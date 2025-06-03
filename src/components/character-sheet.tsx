@@ -893,63 +893,63 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                     </div>
                   )}
 
-                  {/* Combat Actions Dropdown */}
+                  {/* Combat Actions Reference */}
                   <div className="bg-slate-700 rounded-lg p-6">
                     <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
                       <Swords className="h-6 w-6" />
-                      Combat Actions
+                      Combat Actions Reference
                     </h3>
                     
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {/* Actions */}
                       <div className="bg-slate-600 rounded-lg p-4">
                         <h4 className="font-semibold text-white mb-3 text-center">Actions</h4>
-                        <select className="w-full bg-slate-700 border border-slate-500 rounded px-3 py-2 text-white text-sm">
-                          <option value="">Select Action...</option>
-                          <option value="attack">Attack</option>
-                          <option value="cast-spell">Cast a Spell</option>
-                          <option value="dash">Dash</option>
-                          <option value="disengage">Disengage</option>
-                          <option value="dodge">Dodge</option>
-                          <option value="help">Help</option>
-                          <option value="hide">Hide</option>
-                          <option value="ready">Ready</option>
-                          <option value="search">Search</option>
-                          <option value="use-object">Use an Object</option>
-                          {character.actions?.filter(a => a.type === 'Action').map((action, i) => (
-                            <option key={i} value={action.name.toLowerCase()}>{action.name}</option>
+                        <div className="space-y-2 max-h-32 overflow-y-auto">
+                          <div className="text-slate-300 text-sm">• Attack</div>
+                          <div className="text-slate-300 text-sm">• Cast a Spell</div>
+                          <div className="text-slate-300 text-sm">• Dash</div>
+                          <div className="text-slate-300 text-sm">• Disengage</div>
+                          <div className="text-slate-300 text-sm">• Dodge</div>
+                          <div className="text-slate-300 text-sm">• Help</div>
+                          <div className="text-slate-300 text-sm">• Hide</div>
+                          <div className="text-slate-300 text-sm">• Ready</div>
+                          <div className="text-slate-300 text-sm">• Search</div>
+                          <div className="text-slate-300 text-sm">• Use an Object</div>
+                          {character.actions?.filter(a => 
+                            a.type === 'Action' && 
+                            !['Attack', 'Cast a Spell', 'Dash', 'Disengage', 'Dodge', 'Help', 'Hide', 'Ready', 'Search', 'Use an Object'].includes(a.name)
+                          ).map((action, i) => (
+                            <div key={i} className="text-purple-300 text-sm">• {action.name}</div>
                           ))}
-                        </select>
+                        </div>
                       </div>
 
                       {/* Bonus Actions */}
                       <div className="bg-slate-600 rounded-lg p-4">
                         <h4 className="font-semibold text-white mb-3 text-center">Bonus Actions</h4>
-                        <select className="w-full bg-slate-700 border border-slate-500 rounded px-3 py-2 text-white text-sm">
-                          <option value="">Select Bonus Action...</option>
-                          <option value="offhand-attack">Off-hand Attack</option>
-                          <option value="two-weapon-fighting">Two-Weapon Fighting</option>
+                        <div className="space-y-2 max-h-32 overflow-y-auto">
+                          <div className="text-slate-300 text-sm">• Off-hand Attack</div>
+                          <div className="text-slate-300 text-sm">• Two-Weapon Fighting</div>
                           {character.bonusActions?.map((action, i) => (
-                            <option key={i} value={action.name.toLowerCase()}>{action.name}</option>
+                            <div key={i} className="text-yellow-300 text-sm">• {action.name}</div>
                           ))}
-                        </select>
+                        </div>
                       </div>
 
                       {/* Reactions */}
                       <div className="bg-slate-600 rounded-lg p-4">
                         <h4 className="font-semibold text-white mb-3 text-center">Reactions</h4>
-                        <select className="w-full bg-slate-700 border border-slate-500 rounded px-3 py-2 text-white text-sm">
-                          <option value="">Select Reaction...</option>
-                          <option value="opportunity-attack">Opportunity Attack</option>
+                        <div className="space-y-2 max-h-32 overflow-y-auto">
+                          <div className="text-slate-300 text-sm">• Opportunity Attack</div>
                           {character.reactions?.map((action, i) => (
-                            <option key={i} value={action.name.toLowerCase()}>{action.name}</option>
+                            <div key={i} className="text-blue-300 text-sm">• {action.name}</div>
                           ))}
-                        </select>
+                        </div>
                       </div>
                     </div>
                     
                     <div className="mt-4 text-center text-slate-400 text-sm">
-                      Use the dropdowns above to quickly reference available actions during combat
+                      Quick reference for available combat actions - no dice rolling here!
                     </div>
                   </div>
 
