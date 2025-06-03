@@ -1,0 +1,103 @@
+"use client";
+
+import { Heart, Shield } from "lucide-react";
+import { useState } from "react";
+import { CharacterSheet } from "./character-sheet";
+
+interface Character {
+  id: string;
+  name: string;
+  race: string;
+  class: string;
+  level: number;
+  hitPoints: number;
+  maxHitPoints: number;
+  armorClass: number;
+  background?: string;
+  alignment?: string;
+  strength: number;
+  dexterity: number;
+  constitution: number;
+  intelligence: number;
+  wisdom: number;
+  charisma: number;
+  speed: number;
+  proficiencyBonus: number;
+  skills?: string[];
+  inventory?: string[];
+  equipment?: string[];
+  appearance?: string;
+  personality?: string;
+  backstory?: string;
+  notes?: string;
+}
+
+interface CharacterCardProps {
+  character: Character;
+  onCharacterDeleted?: () => void;
+}
+
+export function CharacterCard({ character, onCharacterDeleted }: CharacterCardProps) {
+  const [showSheet, setShowSheet] = useState(false);
+  const hpPercentage = (character.hitPoints / character.maxHitPoints) * 100;
+  
+  return (
+    <>
+      <div 
+        className="bg-slate-800 rounded-lg p-6 border border-slate-700 hover:border-purple-500 transition-colors cursor-pointer"
+        onClick={() => setShowSheet(true)}
+      >
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h3 className="text-xl font-bold text-white mb-1">{character.name}</h3>
+            <p className="text-slate-400">
+              {character.race} {character.class}
+            </p>
+          </div>
+          <div className="bg-purple-600 text-white text-sm font-semibold px-2 py-1 rounded">
+            Lv. {character.level}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {/* Hit Points */}
+          <div className="flex items-center gap-2">
+            <Heart className="h-4 w-4 text-red-400" />
+            <div className="flex-1">
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-slate-300">Hit Points</span>
+                <span className="text-white font-medium">
+                  {character.hitPoints}/{character.maxHitPoints}
+                </span>
+              </div>
+              <div className="w-full bg-slate-700 rounded-full h-2">
+                <div
+                  className="bg-red-500 h-2 rounded-full"
+                  style={{ width: `${hpPercentage}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Armor Class */}
+          <div className="flex items-center gap-2">
+            <Shield className="h-4 w-4 text-blue-400" />
+            <span className="text-slate-300">Armor Class</span>
+            <span className="text-white font-medium ml-auto">{character.armorClass}</span>
+          </div>
+        </div>
+      </div>
+
+      {showSheet && (
+        <CharacterSheet
+          character={character}
+          onClose={() => setShowSheet(false)}
+          onCharacterDeleted={() => {
+            setShowSheet(false);
+            onCharacterDeleted?.();
+          }}
+        />
+      )}
+    </>
+  );
+} 

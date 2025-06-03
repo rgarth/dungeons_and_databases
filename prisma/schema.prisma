@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String      @id @default(cuid())
+  name          String?
+  email         String      @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  characters    Character[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Character {
+  id          String @id @default(cuid())
+  name        String
+  race        String
+  class       String
+  level       Int    @default(1)
+  background  String?
+  alignment   String?
+  
+  // Core Stats
+  strength     Int @default(10)
+  dexterity    Int @default(10)
+  constitution Int @default(10)
+  intelligence Int @default(10)
+  wisdom       Int @default(10)
+  charisma     Int @default(10)
+  
+  // Derived Stats
+  hitPoints    Int @default(10)
+  maxHitPoints Int @default(10)
+  armorClass   Int @default(10)
+  speed        Int @default(30)
+  
+  // Skills & Proficiencies
+  proficiencyBonus Int @default(2)
+  skills           Json? // Store skill proficiencies as JSON
+  
+  // Equipment & Inventory
+  inventory Json? // Store inventory items as JSON
+  equipment Json? // Store equipped items as JSON
+  weapons   Json? // Store equipped weapons as JSON
+  inventoryWeapons Json? // Store unequipped weapons in inventory as JSON
+  
+  // Money
+  copperPieces  Int @default(0)
+  silverPieces  Int @default(0)
+  goldPieces    Int @default(0)
+  treasures     Json? // Store valuable items/treasures with their worth
+  
+  // Spellcasting
+  spells          Json? // Store known/prepared spells as JSON
+  spellSlots      Json? // Store spell slot levels and counts as JSON
+  spellcastingAbility String? // Primary spellcasting ability
+  spellSaveDC     Int? // Spell save difficulty class
+  spellAttackBonus Int? // Spell attack bonus
+  
+  // Combat Actions
+  actions        Json? // Store available actions as JSON
+  bonusActions   Json? // Store bonus actions as JSON
+  reactions      Json? // Store reactions as JSON
+  
+  // Character Details
+  appearance   String?
+  personality  String?
+  backstory    String?
+  notes        String?
+  
+  // Relationships
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
