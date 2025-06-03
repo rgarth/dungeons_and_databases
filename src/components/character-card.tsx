@@ -1,8 +1,9 @@
 "use client";
 
-import { Heart, Shield } from "lucide-react";
+import { Heart, Shield, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { CharacterSheet } from "./character-sheet";
+import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 
 interface Character {
   id: string;
@@ -39,7 +40,34 @@ interface CharacterCardProps {
 
 export function CharacterCard({ character, onCharacterDeleted }: CharacterCardProps) {
   const [showSheet, setShowSheet] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const hpPercentage = (character.hitPoints / character.maxHitPoints) * 100;
+
+  const handleDeleteCharacter = async () => {
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/characters?id=${character.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setShowDeleteDialog(false);
+        onCharacterDeleted?.();
+      } else {
+        console.error('Failed to delete character');
+      }
+    } catch (error) {
+      console.error('Error deleting character:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent opening character sheet
+    setShowDeleteDialog(true);
+  };
   
   return (
     <>
@@ -54,8 +82,17 @@ export function CharacterCard({ character, onCharacterDeleted }: CharacterCardPr
               {character.race} {character.class}
             </p>
           </div>
-          <div className="bg-purple-600 text-white text-sm font-semibold px-2 py-1 rounded">
-            Lv. {character.level}
+          <div className="flex items-center gap-2">
+            <div className="bg-purple-600 text-white text-sm font-semibold px-2 py-1 rounded">
+              Lv. {character.level}
+            </div>
+            <button
+              onClick={handleDeleteClick}
+              className="text-red-400 hover:text-red-300 transition-colors p-2 rounded-lg hover:bg-red-500/10"
+              title="Delete Character"
+            >
+              <Trash2 className="h-5 w-5" />
+            </button>
           </div>
         </div>
 
@@ -98,6 +135,15 @@ export function CharacterCard({ character, onCharacterDeleted }: CharacterCardPr
           }}
         />
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        isOpen={showDeleteDialog}
+        characterName={character.name}
+        onConfirm={handleDeleteCharacter}
+        onCancel={() => setShowDeleteDialog(false)}
+        isDeleting={isDeleting}
+      />
     </>
   );
 } 

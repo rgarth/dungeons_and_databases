@@ -129,9 +129,43 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     }
   };
 
+  // Migration function to move weapons from general inventory to weapon inventory
+  const migrateWeaponsFromInventory = () => {
+    const weaponNamesToMigrate: string[] = [];
+    const nonWeaponInventory: InventoryItem[] = [];
+    
+    // Check if we need to migrate
+    inventory.forEach(item => {
+      const weaponItem = WEAPONS.find(weapon => weapon.name === item.name);
+      if (weaponItem) {
+        weaponNamesToMigrate.push(item.name);
+      } else {
+        nonWeaponInventory.push(item);
+      }
+    });
+    
+    if (weaponNamesToMigrate.length > 0) {
+      const newWeaponObjects = weaponNamesToMigrate.map(name => 
+        WEAPONS.find(weapon => weapon.name === name)!
+      );
+      
+      const updatedInventoryWeapons = [...inventoryWeapons, ...newWeaponObjects];
+      
+      // Update state
+      setInventory(nonWeaponInventory);
+      setInventoryWeapons(updatedInventoryWeapons);
+      
+      // Save to database
+      updateCharacter({ 
+        inventory: nonWeaponInventory,
+        inventoryWeapons: updatedInventoryWeapons 
+      });
+    }
+  };
+
   // Run migration on component mount
   useEffect(() => {
-    // Only migrate if we have armor items in general inventory and no armor in inventoryArmor
+    // Migrate armor
     const hasArmorInGeneralInventory = inventory.some(item => 
       ARMOR.find(armor => armor.name === item.name)
     );
@@ -140,6 +174,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     if (hasArmorInGeneralInventory && !hasArmorInArmorInventory) {
       console.log('Migrating armor from general inventory to armor inventory...');
       migrateArmorFromInventory();
+    }
+
+    // Migrate weapons
+    const hasWeaponsInGeneralInventory = inventory.some(item => 
+      WEAPONS.find(weapon => weapon.name === item.name)
+    );
+    const hasWeaponsInWeaponInventory = inventoryWeapons.length > 0;
+    
+    if (hasWeaponsInGeneralInventory && !hasWeaponsInWeaponInventory) {
+      console.log('Migrating weapons from general inventory to weapon inventory...');
+      migrateWeaponsFromInventory();
     }
   }, [character.id]); // Only run when character changes
 
@@ -154,6 +199,9 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
   const proficiencyBonus = getProficiencyBonus(character.level);
   const hpPercentage = (character.hitPoints / character.maxHitPoints) * 100;
+  
+  // Calculate dynamic armor class based on equipped armor
+  const currentArmorClass = calculateArmorClass(equippedArmor, character.dexterity);
 
   const handleDeleteCharacter = async () => {
     setIsDeleting(true);
@@ -471,7 +519,6 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   };
   
   const weaponLimits = getWeaponLimits();
-  const maxWeapons = weaponLimits.max;
 
   return (
     <>
@@ -539,7 +586,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               }`}
             >
               <Package className="h-4 w-4" />
-              Equipment
+              Equipment and Spells
             </button>
             <button
               onClick={() => setActiveTab("inventory")}
@@ -613,7 +660,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                           <Shield className="h-4 w-4 text-blue-400" />
                           Armor Class
                         </span>
-                        <span className="text-white font-semibold text-xl">{character.armorClass}</span>
+                        <span className="text-white font-semibold text-xl">{currentArmorClass}</span>
                       </div>
 
                       {/* Speed */}
@@ -651,7 +698,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                   )}
                 </div>
 
-                {/* Right Column - Character Details & Abilities */}
+                {/* Right Column - Character Details */}
                 <div className="space-y-6">
                   {/* Basic Info */}
                   <div className="bg-slate-700 rounded-lg p-4">
@@ -679,196 +726,6 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                         <div>
                           <span className="text-slate-400 text-sm">Alignment:</span>
                           <p className="text-white">{character.alignment}</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Spells */}
-                  {character.spells && character.spells.length > 0 && (
-                    <div className="bg-slate-700 rounded-lg p-4">
-                      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <Zap className="h-5 w-5" />
-                        Spells
-                      </h3>
-                      {character.spellSaveDC && (
-                        <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-                          <div className="text-slate-300">
-                            <strong>Spell Save DC:</strong> {character.spellSaveDC}
-                          </div>
-                          <div className="text-slate-300">
-                            <strong>Spell Attack:</strong> +{character.spellAttackBonus}
-                          </div>
-                        </div>
-                      )}
-                      <div className="space-y-2 max-h-48 overflow-y-auto">
-                        {character.spells.map((spell, index) => (
-                          <div key={index} className="bg-slate-600 p-3 rounded">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-white font-medium">{spell.name}</span>
-                              <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
-                                {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
-                              </span>
-                            </div>
-                            <div className="text-slate-400 text-xs mb-1">
-                              {spell.school} • {spell.castingTime} • {spell.range}
-                            </div>
-                            <p className="text-slate-300 text-sm">{spell.description}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Weapons */}
-                  {equippedWeapons && equippedWeapons.length > 0 && (
-                    <div className="bg-slate-700 rounded-lg p-4">
-                      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <Sword className="h-5 w-5" />
-                        Equipped Weapons ({equippedWeapons.length}/{weaponLimits.max})
-                      </h3>
-                      
-                      {/* Show weapon limits info */}
-                      {weaponLimits.max < 2 && (
-                        <div className="mb-3 text-sm text-orange-300 bg-orange-900/20 p-2 rounded">
-                          ⚠️ {weaponLimits.reason}
-                        </div>
-                      )}
-                      
-                      {/* Current Equipped Weapons */}
-                      <div className="space-y-2 mb-4">
-                        {equippedWeapons.map((weapon, index) => {
-                          const isMagical = 'magicalName' in weapon;
-                          return (
-                            <div key={index} className="bg-slate-600 p-3 rounded">
-                              <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2">
-                                    <div className="text-white font-medium">{weapon.name}</div>
-                                    {isMagical && (
-                                      <span className="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded">
-                                        {(weapon as MagicalWeapon).rarity}
-                                      </span>
-                                    )}
-                                  </div>
-                                  <div className="text-slate-300 text-sm">
-                                    {weapon.damage}{isMagical && (weapon as MagicalWeapon).damageBonus > 0 && `+${(weapon as MagicalWeapon).damageBonus}`} {weapon.damageType}
-                                    {isMagical && (weapon as MagicalWeapon).attackBonus > 0 && (
-                                      <span className="text-purple-300"> • +{(weapon as MagicalWeapon).attackBonus} to hit</span>
-                                    )}
-                                  </div>
-                                  {isMagical && (weapon as MagicalWeapon).magicalProperties && (
-                                    <div className="text-purple-300 text-xs mt-1 italic">
-                                      {(weapon as MagicalWeapon).magicalProperties}
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <button
-                                    onClick={() => handleUnequipWeapon(index)}
-                                    className="bg-slate-500 hover:bg-slate-400 text-white text-xs px-2 py-1 rounded"
-                                  >
-                                    Unequip
-                                  </button>
-                                  <button
-                                    onClick={() => handleRemoveWeapon(index, true)}
-                                    className="text-red-400 hover:text-red-300 transition-colors p-1"
-                                  >
-                                    <Trash2 className="h-3 w-3" />
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Weapon Inventory Section */}
-                  <div className="bg-slate-700 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                      <Package className="h-5 w-5" />
-                      Weapon Storage
-                      <span className="text-xs bg-slate-600 text-slate-300 px-2 py-1 rounded">
-                        Click &quot;Equip&quot; to use
-                      </span>
-                    </h3>
-                    
-                    {/* Add Magical Weapon Button - Move to top for visibility */}
-                    <button
-                      onClick={() => setShowWeaponCreator(true)}
-                      className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-4"
-                    >
-                      <Plus className="h-4 w-4" />
-                      Create Magical Weapon
-                    </button>
-                    
-                    {/* Weapons in Storage */}
-                    <div className="space-y-2">
-                      {inventoryWeapons && inventoryWeapons.length > 0 ? inventoryWeapons.map((weapon, index) => {
-                        const isMagical = 'magicalName' in weapon;
-                        const isProficient = canEquipWeapon(weapon, character.class);
-                        const atLimit = equippedWeapons.length >= weaponLimits.max;
-                        
-                        return (
-                          <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-orange-500">
-                            <div className="flex items-center justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2">
-                                  <div className="text-white font-medium">{weapon.name}</div>
-                                  {isMagical && (
-                                    <span className="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded">
-                                      {(weapon as MagicalWeapon).rarity}
-                                    </span>
-                                  )}
-                                  {!isProficient && (
-                                    <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">
-                                      No Prof Bonus
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="text-slate-300 text-sm">
-                                  {weapon.damage}{isMagical && (weapon as MagicalWeapon).damageBonus > 0 && `+${(weapon as MagicalWeapon).damageBonus}`} {weapon.damageType}
-                                  {isMagical && (weapon as MagicalWeapon).attackBonus > 0 && (
-                                    <span className="text-purple-300"> • +{(weapon as MagicalWeapon).attackBonus} to hit</span>
-                                  )}
-                                </div>
-                                {!isProficient && (
-                                  <div className="text-yellow-300 text-xs mt-1">
-                                    ⚠️ No proficiency - won&apos;t add proficiency bonus to attacks
-                                  </div>
-                                )}
-                                {isMagical && (weapon as MagicalWeapon).magicalProperties && (
-                                  <div className="text-purple-300 text-xs mt-1 italic">
-                                    {(weapon as MagicalWeapon).magicalProperties}
-                                  </div>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <button
-                                  onClick={() => handleEquipWeapon(weapon, index)}
-                                  disabled={atLimit}
-                                  className="bg-green-600 hover:bg-green-700 disabled:bg-slate-500 disabled:opacity-50 text-white text-sm px-3 py-1 rounded font-medium"
-                                  title={atLimit ? "At weapon limit" : "Equip weapon"}
-                                >
-                                  {atLimit ? "Limit Reached" : "Equip"}
-                                </button>
-                                <button
-                                  onClick={() => handleRemoveWeapon(index, false)}
-                                  className="text-red-400 hover:text-red-300 transition-colors p-1"
-                                >
-                                  <Trash2 className="h-3 w-3" />
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      }) : (
-                        <div className="text-center py-6 border-2 border-dashed border-slate-600 rounded-lg">
-                          <Sword className="h-8 w-8 text-slate-500 mx-auto mb-2" />
-                          <p className="text-slate-500 text-sm">No weapons in storage</p>
-                          <p className="text-slate-600 text-xs">Create magical weapons above</p>
                         </div>
                       )}
                     </div>
@@ -1132,7 +989,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div className="text-center bg-slate-600 rounded p-3">
-                        <div className="text-2xl font-bold text-blue-400">{character.armorClass}</div>
+                        <div className="text-2xl font-bold text-blue-400">{currentArmorClass}</div>
                         <div className="text-xs text-slate-400">Armor Class</div>
                       </div>
                       <div className="text-center bg-slate-600 rounded p-3">
@@ -1319,339 +1176,234 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                         </div>
                       </div>
                     </div>
+                  </div>
 
-                    {/* General Inventory Section */}
+                  {/* Right Column - Weapons and Spells */}
+                  <div className="space-y-6">
+                    {/* Equipped Weapons Section */}
+                    {equippedWeapons && equippedWeapons.length > 0 && (
+                      <div className="bg-slate-700 rounded-lg p-4">
+                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                          <Sword className="h-5 w-5" />
+                          Equipped Weapons ({equippedWeapons.length}/{weaponLimits.max})
+                        </h3>
+                        
+                        {/* Show weapon limits info */}
+                        {weaponLimits.max < 2 && (
+                          <div className="mb-3 text-sm text-orange-300 bg-orange-900/20 p-2 rounded">
+                            ⚠️ {weaponLimits.reason}
+                          </div>
+                        )}
+                        
+                        {/* Current Equipped Weapons */}
+                        <div className="space-y-2 mb-4">
+                          {equippedWeapons.map((weapon, index) => {
+                            const isMagical = 'magicalName' in weapon;
+                            return (
+                              <div key={index} className="bg-slate-600 p-3 rounded">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2">
+                                      <div className="text-white font-medium">{weapon.name}</div>
+                                      {isMagical && (
+                                        <span className="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded">
+                                          {(weapon as MagicalWeapon).rarity}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="text-slate-300 text-sm">
+                                      {weapon.damage}{isMagical && (weapon as MagicalWeapon).damageBonus > 0 && `+${(weapon as MagicalWeapon).damageBonus}`} {weapon.damageType}
+                                      {isMagical && (weapon as MagicalWeapon).attackBonus > 0 && (
+                                        <span className="text-purple-300"> • +{(weapon as MagicalWeapon).attackBonus} to hit</span>
+                                      )}
+                                    </div>
+                                    {isMagical && (weapon as MagicalWeapon).magicalProperties && (
+                                      <div className="text-purple-300 text-xs mt-1 italic">
+                                        {(weapon as MagicalWeapon).magicalProperties}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      onClick={() => handleUnequipWeapon(index)}
+                                      className="bg-slate-500 hover:bg-slate-400 text-white text-xs px-2 py-1 rounded"
+                                    >
+                                      Unequip
+                                    </button>
+                                    <button
+                                      onClick={() => handleRemoveWeapon(index, true)}
+                                      className="text-red-400 hover:text-red-300 transition-colors p-1"
+                                    >
+                                      <Trash2 className="h-3 w-3" />
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Weapon Inventory Section */}
                     <div className="bg-slate-700 rounded-lg p-4">
                       <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                         <Package className="h-5 w-5" />
-                        General Inventory
+                        Weapon Storage
+                        <span className="text-xs bg-slate-600 text-slate-300 px-2 py-1 rounded">
+                          Click &quot;Equip&quot; to use
+                        </span>
                       </h3>
                       
-                      {/* Add Item Controls */}
-                      <div className="mb-4 space-y-3">
+                      {/* Add Magical Weapon Button */}
+                      <button
+                        onClick={() => setShowWeaponCreator(true)}
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-4"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Create Magical Weapon
+                      </button>
+
+                      {/* Add Basic Weapon Selector */}
+                      <div className="mb-4">
                         <div className="flex gap-2">
-                          <button
-                            onClick={() => setAddMode("equipment")}
-                            className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-colors ${
-                              addMode === "equipment" 
-                                ? "bg-purple-600 text-white" 
-                                : "bg-slate-600 text-slate-300 hover:bg-slate-500"
-                            }`}
-                          >
-                            Equipment
-                          </button>
-                          <button
-                            onClick={() => setAddMode("custom")}
-                            className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-colors ${
-                              addMode === "custom" 
-                                ? "bg-purple-600 text-white" 
-                                : "bg-slate-600 text-slate-300 hover:bg-slate-500"
-                            }`}
-                          >
-                            Custom
-                          </button>
-                        </div>
-
-                        {addMode === "equipment" ? (
-                          <div className="space-y-2">
-                            <select
-                              value={selectedCategory}
-                              onChange={(e) => setSelectedCategory(e.target.value)}
-                              className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-                            >
-                              {EQUIPMENT_CATEGORIES.filter(cat => cat !== 'Armor').map(category => (
-                                <option key={category} value={category}>{category}</option>
-                              ))}
-                            </select>
-                            <div className="flex gap-2">
-                              <select
-                                value={selectedEquipment}
-                                onChange={(e) => setSelectedEquipment(e.target.value)}
-                                className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-                              >
-                                <option value="">Select item...</option>
-                                {getEquipmentByCategory(selectedCategory).filter(equipment => equipment.type !== 'Armor').map(equipment => (
-                                  <option key={equipment.name} value={equipment.name}>
-                                    {equipment.name} ({equipment.cost})
-                                  </option>
-                                ))}
-                              </select>
-                              <button
-                                onClick={handleAddItem}
-                                disabled={!selectedEquipment}
-                                className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
-                              >
-                                <Plus className="h-4 w-4" />
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="flex gap-2">
-                            <input
-                              type="text"
-                              value={newItem}
-                              onChange={(e) => setNewItem(e.target.value)}
-                              placeholder="Enter custom item name..."
-                              className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-                              onKeyPress={(e) => e.key === 'Enter' && handleAddItem()}
-                            />
-                            <button
-                              onClick={handleAddItem}
-                              disabled={!newItem.trim()}
-                              className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
-                            >
-                              <Plus className="h-4 w-4" />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Inventory Items */}
-                      <div className="space-y-2 max-h-64 overflow-y-auto">
-                        {inventory.map((item, index) => (
-                          <div key={index} className="bg-slate-600 p-3 rounded flex items-center justify-between">
-                            <div className="flex-1">
-                              <span className="text-white font-medium">{item.name}</span>
-                              {item.quantity > 1 && (
-                                <span className="text-slate-400 text-sm ml-2">x{item.quantity}</span>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => handleQuantityChange(index, -1)}
-                                className="w-6 h-6 bg-slate-500 hover:bg-slate-400 rounded text-white text-xs"
-                              >
-                                <Minus className="h-3 w-3 mx-auto" />
-                              </button>
-                              <span className="text-white text-sm w-8 text-center">{item.quantity}</span>
-                              <button
-                                onClick={() => handleQuantityChange(index, 1)}
-                                className="w-6 h-6 bg-slate-500 hover:bg-slate-400 rounded text-white text-xs"
-                              >
-                                <Plus className="h-3 w-3 mx-auto" />
-                              </button>
-                              <button
-                                onClick={() => handleRemoveItem(index)}
-                                className="text-red-400 hover:text-red-300 transition-colors p-1"
-                              >
-                                <Trash2 className="h-3 w-3" />
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                        {inventory.length === 0 && (
-                          <div className="text-center py-6 border-2 border-dashed border-slate-600 rounded-lg">
-                            <Package className="h-8 w-8 text-slate-500 mx-auto mb-2" />
-                            <p className="text-slate-500 text-sm">No items in inventory</p>
-                            <p className="text-slate-600 text-xs">Add equipment or custom items above</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right Column - Money & Treasures */}
-                  <div className="space-y-6">
-                    {/* Money */}
-                    <div className="bg-slate-700 rounded-lg p-4">
-                      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <Coins className="h-5 w-5 text-yellow-400" />
-                        Money
-                      </h3>
-                      <div className="space-y-3">
-                        {/* Gold */}
-                        <div className="flex items-center justify-between">
-                          <span className="text-yellow-400 font-medium">Gold Pieces</span>
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => handleMoneyChange('gold', -1)}
-                              disabled={goldPieces <= 0}
-                              className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 rounded text-white text-sm"
-                            >
-                              <Minus className="h-3 w-3 mx-auto" />
-                            </button>
-                            <span className="text-white font-bold w-8 text-center">{goldPieces}</span>
-                            <button
-                              onClick={() => handleMoneyChange('gold', 1)}
-                              className="w-6 h-6 bg-slate-600 hover:bg-slate-500 rounded text-white text-sm"
-                            >
-                              <Plus className="h-3 w-3 mx-auto" />
-                            </button>
-                          </div>
-                        </div>
-                        {/* Silver */}
-                        <div className="flex items-center justify-between">
-                          <span className="text-slate-300 font-medium">Silver Pieces</span>
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => handleMoneyChange('silver', -1)}
-                              disabled={silverPieces <= 0}
-                              className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 rounded text-white text-sm"
-                            >
-                              <Minus className="h-3 w-3 mx-auto" />
-                            </button>
-                            <span className="text-white font-bold w-8 text-center">{silverPieces}</span>
-                            <button
-                              onClick={() => handleMoneyChange('silver', 1)}
-                              className="w-6 h-6 bg-slate-600 hover:bg-slate-500 rounded text-white text-sm"
-                            >
-                              <Plus className="h-3 w-3 mx-auto" />
-                            </button>
-                          </div>
-                        </div>
-                        {/* Copper */}
-                        <div className="flex items-center justify-between">
-                          <span className="text-orange-400 font-medium">Copper Pieces</span>
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => handleMoneyChange('copper', -1)}
-                              disabled={copperPieces <= 0}
-                              className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 rounded text-white text-sm"
-                            >
-                              <Minus className="h-3 w-3 mx-auto" />
-                            </button>
-                            <span className="text-white font-bold w-8 text-center">{copperPieces}</span>
-                            <button
-                              onClick={() => handleMoneyChange('copper', 1)}
-                              className="w-6 h-6 bg-slate-600 hover:bg-slate-500 rounded text-white text-sm"
-                            >
-                              <Plus className="h-3 w-3 mx-auto" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Treasures */}
-                    <div className="bg-slate-700 rounded-lg p-4">
-                      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <Zap className="h-5 w-5 text-purple-400" />
-                        Treasures & Valuables
-                      </h3>
-                      
-                      {/* Add Treasure Mode Toggle */}
-                      <div className="flex gap-1 mb-4">
-                        <button
-                          onClick={() => setTreasureAddMode("common")}
-                          className={`flex-1 py-2 px-2 rounded text-xs font-medium transition-colors ${
-                            treasureAddMode === "common" 
-                              ? "bg-purple-600 text-white" 
-                              : "bg-slate-600 text-slate-300 hover:bg-slate-500"
-                          }`}
-                        >
-                          Common
-                        </button>
-                        <button
-                          onClick={() => setTreasureAddMode("story")}
-                          className={`flex-1 py-2 px-2 rounded text-xs font-medium transition-colors ${
-                            treasureAddMode === "story" 
-                              ? "bg-purple-600 text-white" 
-                              : "bg-slate-600 text-slate-300 hover:bg-slate-500"
-                          }`}
-                        >
-                          Story
-                        </button>
-                        <button
-                          onClick={() => setTreasureAddMode("custom")}
-                          className={`flex-1 py-2 px-2 rounded text-xs font-medium transition-colors ${
-                            treasureAddMode === "custom" 
-                              ? "bg-purple-600 text-white" 
-                              : "bg-slate-600 text-slate-300 hover:bg-slate-500"
-                          }`}
-                        >
-                          Custom
-                        </button>
-                      </div>
-
-                      {/* Add Treasure */}
-                      {(treasureAddMode === "common" || treasureAddMode === "story") ? (
-                        <div className="flex gap-2 mb-4">
                           <select
-                            value={selectedTreasure}
-                            onChange={(e) => setSelectedTreasure(e.target.value)}
+                            value={selectedWeapon ? selectedWeapon.name : ""}
+                            onChange={(e) => {
+                              const weapon = WEAPONS.find(w => w.name === e.target.value);
+                              setSelectedWeapon(weapon || null);
+                            }}
                             className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
                           >
-                            <option value="">Select treasure...</option>
-                            {(treasureAddMode === "common" ? COMMON_TREASURES : STORY_TREASURES).map(treasure => (
-                              <option key={treasure.name} value={treasure.name}>
-                                {treasure.name} ({treasure.value} gp)
+                            <option value="">Select basic weapon to add...</option>
+                            {WEAPONS.map(weapon => (
+                              <option key={weapon.name} value={weapon.name}>
+                                {weapon.name} ({weapon.damage} {weapon.damageType})
                               </option>
                             ))}
                           </select>
                           <button
-                            onClick={handleAddTreasure}
-                            disabled={!selectedTreasure}
-                            className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
+                            onClick={() => {
+                              if (selectedWeapon) {
+                                const updatedInventoryWeapons = [...inventoryWeapons, selectedWeapon];
+                                setInventoryWeapons(updatedInventoryWeapons);
+                                updateCharacter({ inventoryWeapons: updatedInventoryWeapons });
+                                setSelectedWeapon(null);
+                              }
+                            }}
+                            disabled={!selectedWeapon}
+                            className="bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded text-sm font-medium"
                           >
-                            <Plus className="h-4 w-4" />
+                            Add Weapon
                           </button>
                         </div>
-                      ) : (
-                        <div className="space-y-2 mb-4">
-                          <input
-                            type="text"
-                            value={newTreasureName}
-                            onChange={(e) => setNewTreasureName(e.target.value)}
-                            placeholder="Treasure name..."
-                            className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-                          />
-                          <div className="flex gap-2">
-                            <input
-                              type="number"
-                              value={newTreasureValue}
-                              onChange={(e) => setNewTreasureValue(e.target.value)}
-                              placeholder="Value in gold..."
-                              className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-                            />
-                            <button
-                              onClick={handleAddTreasure}
-                              disabled={!newTreasureName.trim() || !newTreasureValue.trim()}
-                              className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
-                            >
-                              <Plus className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Treasure List */}
-                      <div className="space-y-1 max-h-64 overflow-y-auto">
-                        {treasures.map((treasure, index) => (
-                          <div key={index} className="bg-slate-600 p-3 rounded flex items-center justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <span className="text-slate-300 text-sm">💎 {treasure.name}</span>
-                                <span className="text-yellow-400 text-sm font-medium">{treasure.value} gp</span>
+                      </div>
+                      
+                      {/* Weapons in Storage */}
+                      <div className="space-y-2">
+                        {inventoryWeapons && inventoryWeapons.length > 0 ? inventoryWeapons.map((weapon, index) => {
+                          const isMagical = 'magicalName' in weapon;
+                          const isProficient = canEquipWeapon(weapon, character.class);
+                          const atLimit = equippedWeapons.length >= weaponLimits.max;
+                          
+                          return (
+                            <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-orange-500">
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <div className="text-white font-medium">{weapon.name}</div>
+                                    {isMagical && (
+                                      <span className="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded">
+                                        {(weapon as MagicalWeapon).rarity}
+                                      </span>
+                                    )}
+                                    {!isProficient && (
+                                      <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">
+                                        No Prof Bonus
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="text-slate-300 text-sm">
+                                    {weapon.damage}{isMagical && (weapon as MagicalWeapon).damageBonus > 0 && `+${(weapon as MagicalWeapon).damageBonus}`} {weapon.damageType}
+                                    {isMagical && (weapon as MagicalWeapon).attackBonus > 0 && (
+                                      <span className="text-purple-300"> • +{(weapon as MagicalWeapon).attackBonus} to hit</span>
+                                    )}
+                                  </div>
+                                  {!isProficient && (
+                                    <div className="text-yellow-300 text-xs mt-1">
+                                      ⚠️ No proficiency - won&apos;t add proficiency bonus to attacks
+                                    </div>
+                                  )}
+                                  {isMagical && (weapon as MagicalWeapon).magicalProperties && (
+                                    <div className="text-purple-300 text-xs mt-1 italic">
+                                      {(weapon as MagicalWeapon).magicalProperties}
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => handleEquipWeapon(weapon, index)}
+                                    disabled={atLimit}
+                                    className="bg-green-600 hover:bg-green-700 disabled:bg-slate-500 disabled:opacity-50 text-white text-sm px-3 py-1 rounded font-medium"
+                                    title={atLimit ? "At weapon limit" : "Equip weapon"}
+                                  >
+                                    {atLimit ? "Limit Reached" : "Equip"}
+                                  </button>
+                                  <button
+                                    onClick={() => handleRemoveWeapon(index, false)}
+                                    className="text-red-400 hover:text-red-300 transition-colors p-1"
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </button>
+                                </div>
                               </div>
-                              {treasure.description && (
-                                <div className="text-xs text-slate-500 mt-1">{treasure.description}</div>
-                              )}
                             </div>
-                            <button
-                              onClick={() => handleRemoveTreasure(index)}
-                              className="text-red-400 hover:text-red-300 transition-colors p-1"
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </button>
+                          );
+                        }) : (
+                          <div className="text-center py-6 border-2 border-dashed border-slate-600 rounded-lg">
+                            <Sword className="h-8 w-8 text-slate-500 mx-auto mb-2" />
+                            <p className="text-slate-500 text-sm">No weapons in storage</p>
+                            <p className="text-slate-600 text-xs">Create magical weapons above</p>
                           </div>
-                        ))}
-                        {treasures.length === 0 && (
-                          <p className="text-slate-500 text-sm italic">No treasures collected</p>
                         )}
                       </div>
-
-                      {/* Total Treasure Value */}
-                      {treasures.length > 0 && (
-                        <div className="mt-4 pt-3 border-t border-slate-600">
-                          <div className="flex items-center justify-between">
-                            <span className="text-slate-300 font-medium">Total Treasure Value:</span>
-                            <span className="text-yellow-400 font-bold">
-                              {treasures.reduce((total, treasure) => total + treasure.value, 0)} gp
-                            </span>
-                          </div>
-                        </div>
-                      )}
                     </div>
+
+                    {/* Spells Section */}
+                    {character.spells && character.spells.length > 0 && (
+                      <div className="bg-slate-700 rounded-lg p-4">
+                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                          <Zap className="h-5 w-5" />
+                          Spells
+                        </h3>
+                        {character.spellSaveDC && (
+                          <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                            <div className="text-slate-300">
+                              <strong>Spell Save DC:</strong> {character.spellSaveDC}
+                            </div>
+                            <div className="text-slate-300">
+                              <strong>Spell Attack:</strong> +{character.spellAttackBonus}
+                            </div>
+                          </div>
+                        )}
+                        <div className="space-y-2 max-h-48 overflow-y-auto">
+                          {character.spells.map((spell, index) => (
+                            <div key={index} className="bg-slate-600 p-3 rounded">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-white font-medium">{spell.name}</span>
+                                <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
+                                  {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
+                                </span>
+                              </div>
+                              <div className="text-slate-400 text-xs mb-1">
+                                {spell.school} • {spell.castingTime} • {spell.range}
+                              </div>
+                              <p className="text-slate-300 text-sm">{spell.description}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
