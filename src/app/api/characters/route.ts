@@ -21,8 +21,12 @@ export async function GET() {
     }
 
     const characters = await prisma.character.findMany({
-      where: { userId: user.id },
-      orderBy: { createdAt: "desc" },
+      where: {
+        userId: user.id,
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
     });
 
     return NextResponse.json(characters);
@@ -208,8 +212,10 @@ export async function PATCH(request: NextRequest) {
       silverPieces?: number;
       goldPieces?: number;
       treasures?: { name: string; value: number; description?: string }[];
-      weapons?: Record<string, unknown>[]; // Support both Weapon and MagicalWeapon structures (equipped)
-      inventoryWeapons?: Record<string, unknown>[]; // Support unequipped weapons in inventory
+      weapons?: string[] | { name: string; quantity: number }[];
+      inventoryWeapons?: string[] | { name: string; quantity: number }[];
+      armor?: string[] | { name: string; quantity: number }[];
+      inventoryArmor?: string[] | { name: string; quantity: number }[];
     } = {};
 
     // Handle inventory updates (support both old string[] and new InventoryItem[] formats)
@@ -241,6 +247,16 @@ export async function PATCH(request: NextRequest) {
     // Handle inventory weapons updates (unequipped weapons)
     if (body.inventoryWeapons !== undefined) {
       updateData.inventoryWeapons = body.inventoryWeapons;
+    }
+
+    // Handle armor updates (equipped armor)
+    if (body.armor !== undefined) {
+      updateData.armor = body.armor;
+    }
+
+    // Handle inventory armor updates (unequipped armor)
+    if (body.inventoryArmor !== undefined) {
+      updateData.inventoryArmor = body.inventoryArmor;
     }
 
     // Verify the character belongs to the current user and update

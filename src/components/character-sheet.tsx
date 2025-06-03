@@ -1,8 +1,12 @@
 "use client";
 
-import { Heart, Shield, Zap, User, BookOpen, Sword, Package, Trash2, Plus, Minus, Coins, BarChart3, Swords, Backpack } from "lucide-react";
-import { useState } from "react";
-import { getModifier, getProficiencyBonus, Spell, Weapon, MagicalWeapon, Action, EQUIPMENT, EQUIPMENT_CATEGORIES, getEquipmentByCategory, InventoryItem, Treasure, COMMON_TREASURES, STORY_TREASURES, WEAPONS, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, canEquipWeapon, getMaxEquippedWeapons } from "@/lib/dnd";
+import { Heart, Shield, Zap, User, BookOpen, Sword, Package, Trash2, Plus, Minus, Coins, BarChart3, Swords } from "lucide-react";
+import { useState, useEffect } from "react";
+import { getModifier, getProficiencyBonus } from "@/lib/dnd/core";
+import { Spell } from "@/lib/dnd/spells";
+import { Weapon, MagicalWeapon, InventoryItem, WEAPONS, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, Armor, ARMOR, calculateArmorClass, EQUIPMENT, EQUIPMENT_CATEGORIES, getEquipmentByCategory } from "@/lib/dnd/equipment";
+import { Action, canEquipWeapon, getMaxEquippedWeapons, canEquipArmor } from "@/lib/dnd/combat";
+import { Treasure, COMMON_TREASURES, STORY_TREASURES } from "@/lib/dnd/data";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 
 interface CharacterSheetProps {
@@ -30,6 +34,8 @@ interface CharacterSheetProps {
     equipment?: string[];
     weapons?: (Weapon | MagicalWeapon)[];
     inventoryWeapons?: (Weapon | MagicalWeapon)[];
+    armor?: Armor[];
+    inventoryArmor?: Armor[];
     spells?: Spell[];
     spellSlots?: Record<number, number>;
     spellcastingAbility?: string;
@@ -54,7 +60,7 @@ interface CharacterSheetProps {
 export function CharacterSheet({ character, onClose, onCharacterDeleted }: CharacterSheetProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [activeTab, setActiveTab] = useState<"stats" | "actions" | "inventory">("stats");
+  const [activeTab, setActiveTab] = useState<"stats" | "actions" | "equipment" | "inventory">("stats");
   const [newItem, setNewItem] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("Adventuring Gear");
   const [selectedEquipment, setSelectedEquipment] = useState<string>("");
@@ -73,6 +79,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   const [treasures, setTreasures] = useState<Treasure[]>(character.treasures || []);
   const [inventoryWeapons, setInventoryWeapons] = useState<(Weapon | MagicalWeapon)[]>(character.inventoryWeapons || []);
   const [equippedWeapons, setEquippedWeapons] = useState<(Weapon | MagicalWeapon)[]>(character.weapons || []);
+  const [inventoryArmor, setInventoryArmor] = useState<Armor[]>(character.inventoryArmor || []);
+  const [equippedArmor, setEquippedArmor] = useState<Armor[]>(character.armor || []);
   
   const [inventory, setInventory] = useState<InventoryItem[]>(() => {
     if (!character.inventory) return [];
@@ -83,6 +91,54 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     
     return (character.inventory as string[]).map(name => ({ name, quantity: 1 }));
   });
+
+  // Migration function to move armor from general inventory to armor inventory
+  const migrateArmorFromInventory = () => {
+    const armorNamesToMigrate: string[] = [];
+    const nonArmorInventory: InventoryItem[] = [];
+    
+    // Check if we need to migrate
+    inventory.forEach(item => {
+      const armorItem = ARMOR.find(armor => armor.name === item.name);
+      if (armorItem) {
+        armorNamesToMigrate.push(item.name);
+      } else {
+        nonArmorInventory.push(item);
+      }
+    });
+    
+    if (armorNamesToMigrate.length > 0) {
+      const newArmorObjects = armorNamesToMigrate.map(name => 
+        ARMOR.find(armor => armor.name === name)!
+      );
+      
+      const updatedInventoryArmor = [...inventoryArmor, ...newArmorObjects];
+      
+      // Update state
+      setInventory(nonArmorInventory);
+      setInventoryArmor(updatedInventoryArmor);
+      
+      // Save to database
+      updateCharacter({ 
+        inventory: nonArmorInventory,
+        inventoryArmor: updatedInventoryArmor 
+      });
+    }
+  };
+
+  // Run migration on component mount
+  useEffect(() => {
+    // Only migrate if we have armor items in general inventory and no armor in inventoryArmor
+    const hasArmorInGeneralInventory = inventory.some(item => 
+      ARMOR.find(armor => armor.name === item.name)
+    );
+    const hasArmorInArmorInventory = inventoryArmor.length > 0;
+    
+    if (hasArmorInGeneralInventory && !hasArmorInArmorInventory) {
+      console.log('Migrating armor from general inventory to armor inventory...');
+      migrateArmorFromInventory();
+    }
+  }, [character.id]); // Only run when character changes
 
   const abilities = [
     { name: 'Strength', short: 'STR', value: character.strength },
@@ -125,6 +181,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     treasures?: Treasure[];
     weapons?: (Weapon | MagicalWeapon)[];
     inventoryWeapons?: (Weapon | MagicalWeapon)[];
+    armor?: Armor[];
+    inventoryArmor?: Armor[];
   }) => {
     try {
       const response = await fetch(`/api/characters?id=${character.id}`, {
@@ -320,6 +378,79 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     updateCharacter({ treasures: updatedTreasures });
   };
 
+  const handleEquipArmor = (armor: Armor, fromInventoryIndex: number) => {
+    // Check if armor type can be equipped by class
+    if (!canEquipArmor(armor.type, character.class)) {
+      alert(`${character.class} cannot equip ${armor.type.toLowerCase()} armor!`);
+      return;
+    }
+
+    // Check for conflicts - can only have one body armor and one shield
+    const hasBodyArmor = equippedArmor.some(a => a.type !== 'Shield');
+    const hasShield = equippedArmor.some(a => a.type === 'Shield');
+    
+    if (armor.type === 'Shield' && hasShield) {
+      alert("Can only equip one shield!");
+      return;
+    }
+    
+    if (armor.type !== 'Shield' && hasBodyArmor) {
+      alert("Can only equip one piece of body armor!");
+      return;
+    }
+
+    // Check strength requirement
+    if (armor.minStrength && character.strength < armor.minStrength) {
+      alert(`Requires ${armor.minStrength} Strength to equip this armor!`);
+      return;
+    }
+
+    // Move from inventory to equipped
+    const updatedInventoryArmor = inventoryArmor.filter((_, i) => i !== fromInventoryIndex);
+    const updatedEquippedArmor = [...equippedArmor, armor];
+    
+    setInventoryArmor(updatedInventoryArmor);
+    setEquippedArmor(updatedEquippedArmor);
+    updateCharacter({ 
+      armor: updatedEquippedArmor,
+      inventoryArmor: updatedInventoryArmor 
+    });
+  };
+
+  const handleUnequipArmor = (armorIndex: number) => {
+    const armor = equippedArmor[armorIndex];
+    const updatedEquippedArmor = equippedArmor.filter((_, i) => i !== armorIndex);
+    const updatedInventoryArmor = [...inventoryArmor, armor];
+    
+    setEquippedArmor(updatedEquippedArmor);
+    setInventoryArmor(updatedInventoryArmor);
+    updateCharacter({ 
+      armor: updatedEquippedArmor,
+      inventoryArmor: updatedInventoryArmor 
+    });
+  };
+
+  const handleRemoveArmor = (index: number, isEquipped: boolean = false) => {
+    if (isEquipped) {
+      const updatedArmor = equippedArmor.filter((_, i) => i !== index);
+      setEquippedArmor(updatedArmor);
+      updateCharacter({ armor: updatedArmor });
+    } else {
+      const updatedArmor = inventoryArmor.filter((_, i) => i !== index);
+      setInventoryArmor(updatedArmor);
+      updateCharacter({ inventoryArmor: updatedArmor });
+    }
+  };
+
+  const handleAddArmorFromEquipment = (armorName: string) => {
+    const armor = ARMOR.find(a => a.name === armorName);
+    if (armor) {
+      const updatedInventoryArmor = [...inventoryArmor, armor];
+      setInventoryArmor(updatedInventoryArmor);
+      updateCharacter({ inventoryArmor: updatedInventoryArmor });
+    }
+  };
+
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -378,6 +509,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               Actions
             </button>
             <button
+              onClick={() => setActiveTab("equipment")}
+              className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
+                activeTab === "equipment"
+                  ? "text-purple-400 border-b-2 border-purple-400"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <Package className="h-4 w-4" />
+              Equipment
+            </button>
+            <button
               onClick={() => setActiveTab("inventory")}
               className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
                 activeTab === "inventory"
@@ -385,7 +527,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                   : "text-slate-400 hover:text-white"
               }`}
             >
-              <Backpack className="h-4 w-4" />
+              <Coins className="h-4 w-4" />
               Inventory
             </button>
           </div>
@@ -992,223 +1134,99 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               </div>
             )}
 
-            {activeTab === "inventory" && (
+            {activeTab === "equipment" && (
               <div className="p-6">
                 <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Left Column - Inventory & Weapons */}
                   <div className="space-y-6">
-                    {/* Weapons Section */}
+                    {/* Armor Section */}
                     <div className="bg-slate-700 rounded-lg p-4">
                       <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <Sword className="h-5 w-5" />
-                        Weapons
+                        <Shield className="h-5 w-5" />
+                        Armor & Protection
                       </h3>
                       
-                      {/* Current Weapons */}
+                      {/* Current Armor */}
                       <div className="space-y-2 mb-4">
-                        {equippedWeapons && equippedWeapons.length > 0 ? equippedWeapons.map((weapon, index) => {
-                          const isMagical = 'magicalName' in weapon;
-                          return (
-                            <div key={index} className="bg-slate-600 p-3 rounded">
-                              <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2">
-                                    <div className="text-white font-medium">{weapon.name}</div>
-                                    {isMagical && (
-                                      <span className="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded">
-                                        {(weapon as MagicalWeapon).rarity}
-                                      </span>
-                                    )}
-                                  </div>
-                                  <div className="text-slate-300 text-sm">
-                                    {weapon.damage}{isMagical && (weapon as MagicalWeapon).damageBonus > 0 && `+${(weapon as MagicalWeapon).damageBonus}`} {weapon.damageType}
-                                    {isMagical && (weapon as MagicalWeapon).attackBonus > 0 && (
-                                      <span className="text-purple-300"> • +{(weapon as MagicalWeapon).attackBonus} to hit</span>
-                                    )}
-                                  </div>
-                                  {isMagical && (weapon as MagicalWeapon).magicalProperties && (
-                                    <div className="text-purple-300 text-xs mt-1 italic">
-                                      {(weapon as MagicalWeapon).magicalProperties}
-                                    </div>
-                                  )}
+                        <h4 className="text-sm font-medium text-slate-300">Equipped</h4>
+                        {equippedArmor && equippedArmor.length > 0 ? equippedArmor.map((armor, index) => (
+                          <div key={index} className="bg-slate-600 p-3 rounded">
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <div className="text-white font-medium">{armor.name}</div>
+                                  <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
+                                    {armor.type}
+                                  </span>
                                 </div>
+                                <div className="text-slate-300 text-sm">
+                                  AC {armor.type === 'Shield' ? `+${armor.baseAC}` : armor.baseAC}
+                                  {armor.maxDexBonus !== undefined && ` (Max Dex +${armor.maxDexBonus})`}
+                                  {armor.minStrength && ` • Str ${armor.minStrength}`}
+                                  {armor.stealthDisadvantage && ` • Stealth Disadvantage`}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
                                 <button
-                                  onClick={() => handleRemoveWeapon(index)}
+                                  onClick={() => handleUnequipArmor(index)}
+                                  className="bg-slate-500 hover:bg-slate-400 text-white text-xs px-2 py-1 rounded"
+                                >
+                                  Unequip
+                                </button>
+                                <button
+                                  onClick={() => handleRemoveArmor(index, true)}
                                   className="text-red-400 hover:text-red-300 transition-colors p-1"
                                 >
                                   <Trash2 className="h-3 w-3" />
                                 </button>
                               </div>
                             </div>
-                          );
-                        }) : (
-                          <p className="text-slate-500 text-sm italic">No weapons equipped</p>
+                          </div>
+                        )) : (
+                          <p className="text-slate-500 text-sm italic">No armor equipped</p>
                         )}
                       </div>
-                      
-                      {/* Add Magical Weapon Button */}
-                      <button
-                        onClick={() => setShowWeaponCreator(true)}
-                        className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-                      >
-                        <Plus className="h-4 w-4" />
-                        Add Magical Weapon
-                      </button>
-                    </div>
 
-                    {/* Enhanced Inventory */}
-                    <div className="bg-slate-700 rounded-lg p-4">
-                      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <Package className="h-5 w-5" />
-                        Inventory
-                      </h3>
-                      
-                      {/* Add Mode Toggle */}
-                      <div className="flex gap-2 mb-4">
-                        <button
-                          onClick={() => setAddMode("equipment")}
-                          className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-colors ${
-                            addMode === "equipment" 
-                              ? "bg-purple-600 text-white" 
-                              : "bg-slate-600 text-slate-300 hover:bg-slate-500"
-                          }`}
-                        >
-                          D&D Equipment
-                        </button>
-                        <button
-                          onClick={() => setAddMode("custom")}
-                          className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-colors ${
-                            addMode === "custom" 
-                              ? "bg-purple-600 text-white" 
-                              : "bg-slate-600 text-slate-300 hover:bg-slate-500"
-                          }`}
-                        >
-                          Custom Item
-                        </button>
-                      </div>
-
-                      {/* Add Equipment */}
-                      {addMode === "equipment" ? (
-                        <div className="space-y-3 mb-4">
-                          <div>
-                            <label className="block text-xs text-slate-400 mb-1">Category</label>
-                            <select
-                              value={selectedCategory}
-                              onChange={(e) => {
-                                setSelectedCategory(e.target.value);
-                                setSelectedEquipment("");
-                              }}
-                              className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-                            >
-                              {EQUIPMENT_CATEGORIES.map(category => (
-                                <option key={category} value={category}>{category}</option>
-                              ))}
-                            </select>
-                          </div>
-                          <div className="flex gap-2">
-                            <select
-                              value={selectedEquipment}
-                              onChange={(e) => setSelectedEquipment(e.target.value)}
-                              className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-                            >
-                              <option value="">Select equipment...</option>
-                              {getEquipmentByCategory(selectedCategory).map(equipment => {
-                                const existingItem = inventory.find(item => item.name === equipment.name);
-                                const isDisabled = existingItem && !equipment.stackable;
-                                return (
-                                  <option 
-                                    key={equipment.name} 
-                                    value={equipment.name}
-                                    disabled={isDisabled}
-                                  >
-                                    {equipment.name} ({equipment.cost})
-                                    {existingItem && equipment.stackable && ` (${existingItem.quantity})`}
-                                    {isDisabled && " (owned)"}
-                                  </option>
-                                );
-                              })}
-                            </select>
-                            <button
-                              onClick={handleAddItem}
-                              disabled={!selectedEquipment}
-                              className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
-                            >
-                              <Plus className="h-4 w-4" />
-                            </button>
-                          </div>
-                          {selectedEquipment && (
-                            <div className="text-xs text-slate-400">
-                              {EQUIPMENT.find(e => e.name === selectedEquipment)?.description}
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="flex gap-2 mb-4">
-                          <input
-                            type="text"
-                            value={newItem}
-                            onChange={(e) => setNewItem(e.target.value)}
-                            placeholder="Add custom item..."
-                            className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-                            onKeyPress={(e) => e.key === 'Enter' && handleAddItem()}
-                          />
-                          <button
-                            onClick={handleAddItem}
-                            disabled={!newItem.trim()}
-                            className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
-                          >
-                            <Plus className="h-4 w-4" />
-                          </button>
-                        </div>
-                      )}
-
-                      {/* Inventory Items */}
-                      <div className="space-y-1 max-h-96 overflow-y-auto">
-                        {inventory.map((item, index) => {
-                          const equipment = EQUIPMENT.find(e => e.name === item.name);
-                          const isStackable = equipment?.stackable !== false;
+                      {/* Armor in Storage */}
+                      <div className="space-y-2 mb-4">
+                        <h4 className="text-sm font-medium text-slate-300">Storage</h4>
+                        {inventoryArmor && inventoryArmor.length > 0 ? inventoryArmor.map((armor, index) => {
+                          const canEquip = canEquipArmor(armor.type, character.class);
+                          const hasStrengthReq = !armor.minStrength || character.strength >= armor.minStrength;
                           
                           return (
-                            <div key={index} className="bg-slate-600 p-2 rounded">
+                            <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-orange-500">
                               <div className="flex items-center justify-between">
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2">
-                                    <span className="text-slate-300 text-sm">• {item.name}</span>
-                                    {item.quantity > 1 && (
-                                      <span className="text-purple-300 text-sm font-medium bg-purple-900/30 px-2 py-0.5 rounded">
-                                        {item.quantity}
+                                    <div className="text-white font-medium">{armor.name}</div>
+                                    <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
+                                      {armor.type}
+                                    </span>
+                                    {!canEquip && (
+                                      <span className="text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded">
+                                        No Proficiency
+                                      </span>
+                                    )}
+                                    {!hasStrengthReq && (
+                                      <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">
+                                        Str Req: {armor.minStrength}
                                       </span>
                                     )}
                                   </div>
-                                  {equipment && (
-                                    <div className="text-xs text-slate-400 ml-3">
-                                      {equipment.cost}{equipment.weight ? ` • ${equipment.weight} lb` : ''}
-                                      {equipment.description && (
-                                        <div className="text-xs text-slate-500 mt-1">{equipment.description}</div>
-                                      )}
-                                    </div>
-                                  )}
+                                  <div className="text-slate-300 text-sm">{armor.description}</div>
                                 </div>
-                                <div className="flex items-center gap-1">
-                                  {isStackable && (
-                                    <>
-                                      <button
-                                        onClick={() => handleQuantityChange(index, -1)}
-                                        className="w-6 h-6 bg-slate-500 hover:bg-slate-400 text-white text-xs rounded flex items-center justify-center"
-                                      >
-                                        <Minus className="h-3 w-3" />
-                                      </button>
-                                      <span className="text-white text-xs w-6 text-center">{item.quantity}</span>
-                                      <button
-                                        onClick={() => handleQuantityChange(index, 1)}
-                                        className="w-6 h-6 bg-slate-500 hover:bg-slate-400 text-white text-xs rounded flex items-center justify-center"
-                                      >
-                                        <Plus className="h-3 w-3" />
-                                      </button>
-                                    </>
-                                  )}
+                                <div className="flex items-center gap-2">
                                   <button
-                                    onClick={() => handleRemoveItem(index)}
+                                    onClick={() => handleEquipArmor(armor, index)}
+                                    disabled={!canEquip || !hasStrengthReq}
+                                    className="bg-green-600 hover:bg-green-700 disabled:bg-slate-500 disabled:opacity-50 text-white text-sm px-3 py-1 rounded font-medium"
+                                    title={!canEquip ? "Class cannot use this armor" : !hasStrengthReq ? "Insufficient strength" : "Equip armor"}
+                                  >
+                                    {!canEquip ? "Can't Use" : !hasStrengthReq ? "Too Heavy" : "Equip"}
+                                  </button>
+                                  <button
+                                    onClick={() => handleRemoveArmor(index, false)}
                                     className="text-red-400 hover:text-red-300 transition-colors p-1"
                                   >
                                     <Trash2 className="h-3 w-3" />
@@ -1217,9 +1235,529 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                               </div>
                             </div>
                           );
-                        })}
+                        }) : (
+                          <div className="text-center py-4 border-2 border-dashed border-slate-600 rounded-lg">
+                            <Shield className="h-6 w-6 text-slate-500 mx-auto mb-2" />
+                            <p className="text-slate-500 text-sm">No armor in storage</p>
+                            <p className="text-slate-600 text-xs">Add armor below to get started</p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Add New Armor Section */}
+                      <div className="bg-slate-700 rounded-lg p-4">
+                        <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                          <Plus className="h-5 w-5" />
+                          Add New Armor
+                        </h3>
+                        <p className="text-slate-400 text-sm mb-3">Add armor to your inventory from the equipment database</p>
+                        <select
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              handleAddArmorFromEquipment(e.target.value);
+                              e.target.value = "";
+                            }
+                          }}
+                          className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                        >
+                          <option value="">Select armor to add to inventory...</option>
+                          {ARMOR.map(armor => (
+                            <option key={armor.name} value={armor.name}>
+                              {armor.name} - {armor.cost} ({armor.type})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Enhanced AC Display */}
+                    <div className="bg-slate-700 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                        <Shield className="h-5 w-5" />
+                        Armor Class Calculator
+                      </h3>
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-blue-400 mb-2">
+                          {calculateArmorClass(equippedArmor, character.dexterity)}
+                        </div>
+                        <div className="text-sm text-slate-400">
+                          Base: {equippedArmor.find(a => a.type !== 'Shield')?.baseAC || 10}
+                          {equippedArmor.find(a => a.type !== 'Shield')?.maxDexBonus !== undefined 
+                            ? ` + Dex (max +${equippedArmor.find(a => a.type !== 'Shield')?.maxDexBonus})`
+                            : ` + Dex ${getModifier(character.dexterity) >= 0 ? '+' : ''}${getModifier(character.dexterity)}`
+                          }
+                          {equippedArmor.find(a => a.type === 'Shield') && ` + Shield +${equippedArmor.find(a => a.type === 'Shield')?.baseAC}`}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* General Inventory Section */}
+                    <div className="bg-slate-700 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <Package className="h-5 w-5" />
+                        General Inventory
+                      </h3>
+                      
+                      {/* Add Item Controls */}
+                      <div className="mb-4 space-y-3">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => setAddMode("equipment")}
+                            className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-colors ${
+                              addMode === "equipment" 
+                                ? "bg-purple-600 text-white" 
+                                : "bg-slate-600 text-slate-300 hover:bg-slate-500"
+                            }`}
+                          >
+                            Equipment
+                          </button>
+                          <button
+                            onClick={() => setAddMode("custom")}
+                            className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-colors ${
+                              addMode === "custom" 
+                                ? "bg-purple-600 text-white" 
+                                : "bg-slate-600 text-slate-300 hover:bg-slate-500"
+                            }`}
+                          >
+                            Custom
+                          </button>
+                        </div>
+
+                        {addMode === "equipment" ? (
+                          <div className="space-y-2">
+                            <select
+                              value={selectedCategory}
+                              onChange={(e) => setSelectedCategory(e.target.value)}
+                              className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                            >
+                              {EQUIPMENT_CATEGORIES.filter(cat => cat !== 'Armor').map(category => (
+                                <option key={category} value={category}>{category}</option>
+                              ))}
+                            </select>
+                            <div className="flex gap-2">
+                              <select
+                                value={selectedEquipment}
+                                onChange={(e) => setSelectedEquipment(e.target.value)}
+                                className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                              >
+                                <option value="">Select item...</option>
+                                {getEquipmentByCategory(selectedCategory).filter(equipment => equipment.type !== 'Armor').map(equipment => (
+                                  <option key={equipment.name} value={equipment.name}>
+                                    {equipment.name} ({equipment.cost})
+                                  </option>
+                                ))}
+                              </select>
+                              <button
+                                onClick={handleAddItem}
+                                disabled={!selectedEquipment}
+                                className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={newItem}
+                              onChange={(e) => setNewItem(e.target.value)}
+                              placeholder="Enter custom item name..."
+                              className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                              onKeyPress={(e) => e.key === 'Enter' && handleAddItem()}
+                            />
+                            <button
+                              onClick={handleAddItem}
+                              disabled={!newItem.trim()}
+                              className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Inventory Items */}
+                      <div className="space-y-2 max-h-64 overflow-y-auto">
+                        {inventory.map((item, index) => (
+                          <div key={index} className="bg-slate-600 p-3 rounded flex items-center justify-between">
+                            <div className="flex-1">
+                              <span className="text-white font-medium">{item.name}</span>
+                              {item.quantity > 1 && (
+                                <span className="text-slate-400 text-sm ml-2">x{item.quantity}</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleQuantityChange(index, -1)}
+                                className="w-6 h-6 bg-slate-500 hover:bg-slate-400 rounded text-white text-xs"
+                              >
+                                <Minus className="h-3 w-3 mx-auto" />
+                              </button>
+                              <span className="text-white text-sm w-8 text-center">{item.quantity}</span>
+                              <button
+                                onClick={() => handleQuantityChange(index, 1)}
+                                className="w-6 h-6 bg-slate-500 hover:bg-slate-400 rounded text-white text-xs"
+                              >
+                                <Plus className="h-3 w-3 mx-auto" />
+                              </button>
+                              <button
+                                onClick={() => handleRemoveItem(index)}
+                                className="text-red-400 hover:text-red-300 transition-colors p-1"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
                         {inventory.length === 0 && (
-                          <p className="text-slate-500 text-sm italic">No items in inventory</p>
+                          <div className="text-center py-6 border-2 border-dashed border-slate-600 rounded-lg">
+                            <Package className="h-8 w-8 text-slate-500 mx-auto mb-2" />
+                            <p className="text-slate-500 text-sm">No items in inventory</p>
+                            <p className="text-slate-600 text-xs">Add equipment or custom items above</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column - Money & Treasures */}
+                  <div className="space-y-6">
+                    {/* Money */}
+                    <div className="bg-slate-700 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <Coins className="h-5 w-5 text-yellow-400" />
+                        Money
+                      </h3>
+                      <div className="space-y-3">
+                        {/* Gold */}
+                        <div className="flex items-center justify-between">
+                          <span className="text-yellow-400 font-medium">Gold Pieces</span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleMoneyChange('gold', -1)}
+                              disabled={goldPieces <= 0}
+                              className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 rounded text-white text-sm"
+                            >
+                              <Minus className="h-3 w-3 mx-auto" />
+                            </button>
+                            <span className="text-white font-bold w-8 text-center">{goldPieces}</span>
+                            <button
+                              onClick={() => handleMoneyChange('gold', 1)}
+                              className="w-6 h-6 bg-slate-600 hover:bg-slate-500 rounded text-white text-sm"
+                            >
+                              <Plus className="h-3 w-3 mx-auto" />
+                            </button>
+                          </div>
+                        </div>
+                        {/* Silver */}
+                        <div className="flex items-center justify-between">
+                          <span className="text-slate-300 font-medium">Silver Pieces</span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleMoneyChange('silver', -1)}
+                              disabled={silverPieces <= 0}
+                              className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 rounded text-white text-sm"
+                            >
+                              <Minus className="h-3 w-3 mx-auto" />
+                            </button>
+                            <span className="text-white font-bold w-8 text-center">{silverPieces}</span>
+                            <button
+                              onClick={() => handleMoneyChange('silver', 1)}
+                              className="w-6 h-6 bg-slate-600 hover:bg-slate-500 rounded text-white text-sm"
+                            >
+                              <Plus className="h-3 w-3 mx-auto" />
+                            </button>
+                          </div>
+                        </div>
+                        {/* Copper */}
+                        <div className="flex items-center justify-between">
+                          <span className="text-orange-400 font-medium">Copper Pieces</span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleMoneyChange('copper', -1)}
+                              disabled={copperPieces <= 0}
+                              className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 rounded text-white text-sm"
+                            >
+                              <Minus className="h-3 w-3 mx-auto" />
+                            </button>
+                            <span className="text-white font-bold w-8 text-center">{copperPieces}</span>
+                            <button
+                              onClick={() => handleMoneyChange('copper', 1)}
+                              className="w-6 h-6 bg-slate-600 hover:bg-slate-500 rounded text-white text-sm"
+                            >
+                              <Plus className="h-3 w-3 mx-auto" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Treasures */}
+                    <div className="bg-slate-700 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <Zap className="h-5 w-5 text-purple-400" />
+                        Treasures & Valuables
+                      </h3>
+                      
+                      {/* Add Treasure Mode Toggle */}
+                      <div className="flex gap-1 mb-4">
+                        <button
+                          onClick={() => setTreasureAddMode("common")}
+                          className={`flex-1 py-2 px-2 rounded text-xs font-medium transition-colors ${
+                            treasureAddMode === "common" 
+                              ? "bg-purple-600 text-white" 
+                              : "bg-slate-600 text-slate-300 hover:bg-slate-500"
+                          }`}
+                        >
+                          Common
+                        </button>
+                        <button
+                          onClick={() => setTreasureAddMode("story")}
+                          className={`flex-1 py-2 px-2 rounded text-xs font-medium transition-colors ${
+                            treasureAddMode === "story" 
+                              ? "bg-purple-600 text-white" 
+                              : "bg-slate-600 text-slate-300 hover:bg-slate-500"
+                          }`}
+                        >
+                          Story
+                        </button>
+                        <button
+                          onClick={() => setTreasureAddMode("custom")}
+                          className={`flex-1 py-2 px-2 rounded text-xs font-medium transition-colors ${
+                            treasureAddMode === "custom" 
+                              ? "bg-purple-600 text-white" 
+                              : "bg-slate-600 text-slate-300 hover:bg-slate-500"
+                          }`}
+                        >
+                          Custom
+                        </button>
+                      </div>
+
+                      {/* Add Treasure */}
+                      {(treasureAddMode === "common" || treasureAddMode === "story") ? (
+                        <div className="flex gap-2 mb-4">
+                          <select
+                            value={selectedTreasure}
+                            onChange={(e) => setSelectedTreasure(e.target.value)}
+                            className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                          >
+                            <option value="">Select treasure...</option>
+                            {(treasureAddMode === "common" ? COMMON_TREASURES : STORY_TREASURES).map(treasure => (
+                              <option key={treasure.name} value={treasure.name}>
+                                {treasure.name} ({treasure.value} gp)
+                              </option>
+                            ))}
+                          </select>
+                          <button
+                            onClick={handleAddTreasure}
+                            disabled={!selectedTreasure}
+                            className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="space-y-2 mb-4">
+                          <input
+                            type="text"
+                            value={newTreasureName}
+                            onChange={(e) => setNewTreasureName(e.target.value)}
+                            placeholder="Treasure name..."
+                            className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                          />
+                          <div className="flex gap-2">
+                            <input
+                              type="number"
+                              value={newTreasureValue}
+                              onChange={(e) => setNewTreasureValue(e.target.value)}
+                              placeholder="Value in gold..."
+                              className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                            />
+                            <button
+                              onClick={handleAddTreasure}
+                              disabled={!newTreasureName.trim() || !newTreasureValue.trim()}
+                              className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Treasure List */}
+                      <div className="space-y-1 max-h-64 overflow-y-auto">
+                        {treasures.map((treasure, index) => (
+                          <div key={index} className="bg-slate-600 p-3 rounded flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-slate-300 text-sm">💎 {treasure.name}</span>
+                                <span className="text-yellow-400 text-sm font-medium">{treasure.value} gp</span>
+                              </div>
+                              {treasure.description && (
+                                <div className="text-xs text-slate-500 mt-1">{treasure.description}</div>
+                              )}
+                            </div>
+                            <button
+                              onClick={() => handleRemoveTreasure(index)}
+                              className="text-red-400 hover:text-red-300 transition-colors p-1"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </button>
+                          </div>
+                        ))}
+                        {treasures.length === 0 && (
+                          <p className="text-slate-500 text-sm italic">No treasures collected</p>
+                        )}
+                      </div>
+
+                      {/* Total Treasure Value */}
+                      {treasures.length > 0 && (
+                        <div className="mt-4 pt-3 border-t border-slate-600">
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-300 font-medium">Total Treasure Value:</span>
+                            <span className="text-yellow-400 font-bold">
+                              {treasures.reduce((total, treasure) => total + treasure.value, 0)} gp
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "inventory" && (
+              <div className="p-6">
+                <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Left Column - General Inventory */}
+                  <div className="space-y-6">
+                    {/* General Inventory Section */}
+                    <div className="bg-slate-700 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <Package className="h-5 w-5" />
+                        General Items & Tools
+                      </h3>
+                      
+                      {/* Add Item Controls */}
+                      <div className="mb-4 space-y-3">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => setAddMode("equipment")}
+                            className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-colors ${
+                              addMode === "equipment" 
+                                ? "bg-purple-600 text-white" 
+                                : "bg-slate-600 text-slate-300 hover:bg-slate-500"
+                            }`}
+                          >
+                            Equipment
+                          </button>
+                          <button
+                            onClick={() => setAddMode("custom")}
+                            className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-colors ${
+                              addMode === "custom" 
+                                ? "bg-purple-600 text-white" 
+                                : "bg-slate-600 text-slate-300 hover:bg-slate-500"
+                            }`}
+                          >
+                            Custom
+                          </button>
+                        </div>
+
+                        {addMode === "equipment" ? (
+                          <div className="space-y-2">
+                            <select
+                              value={selectedCategory}
+                              onChange={(e) => setSelectedCategory(e.target.value)}
+                              className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                            >
+                              {EQUIPMENT_CATEGORIES.filter(cat => cat !== 'Armor').map(category => (
+                                <option key={category} value={category}>{category}</option>
+                              ))}
+                            </select>
+                            <div className="flex gap-2">
+                              <select
+                                value={selectedEquipment}
+                                onChange={(e) => setSelectedEquipment(e.target.value)}
+                                className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                              >
+                                <option value="">Select item...</option>
+                                {getEquipmentByCategory(selectedCategory).filter(equipment => equipment.type !== 'Armor').map(equipment => (
+                                  <option key={equipment.name} value={equipment.name}>
+                                    {equipment.name} ({equipment.cost})
+                                  </option>
+                                ))}
+                              </select>
+                              <button
+                                onClick={handleAddItem}
+                                disabled={!selectedEquipment}
+                                className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={newItem}
+                              onChange={(e) => setNewItem(e.target.value)}
+                              placeholder="Enter custom item name..."
+                              className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                              onKeyPress={(e) => e.key === 'Enter' && handleAddItem()}
+                            />
+                            <button
+                              onClick={handleAddItem}
+                              disabled={!newItem.trim()}
+                              className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Inventory Items */}
+                      <div className="space-y-2 max-h-64 overflow-y-auto">
+                        {inventory.map((item, index) => (
+                          <div key={index} className="bg-slate-600 p-3 rounded flex items-center justify-between">
+                            <div className="flex-1">
+                              <span className="text-white font-medium">{item.name}</span>
+                              {item.quantity > 1 && (
+                                <span className="text-slate-400 text-sm ml-2">x{item.quantity}</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleQuantityChange(index, -1)}
+                                className="w-6 h-6 bg-slate-500 hover:bg-slate-400 rounded text-white text-xs"
+                              >
+                                <Minus className="h-3 w-3 mx-auto" />
+                              </button>
+                              <span className="text-white text-sm w-8 text-center">{item.quantity}</span>
+                              <button
+                                onClick={() => handleQuantityChange(index, 1)}
+                                className="w-6 h-6 bg-slate-500 hover:bg-slate-400 rounded text-white text-xs"
+                              >
+                                <Plus className="h-3 w-3 mx-auto" />
+                              </button>
+                              <button
+                                onClick={() => handleRemoveItem(index)}
+                                className="text-red-400 hover:text-red-300 transition-colors p-1"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                        {inventory.length === 0 && (
+                          <div className="text-center py-6 border-2 border-dashed border-slate-600 rounded-lg">
+                            <Package className="h-8 w-8 text-slate-500 mx-auto mb-2" />
+                            <p className="text-slate-500 text-sm">No items in inventory</p>
+                            <p className="text-slate-600 text-xs">Add equipment or custom items above</p>
+                          </div>
                         )}
                       </div>
                     </div>

@@ -82,6 +82,8 @@ model Character {
   equipment Json? // Store equipped items as JSON
   weapons   Json? // Store equipped weapons as JSON
   inventoryWeapons Json? // Store unequipped weapons in inventory as JSON
+  armor     Json? // Store equipped armor as JSON
+  inventoryArmor Json? // Store unequipped armor in inventory as JSON
   
   // Money
   copperPieces  Int @default(0)
