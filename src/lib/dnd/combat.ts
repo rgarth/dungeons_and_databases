@@ -78,67 +78,56 @@ export const BASIC_ACTIONS: Action[] = [
 export const CLASS_PROFICIENCIES: Record<string, {
   armor: string[];
   weapons: string[];
-  maxEquippedWeapons: number;
+  // Note: maxEquippedWeapons isn't a real D&D rule - the limitation is your two hands!
+  // Shield + weapon = 1 weapon max, Two light weapons = 2 weapons max, Two-handed weapon = 1 weapon
 }> = {
   'Barbarian': {
     armor: ['Light', 'Medium', 'Shield'],
-    weapons: ['Simple', 'Martial'],
-    maxEquippedWeapons: 6 // Reasonable carrying capacity
+    weapons: ['Simple', 'Martial']
   },
   'Bard': {
     armor: ['Light'],
-    weapons: ['Simple', 'Longsword', 'Rapier', 'Shortsword', 'Hand Crossbow'],
-    maxEquippedWeapons: 6
+    weapons: ['Simple', 'Longsword', 'Rapier', 'Shortsword', 'Hand Crossbow']
   },
   'Cleric': {
     armor: ['Light', 'Medium', 'Shield'],
-    weapons: ['Simple'],
-    maxEquippedWeapons: 6
+    weapons: ['Simple']
   },
   'Druid': {
     armor: ['Light', 'Medium', 'Shield'], // Non-metal restriction applies
-    weapons: ['Simple', 'Shortsword', 'Scimitar'],
-    maxEquippedWeapons: 6
+    weapons: ['Simple', 'Shortsword', 'Scimitar']
   },
   'Fighter': {
     armor: ['Light', 'Medium', 'Heavy', 'Shield'],
-    weapons: ['Simple', 'Martial'],
-    maxEquippedWeapons: 8 // Fighters are weapon masters
+    weapons: ['Simple', 'Martial']
   },
   'Monk': {
     armor: [], // No armor proficiency
-    weapons: ['Simple', 'Shortsword'],
-    maxEquippedWeapons: 6
+    weapons: ['Simple', 'Shortsword']
   },
   'Paladin': {
     armor: ['Light', 'Medium', 'Heavy', 'Shield'],
-    weapons: ['Simple', 'Martial'],
-    maxEquippedWeapons: 8
+    weapons: ['Simple', 'Martial']
   },
   'Ranger': {
     armor: ['Light', 'Medium', 'Shield'],
-    weapons: ['Simple', 'Martial'],
-    maxEquippedWeapons: 8
+    weapons: ['Simple', 'Martial']
   },
   'Rogue': {
     armor: ['Light'],
-    weapons: ['Simple', 'Longsword', 'Rapier', 'Shortsword', 'Hand Crossbow'],
-    maxEquippedWeapons: 6
+    weapons: ['Simple', 'Longsword', 'Rapier', 'Shortsword', 'Hand Crossbow']
   },
   'Sorcerer': {
     armor: [],
-    weapons: ['Simple', 'Dagger', 'Dart', 'Sling', 'Quarterstaff', 'Light Crossbow'],
-    maxEquippedWeapons: 4 // Less physically oriented
+    weapons: ['Simple', 'Dagger', 'Dart', 'Sling', 'Quarterstaff', 'Light Crossbow']
   },
   'Warlock': {
     armor: ['Light'],
-    weapons: ['Simple'],
-    maxEquippedWeapons: 4
+    weapons: ['Simple']
   },
   'Wizard': {
     armor: [],
-    weapons: ['Simple', 'Dagger', 'Dart', 'Sling', 'Quarterstaff', 'Light Crossbow'],
-    maxEquippedWeapons: 4
+    weapons: ['Simple', 'Dagger', 'Dart', 'Sling', 'Quarterstaff', 'Light Crossbow']
   }
 };
 
@@ -153,10 +142,6 @@ export function canEquipWeapon(weapon: Weapon | MagicalWeapon, characterClass: s
   
   // Check for specific weapon proficiencies
   return proficiencies.weapons.includes(weapon.name);
-}
-
-export function getMaxEquippedWeapons(characterClass: string): number {
-  return CLASS_PROFICIENCIES[characterClass]?.maxEquippedWeapons || 1;
 }
 
 export function canEquipArmor(armorType: string, characterClass: string): boolean {

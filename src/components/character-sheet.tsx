@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { getModifier, getProficiencyBonus } from "@/lib/dnd/core";
 import { Spell } from "@/lib/dnd/spells";
 import { Weapon, MagicalWeapon, InventoryItem, WEAPONS, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, Armor, ARMOR, calculateArmorClass, EQUIPMENT, EQUIPMENT_CATEGORIES, getEquipmentByCategory } from "@/lib/dnd/equipment";
-import { Action, canEquipWeapon, getMaxEquippedWeapons, canEquipArmor } from "@/lib/dnd/combat";
+import { Action, canEquipWeapon, canEquipArmor } from "@/lib/dnd/combat";
 import { Treasure, COMMON_TREASURES, STORY_TREASURES } from "@/lib/dnd/data";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 
@@ -52,6 +52,7 @@ interface CharacterSheetProps {
     personality?: string;
     backstory?: string;
     notes?: string;
+    equippedWeapons?: (Weapon | MagicalWeapon)[];
   };
   onClose: () => void;
   onCharacterDeleted?: () => void;
@@ -78,7 +79,9 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   const [goldPieces, setGoldPieces] = useState(character.goldPieces || 0);
   const [treasures, setTreasures] = useState<Treasure[]>(character.treasures || []);
   const [inventoryWeapons, setInventoryWeapons] = useState<(Weapon | MagicalWeapon)[]>(character.inventoryWeapons || []);
-  const [equippedWeapons, setEquippedWeapons] = useState<(Weapon | MagicalWeapon)[]>(character.weapons || []);
+  const [equippedWeapons, setEquippedWeapons] = useState<(Weapon | MagicalWeapon)[]>(
+    character.equippedWeapons || []
+  );
   const [inventoryArmor, setInventoryArmor] = useState<Armor[]>(character.inventoryArmor || []);
   const [equippedArmor, setEquippedArmor] = useState<Armor[]>(character.armor || []);
   
@@ -329,9 +332,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
   const handleEquipWeapon = (weapon: Weapon | MagicalWeapon, fromInventoryIndex: number) => {
     // Check if at weapon limit
-    const maxWeapons = getMaxEquippedWeapons(character.class);
-    if (equippedWeapons.length >= maxWeapons) {
-      alert(`${character.class} can only equip ${maxWeapons} weapon${maxWeapons > 1 ? 's' : ''}!`);
+    if (equippedWeapons.length >= weaponLimits.max) {
+      alert(`Cannot equip more weapons: ${weaponLimits.reason}`);
       return;
     }
 
@@ -450,6 +452,26 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       updateCharacter({ inventoryArmor: updatedInventoryArmor });
     }
   };
+
+  // Equipment state
+  const [selectedWeapon, setSelectedWeapon] = useState<Weapon | null>(null);
+
+  // Helper function to calculate weapon limits based on D&D 5e rules
+  const getWeaponLimits = () => {
+    const hasShield = inventoryArmor.some(armor => armor.type === 'Shield' && equippedArmor.some(equipped => equipped.name === armor.name));
+    const hasTwoHandedWeapon = equippedWeapons.some(weapon => weapon.properties.includes('Two-Handed'));
+    
+    if (hasShield) {
+      return { max: 1, reason: "Shield equipped - only one weapon can be wielded" };
+    } else if (hasTwoHandedWeapon) {
+      return { max: 1, reason: "Two-handed weapon equipped" };
+    } else {
+      return { max: 2, reason: "Two hands available for weapons (two-weapon fighting possible)" };
+    }
+  };
+  
+  const weaponLimits = getWeaponLimits();
+  const maxWeapons = weaponLimits.max;
 
   return (
     <>
@@ -703,8 +725,15 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                     <div className="bg-slate-700 rounded-lg p-4">
                       <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                         <Sword className="h-5 w-5" />
-                        Equipped Weapons ({equippedWeapons.length}/{getMaxEquippedWeapons(character.class)})
+                        Equipped Weapons ({equippedWeapons.length}/{weaponLimits.max})
                       </h3>
+                      
+                      {/* Show weapon limits info */}
+                      {weaponLimits.max < 2 && (
+                        <div className="mb-3 text-sm text-orange-300 bg-orange-900/20 p-2 rounded">
+                          ⚠️ {weaponLimits.reason}
+                        </div>
+                      )}
                       
                       {/* Current Equipped Weapons */}
                       <div className="space-y-2 mb-4">
@@ -780,7 +809,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                       {inventoryWeapons && inventoryWeapons.length > 0 ? inventoryWeapons.map((weapon, index) => {
                         const isMagical = 'magicalName' in weapon;
                         const isProficient = canEquipWeapon(weapon, character.class);
-                        const atLimit = equippedWeapons.length >= getMaxEquippedWeapons(character.class);
+                        const atLimit = equippedWeapons.length >= weaponLimits.max;
                         
                         return (
                           <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-orange-500">
