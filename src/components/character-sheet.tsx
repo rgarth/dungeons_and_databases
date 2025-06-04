@@ -1,9 +1,9 @@
 "use client";
 
-import { Heart, Shield, Zap, User, BookOpen, Sword, Package, Trash2, Plus, Minus, Coins, BarChart3, Swords } from "lucide-react";
+import { Heart, Shield, Zap, User, BookOpen, Sword, Package, Trash2, Plus, Minus, Coins, BarChart3, Swords, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getModifier, getProficiencyBonus } from "@/lib/dnd/core";
-import { Spell } from "@/lib/dnd/spells";
+import { Spell, getClassSpells } from "@/lib/dnd/spells";
 import { Weapon, MagicalWeapon, InventoryItem, WEAPONS, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, Armor, ARMOR, calculateArmorClass, EQUIPMENT, EQUIPMENT_CATEGORIES, getEquipmentByCategory } from "@/lib/dnd/equipment";
 import { Action, canEquipWeapon, canEquipArmor } from "@/lib/dnd/combat";
 import { Treasure, COMMON_TREASURES, STORY_TREASURES } from "@/lib/dnd/data";
@@ -64,6 +64,8 @@ interface CharacterSheetProps {
 export function CharacterSheet({ character, onClose, onCharacterDeleted }: CharacterSheetProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showLevelUpModal, setShowLevelUpModal] = useState(false);
+  const [showSpellPreparationModal, setShowSpellPreparationModal] = useState(false);
+  const [tempPreparedSpells, setTempPreparedSpells] = useState<Spell[]>([]);
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentCharacter, setCurrentCharacter] = useState(character);
   
@@ -606,6 +608,59 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     }
   };
 
+  const handleOpenSpellPreparation = () => {
+    // Initialize temp prepared spells with current selection
+    setTempPreparedSpells([...(currentCharacter.spellsPrepared || [])]);
+    setShowSpellPreparationModal(true);
+  };
+
+  const handleTogglePreparedSpell = (spell: Spell) => {
+    const isCurrentlyPrepared = tempPreparedSpells.some(s => s.name === spell.name);
+    const spellcastingAbility = currentCharacter.spellcastingAbility || 'intelligence';
+    const abilityValue = currentCharacter[spellcastingAbility as keyof typeof currentCharacter] as number || 10;
+    const abilityModifier = getModifier(abilityValue);
+    const maxPrepared = getSpellsPreparedCount(currentCharacter.class, currentCharacter.level, abilityModifier);
+    
+    // Count only non-cantrip spells toward the preparation limit
+    const currentNonCantripsPrepared = tempPreparedSpells.filter(s => s.level > 0).length;
+    
+    if (isCurrentlyPrepared) {
+      // Remove from prepared spells
+      setTempPreparedSpells(prev => prev.filter(s => s.name !== spell.name));
+    } else {
+      // Add to prepared spells if under limit (only check limit for non-cantrips)
+      if (spell.level === 0 || currentNonCantripsPrepared < maxPrepared) {
+        setTempPreparedSpells(prev => [...prev, spell]);
+      }
+    }
+  };
+
+  const handleSaveSpellPreparation = async () => {
+    try {
+      const response = await fetch(`/api/characters?id=${character.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ spellsPrepared: tempPreparedSpells }),
+      });
+      
+      if (!response.ok) {
+        console.error('Failed to save spell preparation');
+        return;
+      }
+      
+      // Update local character state
+      setCurrentCharacter(prev => ({
+        ...prev,
+        spellsPrepared: tempPreparedSpells
+      }));
+      
+      setShowSpellPreparationModal(false);
+      
+    } catch (error) {
+      console.error('Error saving spell preparation:', error);
+    }
+  };
+
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -1043,7 +1098,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                 {/* Prepared Spells */}
                                 <div>
                                   <h4 className="text-lg font-semibold text-white mb-3">
-                                    Prepared Spells ({(character.spellsPrepared || []).length}/{maxPrepared})
+                                    Prepared Spells ({(character.spellsPrepared || []).filter(s => s.level > 0).length}/{maxPrepared})
                                   </h4>
                                   {character.spellsPrepared && character.spellsPrepared.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
@@ -1105,7 +1160,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                 </div>
                                 
                                 <h4 className="text-lg font-semibold text-white mb-3">
-                                  Prepared Spells ({(character.spellsPrepared || []).length}/{maxPrepared})
+                                  Prepared Spells ({(character.spellsPrepared || []).filter(s => s.level > 0).length}/{maxPrepared})
                                 </h4>
                                 {character.spellsPrepared && character.spellsPrepared.length > 0 ? (
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -1468,10 +1523,22 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                     {/* Spells Section */}
                     {character.spellsKnown && character.spellsKnown.length > 0 && (
                       <div className="bg-slate-700 rounded-lg p-4">
-                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                          <Zap className="h-5 w-5" />
-                          Spells
-                        </h3>
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                            <Zap className="h-5 w-5" />
+                            Spells
+                          </h3>
+                          {canPrepareSpells(character.class) && (
+                            <button
+                              onClick={handleOpenSpellPreparation}
+                              className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded font-medium transition-colors"
+                              title="Change prepared spells"
+                            >
+                              Prepare Spells
+                            </button>
+                          )}
+                        </div>
+                        
                         {character.spellSaveDC && (
                           <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                             <div className="text-slate-300">
@@ -1482,21 +1549,57 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                             </div>
                           </div>
                         )}
-                        <div className="space-y-2 max-h-48 overflow-y-auto">
-                          {character.spellsKnown.map((spell, index) => (
-                            <div key={index} className="bg-slate-600 p-3 rounded">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="text-white font-medium">{spell.name}</span>
-                                <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
-                                  {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
-                                </span>
-                              </div>
-                              <div className="text-slate-400 text-xs mb-1">
-                                {spell.school} • {spell.castingTime} • {spell.range}
-                              </div>
-                              <p className="text-slate-300 text-sm">{spell.description}</p>
+                        
+                        {/* Show preparation status for preparation-based casters */}
+                        {canPrepareSpells(character.class) && (
+                          <div className="mb-4 p-3 bg-blue-900/20 border border-blue-600/30 rounded-lg">
+                            <div className="text-blue-300 text-sm">
+                              <strong>Prepared Spells:</strong> {(character.spellsPrepared || []).filter(s => s.level > 0).length} / {
+                                getSpellsPreparedCount(
+                                  character.class, 
+                                  character.level, 
+                                  getModifier(character[character.spellcastingAbility as keyof typeof character] as number)
+                                )
+                              }
                             </div>
-                          ))}
+                            <div className="text-blue-200 text-xs mt-1">
+                              You can change prepared spells during a long rest
+                            </div>
+                          </div>
+                        )}
+                        
+                        <div className="space-y-2 max-h-48 overflow-y-auto">
+                          {character.spellsKnown.map((spell, index) => {
+                            const isPrepared = character.spellsPrepared?.some(s => s.name === spell.name);
+                            const requiresPreparation = canPrepareSpells(character.class) && spell.level > 0;
+                            
+                            return (
+                              <div 
+                                key={index} 
+                                className={`bg-slate-600 p-3 rounded ${requiresPreparation && !isPrepared ? 'opacity-60' : ''}`}
+                              >
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-white font-medium">{spell.name}</span>
+                                  <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
+                                    {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
+                                  </span>
+                                  {requiresPreparation && (
+                                    <span className={`text-xs px-2 py-1 rounded ${
+                                      isPrepared 
+                                        ? 'bg-green-900/50 text-green-300' 
+                                        : 'bg-gray-900/50 text-gray-400'
+                                    }`}>
+                                      {isPrepared ? 'Prepared' : 'Not Prepared'}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="text-slate-400 text-xs mb-1">
+                                  {spell.school} • {spell.castingTime} • {spell.range}
+                                </div>
+                                <p className="text-slate-300 text-sm">{spell.description}</p>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     )}
@@ -1662,7 +1765,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
             {activeTab === "inventory" && (
               <div className="p-6">
-                <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Left Column - General Inventory */}
                   <div className="space-y-6">
                     {/* General Inventory Section */}
@@ -1752,7 +1855,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                       </div>
 
                       {/* Inventory Items */}
-                      <div className="space-y-2 max-h-64 overflow-y-auto">
+                      <div className="space-y-2 max-h-80 overflow-y-auto">
                         {inventory.map((item, index) => (
                           <div key={index} className="bg-slate-600 p-3 rounded flex items-center justify-between">
                             <div className="flex-1">
@@ -2100,6 +2203,186 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
           onClose={() => setShowLevelUpModal(false)}
           onLevelUp={handleLevelUp}
         />
+      )}
+
+      {/* Spell Preparation Modal */}
+      {showSpellPreparationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-slate-800 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-slate-600">
+              <div>
+                <h3 className="text-xl font-semibold text-white">Prepare Spells</h3>
+                <p className="text-slate-400 text-sm">
+                  Choose spells to prepare for the day ({tempPreparedSpells.filter(s => s.level > 0).length} / {
+                    (() => {
+                      const spellcastingAbility = currentCharacter.spellcastingAbility || 'intelligence';
+                      const abilityValue = currentCharacter[spellcastingAbility as keyof typeof currentCharacter] as number || 10;
+                      const abilityModifier = getModifier(abilityValue);
+                      return getSpellsPreparedCount(currentCharacter.class, currentCharacter.level, abilityModifier);
+                    })()
+                  } prepared) • Cantrips are always available
+                </p>
+              </div>
+              <button
+                onClick={() => setShowSpellPreparationModal(false)}
+                className="text-slate-400 hover:text-white transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="p-6 max-h-[60vh] overflow-y-auto">
+              {/* Spell Selection */}
+              {(() => {
+                const spellcastingType = getSpellcastingType(currentCharacter.class);
+                const availableSpells = spellcastingType === 'spellbook' 
+                  ? (currentCharacter.spellsKnown || [])  // Wizards prepare from spellbook
+                  : getClassSpells(currentCharacter.class, currentCharacter.level); // Clerics/Druids from class list
+                
+                // Group spells by level
+                const spellsByLevel: Record<number, Spell[]> = {};
+                availableSpells.forEach(spell => {
+                  if (!spellsByLevel[spell.level]) {
+                    spellsByLevel[spell.level] = [];
+                  }
+                  spellsByLevel[spell.level].push(spell);
+                });
+                
+                return (
+                  <div className="space-y-6">
+                    {/* Explanation */}
+                    <div className="p-4 bg-blue-900/20 border border-blue-600/30 rounded-lg">
+                      <p className="text-blue-300 text-sm">
+                        {spellcastingType === 'spellbook' 
+                          ? 'As a Wizard, you prepare spells from your spellbook. Cantrips are always available.'
+                          : `As a ${currentCharacter.class}, you can prepare spells from your entire spell list. Cantrips are always available.`
+                        }
+                      </p>
+                    </div>
+                    
+                    {Object.entries(spellsByLevel)
+                      .sort(([a], [b]) => parseInt(a) - parseInt(b))
+                      .map(([level, spells]) => (
+                      <div key={level}>
+                        <h4 className="text-lg font-medium text-white mb-3">
+                          {level === '0' ? 'Cantrips' : `Level ${level} Spells`}
+                        </h4>
+                        <div className="space-y-2">
+                          {spells.map((spell, index) => {
+                            const isSelected = tempPreparedSpells.some(s => s.name === spell.name);
+                            const isCantrip = spell.level === 0;
+                            const spellcastingAbility = currentCharacter.spellcastingAbility || 'intelligence';
+                            const abilityValue = currentCharacter[spellcastingAbility as keyof typeof currentCharacter] as number || 10;
+                            const abilityModifier = getModifier(abilityValue);
+                            const maxPrepared = getSpellsPreparedCount(
+                              currentCharacter.class, 
+                              currentCharacter.level, 
+                              abilityModifier
+                            );
+                            // Count only non-cantrip spells toward the preparation limit
+                            const currentNonCantripsPrepared = tempPreparedSpells.filter(s => s.level > 0).length;
+                            const canSelect = isSelected || isCantrip || currentNonCantripsPrepared < maxPrepared;
+                            
+                            // Debug logging
+                            if (index === 0 && level !== '0') {
+                              console.log('Spell preparation debug:', {
+                                spellName: spell.name,
+                                spellLevel: spell.level,
+                                isCantrip,
+                                isSelected,
+                                tempPreparedLength: tempPreparedSpells.length,
+                                maxPrepared,
+                                abilityModifier,
+                                spellcastingAbility,
+                                abilityValue,
+                                canSelect
+                              });
+                            }
+                            
+                            return (
+                              <div
+                                key={index}
+                                className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                                  isSelected 
+                                    ? 'border-green-500 bg-green-900/20' 
+                                    : canSelect 
+                                      ? 'border-slate-600 hover:border-blue-400 bg-slate-700'
+                                      : 'border-slate-600 bg-slate-700 opacity-50 cursor-not-allowed'
+                                }`}
+                                onClick={() => {
+                                  // Allow all spells to be clicked
+                                  if (canSelect) {
+                                    handleTogglePreparedSpell(spell);
+                                    if (isCantrip) {
+                                      console.log('Cantrip toggled - always available regardless');
+                                    }
+                                  } else {
+                                    console.log('Spell not selectable:', { 
+                                      canSelect, 
+                                      maxPrepared, 
+                                      currentNonCantrips: currentNonCantripsPrepared,
+                                      totalPrepared: tempPreparedSpells.length,
+                                      isCantrip,
+                                      spellLevel: spell.level
+                                    });
+                                  }
+                                }}
+                              >
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-white font-medium">{spell.name}</span>
+                                    <span className="text-xs bg-slate-600 px-2 py-1 rounded">
+                                      {spell.school}
+                                    </span>
+                                    {isCantrip && (
+                                      <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">
+                                        Always Available
+                                      </span>
+                                    )}
+                                  </div>
+                                  {!isCantrip && (
+                                    <span className={`text-xs px-2 py-1 rounded ${
+                                      isSelected 
+                                        ? 'bg-green-600 text-white' 
+                                        : 'bg-slate-600 text-slate-300'
+                                    }`}>
+                                      {isSelected ? 'Prepared' : 'Prepare'}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="text-slate-400 text-xs mb-2">
+                                  {spell.castingTime} • {spell.range} • {spell.duration}
+                                </div>
+                                <div className="text-slate-300 text-sm">
+                                  {spell.description}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+
+            <div className="flex gap-3 p-6 border-t border-slate-600">
+              <button
+                onClick={handleSaveSpellPreparation}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition-colors"
+              >
+                Save Prepared Spells
+              </button>
+              <button
+                onClick={() => setShowSpellPreparationModal(false)}
+                className="flex-1 bg-slate-600 hover:bg-slate-500 text-white py-2 px-4 rounded transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
