@@ -8,6 +8,7 @@ import { Weapon, MagicalWeapon, InventoryItem, WEAPONS, MAGICAL_WEAPON_TEMPLATES
 import { Action, canEquipWeapon, canEquipArmor } from "@/lib/dnd/combat";
 import { Treasure, COMMON_TREASURES, STORY_TREASURES } from "@/lib/dnd/data";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
+import { LevelUpModal } from "./level-up-modal";
 
 interface CharacterSheetProps {
   character: {
@@ -60,7 +61,13 @@ interface CharacterSheetProps {
 
 export function CharacterSheet({ character, onClose, onCharacterDeleted }: CharacterSheetProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showLevelUpModal, setShowLevelUpModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [currentCharacter, setCurrentCharacter] = useState(character);
+  
+  // Use currentCharacter instead of character throughout the component
+  const displayCharacter = currentCharacter;
+  
   const [activeTab, setActiveTab] = useState<"stats" | "actions" | "equipment" | "inventory">("stats");
   const [newItem, setNewItem] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("Adventuring Gear");
@@ -225,19 +232,19 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   }, [character.id]); // Only run when character changes
 
   const abilities = [
-    { name: 'Strength', short: 'STR', value: character.strength },
-    { name: 'Dexterity', short: 'DEX', value: character.dexterity },
-    { name: 'Constitution', short: 'CON', value: character.constitution },
-    { name: 'Intelligence', short: 'INT', value: character.intelligence },
-    { name: 'Wisdom', short: 'WIS', value: character.wisdom },
-    { name: 'Charisma', short: 'CHA', value: character.charisma },
+    { name: 'Strength', short: 'STR', value: displayCharacter.strength },
+    { name: 'Dexterity', short: 'DEX', value: displayCharacter.dexterity },
+    { name: 'Constitution', short: 'CON', value: displayCharacter.constitution },
+    { name: 'Intelligence', short: 'INT', value: displayCharacter.intelligence },
+    { name: 'Wisdom', short: 'WIS', value: displayCharacter.wisdom },
+    { name: 'Charisma', short: 'CHA', value: displayCharacter.charisma },
   ];
 
-  const proficiencyBonus = getProficiencyBonus(character.level);
-  const hpPercentage = (character.hitPoints / character.maxHitPoints) * 100;
+  const proficiencyBonus = getProficiencyBonus(displayCharacter.level);
+  const hpPercentage = (displayCharacter.hitPoints / displayCharacter.maxHitPoints) * 100;
   
   // Calculate dynamic armor class based on equipped armor
-  const currentArmorClass = calculateArmorClass(equippedArmor, character.dexterity);
+  const currentArmorClass = calculateArmorClass(equippedArmor, displayCharacter.dexterity);
 
   const handleDeleteCharacter = async () => {
     setIsDeleting(true);
@@ -565,6 +572,38 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   
   const weaponLimits = getWeaponLimits();
 
+  const handleLevelUp = async (updates: Record<string, unknown>) => {
+    try {
+      console.log('Applying level up updates:', updates);
+      
+      // Save updates to database
+      const response = await fetch(`/api/characters?id=${character.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+      
+      if (!response.ok) {
+        console.error('Failed to save level up updates');
+        return;
+      }
+      
+      // Update local character state immediately
+      setCurrentCharacter(prev => ({
+        ...prev,
+        ...updates
+      } as typeof character));
+      
+      // Close the modal
+      setShowLevelUpModal(false);
+      
+      console.log('Level up completed successfully!');
+      
+    } catch (error) {
+      console.error('Error saving level up updates:', error);
+    }
+  };
+
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -574,10 +613,10 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
             <div className="flex items-center gap-4">
               <User className="h-8 w-8 text-purple-400" />
               <div>
-                <h1 className="text-3xl font-bold text-white">{character.name}</h1>
+                <h1 className="text-3xl font-bold text-white">{displayCharacter.name}</h1>
                 <p className="text-slate-300">
-                  Level {character.level} {character.race} {character.class}
-                  {character.background && ` • ${character.background}`}
+                  Level {displayCharacter.level} {displayCharacter.race} {displayCharacter.class}
+                  {displayCharacter.background && ` • ${displayCharacter.background}`}
                 </p>
               </div>
             </div>
@@ -688,7 +727,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                             Hit Points
                           </span>
                           <span className="text-white font-semibold">
-                            {character.hitPoints}/{character.maxHitPoints}
+                            {displayCharacter.hitPoints}/{displayCharacter.maxHitPoints}
                           </span>
                         </div>
                         <div className="w-full bg-slate-600 rounded-full h-3">
@@ -751,26 +790,36 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                     <div className="space-y-3">
                       <div>
                         <span className="text-slate-400 text-sm">Race:</span>
-                        <p className="text-white">{character.race}</p>
+                        <p className="text-white">{displayCharacter.race}</p>
                       </div>
                       <div>
                         <span className="text-slate-400 text-sm">Class:</span>
-                        <p className="text-white">{character.class}</p>
+                        <p className="text-white">{displayCharacter.class}</p>
                       </div>
-                      <div>
-                        <span className="text-slate-400 text-sm">Level:</span>
-                        <p className="text-white">{character.level}</p>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-slate-400 text-sm">Level:</span>
+                          <p className="text-white">{displayCharacter.level}</p>
+                        </div>
+                        <button
+                          onClick={() => setShowLevelUpModal(true)}
+                          className="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1 rounded font-medium transition-colors flex items-center gap-1"
+                          title="Level up your character"
+                        >
+                          <BarChart3 className="h-3 w-3" />
+                          Level Up
+                        </button>
                       </div>
-                      {character.background && (
+                      {displayCharacter.background && (
                         <div>
                           <span className="text-slate-400 text-sm">Background:</span>
-                          <p className="text-white">{character.background}</p>
+                          <p className="text-white">{displayCharacter.background}</p>
                         </div>
                       )}
-                      {character.alignment && (
+                      {displayCharacter.alignment && (
                         <div>
                           <span className="text-slate-400 text-sm">Alignment:</span>
-                          <p className="text-white">{character.alignment}</p>
+                          <p className="text-white">{displayCharacter.alignment}</p>
                         </div>
                       )}
                     </div>
@@ -1921,6 +1970,15 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
         onCancel={() => setShowDeleteDialog(false)}
         isDeleting={isDeleting}
       />
+
+      {/* Level Up Modal */}
+      {showLevelUpModal && (
+        <LevelUpModal
+          character={displayCharacter}
+          onClose={() => setShowLevelUpModal(false)}
+          onLevelUp={handleLevelUp}
+        />
+      )}
     </>
   );
 } 

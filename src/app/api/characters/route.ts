@@ -210,17 +210,49 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const updateData: {
-      inventory?: string[] | { name: string; quantity: number }[];
-      copperPieces?: number;
-      silverPieces?: number;
-      goldPieces?: number;
-      treasures?: { name: string; value: number; description?: string }[];
-      weapons?: string[] | { name: string; quantity: number }[];
-      inventoryWeapons?: string[] | { name: string; quantity: number }[];
-      armor?: string[] | { name: string; quantity: number }[];
-      inventoryArmor?: string[] | { name: string; quantity: number }[];
-    } = {};
+    const updateData: Record<string, unknown> = {};
+
+    // Handle level up updates
+    if (body.level !== undefined) {
+      updateData.level = body.level;
+    }
+    if (body.hitPoints !== undefined) {
+      updateData.hitPoints = body.hitPoints;
+    }
+    if (body.maxHitPoints !== undefined) {
+      updateData.maxHitPoints = body.maxHitPoints;
+    }
+    if (body.proficiencyBonus !== undefined) {
+      updateData.proficiencyBonus = body.proficiencyBonus;
+    }
+
+    // Handle ability score updates
+    if (body.strength !== undefined) {
+      updateData.strength = body.strength;
+    }
+    if (body.dexterity !== undefined) {
+      updateData.dexterity = body.dexterity;
+    }
+    if (body.constitution !== undefined) {
+      updateData.constitution = body.constitution;
+    }
+    if (body.intelligence !== undefined) {
+      updateData.intelligence = body.intelligence;
+    }
+    if (body.wisdom !== undefined) {
+      updateData.wisdom = body.wisdom;
+    }
+    if (body.charisma !== undefined) {
+      updateData.charisma = body.charisma;
+    }
+
+    // Handle spell updates
+    if (body.spells !== undefined) {
+      updateData.spells = body.spells;
+    }
+    if (body.spellSlots !== undefined) {
+      updateData.spellSlots = body.spellSlots;
+    }
 
     // Handle inventory updates (support both old string[] and new InventoryItem[] formats)
     if (body.inventory !== undefined) {
