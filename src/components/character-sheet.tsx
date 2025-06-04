@@ -61,15 +61,55 @@ interface CharacterSheetProps {
   };
   onClose: () => void;
   onCharacterDeleted?: () => void;
+  onCharacterUpdated?: () => void;
 }
 
-export function CharacterSheet({ character, onClose, onCharacterDeleted }: CharacterSheetProps) {
+export function CharacterSheet({ character, onClose, onCharacterDeleted, onCharacterUpdated }: CharacterSheetProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showLevelUpModal, setShowLevelUpModal] = useState(false);
   const [showSpellPreparationModal, setShowSpellPreparationModal] = useState(false);
   const [tempPreparedSpells, setTempPreparedSpells] = useState<Spell[]>([]);
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentCharacter, setCurrentCharacter] = useState(character);
+  
+  // Sync currentCharacter with character prop when it changes (important for reopening characters)
+  useEffect(() => {
+    setCurrentCharacter(character);
+  }, [character]);
+  
+  // Sync all other state variables with character prop changes
+  useEffect(() => {
+    setCopperPieces(character.copperPieces || 0);
+    setSilverPieces(character.silverPieces || 0);
+    setGoldPieces(character.goldPieces || 0);
+    setTreasures(character.treasures || []);
+    
+    setInventoryWeapons(() => {
+      if (!character.inventoryWeapons || !Array.isArray(character.inventoryWeapons)) {
+        return [];
+      }
+      return character.inventoryWeapons.map(weapon => {
+        if (typeof weapon === 'object' && weapon.name) {
+          return weapon;
+        }
+        return weapon;
+      });
+    });
+    
+    setEquippedWeapons(character.weapons || []);
+    setInventoryArmor(character.inventoryArmor || []);
+    setEquippedArmor(character.armor || []);
+    
+    setInventory(() => {
+      if (!character.inventory) return [];
+      
+      if (character.inventory.length > 0 && typeof character.inventory[0] === 'object' && 'quantity' in character.inventory[0]) {
+        return character.inventory as InventoryItem[];
+      }
+      
+      return (character.inventory as string[]).map(name => ({ name, quantity: 1 }));
+    });
+  }, [character]);
   
   // Use currentCharacter instead of character throughout the component
   const displayCharacter = currentCharacter;
@@ -79,10 +119,10 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   const [selectedBaseWeapon, setSelectedBaseWeapon] = useState("");
   const [selectedMagicalTemplate, setSelectedMagicalTemplate] = useState("");
   const [customWeaponName, setCustomWeaponName] = useState("");
-  const [copperPieces, setCopperPieces] = useState(character.copperPieces || 0);
-  const [silverPieces, setSilverPieces] = useState(character.silverPieces || 0);
-  const [goldPieces, setGoldPieces] = useState(character.goldPieces || 0);
-  const [treasures, setTreasures] = useState<Treasure[]>(character.treasures || []);
+  const [copperPieces, setCopperPieces] = useState(0);
+  const [silverPieces, setSilverPieces] = useState(0);
+  const [goldPieces, setGoldPieces] = useState(0);
+  const [treasures, setTreasures] = useState<Treasure[]>([]);
   
   // Debug logging for character data
   console.log('CharacterSheet rendered with character:', {
@@ -94,48 +134,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     armor: character.armor
   });
   
-  const [inventoryWeapons, setInventoryWeapons] = useState<(Weapon | MagicalWeapon)[]>(() => {
-    console.log('Character inventoryWeapons received:', character.inventoryWeapons);
-    
-    // Handle case where inventoryWeapons might be null/undefined or not properly loaded
-    if (!character.inventoryWeapons || !Array.isArray(character.inventoryWeapons)) {
-      console.log('No inventoryWeapons found or not an array');
-      return [];
-    }
-    
-    console.log('Processing', character.inventoryWeapons.length, 'weapons from database');
-    
-    // If the data comes from JSON, it might need to be converted back to proper Weapon objects
-    return character.inventoryWeapons.map(weapon => {
-      // Ensure the weapon has all required properties
-      if (typeof weapon === 'object' && weapon.name) {
-        return weapon;
-      }
-      return weapon;
-    });
-  });
-  const [equippedWeapons, setEquippedWeapons] = useState<(Weapon | MagicalWeapon)[]>(() => {
-    console.log('Character equipped weapons received:', character.weapons);
-    return character.weapons || [];
-  });
-  const [inventoryArmor, setInventoryArmor] = useState<Armor[]>(() => {
-    console.log('Character inventoryArmor received:', character.inventoryArmor);
-    return character.inventoryArmor || [];
-  });
-  const [equippedArmor, setEquippedArmor] = useState<Armor[]>(() => {
-    console.log('Character equipped armor received:', character.armor);
-    return character.armor || [];
-  });
-  
-  const [inventory, setInventory] = useState<InventoryItem[]>(() => {
-    if (!character.inventory) return [];
-    
-    if (character.inventory.length > 0 && typeof character.inventory[0] === 'object' && 'quantity' in character.inventory[0]) {
-      return character.inventory as InventoryItem[];
-    }
-    
-    return (character.inventory as string[]).map(name => ({ name, quantity: 1 }));
-  });
+  const [inventoryWeapons, setInventoryWeapons] = useState<(Weapon | MagicalWeapon)[]>([]);
+  const [equippedWeapons, setEquippedWeapons] = useState<(Weapon | MagicalWeapon)[]>([]);
+  const [inventoryArmor, setInventoryArmor] = useState<Armor[]>([]);
+  const [equippedArmor, setEquippedArmor] = useState<Armor[]>([]);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
 
   // Migration function to move armor from general inventory to armor inventory
   const migrateArmorFromInventory = () => {
@@ -268,7 +271,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     hitPoints?: number;
     temporaryHitPoints?: number;
     spellsPrepared?: Spell[];
-  }) => {
+  } | Record<string, unknown>) => {
     try {
       const response = await fetch(`/api/characters?id=${character.id}`, {
         method: 'PATCH',
@@ -277,7 +280,10 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       });
       
       if (!response.ok) {
-        console.error('Failed to update character');
+        console.error('Failed to update character:', response.status, response.statusText);
+      } else {
+        // Notify parent component to refetch character data
+        onCharacterUpdated?.();
       }
     } catch (error) {
       console.error('Error updating character:', error);
@@ -441,35 +447,21 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   const weaponLimits = getWeaponLimits();
 
   const handleLevelUp = async (updates: Record<string, unknown>) => {
-    try {
-      console.log('Applying level up updates:', updates);
-      
-      // Save updates to database
-      const response = await fetch(`/api/characters?id=${character.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates),
-      });
-      
-      if (!response.ok) {
-        console.error('Failed to save level up updates');
-        return;
-      }
-      
-      // Update local character state immediately
-      setCurrentCharacter(prev => ({
-        ...prev,
-        ...updates
-      } as typeof character));
-      
-      // Close the modal
-      setShowLevelUpModal(false);
-      
-      console.log('Level up completed successfully!');
-      
-    } catch (error) {
-      console.error('Error saving level up updates:', error);
-    }
+    console.log('Applying level up updates:', updates);
+    
+    // Update local character state immediately
+    setCurrentCharacter(prev => ({
+      ...prev,
+      ...updates
+    } as typeof character));
+    
+    // Use centralized update function to ensure callback is triggered
+    await updateCharacter(updates);
+    
+    // Close the modal
+    setShowLevelUpModal(false);
+    
+    console.log('Level up completed successfully!');
   };
 
   const handleOpenSpellPreparation = () => {
@@ -500,29 +492,16 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   };
 
   const handleSaveSpellPreparation = async () => {
-    try {
-      const response = await fetch(`/api/characters?id=${character.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ spellsPrepared: tempPreparedSpells }),
-      });
-      
-      if (!response.ok) {
-        console.error('Failed to save spell preparation');
-        return;
-      }
-      
-      // Update local character state
-      setCurrentCharacter(prev => ({
-        ...prev,
-        spellsPrepared: tempPreparedSpells
-      }));
-      
-      setShowSpellPreparationModal(false);
-      
-    } catch (error) {
-      console.error('Error saving spell preparation:', error);
-    }
+    // Update local character state
+    setCurrentCharacter(prev => ({
+      ...prev,
+      spellsPrepared: tempPreparedSpells
+    }));
+    
+    // Use centralized update function to ensure callback is triggered
+    await updateCharacter({ spellsPrepared: tempPreparedSpells });
+    
+    setShowSpellPreparationModal(false);
   };
 
   return (
