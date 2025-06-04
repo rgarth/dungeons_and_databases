@@ -38,7 +38,8 @@ interface CharacterListItem {
   inventoryWeapons?: (Weapon | MagicalWeapon)[];
   armor?: Armor[];
   inventoryArmor?: Armor[];
-  spells?: Spell[];
+  spellsKnown?: Spell[]; // All spells known or in spellbook
+  spellsPrepared?: Spell[]; // Currently prepared/equipped spells
   spellSlots?: Record<number, number>;
   spellcastingAbility?: string;
   spellSaveDC?: number;

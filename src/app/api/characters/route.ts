@@ -75,7 +75,8 @@ export async function POST(request: NextRequest) {
       weapons,
       inventoryWeapons,
       inventoryArmor,
-      spells,
+      spellsKnown,
+      spellsPrepared,
       spellSlots,
       spellcastingAbility,
       spellSaveDC,
@@ -115,7 +116,8 @@ export async function POST(request: NextRequest) {
         weapons: weapons || [],
         inventoryWeapons: inventoryWeapons || [],
         inventoryArmor: inventoryArmor || [],
-        spells: spells || [],
+        spellsKnown,
+        spellsPrepared,
         spellSlots: spellSlots || {},
         spellcastingAbility,
         spellSaveDC,
@@ -247,8 +249,11 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Handle spell updates
-    if (body.spells !== undefined) {
-      updateData.spells = body.spells;
+    if (body.spellsKnown !== undefined) {
+      updateData.spellsKnown = body.spellsKnown;
+    }
+    if (body.spellsPrepared !== undefined) {
+      updateData.spellsPrepared = body.spellsPrepared;
     }
     if (body.spellSlots !== undefined) {
       updateData.spellSlots = body.spellSlots;

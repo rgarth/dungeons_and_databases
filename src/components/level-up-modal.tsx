@@ -7,10 +7,11 @@ import {
   hasAbilityScoreImprovement, 
   getHitPointGainOptions, 
   getHitDie,
-  isSpellcaster,
   needsSpellSelection,
   needsCantripsSelection,
-  getSpellsKnownCount,
+  getNewSpellsCount,
+  getNewCantripsCount,
+  getSpellcastingType,
   LevelUpChoices
 } from "@/lib/dnd/level-up";
 import { getModifier } from "@/lib/dnd/core";
@@ -38,7 +39,8 @@ interface LevelUpModalProps {
     speed: number;
     proficiencyBonus: number;
     skills?: string[];
-    spells?: Spell[];
+    spellsKnown?: Spell[];
+    spellsPrepared?: Spell[];
     spellSlots?: Record<number, number>;
     spellcastingAbility?: string;
     spellSaveDC?: number;
@@ -89,13 +91,14 @@ export function LevelUpModal({ character, onClose, onLevelUp }: LevelUpModalProp
   const newLevel = character.level + 1;
   const constitutionModifier = getModifier(character.constitution);
   const hitPointOptions = getHitPointGainOptions(character.class, constitutionModifier);
+  const spellcastingType = getSpellcastingType(character.class);
   
   // Determine what steps are needed
   const needsHitPoints = true;
   const needsASI = hasAbilityScoreImprovement(character.class, newLevel);
-  const needsSpells = isSpellcaster(character.class) && needsSpellSelection(character.class, newLevel);
-  const needsCantrips = isSpellcaster(character.class) && needsCantripsSelection(character.class, newLevel);
-  const needsSubclass = newLevel === 3; // Most classes choose subclass at level 3
+  const needsSpells = needsSpellSelection(character.class, newLevel);
+  const needsCantrips = needsCantripsSelection(character.class, newLevel);
+  const needsSubclass = newLevel === 3;
   
   const steps = [
     ...(needsHitPoints ? ['hitpoints'] : []),
@@ -123,11 +126,19 @@ export function LevelUpModal({ character, onClose, onLevelUp }: LevelUpModalProp
       }
       
       if (needsSpells) {
-        // Filter spells by level that character can learn
-        const maxSpellLevel = Math.min(Math.ceil(newLevel / 2), 9);
-        setAvailableSpells(classSpells.filter(spell => 
-          spell.level > 0 && spell.level <= maxSpellLevel
-        ));
+        // For "known spell" classes and wizards, filter out already known spells
+        // For "prepared" classes, this doesn't apply (they have access to all spells)
+        if (spellcastingType === 'known' || spellcastingType === 'spellbook') {
+          setAvailableSpells(
+            classSpells.filter(spell => 
+              spell.level > 0 && 
+              !character.spellsKnown?.some(s => s.name === spell.name)
+            )
+          );
+        } else {
+          // Clerics/Druids/Paladins don't "learn" spells during level up
+          setAvailableSpells([]);
+        }
       }
     }
     
@@ -135,7 +146,7 @@ export function LevelUpModal({ character, onClose, onLevelUp }: LevelUpModalProp
     if (hitPointMethod === 'average') {
       setChoices(prev => ({ ...prev, hitPointGain: hitPointOptions.average }));
     }
-  }, [character.class, newLevel, hitPointMethod, hitPointOptions.average, needsSpells, needsCantrips]);
+  }, [character.class, newLevel, hitPointMethod, hitPointOptions.average, needsSpells, needsCantrips, spellcastingType, character.spellsKnown]);
   
   const rollHitPoints = () => {
     const roll = Math.floor(Math.random() * hitPointOptions.roll) + 1;
@@ -168,11 +179,8 @@ export function LevelUpModal({ character, onClose, onLevelUp }: LevelUpModalProp
     if (isSelected) {
       setSelectedSpells(prev => prev.filter(s => s.name !== spell.name));
     } else {
-      const spellsKnown = getSpellsKnownCount(character.class, character.level);
-      const newSpellsKnown = getSpellsKnownCount(character.class, newLevel);
-      const canLearnMore = selectedSpells.length < (newSpellsKnown - spellsKnown);
-      
-      if (canLearnMore) {
+      const maxNewSpells = getNewSpellsCount(character.class, newLevel);
+      if (selectedSpells.length < maxNewSpells) {
         setSelectedSpells(prev => [...prev, spell]);
       }
     }
@@ -183,8 +191,8 @@ export function LevelUpModal({ character, onClose, onLevelUp }: LevelUpModalProp
     if (isSelected) {
       setSelectedCantrips(prev => prev.filter(c => c.name !== cantrip.name));
     } else {
-      // Most classes gain 1 cantrip at levels where they gain cantrips
-      if (selectedCantrips.length < 1) {
+      const maxNewCantrips = getNewCantripsCount(character.class, newLevel);
+      if (selectedCantrips.length < maxNewCantrips) {
         setSelectedCantrips(prev => [...prev, cantrip]);
       }
     }
@@ -251,13 +259,36 @@ export function LevelUpModal({ character, onClose, onLevelUp }: LevelUpModalProp
       updates.spellSlots = result.newSpellSlots;
     }
     
-    // Add new spells
+    // Add new spells (for "known spell" classes and wizards adding to spellbook)
     if (result.newSpells && result.newSpells.length > 0) {
-      updates.spells = [...(character.spells || []), ...result.newSpells];
+      updates.spellsKnown = [...(character.spellsKnown || []), ...result.newSpells];
+    }
+    
+    // Add new cantrips
+    if (result.newCantrips && result.newCantrips.length > 0) {
+      const currentSpells = character.spellsKnown || [];
+      const allNewSpells = [...(result.newSpells || []), ...result.newCantrips];
+      updates.spellsKnown = [...currentSpells, ...allNewSpells];
     }
     
     onLevelUp(updates);
     onClose();
+  };
+
+  // Get explanation text for spell selection based on class type
+  const getSpellSelectionExplanation = () => {
+    const maxNewSpells = getNewSpellsCount(character.class, newLevel);
+    
+    switch (spellcastingType) {
+      case 'spellbook':
+        return `As a Wizard, you automatically add ${maxNewSpells} spell(s) to your spellbook when you level up. Select them now or learn them later.`;
+      case 'known':
+        return `You can learn ${maxNewSpells} new spell(s), or skip and learn them later during your adventures.`;
+      case 'prepared':
+        return `${character.class}s prepare spells from their entire spell list rather than learning specific spells. No spell selection needed.`;
+      default:
+        return "No spells available for this class.";
+    }
   };
   
   return (
@@ -300,67 +331,60 @@ export function LevelUpModal({ character, onClose, onLevelUp }: LevelUpModalProp
           {currentStepName === 'hitpoints' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-semibold text-white mb-2">Hit Point Increase</h3>
+                <h3 className="text-lg font-semibold text-white mb-2">Hit Points</h3>
                 <p className="text-slate-400 mb-4">
-                  Choose how to determine your hit point increase for this level.
+                  Choose how to determine your hit point increase for level {newLevel}.
                 </p>
               </div>
               
               <div className="space-y-4">
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-3 p-4 border border-slate-600 rounded-lg cursor-pointer hover:border-purple-500 transition-colors flex-1">
-                    <input
-                      type="radio"
-                      name="hitpoint-method"
-                      value="average"
-                      checked={hitPointMethod === 'average'}
-                      onChange={(e) => setHitPointMethod(e.target.value as 'roll' | 'average')}
-                      className="text-purple-500"
-                    />
-                    <div>
-                      <div className="text-white font-medium">Take Average</div>
-                      <div className="text-slate-400 text-sm">
-                        Gain {hitPointOptions.average} HP (safe choice)
-                      </div>
+                <label className="flex items-center gap-3 p-4 border border-slate-600 rounded-lg cursor-pointer hover:border-green-400 transition-colors">
+                  <input
+                    type="radio"
+                    checked={hitPointMethod === 'average'}
+                    onChange={() => setHitPointMethod('average')}
+                    className="text-green-600 focus:ring-green-500"
+                  />
+                  <div className="flex-1">
+                    <div className="text-white font-medium">Take Average</div>
+                    <div className="text-slate-400 text-sm">
+                      Gain {hitPointOptions.average} hit points ({Math.floor(getHitDie(character.class) / 2) + 1} + {constitutionModifier} Con modifier)
                     </div>
-                  </label>
-                  
-                  <label className="flex items-center gap-3 p-4 border border-slate-600 rounded-lg cursor-pointer hover:border-purple-500 transition-colors flex-1">
-                    <input
-                      type="radio"
-                      name="hitpoint-method"
-                      value="roll"
-                      checked={hitPointMethod === 'roll'}
-                      onChange={(e) => setHitPointMethod(e.target.value as 'roll' | 'average')}
-                      className="text-purple-500"
-                    />
-                    <div>
-                      <div className="text-white font-medium">Roll Dice</div>
-                      <div className="text-slate-400 text-sm">
-                        Roll 1d{getHitDie(character.class)} + {constitutionModifier} (risky)
-                      </div>
+                  </div>
+                </label>
+                
+                <label className="flex items-center gap-3 p-4 border border-slate-600 rounded-lg cursor-pointer hover:border-green-400 transition-colors">
+                  <input
+                    type="radio"
+                    checked={hitPointMethod === 'roll'}
+                    onChange={() => setHitPointMethod('roll')}
+                    className="text-green-600 focus:ring-green-500"
+                  />
+                  <div className="flex-1">
+                    <div className="text-white font-medium">Roll for Hit Points</div>
+                    <div className="text-slate-400 text-sm">
+                      Roll 1d{getHitDie(character.class)} + {constitutionModifier} Con modifier
                     </div>
-                  </label>
-                </div>
+                  </div>
+                </label>
                 
                 {hitPointMethod === 'roll' && (
-                  <div className="p-4 bg-slate-700 rounded-lg">
-                    <div className="flex items-center gap-4 mb-4">
-                      <button
-                        onClick={rollHitPoints}
-                        className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
-                      >
-                        <Dice6 className="h-4 w-4" />
-                        Roll 1d{getHitDie(character.class)}
-                      </button>
-                      {rolledHP > 0 && (
-                        <div className="text-white">
-                          Rolled: {rolledHP} + {constitutionModifier} = <strong>{rolledHP + constitutionModifier} HP</strong>
+                  <div className="ml-8 space-y-3">
+                    <button
+                      onClick={rollHitPoints}
+                      className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                    >
+                      <Dice6 className="h-4 w-4" />
+                      Roll 1d{getHitDie(character.class)}
+                    </button>
+                    
+                    {rolledHP > 0 && (
+                      <div className="p-3 bg-slate-700 rounded-lg">
+                        <div className="text-white">You rolled: {rolledHP}</div>
+                        <div className="text-slate-400 text-sm">
+                          Total HP gain: {rolledHP + constitutionModifier} ({rolledHP} + {constitutionModifier} Con)
                         </div>
-                      )}
-                    </div>
-                    {rolledHP === 0 && (
-                      <p className="text-slate-400 text-sm">Click to roll for your hit point increase!</p>
+                      </div>
                     )}
                   </div>
                 )}
@@ -373,167 +397,173 @@ export function LevelUpModal({ character, onClose, onLevelUp }: LevelUpModalProp
               <div>
                 <h3 className="text-lg font-semibold text-white mb-2">Ability Score Improvement</h3>
                 <p className="text-slate-400 mb-4">
-                  You can increase ability scores or choose a feat.
+                  You can increase your ability scores or choose a feat.
                 </p>
               </div>
               
               <div className="space-y-4">
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-3 p-4 border border-slate-600 rounded-lg cursor-pointer hover:border-purple-500 transition-colors flex-1">
-                    <input
-                      type="radio"
-                      name="asi-method"
-                      value="asi"
-                      checked={asiMethod === 'asi'}
-                      onChange={(e) => setAsiMethod(e.target.value as 'asi' | 'feat')}
-                      className="text-purple-500"
-                    />
-                    <div>
-                      <div className="text-white font-medium">Ability Score Improvement</div>
-                      <div className="text-slate-400 text-sm">
-                        Increase abilities by 2 points total
-                      </div>
-                    </div>
-                  </label>
-                  
-                  <label className="flex items-center gap-3 p-4 border border-slate-600 rounded-lg cursor-pointer hover:border-purple-500 transition-colors flex-1">
-                    <input
-                      type="radio"
-                      name="asi-method"
-                      value="feat"
-                      checked={asiMethod === 'feat'}
-                      onChange={(e) => setAsiMethod(e.target.value as 'asi' | 'feat')}
-                      className="text-purple-500"
-                    />
-                    <div>
-                      <div className="text-white font-medium">Feat</div>
-                      <div className="text-slate-400 text-sm">
-                        Choose a special ability (not implemented yet)
-                      </div>
-                    </div>
-                  </label>
-                </div>
+                <label className="flex items-center gap-3 p-4 border border-slate-600 rounded-lg cursor-pointer hover:border-blue-400 transition-colors">
+                  <input
+                    type="radio"
+                    checked={asiMethod === 'asi'}
+                    onChange={() => setAsiMethod('asi')}
+                    className="text-blue-600 focus:ring-blue-500"
+                  />
+                  <div>
+                    <div className="text-white font-medium">Improve Ability Scores</div>
+                    <div className="text-slate-400 text-sm">Increase one score by 2, or two scores by 1 each</div>
+                  </div>
+                </label>
                 
-                {asiMethod === 'asi' && (
+                <label className="flex items-center gap-3 p-4 border border-slate-600 rounded-lg cursor-pointer hover:border-blue-400 transition-colors">
+                  <input
+                    type="radio"
+                    checked={asiMethod === 'feat'}
+                    onChange={() => setAsiMethod('feat')}
+                    className="text-blue-600 focus:ring-blue-500"
+                  />
+                  <div>
+                    <div className="text-white font-medium">Choose a Feat</div>
+                    <div className="text-slate-400 text-sm">Gain a special ability or feature</div>
+                  </div>
+                </label>
+              </div>
+              
+              {asiMethod === 'asi' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-white font-medium">Ability Score Improvements</span>
+                    <span className="text-slate-400">Points remaining: {availableASIPoints}</span>
+                  </div>
+                  
                   <div className="space-y-3">
-                    <div className="text-sm text-slate-400 mb-3">
-                      Points remaining: {availableASIPoints}
-                    </div>
                     {ABILITY_NAMES.map(ability => {
-                      const currentValue = character[ability];
+                      const currentScore = character[ability];
                       const improvement = abilityImprovements[ability] || 0;
-                      const newValue = currentValue + improvement;
+                      const newScore = currentScore + improvement;
                       
                       return (
                         <div key={ability} className="flex items-center justify-between p-3 bg-slate-700 rounded-lg">
                           <div className="flex items-center gap-3">
-                            <span className="text-white font-medium w-20">
+                            <span className="text-white font-medium w-24">
                               {ABILITY_DISPLAY_NAMES[ability]}
                             </span>
                             <span className="text-slate-400">
-                              {currentValue} → {newValue} ({getModifier(newValue) >= 0 ? '+' : ''}{getModifier(newValue)})
+                              {currentScore} → {newScore}
                             </span>
                           </div>
+                          
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleASIChange(ability, -1)}
-                              disabled={improvement <= 0}
-                              className="p-1 hover:bg-slate-600 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                              disabled={improvement === 0}
+                              className="p-1 rounded bg-slate-600 hover:bg-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              <Minus className="h-4 w-4 text-slate-400" />
+                              <Minus className="h-4 w-4 text-white" />
                             </button>
+                            
                             <span className="text-white w-8 text-center">{improvement}</span>
+                            
                             <button
                               onClick={() => handleASIChange(ability, 1)}
-                              disabled={improvement >= 2 || newValue >= 20 || availableASIPoints <= 0}
-                              className="p-1 hover:bg-slate-600 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                              disabled={availableASIPoints === 0 || improvement === 2 || newScore >= 20}
+                              className="p-1 rounded bg-slate-600 hover:bg-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              <Plus className="h-4 w-4 text-slate-400" />
+                              <Plus className="h-4 w-4 text-white" />
                             </button>
                           </div>
                         </div>
                       );
                     })}
                   </div>
-                )}
-                
-                {asiMethod === 'feat' && (
-                  <div className="p-4 bg-slate-700 rounded-lg">
-                    <p className="text-slate-400">Feat selection is not yet implemented. This will allow you to choose special abilities like Great Weapon Master, Sharpshooter, etc.</p>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
+              
+              {asiMethod === 'feat' && (
+                <div className="p-4 bg-slate-700 rounded-lg">
+                  <p className="text-slate-400">
+                    Feat selection will be implemented in a future update. For now, you can choose ability score improvements.
+                  </p>
+                </div>
+              )}
             </div>
           )}
           
           {currentStepName === 'spells' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-semibold text-white mb-2">Learn New Spells</h3>
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  {spellcastingType === 'spellbook' ? 'Add Spells to Spellbook' : 'Learn New Spells'}
+                </h3>
                 <p className="text-slate-400 mb-4">
-                  You can learn {getSpellsKnownCount(character.class, newLevel) - getSpellsKnownCount(character.class, character.level)} new spell(s), or skip and learn them later.
+                  {getSpellSelectionExplanation()}
                 </p>
               </div>
               
-              {availableSpells.filter(spell => !character.spells?.some(s => s.name === spell.name)).length > 0 ? (
+              {(spellcastingType === 'known' || spellcastingType === 'spellbook') && availableSpells.length > 0 ? (
                 <div className="space-y-4 max-h-96 overflow-y-auto">
-                  {availableSpells
-                    .filter(spell => !character.spells?.some(s => s.name === spell.name))
-                    .map(spell => {
-                      const isSelected = selectedSpells.some(s => s.name === spell.name);
-                      return (
-                        <div
-                          key={spell.name}
-                          onClick={() => handleSpellToggle(spell)}
-                          className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                            isSelected 
-                              ? 'border-purple-500 bg-purple-900/20' 
-                              : 'border-slate-600 hover:border-purple-400'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                              <h4 className="text-white font-medium">{spell.name}</h4>
-                              <span className="text-xs bg-slate-600 px-2 py-1 rounded">
-                                Level {spell.level}
-                              </span>
-                            </div>
-                            {isSelected && <Zap className="h-5 w-5 text-purple-400" />}
+                  {availableSpells.map(spell => {
+                    const isSelected = selectedSpells.some(s => s.name === spell.name);
+                    return (
+                      <div
+                        key={spell.name}
+                        onClick={() => handleSpellToggle(spell)}
+                        className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                          isSelected 
+                            ? 'border-purple-500 bg-purple-900/20' 
+                            : 'border-slate-600 hover:border-purple-400'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-white font-medium">{spell.name}</h4>
+                            <span className="text-xs bg-slate-600 px-2 py-1 rounded">
+                              Level {spell.level}
+                            </span>
                           </div>
-                          <p className="text-slate-400 text-sm">{spell.description}</p>
+                          {isSelected && <Zap className="h-5 w-5 text-purple-400" />}
                         </div>
-                      );
-                    })}
+                        <p className="text-slate-400 text-sm">{spell.description}</p>
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="p-6 bg-slate-700 rounded-lg text-center">
                   <BookOpen className="h-12 w-12 text-slate-500 mx-auto mb-3" />
-                  <h4 className="text-white font-medium mb-2">No New Spells Available</h4>
+                  <h4 className="text-white font-medium mb-2">
+                    {spellcastingType === 'prepared' ? 'No Spell Selection Needed' : 'No New Spells Available'}
+                  </h4>
                   <p className="text-slate-400 text-sm mb-4">
-                    {character.class === 'Cleric' || character.class === 'Druid' 
+                    {spellcastingType === 'prepared' 
                       ? `${character.class}s prepare spells from their entire spell list rather than learning specific spells.`
-                      : `You may have already learned all available spells for your level, or your class doesn&apos;t learn spells at level ${newLevel}.`
+                      : 'You may have already learned all available spells for your level, or your class doesn&apos;t learn spells at this level.'
                     }
                   </p>
                   <p className="text-blue-300 text-sm">
-                    You can always learn spells later during your adventures!
+                    {spellcastingType === 'prepared' 
+                      ? 'You can change your prepared spells during a long rest!'
+                      : 'You can always learn spells later during your adventures!'
+                    }
                   </p>
                 </div>
               )}
               
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-400">
-                  Selected: {selectedSpells.length} / {getSpellsKnownCount(character.class, newLevel) - getSpellsKnownCount(character.class, character.level)} (optional)
-                </span>
-                {selectedSpells.length > 0 && (
-                  <button
-                    onClick={() => setSelectedSpells([])}
-                    className="text-purple-400 hover:text-purple-300 text-sm"
-                  >
-                    Clear Selection
-                  </button>
-                )}
-              </div>
+              {(spellcastingType === 'known' || spellcastingType === 'spellbook') && (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-400">
+                    Selected: {selectedSpells.length} / {getNewSpellsCount(character.class, newLevel)} (optional)
+                  </span>
+                  {selectedSpells.length > 0 && (
+                    <button
+                      onClick={() => setSelectedSpells([])}
+                      className="text-purple-400 hover:text-purple-300 text-sm"
+                    >
+                      Clear Selection
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           )}
           
@@ -542,14 +572,14 @@ export function LevelUpModal({ character, onClose, onLevelUp }: LevelUpModalProp
               <div>
                 <h3 className="text-lg font-semibold text-white mb-2">Learn New Cantrips</h3>
                 <p className="text-slate-400 mb-4">
-                  You can learn 1 new cantrip, or skip and learn it later.
+                  You can learn {getNewCantripsCount(character.class, newLevel)} new cantrip(s), or skip and learn them later.
                 </p>
               </div>
               
-              {availableCantrips.filter(cantrip => !character.spells?.some(s => s.name === cantrip.name)).length > 0 ? (
+              {availableCantrips.filter(cantrip => !character.spellsKnown?.some(s => s.name === cantrip.name)).length > 0 ? (
                 <div className="space-y-4 max-h-96 overflow-y-auto">
                   {availableCantrips
-                    .filter(cantrip => !character.spells?.some(s => s.name === cantrip.name))
+                    .filter(cantrip => !character.spellsKnown?.some(s => s.name === cantrip.name))
                     .map(cantrip => {
                       const isSelected = selectedCantrips.some(c => c.name === cantrip.name);
                       return (
@@ -591,7 +621,7 @@ export function LevelUpModal({ character, onClose, onLevelUp }: LevelUpModalProp
               
               <div className="flex items-center justify-between text-sm">
                 <span className="text-slate-400">
-                  Selected: {selectedCantrips.length} / 1 (optional)
+                  Selected: {selectedCantrips.length} / {getNewCantripsCount(character.class, newLevel)} (optional)
                 </span>
                 {selectedCantrips.length > 0 && (
                   <button
@@ -618,26 +648,18 @@ export function LevelUpModal({ character, onClose, onLevelUp }: LevelUpModalProp
                 <div className="space-y-4">
                   {newFeatures.map((feature, index) => (
                     <div key={index} className="p-4 bg-slate-700 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2">
-                        <BookOpen className="h-5 w-5 text-blue-400" />
-                        <h4 className="text-white font-medium">{feature.name}</h4>
-                        <span className="text-xs bg-blue-600 px-2 py-1 rounded">
-                          {feature.type}
-                        </span>
-                      </div>
+                      <h4 className="text-white font-medium mb-2">{feature.name}</h4>
                       <p className="text-slate-400 text-sm">{feature.description}</p>
-                      {feature.usageType && feature.usageType !== 'passive' && (
-                        <p className="text-blue-300 text-xs mt-2">
-                          Usage: {feature.usageType}
-                          {feature.usesPerRest && ` (${feature.usesPerRest} uses)`}
-                        </p>
-                      )}
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="p-4 bg-slate-700 rounded-lg">
-                  <p className="text-slate-400">No new class features at this level.</p>
+                <div className="p-6 bg-slate-700 rounded-lg text-center">
+                  <TrendingUp className="h-12 w-12 text-slate-500 mx-auto mb-3" />
+                  <h4 className="text-white font-medium mb-2">No New Features This Level</h4>
+                  <p className="text-slate-400 text-sm">
+                    You don&apos;t gain any new class features at level {newLevel}, but you still get stronger!
+                  </p>
                 </div>
               )}
             </div>
@@ -678,7 +700,9 @@ export function LevelUpModal({ character, onClose, onLevelUp }: LevelUpModalProp
                 {/* Spells */}
                 {selectedSpells.length > 0 && (
                   <div className="p-4 bg-slate-700 rounded-lg">
-                    <h4 className="text-white font-medium mb-2">New Spells</h4>
+                    <h4 className="text-white font-medium mb-2">
+                      {spellcastingType === 'spellbook' ? 'Spells Added to Spellbook' : 'New Spells Learned'}
+                    </h4>
                     {selectedSpells.map(spell => (
                       <p key={spell.name} className="text-slate-400">
                         {spell.name} (Level {spell.level})
@@ -720,31 +744,29 @@ export function LevelUpModal({ character, onClose, onLevelUp }: LevelUpModalProp
           <button
             onClick={handlePrevious}
             disabled={currentStep === 0}
-            className="px-4 py-2 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
+            className="px-4 py-2 text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Previous
           </button>
           
-          <div className="text-sm text-slate-400">
-            {currentStep + 1} of {steps.length}
+          <div className="flex items-center gap-3">
+            {currentStep === steps.length - 1 ? (
+              <button
+                onClick={handleConfirm}
+                className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+              >
+                Level Up!
+              </button>
+            ) : (
+              <button
+                onClick={handleNext}
+                disabled={!canProceed()}
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+              >
+                Next
+              </button>
+            )}
           </div>
-          
-          {currentStep === steps.length - 1 ? (
-            <button
-              onClick={handleConfirm}
-              className="px-6 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors font-medium"
-            >
-              Level Up!
-            </button>
-          ) : (
-            <button
-              onClick={handleNext}
-              disabled={!canProceed()}
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
-            >
-              Next
-            </button>
-          )}
         </div>
       </div>
     </div>

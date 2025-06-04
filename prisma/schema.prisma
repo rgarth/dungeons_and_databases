@@ -92,7 +92,8 @@ model Character {
   treasures     Json? // Store valuable items/treasures with their worth
   
   // Spellcasting
-  spells          Json? // Store known/prepared spells as JSON
+  spellsKnown     Json? // Store all spells the character knows/has in spellbook as JSON
+  spellsPrepared  Json? // Store currently prepared/equipped spells as JSON
   spellSlots      Json? // Store spell slot levels and counts as JSON
   spellcastingAbility String? // Primary spellcasting ability
   spellSaveDC     Int? // Spell save difficulty class

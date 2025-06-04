@@ -9,6 +9,7 @@ import { Action, canEquipWeapon, canEquipArmor } from "@/lib/dnd/combat";
 import { Treasure, COMMON_TREASURES, STORY_TREASURES } from "@/lib/dnd/data";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import { LevelUpModal } from "./level-up-modal";
+import { getSpellcastingType, canPrepareSpells, getSpellsPreparedCount } from "@/lib/dnd/level-up";
 
 interface CharacterSheetProps {
   character: {
@@ -37,7 +38,8 @@ interface CharacterSheetProps {
     inventoryWeapons?: (Weapon | MagicalWeapon)[];
     armor?: Armor[];
     inventoryArmor?: Armor[];
-    spells?: Spell[];
+    spellsKnown?: Spell[]; // All spells known or in spellbook
+    spellsPrepared?: Spell[]; // Currently prepared/equipped spells
     spellSlots?: Record<number, number>;
     spellcastingAbility?: string;
     spellSaveDC?: number;
@@ -940,7 +942,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                   )}
 
                   {/* Spell Slots & Spellcasting */}
-                  {character.spellcastingAbility && character.spells && character.spells.length > 0 && (
+                  {character.spellcastingAbility && (character.spellsKnown && character.spellsKnown.length > 0 || character.spellsPrepared && character.spellsPrepared.length > 0) && (
                     <div className="bg-slate-700 rounded-lg p-6">
                       <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
                         <Zap className="h-6 w-6" />
@@ -987,31 +989,151 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                         </div>
                       )}
 
-                      {/* Known Spells */}
-                      <div>
-                        <h4 className="text-lg font-semibold text-white mb-3">Known Spells</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto">
-                          {character.spells.map((spell, index) => (
-                            <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-blue-500">
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="text-white font-medium">{spell.name}</span>
-                                <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
-                                  {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
-                                </span>
-                              </div>
-                              <div className="text-slate-400 text-xs mb-2">
-                                {spell.school} • {spell.castingTime} • {spell.range}
-                              </div>
-                              <div className="text-slate-300 text-xs">{spell.description}</div>
-                              {spell.level === 0 && (
-                                <div className="text-green-300 text-xs mt-1 font-medium">
-                                  ✓ Unlimited Use
+                      {/* Spell Management Based on Class Type */}
+                      {(() => {
+                        const spellcastingType = getSpellcastingType(character.class);
+                        const abilityModifier = getModifier(character[character.spellcastingAbility as keyof typeof character] as number);
+                        const maxPrepared = canPrepareSpells(character.class) ? getSpellsPreparedCount(character.class, character.level, abilityModifier) : 0;
+                        
+                        switch (spellcastingType) {
+                          case 'known':
+                            // Bards, Sorcerers, Warlocks, Rangers, EKs, ATs - their known spells are always prepared
+                            return (
+                              <div>
+                                <div className="mb-3 p-3 bg-green-900/20 border border-green-600/30 rounded-lg">
+                                  <p className="text-green-300 text-sm">
+                                    <strong>{character.class} Spellcasting:</strong> All known spells are always available to cast.
+                                  </p>
                                 </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+                                <h4 className="text-lg font-semibold text-white mb-3">Known Spells</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto">
+                                  {(character.spellsKnown || []).map((spell, index) => (
+                                    <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-green-500">
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-white font-medium">{spell.name}</span>
+                                        <span className="text-xs bg-green-900/50 text-green-300 px-2 py-1 rounded">
+                                          {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
+                                        </span>
+                                      </div>
+                                      <div className="text-slate-400 text-xs mb-2">
+                                        {spell.school} • {spell.castingTime} • {spell.range}
+                                      </div>
+                                      <div className="text-slate-300 text-xs">{spell.description}</div>
+                                      {spell.level === 0 && (
+                                        <div className="text-green-300 text-xs mt-1 font-medium">
+                                          ✓ Unlimited Use
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          
+                          case 'spellbook':
+                            // Wizards - have spellbook + daily preparation
+                            return (
+                              <div className="space-y-6">
+                                <div className="mb-3 p-3 bg-blue-900/20 border border-blue-600/30 rounded-lg">
+                                  <p className="text-blue-300 text-sm">
+                                    <strong>Wizard Spellcasting:</strong> You have a spellbook containing all learned spells, but can only prepare {maxPrepared} spells per day.
+                                  </p>
+                                </div>
+                                
+                                {/* Prepared Spells */}
+                                <div>
+                                  <h4 className="text-lg font-semibold text-white mb-3">
+                                    Prepared Spells ({(character.spellsPrepared || []).length}/{maxPrepared})
+                                  </h4>
+                                  {character.spellsPrepared && character.spellsPrepared.length > 0 ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                                      {character.spellsPrepared.map((spell, index) => (
+                                        <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-blue-500">
+                                          <div className="flex items-center gap-2 mb-2">
+                                            <span className="text-white font-medium">{spell.name}</span>
+                                            <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
+                                              {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
+                                            </span>
+                                          </div>
+                                          <div className="text-slate-400 text-xs mb-2">
+                                            {spell.school} • {spell.castingTime} • {spell.range}
+                                          </div>
+                                          <div className="text-slate-300 text-xs">{spell.description}</div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    <p className="text-slate-400 text-sm mb-4">No spells currently prepared. You can prepare spells during a long rest.</p>
+                                  )}
+                                </div>
+                                
+                                {/* Spellbook */}
+                                <div>
+                                  <h4 className="text-lg font-semibold text-white mb-3">Spellbook</h4>
+                                  {character.spellsKnown && character.spellsKnown.length > 0 ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto">
+                                      {character.spellsKnown.map((spell, index) => (
+                                        <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-purple-500">
+                                          <div className="flex items-center gap-2 mb-2">
+                                            <span className="text-white font-medium">{spell.name}</span>
+                                            <span className="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded">
+                                              {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
+                                            </span>
+                                          </div>
+                                          <div className="text-slate-400 text-xs mb-2">
+                                            {spell.school} • {spell.castingTime} • {spell.range}
+                                          </div>
+                                          <div className="text-slate-300 text-xs">{spell.description}</div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    <p className="text-slate-400 text-sm">Your spellbook is empty. Learn spells during level-up or find them during adventures.</p>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          
+                          case 'prepared':
+                            // Clerics, Druids, Paladins - know all class spells, prepare daily
+                            return (
+                              <div>
+                                <div className="mb-3 p-3 bg-yellow-900/20 border border-yellow-600/30 rounded-lg">
+                                  <p className="text-yellow-300 text-sm">
+                                    <strong>{character.class} Spellcasting:</strong> You know all {character.class} spells and can prepare {maxPrepared} per day.
+                                  </p>
+                                </div>
+                                
+                                <h4 className="text-lg font-semibold text-white mb-3">
+                                  Prepared Spells ({(character.spellsPrepared || []).length}/{maxPrepared})
+                                </h4>
+                                {character.spellsPrepared && character.spellsPrepared.length > 0 ? (
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {character.spellsPrepared.map((spell, index) => (
+                                      <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-yellow-500">
+                                        <div className="flex items-center gap-2 mb-2">
+                                          <span className="text-white font-medium">{spell.name}</span>
+                                          <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">
+                                            {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
+                                          </span>
+                                        </div>
+                                        <div className="text-slate-400 text-xs mb-2">
+                                          {spell.school} • {spell.castingTime} • {spell.range}
+                                        </div>
+                                        <div className="text-slate-300 text-xs">{spell.description}</div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <p className="text-slate-400 text-sm">No spells currently prepared. You can prepare spells during a long rest from the entire {character.class} spell list.</p>
+                                )}
+                              </div>
+                            );
+                          
+                          default:
+                            return null;
+                        }
+                      })()}
                     </div>
                   )}
 
@@ -1103,7 +1225,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
                   {/* Empty State */}
                   {(!equippedWeapons || equippedWeapons.length === 0) && 
-                   (!character.spells || character.spells.length === 0) && (
+                   (!character.spellsKnown || character.spellsKnown.length === 0) && (
                     <div className="text-center py-12">
                       <Swords className="h-16 w-16 text-slate-600 mx-auto mb-4" />
                       <h3 className="text-xl font-semibold text-slate-300 mb-2">No Combat Options</h3>
@@ -1344,7 +1466,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                     </div>
 
                     {/* Spells Section */}
-                    {character.spells && character.spells.length > 0 && (
+                    {character.spellsKnown && character.spellsKnown.length > 0 && (
                       <div className="bg-slate-700 rounded-lg p-4">
                         <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                           <Zap className="h-5 w-5" />
@@ -1361,7 +1483,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                           </div>
                         )}
                         <div className="space-y-2 max-h-48 overflow-y-auto">
-                          {character.spells.map((spell, index) => (
+                          {character.spellsKnown.map((spell, index) => (
                             <div key={index} className="bg-slate-600 p-3 rounded">
                               <div className="flex items-center gap-2 mb-1">
                                 <span className="text-white font-medium">{spell.name}</span>

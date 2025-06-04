@@ -1,5 +1,5 @@
 // Level up system for D&D 5e
-import { Spell } from './spells';
+import { Spell, getClassSpells } from './spells';
 import { ClassFeature, getClassFeatures } from './class-features';
 
 // Experience point thresholds for each level
@@ -204,6 +204,213 @@ export function getSpellSlotsForLevel(characterClass: string, level: number): nu
   }
 }
 
+// D&D 5e SPELLCASTING MECHANICS
+// ==============================
+
+// Determines how a class handles spellcasting
+export type SpellcastingType = 'known' | 'prepared' | 'spellbook' | 'none';
+
+export function getSpellcastingType(characterClass: string): SpellcastingType {
+  switch (characterClass) {
+    case 'Wizard':
+      return 'spellbook'; // Unique: spellbook + preparation
+    case 'Cleric':
+    case 'Druid':
+    case 'Paladin':
+      return 'prepared'; // Full spell list access, prepare daily
+    case 'Bard':
+    case 'Sorcerer':
+    case 'Warlock':
+    case 'Ranger':
+    case 'Fighter': // Eldritch Knight
+    case 'Rogue': // Arcane Trickster
+      return 'known'; // Fixed list of known spells, always available
+    default:
+      return 'none';
+  }
+}
+
+// Get number of spells that can be prepared (for preparation classes)
+export function getSpellsPreparedCount(characterClass: string, level: number, abilityModifier: number): number {
+  const spellcastingType = getSpellcastingType(characterClass);
+  
+  if (spellcastingType === 'known' || spellcastingType === 'none') {
+    return 0; // These classes don't prepare spells
+  }
+  
+  switch (characterClass) {
+    case 'Wizard':
+      return Math.max(1, level + abilityModifier); // Int modifier + wizard level
+    case 'Cleric':
+    case 'Druid':
+      return Math.max(1, level + abilityModifier); // Wis modifier + level
+    case 'Paladin':
+      return Math.max(1, Math.floor(level / 2) + abilityModifier); // Cha modifier + half level
+    default:
+      return 0;
+  }
+}
+
+// Get number of spells known (for known spell classes)
+export function getSpellsKnownCount(characterClass: string, level: number): number {
+  const spellcastingType = getSpellcastingType(characterClass);
+  
+  if (spellcastingType !== 'known') {
+    return 0; // These classes don't have "spells known"
+  }
+  
+  switch (characterClass) {
+    case 'Bard':
+      // Bards: 4 at 1st, then increases irregularly
+      if (level >= 17) return 22;
+      if (level >= 15) return 20;
+      if (level >= 13) return 18;
+      if (level >= 11) return 16;
+      if (level >= 10) return 14;
+      if (level >= 9) return 13;
+      if (level >= 8) return 12;
+      if (level >= 7) return 11;
+      if (level >= 6) return 10;
+      if (level >= 5) return 8;
+      if (level >= 4) return 7;
+      if (level >= 3) return 6;
+      if (level >= 2) return 5;
+      if (level >= 1) return 4;
+      return 0;
+    case 'Sorcerer':
+      // Sorcerers: 2 at 1st, then increases
+      if (level >= 17) return 15;
+      if (level >= 15) return 14;
+      if (level >= 13) return 13;
+      if (level >= 11) return 12;
+      if (level >= 9) return 11;
+      if (level >= 7) return 10;
+      if (level >= 5) return 9;
+      if (level >= 4) return 8;
+      if (level >= 3) return 7;
+      if (level >= 2) return 6; // Note: Sorcerer gets 2 at level 1, but table shows they know more
+      if (level >= 1) return 2;
+      return 0;
+    case 'Warlock':
+      // Warlocks: 2 at 1st, capped at 15
+      if (level >= 17) return 11;
+      if (level >= 15) return 10;
+      if (level >= 13) return 9;
+      if (level >= 11) return 8;
+      if (level >= 9) return 7;
+      if (level >= 7) return 6;
+      if (level >= 5) return 5;
+      if (level >= 3) return 4;
+      if (level >= 2) return 3;
+      if (level >= 1) return 2;
+      return 0;
+    case 'Ranger':
+      // Rangers: Start at level 2
+      if (level >= 17) return 11;
+      if (level >= 15) return 10;
+      if (level >= 13) return 9;
+      if (level >= 11) return 8;
+      if (level >= 9) return 7;
+      if (level >= 7) return 6;
+      if (level >= 5) return 5;
+      if (level >= 3) return 4;
+      if (level >= 2) return 2;
+      return 0;
+    case 'Fighter': // Eldritch Knight
+    case 'Rogue': // Arcane Trickster
+      // Third-casters: Start at level 3
+      if (level >= 19) return 13;
+      if (level >= 16) return 12;
+      if (level >= 13) return 11;
+      if (level >= 10) return 9;
+      if (level >= 8) return 8;
+      if (level >= 7) return 7;
+      if (level >= 4) return 4;
+      if (level >= 3) return 3;
+      return 0;
+    default:
+      return 0;
+  }
+}
+
+// Get number of cantrips known
+export function getCantripsKnownCount(characterClass: string, level: number): number {
+  switch (characterClass) {
+    case 'Wizard':
+    case 'Sorcerer':
+      if (level >= 10) return 5;
+      if (level >= 4) return 4;
+      return 3;
+    case 'Bard':
+    case 'Cleric':
+    case 'Druid':
+    case 'Warlock':
+      if (level >= 10) return 4;
+      if (level >= 4) return 3;
+      return 2;
+    case 'Fighter': // Eldritch Knight
+    case 'Rogue': // Arcane Trickster
+      if (level >= 10) return 3;
+      return 2;
+    default:
+      return 0;
+  }
+}
+
+// Determine if class needs spell selection during level up
+export function needsSpellSelection(characterClass: string, level: number): boolean {
+  const spellcastingType = getSpellcastingType(characterClass);
+  
+  // Only "known spell" classes need to select spells during level up
+  if (spellcastingType !== 'known' && characterClass !== 'Wizard') {
+    return false;
+  }
+  
+  // Check if this level grants new spells known
+  const currentKnown = getSpellsKnownCount(characterClass, level);
+  const previousKnown = getSpellsKnownCount(characterClass, level - 1);
+  
+  // Special case for Wizard: they add 2 spells to spellbook every level
+  if (characterClass === 'Wizard' && level > 1) {
+    return true;
+  }
+  
+  return currentKnown > previousKnown;
+}
+
+// Determine if class needs cantrip selection during level up
+export function needsCantripsSelection(characterClass: string, level: number): boolean {
+  if (!isSpellcaster(characterClass)) {
+    return false;
+  }
+  
+  const currentCantrips = getCantripsKnownCount(characterClass, level);
+  const previousCantrips = getCantripsKnownCount(characterClass, level - 1);
+  
+  return currentCantrips > previousCantrips;
+}
+
+// Calculate how many new spells can be learned this level
+export function getNewSpellsCount(characterClass: string, level: number): number {
+  const currentKnown = getSpellsKnownCount(characterClass, level);
+  const previousKnown = getSpellsKnownCount(characterClass, level - 1);
+  
+  // Special case for Wizard: always 2 spells per level
+  if (characterClass === 'Wizard' && level > 1) {
+    return 2;
+  }
+  
+  return Math.max(0, currentKnown - previousKnown);
+}
+
+// Calculate how many new cantrips can be learned this level
+export function getNewCantripsCount(characterClass: string, level: number): number {
+  const currentCantrips = getCantripsKnownCount(characterClass, level);
+  const previousCantrips = getCantripsKnownCount(characterClass, level - 1);
+  
+  return Math.max(0, currentCantrips - previousCantrips);
+}
+
 // Interface for level up choices
 export interface LevelUpChoices {
   hitPointGain: number; // HP to add (either rolled or average)
@@ -211,11 +418,12 @@ export interface LevelUpChoices {
     [ability: string]: number; // ability name -> points to add
   };
   featChoice?: string; // feat name instead of ASI
+  // For "known spell" classes and wizards
   spellsLearned?: Spell[]; // new spells learned
   spellsReplaced?: {
     oldSpell: Spell;
     newSpell: Spell;
-  }[]; // spells to replace
+  }[]; // spells to replace (some classes can replace spells on level up)
   cantripsLearned?: Spell[]; // new cantrips
   cantripsReplaced?: {
     oldCantrip: Spell;
@@ -235,7 +443,9 @@ export interface LevelUpResult {
   newProficiencyBonus: number;
   newFeatures: ClassFeature[];
   newSpellSlots?: Record<number, number>;
+  // For "known spell" classes and wizards adding to spellbook
   newSpells?: Spell[];
+  newCantrips?: Spell[];
   abilityScoreChanges?: {
     [ability: string]: number;
   };
@@ -290,8 +500,8 @@ export function levelUpCharacter(
   // Determine what choices are still needed
   const requiresChoices = {
     needsAbilityScoreImprovement: hasAbilityScoreImprovement(character.class, newLevel) && !choices.abilityScoreImprovements && !choices.featChoice,
-    needsSpellSelection: isSpellcaster(character.class) && needsSpellSelection(character.class, newLevel) && !choices.spellsLearned,
-    needsCantripsSelection: isSpellcaster(character.class) && needsCantripsSelection(character.class, newLevel) && !choices.cantripsLearned,
+    needsSpellSelection: needsSpellSelection(character.class, newLevel) && !choices.spellsLearned,
+    needsCantripsSelection: needsCantripsSelection(character.class, newLevel) && !choices.cantripsLearned,
     needsSubclassSelection: newLevel === 3 && !choices.subclassChoice, // Most classes choose subclass at level 3
     needsFeatureChoices: [] as string[] // TODO: Implement feature choices detection
   };
@@ -304,6 +514,7 @@ export function levelUpCharacter(
     newFeatures,
     newSpellSlots,
     newSpells: choices.spellsLearned,
+    newCantrips: choices.cantripsLearned,
     abilityScoreChanges: choices.abilityScoreImprovements,
     requiresChoices
   };
@@ -313,119 +524,6 @@ export function levelUpCharacter(
 export function isSpellcaster(characterClass: string): boolean {
   const spellcasters = ['Wizard', 'Sorcerer', 'Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger', 'Warlock'];
   return spellcasters.includes(characterClass);
-}
-
-export function needsSpellSelection(characterClass: string, level: number): boolean {
-  // Different classes learn spells at different levels
-  switch (characterClass) {
-    case 'Wizard':
-      return level >= 1; // Wizards learn spells every level
-    case 'Sorcerer':
-    case 'Bard':
-    case 'Warlock':
-      return level >= 1 && (level === 1 || level % 2 === 1 || level === 2); // Learn spells most levels
-    case 'Cleric':
-    case 'Druid':
-      return false; // Prepare spells, don't learn new ones
-    case 'Paladin':
-    case 'Ranger':
-      return level >= 2; // Half-casters start at level 2
-    case 'Fighter': // Eldritch Knight
-    case 'Rogue': // Arcane Trickster
-      return level >= 3 && (level === 3 || level % 3 === 1); // Third-casters learn infrequently
-    default:
-      return false;
-  }
-}
-
-export function needsCantripsSelection(characterClass: string, level: number): boolean {
-  // Classes that learn new cantrips at certain levels
-  switch (characterClass) {
-    case 'Wizard':
-    case 'Sorcerer':
-    case 'Bard':
-    case 'Cleric':
-    case 'Druid':
-    case 'Warlock':
-      return level === 1 || level === 4 || level === 10; // Common cantrip progression
-    case 'Fighter': // Eldritch Knight
-    case 'Rogue': // Arcane Trickster
-      return level === 3 || level === 10; // Third-casters get fewer cantrips
-    default:
-      return false;
-  }
-}
-
-// Get number of spells known for a class at a given level
-export function getSpellsKnownCount(characterClass: string, level: number): number {
-  switch (characterClass) {
-    case 'Bard':
-      if (level >= 17) return 22;
-      if (level >= 15) return 20;
-      if (level >= 13) return 18;
-      if (level >= 11) return 16;
-      if (level >= 10) return 14;
-      if (level >= 9) return 13;
-      if (level >= 8) return 12;
-      if (level >= 7) return 11;
-      if (level >= 6) return 10;
-      if (level >= 5) return 8;
-      if (level >= 4) return 7;
-      if (level >= 3) return 6;
-      if (level >= 2) return 5;
-      if (level >= 1) return 4;
-      return 0;
-    case 'Sorcerer':
-      if (level >= 17) return 15;
-      if (level >= 15) return 14;
-      if (level >= 13) return 13;
-      if (level >= 11) return 12;
-      if (level >= 9) return 11;
-      if (level >= 7) return 10;
-      if (level >= 5) return 9;
-      if (level >= 4) return 8;
-      if (level >= 3) return 7;
-      if (level >= 2) return 6;
-      if (level >= 1) return 5;
-      return 0;
-    case 'Warlock':
-      if (level >= 17) return 11;
-      if (level >= 15) return 10;
-      if (level >= 13) return 9;
-      if (level >= 11) return 8;
-      if (level >= 9) return 7;
-      if (level >= 7) return 6;
-      if (level >= 5) return 5;
-      if (level >= 3) return 4;
-      if (level >= 2) return 3;
-      if (level >= 1) return 2;
-      return 0;
-    case 'Ranger':
-    case 'Paladin':
-      if (level >= 17) return 11;
-      if (level >= 15) return 10;
-      if (level >= 13) return 9;
-      if (level >= 11) return 8;
-      if (level >= 9) return 7;
-      if (level >= 7) return 6;
-      if (level >= 5) return 5;
-      if (level >= 3) return 4;
-      if (level >= 2) return 3;
-      return 0;
-    case 'Fighter': // Eldritch Knight
-    case 'Rogue': // Arcane Trickster
-      if (level >= 19) return 13;
-      if (level >= 16) return 12;
-      if (level >= 13) return 11;
-      if (level >= 10) return 9;
-      if (level >= 8) return 8;
-      if (level >= 7) return 7;
-      if (level >= 4) return 4;
-      if (level >= 3) return 3;
-      return 0;
-    default:
-      return 0;
-  }
 }
 
 // Calculate max hit points after level up
@@ -441,4 +539,60 @@ export function calculateNewMaxHitPoints(
     : hitDie + constitutionModifier; // This would be the max possible, actual rolling happens in UI
   
   return currentMax + hitPointGain;
+}
+
+// SPELL PREPARATION UTILITIES
+// ===========================
+
+// Check if a class can prepare spells daily
+export function canPrepareSpells(characterClass: string): boolean {
+  const spellcastingType = getSpellcastingType(characterClass);
+  return spellcastingType === 'prepared' || spellcastingType === 'spellbook';
+}
+
+// Get all spells available for preparation (spellbook or class list)
+export function getAvailableSpellsForPreparation(
+  characterClass: string, 
+  level: number, 
+  spellsKnown?: Spell[]
+): Spell[] {
+  const spellcastingType = getSpellcastingType(characterClass);
+  
+  switch (spellcastingType) {
+    case 'spellbook':
+      // Wizards prepare from their spellbook
+      return spellsKnown || [];
+    case 'prepared':
+      // Clerics, Druids, Paladins prepare from their entire class spell list
+      return getClassSpells(characterClass, level);
+    default:
+      return [];
+  }
+}
+
+// Check if spell preparation is valid
+export function validateSpellPreparation(
+  characterClass: string,
+  level: number,
+  abilityModifier: number,
+  preparedSpells: Spell[]
+): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  const maxPrepared = getSpellsPreparedCount(characterClass, level, abilityModifier);
+  
+  if (preparedSpells.length > maxPrepared) {
+    errors.push(`Can only prepare ${maxPrepared} spells, but ${preparedSpells.length} are selected.`);
+  }
+  
+  // Check for duplicates
+  const spellNames = preparedSpells.map(s => s.name);
+  const uniqueNames = new Set(spellNames);
+  if (spellNames.length !== uniqueNames.size) {
+    errors.push('Cannot prepare the same spell multiple times.');
+  }
+  
+  return {
+    valid: errors.length === 0,
+    errors
+  };
 } 

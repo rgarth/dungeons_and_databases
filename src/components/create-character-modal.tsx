@@ -6,6 +6,7 @@ import { RACES, CLASSES, BACKGROUNDS, ALIGNMENTS, ABILITY_SCORES, STANDARD_ARRAY
 import { AbilityScore, generateAbilityScores, StatMethod, calculatePointBuyRemaining, getModifier, calculateHitPoints, getProficiencyBonus } from "@/lib/dnd/core";
 import { getBackgroundSkills, generateFantasyName, getEquipmentPackOptions, getClassWeaponSuggestions, getClassArmorSuggestions } from "@/lib/dnd/character";
 import { getSpellcastingAbility, getClassSpells, getSpellSlots, calculateSpellSaveDC, calculateSpellAttackBonus } from "@/lib/dnd/spells";
+import { getSpellcastingType } from "@/lib/dnd/level-up";
 import { Spell } from "@/lib/dnd/spells";
 import { Weapon, WEAPONS } from "@/lib/dnd/equipment";
 import { canEquipWeapon, BASIC_ACTIONS, getClassActions } from "@/lib/dnd/combat";
@@ -158,6 +159,31 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       // Verify weapons are being sent (temporary log)
       console.log('Creating character with weapons:', selectedWeapons.map(w => w.name));
       
+      // Handle spells based on spellcasting type
+      const spellcastingTypeValue = spellcastingAbility ? getSpellcastingType(characterClass) : 'none';
+      let spellsKnownData = null;
+      let spellsPreparedData = null;
+      
+      if (selectedSpells.length > 0) {
+        switch (spellcastingTypeValue) {
+          case 'known':
+            // Bards, Sorcerers, Warlocks, Rangers, EKs, ATs - always have their spells "prepared"
+            spellsKnownData = selectedSpells;
+            spellsPreparedData = selectedSpells; // Known spells are always prepared
+            break;
+          case 'spellbook':
+            // Wizards - spells go in spellbook, prepare subset daily
+            spellsKnownData = selectedSpells;
+            spellsPreparedData = selectedSpells.slice(0, 1 + getModifier(abilityScores.intelligence)); // Can prepare Int mod + level
+            break;
+          case 'prepared':
+            // Clerics, Druids, Paladins - have access to all class spells, prepare subset
+            spellsKnownData = null; // They know all class spells
+            spellsPreparedData = selectedSpells; // What they chose to prepare initially
+            break;
+        }
+      }
+      
       const characterData = {
         name: name.trim(),
         race,
@@ -174,7 +200,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         weapons: [], // No weapons equipped initially - player chooses from storage
         inventoryWeapons: selectedWeapons, // Selected weapons go to storage for player to equip
         inventoryArmor: startingArmor, // Starting equipment armor (in armor storage)
-        spells: selectedSpells,
+        spellsKnown: spellsKnownData,
+        spellsPrepared: spellsPreparedData,
         spellSlots,
         spellcastingAbility,
         spellSaveDC,
