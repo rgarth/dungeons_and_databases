@@ -343,7 +343,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
                 Alignment
@@ -356,23 +356,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 {ALIGNMENTS.map((a) => (
                   <option key={a} value={a}>{a}</option>
                 ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Gender (for name generation)
-              </label>
-              <select
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-              >
-                <option value="">Not specified</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Non-binary">Non-binary</option>
-                <option value="Other">Other</option>
               </select>
             </div>
           </div>
