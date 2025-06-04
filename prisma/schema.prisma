@@ -70,6 +70,7 @@ model Character {
   // Derived Stats
   hitPoints    Int @default(10)
   maxHitPoints Int @default(10)
+  temporaryHitPoints Int @default(0)
   armorClass   Int @default(10)
   speed        Int @default(30)
   
