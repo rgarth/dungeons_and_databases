@@ -4,7 +4,7 @@ import { User, BarChart3, Swords, X, Trash2, Package, Coins } from "lucide-react
 import { useState, useEffect } from "react";
 import { getModifier } from "@/lib/dnd/core";
 import { Spell, getClassSpells } from "@/lib/dnd/spells";
-import { Weapon, MagicalWeapon, InventoryItem, WEAPONS, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, Armor, ARMOR, calculateArmorClass } from "@/lib/dnd/equipment";
+import { Weapon, MagicalWeapon, InventoryItem, WEAPONS, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, Armor, calculateArmorClass } from "@/lib/dnd/equipment";
 import { Action, canEquipArmor } from "@/lib/dnd/combat";
 import { Treasure } from "@/lib/dnd/data";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
@@ -140,102 +140,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
   const [equippedArmor, setEquippedArmor] = useState<Armor[]>([]);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
 
-  // Migration function to move armor from general inventory to armor inventory
-  const migrateArmorFromInventory = () => {
-    const armorNamesToMigrate: string[] = [];
-    const nonArmorInventory: InventoryItem[] = [];
-    
-    // Check if we need to migrate
-    inventory.forEach(item => {
-      const armorItem = ARMOR.find(armor => armor.name === item.name);
-      if (armorItem) {
-        armorNamesToMigrate.push(item.name);
-      } else {
-        nonArmorInventory.push(item);
-      }
-    });
-    
-    if (armorNamesToMigrate.length > 0) {
-      const newArmorObjects = armorNamesToMigrate.map(name => 
-        ARMOR.find(armor => armor.name === name)!
-      );
-      
-      const updatedInventoryArmor = [...inventoryArmor, ...newArmorObjects];
-      
-      // Update state
-      setInventory(nonArmorInventory);
-      setInventoryArmor(updatedInventoryArmor);
-      
-      // Save to database
-      updateCharacter({ 
-        inventory: nonArmorInventory,
-        inventoryArmor: updatedInventoryArmor 
-      });
-    }
-  };
-
-  // Migration function to move weapons from general inventory to weapon inventory
-  const migrateWeaponsFromInventory = () => {
-    const weaponNamesToMigrate: string[] = [];
-    const nonWeaponInventory: InventoryItem[] = [];
-    
-    // Check if we need to migrate
-    inventory.forEach(item => {
-      const weaponItem = WEAPONS.find(weapon => weapon.name === item.name);
-      if (weaponItem) {
-        weaponNamesToMigrate.push(item.name);
-      } else {
-        nonWeaponInventory.push(item);
-      }
-    });
-    
-    if (weaponNamesToMigrate.length > 0) {
-      const newWeaponObjects = weaponNamesToMigrate.map(name => 
-        WEAPONS.find(weapon => weapon.name === name)!
-      );
-      
-      const updatedInventoryWeapons = [...inventoryWeapons, ...newWeaponObjects];
-      
-      // Update state
-      setInventory(nonWeaponInventory);
-      setInventoryWeapons(updatedInventoryWeapons);
-      
-      // Save to database
-      updateCharacter({ 
-        inventory: nonWeaponInventory,
-        inventoryWeapons: updatedInventoryWeapons 
-      });
-    }
-  };
-
-  // Run migration on component mount (only for armor - weapons now categorized during creation)
-  useEffect(() => {
-    // Migrate armor (keep this for backward compatibility with existing characters)
-    const hasArmorInGeneralInventory = inventory.some(item => 
-      ARMOR.find(armor => armor.name === item.name)
-    );
-    const hasArmorInArmorInventory = inventoryArmor.length > 0;
-    
-    if (hasArmorInGeneralInventory && !hasArmorInArmorInventory) {
-      console.log('Migrating armor from general inventory to armor inventory...');
-      migrateArmorFromInventory();
-    }
-
-    // Legacy weapon migration (only for old characters that still have weapons in general inventory)
-    const hasWeaponsInGeneralInventory = inventory.some(item => 
-      WEAPONS.find(weapon => weapon.name === item.name)
-    );
-    
-    if (hasWeaponsInGeneralInventory) {
-      console.log('Migrating weapons from general inventory to weapon inventory (legacy)...');
-      migrateWeaponsFromInventory();
-    }
-  }, [character.id]); // Only run when character changes
-
-
   // Calculate dynamic armor class based on equipped armor
   const currentArmorClass = calculateArmorClass(equippedArmor, displayCharacter.dexterity);
-
 
   const handleDeleteCharacter = async () => {
     setIsDeleting(true);
