@@ -542,15 +542,24 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
   // Helper function to calculate weapon limits based on D&D 5e rules
   const getWeaponLimits = () => {
-    const hasShield = inventoryArmor.some(armor => armor.type === 'Shield' && equippedArmor.some(equipped => equipped.name === armor.name));
-    const hasTwoHandedWeapon = equippedWeapons.some(weapon => weapon.properties.includes('Two-Handed'));
+    const hasShield = equippedArmor.some(armor => armor.type === 'Shield');
+    
+    // In D&D 5e, you can carry multiple weapons and switch between them
+    // The limitation is what you can actively use in combat, not what you can carry
+    // We'll be more generous with carrying capacity but show warnings about hand usage
     
     if (hasShield) {
-      return { max: 1, reason: "Shield equipped - only one weapon can be wielded" };
-    } else if (hasTwoHandedWeapon) {
-      return { max: 1, reason: "Two-handed weapon equipped" };
+      // With shield: can carry multiple weapons but only use 1-handed weapons effectively
+      return { 
+        max: 4, 
+        reason: "Shield equipped - can carry multiple weapons but only use one-handed weapons effectively" 
+      };
     } else {
-      return { max: 2, reason: "Two hands available for weapons (two-weapon fighting possible)" };
+      // Without shield: can carry multiple weapons and switch between them as needed
+      return { 
+        max: 6, 
+        reason: "Can carry multiple weapons - switch between melee and ranged as needed" 
+      };
     }
   };
   
@@ -1069,10 +1078,22 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                           Equipped Weapons ({equippedWeapons.length}/{weaponLimits.max})
                         </h3>
                         
-                        {/* Show weapon limits info */}
-                        {weaponLimits.max < 2 && (
+                        {/* D&D Combat Usage Information */}
+                        <div className="mb-4 text-sm text-blue-300 bg-blue-900/20 p-3 rounded">
+                          <div className="font-medium mb-1">⚔️ D&D 5e Combat:</div>
+                          <div className="text-xs space-y-1">
+                            <div>• <strong>Melee weapons:</strong> Used when adjacent to enemies</div>
+                            <div>• <strong>Ranged weapons:</strong> Used for distant targets (crossbows, bows)</div>
+                            <div>• <strong>Two-handed weapons:</strong> Require both hands when attacking</div>
+                            <div>• <strong>Switching:</strong> Free to draw/sheath weapons once per turn</div>
+                          </div>
+                        </div>
+                        
+                        {/* Show shield compatibility warning if relevant */}
+                        {equippedArmor.some(armor => armor.type === 'Shield') && 
+                         equippedWeapons.some(weapon => weapon.properties.includes('Two-handed')) && (
                           <div className="mb-3 text-sm text-orange-300 bg-orange-900/20 p-2 rounded">
-                            ⚠️ {weaponLimits.reason}
+                            ⚠️ Shield + Two-handed weapon: Can&apos;t use both simultaneously in combat
                           </div>
                         )}
                         
@@ -1081,6 +1102,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                           {equippedWeapons.map((weapon, index) => {
                             const isMagical = 'magicalName' in weapon;
                             const isProficient = canEquipWeapon(weapon, character.class);
+                            const isTwoHanded = weapon.properties.includes('Two-handed');
                             
                             return (
                               <div key={index} className="bg-slate-600 p-3 rounded">
@@ -1088,6 +1110,16 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                   <div className="flex-1">
                                     <div className="flex items-center gap-2">
                                       <div className="text-white font-medium">{weapon.name}</div>
+                                      {weapon.category === 'Ranged' && (
+                                        <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
+                                          Ranged
+                                        </span>
+                                      )}
+                                      {isTwoHanded && (
+                                        <span className="text-xs bg-orange-900/50 text-orange-300 px-2 py-1 rounded">
+                                          Two-handed
+                                        </span>
+                                      )}
                                       {isMagical && (
                                         <span className="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded">
                                           {(weapon as MagicalWeapon).rarity}
