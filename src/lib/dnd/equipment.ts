@@ -122,6 +122,17 @@ export const WEAPONS: Weapon[] = [
     stackable: false
   },
   {
+    name: "Handaxe",
+    type: "Simple",
+    category: "Melee",
+    damage: "1d6",
+    damageType: "Slashing",
+    properties: ["Light", "Thrown (20/60)"],
+    weight: 2,
+    cost: "5 gp",
+    stackable: true
+  },
+  {
     name: "Quarterstaff",
     type: "Simple",
     category: "Melee", 
@@ -179,6 +190,28 @@ export const WEAPONS: Weapon[] = [
   },
   // Martial Melee Weapons
   {
+    name: "Shortsword",
+    type: "Martial",
+    category: "Melee",
+    damage: "1d6",
+    damageType: "Piercing",
+    properties: ["Finesse", "Light"],
+    weight: 2,
+    cost: "10 gp",
+    stackable: false
+  },
+  {
+    name: "Scimitar",
+    type: "Martial",
+    category: "Melee",
+    damage: "1d6",
+    damageType: "Slashing",
+    properties: ["Finesse", "Light"],
+    weight: 3,
+    cost: "25 gp",
+    stackable: false
+  },
+  {
     name: "Longsword",
     type: "Martial",
     category: "Melee",
@@ -198,6 +231,28 @@ export const WEAPONS: Weapon[] = [
     properties: ["Finesse"],
     weight: 2,
     cost: "25 gp",
+    stackable: false
+  },
+  {
+    name: "Warhammer",
+    type: "Martial",
+    category: "Melee",
+    damage: "1d8",
+    damageType: "Bludgeoning",
+    properties: ["Versatile (1d10)"],
+    weight: 2,
+    cost: "15 gp",
+    stackable: false
+  },
+  {
+    name: "Battleaxe",
+    type: "Martial",
+    category: "Melee",
+    damage: "1d8",
+    damageType: "Slashing",
+    properties: ["Versatile (1d10)"],
+    weight: 4,
+    cost: "10 gp",
     stackable: false
   },
   {

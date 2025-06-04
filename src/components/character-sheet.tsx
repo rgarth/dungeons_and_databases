@@ -78,12 +78,49 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   const [silverPieces, setSilverPieces] = useState(character.silverPieces || 0);
   const [goldPieces, setGoldPieces] = useState(character.goldPieces || 0);
   const [treasures, setTreasures] = useState<Treasure[]>(character.treasures || []);
-  const [inventoryWeapons, setInventoryWeapons] = useState<(Weapon | MagicalWeapon)[]>(character.inventoryWeapons || []);
-  const [equippedWeapons, setEquippedWeapons] = useState<(Weapon | MagicalWeapon)[]>(
-    character.equippedWeapons || []
-  );
-  const [inventoryArmor, setInventoryArmor] = useState<Armor[]>(character.inventoryArmor || []);
-  const [equippedArmor, setEquippedArmor] = useState<Armor[]>(character.armor || []);
+  
+  // Debug logging for character data
+  console.log('CharacterSheet rendered with character:', {
+    id: character.id,
+    name: character.name,
+    inventoryWeapons: character.inventoryWeapons,
+    inventoryArmor: character.inventoryArmor,
+    equippedWeapons: character.equippedWeapons,
+    armor: character.armor
+  });
+  
+  const [inventoryWeapons, setInventoryWeapons] = useState<(Weapon | MagicalWeapon)[]>(() => {
+    console.log('Character inventoryWeapons received:', character.inventoryWeapons);
+    
+    // Handle case where inventoryWeapons might be null/undefined or not properly loaded
+    if (!character.inventoryWeapons || !Array.isArray(character.inventoryWeapons)) {
+      console.log('No inventoryWeapons found or not an array');
+      return [];
+    }
+    
+    console.log('Processing', character.inventoryWeapons.length, 'weapons from database');
+    
+    // If the data comes from JSON, it might need to be converted back to proper Weapon objects
+    return character.inventoryWeapons.map(weapon => {
+      // Ensure the weapon has all required properties
+      if (typeof weapon === 'object' && weapon.name) {
+        return weapon;
+      }
+      return weapon;
+    });
+  });
+  const [equippedWeapons, setEquippedWeapons] = useState<(Weapon | MagicalWeapon)[]>(() => {
+    console.log('Character equipped weapons received:', character.weapons);
+    return character.weapons || [];
+  });
+  const [inventoryArmor, setInventoryArmor] = useState<Armor[]>(() => {
+    console.log('Character inventoryArmor received:', character.inventoryArmor);
+    return character.inventoryArmor || [];
+  });
+  const [equippedArmor, setEquippedArmor] = useState<Armor[]>(() => {
+    console.log('Character equipped armor received:', character.armor);
+    return character.armor || [];
+  });
   
   const [inventory, setInventory] = useState<InventoryItem[]>(() => {
     if (!character.inventory) return [];
@@ -163,9 +200,9 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     }
   };
 
-  // Run migration on component mount
+  // Run migration on component mount (only for armor - weapons now categorized during creation)
   useEffect(() => {
-    // Migrate armor
+    // Migrate armor (keep this for backward compatibility with existing characters)
     const hasArmorInGeneralInventory = inventory.some(item => 
       ARMOR.find(armor => armor.name === item.name)
     );
@@ -176,14 +213,13 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       migrateArmorFromInventory();
     }
 
-    // Migrate weapons
+    // Legacy weapon migration (only for old characters that still have weapons in general inventory)
     const hasWeaponsInGeneralInventory = inventory.some(item => 
       WEAPONS.find(weapon => weapon.name === item.name)
     );
-    const hasWeaponsInWeaponInventory = inventoryWeapons.length > 0;
     
-    if (hasWeaponsInGeneralInventory && !hasWeaponsInWeaponInventory) {
-      console.log('Migrating weapons from general inventory to weapon inventory...');
+    if (hasWeaponsInGeneralInventory) {
+      console.log('Migrating weapons from general inventory to weapon inventory (legacy)...');
       migrateWeaponsFromInventory();
     }
   }, [character.id]); // Only run when character changes
@@ -1023,162 +1059,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
             {activeTab === "equipment" && (
               <div className="p-6">
                 <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Left Column - Inventory & Weapons */}
-                  <div className="space-y-6">
-                    {/* Armor Section */}
-                    <div className="bg-slate-700 rounded-lg p-4">
-                      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <Shield className="h-5 w-5" />
-                        Armor & Protection
-                      </h3>
-                      
-                      {/* Current Armor */}
-                      <div className="space-y-2 mb-4">
-                        <h4 className="text-sm font-medium text-slate-300">Equipped</h4>
-                        {equippedArmor && equippedArmor.length > 0 ? equippedArmor.map((armor, index) => (
-                          <div key={index} className="bg-slate-600 p-3 rounded">
-                            <div className="flex items-center justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2">
-                                  <div className="text-white font-medium">{armor.name}</div>
-                                  <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
-                                    {armor.type}
-                                  </span>
-                                </div>
-                                <div className="text-slate-300 text-sm">
-                                  AC {armor.type === 'Shield' ? `+${armor.baseAC}` : armor.baseAC}
-                                  {armor.maxDexBonus !== undefined && ` (Max Dex +${armor.maxDexBonus})`}
-                                  {armor.minStrength && ` • Str ${armor.minStrength}`}
-                                  {armor.stealthDisadvantage && ` • Stealth Disadvantage`}
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <button
-                                  onClick={() => handleUnequipArmor(index)}
-                                  className="bg-slate-500 hover:bg-slate-400 text-white text-xs px-2 py-1 rounded"
-                                >
-                                  Unequip
-                                </button>
-                                <button
-                                  onClick={() => handleRemoveArmor(index, true)}
-                                  className="text-red-400 hover:text-red-300 transition-colors p-1"
-                                >
-                                  <Trash2 className="h-3 w-3" />
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )) : (
-                          <p className="text-slate-500 text-sm italic">No armor equipped</p>
-                        )}
-                      </div>
-
-                      {/* Armor in Storage */}
-                      <div className="space-y-2 mb-4">
-                        <h4 className="text-sm font-medium text-slate-300">Storage</h4>
-                        {inventoryArmor && inventoryArmor.length > 0 ? inventoryArmor.map((armor, index) => {
-                          const canEquip = canEquipArmor(armor.type, character.class);
-                          const hasStrengthReq = !armor.minStrength || character.strength >= armor.minStrength;
-                          
-                          return (
-                            <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-orange-500">
-                              <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2">
-                                    <div className="text-white font-medium">{armor.name}</div>
-                                    <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
-                                      {armor.type}
-                                    </span>
-                                    {!canEquip && (
-                                      <span className="text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded">
-                                        No Proficiency
-                                      </span>
-                                    )}
-                                    {!hasStrengthReq && (
-                                      <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">
-                                        Str Req: {armor.minStrength}
-                                      </span>
-                                    )}
-                                  </div>
-                                  <div className="text-slate-300 text-sm">{armor.description}</div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <button
-                                    onClick={() => handleEquipArmor(armor, index)}
-                                    disabled={!canEquip || !hasStrengthReq}
-                                    className="bg-green-600 hover:bg-green-700 disabled:bg-slate-500 disabled:opacity-50 text-white text-sm px-3 py-1 rounded font-medium"
-                                    title={!canEquip ? "Class cannot use this armor" : !hasStrengthReq ? "Insufficient strength" : "Equip armor"}
-                                  >
-                                    {!canEquip ? "Can't Use" : !hasStrengthReq ? "Too Heavy" : "Equip"}
-                                  </button>
-                                  <button
-                                    onClick={() => handleRemoveArmor(index, false)}
-                                    className="text-red-400 hover:text-red-300 transition-colors p-1"
-                                  >
-                                    <Trash2 className="h-3 w-3" />
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        }) : (
-                          <div className="text-center py-4 border-2 border-dashed border-slate-600 rounded-lg">
-                            <Shield className="h-6 w-6 text-slate-500 mx-auto mb-2" />
-                            <p className="text-slate-500 text-sm">No armor in storage</p>
-                            <p className="text-slate-600 text-xs">Add armor below to get started</p>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Add New Armor Section */}
-                      <div className="bg-slate-700 rounded-lg p-4">
-                        <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                          <Plus className="h-5 w-5" />
-                          Add New Armor
-                        </h3>
-                        <p className="text-slate-400 text-sm mb-3">Add armor to your inventory from the equipment database</p>
-                        <select
-                          onChange={(e) => {
-                            if (e.target.value) {
-                              handleAddArmorFromEquipment(e.target.value);
-                              e.target.value = "";
-                            }
-                          }}
-                          className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-                        >
-                          <option value="">Select armor to add to inventory...</option>
-                          {ARMOR.map(armor => (
-                            <option key={armor.name} value={armor.name}>
-                              {armor.name} - {armor.cost} ({armor.type})
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    {/* Enhanced AC Display */}
-                    <div className="bg-slate-700 rounded-lg p-4">
-                      <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                        <Shield className="h-5 w-5" />
-                        Armor Class Calculator
-                      </h3>
-                      <div className="text-center">
-                        <div className="text-3xl font-bold text-blue-400 mb-2">
-                          {calculateArmorClass(equippedArmor, character.dexterity)}
-                        </div>
-                        <div className="text-sm text-slate-400">
-                          Base: {equippedArmor.find(a => a.type !== 'Shield')?.baseAC || 10}
-                          {equippedArmor.find(a => a.type !== 'Shield')?.maxDexBonus !== undefined 
-                            ? ` + Dex (max +${equippedArmor.find(a => a.type !== 'Shield')?.maxDexBonus})`
-                            : ` + Dex ${getModifier(character.dexterity) >= 0 ? '+' : ''}${getModifier(character.dexterity)}`
-                          }
-                          {equippedArmor.find(a => a.type === 'Shield') && ` + Shield +${equippedArmor.find(a => a.type === 'Shield')?.baseAC}`}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right Column - Weapons and Spells */}
+                  {/* Left Column - Weapons */}
                   <div className="space-y-6">
                     {/* Equipped Weapons Section */}
                     {equippedWeapons && equippedWeapons.length > 0 && (
@@ -1199,6 +1080,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                         <div className="space-y-2 mb-4">
                           {equippedWeapons.map((weapon, index) => {
                             const isMagical = 'magicalName' in weapon;
+                            const isProficient = canEquipWeapon(weapon, character.class);
+                            
                             return (
                               <div key={index} className="bg-slate-600 p-3 rounded">
                                 <div className="flex items-center justify-between">
@@ -1210,6 +1093,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                           {(weapon as MagicalWeapon).rarity}
                                         </span>
                                       )}
+                                      {!isProficient && (
+                                        <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">
+                                          No Prof Bonus
+                                        </span>
+                                      )}
                                     </div>
                                     <div className="text-slate-300 text-sm">
                                       {weapon.damage}{isMagical && (weapon as MagicalWeapon).damageBonus > 0 && `+${(weapon as MagicalWeapon).damageBonus}`} {weapon.damageType}
@@ -1217,6 +1105,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                         <span className="text-purple-300"> • +{(weapon as MagicalWeapon).attackBonus} to hit</span>
                                       )}
                                     </div>
+                                    {!isProficient && (
+                                      <div className="text-yellow-300 text-xs mt-1">
+                                        ⚠️ No proficiency - won&apos;t add proficiency bonus to attacks
+                                      </div>
+                                    )}
                                     {isMagical && (weapon as MagicalWeapon).magicalProperties && (
                                       <div className="text-purple-300 text-xs mt-1 italic">
                                         {(weapon as MagicalWeapon).magicalProperties}
@@ -1404,6 +1297,161 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                         </div>
                       </div>
                     )}
+                  </div>
+
+                  {/* Right Column - Armor */}
+                  <div className="space-y-6">
+                    {/* Armor Section */}
+                    <div className="bg-slate-700 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <Shield className="h-5 w-5" />
+                        Armor & Protection
+                      </h3>
+                      
+                      {/* Current Armor */}
+                      <div className="space-y-2 mb-4">
+                        <h4 className="text-sm font-medium text-slate-300">Equipped</h4>
+                        {equippedArmor && equippedArmor.length > 0 ? equippedArmor.map((armor, index) => (
+                          <div key={index} className="bg-slate-600 p-3 rounded">
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <div className="text-white font-medium">{armor.name}</div>
+                                  <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
+                                    {armor.type}
+                                  </span>
+                                </div>
+                                <div className="text-slate-300 text-sm">
+                                  AC {armor.type === 'Shield' ? `+${armor.baseAC}` : armor.baseAC}
+                                  {armor.maxDexBonus !== undefined && ` (Max Dex +${armor.maxDexBonus})`}
+                                  {armor.minStrength && ` • Str ${armor.minStrength}`}
+                                  {armor.stealthDisadvantage && ` • Stealth Disadvantage`}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => handleUnequipArmor(index)}
+                                  className="bg-slate-500 hover:bg-slate-400 text-white text-xs px-2 py-1 rounded"
+                                >
+                                  Unequip
+                                </button>
+                                <button
+                                  onClick={() => handleRemoveArmor(index, true)}
+                                  className="text-red-400 hover:text-red-300 transition-colors p-1"
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )) : (
+                          <p className="text-slate-500 text-sm italic">No armor equipped</p>
+                        )}
+                      </div>
+
+                      {/* Armor in Storage */}
+                      <div className="space-y-2 mb-4">
+                        <h4 className="text-sm font-medium text-slate-300">Storage</h4>
+                        {inventoryArmor && inventoryArmor.length > 0 ? inventoryArmor.map((armor, index) => {
+                          const canEquip = canEquipArmor(armor.type, character.class);
+                          const hasStrengthReq = !armor.minStrength || character.strength >= armor.minStrength;
+                          
+                          return (
+                            <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-orange-500">
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <div className="text-white font-medium">{armor.name}</div>
+                                    <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
+                                      {armor.type}
+                                    </span>
+                                    {!canEquip && (
+                                      <span className="text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded">
+                                        No Proficiency
+                                      </span>
+                                    )}
+                                    {!hasStrengthReq && (
+                                      <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">
+                                        Str Req: {armor.minStrength}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="text-slate-300 text-sm">{armor.description}</div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => handleEquipArmor(armor, index)}
+                                    disabled={!canEquip || !hasStrengthReq}
+                                    className="bg-green-600 hover:bg-green-700 disabled:bg-slate-500 disabled:opacity-50 text-white text-sm px-3 py-1 rounded font-medium"
+                                    title={!canEquip ? "Class cannot use this armor" : !hasStrengthReq ? "Insufficient strength" : "Equip armor"}
+                                  >
+                                    {!canEquip ? "Can't Use" : !hasStrengthReq ? "Too Heavy" : "Equip"}
+                                  </button>
+                                  <button
+                                    onClick={() => handleRemoveArmor(index, false)}
+                                    className="text-red-400 hover:text-red-300 transition-colors p-1"
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        }) : (
+                          <div className="text-center py-4 border-2 border-dashed border-slate-600 rounded-lg">
+                            <Shield className="h-6 w-6 text-slate-500 mx-auto mb-2" />
+                            <p className="text-slate-500 text-sm">No armor in storage</p>
+                            <p className="text-slate-600 text-xs">Add armor below to get started</p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Add New Armor Section */}
+                      <div className="bg-slate-700 rounded-lg p-4">
+                        <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                          <Plus className="h-5 w-5" />
+                          Add New Armor
+                        </h3>
+                        <p className="text-slate-400 text-sm mb-3">Add armor to your inventory from the equipment database</p>
+                        <select
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              handleAddArmorFromEquipment(e.target.value);
+                              e.target.value = "";
+                            }
+                          }}
+                          className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                        >
+                          <option value="">Select armor to add to inventory...</option>
+                          {ARMOR.map(armor => (
+                            <option key={armor.name} value={armor.name}>
+                              {armor.name} - {armor.cost} ({armor.type})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Enhanced AC Display */}
+                    <div className="bg-slate-700 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                        <Shield className="h-5 w-5" />
+                        Armor Class Calculator
+                      </h3>
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-blue-400 mb-2">
+                          {calculateArmorClass(equippedArmor, character.dexterity)}
+                        </div>
+                        <div className="text-sm text-slate-400">
+                          Base: {equippedArmor.find(a => a.type !== 'Shield')?.baseAC || 10}
+                          {equippedArmor.find(a => a.type !== 'Shield')?.maxDexBonus !== undefined 
+                            ? ` + Dex (max +${equippedArmor.find(a => a.type !== 'Shield')?.maxDexBonus})`
+                            : ` + Dex ${getModifier(character.dexterity) >= 0 ? '+' : ''}${getModifier(character.dexterity)}`
+                          }
+                          {equippedArmor.find(a => a.type === 'Shield') && ` + Shield +${equippedArmor.find(a => a.type === 'Shield')?.baseAC}`}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

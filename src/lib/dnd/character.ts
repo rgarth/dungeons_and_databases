@@ -1,18 +1,341 @@
 // Character generation utilities
+import { Weapon, WEAPONS, Armor, ARMOR } from './equipment';
 
-// Starting Equipment by Class
+// D&D 5e Equipment Packages by Class (players choose from these options)
+export function getEquipmentPackageOptions(characterClass: string): Array<{name: string, items: string[]}> {
+  const packageOptions: Record<string, Array<{name: string, items: string[]}>> = {
+    Barbarian: [
+      {
+        name: "Wilderness Warrior",
+        items: ['Greataxe', 'Handaxe', 'Handaxe', 'Javelin', 'Javelin', 'Javelin', 'Javelin', 'Leather Armor', 'Explorers Pack', 'Shield']
+      },
+      {
+        name: "Tribal Hunter", 
+        items: ['Battleaxe', 'Shortbow', 'Quiver of 20 Arrows', 'Handaxe', 'Handaxe', 'Leather Armor', 'Explorers Pack']
+      },
+      {
+        name: "Berserker",
+        items: ['Greatsword', 'Handaxe', 'Handaxe', 'Javelin', 'Javelin', 'Leather Armor', 'Explorers Pack']
+      }
+    ],
+    Fighter: [
+      {
+        name: "Armored Warrior",
+        items: ['Chain Mail', 'Shield', 'Longsword', 'Handaxe', 'Handaxe', 'Light Crossbow', 'Quiver of 20 Bolts', 'Dungeoneers Pack']
+      },
+      {
+        name: "Archer",
+        items: ['Leather Armor', 'Longbow', 'Quiver of 20 Arrows', 'Shortsword', 'Shortsword', 'Dungeoneers Pack']
+      },
+      {
+        name: "Weapon Master",
+        items: ['Chain Mail', 'Greatsword', 'Handaxe', 'Handaxe', 'Light Crossbow', 'Quiver of 20 Bolts', 'Dungeoneers Pack']
+      },
+      {
+        name: "Scout",
+        items: ['Studded Leather Armor', 'Shield', 'Scimitar', 'Shortbow', 'Quiver of 20 Arrows', 'Explorers Pack']
+      }
+    ],
+    Cleric: [
+      {
+        name: "Battle Cleric",
+        items: ['Chain Mail', 'Shield', 'Warhammer', 'Light Crossbow', 'Quiver of 20 Bolts', 'Priests Pack', 'Holy Symbol']
+      },
+      {
+        name: "Divine Healer",
+        items: ['Scale Mail', 'Shield', 'Mace', 'Javelin', 'Javelin', 'Priests Pack', 'Holy Symbol', 'Healers Kit']
+      },
+      {
+        name: "Temple Guardian",
+        items: ['Chain Mail', 'Shield', 'Morningstar', 'Handaxe', 'Handaxe', 'Priests Pack', 'Holy Symbol']
+      }
+    ],
+    Wizard: [
+      {
+        name: "Scholar Mage",
+        items: ['Quarterstaff', 'Spellbook', 'Component Pouch', 'Scholars Pack', 'Dagger', 'Dagger']
+      },
+      {
+        name: "Court Wizard",
+        items: ['Dagger', 'Spellbook', 'Arcane Focus', 'Scholars Pack', 'Light Crossbow', 'Quiver of 20 Bolts']
+      },
+      {
+        name: "War Mage",
+        items: ['Quarterstaff', 'Spellbook', 'Arcane Focus', 'Dungeoneers Pack', 'Scimitar']
+      }
+    ],
+    Rogue: [
+      {
+        name: "Burglar",
+        items: ['Studded Leather Armor', 'Shortsword', 'Shortsword', 'Thieves Tools', 'Burglars Pack', 'Leather Armor', 'Dagger', 'Dagger']
+      },
+      {
+        name: "Scout",
+        items: ['Leather Armor', 'Shortbow', 'Quiver of 20 Arrows', 'Shortsword', 'Thieves Tools', 'Dungeoneers Pack', 'Dagger', 'Dagger']
+      },
+      {
+        name: "Assassin",
+        items: ['Studded Leather Armor', 'Shortsword', 'Shortbow', 'Quiver of 20 Arrows', 'Thieves Tools', 'Dungeoneers Pack', 'Dagger', 'Dagger', 'Dagger']
+      }
+    ],
+    Ranger: [
+      {
+        name: "Beast Hunter",
+        items: ['Studded Leather Armor', 'Shortsword', 'Shortsword', 'Longbow', 'Quiver of 20 Arrows', 'Explorers Pack']
+      },
+      {
+        name: "Tracker",
+        items: ['Scale Mail', 'Shield', 'Scimitar', 'Shortbow', 'Quiver of 20 Arrows', 'Explorers Pack']
+      },
+      {
+        name: "Wilderness Guide",
+        items: ['Leather Armor', 'Rapier', 'Longbow', 'Quiver of 20 Arrows', 'Explorers Pack', 'Handaxe', 'Handaxe']
+      }
+    ],
+    Paladin: [
+      {
+        name: "Holy Knight",
+        items: ['Chain Mail', 'Shield', 'Longsword', 'Javelin', 'Javelin', 'Javelin', 'Javelin', 'Javelin', 'Explorers Pack', 'Holy Symbol']
+      },
+      {
+        name: "Divine Warrior",
+        items: ['Chain Mail', 'Greatsword', 'Handaxe', 'Handaxe', 'Javelin', 'Javelin', 'Explorers Pack', 'Holy Symbol']
+      },
+      {
+        name: "Crusader",
+        items: ['Chain Mail', 'Shield', 'Warhammer', 'Light Crossbow', 'Quiver of 20 Bolts', 'Explorers Pack', 'Holy Symbol']
+      }
+    ],
+    Bard: [
+      {
+        name: "Traveling Minstrel",
+        items: ['Leather Armor', 'Rapier', 'Entertainers Pack', 'Lute', 'Dagger']
+      },
+      {
+        name: "College Scholar",
+        items: ['Studded Leather Armor', 'Shortsword', 'Scholars Pack', 'Lyre', 'Dagger', 'Dagger']
+      },
+      {
+        name: "Court Bard",
+        items: ['Leather Armor', 'Scimitar', 'Entertainers Pack', 'Dulcimer', 'Shortbow', 'Quiver of 20 Arrows']
+      }
+    ],
+    Warlock: [
+      {
+        name: "Pact Keeper",
+        items: ['Leather Armor', 'Scimitar', 'Light Crossbow', 'Quiver of 20 Bolts', 'Scholars Pack', 'Dagger', 'Dagger']
+      },
+      {
+        name: "Eldritch Warrior",
+        items: ['Studded Leather Armor', 'Shortsword', 'Shortbow', 'Quiver of 20 Arrows', 'Dungeoneers Pack', 'Dagger', 'Dagger']
+      },
+      {
+        name: "Dark Scholar",
+        items: ['Leather Armor', 'Quarterstaff', 'Light Crossbow', 'Quiver of 20 Bolts', 'Scholars Pack', 'Dagger', 'Dagger']
+      }
+    ],
+    Sorcerer: [
+      {
+        name: "Wild Mage",
+        items: ['Dagger', 'Dagger', 'Component Pouch', 'Dungeoneers Pack', 'Light Crossbow', 'Quiver of 20 Bolts']
+      },
+      {
+        name: "Noble Bloodline",
+        items: ['Quarterstaff', 'Arcane Focus', 'Explorers Pack', 'Dagger', 'Dagger']
+      },
+      {
+        name: "Elemental Adept",
+        items: ['Dagger', 'Component Pouch', 'Scholars Pack', 'Light Crossbow', 'Quiver of 20 Bolts']
+      }
+    ],
+    Druid: [
+      {
+        name: "Circle Guardian",
+        items: ['Leather Armor', 'Shield', 'Scimitar', 'Javelin', 'Javelin', 'Explorers Pack', 'Druidcraft Focus']
+      },
+      {
+        name: "Wilderness Hermit",
+        items: ['Studded Leather Armor', 'Quarterstaff', 'Dart', 'Dart', 'Dart', 'Dart', 'Explorers Pack', 'Druidcraft Focus']
+      },
+      {
+        name: "Beast Friend",
+        items: ['Leather Armor', 'Shield', 'Spear', 'Shortbow', 'Quiver of 20 Arrows', 'Explorers Pack', 'Druidcraft Focus']
+      }
+    ],
+    Monk: [
+      {
+        name: "Temple Initiate",
+        items: ['Shortsword', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dungeoneers Pack']
+      },
+      {
+        name: "Wandering Ascetic",
+        items: ['Handaxe', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Explorers Pack']
+      },
+      {
+        name: "Mountain Monk",
+        items: ['Spear', 'Shortbow', 'Quiver of 20 Arrows', 'Explorers Pack']
+      }
+    ]
+  };
+
+  return packageOptions[characterClass] || [
+    {
+      name: "Basic Adventurer",
+      items: ['Dagger', 'Explorers Pack', 'Leather Armor']
+    }
+  ];
+}
+
+// D&D 5e Equipment Packs (separate from weapons)
+export function getEquipmentPackOptions(): Array<{name: string, items: Array<{name: string, quantity: number}>, description: string}> {
+  return [
+    {
+      name: "Dungeoneers Pack",
+      description: "For exploring dungeons and underground adventures",
+      items: [
+        {name: 'Backpack', quantity: 1},
+        {name: 'Crowbar', quantity: 1},
+        {name: 'Hammer', quantity: 1},
+        {name: 'Piton', quantity: 10},
+        {name: 'Torch', quantity: 10},
+        {name: 'Tinderbox', quantity: 1},
+        {name: 'Rations (10 days)', quantity: 1},
+        {name: 'Waterskin', quantity: 1},
+        {name: 'Hempen Rope (50 feet)', quantity: 1}
+      ]
+    },
+    {
+      name: "Explorers Pack", 
+      description: "For wilderness exploration and outdoor adventures",
+      items: [
+        {name: 'Backpack', quantity: 1},
+        {name: 'Bedroll', quantity: 1},
+        {name: 'Mess Kit', quantity: 1},
+        {name: 'Tinderbox', quantity: 1},
+        {name: 'Torch', quantity: 10},
+        {name: 'Rations (10 days)', quantity: 1},
+        {name: 'Waterskin', quantity: 1},
+        {name: 'Hempen Rope (50 feet)', quantity: 1}
+      ]
+    },
+    {
+      name: "Entertainers Pack",
+      description: "For bards and performers",
+      items: [
+        {name: 'Backpack', quantity: 1},
+        {name: 'Bedroll', quantity: 1},
+        {name: 'Costume Clothes', quantity: 2},
+        {name: 'Candle', quantity: 5},
+        {name: 'Rations (5 days)', quantity: 1},
+        {name: 'Waterskin', quantity: 1},
+        {name: 'Disguise Kit', quantity: 1}
+      ]
+    },
+    {
+      name: "Priests Pack",
+      description: "For clerics and religious characters", 
+      items: [
+        {name: 'Backpack', quantity: 1},
+        {name: 'Blanket', quantity: 1},
+        {name: 'Tinderbox', quantity: 1},
+        {name: 'Alms Box', quantity: 1},
+        {name: 'Incense', quantity: 2},
+        {name: 'Censer', quantity: 1},
+        {name: 'Vestments', quantity: 1},
+        {name: 'Rations (2 days)', quantity: 1},
+        {name: 'Waterskin', quantity: 1}
+      ]
+    },
+    {
+      name: "Scholars Pack",
+      description: "For wizards and learned characters",
+      items: [
+        {name: 'Backpack', quantity: 1},
+        {name: 'Book of Lore', quantity: 1},
+        {name: 'Ink', quantity: 2},
+        {name: 'Quill', quantity: 1},
+        {name: 'Parchment (10 sheets)', quantity: 1},
+        {name: 'Little Bag of Sand', quantity: 1},
+        {name: 'Small Knife', quantity: 1}
+      ]
+    },
+    {
+      name: "Burglars Pack", 
+      description: "For rogues and sneaky characters",
+      items: [
+        {name: 'Backpack', quantity: 1},
+        {name: 'Ball Bearings (1000)', quantity: 1},
+        {name: 'String (10 feet)', quantity: 1},
+        {name: 'Bell', quantity: 1},
+        {name: 'Candle', quantity: 5},
+        {name: 'Crowbar', quantity: 1},
+        {name: 'Hammer', quantity: 1},
+        {name: 'Piton', quantity: 10},
+        {name: 'Hooded Lantern', quantity: 1},
+        {name: 'Oil (2 flasks)', quantity: 1},
+        {name: 'Rations (5 days)', quantity: 1},
+        {name: 'Waterskin', quantity: 1},
+        {name: 'Hempen Rope (50 feet)', quantity: 1}
+      ]
+    }
+  ];
+}
+
+// Weapon suggestions by class (players can customize freely)
+export function getClassWeaponSuggestions(characterClass: string): Weapon[] {
+  const weaponSuggestions: Record<string, string[]> = {
+    Barbarian: ['Greataxe', 'Handaxe', 'Javelin'],
+    Fighter: ['Longsword', 'Shield', 'Handaxe', 'Light Crossbow'],
+    Cleric: ['Warhammer', 'Light Crossbow'],
+    Wizard: ['Quarterstaff', 'Dagger'],
+    Rogue: ['Shortsword', 'Shortbow', 'Dagger'],
+    Ranger: ['Shortsword', 'Longbow'],
+    Paladin: ['Longsword', 'Javelin'],
+    Bard: ['Rapier', 'Dagger'],
+    Warlock: ['Scimitar', 'Light Crossbow'],
+    Sorcerer: ['Dagger', 'Light Crossbow'],
+    Druid: ['Scimitar', 'Javelin'],
+    Monk: ['Shortsword', 'Dart']
+  };
+
+  const suggestions = weaponSuggestions[characterClass] || ['Dagger'];
+  return suggestions.map(name => WEAPONS.find(w => w.name === name)).filter(Boolean) as Weapon[];
+}
+
+// Armor suggestions by class 
+export function getClassArmorSuggestions(characterClass: string): Armor[] {
+  const armorSuggestions: Record<string, string[]> = {
+    Barbarian: ['Leather Armor'],
+    Fighter: ['Chain Mail', 'Shield'],
+    Cleric: ['Scale Mail', 'Shield'],
+    Wizard: [],
+    Rogue: ['Leather Armor'],
+    Ranger: ['Studded Leather'],
+    Paladin: ['Chain Mail', 'Shield'], 
+    Bard: ['Leather Armor'],
+    Warlock: ['Leather Armor'],
+    Sorcerer: [],
+    Druid: ['Leather Armor', 'Shield'],
+    Monk: []
+  };
+
+  const suggestions = armorSuggestions[characterClass] || [];
+  return suggestions.map(name => ARMOR.find(a => a.name === name)).filter(Boolean) as Armor[];
+}
+
+// Legacy function for auto-assignment (keep for backwards compatibility but discourage use)
 export function getStartingEquipment(characterClass: string, background: string): string[] {
   const classEquipment: Record<string, string[]> = {
-    Barbarian: ['Greataxe', 'Handaxe (2)', 'Javelin (4)', 'Leather Armor', 'Explorers Pack'],
+    Barbarian: ['Greataxe', 'Handaxe', 'Handaxe', 'Javelin', 'Javelin', 'Javelin', 'Javelin', 'Leather Armor', 'Explorers Pack'],
     Bard: ['Rapier', 'Leather Armor', 'Dagger', 'Simple Weapon', 'Lute', 'Entertainers Pack'],
     Cleric: ['Scale Mail', 'Shield', 'Warhammer', 'Light Crossbow', 'Priests Pack'],
     Druid: ['Leather Armor', 'Shield', 'Scimitar', 'Simple Weapon', 'Explorers Pack'],
     Fighter: ['Chain Mail', 'Shield', 'Martial Weapon', 'Martial Weapon', 'Light Crossbow', 'Dungeoneer Pack'],
-    Monk: ['Shortsword', 'Simple Weapon', 'Dart (10)', 'Dungeoneer Pack'],
-    Paladin: ['Chain Mail', 'Shield', 'Martial Weapon', 'Javelin (5)', 'Explorers Pack'],
-    Ranger: ['Scale Mail', 'Shield', 'Shortsword (2)', 'Simple Weapon', 'Longbow', 'Dungeoneer Pack'],
-    Rogue: ['Leather Armor', 'Shortsword (2)', 'Shortbow', 'Arrow (20)', 'Thieves Tools', 'Dungeoneer Pack'],
-    Sorcerer: ['Light Crossbow', 'Simple Weapon', 'Dagger (2)', 'Dungeoneer Pack'],
+    Monk: ['Shortsword', 'Simple Weapon', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dungeoneer Pack'],
+    Paladin: ['Chain Mail', 'Shield', 'Martial Weapon', 'Javelin', 'Javelin', 'Javelin', 'Javelin', 'Javelin', 'Explorers Pack'],
+    Ranger: ['Scale Mail', 'Shield', 'Shortsword', 'Shortsword', 'Simple Weapon', 'Longbow', 'Dungeoneer Pack'],
+    Rogue: ['Leather Armor', 'Shortsword', 'Shortsword', 'Shortbow', 'Arrow (20)', 'Thieves Tools', 'Dungeoneer Pack'],
+    Sorcerer: ['Light Crossbow', 'Simple Weapon', 'Dagger', 'Dagger', 'Dungeoneer Pack'],
     Warlock: ['Light Armor', 'Simple Weapon', 'Simple Weapon', 'Light Crossbow', 'Scholars Pack'],
     Wizard: ['Quarterstaff', 'Dagger', 'Light Crossbow', 'Scholars Pack', 'Spellbook']
   };

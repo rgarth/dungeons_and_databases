@@ -5,6 +5,10 @@ import { useState, useEffect } from "react";
 import { Plus, User, LogOut, Sword, Shield } from "lucide-react";
 import { CharacterCard } from "../components/character-card";
 import { CreateCharacterModal } from "../components/create-character-modal";
+import { Weapon, MagicalWeapon, Armor, InventoryItem } from "@/lib/dnd/equipment";
+import { Spell } from "@/lib/dnd/spells";
+import { Action } from "@/lib/dnd/combat";
+import { Treasure } from "@/lib/dnd/data";
 
 // Use a simplified interface for the character list view
 interface CharacterListItem {
@@ -28,26 +32,29 @@ interface CharacterListItem {
   background?: string;
   alignment?: string;
   skills?: string[];
-  inventory?: unknown[];
+  inventory?: InventoryItem[] | string[];
   equipment?: string[];
-  weapons?: unknown[];
-  spells?: unknown[];
+  weapons?: (Weapon | MagicalWeapon)[];
+  inventoryWeapons?: (Weapon | MagicalWeapon)[];
+  armor?: Armor[];
+  inventoryArmor?: Armor[];
+  spells?: Spell[];
   spellSlots?: Record<number, number>;
   spellcastingAbility?: string;
   spellSaveDC?: number;
   spellAttackBonus?: number;
-  actions?: unknown[];
-  bonusActions?: unknown[];
-  reactions?: unknown[];
+  actions?: Action[];
+  bonusActions?: Action[];
+  reactions?: Action[];
   copperPieces?: number;
   silverPieces?: number;
   goldPieces?: number;
-  treasures?: unknown[];
-  inventoryWeapons?: unknown[];
+  treasures?: Treasure[];
   appearance?: string;
   personality?: string;
   backstory?: string;
   notes?: string;
+  equippedWeapons?: (Weapon | MagicalWeapon)[];
 }
 
 export default function Home() {

@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Dice6, RefreshCw, Plus, Minus } from "lucide-react";
-import { 
-  RACES, CLASSES, BACKGROUNDS, ALIGNMENTS, getModifier, getProficiencyBonus, generateAbilityScores, StatMethod, ABILITY_SCORES, AbilityScore, STANDARD_ARRAY, calculatePointBuyRemaining, calculateHitPoints, Spell, Weapon, WEAPONS, getStartingEquipment, getBackgroundSkills, getSpellcastingAbility, calculateSpellSaveDC, calculateSpellAttackBonus, getSpellSlots, getClassSpells, getClassActions, BASIC_ACTIONS, generateFantasyName, canEquipWeapon
-} from "@/lib/dnd";
+import { RACES, CLASSES, BACKGROUNDS, ALIGNMENTS, ABILITY_SCORES, STANDARD_ARRAY } from "@/lib/dnd/core";
+import { AbilityScore, generateAbilityScores, StatMethod, calculatePointBuyRemaining, getModifier, calculateHitPoints, getProficiencyBonus } from "@/lib/dnd/core";
+import { getBackgroundSkills, generateFantasyName, getEquipmentPackOptions, getClassWeaponSuggestions, getClassArmorSuggestions } from "@/lib/dnd/character";
+import { getSpellcastingAbility, getClassSpells, getSpellSlots, calculateSpellSaveDC, calculateSpellAttackBonus } from "@/lib/dnd/spells";
+import { Spell } from "@/lib/dnd/spells";
+import { Weapon, WEAPONS } from "@/lib/dnd/equipment";
+import { canEquipWeapon, BASIC_ACTIONS, getClassActions } from "@/lib/dnd/combat";
 
 interface CreateCharacterModalProps {
   onClose: () => void;
@@ -24,6 +28,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [generatingName, setGeneratingName] = useState(false);
   const [selectedSpells, setSelectedSpells] = useState<Spell[]>([]);
   const [selectedWeapons, setSelectedWeapons] = useState<Weapon[]>([]);
+  const [selectedEquipmentPack, setSelectedEquipmentPack] = useState<number>(0);
 
   const handleStatMethodChange = (method: StatMethod) => {
     setStatMethod(method);
@@ -74,9 +79,12 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }
   };
 
-  const startingEquipment = getStartingEquipment(characterClass, background);
+  const equipmentPacks = getEquipmentPackOptions();
   const backgroundSkills = getBackgroundSkills(background);
   const pointBuyRemaining = statMethod === 'pointbuy' ? calculatePointBuyRemaining(abilityScores) : 0;
+  
+  // Get class-based suggestions
+  const armorSuggestions = getClassArmorSuggestions(characterClass);
   
   // Spellcasting calculations
   const spellcastingAbility = getSpellcastingAbility(characterClass);
@@ -128,6 +136,27 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     setLoading(true);
     try {
       const maxHitPoints = calculateHitPoints(1, abilityScores.constitution, characterClass);
+      const selectedPack = equipmentPacks[selectedEquipmentPack];
+      
+      // Categorize equipment properly from the start
+      const generalInventory: {name: string, quantity: number}[] = [];
+      
+      // Process selected equipment pack (no weapons/armor, just general items)
+      if (selectedPack) {
+        selectedPack.items.forEach(packItem => {
+          // Add items with their quantities to general inventory as InventoryItem objects
+          generalInventory.push({
+            name: packItem.name,
+            quantity: packItem.quantity
+          });
+        });
+      }
+      
+      // Add suggested armor to armor inventory (player can customize later)
+      const startingArmor = [...armorSuggestions];
+      
+      // Verify weapons are being sent (temporary log)
+      console.log('Creating character with weapons:', selectedWeapons.map(w => w.name));
       
       const characterData = {
         name: name.trim(),
@@ -140,9 +169,11 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         hitPoints: maxHitPoints,
         maxHitPoints,
         armorClass: 10 + getModifier(abilityScores.dexterity),
-        inventory: startingEquipment,
+        inventory: generalInventory, // Only non-weapon, non-armor items
         skills: backgroundSkills,
-        weapons: selectedWeapons,
+        weapons: [], // No weapons equipped initially - player chooses from storage
+        inventoryWeapons: selectedWeapons, // Selected weapons go to storage for player to equip
+        inventoryArmor: startingArmor, // Starting equipment armor (in armor storage)
         spells: selectedSpells,
         spellSlots,
         spellcastingAbility,
@@ -171,6 +202,13 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       setLoading(false);
     }
   };
+
+  // Update weapon selection when character class changes
+  useEffect(() => {
+    // Pre-populate selected weapons with class suggestions
+    const suggestions = getClassWeaponSuggestions(characterClass);
+    setSelectedWeapons([...suggestions]);
+  }, [characterClass]); // Only depend on characterClass, not weaponSuggestions
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -445,23 +483,39 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             </div>
           )}
 
-          {/* Starting Equipment */}
+          {/* Equipment Pack */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-2">Starting Equipment</h3>
-            <div className="bg-slate-700 rounded-lg p-4 max-h-32 overflow-y-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
-                {startingEquipment.map((item, index) => (
-                  <div key={index} className="text-slate-300 text-sm">• {item}</div>
-                ))}
+            <h3 className="text-lg font-semibold text-white mb-2">Equipment Pack</h3>
+            <select
+              value={selectedEquipmentPack}
+              onChange={(e) => setSelectedEquipmentPack(parseInt(e.target.value))}
+              className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+            >
+              {equipmentPacks.map((equipmentPack, index) => (
+                <option key={index} value={index}>{equipmentPack.name}</option>
+              ))}
+            </select>
+            
+            {/* Show selected pack contents */}
+            {equipmentPacks[selectedEquipmentPack] && (
+              <div className="mt-3 bg-slate-700 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-slate-300 mb-2">Pack Contents:</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+                  {equipmentPacks[selectedEquipmentPack].items.map((item, index) => (
+                    <div key={index} className="text-slate-300 text-sm">• {item.name} x {item.quantity}</div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Weapon Selection */}
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">Choose Weapons</h3>
             <div className="bg-slate-700 rounded-lg p-4 max-h-64 overflow-y-auto">
-              <p className="text-slate-400 text-sm mb-4">Select up to 3 weapons (in addition to starting equipment)</p>
+              <p className="text-slate-400 text-sm mb-4">
+                Weapons are suggested based on your class. Customize freely - want a club instead of an axe? Go for it! (up to 3 total)
+              </p>
               
               {/* Proficient Weapons First */}
               <div className="mb-4">

@@ -4,6 +4,10 @@ import { Heart, Shield, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { CharacterSheet } from "./character-sheet";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
+import { Weapon, MagicalWeapon, Armor, InventoryItem } from "@/lib/dnd/equipment";
+import { Spell } from "@/lib/dnd/spells";
+import { Action } from "@/lib/dnd/combat";
+import { Treasure } from "@/lib/dnd/data";
 
 interface Character {
   id: string;
@@ -25,12 +29,29 @@ interface Character {
   speed: number;
   proficiencyBonus: number;
   skills?: string[];
-  inventory?: string[];
+  inventory?: InventoryItem[] | string[];
   equipment?: string[];
+  weapons?: (Weapon | MagicalWeapon)[];
+  inventoryWeapons?: (Weapon | MagicalWeapon)[];
+  armor?: Armor[];
+  inventoryArmor?: Armor[];
+  spells?: Spell[];
+  spellSlots?: Record<number, number>;
+  spellcastingAbility?: string;
+  spellSaveDC?: number;
+  spellAttackBonus?: number;
+  actions?: Action[];
+  bonusActions?: Action[];
+  reactions?: Action[];
+  copperPieces?: number;
+  silverPieces?: number;
+  goldPieces?: number;
+  treasures?: Treasure[];
   appearance?: string;
   personality?: string;
   backstory?: string;
   notes?: string;
+  equippedWeapons?: (Weapon | MagicalWeapon)[];
 }
 
 interface CharacterCardProps {
