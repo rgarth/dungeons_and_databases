@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, Shield, Zap, User, BookOpen, Sword, Package, Trash2, Plus, Minus, Coins, BarChart3, Swords, X } from "lucide-react";
+import { Shield, Zap, User, Sword, Package, Trash2, Plus, Minus, Coins, BarChart3, Swords, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getModifier, getProficiencyBonus } from "@/lib/dnd/core";
 import { Spell, getClassSpells } from "@/lib/dnd/spells";
@@ -10,6 +10,7 @@ import { Treasure, COMMON_TREASURES, STORY_TREASURES } from "@/lib/dnd/data";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import { LevelUpModal } from "./level-up-modal";
 import { getSpellcastingType, canPrepareSpells, getSpellsPreparedCount } from "@/lib/dnd/level-up";
+import { StatsTab } from "./character-sheet/";
 
 interface CharacterSheetProps {
   character: {
@@ -28,6 +29,7 @@ interface CharacterSheetProps {
     charisma: number;
     hitPoints: number;
     maxHitPoints: number;
+    temporaryHitPoints?: number;
     armorClass: number;
     speed: number;
     proficiencyBonus: number;
@@ -235,20 +237,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     }
   }, [character.id]); // Only run when character changes
 
-  const abilities = [
-    { name: 'Strength', short: 'STR', value: displayCharacter.strength },
-    { name: 'Dexterity', short: 'DEX', value: displayCharacter.dexterity },
-    { name: 'Constitution', short: 'CON', value: displayCharacter.constitution },
-    { name: 'Intelligence', short: 'INT', value: displayCharacter.intelligence },
-    { name: 'Wisdom', short: 'WIS', value: displayCharacter.wisdom },
-    { name: 'Charisma', short: 'CHA', value: displayCharacter.charisma },
-  ];
-
   const proficiencyBonus = getProficiencyBonus(displayCharacter.level);
-  const hpPercentage = (displayCharacter.hitPoints / displayCharacter.maxHitPoints) * 100;
-  
+
   // Calculate dynamic armor class based on equipped armor
   const currentArmorClass = calculateArmorClass(equippedArmor, displayCharacter.dexterity);
+
 
   const handleDeleteCharacter = async () => {
     setIsDeleting(true);
@@ -281,6 +274,9 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     inventoryWeapons?: (Weapon | MagicalWeapon)[];
     armor?: Armor[];
     inventoryArmor?: Armor[];
+    hitPoints?: number;
+    temporaryHitPoints?: number;
+    spellsPrepared?: Spell[];
   }) => {
     try {
       const response = await fetch(`/api/characters?id=${character.id}`, {
@@ -745,175 +741,16 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
           {/* Tab Content */}
           <div className="flex-1 overflow-y-auto">
             {activeTab === "stats" && (
-              <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Left Column - Core Stats */}
-                <div className="space-y-6">
-                  {/* Ability Scores */}
-                  <div className="bg-slate-700 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                      <Zap className="h-5 w-5" />
-                      Ability Scores
-                    </h3>
-                    <div className="grid grid-cols-2 gap-3">
-                      {abilities.map((ability) => (
-                        <div key={ability.short} className="bg-slate-600 rounded-lg p-3 text-center">
-                          <div className="text-xs text-slate-400 font-medium mb-1">
-                            {ability.short}
-                          </div>
-                          <div className="text-2xl font-bold text-white">{ability.value}</div>
-                          <div className="text-sm text-slate-300">
-                            {getModifier(ability.value) >= 0 ? '+' : ''}{getModifier(ability.value)}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Combat Stats */}
-                  <div className="bg-slate-700 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                      <Sword className="h-5 w-5" />
-                      Combat Stats
-                    </h3>
-                    <div className="space-y-4">
-                      {/* Hit Points */}
-                      <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-slate-300 flex items-center gap-2">
-                            <Heart className="h-4 w-4 text-red-400" />
-                            Hit Points
-                          </span>
-                          <span className="text-white font-semibold">
-                            {displayCharacter.hitPoints}/{displayCharacter.maxHitPoints}
-                          </span>
-                        </div>
-                        <div className="w-full bg-slate-600 rounded-full h-3">
-                          <div
-                            className="bg-red-500 h-3 rounded-full transition-all"
-                            style={{ width: `${hpPercentage}%` }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Armor Class */}
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-300 flex items-center gap-2">
-                          <Shield className="h-4 w-4 text-blue-400" />
-                          Armor Class
-                        </span>
-                        <span className="text-white font-semibold text-xl">{currentArmorClass}</span>
-                      </div>
-
-                      {/* Speed */}
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-300">Speed</span>
-                        <span className="text-white font-semibold">{character.speed} ft</span>
-                      </div>
-
-                      {/* Proficiency Bonus */}
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-300">Proficiency Bonus</span>
-                        <span className="text-white font-semibold">+{proficiencyBonus}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Skills */}
-                  {character.skills && character.skills.length > 0 && (
-                    <div className="bg-slate-700 rounded-lg p-4">
-                      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                        <BookOpen className="h-5 w-5" />
-                        Skill Proficiencies
-                      </h3>
-                      <div className="flex flex-wrap gap-2">
-                        {character.skills.map((skill) => (
-                          <span
-                            key={skill}
-                            className="bg-purple-900/30 text-purple-300 px-3 py-1 rounded-lg text-sm"
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Right Column - Character Details */}
-                <div className="space-y-6">
-                  {/* Basic Info */}
-                  <div className="bg-slate-700 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-white mb-4">Character Details</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <span className="text-slate-400 text-sm">Race:</span>
-                        <p className="text-white">{displayCharacter.race}</p>
-                      </div>
-                      <div>
-                        <span className="text-slate-400 text-sm">Class:</span>
-                        <p className="text-white">{displayCharacter.class}</p>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-slate-400 text-sm">Level:</span>
-                          <p className="text-white">{displayCharacter.level}</p>
-                        </div>
-                        <button
-                          onClick={() => setShowLevelUpModal(true)}
-                          className="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1 rounded font-medium transition-colors flex items-center gap-1"
-                          title="Level up your character"
-                        >
-                          <BarChart3 className="h-3 w-3" />
-                          Level Up
-                        </button>
-                      </div>
-                      {displayCharacter.background && (
-                        <div>
-                          <span className="text-slate-400 text-sm">Background:</span>
-                          <p className="text-white">{displayCharacter.background}</p>
-                        </div>
-                      )}
-                      {displayCharacter.alignment && (
-                        <div>
-                          <span className="text-slate-400 text-sm">Alignment:</span>
-                          <p className="text-white">{displayCharacter.alignment}</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Character Descriptions */}
-                  {(character.appearance || character.personality || character.backstory || character.notes) && (
-                    <div className="space-y-4">
-                      {character.appearance && (
-                        <div className="bg-slate-700 rounded-lg p-4">
-                          <h3 className="text-lg font-semibold text-white mb-3">Appearance</h3>
-                          <p className="text-slate-300 leading-relaxed">{character.appearance}</p>
-                        </div>
-                      )}
-
-                      {character.personality && (
-                        <div className="bg-slate-700 rounded-lg p-4">
-                          <h3 className="text-lg font-semibold text-white mb-3">Personality</h3>
-                          <p className="text-slate-300 leading-relaxed">{character.personality}</p>
-                        </div>
-                      )}
-
-                      {character.backstory && (
-                        <div className="bg-slate-700 rounded-lg p-4">
-                          <h3 className="text-lg font-semibold text-white mb-3">Backstory</h3>
-                          <p className="text-slate-300 leading-relaxed">{character.backstory}</p>
-                        </div>
-                      )}
-
-                      {character.notes && (
-                        <div className="bg-slate-700 rounded-lg p-4">
-                          <h3 className="text-lg font-semibold text-white mb-3">Notes</h3>
-                          <p className="text-slate-300 leading-relaxed">{character.notes}</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
+              <div className="p-6">
+                <div className="max-w-4xl mx-auto">
+                  <StatsTab 
+                    character={displayCharacter}
+                    equippedArmor={equippedArmor}
+                    onUpdate={(updates) => {
+                      setCurrentCharacter(prev => ({ ...prev, ...updates }));
+                      updateCharacter(updates);
+                    }}
+                  />
                 </div>
               </div>
             )}
@@ -997,7 +834,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                   )}
 
                   {/* Spell Slots & Spellcasting */}
-                  {character.spellcastingAbility && (character.spellsKnown && character.spellsKnown.length > 0 || character.spellsPrepared && character.spellsPrepared.length > 0) && (
+                  {displayCharacter.spellcastingAbility && (displayCharacter.spellsKnown && displayCharacter.spellsKnown.length > 0 || displayCharacter.spellsPrepared && displayCharacter.spellsPrepared.length > 0) && (
                     <div className="bg-slate-700 rounded-lg p-6">
                       <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
                         <Zap className="h-6 w-6" />
@@ -1007,25 +844,25 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                       {/* Spellcasting Stats */}
                       <div className="grid grid-cols-3 gap-4 mb-6">
                         <div className="text-center bg-slate-600 rounded p-3">
-                          <div className="text-xl font-bold text-blue-400">{character.spellSaveDC}</div>
+                          <div className="text-xl font-bold text-blue-400">{displayCharacter.spellSaveDC}</div>
                           <div className="text-xs text-slate-400">Spell Save DC</div>
                         </div>
                         <div className="text-center bg-slate-600 rounded p-3">
-                          <div className="text-xl font-bold text-green-400">+{character.spellAttackBonus}</div>
+                          <div className="text-xl font-bold text-green-400">+{displayCharacter.spellAttackBonus}</div>
                           <div className="text-xs text-slate-400">Spell Attack</div>
                         </div>
                         <div className="text-center bg-slate-600 rounded p-3">
-                          <div className="text-xl font-bold text-purple-400">{character.spellcastingAbility?.toUpperCase()}</div>
+                          <div className="text-xl font-bold text-purple-400">{displayCharacter.spellcastingAbility?.toUpperCase()}</div>
                           <div className="text-xs text-slate-400">Casting Ability</div>
                         </div>
                       </div>
 
                       {/* Spell Slots */}
-                      {character.spellSlots && Object.keys(character.spellSlots).length > 0 && (
+                      {displayCharacter.spellSlots && Object.keys(displayCharacter.spellSlots).length > 0 && (
                         <div className="mb-6">
                           <h4 className="text-lg font-semibold text-white mb-3">Spell Slots</h4>
                           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                            {Object.entries(character.spellSlots).map(([level, total]) => (
+                            {Object.entries(displayCharacter.spellSlots).map(([level, total]) => (
                               <div key={level} className="bg-slate-600 rounded p-3">
                                 <div className="text-center">
                                   <div className="text-sm text-slate-400 mb-1">Level {level}</div>
@@ -1047,7 +884,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                       {/* Spell Management Based on Class Type */}
                       {(() => {
                         const spellcastingType = getSpellcastingType(character.class);
-                        const abilityModifier = getModifier(character[character.spellcastingAbility as keyof typeof character] as number);
+                        const abilityModifier = getModifier(displayCharacter[displayCharacter.spellcastingAbility as keyof typeof displayCharacter] as number);
                         const maxPrepared = canPrepareSpells(character.class) ? getSpellsPreparedCount(character.class, character.level, abilityModifier) : 0;
                         
                         switch (spellcastingType) {
@@ -1062,7 +899,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                 </div>
                                 <h4 className="text-lg font-semibold text-white mb-3">Known Spells</h4>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto">
-                                  {(character.spellsKnown || []).map((spell, index) => (
+                                  {(displayCharacter.spellsKnown || []).map((spell, index) => (
                                     <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-green-500">
                                       <div className="flex items-center gap-2 mb-2">
                                         <span className="text-white font-medium">{spell.name}</span>
@@ -1098,11 +935,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                 {/* Prepared Spells */}
                                 <div>
                                   <h4 className="text-lg font-semibold text-white mb-3">
-                                    Prepared Spells ({(character.spellsPrepared || []).filter(s => s.level > 0).length}/{maxPrepared})
+                                    Prepared Spells ({(displayCharacter.spellsPrepared || []).filter(s => s.level > 0).length}/{maxPrepared})
                                   </h4>
-                                  {character.spellsPrepared && character.spellsPrepared.length > 0 ? (
+                                  {displayCharacter.spellsPrepared && displayCharacter.spellsPrepared.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                                      {character.spellsPrepared.map((spell, index) => (
+                                      {displayCharacter.spellsPrepared.map((spell, index) => (
                                         <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-blue-500">
                                           <div className="flex items-center gap-2 mb-2">
                                             <span className="text-white font-medium">{spell.name}</span>
@@ -1125,9 +962,9 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                 {/* Spellbook */}
                                 <div>
                                   <h4 className="text-lg font-semibold text-white mb-3">Spellbook</h4>
-                                  {character.spellsKnown && character.spellsKnown.length > 0 ? (
+                                  {displayCharacter.spellsKnown && displayCharacter.spellsKnown.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto">
-                                      {character.spellsKnown.map((spell, index) => (
+                                      {displayCharacter.spellsKnown.map((spell, index) => (
                                         <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-purple-500">
                                           <div className="flex items-center gap-2 mb-2">
                                             <span className="text-white font-medium">{spell.name}</span>
@@ -1160,11 +997,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                 </div>
                                 
                                 <h4 className="text-lg font-semibold text-white mb-3">
-                                  Prepared Spells ({(character.spellsPrepared || []).filter(s => s.level > 0).length}/{maxPrepared})
+                                  Prepared Spells ({(displayCharacter.spellsPrepared || []).filter(s => s.level > 0).length}/{maxPrepared})
                                 </h4>
-                                {character.spellsPrepared && character.spellsPrepared.length > 0 ? (
+                                {displayCharacter.spellsPrepared && displayCharacter.spellsPrepared.length > 0 ? (
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    {character.spellsPrepared.map((spell, index) => (
+                                    {displayCharacter.spellsPrepared.map((spell, index) => (
                                       <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-yellow-500">
                                         <div className="flex items-center gap-2 mb-2">
                                           <span className="text-white font-medium">{spell.name}</span>
@@ -1280,7 +1117,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
                   {/* Empty State */}
                   {(!equippedWeapons || equippedWeapons.length === 0) && 
-                   (!character.spellsKnown || character.spellsKnown.length === 0) && (
+                   (!displayCharacter.spellsKnown || displayCharacter.spellsKnown.length === 0) && (
                     <div className="text-center py-12">
                       <Swords className="h-16 w-16 text-slate-600 mx-auto mb-4" />
                       <h3 className="text-xl font-semibold text-slate-300 mb-2">No Combat Options</h3>
@@ -1521,7 +1358,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                     </div>
 
                     {/* Spells Section */}
-                    {character.spellsKnown && character.spellsKnown.length > 0 && (
+                    {displayCharacter.spellsKnown && displayCharacter.spellsKnown.length > 0 && (
                       <div className="bg-slate-700 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-4">
                           <h3 className="text-lg font-semibold text-white flex items-center gap-2">
@@ -1539,13 +1376,13 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                           )}
                         </div>
                         
-                        {character.spellSaveDC && (
+                        {displayCharacter.spellSaveDC && (
                           <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                             <div className="text-slate-300">
-                              <strong>Spell Save DC:</strong> {character.spellSaveDC}
+                              <strong>Spell Save DC:</strong> {displayCharacter.spellSaveDC}
                             </div>
                             <div className="text-slate-300">
-                              <strong>Spell Attack:</strong> +{character.spellAttackBonus}
+                              <strong>Spell Attack:</strong> +{displayCharacter.spellAttackBonus}
                             </div>
                           </div>
                         )}
@@ -1554,11 +1391,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                         {canPrepareSpells(character.class) && (
                           <div className="mb-4 p-3 bg-blue-900/20 border border-blue-600/30 rounded-lg">
                             <div className="text-blue-300 text-sm">
-                              <strong>Prepared Spells:</strong> {(character.spellsPrepared || []).filter(s => s.level > 0).length} / {
+                              <strong>Prepared Spells:</strong> {(displayCharacter.spellsPrepared || []).filter(s => s.level > 0).length} / {
                                 getSpellsPreparedCount(
                                   character.class, 
                                   character.level, 
-                                  getModifier(character[character.spellcastingAbility as keyof typeof character] as number)
+                                  getModifier(displayCharacter[displayCharacter.spellcastingAbility as keyof typeof displayCharacter] as number)
                                 )
                               }
                             </div>
@@ -1569,8 +1406,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                         )}
                         
                         <div className="space-y-2 max-h-48 overflow-y-auto">
-                          {character.spellsKnown.map((spell, index) => {
-                            const isPrepared = character.spellsPrepared?.some(s => s.name === spell.name);
+                          {displayCharacter.spellsKnown?.map((spell, index) => {
+                            const isPrepared = displayCharacter.spellsPrepared?.some(s => s.name === spell.name);
                             const requiresPreparation = canPrepareSpells(character.class) && spell.level > 0;
                             
                             return (

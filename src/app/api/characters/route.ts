@@ -224,6 +224,9 @@ export async function PATCH(request: NextRequest) {
     if (body.maxHitPoints !== undefined) {
       updateData.maxHitPoints = body.maxHitPoints;
     }
+    if (body.temporaryHitPoints !== undefined) {
+      updateData.temporaryHitPoints = body.temporaryHitPoints;
+    }
     if (body.proficiencyBonus !== undefined) {
       updateData.proficiencyBonus = body.proficiencyBonus;
     }
