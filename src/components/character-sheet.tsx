@@ -9,7 +9,7 @@ import { Action, canEquipWeapon, canEquipArmor } from "@/lib/dnd/combat";
 import { Treasure, COMMON_TREASURES, STORY_TREASURES } from "@/lib/dnd/data";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import { LevelUpModal } from "./level-up-modal";
-import { getSpellcastingType, canPrepareSpells, getSpellsPreparedCount, getHitDie } from "@/lib/dnd/level-up";
+import { getSpellcastingType, canPrepareSpells, getSpellsPreparedCount } from "@/lib/dnd/level-up";
 
 interface CharacterSheetProps {
   character: {
@@ -281,7 +281,6 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     inventoryWeapons?: (Weapon | MagicalWeapon)[];
     armor?: Armor[];
     inventoryArmor?: Armor[];
-    hitPoints?: number;
   }) => {
     try {
       const response = await fetch(`/api/characters?id=${character.id}`, {
@@ -662,96 +661,6 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     }
   };
 
-  const handleShortRest = async () => {
-    // D&D 5e Short Rest: Can spend Hit Dice to recover HP, recover some class features
-    // For simplicity, we'll allow recovery of up to half max HP
-    const currentHp = currentCharacter.hitPoints;
-    const maxHp = currentCharacter.maxHitPoints;
-    
-    if (currentHp >= maxHp) {
-      alert("You're already at full health!");
-      return;
-    }
-    
-    // Calculate potential HP recovery (using average of hit die + CON modifier)
-    const hitDie = getHitDie(currentCharacter.class);
-    const conModifier = getModifier(currentCharacter.constitution);
-    const averageRecovery = Math.floor(hitDie / 2) + 1 + conModifier;
-    const maxRecovery = Math.floor(maxHp / 2); // Can't exceed half max HP from short rest
-    const actualRecovery = Math.min(averageRecovery, maxRecovery, maxHp - currentHp);
-    
-    const newHp = Math.min(maxHp, currentHp + actualRecovery);
-    
-    const updates = {
-      hitPoints: newHp
-    };
-    
-    try {
-      const response = await fetch(`/api/characters?id=${character.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates),
-      });
-      
-      if (!response.ok) {
-        console.error('Failed to save short rest');
-        return;
-      }
-      
-      setCurrentCharacter(prev => ({
-        ...prev,
-        ...updates
-      }));
-      
-      alert(`Short Rest completed! Recovered ${actualRecovery} hit points.`);
-      
-    } catch (error) {
-      console.error('Error during short rest:', error);
-    }
-  };
-
-  const handleLongRest = async () => {
-    // D&D 5e Long Rest: Fully restore HP, spell slots, most class features
-    const updates = {
-      hitPoints: currentCharacter.maxHitPoints
-    };
-    
-    try {
-      const response = await fetch(`/api/characters?id=${character.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates),
-      });
-      
-      if (!response.ok) {
-        console.error('Failed to save long rest');
-        return;
-      }
-      
-      setCurrentCharacter(prev => ({
-        ...prev,
-        ...updates
-      }));
-      
-      // Prepare spell reminder for spellcasters who need daily preparation
-      const needsSpellPrep = canPrepareSpells(currentCharacter.class);
-      const message = needsSpellPrep 
-        ? "Long Rest completed! Hit points fully restored. Don't forget to prepare your spells for the day!"
-        : "Long Rest completed! Hit points and spell slots fully restored.";
-      
-      alert(message);
-      
-    } catch (error) {
-      console.error('Error during long rest:', error);
-    }
-  };
-
-  const handleHitPointChange = (change: number) => {
-    const newHp = Math.max(0, Math.min(currentCharacter.maxHitPoints, currentCharacter.hitPoints + change));
-    setCurrentCharacter(prev => ({ ...prev, hitPoints: newHp }));
-    updateCharacter({ hitPoints: newHp });
-  };
-
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -874,67 +783,15 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                             <Heart className="h-4 w-4 text-red-400" />
                             Hit Points
                           </span>
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => handleHitPointChange(-1)}
-                              disabled={displayCharacter.hitPoints <= 0}
-                              className="w-6 h-6 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed rounded text-white text-xs flex items-center justify-center"
-                              title="Take 1 damage"
-                            >
-                              <Minus className="h-3 w-3" />
-                            </button>
-                            <span className="text-white font-semibold text-lg min-w-[60px] text-center">
-                              {displayCharacter.hitPoints}/{displayCharacter.maxHitPoints}
-                            </span>
-                            <button
-                              onClick={() => handleHitPointChange(1)}
-                              disabled={displayCharacter.hitPoints >= displayCharacter.maxHitPoints}
-                              className="w-6 h-6 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed rounded text-white text-xs flex items-center justify-center"
-                              title="Heal 1 hit point"
-                            >
-                              <Plus className="h-3 w-3" />
-                            </button>
-                          </div>
+                          <span className="text-white font-semibold">
+                            {displayCharacter.hitPoints}/{displayCharacter.maxHitPoints}
+                          </span>
                         </div>
-                        <div className="w-full bg-slate-600 rounded-full h-3 mb-2">
+                        <div className="w-full bg-slate-600 rounded-full h-3">
                           <div
-                            className={`h-3 rounded-full transition-all ${
-                              hpPercentage <= 25 ? 'bg-red-600' : 
-                              hpPercentage <= 50 ? 'bg-yellow-500' : 
-                              'bg-green-500'
-                            }`}
+                            className="bg-red-500 h-3 rounded-full transition-all"
                             style={{ width: `${hpPercentage}%` }}
                           />
-                        </div>
-                        {/* HP Status Indicator */}
-                        {hpPercentage <= 25 && displayCharacter.hitPoints > 0 && (
-                          <div className="text-red-400 text-xs font-medium">⚠️ Critically wounded</div>
-                        )}
-                        {displayCharacter.hitPoints === 0 && (
-                          <div className="text-red-500 text-xs font-bold">💀 Unconscious/Dying</div>
-                        )}
-                        {hpPercentage > 75 && (
-                          <div className="text-green-400 text-xs">✓ Healthy</div>
-                        )}
-                        
-                        {/* Large HP Adjustment Buttons */}
-                        <div className="flex justify-center gap-2 mt-2">
-                          <button
-                            onClick={() => handleHitPointChange(-5)}
-                            disabled={displayCharacter.hitPoints <= 0}
-                            className="bg-red-700 hover:bg-red-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs px-2 py-1 rounded font-medium"
-                            title="Take 5 damage"
-                          >
-                            -5 HP
-                          </button>
-                          <button
-                            onClick={() => handleHitPointChange(5)}
-                            disabled={displayCharacter.hitPoints >= displayCharacter.maxHitPoints}
-                            className="bg-green-700 hover:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs px-2 py-1 rounded font-medium"
-                            title="Heal 5 hit points"
-                          >
-                            +5 HP
-                          </button>
                         </div>
                       </div>
 
@@ -958,26 +815,6 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                         <span className="text-slate-300">Proficiency Bonus</span>
                         <span className="text-white font-semibold">+{proficiencyBonus}</span>
                       </div>
-                    </div>
-                    
-                    {/* Rest Buttons */}
-                    <div className="mt-4 grid grid-cols-2 gap-2">
-                      <button
-                        onClick={handleShortRest}
-                        className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-2 rounded font-medium transition-colors flex items-center justify-center gap-1"
-                        title="Take a short rest (1 hour) - recover some HP and abilities"
-                      >
-                        <Heart className="h-3 w-3" />
-                        Short Rest
-                      </button>
-                      <button
-                        onClick={handleLongRest}
-                        className="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-2 rounded font-medium transition-colors flex items-center justify-center gap-1"
-                        title="Take a long rest (8 hours) - fully recover HP, spell slots, and abilities"
-                      >
-                        <Zap className="h-3 w-3" />
-                        Long Rest
-                      </button>
                     </div>
                   </div>
 
