@@ -1,4 +1,5 @@
 // Character Sheet Components
 export { AbilityScores } from './sections/AbilityScores';
 export { HitPointsDisplay } from './sections/HitPointsDisplay';
-export { StatsTab } from './tabs/StatsTab'; 
+export { StatsTab } from './tabs/StatsTab';
+export { ActionsTab } from './tabs/ActionsTab'; 
