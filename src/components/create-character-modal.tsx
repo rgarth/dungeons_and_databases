@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { X, Dice6, RefreshCw, Plus, Minus } from "lucide-react";
-import { RACES, CLASSES, BACKGROUNDS, ALIGNMENTS, ABILITY_SCORES, STANDARD_ARRAY } from "@/lib/dnd/core";
-import { AbilityScore, generateAbilityScores, StatMethod, calculatePointBuyRemaining, getModifier, calculateHitPoints, getProficiencyBonus } from "@/lib/dnd/core";
+import { RACES, CLASSES, BACKGROUNDS, ALIGNMENTS, ABILITY_SCORES } from "@/lib/dnd/core";
+import { AbilityScore, generateAbilityScores, generateRandomScoreArray, StatMethod, calculatePointBuyRemaining, getModifier, calculateHitPoints, getProficiencyBonus } from "@/lib/dnd/core";
 import { getBackgroundSkills, generateFantasyName, getEquipmentPackOptions, getClassWeaponSuggestions, getClassArmorSuggestions } from "@/lib/dnd/character";
 import { getSpellcastingAbility, getClassSpells, getSpellSlots, calculateSpellSaveDC, calculateSpellAttackBonus } from "@/lib/dnd/spells";
 import { getSpellcastingType } from "@/lib/dnd/level-up";
@@ -23,21 +23,39 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [background, setBackground] = useState<typeof BACKGROUNDS[number]>(BACKGROUNDS[0]);
   const [alignment, setAlignment] = useState<typeof ALIGNMENTS[number]>(ALIGNMENTS[4]); // True Neutral
   const [gender, setGender] = useState<string>('');
-  const [statMethod, setStatMethod] = useState<StatMethod>('rolling');
-  const [abilityScores, setAbilityScores] = useState(generateAbilityScores('rolling'));
+  const [statMethod, setStatMethod] = useState<StatMethod>('rolling-assign');
+  const [abilityScores, setAbilityScores] = useState(generateAbilityScores('rolling-assign'));
+  const [randomScoreArray, setRandomScoreArray] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
   const [generatingName, setGeneratingName] = useState(false);
   const [selectedSpells, setSelectedSpells] = useState<Spell[]>([]);
   const [selectedWeapons, setSelectedWeapons] = useState<Weapon[]>([]);
   const [selectedEquipmentPack, setSelectedEquipmentPack] = useState<number>(0);
 
+  // Initialize random score array on mount since rolling-assign is default
+  useEffect(() => {
+    setRandomScoreArray(generateRandomScoreArray());
+  }, []);
+
   const handleStatMethodChange = (method: StatMethod) => {
     setStatMethod(method);
-    setAbilityScores(generateAbilityScores(method));
+    const newScores = generateAbilityScores(method);
+    setAbilityScores(newScores);
+    
+    // If switching to rolling-assign, generate the random score array
+    if (method === 'rolling-assign') {
+      setRandomScoreArray(generateRandomScoreArray());
+    }
   };
 
   const handleGenerateStats = () => {
-    setAbilityScores(generateAbilityScores(statMethod));
+    const newScores = generateAbilityScores(statMethod);
+    setAbilityScores(newScores);
+    
+    // If using rolling-assign, also regenerate the random score array
+    if (statMethod === 'rolling-assign') {
+      setRandomScoreArray(generateRandomScoreArray());
+    }
   };
 
   const handleGenerateName = async () => {
@@ -66,16 +84,24 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }
   };
 
-  const handleStandardArrayAssign = (ability: AbilityScore, value: number) => {
-    if (statMethod !== 'standard') return;
+  const handleDragStart = (e: React.DragEvent, fromAbility: AbilityScore) => {
+    e.dataTransfer.setData('text/plain', fromAbility);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault(); // Allow drop
+  };
+
+  const handleDrop = (e: React.DragEvent, toAbility: AbilityScore) => {
+    e.preventDefault();
+    const fromAbility = e.dataTransfer.getData('text/plain') as AbilityScore;
     
-    // Find what ability currently has this value and swap
-    const currentAbility = Object.entries(abilityScores).find(([, score]) => score === value)?.[0] as AbilityScore;
-    if (currentAbility) {
+    if (fromAbility && fromAbility !== toAbility) {
+      // Swap the values
       setAbilityScores(prev => ({
         ...prev,
-        [ability]: value,
-        [currentAbility]: prev[ability]
+        [fromAbility]: prev[toAbility],
+        [toAbility]: prev[fromAbility]
       }));
     }
   };
@@ -366,15 +392,15 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <button
                 type="button"
-                onClick={() => handleStatMethodChange('rolling')}
+                onClick={() => handleStatMethodChange('rolling-assign')}
                 className={`p-4 rounded-lg border-2 transition-colors ${
-                  statMethod === 'rolling' 
+                  statMethod === 'rolling-assign' 
                     ? 'border-purple-500 bg-purple-900/30' 
                     : 'border-slate-600 bg-slate-700'
                 }`}
               >
                 <div className="text-white font-semibold mb-1">Rolling</div>
-                <div className="text-sm text-slate-300">4d6 drop lowest</div>
+                <div className="text-sm text-slate-300">4d6 drop lowest, arrange freely</div>
               </button>
               
               <button
@@ -413,7 +439,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 {statMethod === 'pointbuy' && (
                   <span className="text-slate-300">Points Remaining: <span className="text-white font-bold">{pointBuyRemaining}</span></span>
                 )}
-                {statMethod === 'rolling' && (
+                {statMethod === 'rolling-assign' && (
                   <button
                     type="button"
                     onClick={handleGenerateStats}
@@ -422,6 +448,11 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     <Dice6 className="h-4 w-4" />
                     Reroll
                   </button>
+                )}
+                {statMethod === 'rolling-assign' && randomScoreArray.length > 0 && (
+                  <div className="text-slate-300 text-sm">
+                    Rolled: {randomScoreArray.join(', ')}
+                  </div>
                 )}
               </div>
             </div>
@@ -433,16 +464,17 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     {ability}
                   </div>
                   
-                  {statMethod === 'standard' ? (
-                    <select
-                      value={abilityScores[ability]}
-                      onChange={(e) => handleStandardArrayAssign(ability, parseInt(e.target.value))}
-                      className="w-full bg-slate-600 text-white text-center text-xl font-bold rounded mb-1"
+                  {(statMethod === 'standard' || statMethod === 'rolling-assign') ? (
+                    <div
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, ability)}
+                      onDragOver={handleDragOver}
+                      onDrop={(e) => handleDrop(e, ability)}
+                      className="text-2xl font-bold text-white mb-1 text-center bg-slate-600 rounded-lg py-2 cursor-move hover:bg-slate-500 transition-colors border-2 border-transparent hover:border-purple-400"
+                      title="Drag to swap with another ability"
                     >
-                      {STANDARD_ARRAY.map(value => (
-                        <option key={value} value={value}>{value}</option>
-                      ))}
-                    </select>
+                      {abilityScores[ability]}
+                    </div>
                   ) : statMethod === 'pointbuy' ? (
                     <div className="flex items-center justify-center gap-1 mb-1">
                       <button

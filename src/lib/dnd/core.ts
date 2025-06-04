@@ -46,7 +46,7 @@ export const SKILLS = {
 } as const;
 
 // Stat Generation Methods
-export type StatMethod = 'rolling' | 'standard' | 'pointbuy';
+export type StatMethod = 'rolling-assign' | 'standard' | 'pointbuy';
 
 // Standard Array (official D&D 5e)
 export const STANDARD_ARRAY = [15, 14, 13, 12, 10, 8];
@@ -73,12 +73,19 @@ export function rollAbilityScore(): number {
   return rolls.slice(0, 3).reduce((sum, roll) => sum + roll, 0);
 }
 
+// Generate 6 random ability scores for assignment
+export function generateRandomScoreArray(): number[] {
+  return Array.from({ length: 6 }, () => rollAbilityScore()).sort((a, b) => b - a);
+}
+
 // Generate a complete set of ability scores by method
-export function generateAbilityScores(method: StatMethod = 'rolling'): Record<AbilityScore, number> {
+export function generateAbilityScores(method: StatMethod = 'rolling-assign'): Record<AbilityScore, number> {
   switch (method) {
-    case 'rolling':
-      return ABILITY_SCORES.reduce((scores, ability) => {
-        scores[ability] = rollAbilityScore();
+    case 'rolling-assign':
+      // Generate 6 random scores and assign them in order initially
+      const randomScores = generateRandomScoreArray();
+      return ABILITY_SCORES.reduce((scores, ability, index) => {
+        scores[ability] = randomScores[index] || 10;
         return scores;
       }, {} as Record<AbilityScore, number>);
     
@@ -95,7 +102,7 @@ export function generateAbilityScores(method: StatMethod = 'rolling'): Record<Ab
       }, {} as Record<AbilityScore, number>);
     
     default:
-      return generateAbilityScores('rolling');
+      return generateAbilityScores('rolling-assign');
   }
 }
 
