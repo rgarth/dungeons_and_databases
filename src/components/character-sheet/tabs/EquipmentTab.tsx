@@ -85,176 +85,60 @@ export function EquipmentTab({
   };
 
   return (
-    <>
-      <div className="p-6">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Column - Weapons */}
-          <div className="space-y-6">
-            {/* Equipped Weapons Section */}
-            {equippedWeapons && equippedWeapons.length > 0 && (
-              <div className="bg-slate-700 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <Sword className="h-5 w-5" />
-                  Equipped Weapons ({equippedWeapons.length}/{weaponLimits.max})
-                </h3>
-                
-                {/* D&D Combat Usage Information */}
-                <div className="mb-4 text-sm text-blue-300 bg-blue-900/20 p-3 rounded">
-                  <div className="font-medium mb-1">⚔️ D&D 5e Combat:</div>
-                  <div className="text-xs space-y-1">
-                    <div>• <strong>Melee weapons:</strong> Used when adjacent to enemies</div>
-                    <div>• <strong>Ranged weapons:</strong> Used for distant targets (crossbows, bows)</div>
-                    <div>• <strong>Two-handed weapons:</strong> Require both hands when attacking</div>
-                    <div>• <strong>Switching:</strong> Free to draw/sheath weapons once per turn</div>
-                  </div>
-                </div>
-                
-                {/* Show shield compatibility warning if relevant */}
-                {equippedArmor.some(armor => armor.type === 'Shield') && 
-                 equippedWeapons.some(weapon => weapon.properties.includes('Two-handed')) && (
-                  <div className="mb-3 text-sm text-orange-300 bg-orange-900/20 p-2 rounded">
-                    ⚠️ Shield + Two-handed weapon: Can&apos;t use both simultaneously in combat
-                  </div>
-                )}
-                
-                {/* Current Equipped Weapons */}
-                <div className="space-y-2 mb-4">
-                  {equippedWeapons.map((weapon, index) => {
-                    const isMagical = 'magicalName' in weapon;
-                    const isProficient = canEquipWeapon(weapon, character.class);
-                    const isTwoHanded = weapon.properties.includes('Two-handed');
-                    
-                    return (
-                      <div key={index} className="bg-slate-600 p-3 rounded">
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <div className="text-white font-medium">{weapon.name}</div>
-                              {weapon.category === 'Ranged' && (
-                                <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
-                                  Ranged
-                                </span>
-                              )}
-                              {isTwoHanded && (
-                                <span className="text-xs bg-orange-900/50 text-orange-300 px-2 py-1 rounded">
-                                  Two-handed
-                                </span>
-                              )}
-                              {isMagical && (
-                                <span className="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded">
-                                  {(weapon as MagicalWeapon).rarity}
-                                </span>
-                              )}
-                              {!isProficient && (
-                                <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">
-                                  No Prof Bonus
-                                </span>
-                              )}
-                            </div>
-                            <div className="text-slate-300 text-sm">
-                              {weapon.damage}{isMagical && (weapon as MagicalWeapon).damageBonus > 0 && `+${(weapon as MagicalWeapon).damageBonus}`} {weapon.damageType}
-                              {isMagical && (weapon as MagicalWeapon).attackBonus > 0 && (
-                                <span className="text-purple-300"> • +{(weapon as MagicalWeapon).attackBonus} to hit</span>
-                              )}
-                            </div>
-                            {!isProficient && (
-                              <div className="text-yellow-300 text-xs mt-1">
-                                ⚠️ No proficiency - won&apos;t add proficiency bonus to attacks
-                              </div>
-                            )}
-                            {isMagical && (weapon as MagicalWeapon).magicalProperties && (
-                              <div className="text-purple-300 text-xs mt-1 italic">
-                                {(weapon as MagicalWeapon).magicalProperties}
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => onUnequipWeapon(index)}
-                              className="bg-slate-500 hover:bg-slate-400 text-white text-xs px-2 py-1 rounded"
-                            >
-                              Unequip
-                            </button>
-                            <button
-                              onClick={() => onRemoveWeapon(index, true)}
-                              className="text-red-400 hover:text-red-300 transition-colors p-1"
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Weapon Inventory Section */}
+    <div className="p-6">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Column - Weapons */}
+        <div className="space-y-6">
+          {/* Equipped Weapons Section */}
+          {equippedWeapons && equippedWeapons.length > 0 && (
             <div className="bg-slate-700 rounded-lg p-4">
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Package className="h-5 w-5" />
-                Weapon Storage
-                <span className="text-xs bg-slate-600 text-slate-300 px-2 py-1 rounded">
-                  Click &quot;Equip&quot; to use
-                </span>
+                <Sword className="h-5 w-5" />
+                Equipped Weapons ({equippedWeapons.length}/{weaponLimits.max})
               </h3>
               
-              {/* Add Magical Weapon Button */}
-              <button
-                onClick={() => setShowWeaponCreator(true)}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-4"
-              >
-                <Plus className="h-4 w-4" />
-                Create Magical Weapon
-              </button>
-
-              {/* Add Basic Weapon Selector */}
-              <div className="mb-4">
-                <div className="flex gap-2">
-                  <select
-                    value={selectedWeapon ? selectedWeapon.name : ""}
-                    onChange={(e) => {
-                      const weapon = WEAPONS.find(w => w.name === e.target.value);
-                      setSelectedWeapon(weapon || null);
-                    }}
-                    className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-                  >
-                    <option value="">Select basic weapon to add...</option>
-                    {WEAPONS.map(weapon => (
-                      <option key={weapon.name} value={weapon.name}>
-                        {weapon.name} ({weapon.damage} {weapon.damageType})
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => {
-                      if (selectedWeapon) {
-                        onAddWeapon(selectedWeapon);
-                        setSelectedWeapon(null);
-                      }
-                    }}
-                    disabled={!selectedWeapon}
-                    className="bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded text-sm font-medium"
-                  >
-                    Add Weapon
-                  </button>
+              {/* D&D Combat Usage Information */}
+              <div className="mb-4 text-sm text-blue-300 bg-blue-900/20 p-3 rounded">
+                <div className="font-medium mb-1">⚔️ D&D 5e Combat:</div>
+                <div className="text-xs space-y-1">
+                  <div>• <strong>Melee weapons:</strong> Used when adjacent to enemies</div>
+                  <div>• <strong>Ranged weapons:</strong> Used for distant targets (crossbows, bows)</div>
+                  <div>• <strong>Two-handed weapons:</strong> Require both hands when attacking</div>
+                  <div>• <strong>Switching:</strong> Free to draw/sheath weapons once per turn</div>
                 </div>
               </div>
               
-              {/* Weapons in Storage */}
-              <div className="space-y-2">
-                {inventoryWeapons && inventoryWeapons.length > 0 ? inventoryWeapons.map((weapon, index) => {
+              {/* Show shield compatibility warning if relevant */}
+              {equippedArmor.some(armor => armor.type === 'Shield') && 
+               equippedWeapons.some(weapon => weapon.properties.includes('Two-handed')) && (
+                <div className="mb-3 text-sm text-orange-300 bg-orange-900/20 p-2 rounded">
+                  ⚠️ Shield + Two-handed weapon: Can&apos;t use both simultaneously in combat
+                </div>
+              )}
+              
+              {/* Current Equipped Weapons */}
+              <div className="space-y-2 mb-4">
+                {equippedWeapons.map((weapon, index) => {
                   const isMagical = 'magicalName' in weapon;
                   const isProficient = canEquipWeapon(weapon, character.class);
-                  const atLimit = equippedWeapons.length >= weaponLimits.max;
+                  const isTwoHanded = weapon.properties.includes('Two-handed');
                   
                   return (
-                    <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-orange-500">
+                    <div key={index} className="bg-slate-600 p-3 rounded">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <div className="text-white font-medium">{weapon.name}</div>
+                            {weapon.category === 'Ranged' && (
+                              <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
+                                Ranged
+                              </span>
+                            )}
+                            {isTwoHanded && (
+                              <span className="text-xs bg-orange-900/50 text-orange-300 px-2 py-1 rounded">
+                                Two-handed
+                              </span>
+                            )}
                             {isMagical && (
                               <span className="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded">
                                 {(weapon as MagicalWeapon).rarity}
@@ -285,15 +169,13 @@ export function EquipmentTab({
                         </div>
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() => onEquipWeapon(weapon, index)}
-                            disabled={atLimit}
-                            className="bg-green-600 hover:bg-green-700 disabled:bg-slate-500 disabled:opacity-50 text-white text-sm px-3 py-1 rounded font-medium"
-                            title={atLimit ? "At weapon limit" : "Equip weapon"}
+                            onClick={() => onUnequipWeapon(index)}
+                            className="bg-slate-500 hover:bg-slate-400 text-white text-xs px-2 py-1 rounded"
                           >
-                            {atLimit ? "Limit Reached" : "Equip"}
+                            Unequip
                           </button>
                           <button
-                            onClick={() => onRemoveWeapon(index, false)}
+                            onClick={() => onRemoveWeapon(index, true)}
                             className="text-red-400 hover:text-red-300 transition-colors p-1"
                           >
                             <Trash2 className="h-3 w-3" />
@@ -302,139 +184,115 @@ export function EquipmentTab({
                       </div>
                     </div>
                   );
-                }) : (
-                  <div className="text-center py-6 border-2 border-dashed border-slate-600 rounded-lg">
-                    <Sword className="h-8 w-8 text-slate-500 mx-auto mb-2" />
-                    <p className="text-slate-500 text-sm">No weapons in storage</p>
-                    <p className="text-slate-600 text-xs">Create magical weapons above</p>
-                  </div>
-                )}
+                })}
               </div>
             </div>
+          )}
 
-            {/* Spells Section */}
-            {character.spellsKnown && character.spellsKnown.length > 0 && (
-              <div className="bg-slate-700 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                    <Zap className="h-5 w-5" />
-                    Spells
-                  </h3>
-                  {canPrepareSpells(character.class) && (
-                    <button
-                      onClick={onOpenSpellPreparation}
-                      className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded font-medium transition-colors"
-                      title="Change prepared spells"
-                    >
-                      Prepare Spells
-                    </button>
-                  )}
-                </div>
-                
-                {character.spellSaveDC && (
-                  <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-                    <div className="text-slate-300">
-                      <strong>Spell Save DC:</strong> {character.spellSaveDC}
-                    </div>
-                    <div className="text-slate-300">
-                      <strong>Spell Attack:</strong> +{character.spellAttackBonus}
-                    </div>
-                  </div>
-                )}
-                
-                {/* Show preparation status for preparation-based casters */}
-                {canPrepareSpells(character.class) && (
-                  <div className="mb-4 p-3 bg-blue-900/20 border border-blue-600/30 rounded-lg">
-                    <div className="text-blue-300 text-sm">
-                      <strong>Prepared Spells:</strong> {(character.spellsPrepared || []).filter(s => s.level > 0).length} / {
-                        getSpellsPreparedCount(
-                          character.class, 
-                          character.level, 
-                          getModifier(character[character.spellcastingAbility as keyof typeof character] as number)
-                        )
-                      }
-                    </div>
-                    <div className="text-blue-200 text-xs mt-1">
-                      You can change prepared spells during a long rest
-                    </div>
-                  </div>
-                )}
-                
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {character.spellsKnown?.map((spell, index) => {
-                    const isPrepared = character.spellsPrepared?.some(s => s.name === spell.name);
-                    const requiresPreparation = canPrepareSpells(character.class) && spell.level > 0;
-                    
-                    return (
-                      <div 
-                        key={index} 
-                        className={`bg-slate-600 p-3 rounded ${requiresPreparation && !isPrepared ? 'opacity-60' : ''}`}
-                      >
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-white font-medium">{spell.name}</span>
-                          <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
-                            {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
-                          </span>
-                          {requiresPreparation && (
-                            <span className={`text-xs px-2 py-1 rounded ${
-                              isPrepared 
-                                ? 'bg-green-900/50 text-green-300' 
-                                : 'bg-gray-900/50 text-gray-400'
-                            }`}>
-                              {isPrepared ? 'Prepared' : 'Not Prepared'}
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-slate-400 text-xs mb-1">
-                          {spell.school} • {spell.castingTime} • {spell.range}
-                        </div>
-                        <p className="text-slate-300 text-sm">{spell.description}</p>
-                      </div>
-                    );
-                  })}
-                </div>
+          {/* Weapon Inventory Section */}
+          <div className="bg-slate-700 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <Package className="h-5 w-5" />
+              Weapon Storage
+              <span className="text-xs bg-slate-600 text-slate-300 px-2 py-1 rounded">
+                Click &quot;Equip&quot; to use
+              </span>
+            </h3>
+            
+            {/* Add Magical Weapon Button */}
+            <button
+              onClick={() => setShowWeaponCreator(true)}
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 mb-4"
+            >
+              <Plus className="h-4 w-4" />
+              Create Magical Weapon
+            </button>
+
+            {/* Add Basic Weapon Selector */}
+            <div className="mb-4">
+              <div className="flex gap-2">
+                <select
+                  value={selectedWeapon ? selectedWeapon.name : ""}
+                  onChange={(e) => {
+                    const weapon = WEAPONS.find(w => w.name === e.target.value);
+                    setSelectedWeapon(weapon || null);
+                  }}
+                  className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                >
+                  <option value="">Select basic weapon to add...</option>
+                  {WEAPONS.map(weapon => (
+                    <option key={weapon.name} value={weapon.name}>
+                      {weapon.name} ({weapon.damage} {weapon.damageType})
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => {
+                    if (selectedWeapon) {
+                      onAddWeapon(selectedWeapon);
+                      setSelectedWeapon(null);
+                    }
+                  }}
+                  disabled={!selectedWeapon}
+                  className="bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded text-sm font-medium"
+                >
+                  Add Weapon
+                </button>
               </div>
-            )}
-          </div>
-
-          {/* Right Column - Armor */}
-          <div className="space-y-6">
-            {/* Armor Section */}
-            <div className="bg-slate-700 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                Armor & Protection
-              </h3>
-              
-              {/* Current Armor */}
-              <div className="space-y-2 mb-4">
-                <h4 className="text-sm font-medium text-slate-300">Equipped</h4>
-                {equippedArmor && equippedArmor.length > 0 ? equippedArmor.map((armor, index) => (
-                  <div key={index} className="bg-slate-600 p-3 rounded">
+            </div>
+            
+            {/* Weapons in Storage */}
+            <div className="space-y-2">
+              {inventoryWeapons && inventoryWeapons.length > 0 ? inventoryWeapons.map((weapon, index) => {
+                const isMagical = 'magicalName' in weapon;
+                const isProficient = canEquipWeapon(weapon, character.class);
+                const atLimit = equippedWeapons.length >= weaponLimits.max;
+                
+                return (
+                  <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-orange-500">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <div className="text-white font-medium">{armor.name}</div>
-                          <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
-                            {armor.type}
-                          </span>
+                          <div className="text-white font-medium">{weapon.name}</div>
+                          {isMagical && (
+                            <span className="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded">
+                              {(weapon as MagicalWeapon).rarity}
+                            </span>
+                          )}
+                          {!isProficient && (
+                            <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">
+                              No Prof Bonus
+                            </span>
+                          )}
                         </div>
                         <div className="text-slate-300 text-sm">
-                          AC {armor.type === 'Shield' ? `+${armor.baseAC}` : armor.baseAC}
-                          {armor.maxDexBonus !== undefined && ` (Max Dex +${armor.maxDexBonus})`}
-                          {armor.minStrength && ` • Str ${armor.minStrength}`}
-                          {armor.stealthDisadvantage && ` • Stealth Disadvantage`}
+                          {weapon.damage}{isMagical && (weapon as MagicalWeapon).damageBonus > 0 && `+${(weapon as MagicalWeapon).damageBonus}`} {weapon.damageType}
+                          {isMagical && (weapon as MagicalWeapon).attackBonus > 0 && (
+                            <span className="text-purple-300"> • +{(weapon as MagicalWeapon).attackBonus} to hit</span>
+                          )}
                         </div>
+                        {!isProficient && (
+                          <div className="text-yellow-300 text-xs mt-1">
+                            ⚠️ No proficiency - won&apos;t add proficiency bonus to attacks
+                          </div>
+                        )}
+                        {isMagical && (weapon as MagicalWeapon).magicalProperties && (
+                          <div className="text-purple-300 text-xs mt-1 italic">
+                            {(weapon as MagicalWeapon).magicalProperties}
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => onUnequipArmor(index)}
-                          className="bg-slate-500 hover:bg-slate-400 text-white text-xs px-2 py-1 rounded"
+                          onClick={() => onEquipWeapon(weapon, index)}
+                          disabled={atLimit}
+                          className="bg-green-600 hover:bg-green-700 disabled:bg-slate-500 disabled:opacity-50 text-white text-sm px-3 py-1 rounded font-medium"
+                          title={atLimit ? "At weapon limit" : "Equip weapon"}
                         >
-                          Unequip
+                          {atLimit ? "Limit Reached" : "Equip"}
                         </button>
                         <button
-                          onClick={() => onRemoveArmor(index, true)}
+                          onClick={() => onRemoveWeapon(index, false)}
                           className="text-red-400 hover:text-red-300 transition-colors p-1"
                         >
                           <Trash2 className="h-3 w-3" />
@@ -442,115 +300,255 @@ export function EquipmentTab({
                       </div>
                     </div>
                   </div>
-                )) : (
-                  <p className="text-slate-500 text-sm italic">No armor equipped</p>
+                );
+              }) : (
+                <div className="text-center py-6 border-2 border-dashed border-slate-600 rounded-lg">
+                  <Sword className="h-8 w-8 text-slate-500 mx-auto mb-2" />
+                  <p className="text-slate-500 text-sm">No weapons in storage</p>
+                  <p className="text-slate-600 text-xs">Create magical weapons above</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Spells Section */}
+          {character.spellsKnown && character.spellsKnown.length > 0 && (
+            <div className="bg-slate-700 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <Zap className="h-5 w-5" />
+                  Spells
+                </h3>
+                {canPrepareSpells(character.class) && (
+                  <button
+                    onClick={onOpenSpellPreparation}
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded font-medium transition-colors"
+                    title="Change prepared spells"
+                  >
+                    Prepare Spells
+                  </button>
                 )}
               </div>
-
-              {/* Armor in Storage */}
-              <div className="space-y-2 mb-4">
-                <h4 className="text-sm font-medium text-slate-300">Storage</h4>
-                {inventoryArmor && inventoryArmor.length > 0 ? inventoryArmor.map((armor, index) => {
-                  const canEquip = canEquipArmor(armor.type, character.class);
-                  const hasStrengthReq = !armor.minStrength || character.strength >= armor.minStrength;
+              
+              {character.spellSaveDC && (
+                <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                  <div className="text-slate-300">
+                    <strong>Spell Save DC:</strong> {character.spellSaveDC}
+                  </div>
+                  <div className="text-slate-300">
+                    <strong>Spell Attack:</strong> +{character.spellAttackBonus}
+                  </div>
+                </div>
+              )}
+              
+              {/* Show preparation status for preparation-based casters */}
+              {canPrepareSpells(character.class) && (
+                <div className="mb-4 p-3 bg-blue-900/20 border border-blue-600/30 rounded-lg">
+                  <div className="text-blue-300 text-sm">
+                    <strong>Prepared Spells:</strong> {(character.spellsPrepared || []).filter(s => s.level > 0).length} / {
+                      getSpellsPreparedCount(
+                        character.class, 
+                        character.level, 
+                        getModifier(character[character.spellcastingAbility as keyof typeof character] as number)
+                      )
+                    }
+                  </div>
+                  <div className="text-blue-200 text-xs mt-1">
+                    You can change prepared spells during a long rest
+                  </div>
+                </div>
+              )}
+              
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {character.spellsKnown?.map((spell, index) => {
+                  const isPrepared = character.spellsPrepared?.some(s => s.name === spell.name);
+                  const requiresPreparation = canPrepareSpells(character.class) && spell.level > 0;
                   
                   return (
-                    <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-orange-500">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <div className="text-white font-medium">{armor.name}</div>
-                            <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
-                              {armor.type}
-                            </span>
-                            {!canEquip && (
-                              <span className="text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded">
-                                No Proficiency
-                              </span>
-                            )}
-                            {!hasStrengthReq && (
-                              <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">
-                                Str Req: {armor.minStrength}
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-slate-300 text-sm">{armor.description}</div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => onEquipArmor(armor, index)}
-                            disabled={!canEquip || !hasStrengthReq}
-                            className="bg-green-600 hover:bg-green-700 disabled:bg-slate-500 disabled:opacity-50 text-white text-sm px-3 py-1 rounded font-medium"
-                            title={!canEquip ? "Class cannot use this armor" : !hasStrengthReq ? "Insufficient strength" : "Equip armor"}
-                          >
-                            {!canEquip ? "Can't Use" : !hasStrengthReq ? "Too Heavy" : "Equip"}
-                          </button>
-                          <button
-                            onClick={() => onRemoveArmor(index, false)}
-                            className="text-red-400 hover:text-red-300 transition-colors p-1"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </button>
-                        </div>
+                    <div 
+                      key={index} 
+                      className={`bg-slate-600 p-3 rounded ${requiresPreparation && !isPrepared ? 'opacity-60' : ''}`}
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-white font-medium">{spell.name}</span>
+                        <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
+                          {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
+                        </span>
+                        {requiresPreparation && (
+                          <span className={`text-xs px-2 py-1 rounded ${
+                            isPrepared 
+                              ? 'bg-green-900/50 text-green-300' 
+                              : 'bg-gray-900/50 text-gray-400'
+                          }`}>
+                            {isPrepared ? 'Prepared' : 'Not Prepared'}
+                          </span>
+                        )}
                       </div>
+                      <div className="text-slate-400 text-xs mb-1">
+                        {spell.school} • {spell.castingTime} • {spell.range}
+                      </div>
+                      <p className="text-slate-300 text-sm">{spell.description}</p>
                     </div>
                   );
-                }) : (
-                  <div className="text-center py-4 border-2 border-dashed border-slate-600 rounded-lg">
-                    <Shield className="h-6 w-6 text-slate-500 mx-auto mb-2" />
-                    <p className="text-slate-500 text-sm">No armor in storage</p>
-                    <p className="text-slate-600 text-xs">Add armor below to get started</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Add New Armor Section */}
-              <div className="bg-slate-700 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                  <Plus className="h-5 w-5" />
-                  Add New Armor
-                </h3>
-                <p className="text-slate-400 text-sm mb-3">Add armor to your inventory from the equipment database</p>
-                <select
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      const armor = ARMOR.find(a => a.name === e.target.value);
-                      if (armor) {
-                        onAddArmor(armor);
-                      }
-                      e.target.value = "";
-                    }
-                  }}
-                  className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-                >
-                  <option value="">Select armor to add to inventory...</option>
-                  {ARMOR.map(armor => (
-                    <option key={armor.name} value={armor.name}>
-                      {armor.name} - {armor.cost} ({armor.type})
-                    </option>
-                  ))}
-                </select>
+                })}
               </div>
             </div>
+          )}
+        </div>
 
-            {/* Enhanced AC Display */}
+        {/* Right Column - Armor */}
+        <div className="space-y-6">
+          {/* Armor Section */}
+          <div className="bg-slate-700 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              Armor & Protection
+            </h3>
+            
+            {/* Current Armor */}
+            <div className="space-y-2 mb-4">
+              <h4 className="text-sm font-medium text-slate-300">Equipped</h4>
+              {equippedArmor && equippedArmor.length > 0 ? equippedArmor.map((armor, index) => (
+                <div key={index} className="bg-slate-600 p-3 rounded">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <div className="text-white font-medium">{armor.name}</div>
+                        <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
+                          {armor.type}
+                        </span>
+                      </div>
+                      <div className="text-slate-300 text-sm">
+                        AC {armor.type === 'Shield' ? `+${armor.baseAC}` : armor.baseAC}
+                        {armor.maxDexBonus !== undefined && ` (Max Dex +${armor.maxDexBonus})`}
+                        {armor.minStrength && ` • Str ${armor.minStrength}`}
+                        {armor.stealthDisadvantage && ` • Stealth Disadvantage`}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => onUnequipArmor(index)}
+                        className="bg-slate-500 hover:bg-slate-400 text-white text-xs px-2 py-1 rounded"
+                      >
+                        Unequip
+                      </button>
+                      <button
+                        onClick={() => onRemoveArmor(index, true)}
+                        className="text-red-400 hover:text-red-300 transition-colors p-1"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )) : (
+                <p className="text-slate-500 text-sm italic">No armor equipped</p>
+              )}
+            </div>
+
+            {/* Armor in Storage */}
+            <div className="space-y-2 mb-4">
+              <h4 className="text-sm font-medium text-slate-300">Storage</h4>
+              {inventoryArmor && inventoryArmor.length > 0 ? inventoryArmor.map((armor, index) => {
+                const canEquip = canEquipArmor(armor.type, character.class);
+                const hasStrengthReq = !armor.minStrength || character.strength >= armor.minStrength;
+                
+                return (
+                  <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-orange-500">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <div className="text-white font-medium">{armor.name}</div>
+                          <span className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded">
+                            {armor.type}
+                          </span>
+                          {!canEquip && (
+                            <span className="text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded">
+                              No Proficiency
+                            </span>
+                          )}
+                          {!hasStrengthReq && (
+                            <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">
+                              Str Req: {armor.minStrength}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-slate-300 text-sm">{armor.description}</div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => onEquipArmor(armor, index)}
+                          disabled={!canEquip || !hasStrengthReq}
+                          className="bg-green-600 hover:bg-green-700 disabled:bg-slate-500 disabled:opacity-50 text-white text-sm px-3 py-1 rounded font-medium"
+                          title={!canEquip ? "Class cannot use this armor" : !hasStrengthReq ? "Insufficient strength" : "Equip armor"}
+                        >
+                          {!canEquip ? "Can't Use" : !hasStrengthReq ? "Too Heavy" : "Equip"}
+                        </button>
+                        <button
+                          onClick={() => onRemoveArmor(index, false)}
+                          className="text-red-400 hover:text-red-300 transition-colors p-1"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }) : (
+                <div className="text-center py-4 border-2 border-dashed border-slate-600 rounded-lg">
+                  <Shield className="h-6 w-6 text-slate-500 mx-auto mb-2" />
+                  <p className="text-slate-500 text-sm">No armor in storage</p>
+                  <p className="text-slate-600 text-xs">Add armor below to get started</p>
+                </div>
+              )}
+            </div>
+
+            {/* Add New Armor Section */}
             <div className="bg-slate-700 rounded-lg p-4">
               <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                Armor Class Calculator
+                <Plus className="h-5 w-5" />
+                Add New Armor
               </h3>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-400 mb-2">
-                  {calculateArmorClass(equippedArmor, character.dexterity)}
-                </div>
-                <div className="text-sm text-slate-400">
-                  Base: {equippedArmor.find(a => a.type !== 'Shield')?.baseAC || 10}
-                  {equippedArmor.find(a => a.type !== 'Shield')?.maxDexBonus !== undefined 
-                    ? ` + Dex (max +${equippedArmor.find(a => a.type !== 'Shield')?.maxDexBonus})`
-                    : ` + Dex ${getModifier(character.dexterity) >= 0 ? '+' : ''}${getModifier(character.dexterity)}`
+              <p className="text-slate-400 text-sm mb-3">Add armor to your inventory from the equipment database</p>
+              <select
+                onChange={(e) => {
+                  if (e.target.value) {
+                    const armor = ARMOR.find(a => a.name === e.target.value);
+                    if (armor) {
+                      onAddArmor(armor);
+                    }
+                    e.target.value = "";
                   }
-                  {equippedArmor.find(a => a.type === 'Shield') && ` + Shield +${equippedArmor.find(a => a.type === 'Shield')?.baseAC}`}
-                </div>
+                }}
+                className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+              >
+                <option value="">Select armor to add to inventory...</option>
+                {ARMOR.map(armor => (
+                  <option key={armor.name} value={armor.name}>
+                    {armor.name} - {armor.cost} ({armor.type})
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Enhanced AC Display */}
+          <div className="bg-slate-700 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              Armor Class Calculator
+            </h3>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-blue-400 mb-2">
+                {calculateArmorClass(equippedArmor, character.dexterity)}
+              </div>
+              <div className="text-sm text-slate-400">
+                Base: {equippedArmor.find(a => a.type !== 'Shield')?.baseAC || 10}
+                {equippedArmor.find(a => a.type !== 'Shield')?.maxDexBonus !== undefined 
+                  ? ` + Dex (max +${equippedArmor.find(a => a.type !== 'Shield')?.maxDexBonus})`
+                  : ` + Dex ${getModifier(character.dexterity) >= 0 ? '+' : ''}${getModifier(character.dexterity)}`
+                }
+                {equippedArmor.find(a => a.type === 'Shield') && ` + Shield +${equippedArmor.find(a => a.type === 'Shield')?.baseAC}`}
               </div>
             </div>
           </div>
@@ -635,6 +633,6 @@ export function EquipmentTab({
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 } 

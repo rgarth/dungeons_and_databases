@@ -141,7 +141,7 @@ export function InventoryTab({
 
   return (
     <div className="p-6">
-      <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column - General Inventory */}
         <div className="space-y-6">
           {/* General Inventory Section */}

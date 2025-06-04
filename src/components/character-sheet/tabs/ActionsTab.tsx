@@ -46,7 +46,33 @@ export function ActionsTab({
 
   return (
     <div className="p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="max-w-6xl mx-auto space-y-6">
+        
+        {/* Combat Stats Summary */}
+        <div className="bg-slate-700 rounded-lg p-6">
+          <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+            <Shield className="h-6 w-6" />
+            Combat Summary
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="text-center bg-slate-600 rounded p-3">
+              <div className="text-2xl font-bold text-blue-400">{currentArmorClass}</div>
+              <div className="text-xs text-slate-400">Armor Class</div>
+            </div>
+            <div className="text-center bg-slate-600 rounded p-3">
+              <div className="text-2xl font-bold text-red-400">{character.hitPoints}/{character.maxHitPoints}</div>
+              <div className="text-xs text-slate-400">Hit Points</div>
+            </div>
+            <div className="text-center bg-slate-600 rounded p-3">
+              <div className="text-2xl font-bold text-green-400">+{getProficiencyBonus(character.level)}</div>
+              <div className="text-xs text-slate-400">Proficiency</div>
+            </div>
+            <div className="text-center bg-slate-600 rounded p-3">
+              <div className="text-2xl font-bold text-yellow-400">{character.speed} ft</div>
+              <div className="text-xs text-slate-400">Speed</div>
+            </div>
+          </div>
+        </div>
         
         {/* Weapon Attacks */}
         {equippedWeapons && equippedWeapons.length > 0 && (
@@ -393,32 +419,6 @@ export function ActionsTab({
           
           <div className="mt-4 text-center text-slate-400 text-sm">
             Quick reference for available combat actions - no dice rolling here!
-          </div>
-        </div>
-
-        {/* Combat Stats Summary */}
-        <div className="bg-slate-700 rounded-lg p-6">
-          <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-            <Shield className="h-6 w-6" />
-            Combat Summary
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center bg-slate-600 rounded p-3">
-              <div className="text-2xl font-bold text-blue-400">{currentArmorClass}</div>
-              <div className="text-xs text-slate-400">Armor Class</div>
-            </div>
-            <div className="text-center bg-slate-600 rounded p-3">
-              <div className="text-2xl font-bold text-red-400">{character.hitPoints}/{character.maxHitPoints}</div>
-              <div className="text-xs text-slate-400">Hit Points</div>
-            </div>
-            <div className="text-center bg-slate-600 rounded p-3">
-              <div className="text-2xl font-bold text-green-400">+{getProficiencyBonus(character.level)}</div>
-              <div className="text-xs text-slate-400">Proficiency</div>
-            </div>
-            <div className="text-center bg-slate-600 rounded p-3">
-              <div className="text-2xl font-bold text-yellow-400">{character.speed} ft</div>
-              <div className="text-xs text-slate-400">Speed</div>
-            </div>
           </div>
         </div>
 
