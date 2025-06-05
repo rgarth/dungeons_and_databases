@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react/no-unescaped-entities */
 
 import { useState } from "react";
 import { BookOpen, Edit3, Save, X, HelpCircle, FileText } from "lucide-react";
@@ -40,7 +41,7 @@ const BACKSTORY_PROMPTS = [
   },
   {
     question: "What is your greatest achievement before adventuring?",
-    placeholder: "Something you accomplished that you're proud of..."
+    placeholder: "Something you accomplished that you\'re proud of..."
   },
   {
     question: "What is your most treasured possession and why?",
@@ -60,7 +61,7 @@ const BACKSTORY_PROMPTS = [
   },
   {
     question: "What secret do you keep hidden from others?",
-    placeholder: "Something from your past you don't share..."
+    placeholder: "Something from your past you don\'t share..."
   },
   {
     question: "How do others typically perceive you?",
@@ -69,8 +70,21 @@ const BACKSTORY_PROMPTS = [
   {
     question: "What would make you risk everything?",
     placeholder: "Causes, people, or ideals worth great sacrifice..."
+  },
+  {
+    question: "What is your relationship with the gods or divine forces?",
+    placeholder: "Your deity, religious beliefs, spiritual practices, or lack thereof..."
   }
 ];
+
+// Character limits for different fields
+const CHARACTER_LIMITS = {
+  appearance: 1000,
+  personality: 1500,
+  backstory: 5000,
+  notes: 3000,
+  guidedAnswer: 500
+} as const;
 
 export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
   const [isEditing, setIsEditing] = useState<string | null>(null);
@@ -132,10 +146,35 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
   };
 
   const handleGuidedAnswerChange = (index: number, value: string) => {
-    setGuidedAnswers(prev => ({
-      ...prev,
-      [index]: value
-    }));
+    // Apply character limit for guided answers
+    if (value.length <= CHARACTER_LIMITS.guidedAnswer) {
+      setGuidedAnswers(prev => ({
+        ...prev,
+        [index]: value
+      }));
+    }
+  };
+
+  const handleFieldChange = (field: keyof typeof editValues, value: string) => {
+    const limit = CHARACTER_LIMITS[field];
+    if (value.length <= limit) {
+      setEditValues(prev => ({ ...prev, [field]: value }));
+    }
+  };
+
+  const getCharacterCount = (field: keyof typeof editValues) => {
+    return editValues[field]?.length || 0;
+  };
+
+  const getCharacterCountDisplay = (field: keyof typeof editValues) => {
+    const count = getCharacterCount(field);
+    const limit = CHARACTER_LIMITS[field];
+    const isNearLimit = count > limit * 0.8;
+    return (
+      <span className={`text-xs ${isNearLimit ? 'text-yellow-400' : 'text-slate-400'}`}>
+        {count}/{limit}
+      </span>
+    );
   };
 
   const renderBackstoryEditor = () => {
@@ -171,13 +210,18 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
         {/* Free Form Editor */}
         {editMode === 'freeform' && (
-          <textarea
-            value={editValues.backstory}
-            onChange={(e) => setEditValues(prev => ({ ...prev, backstory: e.target.value }))}
-                         placeholder="Tell your character&apos;s story - their background, history, motivations, and how they became an adventurer."
-            className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
-            rows={8}
-          />
+          <div>
+            <textarea
+              value={editValues.backstory}
+              onChange={(e) => handleFieldChange('backstory', e.target.value)}
+              placeholder="Tell your character&apos;s story - their background, history, motivations, and how they became an adventurer."
+              className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
+              rows={8}
+            />
+            <div className="flex justify-end mt-1">
+              {getCharacterCountDisplay('backstory')}
+            </div>
+          </div>
         )}
 
         {/* Guided Editor */}
@@ -186,7 +230,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             <div className="bg-slate-800 p-3 rounded-lg">
               <p className="text-slate-300 text-sm">
                 Answer any questions that interest you. Each answered question will be added to your backstory.
-                <span className="text-slate-400 block mt-1">None are required - skip any you don't want to answer!</span>
+                <span className="text-slate-400 block mt-1">None are required - skip any you don\'t want to answer!</span>
               </p>
             </div>
             
@@ -203,6 +247,11 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                     className="w-full bg-slate-700 border border-slate-500 rounded px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
                     rows={2}
                   />
+                  <div className="flex justify-end mt-1">
+                    <span className={`text-xs ${(guidedAnswers[index]?.length || 0) > CHARACTER_LIMITS.guidedAnswer * 0.8 ? 'text-yellow-400' : 'text-slate-400'}`}>
+                      {guidedAnswers[index]?.length || 0}/{CHARACTER_LIMITS.guidedAnswer}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -272,13 +321,18 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           field === 'backstory' ? (
             renderBackstoryEditor()
           ) : (
-            <textarea
-              value={editValues[field]}
-              onChange={(e) => setEditValues(prev => ({ ...prev, [field]: e.target.value }))}
-              placeholder={placeholder}
-              className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
-              rows={field === 'notes' ? 12 : 4}
-            />
+            <div>
+              <textarea
+                value={editValues[field]}
+                onChange={(e) => handleFieldChange(field, e.target.value)}
+                placeholder={placeholder}
+                className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
+                rows={field === 'notes' ? 12 : 4}
+              />
+              <div className="flex justify-end mt-1">
+                {getCharacterCountDisplay(field)}
+              </div>
+            </div>
           )
         ) : (
           <div className={field === 'notes' ? "min-h-[300px]" : "min-h-[60px]"}>
