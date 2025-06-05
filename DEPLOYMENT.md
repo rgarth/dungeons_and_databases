@@ -4,8 +4,8 @@ This guide covers deploying your D&D character management application to product
 
 ## 📋 Quick Overview
 
-The app includes **177 items** of D&D 5e SRD content:
-- **23 spells** (cantrips)
+The app includes **554 items** of D&D 5e SRD content:
+- **396 spells** (all levels 0-9, complete SRD)
 - **37 weapons** (simple & martial) 
 - **16 armor pieces** (light, medium, heavy + shield variants)
 - **105 equipment items** (adventuring gear, tools, packs)
@@ -138,8 +138,8 @@ The seed script automatically validates that all content was seeded correctly:
 ```
 🔍 Validating seeded data...
 ✅ Data validation successful!
-📊 Total items: 177
-   📜 Spells: 23
+📊 Total items: 554
+   📜 Spells: 396
    ⚔️  Weapons: 37
    🛡️  Armor: 16
    🎒 Equipment: 105
@@ -184,10 +184,11 @@ prisma/
 ├── seed-production.ts      # Production-ready seed script
 ├── seed.ts                # Development seed script
 ├── data/
-│   └── index.ts           # Consolidated D&D content
-├── weapons-data.ts        # Weapon definitions
-├── armor-data.ts          # Armor definitions
-└── equipment-data.ts      # Equipment definitions
+│   ├── index.ts           # Consolidated D&D content
+│   ├── spells-data.ts     # 396 spells (all levels)
+│   ├── weapons-data.ts    # Weapon definitions
+│   ├── armor-data.ts      # Armor definitions
+│   └── equipment-data.ts  # Equipment definitions
 ```
 
 ## 🛡️ Production Safety
@@ -238,7 +239,7 @@ npm run db:seed:force
 
 After deployment, verify:
 - [ ] App loads without errors
-- [ ] Database has 177 D&D items
+- [ ] Database has 554 D&D items
 - [ ] Character creation works
 - [ ] All equipment/spells/weapons available
 - [ ] User authentication functional

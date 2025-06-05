@@ -4,19 +4,31 @@ A modern D&D 5e character management application built with Next.js, Prisma, and
 
 ## ✨ Features
 
-- **Complete D&D 5e SRD Content** - 181 items ready for gameplay
+- **Complete D&D 5e SRD Content** - 554 items ready for gameplay
 - **Character Management** - Create, edit, and manage D&D characters
 - **Equipment System** - Full weapon, armor, and equipment database
-- **Spell Management** - Comprehensive spell system
+- **Spell Management** - Comprehensive spell system with all spell levels
 - **User Authentication** - Secure user accounts with NextAuth
 - **Production Ready** - Automated deployment with database seeding
 
 ## 📊 D&D Content Included
 
-- **23 Spells** (Cantrips/Level 0)
+- **396 Spells** (All levels 0-9, complete SRD)
 - **37 Weapons** (Simple & Martial, Melee & Ranged)
 - **16 Armor Pieces** (Light, Medium, Heavy + Shield Variants)
 - **105 Equipment Items** (Adventuring Gear, Tools, Equipment Packs)
+
+### 📜 Complete Spell Database
+- **Level 0 (Cantrips)**: 35 spells
+- **Level 1**: 65 spells  
+- **Level 2**: 64 spells
+- **Level 3**: 54 spells
+- **Level 4**: 39 spells
+- **Level 5**: 46 spells
+- **Level 6**: 38 spells
+- **Level 7**: 21 spells
+- **Level 8**: 18 spells
+- **Level 9**: 16 spells
 
 ## 🚀 Quick Start
 
@@ -84,6 +96,7 @@ prisma/
 ├── seed-production.ts         # Production-ready seed script
 ├── data/
 │   ├── index.ts              # Consolidated D&D content
+│   ├── spells-data.ts        # 396 spells (all levels)
 │   ├── weapons-data.ts       # 37 weapons
 │   ├── armor-data.ts         # 16 armor pieces
 │   └── equipment-data.ts     # 105 equipment items
@@ -107,6 +120,12 @@ src/
 
 All content is sourced from the **D&D 5e System Reference Document (SRD)** - completely legal and free to use. Includes:
 
+### Spells (Complete SRD)
+- **All 396 official spells** from levels 0-9
+- **Complete descriptions** with casting time, range, components, duration
+- **Class availability** for each spell (Bard, Cleric, Druid, Paladin, Ranger, Sorcerer, Warlock, Wizard)
+- **School classification** (Abjuration, Conjuration, Divination, Enchantment, Evocation, Illusion, Necromancy, Transmutation)
+
 ### Weapons
 - **Simple Weapons**: Club, Dagger, Spear, Shortbow, Light Crossbow, etc.
 - **Martial Weapons**: Longsword, Battleaxe, Greatsword, Longbow, etc.
@@ -124,9 +143,6 @@ All content is sourced from the **D&D 5e System Reference Document (SRD)** - com
 - **Equipment Packs**: Burglar's Pack, Dungeoneer's Pack, etc.
 - **Arcane Focuses**: Crystal, orb, rod, staff, wand, etc.
 
-### Spells (Cantrips)
-All 23 official D&D 5e cantrips with complete descriptions, components, and class availability.
-
 ## 🛡️ Production Safety
 
 The application includes enterprise-grade safety features:
@@ -135,7 +151,7 @@ The application includes enterprise-grade safety features:
 - **Data Validation**: Automatic integrity checks after seeding
 - **Environment Detection**: Smart behavior based on NODE_ENV
 - **Error Recovery**: Graceful handling of deployment issues
-- **Content Verification**: Validates all 181 items are properly seeded
+- **Content Verification**: Validates all 554 items are properly seeded
 
 ## 📄 License
 
