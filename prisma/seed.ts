@@ -1,11 +1,14 @@
 import { PrismaClient } from '@prisma/client'
-import { weaponsData } from './weapons-data'
-import { armorData } from './armor-data'
-import { equipmentData } from './equipment-data'
+import { weaponsData } from './data/weapons-data'
+import { armorData } from './data/armor-data'
+import { equipmentData } from './data/equipment-data'
 
 const prisma = new PrismaClient()
 
-// Core D&D 5e SRD Spells Data
+// Core D&D 5e SRD Content Database Seeding
+// Source: System Reference Document 5.1 by Wizards of the Coast LLC
+// Licensed under Creative Commons Attribution 4.0 International License
+// https://dnd.wizards.com/resources/systems-reference-document
 const spellsData = [
   // Cantrips (Level 0)
   {

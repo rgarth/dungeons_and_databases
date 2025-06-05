@@ -153,9 +153,20 @@ The application includes enterprise-grade safety features:
 - **Error Recovery**: Graceful handling of deployment issues
 - **Content Verification**: Validates all 554 items are properly seeded
 
-## 📄 License
+## 📄 License & Attribution
 
-This project is MIT licensed. All D&D content is from the official System Reference Document (SRD) and is used under the Open Game License.
+### Application License
+This application is licensed under the **MIT License**. The application code is separate from D&D content and may be used according to MIT License terms.
+
+### D&D Content Attribution
+All D&D content is from the **System Reference Document 5.1 (SRD 5.1)** by Wizards of the Coast LLC and is licensed under the **Creative Commons Attribution 4.0 International License**.
+
+**Source**: https://dnd.wizards.com/resources/systems-reference-document
+
+**Legal Compliance**: This application includes proper attribution and licensing information. View complete legal details at `/legal` within the application.
+
+### Disclaimer
+**Dungeons & Dragons** and **D&D** are trademarks of Wizards of the Coast LLC. This application is not affiliated with, endorsed, sponsored, or specifically approved by Wizards of the Coast LLC.
 
 ---
 

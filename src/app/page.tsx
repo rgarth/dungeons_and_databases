@@ -194,6 +194,32 @@ export default function Home() {
           }}
         />
       )}
+
+      {/* Footer with Attribution */}
+      <footer className="mt-16 pt-8 border-t border-slate-700 text-center">
+        <div className="text-slate-400 text-sm space-y-2">
+          <p>
+            Content from the{' '}
+            <a 
+              href="https://dnd.wizards.com/resources/systems-reference-document" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-purple-400 hover:text-purple-300 underline"
+            >
+              D&D 5e System Reference Document
+            </a>
+            {' '}by Wizards of the Coast LLC
+          </p>
+          <p>
+            <a 
+              href="/legal" 
+              className="text-purple-400 hover:text-purple-300 underline"
+            >
+              View Complete Legal Information & Licensing
+            </a>
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

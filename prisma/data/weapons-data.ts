@@ -1,4 +1,7 @@
 // Complete D&D 5e SRD Weapons Data
+// Source: System Reference Document 5.1 by Wizards of the Coast LLC
+// Licensed under Creative Commons Attribution 4.0 International License
+// https://dnd.wizards.com/resources/systems-reference-document
 export const weaponsData = [
   // Simple Melee Weapons
   {
