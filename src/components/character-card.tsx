@@ -52,6 +52,7 @@ interface Character {
   personality?: string;
   backstory?: string;
   notes?: string;
+  avatar?: string;
   equippedWeapons?: (Weapon | MagicalWeapon)[];
 }
 
@@ -99,11 +100,26 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
         onClick={() => setShowSheet(true)}
       >
         <div className="flex justify-between items-start mb-4">
-          <div>
-            <h3 className="text-xl font-bold text-white mb-1">{character.name}</h3>
-            <p className="text-slate-400">
-              {character.race} {character.class}
-            </p>
+          <div className="flex items-start gap-3">
+            {/* Avatar */}
+            {character.avatar && (
+              <img
+                src={`/avatars/${character.avatar}`}
+                alt={`${character.name} avatar`}
+                className="w-16 h-16 rounded-lg border border-slate-600 object-cover"
+                onError={(e) => {
+                  // Hide broken images
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            )}
+            
+            <div>
+              <h3 className="text-xl font-bold text-white mb-1">{character.name}</h3>
+              <p className="text-slate-400">
+                {character.race} {character.class}
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <div className="bg-purple-600 text-white text-sm font-semibold px-2 py-1 rounded">

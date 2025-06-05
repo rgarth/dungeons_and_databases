@@ -12,6 +12,7 @@ import { LevelUpModal } from "./level-up-modal";
 import { getSpellcastingType, getSpellsPreparedCount } from "@/lib/dnd/level-up";
 import { StatsTab, ActionsTab, EquipmentTab, InventoryTab, BackgroundTab } from "./character-sheet/";
 
+
 interface CharacterSheetProps {
   character: {
     id: string;
@@ -57,6 +58,7 @@ interface CharacterSheetProps {
     personality?: string;
     backstory?: string;
     notes?: string;
+    avatar?: string;
     equippedWeapons?: (Weapon | MagicalWeapon)[];
   };
   onClose: () => void;
@@ -177,6 +179,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     hitPoints?: number;
     temporaryHitPoints?: number;
     spellsPrepared?: Spell[];
+    avatar?: string | null;
+    appearance?: string;
+    personality?: string;
+    backstory?: string;
+    notes?: string;
   } | Record<string, unknown>) => {
     try {
       const response = await fetch(`/api/characters?id=${character.id}`, {
@@ -417,7 +424,20 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
           {/* Header */}
           <div className="flex justify-between items-center p-6 border-b border-slate-700">
             <div className="flex items-center gap-4">
-              <User className="h-8 w-8 text-purple-400" />
+              {/* Avatar or default icon */}
+              {displayCharacter.avatar ? (
+                <img
+                  src={`/avatars/${displayCharacter.avatar}`}
+                  alt={`${displayCharacter.name} avatar`}
+                  className="w-16 h-16 rounded-lg border-2 border-purple-400 object-cover"
+                  onError={(e) => {
+                    // Fallback to User icon if avatar fails to load
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                  }}
+                />
+              ) : null}
+              <User className={`h-8 w-8 text-purple-400 ${displayCharacter.avatar ? 'hidden' : ''}`} />
               <div>
                 <h1 className="text-3xl font-bold text-white">{displayCharacter.name}</h1>
                 <p className="text-slate-300">

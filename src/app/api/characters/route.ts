@@ -316,6 +316,9 @@ export async function PATCH(request: NextRequest) {
     if (body.notes !== undefined) {
       updateData.notes = body.notes;
     }
+    if (body.avatar !== undefined) {
+      updateData.avatar = body.avatar;
+    }
 
     // Verify the character belongs to the current user and update
     const character = await prisma.character.updateMany({

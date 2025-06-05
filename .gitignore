@@ -46,3 +46,7 @@ next-env.d.ts
 /prisma/*.db*
 
 /src/generated/prisma
+
+# avatar generation
+/public/avatars/
+/scripts/avatar-progress*.json

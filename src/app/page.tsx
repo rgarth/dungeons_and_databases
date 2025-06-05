@@ -9,6 +9,7 @@ import { Weapon, MagicalWeapon, Armor, InventoryItem } from "@/lib/dnd/equipment
 import { Spell } from "@/lib/dnd/spells";
 import { Action } from "@/lib/dnd/combat";
 import { Treasure } from "@/lib/dnd/data";
+import { useAppStartupPreloader } from "@/hooks/useAppStartupPreloader";
 
 // Use a simplified interface for the character list view
 interface CharacterListItem {
@@ -55,6 +56,7 @@ interface CharacterListItem {
   personality?: string;
   backstory?: string;
   notes?: string;
+  avatar?: string;
   equippedWeapons?: (Weapon | MagicalWeapon)[];
 }
 
@@ -63,6 +65,9 @@ export default function Home() {
   const [characters, setCharacters] = useState<CharacterListItem[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  
+  // Start app-wide avatar preloading after authentication
+  const { isPreloading, preloadProgress, preloadCompleted } = useAppStartupPreloader();
 
   useEffect(() => {
     if (session) {
@@ -130,6 +135,18 @@ export default function Home() {
         </div>
         
         <div className="flex items-center gap-4">
+          {/* Avatar preload status */}
+          {isPreloading && (
+            <div className="text-xs text-slate-400">
+              Loading avatars: {preloadProgress.loaded}/{preloadProgress.total}
+            </div>
+          )}
+          {preloadCompleted && !isPreloading && (
+            <div className="text-xs text-green-400">
+              ✅ Avatars ready
+            </div>
+          )}
+          
           <div className="flex items-center gap-2 text-slate-300">
             <User className="h-5 w-5" />
             <span>{session.user?.name}</span>

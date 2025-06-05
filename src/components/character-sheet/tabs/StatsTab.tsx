@@ -188,28 +188,28 @@ export function StatsTab({ character, equippedArmor, onUpdate }: StatsTabProps) 
             {character.appearance && (
               <div className="bg-slate-700 rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-white mb-3">Appearance</h3>
-                <p className="text-slate-300 leading-relaxed">{character.appearance}</p>
+                <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{character.appearance}</p>
               </div>
             )}
 
             {character.personality && (
               <div className="bg-slate-700 rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-white mb-3">Personality</h3>
-                <p className="text-slate-300 leading-relaxed">{character.personality}</p>
+                <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{character.personality}</p>
               </div>
             )}
 
             {character.backstory && (
               <div className="bg-slate-700 rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-white mb-3">Backstory</h3>
-                <p className="text-slate-300 leading-relaxed">{character.backstory}</p>
+                <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{character.backstory}</p>
               </div>
             )}
 
             {character.notes && (
               <div className="bg-slate-700 rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-white mb-3">Notes</h3>
-                <p className="text-slate-300 leading-relaxed">{character.notes}</p>
+                <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{character.notes}</p>
               </div>
             )}
           </div>

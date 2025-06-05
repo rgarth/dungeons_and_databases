@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { BookOpen, Edit3, Save, X, HelpCircle, FileText } from "lucide-react";
+import { AvatarSelector } from "../components/AvatarSelector";
 
 interface BackgroundTabProps {
   character: {
@@ -17,8 +18,9 @@ interface BackgroundTabProps {
     personality?: string;
     backstory?: string;
     notes?: string;
+    avatar?: string;
   };
-  onUpdate: (updates: { appearance?: string; personality?: string; backstory?: string; notes?: string }) => void;
+  onUpdate: (updates: { appearance?: string; personality?: string; backstory?: string; notes?: string; avatar?: string | null }) => void;
 }
 
 // D&D Character Backstory Prompts
@@ -277,7 +279,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     title: string,
     field: keyof typeof editValues,
     placeholder: string,
-    icon: React.ReactNode
+    icon: React.ReactNode,
+    extraComponent?: React.ReactNode
   ) => {
     const isCurrentlyEditing = isEditing === field;
     const value = character[field] || '';
@@ -316,6 +319,13 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             </div>
           )}
         </div>
+
+        {/* Extra component (like avatar selector) */}
+        {extraComponent && (
+          <div className="mb-4">
+            {extraComponent}
+          </div>
+        )}
 
         {isCurrentlyEditing ? (
           field === 'backstory' ? (
@@ -384,7 +394,11 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               "Appearance",
               "appearance",
               "Describe your character\'s physical appearance, clothing, distinctive features, etc.",
-              <Edit3 className="h-5 w-5 text-blue-400" />
+              <Edit3 className="h-5 w-5 text-blue-400" />,
+              <AvatarSelector
+                selectedAvatar={character.avatar}
+                onAvatarSelect={(avatar) => onUpdate({ avatar })}
+              />
             )}
 
             {renderEditableSection(
