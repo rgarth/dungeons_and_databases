@@ -24,7 +24,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [alignment, setAlignment] = useState<typeof ALIGNMENTS[number]>(ALIGNMENTS[4]); // True Neutral
   const [gender, setGender] = useState<string>('');
   const [statMethod, setStatMethod] = useState<StatMethod>('rolling-assign');
-  const [abilityScores, setAbilityScores] = useState(generateAbilityScores('rolling-assign'));
+  const [abilityScores, setAbilityScores] = useState({} as Record<AbilityScore, number>);
   const [randomScoreArray, setRandomScoreArray] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
   const [generatingName, setGeneratingName] = useState(false);
@@ -32,29 +32,54 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [selectedWeapons, setSelectedWeapons] = useState<Weapon[]>([]);
   const [selectedEquipmentPack, setSelectedEquipmentPack] = useState<number>(0);
 
-  // Initialize random score array on mount since rolling-assign is default
+  // Initialize random score array and ability scores on mount since rolling-assign is default
   useEffect(() => {
-    setRandomScoreArray(generateRandomScoreArray());
+    const initialRandomArray = generateRandomScoreArray();
+    setRandomScoreArray(initialRandomArray);
+    
+    // Set initial ability scores from the same random array
+    const initialScores = ABILITY_SCORES.reduce((scores, ability, index) => {
+      scores[ability] = initialRandomArray[index] || 10;
+      return scores;
+    }, {} as Record<AbilityScore, number>);
+    setAbilityScores(initialScores);
   }, []);
 
   const handleStatMethodChange = (method: StatMethod) => {
     setStatMethod(method);
-    const newScores = generateAbilityScores(method);
-    setAbilityScores(newScores);
     
-    // If switching to rolling-assign, generate the random score array
     if (method === 'rolling-assign') {
-      setRandomScoreArray(generateRandomScoreArray());
+      // Generate the random array first, then use it for ability scores
+      const newRandomArray = generateRandomScoreArray();
+      setRandomScoreArray(newRandomArray);
+      
+      // Assign the rolled scores to abilities in order
+      const newScores = ABILITY_SCORES.reduce((scores, ability, index) => {
+        scores[ability] = newRandomArray[index] || 10;
+        return scores;
+      }, {} as Record<AbilityScore, number>);
+      setAbilityScores(newScores);
+    } else {
+      const newScores = generateAbilityScores(method);
+      setAbilityScores(newScores);
     }
   };
 
   const handleGenerateStats = () => {
-    const newScores = generateAbilityScores(statMethod);
-    setAbilityScores(newScores);
-    
-    // If using rolling-assign, also regenerate the random score array
     if (statMethod === 'rolling-assign') {
-      setRandomScoreArray(generateRandomScoreArray());
+      // Generate the random array first, then use it for ability scores
+      const newRandomArray = generateRandomScoreArray();
+      setRandomScoreArray(newRandomArray);
+      
+      // Assign the rolled scores to abilities in order
+      const newScores = ABILITY_SCORES.reduce((scores, ability, index) => {
+        scores[ability] = newRandomArray[index] || 10;
+        return scores;
+      }, {} as Record<AbilityScore, number>);
+      setAbilityScores(newScores);
+    } else {
+      const newScores = generateAbilityScores(statMethod);
+      setAbilityScores(newScores);
     }
   };
 

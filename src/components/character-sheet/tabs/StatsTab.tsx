@@ -42,10 +42,10 @@ export function StatsTab({ character, equippedArmor, onUpdate }: StatsTabProps) 
   const currentArmorClass = calculateArmorClass(equippedArmor, character.dexterity);
 
   return (
-    <div className="p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
-        {/* First Row - Stats 2/3 + HP 1/3 */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="p-4">
+      <div className="space-y-4">
+        {/* First Row - Ability Scores (2 columns) + HP Management (1 column) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Ability Scores - 2/3 */}
           <div className="lg:col-span-2 bg-slate-700 rounded-lg p-4">
             <h3 className="text-lg font-semibold text-white mb-4">Ability Scores</h3>
@@ -69,7 +69,7 @@ export function StatsTab({ character, equippedArmor, onUpdate }: StatsTabProps) 
             </div>
           </div>
 
-          {/* Hit Points - 1/3 */}
+          {/* HP Management - 1/3 */}
           <div className="bg-slate-700 rounded-lg p-4">
             <HitPointsDisplay 
               character={{
@@ -85,9 +85,40 @@ export function StatsTab({ character, equippedArmor, onUpdate }: StatsTabProps) 
           </div>
         </div>
 
-        {/* Second Row - Combat Stats 1/2 + Proficiencies 1/2 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Combat Stats - 1/2 */}
+        {/* Second Row - Character Details + Combat Stats + Skill Proficiency (3 equal columns) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Character Details - 1/3 */}
+          <div className="bg-slate-700 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-white mb-4">Character Details</h3>
+            <div className="space-y-3">
+              <div>
+                <span className="text-slate-400 text-sm">Race:</span>
+                <p className="text-white">{character.race}</p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-sm">Class:</span>
+                <p className="text-white">{character.class}</p>
+              </div>
+              <div>
+                <span className="text-slate-400 text-sm">Level:</span>
+                <p className="text-white">{character.level}</p>
+              </div>
+              {character.background && (
+                <div>
+                  <span className="text-slate-400 text-sm">Background:</span>
+                  <p className="text-white">{character.background}</p>
+                </div>
+              )}
+              {character.alignment && (
+                <div>
+                  <span className="text-slate-400 text-sm">Alignment:</span>
+                  <p className="text-white">{character.alignment}</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Combat Stats - 1/3 */}
           <div className="bg-slate-700 rounded-lg p-4">
             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
               <Shield className="h-5 w-5 text-blue-400" />
@@ -117,13 +148,13 @@ export function StatsTab({ character, equippedArmor, onUpdate }: StatsTabProps) 
             </div>
           </div>
 
-          {/* Skills - 1/2 */}
-          {character.skills && character.skills.length > 0 && (
-            <div className="bg-slate-700 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <BookOpen className="h-5 w-5" />
-                Skill Proficiencies
-              </h3>
+          {/* Skill Proficiency - 1/3 */}
+          <div className="bg-slate-700 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <BookOpen className="h-5 w-5" />
+              Skill Proficiencies
+            </h3>
+            {character.skills && character.skills.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {character.skills.map((skill) => (
                   <span
@@ -134,37 +165,8 @@ export function StatsTab({ character, equippedArmor, onUpdate }: StatsTabProps) 
                   </span>
                 ))}
               </div>
-            </div>
-          )}
-        </div>
-
-        {/* Character Details */}
-        <div className="bg-slate-700 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-4">Character Details</h3>
-          <div className="space-y-3">
-            <div>
-              <span className="text-slate-400 text-sm">Race:</span>
-              <p className="text-white">{character.race}</p>
-            </div>
-            <div>
-              <span className="text-slate-400 text-sm">Class:</span>
-              <p className="text-white">{character.class}</p>
-            </div>
-            <div>
-              <span className="text-slate-400 text-sm">Level:</span>
-              <p className="text-white">{character.level}</p>
-            </div>
-            {character.background && (
-              <div>
-                <span className="text-slate-400 text-sm">Background:</span>
-                <p className="text-white">{character.background}</p>
-              </div>
-            )}
-            {character.alignment && (
-              <div>
-                <span className="text-slate-400 text-sm">Alignment:</span>
-                <p className="text-white">{character.alignment}</p>
-              </div>
+            ) : (
+              <p className="text-slate-400 text-sm">No skill proficiencies</p>
             )}
           </div>
         </div>

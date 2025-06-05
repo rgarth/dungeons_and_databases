@@ -494,18 +494,14 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
           {/* Tab Content */}
           <div className="flex-1 overflow-y-auto">
             {activeTab === "stats" && (
-              <div className="p-6">
-                <div className="max-w-4xl mx-auto">
-                  <StatsTab 
-                    character={displayCharacter}
-                    equippedArmor={equippedArmor}
-                    onUpdate={(updates) => {
-                      setCurrentCharacter(prev => ({ ...prev, ...updates }));
-                      updateCharacter(updates);
-                    }}
-                  />
-                </div>
-              </div>
+              <StatsTab 
+                character={displayCharacter}
+                equippedArmor={equippedArmor}
+                onUpdate={(updates) => {
+                  setCurrentCharacter(prev => ({ ...prev, ...updates }));
+                  updateCharacter(updates);
+                }}
+              />
             )}
 
             {activeTab === "actions" && (
