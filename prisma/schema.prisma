@@ -50,6 +50,64 @@ model User {
   updatedAt     DateTime    @updatedAt
 }
 
+// NEW: Core D&D Content Tables
+model Spell {
+  id           String @id @default(cuid())
+  name         String @unique
+  level        Int    // 0 for cantrips, 1-9 for spell levels
+  school       String // Abjuration, Conjuration, etc.
+  castingTime  String // "1 action", "1 bonus action", etc.
+  range        String // "Self", "Touch", "30 feet", etc.
+  components   String // "V, S", "V, S, M", etc.
+  duration     String // "Instantaneous", "1 minute", etc.
+  description  String
+  classes      String // JSON array of class names
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Weapon {
+  id         String  @id @default(cuid())
+  name       String  @unique
+  type       String  // "Simple" or "Martial"
+  category   String  // "Melee" or "Ranged"
+  damage     String  // "1d6", "1d8", etc.
+  damageType String  // "Slashing", "Piercing", "Bludgeoning"
+  properties String  // JSON array of properties
+  weight     Float
+  cost       String  // "10 gp", "5 sp", etc.
+  stackable  Boolean @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Armor {
+  id                   String   @id @default(cuid())
+  name                 String   @unique
+  type                 String   // "Light", "Medium", "Heavy", "Shield"
+  baseAC               Int
+  maxDexBonus          Int?     // null means no limit (light armor)
+  minStrength          Int?     // minimum strength requirement
+  stealthDisadvantage  Boolean  @default(false)
+  weight               Float
+  cost                 String   // "50 gp", "1500 gp", etc.
+  description          String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model Equipment {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  type        String   // "Adventuring Gear", "Tools", "Trade Goods", etc.
+  cost        String   // "1 gp", "25 gp", etc.
+  weight      Float?   // Some items have no weight
+  description String?
+  stackable   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model Character {
   id          String @id @default(cuid())
   name        String
