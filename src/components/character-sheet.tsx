@@ -1,6 +1,6 @@
 "use client";
 
-import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp } from "lucide-react";
+import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp, FileText } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getModifier } from "@/lib/dnd/core";
 import { Spell, getClassSpells } from "@/lib/dnd/spells";
@@ -10,7 +10,7 @@ import { Treasure } from "@/lib/dnd/data";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import { LevelUpModal } from "./level-up-modal";
 import { getSpellcastingType, getSpellsPreparedCount } from "@/lib/dnd/level-up";
-import { StatsTab, ActionsTab, EquipmentTab, InventoryTab } from "./character-sheet/";
+import { StatsTab, ActionsTab, EquipmentTab, InventoryTab, BackgroundTab } from "./character-sheet/";
 
 interface CharacterSheetProps {
   character: {
@@ -114,7 +114,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
   // Use currentCharacter instead of character throughout the component
   const displayCharacter = currentCharacter;
   
-  const [activeTab, setActiveTab] = useState<"stats" | "actions" | "equipment" | "inventory">("stats");
+  const [activeTab, setActiveTab] = useState<"stats" | "actions" | "equipment" | "inventory" | "background">("stats");
   const [showWeaponCreator, setShowWeaponCreator] = useState(false);
   const [selectedBaseWeapon, setSelectedBaseWeapon] = useState("");
   const [selectedMagicalTemplate, setSelectedMagicalTemplate] = useState("");
@@ -497,6 +497,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
               <Coins className="h-4 w-4" />
               Inventory
             </button>
+            <button
+              onClick={() => setActiveTab("background")}
+              className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
+                activeTab === "background"
+                  ? "text-purple-400 border-b-2 border-purple-400"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <FileText className="h-4 w-4" />
+              Background / Notes
+            </button>
           </div>
 
           {/* Tab Content */}
@@ -569,6 +580,16 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
                 onTreasuresUpdate={(updatedTreasures) => {
                   setTreasures(updatedTreasures);
                   updateCharacter({ treasures: updatedTreasures });
+                }}
+              />
+            )}
+
+            {activeTab === "background" && (
+              <BackgroundTab
+                character={displayCharacter}
+                onUpdate={(updates) => {
+                  setCurrentCharacter(prev => ({ ...prev, ...updates }));
+                  updateCharacter(updates);
                 }}
               />
             )}
