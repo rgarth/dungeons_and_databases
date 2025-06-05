@@ -303,6 +303,20 @@ export async function PATCH(request: NextRequest) {
       updateData.inventoryArmor = body.inventoryArmor;
     }
 
+    // Handle character background/detail updates
+    if (body.appearance !== undefined) {
+      updateData.appearance = body.appearance;
+    }
+    if (body.personality !== undefined) {
+      updateData.personality = body.personality;
+    }
+    if (body.backstory !== undefined) {
+      updateData.backstory = body.backstory;
+    }
+    if (body.notes !== undefined) {
+      updateData.notes = body.notes;
+    }
+
     // Verify the character belongs to the current user and update
     const character = await prisma.character.updateMany({
       where: {
