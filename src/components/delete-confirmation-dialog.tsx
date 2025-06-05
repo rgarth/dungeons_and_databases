@@ -20,7 +20,7 @@ export function DeleteConfirmationDialog({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[60]">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-[60]">
       <div className="bg-slate-800 rounded-lg w-full max-w-md border border-red-500/20">
         <div className="p-6">
           <div className="flex items-center gap-3 mb-4">

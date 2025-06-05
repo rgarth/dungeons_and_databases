@@ -1,6 +1,6 @@
 "use client";
 
-import { User, BarChart3, Swords, X, Trash2, Package, Coins } from "lucide-react";
+import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getModifier } from "@/lib/dnd/core";
 import { Spell, getClassSpells } from "@/lib/dnd/spells";
@@ -412,7 +412,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
         <div className="bg-slate-800 rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
           {/* Header */}
           <div className="flex justify-between items-center p-6 border-b border-slate-700">
@@ -427,6 +427,14 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
               </div>
             </div>
             <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowLevelUpModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                title="Level Up"
+              >
+                <TrendingUp className="h-4 w-4" />
+                Level Up
+              </button>
               <button
                 onClick={() => setShowDeleteDialog(true)}
                 className="text-red-400 hover:text-red-300 transition-colors p-2 rounded-lg hover:bg-red-500/10"
@@ -444,7 +452,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex border-b border-slate-700">
+          <div className="flex items-end border-b border-slate-700">
             <button
               onClick={() => setActiveTab("stats")}
               className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
@@ -570,7 +578,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
 
       {/* Magical Weapon Creator Modal */}
       {showWeaponCreator && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
           <div className="bg-slate-800 rounded-lg w-full max-w-md p-6">
             <h3 className="text-lg font-semibold text-white mb-4">Create Magical Weapon</h3>
             
@@ -667,7 +675,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
 
       {/* Spell Preparation Modal */}
       {showSpellPreparationModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
           <div className="bg-slate-800 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-slate-600">
               <div>

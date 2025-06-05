@@ -29,7 +29,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [loading, setLoading] = useState(false);
   const [generatingName, setGeneratingName] = useState(false);
   const [selectedSpells, setSelectedSpells] = useState<Spell[]>([]);
-  const [selectedWeapons, setSelectedWeapons] = useState<Weapon[]>([]);
+  const [selectedWeapons, setSelectedWeapons] = useState<{weapon: Weapon, quantity: number}[]>([]);
   const [selectedEquipmentPack, setSelectedEquipmentPack] = useState<number>(0);
 
   // Initialize random score array and ability scores on mount since rolling-assign is default
@@ -141,10 +141,12 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Spellcasting calculations
   const spellcastingAbility = getSpellcastingAbility(characterClass);
   const proficiencyBonus = getProficiencyBonus(1); // Level 1
-  const availableSpells = spellcastingAbility ? getClassSpells(characterClass, 1) : [];
-  const spellSlots = spellcastingAbility ? getSpellSlots(characterClass, 1) : {};
-  const spellSaveDC = spellcastingAbility ? calculateSpellSaveDC(abilityScores[spellcastingAbility as AbilityScore], proficiencyBonus) : undefined;
-  const spellAttackBonus = spellcastingAbility ? calculateSpellAttackBonus(abilityScores[spellcastingAbility as AbilityScore], proficiencyBonus) : undefined;
+  // Only show spell selection for classes that can cast spells at level 1
+  const canCastSpellsAtLevel1 = spellcastingAbility && getClassSpells(characterClass, 1).length > 0;
+  const availableSpells = canCastSpellsAtLevel1 ? getClassSpells(characterClass, 1) : [];
+  const spellSlots = canCastSpellsAtLevel1 ? getSpellSlots(characterClass, 1) : {};
+  const spellSaveDC = canCastSpellsAtLevel1 ? calculateSpellSaveDC(abilityScores[spellcastingAbility as AbilityScore], proficiencyBonus) : undefined;
+  const spellAttackBonus = canCastSpellsAtLevel1 ? calculateSpellAttackBonus(abilityScores[spellcastingAbility as AbilityScore], proficiencyBonus) : undefined;
   
   // Actions
   const classActions = getClassActions(characterClass, 1);
@@ -166,17 +168,20 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     });
   };
 
-  const handleWeaponToggle = (weapon: Weapon) => {
+  const handleWeaponQuantityChange = (weapon: Weapon, quantity: number) => {
     setSelectedWeapons(prev => {
-      const isSelected = prev.some(w => w.name === weapon.name);
-      if (isSelected) {
-        return prev.filter(w => w.name !== weapon.name);
+      const existingIndex = prev.findIndex(w => w.weapon.name === weapon.name);
+      if (quantity === 0) {
+        // Remove weapon if quantity is 0
+        return prev.filter(w => w.weapon.name !== weapon.name);
+      } else if (existingIndex >= 0) {
+        // Update existing weapon quantity
+        const updated = [...prev];
+        updated[existingIndex] = { weapon, quantity };
+        return updated;
       } else {
-        // Limit to 3 weapons for simplicity
-        if (prev.length < 3) {
-          return [...prev, weapon];
-        }
-        return prev;
+        // Add new weapon with quantity
+        return [...prev, { weapon, quantity }];
       }
     });
   };
@@ -208,7 +213,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       const startingArmor = [...armorSuggestions];
       
       // Verify weapons are being sent (temporary log)
-      console.log('Creating character with weapons:', selectedWeapons.map(w => w.name));
+      console.log('Creating character with weapons:', selectedWeapons.map(w => `${w.weapon.name} x${w.quantity}`));
       
       // Handle spells based on spellcasting type
       const spellcastingTypeValue = spellcastingAbility ? getSpellcastingType(characterClass) : 'none';
@@ -249,7 +254,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         inventory: generalInventory, // Only non-weapon, non-armor items
         skills: backgroundSkills,
         weapons: [], // No weapons equipped initially - player chooses from storage
-        inventoryWeapons: selectedWeapons, // Selected weapons go to storage for player to equip
+        inventoryWeapons: selectedWeapons.flatMap(w => Array(w.quantity).fill(w.weapon)), // Expand weapons with quantities
         inventoryArmor: startingArmor, // Starting equipment armor (in armor storage)
         spellsKnown: spellsKnownData,
         spellsPrepared: spellsPreparedData,
@@ -283,13 +288,13 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
   // Update weapon selection when character class changes
   useEffect(() => {
-    // Pre-populate selected weapons with class suggestions
+    // Pre-populate selected weapons with class suggestions (quantity 1 each)
     const suggestions = getClassWeaponSuggestions(characterClass);
-    setSelectedWeapons([...suggestions]);
+    setSelectedWeapons(suggestions.map(weapon => ({ weapon, quantity: 1 })));
   }, [characterClass]); // Only depend on characterClass, not weaponSuggestions
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
       <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[95vh] overflow-y-auto">
         <div className="flex justify-between items-center p-6 border-b border-slate-700">
           <h2 className="text-2xl font-bold text-white">Create New Character</h2>
@@ -591,23 +596,43 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   <span className="text-xs bg-green-900/30 px-2 py-0.5 rounded">+Prof Bonus</span>
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {WEAPONS.filter(weapon => canEquipWeapon(weapon, characterClass)).map((weapon) => (
-                    <label key={weapon.name} className="flex items-center gap-3 p-2 rounded hover:bg-slate-600 cursor-pointer border-l-2 border-green-500">
-                      <input
-                        type="checkbox"
-                        checked={selectedWeapons.some(w => w.name === weapon.name)}
-                        onChange={() => handleWeaponToggle(weapon)}
-                        disabled={!selectedWeapons.some(w => w.name === weapon.name) && selectedWeapons.length >= 3}
-                        className="rounded text-purple-600 focus:ring-purple-500"
-                      />
-                      <div className="flex-1">
-                        <div className="text-white text-sm font-medium">{weapon.name}</div>
-                        <div className="text-slate-400 text-xs">
-                          {weapon.damage} {weapon.damageType} • {weapon.type} {weapon.category}
+                  {WEAPONS.filter(weapon => canEquipWeapon(weapon, characterClass)).map((weapon) => {
+                    const selectedWeapon = selectedWeapons.find(w => w.weapon.name === weapon.name);
+                    const currentQuantity = selectedWeapon?.quantity || 0;
+                    const isLight = weapon.properties.includes('Light');
+                    const maxQuantity = isLight ? 2 : 1; // Light weapons can have 2 for dual wielding
+                    
+                    return (
+                      <div key={weapon.name} className="flex items-center gap-3 p-2 rounded hover:bg-slate-600 border-l-2 border-green-500">
+                        <div className="flex-1">
+                          <div className="text-white text-sm font-medium">{weapon.name}</div>
+                          <div className="text-slate-400 text-xs">
+                            {weapon.damage} {weapon.damageType} • {weapon.type} {weapon.category}
+                            {isLight && <span className="text-green-400 ml-1">(Light - dual wield)</span>}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => handleWeaponQuantityChange(weapon, Math.max(0, currentQuantity - 1))}
+                            disabled={currentQuantity <= 0}
+                            className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 rounded text-white text-xs"
+                          >
+                            -
+                          </button>
+                          <span className="text-white text-sm w-8 text-center">{currentQuantity}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleWeaponQuantityChange(weapon, Math.min(maxQuantity, currentQuantity + 1))}
+                            disabled={currentQuantity >= maxQuantity}
+                            className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 rounded text-white text-xs"
+                          >
+                            +
+                          </button>
                         </div>
                       </div>
-                    </label>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
               
@@ -618,31 +643,51 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   <span className="text-xs bg-yellow-900/30 px-2 py-0.5 rounded">No Prof Bonus</span>
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {WEAPONS.filter(weapon => !canEquipWeapon(weapon, characterClass)).map((weapon) => (
-                    <label key={weapon.name} className="flex items-center gap-3 p-2 rounded hover:bg-slate-600 cursor-pointer border-l-2 border-yellow-500 opacity-75">
-                      <input
-                        type="checkbox"
-                        checked={selectedWeapons.some(w => w.name === weapon.name)}
-                        onChange={() => handleWeaponToggle(weapon)}
-                        disabled={!selectedWeapons.some(w => w.name === weapon.name) && selectedWeapons.length >= 3}
-                        className="rounded text-purple-600 focus:ring-purple-500"
-                      />
-                      <div className="flex-1">
-                        <div className="text-white text-sm font-medium">{weapon.name}</div>
-                        <div className="text-slate-400 text-xs">
-                          {weapon.damage} {weapon.damageType} • {weapon.type} {weapon.category}
+                  {WEAPONS.filter(weapon => !canEquipWeapon(weapon, characterClass)).map((weapon) => {
+                    const selectedWeapon = selectedWeapons.find(w => w.weapon.name === weapon.name);
+                    const currentQuantity = selectedWeapon?.quantity || 0;
+                    const isLight = weapon.properties.includes('Light');
+                    const maxQuantity = isLight ? 2 : 1; // Light weapons can have 2 for dual wielding
+                    
+                    return (
+                      <div key={weapon.name} className="flex items-center gap-3 p-2 rounded hover:bg-slate-600 border-l-2 border-yellow-500 opacity-75">
+                        <div className="flex-1">
+                          <div className="text-white text-sm font-medium">{weapon.name}</div>
+                          <div className="text-slate-400 text-xs">
+                            {weapon.damage} {weapon.damageType} • {weapon.type} {weapon.category}
+                            {isLight && <span className="text-green-400 ml-1">(Light - dual wield)</span>}
+                          </div>
+                          <div className="text-yellow-300 text-xs">Won&apos;t add proficiency bonus to attacks</div>
                         </div>
-                        <div className="text-yellow-300 text-xs">Won&apos;t add proficiency bonus to attacks</div>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => handleWeaponQuantityChange(weapon, Math.max(0, currentQuantity - 1))}
+                            disabled={currentQuantity <= 0}
+                            className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 rounded text-white text-xs"
+                          >
+                            -
+                          </button>
+                          <span className="text-white text-sm w-8 text-center">{currentQuantity}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleWeaponQuantityChange(weapon, Math.min(maxQuantity, currentQuantity + 1))}
+                            disabled={currentQuantity >= maxQuantity}
+                            className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 rounded text-white text-xs"
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
-                    </label>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
           </div>
 
           {/* Spell Selection for Spellcasters */}
-          {spellcastingAbility && (
+          {canCastSpellsAtLevel1 && (
             <div>
               <h3 className="text-lg font-semibold text-white mb-4">
                 Choose Spells

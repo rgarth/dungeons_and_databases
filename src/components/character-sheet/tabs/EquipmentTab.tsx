@@ -557,7 +557,7 @@ export function EquipmentTab({
 
       {/* Magical Weapon Creator Modal */}
       {showWeaponCreator && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
           <div className="bg-slate-800 rounded-lg w-full max-w-md p-6">
             <h3 className="text-lg font-semibold text-white mb-4">Create Magical Weapon</h3>
             
