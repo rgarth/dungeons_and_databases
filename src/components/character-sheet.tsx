@@ -58,7 +58,8 @@ interface CharacterSheetProps {
     personality?: string;
     backstory?: string;
     notes?: string;
-    avatar?: string;
+    avatar?: string | null;
+    inspiration?: boolean;
     equippedWeapons?: (Weapon | MagicalWeapon)[];
   };
   onClose: () => void;
@@ -184,6 +185,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     personality?: string;
     backstory?: string;
     notes?: string;
+    inspiration?: boolean;
   } | Record<string, unknown>) => {
     try {
       const response = await fetch(`/api/characters?id=${character.id}`, {

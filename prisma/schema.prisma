@@ -169,6 +169,7 @@ model Character {
   backstory    String?
   notes        String?
   avatar       String? // Store selected avatar filename (e.g., "Human_Fighter_Male.png")
+  inspiration  Boolean @default(false) // DM-awarded inspiration (binary: have it or don't)
   
   // Relations
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)

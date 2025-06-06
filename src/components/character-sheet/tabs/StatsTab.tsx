@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Shield, HelpCircle } from "lucide-react";
+import { Shield, HelpCircle, Star } from "lucide-react";
 import { getProficiencyBonus, getModifier, SKILLS } from "@/lib/dnd/core";
 import { calculateArmorClass } from "@/lib/dnd/equipment";
 import { HitPointsDisplay } from "../sections/HitPointsDisplay";
@@ -33,9 +33,10 @@ interface StatsTabProps {
     personality?: string;
     backstory?: string;
     notes?: string;
+    inspiration?: boolean;
   };
   equippedArmor: Armor[];
-  onUpdate: (updates: { hitPoints?: number; temporaryHitPoints?: number; spellsPrepared?: Spell[] }) => void;
+  onUpdate: (updates: { hitPoints?: number; temporaryHitPoints?: number; spellsPrepared?: Spell[]; inspiration?: boolean }) => void;
 }
 
 export function StatsTab({ character, equippedArmor, onUpdate }: StatsTabProps) {
@@ -156,7 +157,7 @@ export function StatsTab({ character, equippedArmor, onUpdate }: StatsTabProps) 
               <Shield className="h-5 w-5 text-blue-400" />
               Combat Stats
             </h3>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               {/* Armor Class */}
               <div className="text-center">
                 <div className="flex justify-center items-center mb-2">
@@ -177,6 +178,43 @@ export function StatsTab({ character, equippedArmor, onUpdate }: StatsTabProps) 
               <div className="text-center">
                 <div className="text-slate-300 text-sm mb-2">Prof</div>
                 <span className="text-white font-bold text-2xl">+{proficiencyBonus}</span>
+              </div>
+
+              {/* Inspiration */}
+              <div className="text-center relative">
+                <div className="flex justify-center items-center mb-2">
+                  <Star className="h-4 w-4 text-yellow-400 mr-2" />
+                  <span className="text-slate-300 text-sm">Inspiration</span>
+                  <button 
+                    onClick={() => toggleTooltip('inspiration')}
+                    className="cursor-pointer hover:bg-slate-500 rounded p-0.5 ml-1"
+                  >
+                    <HelpCircle className="h-3 w-3 text-slate-400 hover:text-slate-300" />
+                  </button>
+                </div>
+                <button
+                  onClick={() => onUpdate({ inspiration: !character.inspiration })}
+                  className={`w-12 h-12 rounded-full border-2 transition-all ${
+                    character.inspiration 
+                      ? 'bg-yellow-400 border-yellow-400 text-slate-900' 
+                      : 'bg-slate-600 border-slate-500 text-slate-400 hover:border-yellow-400'
+                  }`}
+                  title={character.inspiration ? 'Click to use inspiration' : 'No inspiration (DM awards this)'}
+                >
+                  <Star className={`h-6 w-6 mx-auto ${character.inspiration ? 'fill-current' : ''}`} />
+                </button>
+                <div className="text-slate-400 text-xs mt-1">
+                  {character.inspiration ? 'Available' : 'None'}
+                </div>
+                
+                {activeTooltip === 'inspiration' && (
+                  <div className="absolute z-20 mt-1 p-3 bg-slate-800 rounded text-xs text-slate-300 border border-slate-600 w-64 left-1/2 transform -translate-x-1/2 shadow-lg">
+                    <strong>Inspiration:</strong> Spend to gain advantage on any attack roll, saving throw, or ability check.<br/>
+                    <strong>Advantage:</strong> Roll 2d20, take the higher result.<br/>
+                    <strong>How to get:</strong> DM awards for great roleplay, heroic acts, or creative solutions.<br/>
+                                         <strong>Limit:</strong> You either have it or you don&apos;t (can&apos;t stack multiple).
+                  </div>
+                )}
               </div>
             </div>
           </div>
