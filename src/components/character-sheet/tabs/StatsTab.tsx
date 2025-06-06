@@ -246,14 +246,14 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
                 </div>
                 <button
                   onClick={() => onUpdate({ inspiration: !character.inspiration })}
-                  className={`w-12 h-12 rounded-full border-2 transition-all ${
+                  className={`transition-all ${
                     character.inspiration 
-                      ? 'bg-yellow-400 border-yellow-400 text-slate-900' 
-                      : 'bg-slate-600 border-slate-500 text-slate-400 hover:border-yellow-400'
+                      ? 'text-yellow-400' 
+                      : 'text-slate-400 hover:text-yellow-400'
                   }`}
                   title={character.inspiration ? 'Click to use inspiration' : 'No inspiration (DM awards this)'}
                 >
-                  <Star className={`h-6 w-6 mx-auto ${character.inspiration ? 'fill-current' : ''}`} />
+                  <Star className={`h-8 w-8 mx-auto ${character.inspiration ? 'fill-current' : ''}`} />
                 </button>
                 <div className="text-slate-400 text-xs mt-1">
                   {character.inspiration ? 'Available' : 'None'}
