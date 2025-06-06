@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { spellsData, weaponsData, armorData, equipmentData, contentCounts } from './data'
+import { magicalItemsData } from './data/magical-items-data'
 
 const prisma = new PrismaClient()
 
@@ -10,11 +11,12 @@ interface SeedOptions {
 }
 
 async function checkExistingData() {
-  const [spellCount, weaponCount, armorCount, equipmentCount] = await Promise.all([
+  const [spellCount, weaponCount, armorCount, equipmentCount, magicalItemCount] = await Promise.all([
     prisma.spell.count(),
     prisma.weapon.count(),
     prisma.armor.count(),
-    prisma.equipment.count()
+    prisma.equipment.count(),
+    prisma.magicalItem.count()
   ])
   
   return {
@@ -22,7 +24,8 @@ async function checkExistingData() {
     weapons: weaponCount,
     armor: armorCount,
     equipment: equipmentCount,
-    total: spellCount + weaponCount + armorCount + equipmentCount
+    magicalItems: magicalItemCount,
+    total: spellCount + weaponCount + armorCount + equipmentCount + magicalItemCount
   }
 }
 
@@ -34,6 +37,7 @@ async function clearExistingData() {
   await prisma.weapon.deleteMany()
   await prisma.armor.deleteMany()
   await prisma.equipment.deleteMany()
+  await prisma.magicalItem.deleteMany()
   
   console.log('✅ Existing content cleared')
 }
@@ -92,6 +96,20 @@ async function seedEquipment() {
   }
   
   console.log(`✅ Seeded ${equipmentData.length} equipment items`)
+}
+
+async function seedMagicalItems() {
+  console.log('✨ Seeding magical items...')
+  
+  for (const item of magicalItemsData) {
+    await prisma.magicalItem.upsert({
+      where: { name: item.name },
+      update: item,
+      create: item
+    })
+  }
+  
+  console.log(`✅ Seeded ${magicalItemsData.length} magical items`)
 }
 
 async function validateSeeding() {
@@ -162,7 +180,8 @@ export async function seedDatabase(options: SeedOptions = {}) {
       seedSpells(),
       seedWeapons(), 
       seedArmor(),
-      seedEquipment()
+      seedEquipment(),
+      seedMagicalItems()
     ])
     
     // Validate results
@@ -196,6 +215,6 @@ async function main() {
 }
 
 // Only run if this file is executed directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main()
 } 

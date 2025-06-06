@@ -18,7 +18,7 @@ interface BackgroundTabProps {
     personality?: string;
     backstory?: string;
     notes?: string;
-    avatar?: string;
+    avatar?: string | null;
   };
   onUpdate: (updates: { appearance?: string; personality?: string; backstory?: string; notes?: string; avatar?: string | null }) => void;
 }
@@ -283,7 +283,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     extraComponent?: React.ReactNode
   ) => {
     const isCurrentlyEditing = isEditing === field;
-    const value = character[field] || '';
+    const value = (character[field] as string) || '';
 
     return (
       <div className="bg-slate-700 rounded-lg p-4">
@@ -396,7 +396,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               "Describe your character\'s physical appearance, clothing, distinctive features, etc.",
               <Edit3 className="h-5 w-5 text-blue-400" />,
               <AvatarSelector
-                selectedAvatar={character.avatar}
+                selectedAvatar={character.avatar || undefined}
                 onAvatarSelect={(avatar) => onUpdate({ avatar })}
               />
             )}

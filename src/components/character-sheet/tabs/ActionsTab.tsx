@@ -4,8 +4,11 @@ import { Swords, Sword, Zap, Shield } from "lucide-react";
 import { getModifier, getProficiencyBonus } from "@/lib/dnd/core";
 import { canEquipWeapon } from "@/lib/dnd/combat";
 import { getSpellcastingType, canPrepareSpells, getSpellsPreparedCount } from "@/lib/dnd/level-up";
+import { getSpellsFromMagicalItems, type EquippedMagicalItem } from "@/lib/dnd/magical-items";
 import type { Weapon, MagicalWeapon } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
+import { SPELLS, getClassSpells } from "@/lib/dnd/spells";
+import type { MagicalItem } from "@/lib/dnd/magical-items";
 
 interface ActionsTabProps {
   character: {
@@ -32,17 +35,96 @@ interface ActionsTabProps {
     reactions?: { type: string; name: string }[];
   };
   equippedWeapons: (Weapon | MagicalWeapon)[];
+  equippedMagicalItems: EquippedMagicalItem[];
+  inventoryMagicalItems: MagicalItem[];
   currentArmorClass: number;
   onOpenSpellPreparation: () => void;
+  onUseSpellScroll?: (scrollIndex: number) => void;
 }
 
 export function ActionsTab({ 
   character, 
   equippedWeapons, 
+  equippedMagicalItems,
+  inventoryMagicalItems,
   currentArmorClass, 
-  onOpenSpellPreparation 
+  onOpenSpellPreparation,
+  onUseSpellScroll
 }: ActionsTabProps) {
   const proficiencyBonus = getProficiencyBonus(character.level);
+  
+  // Get spells from equipped magical items
+  const equippedMagicalItemSpells = getSpellsFromMagicalItems(
+    equippedMagicalItems || [], 
+    character.class, 
+    character.level
+  );
+
+  // Get spell scrolls from inventory
+  const inventorySpellScrolls = (inventoryMagicalItems || [])
+    .filter(item => item.type === 'Scroll' && item.effects.some(effect => effect.type === 'spell_effect'))
+    .map((scroll, index) => {
+      // Extract spell name from the scroll's effect
+      const spellEffect = scroll.effects.find(effect => effect.type === 'spell_effect');
+      if (!spellEffect || !spellEffect.target) return null;
+      
+      // Find the actual spell - handle both target formats
+      let spellName = spellEffect.target;
+      if (spellName === 'fire_bolt') spellName = 'Fire Bolt';
+      else if (spellName === 'magic_missile') spellName = 'Magic Missile';
+      else {
+        // Convert snake_case back to proper case
+        spellName = spellName.split('_').map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ');
+      }
+      
+      // For custom scrolls, extract spell name from scroll name
+      if (scroll.name.includes('Spell Scroll (') && scroll.name.includes(')')) {
+        const match = scroll.name.match(/Spell Scroll \((.*)\)/);
+        if (match) spellName = match[1];
+      }
+      
+      // Find the actual spell
+      const spell = SPELLS.find((s: Spell) => s.name === spellName);
+      
+      if (!spell) return null;
+      
+      // Determine if character can use this scroll
+      const canUse = true;
+      let reason = '';
+      
+      if (spell.level === 0) {
+        // Cantrips: Anyone can use, but need ability check if not on class list
+        const classSpells = getClassSpells(character.class, character.level);
+        const isOnClassList = classSpells.some((s: Spell) => s.name === spell.name);
+        if (!isOnClassList) {
+          reason = 'Requires DC 10 + spell level ability check (not on your class spell list)';
+        }
+      } else {
+        // Higher level spells: Must be on class list or make ability check
+        const classSpells = getClassSpells(character.class, character.level);
+        const isOnClassList = classSpells.some((s: Spell) => s.name === spell.name);
+        if (!isOnClassList) {
+          reason = `Requires DC ${10 + spell.level} ability check (not on your class spell list)`;
+        }
+      }
+      
+      return {
+        spell,
+        canUse,
+        reason,
+        source: scroll.name,
+        uses: 'Single Use',
+        scrollIndex: index,
+        requiresAttunement: false,
+        isAttuned: true
+      };
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null);
+
+  // Combine all magical item spells
+  const allMagicalItemSpells = [...equippedMagicalItemSpells, ...inventorySpellScrolls];
 
   return (
     <div className="p-6">
@@ -149,7 +231,7 @@ export function ActionsTab({
         )}
 
         {/* Spell Slots & Spellcasting */}
-        {character.spellcastingAbility && (character.spellsKnown && character.spellsKnown.length > 0 || character.spellsPrepared && character.spellsPrepared.length > 0) && (
+        {((character.spellcastingAbility && (character.spellsKnown && character.spellsKnown.length > 0 || character.spellsPrepared && character.spellsPrepared.length > 0)) || allMagicalItemSpells.length > 0) && (
           <div className="bg-slate-700 rounded-lg p-6">
             <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
               <Zap className="h-6 w-6" />
@@ -157,23 +239,25 @@ export function ActionsTab({
             </h3>
             
             {/* Spellcasting Stats */}
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="text-center bg-slate-600 rounded p-3">
-                <div className="text-xl font-bold text-blue-400">{character.spellSaveDC}</div>
-                <div className="text-xs text-slate-400">Spell Save DC</div>
+            {character.spellcastingAbility && (
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="text-center bg-slate-600 rounded p-3">
+                  <div className="text-xl font-bold text-blue-400">{character.spellSaveDC}</div>
+                  <div className="text-xs text-slate-400">Spell Save DC</div>
+                </div>
+                <div className="text-center bg-slate-600 rounded p-3">
+                  <div className="text-xl font-bold text-green-400">+{character.spellAttackBonus}</div>
+                  <div className="text-xs text-slate-400">Spell Attack</div>
+                </div>
+                <div className="text-center bg-slate-600 rounded p-3">
+                  <div className="text-xl font-bold text-purple-400">{character.spellcastingAbility?.toUpperCase()}</div>
+                  <div className="text-xs text-slate-400">Casting Ability</div>
+                </div>
               </div>
-              <div className="text-center bg-slate-600 rounded p-3">
-                <div className="text-xl font-bold text-green-400">+{character.spellAttackBonus}</div>
-                <div className="text-xs text-slate-400">Spell Attack</div>
-              </div>
-              <div className="text-center bg-slate-600 rounded p-3">
-                <div className="text-xl font-bold text-purple-400">{character.spellcastingAbility?.toUpperCase()}</div>
-                <div className="text-xs text-slate-400">Casting Ability</div>
-              </div>
-            </div>
+            )}
 
             {/* Spell Slots */}
-            {character.spellSlots && Object.keys(character.spellSlots).length > 0 && (
+            {character.spellcastingAbility && character.spellSlots && Object.keys(character.spellSlots).length > 0 && (
               <div className="mb-6">
                 <h4 className="text-lg font-semibold text-white mb-3">Spell Slots</h4>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -197,7 +281,7 @@ export function ActionsTab({
             )}
 
             {/* Spell Management Based on Class Type */}
-            {(() => {
+            {character.spellcastingAbility && (() => {
               const spellcastingType = getSpellcastingType(character.class);
               const abilityModifier = getModifier(character[character.spellcastingAbility as keyof typeof character] as number);
               const maxPrepared = canPrepareSpells(character.class) ? getSpellsPreparedCount(character.class, character.level, abilityModifier) : 0;
@@ -359,6 +443,86 @@ export function ActionsTab({
                   return null;
               }
             })()}
+
+            {/* Magical Item Spells */}
+            {allMagicalItemSpells.length > 0 && (
+              <div className={character.spellcastingAbility ? "mt-6" : ""}>
+                <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                  <Zap className="h-5 w-5 text-orange-400" />
+                  Spells from Magical Items
+                </h4>
+                <div className="mb-3 p-3 bg-orange-900/20 border border-orange-600/30 rounded-lg">
+                  <p className="text-orange-300 text-sm">
+                    <strong>Magical Item Spells:</strong> These spells come from your equipped magical items{character.spellcastingAbility ? " and don't use your spell slots" : ""}. {!character.spellcastingAbility && "Anyone can use spell scrolls with the right requirements!"}
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {allMagicalItemSpells.map((itemSpell, index) => (
+                    <div 
+                      key={index} 
+                      className={`p-3 rounded border-l-4 ${
+                        itemSpell.canUse 
+                          ? 'bg-slate-600 border-orange-500' 
+                          : 'bg-slate-700 border-red-500 opacity-75'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={`font-medium ${itemSpell.canUse ? 'text-white' : 'text-slate-400'}`}>
+                          {itemSpell.spell.name}
+                        </span>
+                        <span className={`text-xs px-2 py-1 rounded ${
+                          itemSpell.canUse 
+                            ? 'bg-orange-900/50 text-orange-300' 
+                            : 'bg-slate-800 text-slate-500'
+                        }`}>
+                          {itemSpell.spell.level === 0 ? 'Cantrip' : `Level ${itemSpell.spell.level}`}
+                        </span>
+                        <span className="text-xs bg-slate-700 text-slate-300 px-2 py-1 rounded">
+                          {itemSpell.uses}
+                        </span>
+                        {!itemSpell.canUse && (
+                          <span className="text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded">
+                            Cannot Use
+                          </span>
+                        )}
+                      </div>
+                      <div className={`text-xs mb-2 ${itemSpell.canUse ? 'text-slate-400' : 'text-slate-500'}`}>
+                        {itemSpell.spell.school} • {itemSpell.spell.castingTime} • {itemSpell.spell.range}
+                      </div>
+                      <div className={`text-xs mb-2 ${itemSpell.canUse ? 'text-slate-300' : 'text-slate-500'}`}>
+                        {itemSpell.spell.description}
+                      </div>
+                      <div className={`text-xs ${itemSpell.canUse ? 'text-orange-300' : 'text-slate-500'}`}>
+                        <strong>Source:</strong> {itemSpell.source}
+                        {itemSpell.requiresAttunement && !itemSpell.isAttuned && (
+                          <span className="ml-2 text-red-300">(Requires Attunement)</span>
+                        )}
+                        {!itemSpell.canUse && itemSpell.reason && (
+                          <div className="mt-1 text-red-300">
+                            <strong>Restriction:</strong> {itemSpell.reason}
+                          </div>
+                        )}
+                        {itemSpell.canUse && itemSpell.reason && (
+                          <div className="mt-1 text-yellow-300">
+                            <strong>Note:</strong> {itemSpell.reason}
+                          </div>
+                        )}
+                        {onUseSpellScroll && 'scrollIndex' in itemSpell && typeof itemSpell.scrollIndex === 'number' && (
+                          <div className="mt-2">
+                            <button
+                              onClick={() => onUseSpellScroll(itemSpell.scrollIndex as number)}
+                              className="bg-orange-600 hover:bg-orange-700 text-white text-xs px-3 py-1 rounded font-medium"
+                            >
+                              Cast & Consume
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

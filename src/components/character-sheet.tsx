@@ -7,10 +7,11 @@ import { Spell, getClassSpells } from "@/lib/dnd/spells";
 import { Weapon, MagicalWeapon, InventoryItem, WEAPONS, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, Armor, calculateArmorClass } from "@/lib/dnd/equipment";
 import { Action, canEquipArmor } from "@/lib/dnd/combat";
 import { Treasure } from "@/lib/dnd/data";
+import { MagicalItem, EquippedMagicalItem, applyMagicalItemEffects } from "@/lib/dnd/magical-items";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import { LevelUpModal } from "./level-up-modal";
 import { getSpellcastingType, getSpellsPreparedCount } from "@/lib/dnd/level-up";
-import { StatsTab, ActionsTab, EquipmentTab, InventoryTab, BackgroundTab } from "./character-sheet/";
+import { StatsTab, ActionsTab, GearTab, InventoryTab, BackgroundTab } from "./character-sheet/";
 
 
 interface CharacterSheetProps {
@@ -41,6 +42,9 @@ interface CharacterSheetProps {
     inventoryWeapons?: (Weapon | MagicalWeapon)[];
     armor?: Armor[];
     inventoryArmor?: Armor[];
+    magicalItems?: EquippedMagicalItem[];
+    inventoryMagicalItems?: MagicalItem[];
+    attunedItems?: string[];
     spellsKnown?: Spell[]; // All spells known or in spellbook
     spellsPrepared?: Spell[]; // Currently prepared/equipped spells
     spellSlots?: Record<number, number>;
@@ -61,6 +65,8 @@ interface CharacterSheetProps {
     avatar?: string | null;
     inspiration?: boolean;
     equippedWeapons?: (Weapon | MagicalWeapon)[];
+    deathSaveSuccesses?: number;
+    deathSaveFailures?: number;
   };
   onClose: () => void;
   onCharacterDeleted?: () => void;
@@ -103,6 +109,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     setInventoryArmor(character.inventoryArmor || []);
     setEquippedArmor(character.armor || []);
     
+    // Initialize magical items state
+    setEquippedMagicalItems(character.magicalItems || []);
+    setInventoryMagicalItems(character.inventoryMagicalItems || []);
+    setAttunedItems(character.attunedItems || []);
+    
     setInventory(() => {
       if (!character.inventory) return [];
       
@@ -117,7 +128,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
   // Use currentCharacter instead of character throughout the component
   const displayCharacter = currentCharacter;
   
-  const [activeTab, setActiveTab] = useState<"stats" | "actions" | "equipment" | "inventory" | "background">("stats");
+  const [activeTab, setActiveTab] = useState<"stats" | "actions" | "gear" | "inventory" | "background">("stats");
   const [showWeaponCreator, setShowWeaponCreator] = useState(false);
   const [selectedBaseWeapon, setSelectedBaseWeapon] = useState("");
   const [selectedMagicalTemplate, setSelectedMagicalTemplate] = useState("");
@@ -142,9 +153,39 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
   const [inventoryArmor, setInventoryArmor] = useState<Armor[]>([]);
   const [equippedArmor, setEquippedArmor] = useState<Armor[]>([]);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [equippedMagicalItems, setEquippedMagicalItems] = useState<EquippedMagicalItem[]>([]);
+  const [inventoryMagicalItems, setInventoryMagicalItems] = useState<MagicalItem[]>([]);
+  const [attunedItems, setAttunedItems] = useState<string[]>([]);
 
-  // Calculate dynamic armor class based on equipped armor
-  const currentArmorClass = calculateArmorClass(equippedArmor, displayCharacter.dexterity);
+  // Calculate stats with magical item effects
+  const baseStats = {
+    strength: displayCharacter.strength,
+    dexterity: displayCharacter.dexterity,
+    constitution: displayCharacter.constitution,
+    intelligence: displayCharacter.intelligence,
+    wisdom: displayCharacter.wisdom,
+    charisma: displayCharacter.charisma,
+    ac: displayCharacter.armorClass,
+    speed: displayCharacter.speed
+  };
+  
+  const modifiedStats = applyMagicalItemEffects(baseStats, equippedMagicalItems);
+  
+  // Calculate dynamic armor class based on equipped armor and magical items
+  let currentArmorClass: number;
+  
+  // Check if any magical item sets a base AC (like Robe of the Archmagi)
+  if (modifiedStats.ac_base && modifiedStats.ac_base > 0) {
+    // Use magical base AC + Dex modifier
+    const dexMod = Math.floor((modifiedStats.dexterity - 10) / 2);
+    currentArmorClass = modifiedStats.ac_base + dexMod;
+  } else {
+    // Use regular armor calculation
+    currentArmorClass = calculateArmorClass(equippedArmor, modifiedStats.dexterity);
+  }
+  
+  // Add any AC bonuses from magical items
+  currentArmorClass += (modifiedStats.ac - baseStats.ac);
 
   const handleDeleteCharacter = async () => {
     setIsDeleting(true);
@@ -177,6 +218,9 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     inventoryWeapons?: (Weapon | MagicalWeapon)[];
     armor?: Armor[];
     inventoryArmor?: Armor[];
+    magicalItems?: EquippedMagicalItem[];
+    inventoryMagicalItems?: MagicalItem[];
+    attunedItems?: string[];
     hitPoints?: number;
     temporaryHitPoints?: number;
     spellsPrepared?: Spell[];
@@ -186,6 +230,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     backstory?: string;
     notes?: string;
     inspiration?: boolean;
+    deathSaveSuccesses?: number;
+    deathSaveFailures?: number;
   } | Record<string, unknown>) => {
     try {
       const response = await fetch(`/api/characters?id=${character.id}`, {
@@ -227,8 +273,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
 
   const handleEquipWeapon = (weapon: Weapon | MagicalWeapon, fromInventoryIndex: number) => {
     // Check if at weapon limit
-    if (equippedWeapons.length >= weaponLimits.max) {
-      alert(`Cannot equip more weapons: ${weaponLimits.reason}`);
+    if (equippedWeapons.length >= weaponLimits.maxEquipped) {
+      alert(`Cannot equip more weapons (max ${weaponLimits.maxEquipped})`);
       return;
     }
 
@@ -333,6 +379,91 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     }
   };
 
+  // Magical Item handlers
+  const handleEquipMagicalItem = (item: MagicalItem, fromInventoryIndex: number) => {
+    const updatedEquippedItems = [...equippedMagicalItems, { ...item, isAttuned: false }];
+    const updatedInventoryItems = inventoryMagicalItems.filter((_, i) => i !== fromInventoryIndex);
+    
+    setEquippedMagicalItems(updatedEquippedItems);
+    setInventoryMagicalItems(updatedInventoryItems);
+    updateCharacter({ 
+      magicalItems: updatedEquippedItems,
+      inventoryMagicalItems: updatedInventoryItems 
+    });
+  };
+
+  const handleUnequipMagicalItem = (itemIndex: number) => {
+    const itemToUnequip = equippedMagicalItems[itemIndex];
+    const updatedEquippedItems = equippedMagicalItems.filter((_, i) => i !== itemIndex);
+    const updatedInventoryItems = [...inventoryMagicalItems, itemToUnequip];
+    const updatedAttunedItems = attunedItems.filter(name => name !== itemToUnequip.name);
+    
+    setEquippedMagicalItems(updatedEquippedItems);
+    setInventoryMagicalItems(updatedInventoryItems);
+    setAttunedItems(updatedAttunedItems);
+    updateCharacter({ 
+      magicalItems: updatedEquippedItems,
+      inventoryMagicalItems: updatedInventoryItems,
+      attunedItems: updatedAttunedItems
+    });
+  };
+
+  const handleRemoveMagicalItem = (index: number, isEquipped: boolean = false) => {
+    if (isEquipped) {
+      const itemToRemove = equippedMagicalItems[index];
+      const updatedEquippedItems = equippedMagicalItems.filter((_, i) => i !== index);
+      const updatedAttunedItems = attunedItems.filter(name => name !== itemToRemove.name);
+      
+      setEquippedMagicalItems(updatedEquippedItems);
+      setAttunedItems(updatedAttunedItems);
+      updateCharacter({ 
+        magicalItems: updatedEquippedItems,
+        attunedItems: updatedAttunedItems
+      });
+    } else {
+      const updatedInventoryItems = inventoryMagicalItems.filter((_, i) => i !== index);
+      setInventoryMagicalItems(updatedInventoryItems);
+      updateCharacter({ inventoryMagicalItems: updatedInventoryItems });
+    }
+  };
+
+  const handleToggleAttunement = (itemName: string) => {
+    const isCurrentlyAttuned = attunedItems.includes(itemName);
+    let updatedAttunedItems: string[];
+    let updatedEquippedItems = [...equippedMagicalItems];
+
+    if (isCurrentlyAttuned) {
+      // Remove attunement
+      updatedAttunedItems = attunedItems.filter(name => name !== itemName);
+      updatedEquippedItems = updatedEquippedItems.map(item => 
+        item.name === itemName ? { ...item, isAttuned: false } : item
+      );
+    } else {
+      // Add attunement (if possible)
+      if (attunedItems.length < 3) {
+        updatedAttunedItems = [...attunedItems, itemName];
+        updatedEquippedItems = updatedEquippedItems.map(item => 
+          item.name === itemName ? { ...item, isAttuned: true } : item
+        );
+      } else {
+        return; // Cannot attune more than 3 items
+      }
+    }
+
+    setAttunedItems(updatedAttunedItems);
+    setEquippedMagicalItems(updatedEquippedItems);
+    updateCharacter({ 
+      attunedItems: updatedAttunedItems,
+      magicalItems: updatedEquippedItems
+    });
+  };
+
+  const handleAddMagicalItem = (item: MagicalItem) => {
+    const updatedInventoryItems = [...inventoryMagicalItems, item];
+    setInventoryMagicalItems(updatedInventoryItems);
+    updateCharacter({ inventoryMagicalItems: updatedInventoryItems });
+  };
+
 
   // Equipment state
 
@@ -347,14 +478,14 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     if (hasShield) {
       // With shield: can carry multiple weapons but only use 1-handed weapons effectively
       return { 
-        max: 4, 
-        reason: "Shield equipped - can carry multiple weapons but only use one-handed weapons effectively" 
+        maxEquipped: 4,
+        maxInventory: 10
       };
     } else {
       // Without shield: can carry multiple weapons and switch between them as needed
       return { 
-        max: 6, 
-        reason: "Can carry multiple weapons - switch between melee and ranged as needed" 
+        maxEquipped: 6,
+        maxInventory: 15
       };
     }
   };
@@ -380,9 +511,15 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
   };
 
   const handleOpenSpellPreparation = () => {
-    // Initialize temp prepared spells with current selection
-    setTempPreparedSpells([...(currentCharacter.spellsPrepared || [])]);
+    setTempPreparedSpells(currentCharacter.spellsPrepared || []);
     setShowSpellPreparationModal(true);
+  };
+
+  const handleUseSpellScroll = (scrollIndex: number) => {
+    // Remove the spell scroll from inventory when used
+    const updatedInventoryItems = inventoryMagicalItems.filter((_, i) => i !== scrollIndex);
+    setInventoryMagicalItems(updatedInventoryItems);
+    updateCharacter({ inventoryMagicalItems: updatedInventoryItems });
   };
 
   const handleTogglePreparedSpell = (spell: Spell) => {
@@ -498,15 +635,15 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
               Actions
             </button>
             <button
-              onClick={() => setActiveTab("equipment")}
+              onClick={() => setActiveTab("gear")}
               className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
-                activeTab === "equipment"
+                activeTab === "gear"
                   ? "text-purple-400 border-b-2 border-purple-400"
                   : "text-slate-400 hover:text-white"
               }`}
             >
               <Package className="h-4 w-4" />
-              Equipment and Spells
+              Gear & Spells
             </button>
             <button
               onClick={() => setActiveTab("inventory")}
@@ -538,6 +675,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
               <StatsTab 
                 character={displayCharacter}
                 equippedArmor={equippedArmor}
+                modifiedStats={modifiedStats}
+                currentArmorClass={currentArmorClass}
                 onUpdate={(updates) => {
                   setCurrentCharacter(prev => ({ ...prev, ...updates }));
                   updateCharacter(updates);
@@ -549,24 +688,34 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
               <ActionsTab
                 character={displayCharacter}
                 equippedWeapons={equippedWeapons}
+                equippedMagicalItems={equippedMagicalItems}
+                inventoryMagicalItems={inventoryMagicalItems}
                 currentArmorClass={currentArmorClass}
                 onOpenSpellPreparation={handleOpenSpellPreparation}
+                onUseSpellScroll={handleUseSpellScroll}
               />
             )}
 
-            {activeTab === "equipment" && (
-              <EquipmentTab
+            {activeTab === "gear" && (
+              <GearTab
                 character={displayCharacter}
                 equippedWeapons={equippedWeapons}
                 inventoryWeapons={inventoryWeapons}
                 equippedArmor={equippedArmor}
                 inventoryArmor={inventoryArmor}
+                equippedMagicalItems={equippedMagicalItems}
+                inventoryMagicalItems={inventoryMagicalItems}
+                attunedItems={attunedItems}
                 onEquipWeapon={handleEquipWeapon}
                 onUnequipWeapon={handleUnequipWeapon}
                 onRemoveWeapon={handleRemoveWeapon}
                 onEquipArmor={handleEquipArmor}
                 onUnequipArmor={handleUnequipArmor}
                 onRemoveArmor={handleRemoveArmor}
+                onEquipMagicalItem={handleEquipMagicalItem}
+                onUnequipMagicalItem={handleUnequipMagicalItem}
+                onRemoveMagicalItem={handleRemoveMagicalItem}
+                onToggleAttunement={handleToggleAttunement}
                 onAddWeapon={(weapon) => {
                   const updatedInventoryWeapons = [...inventoryWeapons, weapon];
                   setInventoryWeapons(updatedInventoryWeapons);
@@ -577,6 +726,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
                   setInventoryArmor(updatedInventoryArmor);
                   updateCharacter({ inventoryArmor: updatedInventoryArmor });
                 }}
+                onAddMagicalItem={handleAddMagicalItem}
                 onOpenSpellPreparation={handleOpenSpellPreparation}
                 weaponLimits={weaponLimits}
               />

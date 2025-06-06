@@ -78,56 +78,69 @@ export const BASIC_ACTIONS: Action[] = [
 export const CLASS_PROFICIENCIES: Record<string, {
   armor: string[];
   weapons: string[];
+  savingThrows: string[]; // Two saving throws per class
   // Note: maxEquippedWeapons isn't a real D&D rule - the limitation is your two hands!
   // Shield + weapon = 1 weapon max, Two light weapons = 2 weapons max, Two-handed weapon = 1 weapon
 }> = {
   'Barbarian': {
     armor: ['Light', 'Medium', 'Shield'],
-    weapons: ['Simple', 'Martial']
+    weapons: ['Simple', 'Martial'],
+    savingThrows: ['Strength', 'Constitution']
   },
   'Bard': {
     armor: ['Light'],
-    weapons: ['Simple', 'Longsword', 'Rapier', 'Shortsword', 'Hand Crossbow']
+    weapons: ['Simple', 'Longsword', 'Rapier', 'Shortsword', 'Hand Crossbow'],
+    savingThrows: ['Dexterity', 'Charisma']
   },
   'Cleric': {
     armor: ['Light', 'Medium', 'Shield'],
-    weapons: ['Simple']
+    weapons: ['Simple'],
+    savingThrows: ['Wisdom', 'Charisma']
   },
   'Druid': {
     armor: ['Light', 'Medium', 'Shield'], // Non-metal restriction applies
-    weapons: ['Simple', 'Shortsword', 'Scimitar']
+    weapons: ['Simple', 'Shortsword', 'Scimitar'],
+    savingThrows: ['Intelligence', 'Wisdom']
   },
   'Fighter': {
     armor: ['Light', 'Medium', 'Heavy', 'Shield'],
-    weapons: ['Simple', 'Martial']
+    weapons: ['Simple', 'Martial'],
+    savingThrows: ['Strength', 'Constitution']
   },
   'Monk': {
     armor: [], // No armor proficiency
-    weapons: ['Simple', 'Shortsword']
+    weapons: ['Simple', 'Shortsword'],
+    savingThrows: ['Strength', 'Dexterity']
   },
   'Paladin': {
     armor: ['Light', 'Medium', 'Heavy', 'Shield'],
-    weapons: ['Simple', 'Martial']
+    weapons: ['Simple', 'Martial'],
+    savingThrows: ['Wisdom', 'Charisma']
   },
   'Ranger': {
     armor: ['Light', 'Medium', 'Shield'],
-    weapons: ['Simple', 'Martial']
+    weapons: ['Simple', 'Martial'],
+    savingThrows: ['Strength', 'Dexterity']
   },
   'Rogue': {
     armor: ['Light'],
-    weapons: ['Simple', 'Longsword', 'Rapier', 'Shortsword', 'Hand Crossbow']
+    weapons: ['Simple', 'Longsword', 'Rapier', 'Shortsword', 'Hand Crossbow'],
+    savingThrows: ['Dexterity', 'Intelligence']
   },
   'Sorcerer': {
     armor: [],
-    weapons: ['Simple', 'Dagger', 'Dart', 'Sling', 'Quarterstaff', 'Light Crossbow']
+    weapons: ['Simple', 'Dagger', 'Dart', 'Sling', 'Quarterstaff', 'Light Crossbow'],
+    savingThrows: ['Constitution', 'Charisma']
   },
   'Warlock': {
     armor: ['Light'],
-    weapons: ['Simple']
+    weapons: ['Simple'],
+    savingThrows: ['Wisdom', 'Charisma']
   },
   'Wizard': {
     armor: [],
-    weapons: ['Simple', 'Dagger', 'Dart', 'Sling', 'Quarterstaff', 'Light Crossbow']
+    weapons: ['Simple', 'Dagger', 'Dart', 'Sling', 'Quarterstaff', 'Light Crossbow'],
+    savingThrows: ['Intelligence', 'Wisdom']
   }
 };
 
@@ -207,4 +220,53 @@ export function getClassActions(characterClass: string, level: number): Action[]
   };
   
   return classActions[characterClass] || [];
+}
+
+// Get saving throw proficiencies for a class
+export function getSavingThrowProficiencies(characterClass: string): string[] {
+  return CLASS_PROFICIENCIES[characterClass]?.savingThrows || [];
+}
+
+// Calculate saving throw bonus
+export function calculateSavingThrowBonus(
+  abilityScore: number,
+  isProficient: boolean,
+  proficiencyBonus: number
+): number {
+  const abilityModifier = getModifier(abilityScore);
+  const profBonus = isProficient ? proficiencyBonus : 0;
+  return abilityModifier + profBonus;
+}
+
+// Death Save interface
+export interface DeathSaves {
+  successes: number; // 0-3
+  failures: number;  // 0-3
+}
+
+// Reset death saves (used when character is healed above 0 HP)
+export function resetDeathSaves(): DeathSaves {
+  return { successes: 0, failures: 0 };
+}
+
+// Add a death save result
+export function addDeathSave(currentSaves: DeathSaves, isSuccess: boolean): DeathSaves {
+  if (isSuccess) {
+    return {
+      ...currentSaves,
+      successes: Math.min(3, currentSaves.successes + 1)
+    };
+  } else {
+    return {
+      ...currentSaves,
+      failures: Math.min(3, currentSaves.failures + 1)
+    };
+  }
+}
+
+// Check death save status
+export function getDeathSaveStatus(deathSaves: DeathSaves): 'stable' | 'dead' | 'continue' {
+  if (deathSaves.successes >= 3) return 'stable';
+  if (deathSaves.failures >= 3) return 'dead';
+  return 'continue';
 } 

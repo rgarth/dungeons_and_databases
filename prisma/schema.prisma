@@ -108,6 +108,21 @@ model Equipment {
   updatedAt   DateTime @updatedAt
 }
 
+model MagicalItem {
+  id                  String   @id @default(cuid())
+  name                String   @unique
+  type                String   // "Wondrous Item", "Ring", "Potion", "Scroll", "Wand", "Rod", "Staff", etc.
+  rarity              String   // "Common", "Uncommon", "Rare", "Very Rare", "Legendary", "Artifact"
+  requiresAttunement  Boolean  @default(false)
+  description         String
+  weight              Float?   // Some items have no weight
+  cost                String?  // "500 gp", "5000 gp", etc. - may be null for priceless items
+  effects             Json?    // Store stat modifications and special effects as JSON
+  stackable           Boolean  @default(false) // Most magical items don't stack, but potions do
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
 model Character {
   id          String @id @default(cuid())
   name        String
@@ -132,6 +147,10 @@ model Character {
   armorClass   Int @default(10)
   speed        Int @default(30)
   
+  // Death Saves (for 0 HP situations)
+  deathSaveSuccesses Int @default(0) // 0-3
+  deathSaveFailures  Int @default(0) // 0-3
+  
   // Skills & Proficiencies
   proficiencyBonus Int @default(2)
   skills           Json? // Store skill proficiencies as JSON
@@ -143,6 +162,9 @@ model Character {
   inventoryWeapons Json? // Store unequipped weapons in inventory as JSON
   armor     Json? // Store equipped armor as JSON
   inventoryArmor Json? // Store unequipped armor in inventory as JSON
+  magicalItems Json? // Store equipped magical items as JSON
+  inventoryMagicalItems Json? // Store unequipped magical items in inventory as JSON
+  attunedItems Json? // Store list of attuned magical item names (max 3)
   
   // Money
   copperPieces  Int @default(0)

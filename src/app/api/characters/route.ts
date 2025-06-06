@@ -128,6 +128,8 @@ export async function POST(request: NextRequest) {
         copperPieces: copperPieces || 0,
         silverPieces: silverPieces || 0,
         goldPieces: goldPieces || 0,
+        deathSaveSuccesses: 0,
+        deathSaveFailures: 0,
         userId: user.id,
       },
     });
@@ -303,6 +305,21 @@ export async function PATCH(request: NextRequest) {
       updateData.inventoryArmor = body.inventoryArmor;
     }
 
+    // Handle magical items updates (equipped magical items)
+    if (body.magicalItems !== undefined) {
+      updateData.magicalItems = body.magicalItems;
+    }
+
+    // Handle inventory magical items updates (unequipped magical items)
+    if (body.inventoryMagicalItems !== undefined) {
+      updateData.inventoryMagicalItems = body.inventoryMagicalItems;
+    }
+
+    // Handle attuned items updates (list of attuned magical item names)
+    if (body.attunedItems !== undefined) {
+      updateData.attunedItems = body.attunedItems;
+    }
+
     // Handle character background/detail updates
     if (body.appearance !== undefined) {
       updateData.appearance = body.appearance;
@@ -321,6 +338,14 @@ export async function PATCH(request: NextRequest) {
     }
     if (body.inspiration !== undefined) {
       updateData.inspiration = body.inspiration;
+    }
+
+    // Handle death saves updates
+    if (body.deathSaveSuccesses !== undefined) {
+      updateData.deathSaveSuccesses = body.deathSaveSuccesses;
+    }
+    if (body.deathSaveFailures !== undefined) {
+      updateData.deathSaveFailures = body.deathSaveFailures;
     }
 
     // Verify the character belongs to the current user and update

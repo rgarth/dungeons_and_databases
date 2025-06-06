@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Shield, HelpCircle, Star } from "lucide-react";
+import { Shield, HelpCircle, Star, Heart, Skull } from "lucide-react";
 import { getProficiencyBonus, getModifier, SKILLS } from "@/lib/dnd/core";
+import { getSavingThrowProficiencies, calculateSavingThrowBonus, type DeathSaves, addDeathSave, resetDeathSaves, getDeathSaveStatus } from "@/lib/dnd/combat";
 import { calculateArmorClass } from "@/lib/dnd/equipment";
 import { HitPointsDisplay } from "../sections/HitPointsDisplay";
 import type { Armor } from "@/lib/dnd/equipment";
@@ -34,15 +35,57 @@ interface StatsTabProps {
     backstory?: string;
     notes?: string;
     inspiration?: boolean;
+    deathSaveSuccesses?: number;
+    deathSaveFailures?: number;
   };
   equippedArmor: Armor[];
-  onUpdate: (updates: { hitPoints?: number; temporaryHitPoints?: number; spellsPrepared?: Spell[]; inspiration?: boolean }) => void;
+  modifiedStats?: Record<string, number>;
+  currentArmorClass?: number;
+  onUpdate: (updates: { 
+    hitPoints?: number; 
+    temporaryHitPoints?: number; 
+    spellsPrepared?: Spell[]; 
+    inspiration?: boolean;
+    deathSaveSuccesses?: number;
+    deathSaveFailures?: number;
+  }) => void;
 }
 
-export function StatsTab({ character, equippedArmor, onUpdate }: StatsTabProps) {
+export function StatsTab({ character, equippedArmor, modifiedStats, currentArmorClass: passedArmorClass, onUpdate }: StatsTabProps) {
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
   const proficiencyBonus = getProficiencyBonus(character.level);
-  const currentArmorClass = calculateArmorClass(equippedArmor, character.dexterity);
+  const currentArmorClass = passedArmorClass ?? calculateArmorClass(equippedArmor, character.dexterity);
+  
+  // Get saving throw proficiencies for this class
+  const savingThrowProficiencies = getSavingThrowProficiencies(character.class);
+  
+  // Death saves state
+  const currentDeathSaves: DeathSaves = {
+    successes: character.deathSaveSuccesses || 0,
+    failures: character.deathSaveFailures || 0
+  };
+  
+  const isUnconscious = character.hitPoints <= 0;
+  const deathSaveStatus = getDeathSaveStatus(currentDeathSaves);
+  
+  // Use modified stats if provided, otherwise use base character stats
+  const effectiveStats = modifiedStats ? {
+    strength: modifiedStats.strength ?? character.strength,
+    dexterity: modifiedStats.dexterity ?? character.dexterity,
+    constitution: modifiedStats.constitution ?? character.constitution,
+    intelligence: modifiedStats.intelligence ?? character.intelligence,
+    wisdom: modifiedStats.wisdom ?? character.wisdom,
+    charisma: modifiedStats.charisma ?? character.charisma,
+    speed: modifiedStats.speed ?? character.speed,
+  } : {
+    strength: character.strength,
+    dexterity: character.dexterity,
+    constitution: character.constitution,
+    intelligence: character.intelligence,
+    wisdom: character.wisdom,
+    charisma: character.charisma,
+    speed: character.speed,
+  };
 
   // Get skills that belong to each ability
   const getSkillsForAbility = (abilityName: string) => {
@@ -66,18 +109,25 @@ export function StatsTab({ character, equippedArmor, onUpdate }: StatsTabProps) 
             <h3 className="text-lg font-semibold text-white mb-4">Ability Scores</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               {[
-                { name: 'Strength', short: 'STR', value: character.strength },
-                { name: 'Dexterity', short: 'DEX', value: character.dexterity },
-                { name: 'Constitution', short: 'CON', value: character.constitution },
-                { name: 'Intelligence', short: 'INT', value: character.intelligence },
-                { name: 'Wisdom', short: 'WIS', value: character.wisdom },
-                { name: 'Charisma', short: 'CHA', value: character.charisma },
+                { name: 'Strength', short: 'STR', value: effectiveStats.strength, baseValue: character.strength },
+                { name: 'Dexterity', short: 'DEX', value: effectiveStats.dexterity, baseValue: character.dexterity },
+                { name: 'Constitution', short: 'CON', value: effectiveStats.constitution, baseValue: character.constitution },
+                { name: 'Intelligence', short: 'INT', value: effectiveStats.intelligence, baseValue: character.intelligence },
+                { name: 'Wisdom', short: 'WIS', value: effectiveStats.wisdom, baseValue: character.wisdom },
+                { name: 'Charisma', short: 'CHA', value: effectiveStats.charisma, baseValue: character.charisma },
               ].map((ability) => {
                 const skillsForAbility = getSkillsForAbility(ability.name);
                 return (
                   <div key={ability.name} className="bg-slate-600 rounded-lg p-3 text-center relative">
                     <div className="text-xs text-slate-400 mb-1 font-medium">{ability.short}</div>
-                    <div className="text-xl font-bold text-white mb-1">{ability.value}</div>
+                    <div className={`text-xl font-bold mb-1 ${ability.value !== ability.baseValue ? 'text-purple-300' : 'text-white'}`}>
+                      {ability.value}
+                      {ability.value !== ability.baseValue && (
+                        <span className="text-xs text-slate-400 ml-1">
+                          (was {ability.baseValue})
+                        </span>
+                      )}
+                    </div>
                     <div className="text-sm text-slate-300 mb-2 relative">
                       <div className="flex items-center justify-center gap-1">
                         <span>Mod: {getModifier(ability.value) >= 0 ? '+' : ''}{getModifier(ability.value)}</span>
@@ -170,7 +220,14 @@ export function StatsTab({ character, equippedArmor, onUpdate }: StatsTabProps) 
               {/* Speed */}
               <div className="text-center">
                 <div className="text-slate-300 text-sm mb-2">Speed</div>
-                <span className="text-white font-bold text-2xl">{character.speed}</span>
+                <span className={`font-bold text-2xl ${effectiveStats.speed !== character.speed ? 'text-purple-300' : 'text-white'}`}>
+                  {effectiveStats.speed}
+                  {effectiveStats.speed !== character.speed && (
+                    <span className="text-xs text-slate-400 ml-1">
+                      (was {character.speed})
+                    </span>
+                  )}
+                </span>
                 <div className="text-slate-400 text-xs">ft</div>
               </div>
 
@@ -219,6 +276,176 @@ export function StatsTab({ character, equippedArmor, onUpdate }: StatsTabProps) 
             </div>
           </div>
         </div>
+
+        {/* Saving Throws Section */}
+        <div className="bg-slate-700 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <Shield className="h-5 w-5 text-green-400" />
+            Saving Throws
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[
+              { name: 'Strength', value: effectiveStats.strength },
+              { name: 'Dexterity', value: effectiveStats.dexterity },
+              { name: 'Constitution', value: effectiveStats.constitution },
+              { name: 'Intelligence', value: effectiveStats.intelligence },
+              { name: 'Wisdom', value: effectiveStats.wisdom },
+              { name: 'Charisma', value: effectiveStats.charisma }
+            ].map((ability) => {
+              const isProficient = savingThrowProficiencies.includes(ability.name);
+              const bonus = calculateSavingThrowBonus(ability.value, isProficient, proficiencyBonus);
+              const modifierText = bonus >= 0 ? `+${bonus}` : `${bonus}`;
+              
+              return (
+                <div 
+                  key={ability.name} 
+                  className={`text-center p-3 rounded-lg border-2 transition-colors ${
+                    isProficient 
+                      ? 'bg-green-900/20 border-green-600/30' 
+                      : 'bg-slate-600 border-slate-500'
+                  }`}
+                >
+                  <div className="text-sm text-slate-300 mb-1">{ability.name}</div>
+                  <div className={`text-2xl font-bold ${isProficient ? 'text-green-400' : 'text-white'}`}>
+                    {modifierText}
+                  </div>
+                  {isProficient && (
+                    <div className="text-xs text-green-300 mt-1">Proficient</div>
+                  )}
+                  <div className="text-xs text-slate-400 mt-1">
+                    {getModifier(ability.value)}{isProficient ? ` + ${proficiencyBonus}` : ''}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Death Saves Section - Only show when unconscious */}
+        {isUnconscious && (
+          <div className={`rounded-lg p-6 border-2 ${
+            deathSaveStatus === 'dead' ? 'bg-red-900/20 border-red-500' :
+            deathSaveStatus === 'stable' ? 'bg-green-900/20 border-green-500' :
+            'bg-yellow-900/20 border-yellow-500'
+          }`}>
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              {deathSaveStatus === 'dead' ? <Skull className="h-5 w-5 text-red-400" /> :
+               deathSaveStatus === 'stable' ? <Heart className="h-5 w-5 text-green-400" /> :
+               <Heart className="h-5 w-5 text-yellow-400" />}
+              Death Saving Throws
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+              {/* Successes */}
+              <div className="text-center">
+                <div className="text-sm text-slate-300 mb-2">Successes</div>
+                <div className="flex justify-center gap-2 mb-3">
+                  {[1, 2, 3].map((i) => (
+                    <div 
+                      key={i}
+                      className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${
+                        i <= currentDeathSaves.successes 
+                          ? 'bg-green-600 border-green-400 text-white' 
+                          : 'border-slate-400 text-slate-400'
+                      }`}
+                    >
+                      {i <= currentDeathSaves.successes ? '✓' : '○'}
+                    </div>
+                  ))}
+                </div>
+                <button
+                  onClick={() => {
+                    const newSaves = addDeathSave(currentDeathSaves, true);
+                    onUpdate({
+                      deathSaveSuccesses: newSaves.successes,
+                      deathSaveFailures: newSaves.failures
+                    });
+                  }}
+                  disabled={currentDeathSaves.successes >= 3 || deathSaveStatus !== 'continue'}
+                  className="bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm px-3 py-1 rounded"
+                >
+                  Add Success
+                </button>
+              </div>
+
+              {/* Failures */}
+              <div className="text-center">
+                <div className="text-sm text-slate-300 mb-2">Failures</div>
+                <div className="flex justify-center gap-2 mb-3">
+                  {[1, 2, 3].map((i) => (
+                    <div 
+                      key={i}
+                      className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${
+                        i <= currentDeathSaves.failures 
+                          ? 'bg-red-600 border-red-400 text-white' 
+                          : 'border-slate-400 text-slate-400'
+                      }`}
+                    >
+                      {i <= currentDeathSaves.failures ? '✗' : '○'}
+                    </div>
+                  ))}
+                </div>
+                <button
+                  onClick={() => {
+                    const newSaves = addDeathSave(currentDeathSaves, false);
+                    onUpdate({
+                      deathSaveSuccesses: newSaves.successes,
+                      deathSaveFailures: newSaves.failures
+                    });
+                  }}
+                  disabled={currentDeathSaves.failures >= 3 || deathSaveStatus !== 'continue'}
+                  className="bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm px-3 py-1 rounded"
+                >
+                  Add Failure
+                </button>
+              </div>
+            </div>
+
+            {/* Status and Reset */}
+            <div className="text-center">
+              <div className={`text-lg font-semibold mb-3 ${
+                deathSaveStatus === 'dead' ? 'text-red-400' :
+                deathSaveStatus === 'stable' ? 'text-green-400' :
+                'text-yellow-400'
+              }`}>
+                {deathSaveStatus === 'dead' ? 'Dead' :
+                 deathSaveStatus === 'stable' ? 'Stable at 1 HP' :
+                 'Making Death Saves...'}
+              </div>
+              
+              <div className="flex gap-2 justify-center">
+                <button
+                  onClick={() => {
+                    const resetSaves = resetDeathSaves();
+                    onUpdate({
+                      deathSaveSuccesses: resetSaves.successes,
+                      deathSaveFailures: resetSaves.failures
+                    });
+                  }}
+                  className="bg-slate-600 hover:bg-slate-500 text-white text-sm px-3 py-1 rounded"
+                >
+                  Reset Saves
+                </button>
+                
+                {deathSaveStatus === 'stable' && (
+                  <button
+                    onClick={() => {
+                      const resetSaves = resetDeathSaves();
+                      onUpdate({
+                        hitPoints: 1,
+                        deathSaveSuccesses: resetSaves.successes,
+                        deathSaveFailures: resetSaves.failures
+                      });
+                    }}
+                    className="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1 rounded"
+                  >
+                    Stabilize at 1 HP
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Character Descriptions */}
         {(character.appearance || character.personality || character.backstory || character.notes) && (

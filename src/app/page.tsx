@@ -58,6 +58,8 @@ interface CharacterListItem {
   notes?: string;
   avatar?: string;
   equippedWeapons?: (Weapon | MagicalWeapon)[];
+  deathSaveSuccesses?: number;
+  deathSaveFailures?: number;
 }
 
 export default function Home() {
@@ -67,7 +69,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   
   // Start app-wide avatar preloading after authentication
-  const { isPreloading, preloadProgress, preloadCompleted } = useAppStartupPreloader();
+  const { isPreloading, preloadProgress } = useAppStartupPreloader();
 
   useEffect(() => {
     if (session) {
@@ -139,11 +141,6 @@ export default function Home() {
           {isPreloading && (
             <div className="text-xs text-slate-400">
               Loading avatars: {preloadProgress.loaded}/{preloadProgress.total}
-            </div>
-          )}
-          {preloadCompleted && !isPreloading && (
-            <div className="text-xs text-green-400">
-              ✅ Avatars ready
             </div>
           )}
           
