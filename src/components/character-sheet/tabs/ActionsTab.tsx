@@ -45,6 +45,7 @@ interface ActionsTabProps {
   onOpenSpellPreparation: () => void;
   onUseSpellScroll?: (scrollIndex: number) => void;
   onUpdateConditions?: (conditions: ActiveCondition[]) => void;
+  onUpdateDeathSaves?: (successes: number, failures: number) => void;
 }
 
 export function ActionsTab({ 
@@ -55,8 +56,11 @@ export function ActionsTab({
   currentArmorClass, 
   onOpenSpellPreparation,
   onUseSpellScroll,
-  onUpdateConditions
+  onUpdateConditions,
+  onUpdateDeathSaves
 }: ActionsTabProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _unused = onUpdateDeathSaves;
   const proficiencyBonus = getProficiencyBonus(character.level);
   
   // Get spells from equipped magical items

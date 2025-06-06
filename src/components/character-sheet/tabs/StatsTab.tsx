@@ -101,8 +101,9 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
                 { name: 'Wisdom', short: 'WIS', value: effectiveStats.wisdom, baseValue: character.wisdom },
                 { name: 'Charisma', short: 'CHA', value: effectiveStats.charisma, baseValue: character.charisma },
               ].map((ability) => {
-                // Use service to get skills for this ability
-                const skillsForAbility = calc.getSkillsForAbility(ability.name.toLowerCase());
+                // Use service to get skills for this ability (only proficient ones)
+                const allSkillsForAbility = calc.getSkillsForAbility(ability.name.toLowerCase());
+                const proficientSkills = allSkillsForAbility.filter(skill => calc.isSkillProficient(skill));
                 const modifier = calc.getAbilityModifier(ability.name.toLowerCase());
                 
                 return (
@@ -136,9 +137,9 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
                     </div>
                     
                     {/* Skill Proficiency Badges */}
-                    {skillsForAbility.length > 0 && (
+                    {proficientSkills.length > 0 && (
                       <div className="flex flex-wrap gap-1 justify-center">
-                        {skillsForAbility.map((skill) => {
+                        {proficientSkills.map((skill: string) => {
                           // Use service to get skill bonus
                           const skillBonus = calc.getSkillBonus(skill);
                           const modifierText = skillBonus >= 0 ? `+${skillBonus}` : `${skillBonus}`;

@@ -1,7 +1,7 @@
 import { getModifier, getProficiencyBonus } from '@/lib/dnd/core';
 import { calculateArmorClass } from '@/lib/dnd/equipment';
 import { canEquipWeapon, canEquipArmor } from '@/lib/dnd/combat';
-import { Weapon, MagicalWeapon, Armor, InventoryItem } from '@/lib/dnd/equipment';
+import { Weapon, MagicalWeapon, Armor } from '@/lib/dnd/equipment';
 import { getSpellsFromMagicalItems, EquippedMagicalItem, MagicalItem } from '@/lib/dnd/magical-items';
 
 // Character interface (minimal for equipment calculations)

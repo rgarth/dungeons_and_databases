@@ -9,7 +9,15 @@ export async function GET(request: NextRequest) {
     const requiresAttunement = searchParams.get('requiresAttunement');
     const search = searchParams.get('search');
 
-    const where: Record<string, any> = {};
+    const where: {
+      type?: string;
+      rarity?: string;
+      requiresAttunement?: boolean;
+      OR?: Array<{
+        name?: { contains: string; mode: 'insensitive' };
+        description?: { contains: string; mode: 'insensitive' };
+      }>;
+    } = {};
 
     // Filter by type
     if (type) {

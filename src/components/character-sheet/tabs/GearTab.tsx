@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Package, Shield, Wand2, Plus, X, Trash2, Sparkles, Scroll } from "lucide-react";
-import { calculateArmorClass, WEAPONS, ARMOR } from "@/lib/dnd/equipment";
+import { createCharacterEquipment } from "@/services/character/equipment";
+import { WEAPONS, ARMOR } from "@/lib/dnd/equipment";
 import type { Weapon, MagicalWeapon, Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
 import { SPELLS } from "@/lib/dnd/spells";
@@ -72,6 +73,22 @@ export function GearTab({
   onOpenSpellPreparation,
   weaponLimits
 }: GearTabProps) {
+  // Create service instances for clean calculations
+  const characterData = {
+    ...character,
+    armorClass: 10, // Will be calculated by equipment service
+    proficiencyBonus: Math.floor((character.level - 1) / 4) + 2,
+    hitPoints: 1,
+    maxHitPoints: 1,
+    speed: 30,
+    intelligence: 10,
+    wisdom: 10,
+    charisma: 10
+  };
+  
+  // Service instances for equipment calculations
+  const equipment = createCharacterEquipment(characterData);
+
   const [activeSection, setActiveSection] = useState<"equipped" | "inventory">("equipped");
   const [showWeaponSelector, setShowWeaponSelector] = useState(false);
   const [showArmorSelector, setShowArmorSelector] = useState(false);
@@ -95,7 +112,7 @@ export function GearTab({
   const [selectedPotion, setSelectedPotion] = useState<MagicalItem | null>(null);
   const [potionRolls, setPotionRolls] = useState<{roll: number, total: number} | null>(null);
 
-  const currentArmorClass = calculateArmorClass(equippedArmor, character.dexterity);
+  const currentArmorClass = equipment.calculateArmorClass(equippedArmor);
 
   const handleAddWeapon = () => {
     const weapon = WEAPONS.find(w => w.name === selectedWeapon);
@@ -561,7 +578,14 @@ export function GearTab({
               </button>
             </div>
             {inventoryWeapons.length === 0 ? (
-              <p className="text-slate-400 text-sm">No weapons in inventory</p>
+              <div className="text-slate-400 text-sm">
+                <p>No weapons in inventory</p>
+                {equippedWeapons.length > 0 && (
+                  <p className="text-xs mt-1 text-slate-500">
+                    💡 Equipped weapons ({equippedWeapons.length}) are shown in &quot;Equipped Gear&quot; tab
+                  </p>
+                )}
+              </div>
             ) : (
               <div className="space-y-2">
                 {inventoryWeapons.map((weapon, index) => (
@@ -611,7 +635,14 @@ export function GearTab({
               </button>
             </div>
             {inventoryArmor.length === 0 ? (
-              <p className="text-slate-400 text-sm">No armor in inventory</p>
+              <div className="text-slate-400 text-sm">
+                <p>No armor in inventory</p>
+                {equippedArmor.length > 0 && (
+                  <p className="text-xs mt-1 text-slate-500">
+                    💡 Equipped armor ({equippedArmor.length}) is shown in &quot;Equipped Gear&quot; tab
+                  </p>
+                )}
+              </div>
             ) : (
               <div className="space-y-2">
                 {inventoryArmor.map((armor, index) => (
@@ -662,7 +693,14 @@ export function GearTab({
               </div>
             </div>
             {inventoryMagicalItems.length === 0 ? (
-              <p className="text-slate-400 text-sm">No magical items in inventory</p>
+              <div className="text-slate-400 text-sm">
+                <p>No magical items in inventory</p>
+                {equippedMagicalItems.length > 0 && (
+                  <p className="text-xs mt-1 text-slate-500">
+                    💡 Equipped magical items ({equippedMagicalItems.length}) are shown in &quot;Equipped Gear&quot; tab
+                  </p>
+                )}
+              </div>
             ) : (
               <div className="space-y-2">
                 {inventoryMagicalItems.map((item, index) => (
