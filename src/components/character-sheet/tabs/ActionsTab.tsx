@@ -1,6 +1,6 @@
 "use client";
 
-import { Swords, Sword, Zap, Shield } from "lucide-react";
+import { Swords, Sword, Zap, Shield, AlertTriangle } from "lucide-react";
 import { getModifier, getProficiencyBonus } from "@/lib/dnd/core";
 import { canEquipWeapon } from "@/lib/dnd/combat";
 import { getSpellcastingType, canPrepareSpells, getSpellsPreparedCount } from "@/lib/dnd/level-up";
@@ -9,6 +9,7 @@ import type { Weapon, MagicalWeapon } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
 import { SPELLS, getClassSpells } from "@/lib/dnd/spells";
 import type { MagicalItem } from "@/lib/dnd/magical-items";
+import { CONDITIONS, getCondition, type ActiveCondition } from "@/lib/dnd/conditions";
 
 interface ActionsTabProps {
   character: {
@@ -33,6 +34,9 @@ interface ActionsTabProps {
     actions?: { type: string; name: string }[];
     bonusActions?: { type: string; name: string }[];
     reactions?: { type: string; name: string }[];
+    conditions?: ActiveCondition[];
+    deathSaveSuccesses?: number;
+    deathSaveFailures?: number;
   };
   equippedWeapons: (Weapon | MagicalWeapon)[];
   equippedMagicalItems: EquippedMagicalItem[];
@@ -40,6 +44,7 @@ interface ActionsTabProps {
   currentArmorClass: number;
   onOpenSpellPreparation: () => void;
   onUseSpellScroll?: (scrollIndex: number) => void;
+  onUpdateConditions?: (conditions: ActiveCondition[]) => void;
 }
 
 export function ActionsTab({ 
@@ -49,7 +54,8 @@ export function ActionsTab({
   inventoryMagicalItems,
   currentArmorClass, 
   onOpenSpellPreparation,
-  onUseSpellScroll
+  onUseSpellScroll,
+  onUpdateConditions
 }: ActionsTabProps) {
   const proficiencyBonus = getProficiencyBonus(character.level);
   
@@ -132,29 +138,144 @@ export function ActionsTab({
         
         {/* Combat Stats Summary */}
         <div className="bg-slate-700 rounded-lg p-6">
-          <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-            <Shield className="h-6 w-6" />
-            Combat Summary
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center bg-slate-600 rounded p-3">
-              <div className="text-2xl font-bold text-blue-400">{currentArmorClass}</div>
-              <div className="text-xs text-slate-400">Armor Class</div>
-            </div>
-            <div className="text-center bg-slate-600 rounded p-3">
-              <div className="text-2xl font-bold text-red-400">{character.hitPoints}/{character.maxHitPoints}</div>
-              <div className="text-xs text-slate-400">Hit Points</div>
-            </div>
-            <div className="text-center bg-slate-600 rounded p-3">
-              <div className="text-2xl font-bold text-green-400">+{getProficiencyBonus(character.level)}</div>
-              <div className="text-xs text-slate-400">Proficiency</div>
-            </div>
-            <div className="text-center bg-slate-600 rounded p-3">
-              <div className="text-2xl font-bold text-yellow-400">{character.speed} ft</div>
-              <div className="text-xs text-slate-400">Speed</div>
+            <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+              <Shield className="h-6 w-6" />
+              Combat Summary
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center bg-slate-600 rounded p-3">
+                <div className="text-2xl font-bold text-blue-400">{currentArmorClass}</div>
+                <div className="text-xs text-slate-400">Armor Class</div>
+              </div>
+              
+                            <div className="text-center bg-slate-600 rounded p-3">
+                <div className="text-2xl font-bold text-red-400">{character.hitPoints}/{character.maxHitPoints}</div>
+                <div className="text-xs text-slate-400">Hit Points</div>
+              </div>
+              
+              <div className="text-center bg-slate-600 rounded p-3">
+                <div className="text-2xl font-bold text-green-400">+{getProficiencyBonus(character.level)}</div>
+                <div className="text-xs text-slate-400">Proficiency</div>
+              </div>
+              <div className="text-center bg-slate-600 rounded p-3">
+                <div className="text-2xl font-bold text-yellow-400">{character.speed} ft</div>
+                <div className="text-xs text-slate-400">Speed</div>
+              </div>
             </div>
           </div>
+
+        {/* Active Conditions - Compact */}
+        <div className="bg-slate-700 rounded-lg p-6">
+          <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-yellow-400" />
+            Conditions
+          </h3>
+          
+          {/* Add Condition Dropdown */}
+          <div className="mb-4">
+            <select
+              value=""
+              onChange={(e) => {
+                if (e.target.value) {
+                  const existingConditions = character.conditions || [];
+                  const isAlreadyActive = existingConditions.some(c => c.name === e.target.value);
+                  
+                  if (!isAlreadyActive) {
+                    const newCondition: ActiveCondition = {
+                      name: e.target.value,
+                      duration: 'Until removed',
+                    };
+                    onUpdateConditions?.([...existingConditions, newCondition]);
+                  }
+                  e.target.value = ""; // Reset selection
+                }
+              }}
+              className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-yellow-500 focus:outline-none"
+            >
+              <option value="">Add condition...</option>
+              {CONDITIONS
+                .filter(condition => {
+                  const activeConditions = character.conditions || [];
+                  return !activeConditions.some(c => c.name === condition.name);
+                })
+                .sort((a, b) => {
+                  // Sort by severity (most severe first), then name
+                  const severityOrder = ['Severe', 'Major', 'Minor'];
+                  const severityDiff = severityOrder.indexOf(a.severity) - severityOrder.indexOf(b.severity);
+                  return severityDiff !== 0 ? severityDiff : a.name.localeCompare(b.name);
+                })
+                .map(condition => (
+                  <option key={condition.name} value={condition.name}>
+                    {condition.name} ({condition.severity})
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          {/* Active Conditions Pills */}
+          <div className="space-y-2">
+            <div className="text-sm text-slate-400">Active conditions:</div>
+            <div className="flex flex-wrap gap-2">
+              {(character.conditions || []).map((activeCondition, index) => {
+                const condition = getCondition(activeCondition.name);
+                if (!condition) return null;
+
+                const getSeverityColor = (severity: string) => {
+                  switch (severity) {
+                    case 'Minor': return 'bg-yellow-900/30 text-yellow-300 border-yellow-600/30';
+                    case 'Major': return 'bg-orange-900/30 text-orange-300 border-orange-600/30';
+                    case 'Severe': return 'bg-red-900/30 text-red-300 border-red-600/30';
+                    default: return 'bg-slate-700 text-slate-300 border-slate-600/30';
+                  }
+                };
+
+                return (
+                  <span 
+                    key={index} 
+                    className={`px-3 py-1 rounded-full text-sm border flex items-center gap-2 ${getSeverityColor(condition.severity)}`}
+                    title={condition.description}
+                  >
+                    {condition.name}
+                    <button
+                      onClick={() => {
+                        const newConditions = (character.conditions || []).filter((_, i) => i !== index);
+                        onUpdateConditions?.(newConditions);
+                      }}
+                      className="text-xs font-bold opacity-75 hover:opacity-100"
+                      title="Remove condition"
+                    >
+                      ×
+                    </button>
+                  </span>
+                );
+              })}
+            </div>
+            
+            {/* Empty state */}
+            {(!character.conditions || character.conditions.length === 0) && (
+              <div className="text-slate-500 text-sm italic">No active conditions</div>
+            )}
+            
+            {/* Effects summary for active conditions */}
+            {character.conditions && character.conditions.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-slate-600">
+                <div className="text-xs text-slate-400 space-y-1">
+                  {character.conditions.some(c => getCondition(c.name)?.effects.some(e => e.toLowerCase().includes('attack') && e.toLowerCase().includes('disadvantage'))) && (
+                    <div>• Disadvantage on attacks</div>
+                  )}
+                  {character.conditions.some(c => getCondition(c.name)?.effects.some(e => e.toLowerCase().includes('can\'t take actions'))) && (
+                    <div>• Cannot take actions</div>
+                  )}
+                  {character.conditions.some(c => getCondition(c.name)?.effects.some(e => e.toLowerCase().includes('speed becomes 0'))) && (
+                    <div>• Speed is 0</div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
+
+
         
         {/* Weapon Attacks */}
         {equippedWeapons && equippedWeapons.length > 0 && (

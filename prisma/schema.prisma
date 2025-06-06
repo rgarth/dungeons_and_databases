@@ -192,6 +192,8 @@ model Character {
   notes        String?
   avatar       String? // Store selected avatar filename (e.g., "Human_Fighter_Male.png")
   inspiration  Boolean @default(false) // DM-awarded inspiration (binary: have it or don't)
+  languages    Json? // Store known languages as JSON array
+  conditions   Json? // Store active conditions as JSON array
   
   // Relations
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)

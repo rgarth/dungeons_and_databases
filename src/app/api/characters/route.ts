@@ -348,6 +348,16 @@ export async function PATCH(request: NextRequest) {
       updateData.deathSaveFailures = body.deathSaveFailures;
     }
 
+    // Handle languages updates
+    if (body.languages !== undefined) {
+      updateData.languages = body.languages;
+    }
+
+    // Handle conditions updates
+    if (body.conditions !== undefined) {
+      updateData.conditions = body.conditions;
+    }
+
     // Verify the character belongs to the current user and update
     const character = await prisma.character.updateMany({
       where: {

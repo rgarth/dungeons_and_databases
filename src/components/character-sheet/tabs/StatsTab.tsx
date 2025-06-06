@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Shield, HelpCircle, Star, Heart, Skull } from "lucide-react";
+import { Shield, HelpCircle, Star } from "lucide-react";
 import { getProficiencyBonus, getModifier, SKILLS } from "@/lib/dnd/core";
-import { getSavingThrowProficiencies, calculateSavingThrowBonus, type DeathSaves, addDeathSave, resetDeathSaves, getDeathSaveStatus } from "@/lib/dnd/combat";
+import { getSavingThrowProficiencies, calculateSavingThrowBonus } from "@/lib/dnd/combat";
 import { calculateArmorClass } from "@/lib/dnd/equipment";
 import { HitPointsDisplay } from "../sections/HitPointsDisplay";
 import type { Armor } from "@/lib/dnd/equipment";
@@ -59,14 +59,7 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
   // Get saving throw proficiencies for this class
   const savingThrowProficiencies = getSavingThrowProficiencies(character.class);
   
-  // Death saves state
-  const currentDeathSaves: DeathSaves = {
-    successes: character.deathSaveSuccesses || 0,
-    failures: character.deathSaveFailures || 0
-  };
-  
-  const isUnconscious = character.hitPoints <= 0;
-  const deathSaveStatus = getDeathSaveStatus(currentDeathSaves);
+
   
   // Use modified stats if provided, otherwise use base character stats
   const effectiveStats = modifiedStats ? {
@@ -193,6 +186,8 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
                 maxHitPoints: character.maxHitPoints,
                 temporaryHitPoints: character.temporaryHitPoints,
                 constitution: character.constitution,
+                deathSaveSuccesses: character.deathSaveSuccesses,
+                deathSaveFailures: character.deathSaveFailures,
               }}
               onUpdate={onUpdate}
             />
@@ -321,145 +316,7 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
           </div>
         </div>
 
-        {/* Death Saves Section - Only show when unconscious */}
-        {isUnconscious && (
-          <div className={`rounded-lg p-6 border-2 ${
-            deathSaveStatus === 'dead' ? 'bg-red-900/20 border-red-500' :
-            deathSaveStatus === 'stable' ? 'bg-green-900/20 border-green-500' :
-            'bg-yellow-900/20 border-yellow-500'
-          }`}>
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              {deathSaveStatus === 'dead' ? <Skull className="h-5 w-5 text-red-400" /> :
-               deathSaveStatus === 'stable' ? <Heart className="h-5 w-5 text-green-400" /> :
-               <Heart className="h-5 w-5 text-yellow-400" />}
-              Death Saving Throws
-            </h3>
-            
-            {/* Instructions */}
-            <div className="mb-4 p-3 bg-slate-800 rounded border border-slate-600">
-              <div className="text-sm text-slate-300">
-                <div className="font-medium text-white mb-2">🎲 How to Make Death Saving Throws:</div>
-                <div className="space-y-1 text-xs">
-                  <div>• <strong>Roll a d20</strong> (no modifiers)</div>
-                  <div>• <strong className="text-green-400">10 or higher = SUCCESS</strong></div>
-                  <div>• <strong className="text-red-400">9 or lower = FAILURE</strong></div>
-                  <div>• <strong className="text-blue-400">Natural 20 = Regain 1 HP instantly</strong></div>
-                  <div>• <strong className="text-orange-400">Natural 1 = 2 failures</strong></div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-              {/* Successes */}
-              <div className="text-center">
-                <div className="text-sm text-slate-300 mb-2">Successes</div>
-                <div className="flex justify-center gap-2 mb-3">
-                  {[1, 2, 3].map((i) => (
-                    <div 
-                      key={i}
-                      className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${
-                        i <= currentDeathSaves.successes 
-                          ? 'bg-green-600 border-green-400 text-white' 
-                          : 'border-slate-400 text-slate-400'
-                      }`}
-                    >
-                      {i <= currentDeathSaves.successes ? '✓' : '○'}
-                    </div>
-                  ))}
-                </div>
-                <button
-                  onClick={() => {
-                    const newSaves = addDeathSave(currentDeathSaves, true);
-                    onUpdate({
-                      deathSaveSuccesses: newSaves.successes,
-                      deathSaveFailures: newSaves.failures
-                    });
-                  }}
-                  disabled={currentDeathSaves.successes >= 3 || deathSaveStatus !== 'continue'}
-                  className="bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm px-3 py-1 rounded"
-                >
-                  Add Success
-                </button>
-              </div>
 
-              {/* Failures */}
-              <div className="text-center">
-                <div className="text-sm text-slate-300 mb-2">Failures</div>
-                <div className="flex justify-center gap-2 mb-3">
-                  {[1, 2, 3].map((i) => (
-                    <div 
-                      key={i}
-                      className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${
-                        i <= currentDeathSaves.failures 
-                          ? 'bg-red-600 border-red-400 text-white' 
-                          : 'border-slate-400 text-slate-400'
-                      }`}
-                    >
-                      {i <= currentDeathSaves.failures ? '✗' : '○'}
-                    </div>
-                  ))}
-                </div>
-                <button
-                  onClick={() => {
-                    const newSaves = addDeathSave(currentDeathSaves, false);
-                    onUpdate({
-                      deathSaveSuccesses: newSaves.successes,
-                      deathSaveFailures: newSaves.failures
-                    });
-                  }}
-                  disabled={currentDeathSaves.failures >= 3 || deathSaveStatus !== 'continue'}
-                  className="bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm px-3 py-1 rounded"
-                >
-                  Add Failure
-                </button>
-              </div>
-            </div>
-
-            {/* Status and Reset */}
-            <div className="text-center">
-              <div className={`text-lg font-semibold mb-3 ${
-                deathSaveStatus === 'dead' ? 'text-red-400' :
-                deathSaveStatus === 'stable' ? 'text-green-400' :
-                'text-yellow-400'
-              }`}>
-                {deathSaveStatus === 'dead' ? 'Dead' :
-                 deathSaveStatus === 'stable' ? 'Stable at 1 HP' :
-                 'Making Death Saves...'}
-              </div>
-              
-              <div className="flex gap-2 justify-center">
-                <button
-                  onClick={() => {
-                    const resetSaves = resetDeathSaves();
-                    onUpdate({
-                      deathSaveSuccesses: resetSaves.successes,
-                      deathSaveFailures: resetSaves.failures
-                    });
-                  }}
-                  className="bg-slate-600 hover:bg-slate-500 text-white text-sm px-3 py-1 rounded"
-                >
-                  Reset Saves
-                </button>
-                
-                {deathSaveStatus === 'stable' && (
-                  <button
-                    onClick={() => {
-                      const resetSaves = resetDeathSaves();
-                      onUpdate({
-                        hitPoints: 1,
-                        deathSaveSuccesses: resetSaves.successes,
-                        deathSaveFailures: resetSaves.failures
-                      });
-                    }}
-                    className="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1 rounded"
-                  >
-                    Stabilize at 1 HP
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Character Descriptions */}
         {(character.appearance || character.personality || character.backstory || character.notes) && (

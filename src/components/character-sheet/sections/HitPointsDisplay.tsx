@@ -13,8 +13,16 @@ interface HitPointsDisplayProps {
     maxHitPoints: number;
     temporaryHitPoints?: number;
     constitution: number;
+    deathSaveSuccesses?: number;
+    deathSaveFailures?: number;
   };
-  onUpdate: (updates: { hitPoints?: number; temporaryHitPoints?: number; spellsPrepared?: Spell[] }) => void;
+  onUpdate: (updates: { 
+    hitPoints?: number; 
+    temporaryHitPoints?: number; 
+    spellsPrepared?: Spell[];
+    deathSaveSuccesses?: number;
+    deathSaveFailures?: number;
+  }) => void;
 }
 
 export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps) {
@@ -79,6 +87,100 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
     
     alert(message);
   };
+
+  const handleDeathSaveChange = (type: 'success' | 'failure', count: number) => {
+    const currentSuccesses = character.deathSaveSuccesses || 0;
+    const currentFailures = character.deathSaveFailures || 0;
+    
+    if (type === 'success') {
+      const newSuccesses = currentSuccesses === count ? count - 1 : count;
+      onUpdate({ deathSaveSuccesses: newSuccesses });
+      
+      // Auto-stabilize at 3 successes
+      if (newSuccesses >= 3) {
+        setTimeout(() => {
+          onUpdate({ hitPoints: 1, deathSaveSuccesses: 0, deathSaveFailures: 0 });
+        }, 1000);
+      }
+    } else {
+      const newFailures = currentFailures === count ? count - 1 : count;
+      onUpdate({ deathSaveFailures: newFailures });
+    }
+  };
+
+  // Death Saves Mode when HP ≤ 0
+  if (character.hitPoints <= 0) {
+    return (
+      <div>
+        <div className="text-center mb-4">
+          <div className="text-xl font-bold text-red-400 mb-2">Death Saving Throws</div>
+          <div className="text-sm text-slate-400 mb-3">
+            Roll d20: 10+ = Success, 1-9 = Failure
+          </div>
+        </div>
+        
+        <div className="flex justify-center gap-8 mb-4">
+          {/* Successes */}
+          <div className="text-center">
+            <div className="text-sm font-medium text-green-400 mb-2">Successes</div>
+            <div className="flex gap-2">
+              {[1, 2, 3].map(i => (
+                <button
+                  key={`success-${i}`}
+                  onClick={() => handleDeathSaveChange('success', i)}
+                  className={`w-8 h-8 rounded-full border-2 transition-colors ${
+                    (character.deathSaveSuccesses || 0) >= i
+                      ? 'bg-green-500 border-green-400'
+                      : 'border-green-400 hover:bg-green-500/20'
+                  }`}
+                  title={`Mark ${i} success${i > 1 ? 'es' : ''}`}
+                />
+              ))}
+            </div>
+          </div>
+          
+          {/* Failures */}
+          <div className="text-center">
+            <div className="text-sm font-medium text-red-400 mb-2">Failures</div>
+            <div className="flex gap-2">
+              {[1, 2, 3].map(i => (
+                <button
+                  key={`failure-${i}`}
+                  onClick={() => handleDeathSaveChange('failure', i)}
+                  className={`w-8 h-8 rounded-full border-2 transition-colors ${
+                    (character.deathSaveFailures || 0) >= i
+                      ? 'bg-red-500 border-red-400'
+                      : 'border-red-400 hover:bg-red-500/20'
+                  }`}
+                  title={`Mark ${i} failure${i > 1 ? 's' : ''}`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        {/* Status */}
+        <div className="text-center mb-4">
+          {(character.deathSaveSuccesses || 0) >= 3 && (
+            <div className="text-green-400 font-medium">Stabilized - gaining 1 HP!</div>
+          )}
+          {(character.deathSaveFailures || 0) >= 3 && (
+            <div className="text-red-400 font-medium">DEAD</div>
+          )}
+        </div>
+        
+        {/* Emergency Healing Button */}
+        <div className="text-center">
+          <button
+            onClick={() => onUpdate({ hitPoints: 1, deathSaveSuccesses: 0, deathSaveFailures: 0 })}
+            className="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded font-medium"
+          >
+            Heal to 1 HP
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>

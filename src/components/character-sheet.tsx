@@ -8,6 +8,7 @@ import { Weapon, MagicalWeapon, InventoryItem, WEAPONS, MAGICAL_WEAPON_TEMPLATES
 import { Action, canEquipArmor } from "@/lib/dnd/combat";
 import { Treasure } from "@/lib/dnd/data";
 import { MagicalItem, EquippedMagicalItem, applyMagicalItemEffects } from "@/lib/dnd/magical-items";
+import { ActiveCondition } from "@/lib/dnd/conditions";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import { LevelUpModal } from "./level-up-modal";
 import { getSpellcastingType, getSpellsPreparedCount } from "@/lib/dnd/level-up";
@@ -64,6 +65,8 @@ interface CharacterSheetProps {
     notes?: string;
     avatar?: string | null;
     inspiration?: boolean;
+    languages?: string[];
+    conditions?: ActiveCondition[];
     equippedWeapons?: (Weapon | MagicalWeapon)[];
     deathSaveSuccesses?: number;
     deathSaveFailures?: number;
@@ -230,6 +233,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     backstory?: string;
     notes?: string;
     inspiration?: boolean;
+    languages?: string[];
+    conditions?: ActiveCondition[];
     deathSaveSuccesses?: number;
     deathSaveFailures?: number;
   } | Record<string, unknown>) => {
@@ -464,6 +469,16 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     updateCharacter({ inventoryMagicalItems: updatedInventoryItems });
   };
 
+  const handleUpdateConditions = (conditions: ActiveCondition[]) => {
+    setCurrentCharacter(prev => ({ ...prev, conditions }));
+    updateCharacter({ conditions });
+  };
+
+  const handleUpdateDeathSaves = (successes: number, failures: number) => {
+    setCurrentCharacter(prev => ({ ...prev, deathSaveSuccesses: successes, deathSaveFailures: failures }));
+    updateCharacter({ deathSaveSuccesses: successes, deathSaveFailures: failures });
+  };
+
 
   // Equipment state
 
@@ -693,6 +708,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
                 currentArmorClass={currentArmorClass}
                 onOpenSpellPreparation={handleOpenSpellPreparation}
                 onUseSpellScroll={handleUseSpellScroll}
+                onUpdateConditions={handleUpdateConditions}
+                onUpdateDeathSaves={handleUpdateDeathSaves}
               />
             )}
 

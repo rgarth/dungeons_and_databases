@@ -2,8 +2,9 @@
 /* eslint-disable react/no-unescaped-entities */
 
 import { useState } from "react";
-import { BookOpen, Edit3, Save, X, HelpCircle, FileText } from "lucide-react";
+import { BookOpen, Edit3, Save, X, HelpCircle, FileText, Languages } from "lucide-react";
 import { AvatarSelector } from "../components/AvatarSelector";
+import { LANGUAGES, getRacialLanguages } from "@/lib/dnd/languages";
 
 interface BackgroundTabProps {
   character: {
@@ -19,8 +20,9 @@ interface BackgroundTabProps {
     backstory?: string;
     notes?: string;
     avatar?: string | null;
+    languages?: string[];
   };
-  onUpdate: (updates: { appearance?: string; personality?: string; backstory?: string; notes?: string; avatar?: string | null }) => void;
+  onUpdate: (updates: { appearance?: string; personality?: string; backstory?: string; notes?: string; avatar?: string | null; languages?: string[] }) => void;
 }
 
 // D&D Character Backstory Prompts
@@ -400,6 +402,93 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 onAvatarSelect={(avatar) => onUpdate({ avatar })}
               />
             )}
+
+            {/* Languages Section - Compact Design */}
+            <div className="bg-slate-700 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                <Languages className="h-5 w-5 text-indigo-400" />
+                Languages Known
+              </h3>
+              
+              {/* Add Language Controls */}
+              <div className="flex gap-2 mb-4">
+                <select
+                  value=""
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      const currentLanguages = character.languages || [];
+                      const racialLanguages = getRacialLanguages(character.race);
+                      const allKnown = [...racialLanguages, ...currentLanguages];
+                      
+                      if (!allKnown.includes(e.target.value)) {
+                        const newLanguages = [...currentLanguages, e.target.value];
+                        onUpdate({ languages: newLanguages });
+                      }
+                      e.target.value = ""; // Reset selection
+                    }
+                  }}
+                  className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                >
+                  <option value="">Add a language...</option>
+                  {LANGUAGES
+                    .filter(lang => {
+                      const racialLanguages = getRacialLanguages(character.race);
+                      const learnedLanguages = character.languages || [];
+                      const allKnown = [...racialLanguages, ...learnedLanguages];
+                      return !allKnown.includes(lang.name);
+                    })
+                    .sort((a, b) => {
+                      // Sort by category, then by name
+                      if (a.category !== b.category) {
+                        const order = ['Standard', 'Exotic', 'Secret'];
+                        return order.indexOf(a.category) - order.indexOf(b.category);
+                      }
+                      return a.name.localeCompare(b.name);
+                    })
+                    .map(lang => (
+                      <option key={lang.name} value={lang.name}>
+                        {lang.name} ({lang.category})
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              {/* All Known Languages List */}
+              <div className="space-y-2">
+                <div className="text-sm text-slate-400 mb-2">Known languages:</div>
+                <div className="flex flex-wrap gap-2">
+                  {/* Racial Languages */}
+                  {getRacialLanguages(character.race).map(lang => (
+                    <span key={`racial-${lang}`} className="bg-blue-900/30 text-blue-300 px-3 py-1 rounded-full text-sm border border-blue-600/30 flex items-center gap-2">
+                      {lang}
+                      <span className="text-xs opacity-75">(Racial)</span>
+                    </span>
+                  ))}
+                  
+                  {/* Learned Languages */}
+                  {(character.languages || []).map(lang => (
+                    <span key={`learned-${lang}`} className="bg-green-900/30 text-green-300 px-3 py-1 rounded-full text-sm border border-green-600/30 flex items-center gap-2">
+                      {lang}
+                      <button
+                        onClick={() => {
+                          const newLanguages = (character.languages || []).filter(l => l !== lang);
+                          onUpdate({ languages: newLanguages });
+                        }}
+                        className="text-green-400 hover:text-green-200 ml-1 text-xs font-bold"
+                        title="Remove language"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                
+                {/* Empty state */}
+                {getRacialLanguages(character.race).length === 0 && (!character.languages || character.languages.length === 0) && (
+                  <div className="text-slate-500 text-sm italic">No languages known</div>
+                )}
+              </div>
+            </div>
 
             {renderEditableSection(
               "Personality",
