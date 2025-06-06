@@ -335,6 +335,20 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
               Death Saving Throws
             </h3>
             
+            {/* Instructions */}
+            <div className="mb-4 p-3 bg-slate-800 rounded border border-slate-600">
+              <div className="text-sm text-slate-300">
+                <div className="font-medium text-white mb-2">🎲 How to Make Death Saving Throws:</div>
+                <div className="space-y-1 text-xs">
+                  <div>• <strong>Roll a d20</strong> (no modifiers)</div>
+                  <div>• <strong className="text-green-400">10 or higher = SUCCESS</strong></div>
+                  <div>• <strong className="text-red-400">9 or lower = FAILURE</strong></div>
+                  <div>• <strong className="text-blue-400">Natural 20 = Regain 1 HP instantly</strong></div>
+                  <div>• <strong className="text-orange-400">Natural 1 = 2 failures</strong></div>
+                </div>
+              </div>
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
               {/* Successes */}
               <div className="text-center">
