@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { Shield, HelpCircle, Star } from "lucide-react";
-import { getProficiencyBonus, getModifier, SKILLS } from "@/lib/dnd/core";
-import { getSavingThrowProficiencies, calculateSavingThrowBonus } from "@/lib/dnd/combat";
-import { calculateArmorClass } from "@/lib/dnd/equipment";
 import { HitPointsDisplay } from "../sections/HitPointsDisplay";
+import { createCharacterCalculations } from "@/services/character/calculations";
+import { createCharacterEquipment } from "@/services/character/equipment";
+import { getSavingThrowProficiencies, calculateSavingThrowBonus } from "@/lib/dnd/combat";
+import { getModifier } from "@/lib/dnd/core";
 import type { Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
 
@@ -53,13 +54,13 @@ interface StatsTabProps {
 
 export function StatsTab({ character, equippedArmor, modifiedStats, currentArmorClass: passedArmorClass, onUpdate }: StatsTabProps) {
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
-  const proficiencyBonus = getProficiencyBonus(character.level);
-  const currentArmorClass = passedArmorClass ?? calculateArmorClass(equippedArmor, character.dexterity);
   
-  // Get saving throw proficiencies for this class
-  const savingThrowProficiencies = getSavingThrowProficiencies(character.class);
+  // Create service instances for clean calculations
+  const calc = createCharacterCalculations(character);
+  const equipment = createCharacterEquipment(character);
   
-
+  // Use equipment service for AC calculation
+  const currentArmorClass = passedArmorClass ?? equipment.calculateArmorClass(equippedArmor);
   
   // Use modified stats if provided, otherwise use base character stats
   const effectiveStats = modifiedStats ? {
@@ -78,14 +79,6 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
     wisdom: character.wisdom,
     charisma: character.charisma,
     speed: character.speed,
-  };
-
-  // Get skills that belong to each ability
-  const getSkillsForAbility = (abilityName: string) => {
-    if (!character.skills) return [];
-    return character.skills.filter(skill => 
-      SKILLS[skill as keyof typeof SKILLS] === abilityName.toLowerCase()
-    );
   };
 
   const toggleTooltip = (tooltipId: string) => {
@@ -109,7 +102,10 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
                 { name: 'Wisdom', short: 'WIS', value: effectiveStats.wisdom, baseValue: character.wisdom },
                 { name: 'Charisma', short: 'CHA', value: effectiveStats.charisma, baseValue: character.charisma },
               ].map((ability) => {
-                const skillsForAbility = getSkillsForAbility(ability.name);
+                // Use service to get skills for this ability
+                const skillsForAbility = calc.getSkillsForAbility(ability.name.toLowerCase());
+                const modifier = calc.getAbilityModifier(ability.name.toLowerCase());
+                
                 return (
                   <div key={ability.name} className="bg-slate-600 rounded-lg p-3 text-center relative">
                     <div className="text-xs text-slate-400 mb-1 font-medium">{ability.short}</div>
@@ -123,7 +119,7 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
                     </div>
                     <div className="text-sm text-slate-300 mb-2 relative">
                       <div className="flex items-center justify-center gap-1">
-                        <span>Mod: {getModifier(ability.value) >= 0 ? '+' : ''}{getModifier(ability.value)}</span>
+                        <span>Mod: {modifier >= 0 ? '+' : ''}{modifier}</span>
                         <button 
                           onClick={() => toggleTooltip(`ability-${ability.name}`)}
                           className="cursor-pointer hover:bg-slate-500 rounded p-0.5"
@@ -134,7 +130,7 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
                       {activeTooltip === `ability-${ability.name}` && (
                         <div className="absolute z-20 mt-1 p-3 bg-slate-800 rounded text-xs text-slate-300 border border-slate-600 w-56 left-1/2 transform -translate-x-1/2 shadow-lg">
                           <strong>Ability Modifier:</strong> Add this to d20 rolls using {ability.name}.<br/>
-                          <strong>Calculation:</strong> ({ability.value} - 10) ÷ 2 = {getModifier(ability.value)}<br/>
+                          <strong>Calculation:</strong> ({ability.value} - 10) ÷ 2 = {modifier}<br/>
                           <strong>Used for:</strong> Basic {ability.name} checks and saving throws.
                         </div>
                       )}
@@ -144,9 +140,10 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
                     {skillsForAbility.length > 0 && (
                       <div className="flex flex-wrap gap-1 justify-center">
                         {skillsForAbility.map((skill) => {
-                          const abilityModifier = getModifier(ability.value);
-                          const totalModifier = abilityModifier + proficiencyBonus;
-                          const modifierText = totalModifier >= 0 ? `+${totalModifier}` : `${totalModifier}`;
+                          // Use service to get skill bonus
+                          const skillBonus = calc.getSkillBonus(skill);
+                          const modifierText = skillBonus >= 0 ? `+${skillBonus}` : `${skillBonus}`;
+                          
                           return (
                             <div key={skill} className="relative">
                               <div className="bg-purple-900/40 text-purple-300 px-2 py-1 rounded text-xs font-medium inline-flex items-center gap-1">
@@ -161,8 +158,8 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
                               {activeTooltip === `skill-${ability.name}-${skill}` && (
                                 <div className="absolute z-10 mt-1 p-2 bg-slate-800 rounded text-xs text-slate-300 border border-slate-600 w-48 left-1/2 transform -translate-x-1/2">
                                   <strong>{skill} Check:</strong> Roll 1d20 {modifierText}<br/>
-                                  <strong>Breakdown:</strong> {ability.name} modifier ({abilityModifier >= 0 ? '+' : ''}{abilityModifier}) + Proficiency (+{proficiencyBonus})<br/>
-                                                                     <strong>Why:</strong> You&apos;re trained in this skill!
+                                  <strong>Breakdown:</strong> {ability.name} modifier ({modifier >= 0 ? '+' : ''}{modifier}) + Proficiency (+{calc.proficiencyBonus})<br/>
+                                  <strong>Why:</strong> You&apos;re trained in this skill!
                                 </div>
                               )}
                             </div>
@@ -229,7 +226,7 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
               {/* Proficiency Bonus */}
               <div className="text-center">
                 <div className="text-slate-300 text-sm mb-2">Prof</div>
-                <span className="text-white font-bold text-2xl">+{proficiencyBonus}</span>
+                <span className="text-white font-bold text-2xl">+{calc.proficiencyBonus}</span>
               </div>
 
               {/* Inspiration */}
@@ -287,8 +284,8 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
               { name: 'Wisdom', value: effectiveStats.wisdom },
               { name: 'Charisma', value: effectiveStats.charisma }
             ].map((ability) => {
-              const isProficient = savingThrowProficiencies.includes(ability.name);
-              const bonus = calculateSavingThrowBonus(ability.value, isProficient, proficiencyBonus);
+              const isProficient = calc.getSavingThrowProficiencies().includes(ability.name);
+              const bonus = calc.calculateSavingThrowBonus(ability.value, isProficient);
               const modifierText = bonus >= 0 ? `+${bonus}` : `${bonus}`;
               
               return (
@@ -308,15 +305,13 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
                     <div className="text-xs text-green-300 mt-1">Proficient</div>
                   )}
                   <div className="text-xs text-slate-400 mt-1">
-                    {getModifier(ability.value)}{isProficient ? ` + ${proficiencyBonus}` : ''}
+                    {calc.getModifier(ability.value)}{isProficient ? ` + ${calc.proficiencyBonus}` : ''}
                   </div>
                 </div>
               );
             })}
           </div>
         </div>
-
-
 
         {/* Character Descriptions */}
         {(character.appearance || character.personality || character.backstory || character.notes) && (
