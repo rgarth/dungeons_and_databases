@@ -153,15 +153,7 @@ export class CharacterEquipment {
   }
 
   // Calculate total weight carried (for future encumbrance rules)
-  calculateWeight(
-    equippedWeapons: (Weapon | MagicalWeapon)[],
-    equippedArmor: Armor[],
-    inventory: InventoryItem[]
-  ): number {
-    // This would sum up all item weights
-    // For now, return 0 as weight isn't implemented in the current equipment system
-    return 0;
-  }
+  // TODO: Implement when weight/encumbrance system is added
 }
 
 // Factory function

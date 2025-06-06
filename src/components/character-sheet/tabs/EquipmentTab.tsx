@@ -1,9 +1,9 @@
 "use client";
 
 import { Sword, Package, Shield, Plus, Trash2, Zap } from "lucide-react";
-import { getModifier } from "@/lib/dnd/core";
-import { canEquipWeapon, canEquipArmor } from "@/lib/dnd/combat";
-import { calculateArmorClass, WEAPONS, ARMOR } from "@/lib/dnd/equipment";
+import { createCharacterCalculations } from "@/services/character/calculations";
+import { createCharacterEquipment } from "@/services/character/equipment";
+import { WEAPONS, ARMOR } from "@/lib/dnd/equipment";
 import { MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon } from "@/lib/dnd/equipment";
 import { canPrepareSpells, getSpellsPreparedCount } from "@/lib/dnd/level-up";
 import type { Weapon, MagicalWeapon, Armor } from "@/lib/dnd/equipment";
@@ -60,6 +60,21 @@ export function EquipmentTab({
   onOpenSpellPreparation,
   weaponLimits
 }: EquipmentTabProps) {
+  // Create service instances for clean calculations
+  const characterData = {
+    ...character,
+    name: '',
+    race: '',
+    armorClass: 10, // Will be calculated by equipment service
+    proficiencyBonus: Math.floor((character.level - 1) / 4) + 2,
+    hitPoints: 1,
+    maxHitPoints: 1,
+    speed: 30
+  };
+  
+  const calc = createCharacterCalculations(characterData);
+  const equipment = createCharacterEquipment(characterData);
+
   const [showWeaponCreator, setShowWeaponCreator] = useState(false);
   const [selectedBaseWeapon, setSelectedBaseWeapon] = useState("");
   const [selectedMagicalTemplate, setSelectedMagicalTemplate] = useState("");
@@ -120,7 +135,7 @@ export function EquipmentTab({
               <div className="space-y-2 mb-4">
                 {equippedWeapons.map((weapon, index) => {
                   const isMagical = 'magicalName' in weapon;
-                  const isProficient = canEquipWeapon(weapon, character.class);
+                  const isProficient = equipment.canUseWeapon(weapon);
                   const isTwoHanded = weapon.properties.includes('Two-handed');
                   
                   return (
@@ -245,7 +260,7 @@ export function EquipmentTab({
             <div className="space-y-2">
               {inventoryWeapons && inventoryWeapons.length > 0 ? inventoryWeapons.map((weapon, index) => {
                 const isMagical = 'magicalName' in weapon;
-                const isProficient = canEquipWeapon(weapon, character.class);
+                                  const isProficient = equipment.canUseWeapon(weapon);
                 const atLimit = equippedWeapons.length >= weaponLimits.max;
                 
                 return (
@@ -349,7 +364,7 @@ export function EquipmentTab({
                       getSpellsPreparedCount(
                         character.class, 
                         character.level, 
-                        getModifier(character[character.spellcastingAbility as keyof typeof character] as number)
+                        calc.abilityModifiers[character.spellcastingAbility as keyof typeof calc.abilityModifiers]
                       )
                     }
                   </div>
@@ -450,7 +465,7 @@ export function EquipmentTab({
             <div className="space-y-2 mb-4">
               <h4 className="text-sm font-medium text-slate-300">Storage</h4>
               {inventoryArmor && inventoryArmor.length > 0 ? inventoryArmor.map((armor, index) => {
-                const canEquip = canEquipArmor(armor.type, character.class);
+                const canEquip = equipment.canWearArmor(armor);
                 const hasStrengthReq = !armor.minStrength || character.strength >= armor.minStrength;
                 
                 return (
@@ -540,13 +555,13 @@ export function EquipmentTab({
             </h3>
             <div className="text-center">
               <div className="text-3xl font-bold text-blue-400 mb-2">
-                {calculateArmorClass(equippedArmor, character.dexterity)}
+                {equipment.calculateArmorClass(equippedArmor)}
               </div>
               <div className="text-sm text-slate-400">
                 Base: {equippedArmor.find(a => a.type !== 'Shield')?.baseAC || 10}
                 {equippedArmor.find(a => a.type !== 'Shield')?.maxDexBonus !== undefined 
                   ? ` + Dex (max +${equippedArmor.find(a => a.type !== 'Shield')?.maxDexBonus})`
-                  : ` + Dex ${getModifier(character.dexterity) >= 0 ? '+' : ''}${getModifier(character.dexterity)}`
+                  : ` + Dex ${calc.abilityModifiers.dexterity >= 0 ? '+' : ''}${calc.abilityModifiers.dexterity}`
                 }
                 {equippedArmor.find(a => a.type === 'Shield') && ` + Shield +${equippedArmor.find(a => a.type === 'Shield')?.baseAC}`}
               </div>

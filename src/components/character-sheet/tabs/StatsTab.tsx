@@ -5,8 +5,7 @@ import { Shield, HelpCircle, Star } from "lucide-react";
 import { HitPointsDisplay } from "../sections/HitPointsDisplay";
 import { createCharacterCalculations } from "@/services/character/calculations";
 import { createCharacterEquipment } from "@/services/character/equipment";
-import { getSavingThrowProficiencies, calculateSavingThrowBonus } from "@/lib/dnd/combat";
-import { getModifier } from "@/lib/dnd/core";
+// Service layer now handles these calculations
 import type { Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
 
@@ -284,8 +283,8 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
               { name: 'Wisdom', value: effectiveStats.wisdom },
               { name: 'Charisma', value: effectiveStats.charisma }
             ].map((ability) => {
-              const isProficient = calc.getSavingThrowProficiencies().includes(ability.name);
-              const bonus = calc.calculateSavingThrowBonus(ability.value, isProficient);
+              const isProficient = calc.isSavingThrowProficient(ability.name.toLowerCase());
+              const bonus = calc.getSavingThrowBonus(ability.name.toLowerCase());
               const modifierText = bonus >= 0 ? `+${bonus}` : `${bonus}`;
               
               return (
@@ -305,7 +304,7 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
                     <div className="text-xs text-green-300 mt-1">Proficient</div>
                   )}
                   <div className="text-xs text-slate-400 mt-1">
-                    {calc.getModifier(ability.value)}{isProficient ? ` + ${calc.proficiencyBonus}` : ''}
+                    {calc.getAbilityModifier(ability.name.toLowerCase())}{isProficient ? ` + ${calc.proficiencyBonus}` : ''}
                   </div>
                 </div>
               );
