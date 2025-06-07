@@ -8,6 +8,7 @@ import { getSpellsFromMagicalItems, EquippedMagicalItem, MagicalItem } from '@/l
 interface Character {
   id: string;
   class: string;
+  subclass?: string;
   level: number;
   strength: number;
   dexterity: number;

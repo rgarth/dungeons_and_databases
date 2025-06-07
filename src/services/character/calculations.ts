@@ -7,6 +7,7 @@ interface Character {
   name: string;
   race: string;
   class: string;
+  subclass?: string;
   level: number;
   hitPoints: number;
   maxHitPoints: number;

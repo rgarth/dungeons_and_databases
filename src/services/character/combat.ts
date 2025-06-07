@@ -7,6 +7,7 @@ import { Armor } from '@/lib/dnd/equipment';
 interface Character {
   id: string;
   class: string;
+  subclass?: string;
   level: number;
   hitPoints: number;
   maxHitPoints: number;
