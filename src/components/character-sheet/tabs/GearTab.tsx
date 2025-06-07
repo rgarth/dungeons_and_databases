@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Package, Shield, Wand2, Plus, X, Trash2, Sparkles, Scroll } from "lucide-react";
 import { createCharacterEquipment } from "@/services/character/equipment";
+import { createMagicalItemService, type DiceRoll } from "@/services/character/magical-items";
 import { WEAPONS, ARMOR } from "@/lib/dnd/equipment";
 import type { Weapon, MagicalWeapon, Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
@@ -88,6 +89,7 @@ export function GearTab({
   
   // Service instances for equipment calculations
   const equipment = createCharacterEquipment(characterData);
+  const magicalItems = createMagicalItemService();
 
   const [activeSection, setActiveSection] = useState<"equipped" | "inventory">("equipped");
   const [showWeaponSelector, setShowWeaponSelector] = useState(false);
@@ -110,7 +112,7 @@ export function GearTab({
   // Potion usage states
   const [showPotionUsage, setShowPotionUsage] = useState(false);
   const [selectedPotion, setSelectedPotion] = useState<MagicalItem | null>(null);
-  const [potionRolls, setPotionRolls] = useState<{roll: number, total: number} | null>(null);
+  const [potionRolls, setPotionRolls] = useState<DiceRoll | null>(null);
 
   const currentArmorClass = equipment.calculateArmorClass(equippedArmor);
 
@@ -148,7 +150,7 @@ export function GearTab({
   const handleCreateSpellScroll = () => {
     const spell = SPELLS.find(s => s.name === selectedSpell);
     if (spell) {
-      const scrollLevel = spell.level === 0 ? "Cantrip" : `${spell.level}${getOrdinalSuffix(spell.level)} Level`;
+      const scrollLevel = spell.level === 0 ? "Cantrip" : `${spell.level}${magicalItems.getOrdinalSuffix(spell.level)} Level`;
       const rarity: "Common" | "Uncommon" | "Rare" | "Very Rare" | "Legendary" = 
         spell.level === 0 ? "Common" : 
         spell.level <= 1 ? "Common" :
@@ -179,15 +181,6 @@ export function GearTab({
     }
   };
 
-  const getOrdinalSuffix = (num: number): string => {
-    const j = num % 10;
-    const k = num % 100;
-    if (j === 1 && k !== 11) return "st";
-    if (j === 2 && k !== 12) return "nd";
-    if (j === 3 && k !== 13) return "rd";
-    return "th";
-  };
-
   // Filter spells by level for spell scroll creator
   const spellsForLevel = selectedSpellLevel >= 0 
     ? SPELLS.filter(spell => spell.level === selectedSpellLevel)
@@ -209,10 +202,7 @@ export function GearTab({
   const availableRarities = [...new Set(MAGICAL_ITEMS.map(item => item.rarity))];
   const availableTypes = [...new Set(MAGICAL_ITEMS.map(item => item.type))];
 
-  // Helper to check if item is consumable
-  const isConsumable = (item: MagicalItem) => {
-    return item.consumable || item.type === 'Potion' || item.type === 'Scroll';
-  };
+  // Helper to check if item is consumable using service
 
   // Helper to handle using/consuming items
   const handleUseItem = (item: MagicalItem, index: number) => {
@@ -229,61 +219,13 @@ export function GearTab({
     }
   };
 
-  // Helper to roll dice for potions
-  const rollDice = (sides: number, count: number = 1): number[] => {
-    return Array.from({ length: count }, () => Math.floor(Math.random() * sides) + 1);
-  };
-
-  // Helper to get potion effects and dice
-  const getPotionEffects = (potion: MagicalItem) => {
-    const name = potion.name.toLowerCase();
-    
-    if (name.includes('healing')) {
-      if (name.includes('greater')) {
-        return { dice: '4d4', bonus: 4, description: 'Regain hit points', type: 'healing' };
-      } else if (name.includes('superior')) {
-        return { dice: '8d4', bonus: 8, description: 'Regain hit points', type: 'healing' };
-      } else if (name.includes('supreme')) {
-        return { dice: '10d4', bonus: 20, description: 'Regain hit points', type: 'healing' };
-      } else {
-        return { dice: '2d4', bonus: 2, description: 'Regain hit points', type: 'healing' };
-      }
-    } else if (name.includes('giant strength')) {
-      if (name.includes('hill')) {
-        return { value: 21, description: 'Strength becomes 21 for 1 hour', type: 'stat' };
-      } else if (name.includes('stone') || name.includes('frost')) {
-        return { value: 23, description: 'Strength becomes 23 for 1 hour', type: 'stat' };
-      } else if (name.includes('fire')) {
-        return { value: 25, description: 'Strength becomes 25 for 1 hour', type: 'stat' };
-      } else if (name.includes('cloud')) {
-        return { value: 27, description: 'Strength becomes 27 for 1 hour', type: 'stat' };
-      } else if (name.includes('storm')) {
-        return { value: 29, description: 'Strength becomes 29 for 1 hour', type: 'stat' };
-      }
-    } else if (name.includes('resistance')) {
-      const damageType = name.includes('fire') ? 'fire' : 
-                        name.includes('cold') ? 'cold' :
-                        name.includes('acid') ? 'acid' :
-                        name.includes('lightning') ? 'lightning' :
-                        name.includes('thunder') ? 'thunder' : 'unknown';
-      return { description: `Gain resistance to ${damageType} damage for 1 hour`, type: 'resistance' };
-    }
-    
-    return { description: potion.description, type: 'special' };
-  };
-
-  // Handle rolling for potion
+  // Handle rolling for potion using service
   const handleRollPotion = () => {
     if (!selectedPotion) return;
     
-    const effects = getPotionEffects(selectedPotion);
-    if (effects.dice) {
-      const [count, sides] = effects.dice.split('d').map(Number);
-      const rolls = rollDice(sides, count);
-      const rollTotal = rolls.reduce((sum, roll) => sum + roll, 0);
-      const total = rollTotal + (effects.bonus || 0);
-      
-      setPotionRolls({ roll: rollTotal, total });
+    const rollResult = magicalItems.rollPotionEffects(selectedPotion);
+    if (rollResult) {
+      setPotionRolls(rollResult);
     }
   };
 
@@ -306,17 +248,7 @@ export function GearTab({
     setPotionRolls(null);
   };
 
-  const getRarityColor = (rarity: string) => {
-    switch (rarity) {
-      case 'Common': return 'text-gray-300';
-      case 'Uncommon': return 'text-green-400';
-      case 'Rare': return 'text-blue-400';
-      case 'Very Rare': return 'text-purple-400';
-      case 'Legendary': return 'text-orange-400';
-      case 'Artifact': return 'text-red-400';
-      default: return 'text-gray-300';
-    }
-  };
+
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -371,7 +303,7 @@ export function GearTab({
                       <div>
                         <span className="text-white font-medium">{weapon.name}</span>
                         {'rarity' in weapon && (
-                          <span className={`ml-2 text-xs ${getRarityColor(weapon.rarity)}`}>
+                          <span className={`ml-2 text-xs ${magicalItems.getRarityColor(weapon.rarity)}`}>
                             {weapon.rarity}
                           </span>
                         )}
@@ -457,7 +389,7 @@ export function GearTab({
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="text-white font-medium">{item.name}</span>
-                            <span className={`text-xs ${getRarityColor(item.rarity)}`}>
+                            <span className={`text-xs ${magicalItems.getRarityColor(item.rarity)}`}>
                               {item.rarity}
                             </span>
                             {item.requiresAttunement && (
@@ -594,7 +526,7 @@ export function GearTab({
                       <div>
                         <span className="text-white font-medium">{weapon.name}</span>
                         {'rarity' in weapon && (
-                          <span className={`ml-2 text-xs ${getRarityColor(weapon.rarity)}`}>
+                          <span className={`ml-2 text-xs ${magicalItems.getRarityColor(weapon.rarity)}`}>
                             {weapon.rarity}
                           </span>
                         )}
@@ -709,7 +641,7 @@ export function GearTab({
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="text-white font-medium">{item.name}</span>
-                          <span className={`text-xs ${getRarityColor(item.rarity)}`}>
+                          <span className={`text-xs ${magicalItems.getRarityColor(item.rarity)}`}>
                             {item.rarity}
                           </span>
                         </div>
@@ -723,7 +655,7 @@ export function GearTab({
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        {isConsumable(item) ? (
+                        {magicalItems.isConsumable(item) ? (
                           <button
                             onClick={() => handleUseItem(item, index)}
                             className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded font-medium transition-colors"
@@ -961,7 +893,7 @@ export function GearTab({
                       <div className="flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-white font-medium">{item.name}</span>
-                          <span className={`text-xs ${getRarityColor(item.rarity)} px-1 rounded`}>
+                          <span className={`text-xs ${magicalItems.getRarityColor(item.rarity)} px-1 rounded`}>
                             {item.rarity}
                           </span>
                           {item.requiresAttunement && (
@@ -1093,7 +1025,7 @@ export function GearTab({
             </div>
             
             {(() => {
-              const effects = getPotionEffects(selectedPotion);
+              const effects = magicalItems.getPotionEffects(selectedPotion);
               
               return (
                 <div className="space-y-4">

@@ -1,8 +1,8 @@
 "use client";
 
 import { Swords, Sword, Zap, Shield, AlertTriangle } from "lucide-react";
-import { getModifier, getProficiencyBonus } from "@/lib/dnd/core";
-import { canEquipWeapon } from "@/lib/dnd/combat";
+import { createCharacterCalculations } from "@/services/character/calculations";
+import { createCharacterEquipment } from "@/services/character/equipment";
 import { getSpellcastingType, canPrepareSpells, getSpellsPreparedCount } from "@/lib/dnd/level-up";
 import { getSpellsFromMagicalItems, type EquippedMagicalItem } from "@/lib/dnd/magical-items";
 import type { Weapon, MagicalWeapon } from "@/lib/dnd/equipment";
@@ -61,7 +61,16 @@ export function ActionsTab({
 }: ActionsTabProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _unused = onUpdateDeathSaves;
-  const proficiencyBonus = getProficiencyBonus(character.level);
+  
+  // Create service instances for clean calculations
+  const calc = createCharacterCalculations({
+    ...character,
+    name: character.id, // Use ID as name fallback
+    race: 'Unknown', // Fallback race
+    armorClass: 10, // Will be calculated properly
+    speed: character.speed || 30, // Fallback speed
+  });
+  const equipment = createCharacterEquipment(character);
   
   // Get spells from equipped magical items
   const equippedMagicalItemSpells = getSpellsFromMagicalItems(
@@ -70,7 +79,7 @@ export function ActionsTab({
     character.level
   );
 
-  // Get spell scrolls from inventory
+  // Get spell scrolls from inventory - simplified logic using services
   const inventorySpellScrolls = (inventoryMagicalItems || [])
     .filter(item => item.type === 'Scroll' && item.effects.some(effect => effect.type === 'spell_effect'))
     .map((scroll, index) => {
@@ -158,7 +167,7 @@ export function ActionsTab({
               </div>
               
               <div className="text-center bg-slate-600 rounded p-3">
-                <div className="text-2xl font-bold text-green-400">+{getProficiencyBonus(character.level)}</div>
+                <div className="text-2xl font-bold text-green-400">+{calc.proficiencyBonus}</div>
                 <div className="text-xs text-slate-400">Proficiency</div>
               </div>
               <div className="text-center bg-slate-600 rounded p-3">
@@ -257,7 +266,7 @@ export function ActionsTab({
             
             {/* Empty state */}
             {(!character.conditions || character.conditions.length === 0) && (
-              <div className="text-slate-500 text-sm italic">No active conditions</div>
+              <div className="text-slate-400 text-sm italic">No active conditions</div>
             )}
             
             {/* Effects summary for active conditions */}
@@ -291,16 +300,26 @@ export function ActionsTab({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {equippedWeapons.map((weapon, index) => {
                 const isMagical = 'magicalName' in weapon;
-                const isProficient = canEquipWeapon(weapon, character.class);
-                const abilityMod = weapon.category === 'Ranged' ? getModifier(character.dexterity) : getModifier(character.strength);
-                const profBonus = isProficient ? proficiencyBonus : 0;
-                const magicalAttackBonus = isMagical ? (weapon as MagicalWeapon).attackBonus || 0 : 0;
-                const magicalDamageBonus = isMagical ? (weapon as MagicalWeapon).damageBonus || 0 : 0;
-                const totalAttackBonus = abilityMod + profBonus + magicalAttackBonus;
+                
+                // Use equipment service for weapon calculations
+                const attackBonus = equipment.getWeaponAttackBonus(weapon);
+                const damageBonus = equipment.getWeaponDamageBonus(weapon);
+                const isProficient = equipment.canUseWeapon(weapon);
 
                 // Extract range from properties
                 const rangeProperty = weapon.properties.find(prop => prop.includes('Ammunition') || prop.includes('Thrown'));
                 const weaponRange = rangeProperty ? rangeProperty : weapon.category === 'Melee' ? '5 ft' : 'Varies';
+
+                // Get ability modifier for display
+                const abilityMod = weapon.category === 'Ranged' 
+                  ? calc.getAbilityModifier('dexterity') 
+                  : calc.getAbilityModifier('strength');
+                const abilityName = weapon.category === 'Ranged' ? 'DEX' : 'STR';
+                
+                // Breakdown for display
+                const profBonus = isProficient ? calc.proficiencyBonus : 0;
+                const magicalAttackBonus = isMagical ? (weapon as MagicalWeapon).attackBonus || 0 : 0;
+                const magicalDamageBonus = isMagical ? (weapon as MagicalWeapon).damageBonus || 0 : 0;
 
                 return (
                   <div key={index} className="bg-slate-600 p-4 rounded-lg border-l-4 border-red-500">
@@ -322,7 +341,7 @@ export function ActionsTab({
                     <div className="grid grid-cols-2 gap-4 mb-3">
                       <div className="text-center bg-slate-700 rounded p-2">
                         <div className="text-2xl font-bold text-green-400">
-                          {totalAttackBonus >= 0 ? '+' : ''}{totalAttackBonus}
+                          {attackBonus >= 0 ? '+' : ''}{attackBonus}
                         </div>
                         <div className="text-xs text-slate-400">Attack Bonus</div>
                       </div>
@@ -336,8 +355,8 @@ export function ActionsTab({
 
                     {/* Attack Breakdown */}
                     <div className="text-xs text-slate-300 space-y-1">
-                      <div>To Hit: 1d20 {abilityMod >= 0 ? '+' : ''}{abilityMod} ({weapon.category === 'Ranged' ? 'DEX' : 'STR'}) {profBonus > 0 && `+${profBonus} (Prof)`} {magicalAttackBonus > 0 && `+${magicalAttackBonus} (Magic)`}</div>
-                      <div>Damage: {weapon.damage} + {abilityMod >= 0 ? '+' : ''}{abilityMod} ({weapon.category === 'Ranged' ? 'DEX' : 'STR'}) {magicalDamageBonus > 0 && `+${magicalDamageBonus} (Magic)`}</div>
+                      <div>To Hit: 1d20 {abilityMod >= 0 ? '+' : ''}{abilityMod} ({abilityName}) {profBonus > 0 && `+${profBonus} (Prof)`} {magicalAttackBonus > 0 && `+${magicalAttackBonus} (Magic)`}</div>
+                      <div>Damage: {weapon.damage} + {damageBonus >= 0 ? '+' : ''}{damageBonus} ({abilityName}{magicalDamageBonus > 0 && ` + Magic`})</div>
                       <div className="text-slate-400">Range: {weaponRange} • {weapon.category} {weapon.type}</div>
                     </div>
 
@@ -364,14 +383,14 @@ export function ActionsTab({
             </h3>
             
             {/* Spellcasting Stats */}
-            {character.spellcastingAbility && (
+            {character.spellcastingAbility && calc.spellcasting && (
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="text-center bg-slate-600 rounded p-3">
-                  <div className="text-xl font-bold text-blue-400">{character.spellSaveDC}</div>
+                  <div className="text-xl font-bold text-blue-400">{calc.spellcasting.spellSaveDC}</div>
                   <div className="text-xs text-slate-400">Spell Save DC</div>
                 </div>
                 <div className="text-center bg-slate-600 rounded p-3">
-                  <div className="text-xl font-bold text-green-400">+{character.spellAttackBonus}</div>
+                  <div className="text-xl font-bold text-green-400">+{calc.spellcasting.spellAttackBonus}</div>
                   <div className="text-xs text-slate-400">Spell Attack</div>
                 </div>
                 <div className="text-center bg-slate-600 rounded p-3">
@@ -408,7 +427,8 @@ export function ActionsTab({
             {/* Spell Management Based on Class Type */}
             {character.spellcastingAbility && (() => {
               const spellcastingType = getSpellcastingType(character.class);
-              const abilityModifier = getModifier(character[character.spellcastingAbility as keyof typeof character] as number);
+              // Use service for spellcasting ability modifier
+              const abilityModifier = calc.spellcasting?.abilityModifier || 0;
               const maxPrepared = canPrepareSpells(character.class) ? getSpellsPreparedCount(character.class, character.level, abilityModifier) : 0;
               
               switch (spellcastingType) {
@@ -452,7 +472,7 @@ export function ActionsTab({
                     <div className="space-y-6">
                       <div className="mb-3 p-3 bg-blue-900/20 border border-blue-600/30 rounded-lg">
                         <p className="text-blue-300 text-sm">
-                          <strong>Wizard Spellcasting:</strong> You have a spellbook containing all learned spells, but can only prepare {maxPrepared} spells per day.
+                          <strong>Wizard Spellcasting:</strong> You have a spellbook containing all learned spells, but can only prepare {maxPrepared} per day.
                         </p>
                       </div>
                       
@@ -484,37 +504,36 @@ export function ActionsTab({
                                   {spell.school} • {spell.castingTime} • {spell.range}
                                 </div>
                                 <div className="text-slate-300 text-xs">{spell.description}</div>
+                                {spell.level === 0 && (
+                                  <div className="text-blue-300 text-xs mt-1 font-medium">
+                                    ✓ Unlimited Use
+                                  </div>
+                                )}
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <p className="text-slate-400 text-sm mb-4">No spells currently prepared. You can prepare spells during a long rest.</p>
+                          <div className="text-slate-400 text-sm italic mb-4">No spells prepared</div>
                         )}
-                      </div>
-                      
-                      {/* Spellbook */}
-                      <div>
-                        <h4 className="text-lg font-semibold text-white mb-3">Spellbook</h4>
-                        {character.spellsKnown && character.spellsKnown.length > 0 ? (
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto">
-                            {character.spellsKnown.map((spell, index) => (
-                              <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-purple-500">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <span className="text-white font-medium">{spell.name}</span>
-                                  <span className="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded">
-                                    {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
-                                  </span>
-                                </div>
-                                <div className="text-slate-400 text-xs mb-2">
-                                  {spell.school} • {spell.castingTime} • {spell.range}
-                                </div>
-                                <div className="text-slate-300 text-xs">{spell.description}</div>
+
+                        {/* All Known Spells (Spellbook) */}
+                        <h5 className="text-md font-semibold text-white mb-3">Spellbook ({(character.spellsKnown || []).length} spells)</h5>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-48 overflow-y-auto">
+                          {(character.spellsKnown || []).map((spell, index) => (
+                            <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-indigo-500">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="text-white font-medium">{spell.name}</span>
+                                <span className="text-xs bg-indigo-900/50 text-indigo-300 px-2 py-1 rounded">
+                                  {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
+                                </span>
                               </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="text-slate-400 text-sm">Your spellbook is empty. Learn spells during level-up or find them during adventures.</p>
-                        )}
+                              <div className="text-slate-400 text-xs mb-2">
+                                {spell.school} • {spell.castingTime} • {spell.range}
+                              </div>
+                              <div className="text-slate-300 text-xs">{spell.description}</div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   );
@@ -555,11 +574,16 @@ export function ActionsTab({
                                 {spell.school} • {spell.castingTime} • {spell.range}
                               </div>
                               <div className="text-slate-300 text-xs">{spell.description}</div>
+                              {spell.level === 0 && (
+                                <div className="text-yellow-300 text-xs mt-1 font-medium">
+                                  ✓ Unlimited Use
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-slate-400 text-sm">No spells currently prepared. You can prepare spells during a long rest from the entire {character.class} spell list.</p>
+                        <div className="text-slate-400 text-sm italic">No spells prepared</div>
                       )}
                     </div>
                   );
@@ -571,48 +595,21 @@ export function ActionsTab({
 
             {/* Magical Item Spells */}
             {allMagicalItemSpells.length > 0 && (
-              <div className={character.spellcastingAbility ? "mt-6" : ""}>
-                <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-orange-400" />
-                  Spells from Magical Items
-                </h4>
-                <div className="mb-3 p-3 bg-orange-900/20 border border-orange-600/30 rounded-lg">
-                  <p className="text-orange-300 text-sm">
-                    <strong>Magical Item Spells:</strong> These spells come from your equipped magical items{character.spellcastingAbility ? " and don't use your spell slots" : ""}. {!character.spellcastingAbility && "Anyone can use spell scrolls with the right requirements!"}
-                  </p>
-                </div>
+              <div className="mt-6">
+                <h4 className="text-lg font-semibold text-white mb-3">Magical Item Spells</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {allMagicalItemSpells.map((itemSpell, index) => (
-                    <div 
-                      key={index} 
-                      className={`p-3 rounded border-l-4 ${
-                        itemSpell.canUse 
-                          ? 'bg-slate-600 border-orange-500' 
-                          : 'bg-slate-700 border-red-500 opacity-75'
-                      }`}
-                    >
+                    <div key={index} className={`bg-slate-600 p-3 rounded border-l-4 ${itemSpell.canUse ? 'border-orange-500' : 'border-slate-500'}`}>
                       <div className="flex items-center gap-2 mb-2">
                         <span className={`font-medium ${itemSpell.canUse ? 'text-white' : 'text-slate-400'}`}>
                           {itemSpell.spell.name}
                         </span>
-                        <span className={`text-xs px-2 py-1 rounded ${
-                          itemSpell.canUse 
-                            ? 'bg-orange-900/50 text-orange-300' 
-                            : 'bg-slate-800 text-slate-500'
-                        }`}>
+                        <span className={`text-xs px-2 py-1 rounded ${itemSpell.canUse ? 'bg-orange-900/50 text-orange-300' : 'bg-slate-700 text-slate-400'}`}>
                           {itemSpell.spell.level === 0 ? 'Cantrip' : `Level ${itemSpell.spell.level}`}
                         </span>
-                        <span className="text-xs bg-slate-700 text-slate-300 px-2 py-1 rounded">
+                        <span className={`text-xs px-2 py-1 rounded ${itemSpell.canUse ? 'bg-purple-900/50 text-purple-300' : 'bg-slate-700 text-slate-400'}`}>
                           {itemSpell.uses}
                         </span>
-                        {!itemSpell.canUse && (
-                          <span className="text-xs bg-red-900/50 text-red-300 px-2 py-1 rounded">
-                            Cannot Use
-                          </span>
-                        )}
-                      </div>
-                      <div className={`text-xs mb-2 ${itemSpell.canUse ? 'text-slate-400' : 'text-slate-500'}`}>
-                        {itemSpell.spell.school} • {itemSpell.spell.castingTime} • {itemSpell.spell.range}
                       </div>
                       <div className={`text-xs mb-2 ${itemSpell.canUse ? 'text-slate-300' : 'text-slate-500'}`}>
                         {itemSpell.spell.description}
