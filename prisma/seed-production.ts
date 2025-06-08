@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { spellsData, weaponsData, armorData, equipmentData, contentCounts } from './data'
 import { magicalItemsData } from './data/magical-items-data'
+import { treasureData } from './data/treasure-data'
 
 const prisma = new PrismaClient()
 
@@ -11,12 +12,13 @@ interface SeedOptions {
 }
 
 async function checkExistingData() {
-  const [spellCount, weaponCount, armorCount, equipmentCount, magicalItemCount] = await Promise.all([
+  const [spellCount, weaponCount, armorCount, equipmentCount, magicalItemCount, treasureCount] = await Promise.all([
     prisma.spell.count(),
     prisma.weapon.count(),
     prisma.armor.count(),
     prisma.equipment.count(),
-    prisma.magicalItem.count()
+    prisma.magicalItem.count(),
+    prisma.treasure.count()
   ])
   
   return {
@@ -25,7 +27,8 @@ async function checkExistingData() {
     armor: armorCount,
     equipment: equipmentCount,
     magicalItems: magicalItemCount,
-    total: spellCount + weaponCount + armorCount + equipmentCount + magicalItemCount
+    treasures: treasureCount,
+    total: spellCount + weaponCount + armorCount + equipmentCount + magicalItemCount + treasureCount
   }
 }
 
@@ -38,6 +41,7 @@ async function clearExistingData() {
   await prisma.armor.deleteMany()
   await prisma.equipment.deleteMany()
   await prisma.magicalItem.deleteMany()
+  await prisma.treasure.deleteMany()
   
   console.log('✅ Existing content cleared')
 }
@@ -112,6 +116,20 @@ async function seedMagicalItems() {
   console.log(`✅ Seeded ${magicalItemsData.length} magical items`)
 }
 
+async function seedTreasures() {
+  console.log('💎 Seeding treasures...')
+  
+  for (const treasure of treasureData) {
+    await prisma.treasure.upsert({
+      where: { name: treasure.name },
+      update: treasure,
+      create: treasure
+    })
+  }
+  
+  console.log(`✅ Seeded ${treasureData.length} treasures`)
+}
+
 async function validateSeeding() {
   console.log('🔍 Validating seeded data...')
   
@@ -121,7 +139,8 @@ async function validateSeeding() {
     spells: finalCounts.spells === contentCounts.spells,
     weapons: finalCounts.weapons === contentCounts.weapons,
     armor: finalCounts.armor === contentCounts.armor,
-    equipment: finalCounts.equipment === contentCounts.equipment
+    equipment: finalCounts.equipment === contentCounts.equipment,
+    treasures: finalCounts.treasures === contentCounts.treasures
   }
   
   const allValid = Object.values(validation).every(Boolean)
@@ -181,7 +200,8 @@ export async function seedDatabase(options: SeedOptions = {}) {
       seedWeapons(), 
       seedArmor(),
       seedEquipment(),
-      seedMagicalItems()
+      seedMagicalItems(),
+      seedTreasures()
     ])
     
     // Validate results

@@ -104,6 +104,7 @@ model Equipment {
   weight      Float?   // Some items have no weight
   description String?
   stackable   Boolean  @default(false)
+  packItems   EquipmentPackItem[] // Reverse relationship
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -119,6 +120,7 @@ model MagicalItem {
   cost                String?  // "500 gp", "5000 gp", etc. - may be null for priceless items
   effects             Json?    // Store stat modifications and special effects as JSON
   stackable           Boolean  @default(false) // Most magical items don't stack, but potions do
+  consumable          Boolean  @default(false) // True for potions, scrolls, etc.
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
@@ -135,6 +137,29 @@ model Treasure {
   appearance  String?  // Physical description for immersion
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model EquipmentPack {
+  id          String              @id @default(cuid())
+  name        String              @unique // "Burglar's Pack", "Dungeoneer's Pack", etc.
+  description String              // "For rogues and sneaky characters"
+  cost        String              // "16 gp"
+  items       EquipmentPackItem[] // One-to-many relationship
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+}
+
+model EquipmentPackItem {
+  id            String       @id @default(cuid())
+  equipmentPack EquipmentPack @relation(fields: [packId], references: [id], onDelete: Cascade)
+  packId        String
+  equipment     Equipment     @relation(fields: [equipmentId], references: [id])
+  equipmentId   String
+  quantity      Int           @default(1)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@unique([packId, equipmentId]) // Prevent duplicate items in same pack
 }
 
 model Character {

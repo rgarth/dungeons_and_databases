@@ -6,22 +6,54 @@ import { RACES, CLASSES, BACKGROUNDS, ALIGNMENTS, ABILITY_SCORES } from "@/lib/d
 import { AbilityScore } from "@/lib/dnd/core";
 import { generateFantasyName } from "@/lib/dnd/character";
 import { Spell } from "@/lib/dnd/spells";
-import { Weapon } from "@/lib/dnd/equipment";
-import { weaponsData } from "../../prisma/data/weapons-data";
-import { canEquipWeapon } from "@/lib/dnd/combat";
-import { 
-  characterCreationService, 
-  type StatMethod, 
-  type CharacterCreationData 
-} from "@/services/character/creation";
+import { Weapon, Armor } from "@/lib/dnd/equipment";
 
+import { 
+  type StatMethod, 
+  type CharacterCreationData,
+  CharacterCreationService
+} from "@/services/character/creation";
 
 interface CreateCharacterModalProps {
   onClose: () => void;
   onCharacterCreated: () => void;
 }
 
+interface Subclass {
+  name: string;
+  description?: string;
+}
+
+interface CreationOptions {
+  equipmentPacks: Array<{
+    id: string;
+    name: string;
+    description: string;
+    cost: string;
+    items: Array<{
+      name: string;
+      quantity: number;
+      type: string;
+      cost: string;
+      weight: number;
+      description: string | null;
+    }>;
+  }>;
+  weaponSuggestions: Weapon[];
+  armorSuggestions: Armor[];
+  subclasses: Subclass[];
+  needsSubclassAtCreation: boolean;
+  spellcasting: {
+    ability: string | null;
+    canCastAtLevel1: boolean | string | null;
+    availableSpells: Spell[];
+    spellSlots: Record<number, number>;
+  };
+}
+
 export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateCharacterModalProps) {
+  const characterCreationService = CharacterCreationService.getInstance();
+
   // Basic character info
   const [name, setName] = useState("");
   const [race, setRace] = useState<typeof RACES[number]>(RACES[0]);
@@ -44,10 +76,39 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Loading states
   const [loading, setLoading] = useState(false);
   const [generatingName, setGeneratingName] = useState(false);
+  const [creationOptions, setCreationOptions] = useState<CreationOptions | null>(null);
+  const [loadingOptions, setLoadingOptions] = useState(true);
+  
 
-  // Get creation options from service
-  const creationOptions = characterCreationService.getCreationOptions(characterClass);
-  const { subclasses, needsSubclassAtCreation, spellcasting } = creationOptions;
+
+  // Load creation options when class changes
+  useEffect(() => {
+    const loadCreationOptions = async () => {
+      setLoadingOptions(true);
+      try {
+        const options = await characterCreationService.getCreationOptions(characterClass);
+        setCreationOptions(options);
+      } catch (error) {
+        console.error('Failed to load creation options:', error);
+        // Fallback to basic options
+        setCreationOptions({
+          equipmentPacks: [],
+          weaponSuggestions: [],
+          armorSuggestions: [],
+          subclasses: [],
+          needsSubclassAtCreation: false,
+          spellcasting: { ability: null, canCastAtLevel1: false, availableSpells: [], spellSlots: {} }
+        });
+      } finally {
+        setLoadingOptions(false);
+      }
+    };
+    
+    loadCreationOptions();
+  }, [characterClass]);
+
+  // Get creation options from state (with fallback)
+  const { subclasses = [], needsSubclassAtCreation = false, spellcasting = { ability: null, canCastAtLevel1: false, availableSpells: [], spellSlots: {} } } = creationOptions || {};
 
   // Initialize ability scores on mount
   useEffect(() => {
@@ -58,15 +119,17 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }
   }, []);
 
-  // Update weapon suggestions when class changes
+  // Update weapon suggestions when creation options load
   useEffect(() => {
-    setSelectedWeapons(
-      creationOptions.weaponSuggestions.map(weapon => ({ weapon, quantity: 1 }))
-    );
+    if (creationOptions?.weaponSuggestions) {
+      setSelectedWeapons(
+        creationOptions.weaponSuggestions.map((weapon: Weapon) => ({ weapon, quantity: 1 }))
+      );
+    }
     
     // Reset subclass when class changes
     setSubclass("");
-  }, [characterClass]);
+  }, [creationOptions, characterCreationService, statMethod]);
 
   const handleStatMethodChange = (method: StatMethod) => {
     setStatMethod(method);
@@ -209,12 +272,14 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[95vh] overflow-y-auto">
         <div className="flex justify-between items-center p-6 border-b border-slate-700">
           <h2 className="text-2xl font-bold text-white">Create New Character</h2>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors"
-          >
-            <X className="h-6 w-6" />
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onClose}
+              className="text-slate-400 hover:text-white transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
@@ -492,15 +557,40 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               <label className="block text-sm font-medium text-slate-300 mb-2">
                 Equipment Pack
               </label>
-              <select
-                value={selectedEquipmentPack}
-                onChange={(e) => setSelectedEquipmentPack(Number(e.target.value))}
-                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-              >
-                {creationOptions.equipmentPacks.map((pack, index) => (
-                  <option key={index} value={index}>{pack.name}</option>
-                ))}
-              </select>
+              {loadingOptions ? (
+                <div className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-400">
+                  Loading equipment packs...
+                </div>
+              ) : (
+                <div>
+                  <select
+                    value={selectedEquipmentPack}
+                    onChange={(e) => setSelectedEquipmentPack(Number(e.target.value))}
+                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                  >
+                    {creationOptions?.equipmentPacks?.map((pack, index) => (
+                      <option key={pack.id || index} value={index}>
+                        {pack.name} ({pack.cost})
+                      </option>
+                    )) || []}
+                  </select>
+                  
+                  {/* Show selected pack details */}
+                  {creationOptions?.equipmentPacks?.[selectedEquipmentPack] && (
+                    <div className="mt-2 p-3 bg-slate-700 rounded-lg">
+                      <div className="text-sm text-slate-300 mb-2">
+                        {creationOptions.equipmentPacks[selectedEquipmentPack].description}
+                      </div>
+                      <div className="text-xs text-slate-400">
+                        <strong>Contains:</strong>{' '}
+                        {creationOptions.equipmentPacks[selectedEquipmentPack].items
+                          .map(item => `${item.quantity}x ${item.name}`)
+                          .join(', ')}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="mb-4">
@@ -514,241 +604,54 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   ✓ Select up to 5 total weapons for character creation. Use +/- for multiples (daggers, javelins, etc.)
                 </div>
                 
-                {/* Simple Melee Weapons */}
+                {/* Suggested Weapons */}
                 <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-amber-300 mb-2">Simple Melee Weapons</h4>
+                  <h4 className="text-sm font-semibold text-amber-300 mb-2">Suggested Weapons for {characterClass}</h4>
                   <div className="grid grid-cols-2 gap-2">
-                    {weaponsData
-                      .filter(w => w.type === 'Simple' && w.category === 'Melee')
-                      .map(weapon => {
-                        const selectedWeapon = selectedWeapons.find(sw => sw.weapon.name === weapon.name);
-                        const quantity = selectedWeapon?.quantity || 0;
-                        const totalWeapons = selectedWeapons.reduce((sum, sw) => sum + sw.quantity, 0);
-                        const canAdd = totalWeapons < 5;
-                        
-                        return (
-                          <div key={weapon.name} className="flex items-center justify-between bg-slate-600 p-2 rounded text-xs">
-                            <div className="flex-1 min-w-0">
-                              <div className={`text-slate-300 ${quantity > 0 ? 'font-medium' : ''} truncate`}>
-                                {weapon.name}
-                              </div>
-                              <div className="text-slate-400 text-xs">
-                                {weapon.damage} {weapon.damageType}
-                              </div>
+                    {creationOptions?.weaponSuggestions.map(weapon => {
+                      const selectedWeapon = selectedWeapons.find(sw => sw.weapon.name === weapon.name);
+                      const quantity = selectedWeapon?.quantity || 0;
+                      const totalWeapons = selectedWeapons.reduce((sum, sw) => sum + sw.quantity, 0);
+                      const canAdd = totalWeapons < 5;
+                      
+                      return (
+                        <div key={weapon.name} className="flex items-center justify-between bg-slate-600 p-2 rounded text-xs">
+                          <div className="flex-1 min-w-0">
+                            <div className={`text-slate-300 ${quantity > 0 ? 'font-medium' : ''} truncate`}>
+                              {weapon.name}
                             </div>
-                            <div className="flex items-center gap-1 ml-2">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const weaponObj = {
-                                    ...weapon,
-                                    type: weapon.type as 'Simple' | 'Martial',
-                                    category: weapon.category as 'Melee' | 'Ranged',
-                                    properties: weapon.properties ? JSON.parse(weapon.properties) : []
-                                  } as Weapon;
-                                  handleWeaponQuantityChange(weaponObj, Math.max(0, quantity - 1));
-                                }}
-                                disabled={quantity <= 0}
-                                className="w-5 h-5 bg-slate-500 hover:bg-slate-400 disabled:opacity-50 disabled:cursor-not-allowed rounded flex items-center justify-center text-white text-xs"
-                              >
-                                <Minus className="h-3 w-3" />
-                              </button>
-                              <span className="w-6 text-center text-white font-mono text-xs">{quantity}</span>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const weaponObj = {
-                                    ...weapon,
-                                    type: weapon.type as 'Simple' | 'Martial',
-                                    category: weapon.category as 'Melee' | 'Ranged',
-                                    properties: weapon.properties ? JSON.parse(weapon.properties) : []
-                                  } as Weapon;
-                                  handleWeaponQuantityChange(weaponObj, quantity + 1);
-                                }}
-                                disabled={!canAdd}
-                                className="w-5 h-5 bg-slate-500 hover:bg-slate-400 disabled:opacity-50 disabled:cursor-not-allowed rounded flex items-center justify-center text-white text-xs"
-                              >
-                                <Plus className="h-3 w-3" />
-                              </button>
+                            <div className="text-slate-400 text-xs">
+                              {weapon.damage} {weapon.damageType}
                             </div>
                           </div>
-                        );
-                      })}
+                          <div className="flex items-center gap-1 ml-2">
+                            <button
+                              type="button"
+                              onClick={() => handleWeaponQuantityChange(weapon, Math.max(0, quantity - 1))}
+                              disabled={quantity <= 0}
+                              className="w-5 h-5 bg-slate-500 hover:bg-slate-400 disabled:opacity-50 disabled:cursor-not-allowed rounded flex items-center justify-center text-white text-xs"
+                            >
+                              <Minus className="h-3 w-3" />
+                            </button>
+                            <span className="w-6 text-center text-white font-mono text-xs">{quantity}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleWeaponQuantityChange(weapon, quantity + 1)}
+                              disabled={!canAdd}
+                              className="w-5 h-5 bg-slate-500 hover:bg-slate-400 disabled:opacity-50 disabled:cursor-not-allowed rounded flex items-center justify-center text-white text-xs"
+                            >
+                              <Plus className="h-3 w-3" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
-                {/* Simple Ranged Weapons */}
-                <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-amber-300 mb-2">Simple Ranged Weapons</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {weaponsData
-                      .filter(w => w.type === 'Simple' && w.category === 'Ranged')
-                      .map(weapon => {
-                        const selectedWeapon = selectedWeapons.find(sw => sw.weapon.name === weapon.name);
-                        const quantity = selectedWeapon?.quantity || 0;
-                        const totalWeapons = selectedWeapons.reduce((sum, sw) => sum + sw.quantity, 0);
-                        const canAdd = totalWeapons < 5;
-                        
-                        return (
-                          <div key={weapon.name} className="flex items-center justify-between bg-slate-600 p-2 rounded text-xs">
-                            <div className="flex-1 min-w-0">
-                              <div className={`text-slate-300 ${quantity > 0 ? 'font-medium' : ''} truncate`}>
-                                {weapon.name}
-                              </div>
-                              <div className="text-slate-400 text-xs">
-                                {weapon.damage} {weapon.damageType}
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-1 ml-2">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const weaponObj = {
-                                    ...weapon,
-                                    type: weapon.type as 'Simple' | 'Martial',
-                                    category: weapon.category as 'Melee' | 'Ranged',
-                                    properties: weapon.properties ? JSON.parse(weapon.properties) : []
-                                  } as Weapon;
-                                  handleWeaponQuantityChange(weaponObj, Math.max(0, quantity - 1));
-                                }}
-                                disabled={quantity <= 0}
-                                className="w-5 h-5 bg-slate-500 hover:bg-slate-400 disabled:opacity-50 disabled:cursor-not-allowed rounded flex items-center justify-center text-white text-xs"
-                              >
-                                <Minus className="h-3 w-3" />
-                              </button>
-                              <span className="w-6 text-center text-white font-mono text-xs">{quantity}</span>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const weaponObj = {
-                                    ...weapon,
-                                    type: weapon.type as 'Simple' | 'Martial',
-                                    category: weapon.category as 'Melee' | 'Ranged',
-                                    properties: weapon.properties ? JSON.parse(weapon.properties) : []
-                                  } as Weapon;
-                                  handleWeaponQuantityChange(weaponObj, quantity + 1);
-                                }}
-                                disabled={!canAdd}
-                                className="w-5 h-5 bg-slate-500 hover:bg-slate-400 disabled:opacity-50 disabled:cursor-not-allowed rounded flex items-center justify-center text-white text-xs"
-                              >
-                                <Plus className="h-3 w-3" />
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </div>
 
-                {/* Martial Melee Weapons */}
-                <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-red-300 mb-2">Martial Melee Weapons</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {weaponsData
-                      .filter(w => w.type === 'Martial' && w.category === 'Melee')
-                      .map(weapon => {
-                        const selectedWeapon = selectedWeapons.find(sw => sw.weapon.name === weapon.name);
-                        const quantity = selectedWeapon?.quantity || 0;
-                        const totalWeapons = selectedWeapons.reduce((sum, sw) => sum + sw.quantity, 0);
-                        const canAdd = totalWeapons < 5;
-                        const weaponObj = {
-                          ...weapon,
-                          type: weapon.type as 'Simple' | 'Martial',
-                          category: weapon.category as 'Melee' | 'Ranged',
-                          properties: weapon.properties ? JSON.parse(weapon.properties) : []
-                        } as Weapon;
-                        const isProficient = canEquipWeapon(weaponObj, characterClass);
-                        
-                        return (
-                          <div key={weapon.name} className={`flex items-center justify-between p-2 rounded text-xs ${isProficient ? 'bg-slate-600' : 'bg-slate-700 opacity-75'}`}>
-                            <div className="flex-1 min-w-0">
-                              <div className={`${isProficient ? 'text-slate-300' : 'text-slate-500'} ${quantity > 0 ? 'font-medium' : ''} truncate`}>
-                                {weapon.name}
-                                {!isProficient && <span className="text-red-400 text-xs"> (No Prof)</span>}
-                              </div>
-                              <div className="text-slate-400 text-xs">
-                                {weapon.damage} {weapon.damageType}
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-1 ml-2">
-                              <button
-                                type="button"
-                                onClick={() => handleWeaponQuantityChange(weaponObj, Math.max(0, quantity - 1))}
-                                disabled={quantity <= 0}
-                                className="w-5 h-5 bg-slate-500 hover:bg-slate-400 disabled:opacity-50 disabled:cursor-not-allowed rounded flex items-center justify-center text-white text-xs"
-                              >
-                                <Minus className="h-3 w-3" />
-                              </button>
-                              <span className="w-6 text-center text-white font-mono text-xs">{quantity}</span>
-                              <button
-                                type="button"
-                                onClick={() => handleWeaponQuantityChange(weaponObj, quantity + 1)}
-                                disabled={!canAdd}
-                                className="w-5 h-5 bg-slate-500 hover:bg-slate-400 disabled:opacity-50 disabled:cursor-not-allowed rounded flex items-center justify-center text-white text-xs"
-                              >
-                                <Plus className="h-3 w-3" />
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </div>
 
-                {/* Martial Ranged Weapons */}
-                <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-red-300 mb-2">Martial Ranged Weapons</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {weaponsData
-                      .filter(w => w.type === 'Martial' && w.category === 'Ranged')
-                      .map(weapon => {
-                        const selectedWeapon = selectedWeapons.find(sw => sw.weapon.name === weapon.name);
-                        const quantity = selectedWeapon?.quantity || 0;
-                        const totalWeapons = selectedWeapons.reduce((sum, sw) => sum + sw.quantity, 0);
-                        const canAdd = totalWeapons < 5;
-                        const weaponObj = {
-                          ...weapon,
-                          type: weapon.type as 'Simple' | 'Martial',
-                          category: weapon.category as 'Melee' | 'Ranged',
-                          properties: weapon.properties ? JSON.parse(weapon.properties) : []
-                        } as Weapon;
-                        const isProficient = canEquipWeapon(weaponObj, characterClass);
-                        
-                        return (
-                          <div key={weapon.name} className={`flex items-center justify-between p-2 rounded text-xs ${isProficient ? 'bg-slate-600' : 'bg-slate-700 opacity-75'}`}>
-                            <div className="flex-1 min-w-0">
-                              <div className={`${isProficient ? 'text-slate-300' : 'text-slate-500'} ${quantity > 0 ? 'font-medium' : ''} truncate`}>
-                                {weapon.name}
-                                {!isProficient && <span className="text-red-400 text-xs"> (No Prof)</span>}
-                              </div>
-                              <div className="text-slate-400 text-xs">
-                                {weapon.damage} {weapon.damageType}
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-1 ml-2">
-                              <button
-                                type="button"
-                                onClick={() => handleWeaponQuantityChange(weaponObj, Math.max(0, quantity - 1))}
-                                disabled={quantity <= 0}
-                                className="w-5 h-5 bg-slate-500 hover:bg-slate-400 disabled:opacity-50 disabled:cursor-not-allowed rounded flex items-center justify-center text-white text-xs"
-                              >
-                                <Minus className="h-3 w-3" />
-                              </button>
-                              <span className="w-6 text-center text-white font-mono text-xs">{quantity}</span>
-                              <button
-                                type="button"
-                                onClick={() => handleWeaponQuantityChange(weaponObj, quantity + 1)}
-                                disabled={!canAdd}
-                                className="w-5 h-5 bg-slate-500 hover:bg-slate-400 disabled:opacity-50 disabled:cursor-not-allowed rounded flex items-center justify-center text-white text-xs"
-                              >
-                                <Plus className="h-3 w-3" />
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </div>
+
               </div>
 
               {/* Selected Weapons Summary */}

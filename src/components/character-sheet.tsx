@@ -1,6 +1,6 @@
 "use client";
 
-import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp, FileText } from "lucide-react";
+import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp, FileText, Dices } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getModifier } from "@/lib/dnd/core";
 import { Spell, getClassSpells } from "@/lib/dnd/spells";
@@ -14,6 +14,7 @@ import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import { LevelUpWizard } from "./character-sheet/LevelUpWizard";
 import { getSpellcastingType, getSpellsPreparedCount } from "@/lib/dnd/level-up";
 import { StatsTab, ActionsTab, GearTab, InventoryTab, BackgroundTab } from "./character-sheet/";
+import { DiceRoller } from "./dice-roller";
 
 
 interface CharacterSheetProps {
@@ -133,7 +134,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   // Use currentCharacter instead of character throughout the component
   const displayCharacter = currentCharacter;
   
-  const [activeTab, setActiveTab] = useState<"stats" | "actions" | "gear" | "inventory" | "background">("stats");
+  const [activeTab, setActiveTab] = useState<"stats" | "actions" | "gear" | "inventory" | "background" | "dice">("stats");
   const [showWeaponCreator, setShowWeaponCreator] = useState(false);
   const [selectedBaseWeapon, setSelectedBaseWeapon] = useState("");
   const [selectedMagicalTemplate, setSelectedMagicalTemplate] = useState("");
@@ -690,6 +691,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               <FileText className="h-4 w-4" />
               Background / Notes
             </button>
+            <button
+              onClick={() => setActiveTab("dice")}
+              className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
+                activeTab === "dice"
+                  ? "text-purple-400 border-b-2 border-purple-400"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <Dices className="h-4 w-4" />
+              Dice Roll
+            </button>
           </div>
 
           {/* Tab Content */}
@@ -789,6 +801,12 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                   updateCharacter(updates);
                 }}
               />
+            )}
+
+            {activeTab === "dice" && (
+              <div className="p-6 h-full">
+                <DiceRoller />
+              </div>
             )}
           </div>
         </div>
