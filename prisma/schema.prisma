@@ -130,6 +130,10 @@ model Character {
   class       String
   subclass    String? // Character subclass/archetype (chosen at specific levels)
   level       Int    @default(1)
+  // New multiclass fields (backward compatible)
+  classes     Json? // Array of ClassLevel objects for multiclass support
+  totalLevel  Int? // Derived total level (for easy querying)
+  selectedFeatures Json? // Array of SelectedFeature objects for level-up choices
   background  String?
   alignment   String?
   

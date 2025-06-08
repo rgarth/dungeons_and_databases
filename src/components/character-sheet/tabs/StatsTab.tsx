@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Shield, HelpCircle, Star } from "lucide-react";
-import { HitPointsDisplay } from "../sections/HitPointsDisplay";
 import { createCharacterCalculations } from "@/services/character/calculations";
 import { createCharacterEquipment } from "@/services/character/equipment";
 // Service layer now handles these calculations
@@ -37,6 +36,7 @@ interface StatsTabProps {
     inspiration?: boolean;
     deathSaveSuccesses?: number;
     deathSaveFailures?: number;
+
   };
   equippedArmor: Armor[];
   modifiedStats?: Record<string, number>;
@@ -49,6 +49,7 @@ interface StatsTabProps {
     deathSaveSuccesses?: number;
     deathSaveFailures?: number;
   }) => void;
+
 }
 
 export function StatsTab({ character, equippedArmor, modifiedStats, currentArmorClass: passedArmorClass, onUpdate }: StatsTabProps) {
@@ -91,7 +92,19 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Ability Scores - 2/3 */}
           <div className="lg:col-span-2 bg-slate-700 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-white mb-4">Ability Scores</h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-white">Ability Scores</h3>
+              <button
+                onClick={() => {
+                  // Placeholder for level up functionality
+                  alert('Level up feature coming soon! The backend is ready, just need to finish the UI integration.');
+                }}
+                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium flex items-center gap-1"
+              >
+                <Star className="h-4 w-4" />
+                Level Up
+              </button>
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               {[
                 { name: 'Strength', short: 'STR', value: effectiveStats.strength, baseValue: character.strength },
@@ -173,21 +186,122 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
             </div>
           </div>
 
-          {/* HP Management - 1/3 */}
+          {/* Hit Points - 1/3 */}
           <div className="bg-slate-700 rounded-lg p-4">
-            <HitPointsDisplay 
-              character={{
-                id: character.id,
-                class: character.class,
-                hitPoints: character.hitPoints,
-                maxHitPoints: character.maxHitPoints,
-                temporaryHitPoints: character.temporaryHitPoints,
-                constitution: character.constitution,
-                deathSaveSuccesses: character.deathSaveSuccesses,
-                deathSaveFailures: character.deathSaveFailures,
-              }}
-              onUpdate={onUpdate}
-            />
+            <h3 className="text-lg font-semibold text-white mb-4">Hit Points</h3>
+            
+            {/* Current HP Display */}
+            <div className="text-center mb-4">
+              <div className="text-3xl font-bold text-red-400 mb-1">
+                {character.hitPoints}/{character.maxHitPoints}
+              </div>
+              {character.temporaryHitPoints && character.temporaryHitPoints > 0 && (
+                <div className="text-lg text-blue-400">
+                  +{character.temporaryHitPoints} temp
+                </div>
+              )}
+            </div>
+
+            {/* HP Adjustment Controls */}
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    const newHP = Math.min(character.hitPoints + 1, character.maxHitPoints);
+                    onUpdate({ hitPoints: newHP });
+                  }}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm"
+                >
+                  +1 HP
+                </button>
+                <button
+                  onClick={() => {
+                    const currentTempHP = character.temporaryHitPoints || 0;
+                    if (currentTempHP > 0) {
+                      // Remove from temp HP first
+                      onUpdate({ temporaryHitPoints: Math.max(currentTempHP - 1, 0) });
+                    } else {
+                      // Only reduce actual HP if no temp HP
+                      const newHP = Math.max(character.hitPoints - 1, 0);
+                      onUpdate({ hitPoints: newHP });
+                    }
+                  }}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded text-sm"
+                >
+                  -1 HP
+                </button>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onUpdate({ hitPoints: character.maxHitPoints })}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded text-sm"
+                >
+                  Full Heal
+                </button>
+                <button
+                  onClick={() => {
+                    const tempHP = prompt("Add temporary hit points:");
+                    if (tempHP) {
+                      const value = parseInt(tempHP);
+                      if (!isNaN(value) && value > 0) {
+                        onUpdate({ temporaryHitPoints: Math.max(character.temporaryHitPoints || 0, value) });
+                      }
+                    }
+                  }}
+                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-3 rounded text-sm"
+                >
+                  Temp HP
+                </button>
+              </div>
+            </div>
+
+            {/* Death Saves (if unconscious) */}
+            {character.hitPoints === 0 && (
+              <div className="mt-4 pt-4 border-t border-slate-600">
+                <h4 className="text-sm font-semibold text-white mb-2">Death Saving Throws</h4>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <div className="text-slate-400 mb-1">Successes</div>
+                    <div className="flex gap-1">
+                      {[1, 2, 3].map(i => (
+                        <button
+                          key={i}
+                          onClick={() => {
+                            const newSuccesses = (character.deathSaveSuccesses || 0) === i ? i - 1 : i;
+                            onUpdate({ deathSaveSuccesses: newSuccesses });
+                          }}
+                          className={`w-4 h-4 rounded-full border ${
+                            (character.deathSaveSuccesses || 0) >= i 
+                              ? 'bg-green-600 border-green-600' 
+                              : 'border-slate-500'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-slate-400 mb-1">Failures</div>
+                    <div className="flex gap-1">
+                      {[1, 2, 3].map(i => (
+                        <button
+                          key={i}
+                          onClick={() => {
+                            const newFailures = (character.deathSaveFailures || 0) === i ? i - 1 : i;
+                            onUpdate({ deathSaveFailures: newFailures });
+                          }}
+                          className={`w-4 h-4 rounded-full border ${
+                            (character.deathSaveFailures || 0) >= i 
+                              ? 'bg-red-600 border-red-600' 
+                              : 'border-slate-500'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -267,6 +381,8 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
               </div>
             </div>
           </div>
+
+
         </div>
 
         {/* Saving Throws Section */}

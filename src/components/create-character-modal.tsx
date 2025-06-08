@@ -6,7 +6,7 @@ import { RACES, CLASSES, BACKGROUNDS, ALIGNMENTS, ABILITY_SCORES } from "@/lib/d
 import { AbilityScore } from "@/lib/dnd/core";
 import { generateFantasyName } from "@/lib/dnd/character";
 import { Spell } from "@/lib/dnd/spells";
-import { Weapon } from "@/lib/dnd/equipment";
+import { Weapon, WEAPONS } from "@/lib/dnd/equipment";
 import { 
   characterCreationService, 
   type StatMethod, 
@@ -505,8 +505,37 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               <label className="block text-sm font-medium text-slate-300 mb-2">
                 Starting Weapons
               </label>
-                             <div className="space-y-2 max-h-32 overflow-y-auto">
-                 {selectedWeapons.map(({ weapon, quantity }) => (
+              
+              {/* Add Weapon Selector */}
+              <div className="mb-3 p-3 bg-slate-700 rounded-lg">
+                <div className="flex gap-2">
+                  <select
+                    value=""
+                    onChange={(e) => {
+                      const weapon = WEAPONS.find(w => w.name === e.target.value);
+                      if (weapon) {
+                        handleWeaponQuantityChange(weapon, 1);
+                        e.target.value = ""; // Reset selection
+                      }
+                    }}
+                    className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                  >
+                    <option value="">Add weapon...</option>
+                    {WEAPONS.map(weapon => (
+                      <option key={weapon.name} value={weapon.name}>
+                        {weapon.name} ({weapon.damage} {weapon.damageType})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Choose your starting weapons. Pre-selected weapons are suggestions for your class.
+                </p>
+              </div>
+
+              {/* Selected Weapons */}
+              <div className="space-y-2 max-h-32 overflow-y-auto">
+                {selectedWeapons.map(({ weapon, quantity }) => (
                   <div key={weapon.name} className="flex items-center justify-between bg-slate-700 p-2 rounded">
                     <span className="text-white text-sm">{weapon.name}</span>
                     <div className="flex items-center gap-2">

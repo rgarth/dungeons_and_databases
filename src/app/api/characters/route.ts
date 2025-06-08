@@ -129,8 +129,15 @@ export async function POST(request: NextRequest) {
         name,
         race,
         class: characterClass,
-        subclass,
+        ...(subclass && { subclass }),
         level: level || 1,
+        // Initialize multiclass structure for new characters (JSON fields)
+        classes: JSON.stringify([{
+          class: characterClass,
+          level: level || 1,
+        }]),
+        totalLevel: level || 1,
+        selectedFeatures: JSON.stringify([]),
         alignment,
         background,
         strength: strength || 10,
@@ -161,7 +168,9 @@ export async function POST(request: NextRequest) {
         goldPieces: goldPieces || 0,
         deathSaveSuccesses: 0,
         deathSaveFailures: 0,
-        userId: user.id,
+        user: {
+          connect: { id: user.id }
+        },
       },
     });
 
