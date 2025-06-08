@@ -8,7 +8,7 @@ import {
   getProficiencyBonus,
   ABILITY_SCORES
 } from '@/lib/dnd/core';
-import { getBackgroundSkills, getEquipmentPackOptions } from '@/lib/dnd/character';
+import { getBackgroundSkills, getEquipmentPacksFromDatabase } from '@/lib/dnd/character';
 import { 
   getSpellcastingAbility, 
   getClassSpells, 
@@ -160,8 +160,25 @@ export class CharacterCreationService {
   }
 
   // Get character creation options
-  getCreationOptions(characterClass: string) {
-    const equipmentPacks = getEquipmentPackOptions();
+  async getCreationOptions(characterClass: string) {
+    // Fetch equipment packs from database
+    let equipmentPacks = [];
+    try {
+      equipmentPacks = await getEquipmentPacksFromDatabase();
+    } catch (error) {
+      console.warn('Error fetching equipment packs:', error);
+      // Provide minimal fallback
+      equipmentPacks = [{
+        id: 'fallback',
+        name: 'Basic Adventurer Pack',
+        description: 'Basic starting equipment',
+        cost: '15 gp',
+        items: [
+          { name: 'Backpack', quantity: 1, type: 'Gear', cost: '2 gp', weight: 5, description: 'A backpack' },
+          { name: 'Rope', quantity: 1, type: 'Gear', cost: '2 gp', weight: 10, description: 'Hemp rope' }
+        ]
+      }];
+    }
     
     // Provide basic weapon suggestions instead of calling deprecated functions
     const weaponSuggestions = this.getBasicWeaponSuggestions(characterClass);
