@@ -7,7 +7,7 @@ import { AbilityScore } from "@/lib/dnd/core";
 import { generateFantasyName } from "@/lib/dnd/character";
 import { Spell } from "@/lib/dnd/spells";
 import { Weapon, Armor } from "@/lib/dnd/equipment";
-import { DiceRoller } from "./dice-roller";
+
 import { 
   type StatMethod, 
   type CharacterCreationData,
@@ -79,8 +79,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [creationOptions, setCreationOptions] = useState<CreationOptions | null>(null);
   const [loadingOptions, setLoadingOptions] = useState(true);
   
-  // Dice roller panel state
-  const [showDicePanel, setShowDicePanel] = useState(false);
+
 
   // Load creation options when class changes
   useEffect(() => {
@@ -274,17 +273,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         <div className="flex justify-between items-center p-6 border-b border-slate-700">
           <h2 className="text-2xl font-bold text-white">Create New Character</h2>
           <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setShowDicePanel(!showDicePanel)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                showDicePanel 
-                  ? 'bg-purple-600 text-white' 
-                  : 'bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white'
-              }`}
-            >
-              🎲 Dice Roller
-            </button>
             <button
               onClick={onClose}
               className="text-slate-400 hover:text-white transition-colors"
@@ -703,24 +691,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           </div>
         </form>
       </div>
-      
-      {/* Floating Dice Panel */}
-      {showDicePanel && (
-        <div className="fixed top-4 right-4 bg-slate-800 rounded-lg shadow-2xl border border-slate-600 z-60 w-80">
-          <div className="flex justify-between items-center p-4 border-b border-slate-700">
-            <h3 className="text-lg font-bold text-white">🎲 Dice Roller</h3>
-            <button
-              onClick={() => setShowDicePanel(false)}
-              className="text-slate-400 hover:text-white transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-          <div className="p-4">
-            <DiceRoller />
-          </div>
-        </div>
-      )}
     </div>
   );
 } 
