@@ -290,78 +290,8 @@ export function getEquipmentPackageOptions(characterClass: string): Array<{name:
 export function getEquipmentPackOptions(): Array<{name: string, items: Array<{name: string, quantity: number}>, description: string}> {
   return [
     {
-      name: "Dungeoneers Pack",
-      description: "For exploring dungeons and underground adventures",
-      items: [
-        {name: 'Backpack', quantity: 1},
-        {name: 'Crowbar', quantity: 1},
-        {name: 'Hammer', quantity: 1},
-        {name: 'Piton', quantity: 10},
-        {name: 'Torch', quantity: 10},
-        {name: 'Tinderbox', quantity: 1},
-        {name: 'Rations (10 days)', quantity: 1},
-        {name: 'Waterskin', quantity: 1},
-        {name: 'Hempen Rope (50 feet)', quantity: 1}
-      ]
-    },
-    {
-      name: "Explorers Pack", 
-      description: "For wilderness exploration and outdoor adventures",
-      items: [
-        {name: 'Backpack', quantity: 1},
-        {name: 'Bedroll', quantity: 1},
-        {name: 'Mess Kit', quantity: 1},
-        {name: 'Tinderbox', quantity: 1},
-        {name: 'Torch', quantity: 10},
-        {name: 'Rations (10 days)', quantity: 1},
-        {name: 'Waterskin', quantity: 1},
-        {name: 'Hempen Rope (50 feet)', quantity: 1}
-      ]
-    },
-    {
-      name: "Entertainers Pack",
-      description: "For bards and performers",
-      items: [
-        {name: 'Backpack', quantity: 1},
-        {name: 'Bedroll', quantity: 1},
-        {name: 'Costume Clothes', quantity: 2},
-        {name: 'Candle', quantity: 5},
-        {name: 'Rations (5 days)', quantity: 1},
-        {name: 'Waterskin', quantity: 1},
-        {name: 'Disguise Kit', quantity: 1}
-      ]
-    },
-    {
-      name: "Priests Pack",
-      description: "For clerics and religious characters", 
-      items: [
-        {name: 'Backpack', quantity: 1},
-        {name: 'Blanket', quantity: 1},
-        {name: 'Tinderbox', quantity: 1},
-        {name: 'Alms Box', quantity: 1},
-        {name: 'Incense', quantity: 2},
-        {name: 'Censer', quantity: 1},
-        {name: 'Vestments', quantity: 1},
-        {name: 'Rations (2 days)', quantity: 1},
-        {name: 'Waterskin', quantity: 1}
-      ]
-    },
-    {
-      name: "Scholars Pack",
-      description: "For wizards and learned characters",
-      items: [
-        {name: 'Backpack', quantity: 1},
-        {name: 'Book of Lore', quantity: 1},
-        {name: 'Ink', quantity: 2},
-        {name: 'Quill', quantity: 1},
-        {name: 'Parchment (10 sheets)', quantity: 1},
-        {name: 'Little Bag of Sand', quantity: 1},
-        {name: 'Small Knife', quantity: 1}
-      ]
-    },
-    {
-      name: "Burglars Pack", 
-      description: "For rogues and sneaky characters",
+      name: "Burglar's Pack",
+      description: "For rogues and sneaky characters (16 gp)",
       items: [
         {name: 'Backpack', quantity: 1},
         {name: 'Ball Bearings (1000)', quantity: 1},
@@ -374,8 +304,97 @@ export function getEquipmentPackOptions(): Array<{name: string, items: Array<{na
         {name: 'Hooded Lantern', quantity: 1},
         {name: 'Oil (2 flasks)', quantity: 1},
         {name: 'Rations (5 days)', quantity: 1},
+        {name: 'Tinderbox', quantity: 1},
         {name: 'Waterskin', quantity: 1},
         {name: 'Hempen Rope (50 feet)', quantity: 1}
+      ]
+    },
+    {
+      name: "Diplomat's Pack",
+      description: "For negotiators and courtly characters (39 gp)",
+      items: [
+        {name: 'Chest', quantity: 1},
+        {name: 'Map or Scroll Case', quantity: 2},
+        {name: 'Fine Clothes', quantity: 1},
+        {name: 'Ink', quantity: 1},
+        {name: 'Ink Pen', quantity: 1},
+        {name: 'Lamp', quantity: 1},
+        {name: 'Oil (2 flasks)', quantity: 1},
+        {name: 'Paper (5 sheets)', quantity: 1},
+        {name: 'Perfume (vial)', quantity: 1},
+        {name: 'Sealing Wax', quantity: 1},
+        {name: 'Soap', quantity: 1}
+      ]
+    },
+    {
+      name: "Dungeoneer's Pack",
+      description: "For exploring dungeons and underground adventures (12 gp)",
+      items: [
+        {name: 'Backpack', quantity: 1},
+        {name: 'Crowbar', quantity: 1},
+        {name: 'Hammer', quantity: 1},
+        {name: 'Piton', quantity: 10},
+        {name: 'Torch', quantity: 10},
+        {name: 'Tinderbox', quantity: 1},
+        {name: 'Rations (10 days)', quantity: 1},
+        {name: 'Waterskin', quantity: 1},
+        {name: 'Hempen Rope (50 feet)', quantity: 1}
+      ]
+    },
+    {
+      name: "Entertainer's Pack",
+      description: "For bards and performers (40 gp)",
+      items: [
+        {name: 'Backpack', quantity: 1},
+        {name: 'Bedroll', quantity: 1},
+        {name: 'Costume', quantity: 2},
+        {name: 'Candle', quantity: 5},
+        {name: 'Rations (5 days)', quantity: 1},
+        {name: 'Waterskin', quantity: 1},
+        {name: 'Disguise Kit', quantity: 1}
+      ]
+    },
+    {
+      name: "Explorer's Pack", 
+      description: "For wilderness exploration and outdoor adventures (10 gp)",
+      items: [
+        {name: 'Backpack', quantity: 1},
+        {name: 'Bedroll', quantity: 1},
+        {name: 'Mess Kit', quantity: 1},
+        {name: 'Tinderbox', quantity: 1},
+        {name: 'Torch', quantity: 10},
+        {name: 'Rations (10 days)', quantity: 1},
+        {name: 'Waterskin', quantity: 1},
+        {name: 'Hempen Rope (50 feet)', quantity: 1}
+      ]
+    },
+    {
+      name: "Priest's Pack",
+      description: "For clerics and religious characters (19 gp)", 
+      items: [
+        {name: 'Backpack', quantity: 1},
+        {name: 'Blanket', quantity: 1},
+        {name: 'Candle', quantity: 10},
+        {name: 'Tinderbox', quantity: 1},
+        {name: 'Alms Box', quantity: 1},
+        {name: 'Incense (2 blocks)', quantity: 1},
+        {name: 'Censer', quantity: 1},
+        {name: 'Vestments', quantity: 1},
+        {name: 'Rations (2 days)', quantity: 1},
+        {name: 'Waterskin', quantity: 1}
+      ]
+    },
+    {
+      name: "Scholar's Pack",
+      description: "For wizards and learned characters (40 gp)",
+      items: [
+        {name: 'Backpack', quantity: 1},
+        {name: 'Book of Lore', quantity: 1},
+        {name: 'Ink', quantity: 1},
+        {name: 'Ink Pen', quantity: 1},
+        {name: 'Parchment (10 sheets)', quantity: 1},
+        {name: 'Little Bag of Sand', quantity: 1},
+        {name: 'Small Knife', quantity: 1}
       ]
     }
   ];
@@ -430,18 +449,18 @@ export function getClassArmorSuggestions(_characterClass: string): Armor[] {
 // Legacy function for auto-assignment (keep for backwards compatibility but discourage use)
 export function getStartingEquipment(characterClass: string, background: string): string[] {
   const classEquipment: Record<string, string[]> = {
-    Barbarian: ['Greataxe', 'Handaxe', 'Handaxe', 'Javelin', 'Javelin', 'Javelin', 'Javelin', 'Leather Armor', 'Explorers Pack'],
-    Bard: ['Rapier', 'Leather Armor', 'Dagger', 'Simple Weapon', 'Lute', 'Entertainers Pack'],
-    Cleric: ['Scale Mail', 'Shield', 'Warhammer', 'Light Crossbow', 'Priests Pack'],
-    Druid: ['Leather Armor', 'Shield', 'Scimitar', 'Simple Weapon', 'Explorers Pack'],
-    Fighter: ['Chain Mail', 'Shield', 'Martial Weapon', 'Martial Weapon', 'Light Crossbow', 'Dungeoneer Pack'],
-    Monk: ['Shortsword', 'Simple Weapon', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dungeoneer Pack'],
-    Paladin: ['Chain Mail', 'Shield', 'Martial Weapon', 'Javelin', 'Javelin', 'Javelin', 'Javelin', 'Javelin', 'Explorers Pack'],
-    Ranger: ['Scale Mail', 'Shield', 'Shortsword', 'Shortsword', 'Simple Weapon', 'Longbow', 'Dungeoneer Pack'],
-    Rogue: ['Leather Armor', 'Shortsword', 'Shortsword', 'Shortbow', 'Arrow (20)', 'Thieves Tools', 'Dungeoneer Pack'],
-    Sorcerer: ['Light Crossbow', 'Simple Weapon', 'Dagger', 'Dagger', 'Dungeoneer Pack'],
-    Warlock: ['Light Armor', 'Simple Weapon', 'Simple Weapon', 'Light Crossbow', 'Scholars Pack'],
-    Wizard: ['Quarterstaff', 'Dagger', 'Light Crossbow', 'Scholars Pack', 'Spellbook']
+    Barbarian: ['Greataxe', 'Handaxe', 'Handaxe', 'Javelin', 'Javelin', 'Javelin', 'Javelin', 'Leather Armor', "Explorer's Pack"],
+    Bard: ['Rapier', 'Leather Armor', 'Dagger', 'Lute', "Entertainer's Pack"],
+    Cleric: ['Scale Mail', 'Shield', 'Warhammer', 'Light Crossbow', "Priest's Pack"],
+    Druid: ['Leather Armor', 'Shield', 'Scimitar', "Explorer's Pack"],
+    Fighter: ['Chain Mail', 'Shield', 'Light Crossbow', "Dungeoneer's Pack"],
+    Monk: ['Shortsword', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', 'Dart', "Dungeoneer's Pack"],
+    Paladin: ['Chain Mail', 'Shield', 'Javelin', 'Javelin', 'Javelin', 'Javelin', 'Javelin', "Explorer's Pack"],
+    Ranger: ['Scale Mail', 'Shield', 'Shortsword', 'Shortsword', 'Longbow', "Dungeoneer's Pack"],
+    Rogue: ['Leather Armor', 'Shortsword', 'Shortsword', 'Shortbow', 'Arrow (20)', 'Thieves Tools', "Dungeoneer's Pack"],
+    Sorcerer: ['Light Crossbow', 'Dagger', 'Dagger', "Dungeoneer's Pack"],
+    Warlock: ['Light Crossbow', "Scholar's Pack"],
+    Wizard: ['Quarterstaff', 'Dagger', 'Light Crossbow', "Scholar's Pack", 'Spellbook']
   };
 
   const backgroundEquipment: Record<string, string[]> = {

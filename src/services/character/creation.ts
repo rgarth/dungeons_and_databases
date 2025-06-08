@@ -8,7 +8,7 @@ import {
   getProficiencyBonus,
   ABILITY_SCORES
 } from '@/lib/dnd/core';
-import { getBackgroundSkills, getEquipmentPackOptions, getClassWeaponSuggestions, getClassArmorSuggestions } from '@/lib/dnd/character';
+import { getBackgroundSkills, getEquipmentPackOptions } from '@/lib/dnd/character';
 import { 
   getSpellcastingAbility, 
   getClassSpells, 
@@ -162,8 +162,10 @@ export class CharacterCreationService {
   // Get character creation options
   getCreationOptions(characterClass: string) {
     const equipmentPacks = getEquipmentPackOptions();
-    const weaponSuggestions = getClassWeaponSuggestions(characterClass);
-    const armorSuggestions = getClassArmorSuggestions(characterClass);
+    
+    // Provide basic weapon suggestions instead of calling deprecated functions
+    const weaponSuggestions = this.getBasicWeaponSuggestions(characterClass);
+    const armorSuggestions = this.getBasicArmorSuggestions(characterClass);
     
     // Subclass info
     const subclasses = getSubclassesForClass(characterClass);
@@ -188,6 +190,94 @@ export class CharacterCreationService {
         spellSlots
       }
     };
+  }
+
+  // Basic weapon suggestions (will be enhanced with database lookups later)
+  private getBasicWeaponSuggestions(characterClass: string): Weapon[] {
+    // For now, return common weapons that each class would use
+    // TODO: Replace with database lookups when weapon database is available
+    const basicWeapons: Record<string, Partial<Weapon>[]> = {
+      Barbarian: [
+        { name: 'Greataxe', type: 'Martial', category: 'Melee', damage: '1d12', damageType: 'slashing' },
+        { name: 'Handaxe', type: 'Simple', category: 'Melee', damage: '1d6', damageType: 'slashing' }
+      ],
+      Fighter: [
+        { name: 'Longsword', type: 'Martial', category: 'Melee', damage: '1d8', damageType: 'slashing' },
+        { name: 'Light Crossbow', type: 'Simple', category: 'Ranged', damage: '1d8', damageType: 'piercing' }
+      ],
+      Ranger: [
+        { name: 'Shortsword', type: 'Martial', category: 'Melee', damage: '1d6', damageType: 'piercing' },
+        { name: 'Longbow', type: 'Martial', category: 'Ranged', damage: '1d8', damageType: 'piercing' }
+      ],
+      Rogue: [
+        { name: 'Shortsword', type: 'Martial', category: 'Melee', damage: '1d6', damageType: 'piercing' },
+        { name: 'Shortbow', type: 'Martial', category: 'Ranged', damage: '1d6', damageType: 'piercing' }
+      ],
+      Cleric: [
+        { name: 'Warhammer', type: 'Martial', category: 'Melee', damage: '1d8', damageType: 'bludgeoning' },
+        { name: 'Light Crossbow', type: 'Simple', category: 'Ranged', damage: '1d8', damageType: 'piercing' }
+      ],
+      Wizard: [
+        { name: 'Quarterstaff', type: 'Simple', category: 'Melee', damage: '1d6', damageType: 'bludgeoning' },
+        { name: 'Dagger', type: 'Simple', category: 'Melee', damage: '1d4', damageType: 'piercing' }
+      ]
+    };
+
+    const suggestions = basicWeapons[characterClass] || basicWeapons.Fighter;
+    return suggestions.map(weapon => ({
+      name: weapon.name || 'Unknown',
+      type: weapon.type || 'Simple',
+      category: weapon.category || 'Melee',
+      damage: weapon.damage || '1d4',
+      damageType: weapon.damageType || 'bludgeoning',
+      properties: [],
+      weight: 2,
+      cost: '10 gp',
+      stackable: false
+    }));
+  }
+
+  // Basic armor suggestions (will be enhanced with database lookups later)
+  private getBasicArmorSuggestions(characterClass: string): Armor[] {
+    // For now, return armor that each class can typically use
+    // TODO: Replace with database lookups when armor database is available
+    const basicArmor: Record<string, Partial<Armor>[]> = {
+      Barbarian: [
+        { name: 'Leather', type: 'Light', baseAC: 11, stealthDisadvantage: false }
+      ],
+      Fighter: [
+        { name: 'Chain Mail', type: 'Heavy', baseAC: 16, minStrength: 13, stealthDisadvantage: true },
+        { name: 'Shield', type: 'Shield', baseAC: 2 }
+      ],
+      Ranger: [
+        { name: 'Scale Mail', type: 'Medium', baseAC: 14, maxDexBonus: 2, stealthDisadvantage: true },
+        { name: 'Shield', type: 'Shield', baseAC: 2 }
+      ],
+      Rogue: [
+        { name: 'Leather', type: 'Light', baseAC: 11, stealthDisadvantage: false },
+        { name: 'Studded Leather', type: 'Light', baseAC: 12, stealthDisadvantage: false }
+      ],
+      Cleric: [
+        { name: 'Scale Mail', type: 'Medium', baseAC: 14, maxDexBonus: 2, stealthDisadvantage: true },
+        { name: 'Shield', type: 'Shield', baseAC: 2 }
+      ],
+      Wizard: [], // Wizards typically don't wear armor
+      Sorcerer: [], // Sorcerers typically don't wear armor
+      Monk: [] // Monks don't wear armor
+    };
+
+    const suggestions = basicArmor[characterClass] || [];
+    return suggestions.map(armor => ({
+      name: armor.name || 'Leather',
+      type: armor.type || 'Light',
+      baseAC: armor.baseAC || 11,
+      maxDexBonus: armor.maxDexBonus,
+      minStrength: armor.minStrength,
+      stealthDisadvantage: armor.stealthDisadvantage || false,
+      weight: 10,
+      cost: '10 gp',
+      description: `Basic ${armor.type} armor for ${characterClass} class.`
+    }));
   }
 
   // Calculate spellcasting stats

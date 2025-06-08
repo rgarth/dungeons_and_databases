@@ -99,6 +99,20 @@ export async function POST(request: NextRequest) {
     console.log('=== SERVER-SIDE ARMOR PROCESSING ===');
     console.log('Raw inventory from client:', inventory);
 
+    // Helper method to check if an item is a placeholder that needs resolution
+    const isPlaceholderItem = (itemName: string): boolean => {
+      const placeholders = [
+        'Simple Weapon',
+        'Martial Weapon', 
+        'Light Armor',
+        'Medium Armor',
+        'Heavy Armor',
+        'Any Weapon',
+        'Any Armor'
+      ];
+      return placeholders.includes(itemName);
+    };
+
     // Separate armor from general inventory (server-side database lookups)
     const processedInventory: Array<{name: string; quantity: number}> = [];
     const processedInventoryArmor: Array<{
@@ -117,6 +131,12 @@ export async function POST(request: NextRequest) {
       for (const item of inventory as Array<{name: string; quantity: number}>) {
         const itemName = item.name;
         console.log(`🔍 Checking if "${itemName}" is armor...`);
+        
+        // Handle placeholder items that need resolution
+        if (isPlaceholderItem(itemName)) {
+          console.log(`⚠️ Skipping placeholder item: ${itemName} (needs manual selection)`);
+          continue; // Skip placeholder items for now
+        }
         
         // Check if this item exists in the armor database
         const armorData = await prisma.armor.findFirst({
@@ -525,4 +545,4 @@ export async function PATCH(request: NextRequest) {
     console.error("Error updating character:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-} 
+}
