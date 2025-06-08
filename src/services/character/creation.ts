@@ -250,8 +250,66 @@ export class CharacterCreationService {
     };
   }
 
+  // Helper method to check if an item is armor
+  private isArmorItem(itemName: string): boolean {
+    const armorNames = [
+      'Padded', 'Leather', 'Studded Leather', 'Hide', 'Chain Shirt', 'Scale Mail',
+      'Breastplate', 'Half Plate', 'Ring Mail', 'Chain Mail', 'Splint', 'Plate',
+      'Shield', 'Buckler', 'Tower Shield', 'Spiked Shield',
+      'Leather Armor', 'Studded Leather Armor', 'Chain Mail', 'Scale Mail', 'Plate Armor'
+    ];
+    return armorNames.some(armor => 
+      itemName.toLowerCase().includes(armor.toLowerCase()) ||
+      armor.toLowerCase().includes(itemName.toLowerCase())
+    );
+  }
+
+  // Helper method to get armor by name from database
+  private async getArmorByName(armorName: string): Promise<Armor | null> {
+    try {
+      // Map common variations to proper armor names
+      const armorNameMap: Record<string, string> = {
+        'Leather Armor': 'Leather',
+        'Studded Leather Armor': 'Studded Leather',
+        'Chain Mail': 'Chain Mail',
+        'Scale Mail': 'Scale Mail',
+        'Plate Armor': 'Plate'
+      };
+      
+      const mappedName = armorNameMap[armorName] || armorName;
+      
+      // Use direct database access instead of API call
+      const { PrismaClient } = await import('@prisma/client');
+      const prisma = new PrismaClient();
+      
+      try {
+        const armor = await prisma.armor.findFirst({
+          where: {
+            name: mappedName
+          }
+        });
+        
+        return armor ? {
+          name: armor.name,
+          type: armor.type as 'Light' | 'Medium' | 'Heavy' | 'Shield',
+          baseAC: armor.baseAC,
+          maxDexBonus: armor.maxDexBonus ?? undefined,
+          minStrength: armor.minStrength ?? undefined,
+          stealthDisadvantage: armor.stealthDisadvantage,
+          weight: armor.weight,
+          cost: armor.cost,
+          description: armor.description
+        } : null;
+      } finally {
+        await prisma.$disconnect();
+      }
+    } catch {
+      return null;
+    }
+  }
+
   // Create final character data
-  createCharacter(data: CharacterCreationData): CharacterCreationResult {
+  async createCharacter(data: CharacterCreationData): Promise<CharacterCreationResult> {
     const { abilityScores, class: characterClass } = data;
     
     // Calculate basic stats
@@ -272,8 +330,27 @@ export class CharacterCreationService {
       });
     }
     
-    // Starting equipment
-    const startingArmor = getClassArmorSuggestions(characterClass);
+    // Process armor from equipment packages
+    const startingArmor: Armor[] = [];
+    if (selectedPack) {
+      // Extract armor items from the pack and convert them to Armor objects
+      const armorItemNames = selectedPack.items
+        .map(item => item.name)
+        .filter(name => this.isArmorItem(name));
+      
+      for (const armorName of armorItemNames) {
+        const armor = await this.getArmorByName(armorName);
+        if (armor) {
+          startingArmor.push(armor);
+          // Remove from general inventory since it's now in armor inventory
+          const itemIndex = generalInventory.findIndex(item => item.name === armorName);
+          if (itemIndex >= 0) {
+            generalInventory.splice(itemIndex, 1);
+          }
+        }
+      }
+    }
+    
     const backgroundSkills = getBackgroundSkills(data.background);
     
     // Spellcasting

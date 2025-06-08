@@ -75,10 +75,10 @@ interface CharacterSheetProps {
   };
   onClose: () => void;
   onCharacterDeleted?: () => void;
-  onCharacterUpdated?: () => void;
+
 }
 
-export function CharacterSheet({ character, onClose, onCharacterDeleted, onCharacterUpdated }: CharacterSheetProps) {
+export function CharacterSheet({ character, onClose, onCharacterDeleted }: CharacterSheetProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showLevelUpModal, setShowLevelUpModal] = useState(false);
   const [showSpellPreparationModal, setShowSpellPreparationModal] = useState(false);
@@ -250,8 +250,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
       if (!response.ok) {
         console.error('Failed to update character:', response.status, response.statusText);
       } else {
-        // Notify parent component to refetch character data
-        onCharacterUpdated?.();
+        // Only update local character state, don't trigger parent refetch to avoid infinite loop
+        setCurrentCharacter(prev => ({ ...prev, ...updates }));
       }
     } catch (error) {
       console.error('Error updating character:', error);

@@ -405,11 +405,13 @@ export function ActionsTab({
             )}
 
             {/* Spell Slots */}
-            {character.spellcastingAbility && character.spellSlots && Object.keys(character.spellSlots).length > 0 && (
+            {character.spellcastingAbility && character.spellSlots && Object.keys(character.spellSlots).filter(k => k && k !== 'undefined').length > 0 && (
               <div className="mb-6">
                 <h4 className="text-lg font-semibold text-white mb-3">Spell Slots</h4>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                  {Object.entries(character.spellSlots).map(([level, total]) => (
+                  {Object.entries(character.spellSlots)
+                    .filter(([level, total]) => level && level !== 'undefined' && total > 0)
+                    .map(([level, total]) => (
                     <div key={level} className="bg-slate-600 rounded p-3">
                       <div className="text-center">
                         <div className="text-sm text-slate-400 mb-1">Level {level}</div>
@@ -447,7 +449,7 @@ export function ActionsTab({
                       </div>
                       <h4 className="text-lg font-semibold text-white mb-3">Known Spells</h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto">
-                        {(character.spellsKnown || []).map((spell, index) => (
+                        {(character.spellsKnown || []).filter(spell => spell && spell.name && spell.level !== undefined).map((spell, index) => (
                           <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-green-500">
                             <div className="flex items-center gap-2 mb-2">
                               <span className="text-white font-medium">{spell.name}</span>
@@ -496,7 +498,7 @@ export function ActionsTab({
                         </div>
                         {character.spellsPrepared && character.spellsPrepared.length > 0 ? (
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                            {character.spellsPrepared.map((spell, index) => (
+                            {character.spellsPrepared.filter(spell => spell && spell.name && spell.level !== undefined).map((spell, index) => (
                               <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-blue-500">
                                 <div className="flex items-center gap-2 mb-2">
                                   <span className="text-white font-medium">{spell.name}</span>
@@ -523,7 +525,7 @@ export function ActionsTab({
                         {/* All Known Spells (Spellbook) */}
                         <h5 className="text-md font-semibold text-white mb-3">Spellbook ({(character.spellsKnown || []).length} spells)</h5>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-48 overflow-y-auto">
-                          {(character.spellsKnown || []).map((spell, index) => (
+                          {(character.spellsKnown || []).filter(spell => spell && spell.name && spell.level !== undefined).map((spell, index) => (
                             <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-indigo-500">
                               <div className="flex items-center gap-2 mb-2">
                                 <span className="text-white font-medium">{spell.name}</span>
@@ -566,7 +568,7 @@ export function ActionsTab({
                       </div>
                       {character.spellsPrepared && character.spellsPrepared.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {character.spellsPrepared.map((spell, index) => (
+                          {character.spellsPrepared.filter(spell => spell && spell.name && spell.level !== undefined).map((spell, index) => (
                             <div key={index} className="bg-slate-600 p-3 rounded border-l-4 border-yellow-500">
                               <div className="flex items-center gap-2 mb-2">
                                 <span className="text-white font-medium">{spell.name}</span>
@@ -675,7 +677,7 @@ export function ActionsTab({
                 <div className="text-slate-300 text-sm">• Search</div>
                 <div className="text-slate-300 text-sm">• Use an Object</div>
                 {character.actions?.filter(a => 
-                  a.type === 'Action' && 
+                  a && a.type === 'Action' && a.name &&
                   !['Attack', 'Cast a Spell', 'Dash', 'Disengage', 'Dodge', 'Help', 'Hide', 'Ready', 'Search', 'Use an Object'].includes(a.name)
                 ).map((action, i) => (
                   <div key={i} className="text-purple-300 text-sm">• {action.name}</div>
@@ -689,7 +691,7 @@ export function ActionsTab({
               <div className="space-y-2 max-h-32 overflow-y-auto">
                 <div className="text-slate-300 text-sm">• Off-hand Attack</div>
                 <div className="text-slate-300 text-sm">• Two-Weapon Fighting</div>
-                {character.bonusActions?.map((action, i) => (
+                {character.bonusActions?.filter(action => action && action.name).map((action, i) => (
                   <div key={i} className="text-yellow-300 text-sm">• {action.name}</div>
                 ))}
               </div>
@@ -700,7 +702,7 @@ export function ActionsTab({
               <h4 className="font-semibold text-white mb-3 text-center">Reactions</h4>
               <div className="space-y-2 max-h-32 overflow-y-auto">
                 <div className="text-slate-300 text-sm">• Opportunity Attack</div>
-                {character.reactions?.map((action, i) => (
+                {character.reactions?.filter(action => action && action.name).map((action, i) => (
                   <div key={i} className="text-blue-300 text-sm">• {action.name}</div>
                 ))}
               </div>

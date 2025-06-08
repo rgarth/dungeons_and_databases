@@ -60,10 +60,9 @@ interface Character {
 interface CharacterCardProps {
   character: Character;
   onCharacterDeleted?: () => void;
-  onCharacterUpdated?: () => void;
 }
 
-export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdated }: CharacterCardProps) {
+export function CharacterCard({ character, onCharacterDeleted }: CharacterCardProps) {
   const [showSheet, setShowSheet] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -173,7 +172,6 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
             setShowSheet(false);
             onCharacterDeleted?.();
           }}
-          onCharacterUpdated={onCharacterUpdated}
         />
       )}
 

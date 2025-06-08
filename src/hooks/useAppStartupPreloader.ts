@@ -15,9 +15,9 @@ interface AvatarData {
   genders: string[];
 }
 
-// Cache keys for persistent storage
-const AVATAR_DATA_CACHE_KEY = 'dd_avatar_data_v1';
-const AVATAR_CACHE_TIMESTAMP_KEY = 'dd_avatar_cache_timestamp_v1';
+// Cache keys for persistent storage (bump version to clear old TEMP race data)
+const AVATAR_DATA_CACHE_KEY = 'dd_avatar_data_v2';
+const AVATAR_CACHE_TIMESTAMP_KEY = 'dd_avatar_cache_timestamp_v2';
 
 
 // 30 days cache (images rarely change)

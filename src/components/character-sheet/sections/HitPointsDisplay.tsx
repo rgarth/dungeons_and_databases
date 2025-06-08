@@ -1,8 +1,9 @@
 "use client";
 
-import { Heart, Shield, Plus, Minus } from "lucide-react";
+import { Heart, Shield, Plus, Minus, Zap } from "lucide-react";
 import { createDamageService } from "@/services/character/damage";
 import type { Spell } from "@/lib/dnd/spells";
+import { useState } from "react";
 
 interface HitPointsDisplayProps {
   character: {
@@ -31,6 +32,9 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
   const effectiveHpPercentage = tempHp > 0 
     ? Math.min(100, (character.hitPoints / character.maxHitPoints) * 100)
     : hpPercentage;
+  
+  const [customDamage, setCustomDamage] = useState("");
+  const [showCustomInput, setShowCustomInput] = useState(false);
 
   const handleHitPointChange = (change: number) => {
     if (change < 0) {
@@ -196,15 +200,15 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
         <div className="flex items-center gap-2">
           <button
             onClick={() => handleHitPointChange(-1)}
-            disabled={character.hitPoints <= 0}
+            disabled={character.hitPoints <= 0 && tempHp <= 0}
             className="w-6 h-6 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed rounded text-white text-xs flex items-center justify-center"
-            title="Take 1 damage"
+            title={tempHp > 0 ? "Take 1 damage (removes temp HP first)" : "Take 1 damage"}
           >
             <Minus className="h-3 w-3" />
           </button>
-          <span className="text-white font-semibold text-lg min-w-[80px] text-center">
+          <span className="text-white font-semibold text-lg min-w-[90px] text-center">
             {character.hitPoints}
-            {tempHp > 0 && <span className="text-blue-400">+{tempHp}</span>}
+            {tempHp > 0 && <span className="text-blue-400 font-medium">+{tempHp}</span>}
             /{character.maxHitPoints}
           </span>
           <button
@@ -218,30 +222,48 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
         </div>
       </div>
       
-      <div className="w-full bg-slate-600 rounded-full h-3 mb-3">
+      <div className="w-full bg-slate-600 rounded-full h-4 mb-3">
         <div
-          className="bg-gradient-to-r from-red-500 to-green-500 h-3 rounded-full transition-all duration-300 relative"
+          className="bg-gradient-to-r from-red-500 to-green-500 h-4 rounded-full transition-all duration-300 relative"
           style={{ width: `${effectiveHpPercentage}%` }}
         >
           {tempHp > 0 && (
             <div 
-              className="absolute top-0 right-0 h-3 bg-blue-500/70 rounded-r-full"
-              style={{ width: `${Math.min(25, (tempHp / character.maxHitPoints) * 100)}%` }}
-              title={`${tempHp} temporary HP`}
+              className="absolute top-0 left-full h-4 bg-blue-500 rounded-r-full shadow-lg border-l border-blue-300"
+              style={{ 
+                width: `${Math.min(100 - effectiveHpPercentage, (tempHp / character.maxHitPoints) * 100)}%`,
+                maxWidth: `${100 - effectiveHpPercentage}%`
+              }}
+              title={`${tempHp} temporary HP - absorbed first when taking damage`}
             />
           )}
         </div>
       </div>
       
+      {/* Damage Flow Explanation */}
+      {tempHp > 0 && (
+        <div className="text-xs text-slate-400 mb-2 text-center">
+          💡 Damage removes <span className="text-blue-400 font-medium">{tempHp} temp HP</span> first, then regular HP
+        </div>
+      )}
+      
       {/* Large HP Adjustment Buttons */}
       <div className="flex justify-center gap-2 mb-3">
         <button
           onClick={() => handleHitPointChange(-5)}
-          disabled={character.hitPoints <= 0}
+          disabled={character.hitPoints <= 0 && tempHp <= 0}
           className="bg-red-700 hover:bg-red-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs px-2 py-1 rounded"
-          title="Take 5 damage"
+          title={tempHp > 0 ? "Take 5 damage (removes temp HP first)" : "Take 5 damage"}
         >
           -5
+        </button>
+        <button
+          onClick={() => handleHitPointChange(-10)}
+          disabled={character.hitPoints <= 0 && tempHp <= 0}
+          className="bg-red-800 hover:bg-red-900 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs px-2 py-1 rounded"
+          title={tempHp > 0 ? "Take 10 damage (removes temp HP first)" : "Take 10 damage"}
+        >
+          -10
         </button>
         <button
           onClick={() => handleHitPointChange(5)}
@@ -251,6 +273,86 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
         >
           +5
         </button>
+        <button
+          onClick={() => handleHitPointChange(10)}
+          disabled={character.hitPoints >= character.maxHitPoints}
+          className="bg-green-800 hover:bg-green-900 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs px-2 py-1 rounded"
+          title="Heal 10 HP"
+        >
+          +10
+        </button>
+      </div>
+      
+      {/* Custom Damage/Healing Input */}
+      <div className="flex justify-center mb-3">
+        {!showCustomInput ? (
+          <button
+            onClick={() => setShowCustomInput(true)}
+            className="bg-slate-600 hover:bg-slate-700 text-slate-300 text-xs px-3 py-1 rounded flex items-center gap-1"
+            title="Enter custom damage/healing amount"
+          >
+            <Zap className="h-3 w-3" />
+            Custom
+          </button>
+        ) : (
+          <div className="flex items-center gap-2">
+            <input
+              type="number"
+              value={customDamage}
+              onChange={(e) => setCustomDamage(e.target.value)}
+              placeholder="Amount"
+              className="w-16 px-2 py-1 text-xs bg-slate-700 text-white rounded border border-slate-600 focus:border-purple-500 focus:outline-none"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  const amount = parseInt(customDamage);
+                  if (!isNaN(amount) && amount !== 0) {
+                    handleHitPointChange(amount);
+                    setCustomDamage("");
+                    setShowCustomInput(false);
+                  }
+                }
+              }}
+            />
+            <button
+              onClick={() => {
+                const amount = parseInt(customDamage);
+                if (!isNaN(amount) && amount !== 0) {
+                  handleHitPointChange(-Math.abs(amount));
+                  setCustomDamage("");
+                  setShowCustomInput(false);
+                }
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-1 rounded"
+              title="Apply as damage"
+            >
+              Dmg
+            </button>
+            <button
+              onClick={() => {
+                const amount = parseInt(customDamage);
+                if (!isNaN(amount) && amount !== 0) {
+                  handleHitPointChange(Math.abs(amount));
+                  setCustomDamage("");
+                  setShowCustomInput(false);
+                }
+              }}
+              className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded"
+              title="Apply as healing"
+            >
+              Heal
+            </button>
+            <button
+              onClick={() => {
+                setCustomDamage("");
+                setShowCustomInput(false);
+              }}
+              className="bg-slate-600 hover:bg-slate-700 text-white text-xs px-2 py-1 rounded"
+              title="Cancel"
+            >
+              ✕
+            </button>
+          </div>
+        )}
       </div>
       
       {/* Temporary Hit Points Section */}

@@ -182,7 +182,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         selectedSpells
       };
 
-      const characterData = characterCreationService.createCharacter(creationData);
+      const characterData = await characterCreationService.createCharacter(creationData);
       
       const response = await fetch("/api/characters", {
         method: "POST",

@@ -501,11 +501,13 @@ export function GearTab({
                   <span className="text-slate-400 text-sm">Known Spells: </span>
                   <span className="text-white">{character.spellsKnown?.length || 0}</span>
                 </div>
-                {character.spellSlots && Object.keys(character.spellSlots).length > 0 && (
+                {character.spellSlots && Object.keys(character.spellSlots).filter(k => k && k !== 'undefined').length > 0 && (
                   <div>
                     <span className="text-slate-400 text-sm">Spell Slots: </span>
                     <div className="flex gap-2 mt-1">
-                      {Object.entries(character.spellSlots).map(([level, slots]) => (
+                      {Object.entries(character.spellSlots)
+                        .filter(([level, slots]) => level && level !== 'undefined' && slots > 0)
+                        .map(([level, slots]) => (
                         <span key={level} className="bg-slate-600 px-2 py-1 rounded text-xs text-white">
                           L{level}: {slots}
                         </span>
