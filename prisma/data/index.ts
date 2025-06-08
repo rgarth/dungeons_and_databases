@@ -8,9 +8,10 @@ import { weaponsData } from './weapons-data'
 import { armorData } from './armor-data'
 import { equipmentData } from './equipment-data'
 import { spellsData } from './spells-data'
+import { treasureData } from './treasure-data'
 
 // Export all data
-export { weaponsData, armorData, equipmentData, spellsData }
+export { weaponsData, armorData, equipmentData, spellsData, treasureData }
 
 // Export counts for validation
 export const contentCounts = {
@@ -18,5 +19,6 @@ export const contentCounts = {
   weapons: weaponsData.length,
   armor: armorData.length,
   equipment: equipmentData.length,
-  total: spellsData.length + weaponsData.length + armorData.length + equipmentData.length
+  treasures: treasureData.length,
+  total: spellsData.length + weaponsData.length + armorData.length + equipmentData.length + treasureData.length
 } 
