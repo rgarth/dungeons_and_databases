@@ -1,11 +1,16 @@
 import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { RACES, CLASSES } from '@/lib/dnd/core';
 
 export async function GET() {
   try {
     const avatarsPath = path.join(process.cwd(), 'public', 'avatars');
     const files = await fs.readdir(avatarsPath);
+    
+    // Valid races and classes from D&D 5e SRD
+    const validRaces = new Set(RACES);
+    const validClasses = new Set(CLASSES);
     
     // Filter for PNG files and parse the filename format Race_Class_Gender.png
     const avatars: Array<{
@@ -32,6 +37,17 @@ export async function GET() {
           const [race, characterClass, gender] = parts;
           const avatarNumber = parts.length === 4 ? parseInt(parts[3]) : null;
           
+          // Validate race and class against D&D data
+          if (!validRaces.has(race as typeof RACES[number])) {
+            console.warn(`⚠️ Skipping avatar with invalid race: ${race} (file: ${file})`);
+            return;
+          }
+          
+          if (!validClasses.has(characterClass as typeof CLASSES[number])) {
+            console.warn(`⚠️ Skipping avatar with invalid class: ${characterClass} (file: ${file})`);
+            return;
+          }
+          
           // Create display name with variation number if present
           const displayName = avatarNumber !== null 
             ? `${gender} ${race} ${characterClass} #${avatarNumber + 1}` 
@@ -49,6 +65,8 @@ export async function GET() {
           availableRaces.add(race);
           availableClasses.add(characterClass);
           availableGenders.add(gender);
+        } else {
+          console.warn(`⚠️ Skipping malformed filename: ${file} (expected Race_Class_Gender.png or Race_Class_Gender_Number.png)`);
         }
       }
     });
@@ -68,6 +86,8 @@ export async function GET() {
       const bNum = b.avatarNumber ?? -1;
       return aNum - bNum;
     });
+
+    console.log(`✅ Avatar API: Loaded ${sortedAvatars.length} valid avatars from ${files.length} files`);
 
     return NextResponse.json({
       avatars: sortedAvatars,

@@ -113,8 +113,7 @@ export function AvatarSelector({ selectedAvatar, onAvatarSelect }: AvatarSelecto
   
   // Use global preloader state
   const { 
-    getCachedAvatarData,
-    clearCache
+    getCachedAvatarData
   } = useAppStartupPreloader();
 
   // Get avatar data (should already be cached by global preloader)
@@ -124,30 +123,14 @@ export function AvatarSelector({ selectedAvatar, onAvatarSelect }: AvatarSelecto
         // Try to get from global cache first
         const cachedData = getCachedAvatarData();
         if (cachedData) {
-          console.log('🔍 Avatar selector using cached data with', cachedData.avatars.length, 'avatars');
-          
-          // Debug: Check Human Fighter Male avatars
-          const humanFighterMale = cachedData.avatars.filter(a => 
-            a.race === 'Human' && a.class === 'Fighter' && a.gender === 'Male'
-          );
-          console.log('🔍 Human Fighter Male avatars in cache:', humanFighterMale.map(a => a.filename));
-          
           setAvatarData(cachedData);
           setLoading(false);
           return;
         }
 
         // Fallback: fetch from API if global preloader hasn't run yet
-        console.log('🔄 Avatar selector fetching fresh data from API...');
         const response = await fetch('/api/avatars');
         const data = await response.json() as AvatarData;
-        
-        // Debug: Check Human Fighter Male avatars
-        const humanFighterMale = data.avatars.filter(a => 
-          a.race === 'Human' && a.class === 'Fighter' && a.gender === 'Male'
-        );
-        console.log('🔍 Human Fighter Male avatars from API:', humanFighterMale.map(a => a.filename));
-        
         setAvatarData(data);
       } catch (error) {
         console.error('Failed to fetch avatars:', error);
@@ -196,25 +179,12 @@ export function AvatarSelector({ selectedAvatar, onAvatarSelect }: AvatarSelecto
           <Image className="h-4 w-4 text-blue-400" />
           Avatar
         </h4>
-        <div className="flex items-center gap-2">
-          {/* Debug: Cache clear button */}
-          <button
-            onClick={() => {
-              clearCache();
-              window.location.reload();
-            }}
-            className="text-red-400 hover:text-red-300 transition-colors text-xs"
-            title="Clear avatar cache"
-          >
-            Clear Cache
-          </button>
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="text-slate-400 hover:text-white transition-colors text-sm"
-          >
-            {isOpen ? 'Hide' : 'Choose'}
-          </button>
-        </div>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="text-slate-400 hover:text-white transition-colors text-sm"
+        >
+          {isOpen ? 'Hide' : 'Choose'}
+        </button>
       </div>
 
       {/* Current Selection */}
