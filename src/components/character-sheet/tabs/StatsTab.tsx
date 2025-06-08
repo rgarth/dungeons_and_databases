@@ -95,16 +95,7 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
           <div className="lg:col-span-2 bg-slate-700 rounded-lg p-4">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-white">Ability Scores</h3>
-              <button
-                onClick={() => {
-                  // Placeholder for level up functionality
-                  alert('Level up feature coming soon! The backend is ready, just need to finish the UI integration.');
-                }}
-                className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium flex items-center gap-1"
-              >
-                <Star className="h-4 w-4" />
-                Level Up
-              </button>
+
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               {[

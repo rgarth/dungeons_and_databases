@@ -219,11 +219,12 @@ export class LevelUpService {
    * Get character's classes (handles both legacy and new format)
    */
   private getCharacterClasses(character: Character): ClassLevel[] {
-    if (character.classes && character.classes.length > 0) {
+    // Handle new multiclass format
+    if (character.classes && Array.isArray(character.classes) && character.classes.length > 0) {
       return character.classes;
     }
     
-    // Legacy format - convert to new format
+    // Legacy format or null classes field - convert to new format
     return [{
       class: character.class,
       level: character.level,

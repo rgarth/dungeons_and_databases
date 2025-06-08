@@ -105,33 +105,53 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
     }
   };
 
-  const nextStep = () => {
+  const getNextStep = (current: WizardStep): WizardStep => {
     const steps: WizardStep[] = ['overview', 'hitPoints', 'choices', 'spells', 'review'];
-    const currentIndex = steps.indexOf(currentStep);
+    const currentIndex = steps.indexOf(current);
     
-    // Skip spell step if no spells to learn
-    if (currentStep === 'choices' && (!levelUpOptions?.spellOptions || levelUpOptions.spellOptions.spellsToLearn === 0)) {
-      setCurrentStep('review');
-      return;
+    if (currentIndex >= steps.length - 1) {
+      return current; // Already at last step
     }
     
-    if (currentIndex < steps.length - 1) {
-      setCurrentStep(steps[currentIndex + 1]);
+    const nextStep = steps[currentIndex + 1];
+    
+    // Skip spell step if no spells to learn
+    if (nextStep === 'spells' && (!levelUpOptions?.spellOptions || levelUpOptions.spellOptions.spellsToLearn === 0)) {
+      return getNextStep(nextStep); // Recursively get next valid step
+    }
+    
+    return nextStep;
+  };
+
+  const nextStep = () => {
+    const next = getNextStep(currentStep);
+    if (next !== currentStep) {
+      setCurrentStep(next);
     }
   };
 
-  const prevStep = () => {
+  const getPrevStep = (current: WizardStep): WizardStep => {
     const steps: WizardStep[] = ['overview', 'hitPoints', 'choices', 'spells', 'review'];
-    const currentIndex = steps.indexOf(currentStep);
+    const currentIndex = steps.indexOf(current);
     
-    // Skip spell step if coming back and no spells
-    if (currentStep === 'review' && (!levelUpOptions?.spellOptions || levelUpOptions.spellOptions.spellsToLearn === 0)) {
-      setCurrentStep('choices');
-      return;
+    if (currentIndex <= 0) {
+      return current; // Already at first step
     }
     
-    if (currentIndex > 0) {
-      setCurrentStep(steps[currentIndex - 1]);
+    const prevStep = steps[currentIndex - 1];
+    
+    // Skip spell step if coming back and no spells
+    if (prevStep === 'spells' && (!levelUpOptions?.spellOptions || levelUpOptions.spellOptions.spellsToLearn === 0)) {
+      return getPrevStep(prevStep); // Recursively get previous valid step
+    }
+    
+    return prevStep;
+  };
+
+  const prevStep = () => {
+    const prev = getPrevStep(currentStep);
+    if (prev !== currentStep) {
+      setCurrentStep(prev);
     }
   };
 

@@ -10,7 +10,7 @@ import { Treasure } from "@/lib/dnd/data";
 import { MagicalItem, EquippedMagicalItem, applyMagicalItemEffects } from "@/lib/dnd/magical-items";
 import { ActiveCondition } from "@/lib/dnd/conditions";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
-import { LevelUpModal } from "./level-up-modal";
+import { LevelUpWizard } from "./character-sheet/LevelUpWizard";
 import { getSpellcastingType, getSpellsPreparedCount } from "@/lib/dnd/level-up";
 import { StatsTab, ActionsTab, GearTab, InventoryTab, BackgroundTab } from "./character-sheet/";
 
@@ -875,10 +875,15 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
         isDeleting={isDeleting}
       />
 
-      {/* Level Up Modal */}
+      {/* Level Up Wizard */}
       {showLevelUpModal && (
-        <LevelUpModal
-          character={displayCharacter}
+        <LevelUpWizard
+          character={{
+            ...displayCharacter,
+            // Convert Spell[] to string[] for level-up service compatibility
+            spellsKnown: displayCharacter.spellsKnown?.map(spell => spell.name),
+            spellsPrepared: displayCharacter.spellsPrepared?.map(spell => spell.name)
+          }}
           onClose={() => setShowLevelUpModal(false)}
           onLevelUp={handleLevelUp}
         />
