@@ -12,6 +12,7 @@ interface AvatarData {
     class: string;
     gender: string;
     displayName: string;
+    avatarNumber: number | null;
   }>;
   races: string[];
   classes: string[];
@@ -129,7 +130,7 @@ export function AvatarSelector({ selectedAvatar, onAvatarSelect }: AvatarSelecto
 
         // Fallback: fetch from API if global preloader hasn't run yet
         const response = await fetch('/api/avatars');
-        const data = await response.json();
+        const data = await response.json() as AvatarData;
         setAvatarData(data);
       } catch (error) {
         console.error('Failed to fetch avatars:', error);
@@ -310,20 +311,20 @@ export function AvatarSelector({ selectedAvatar, onAvatarSelect }: AvatarSelecto
                 </div>
               ))}
             </div>
-            
-            {filteredAvatars.length === 0 && (
-              <div className="text-center py-8 text-slate-400">
-                <Image className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                <div>No avatars found matching current filters</div>
-                <button
-                  onClick={clearFilters}
-                  className="text-blue-400 hover:text-blue-300 text-sm mt-2 transition-colors"
-                >
-                  Clear filters
-                </button>
-              </div>
-            )}
           </div>
+            
+          {filteredAvatars.length === 0 && (
+            <div className="text-center py-8 text-slate-400">
+              <Image className="h-12 w-12 mx-auto mb-2 opacity-50" />
+              <div>No avatars found matching current filters</div>
+              <button
+                onClick={clearFilters}
+                className="text-blue-400 hover:text-blue-300 text-sm mt-2 transition-colors"
+              >
+                Clear filters
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

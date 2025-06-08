@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Shield, HelpCircle, Star } from "lucide-react";
 import { createCharacterCalculations } from "@/services/character/calculations";
 import { createCharacterEquipment } from "@/services/character/equipment";
+import { HitPointsDisplay } from "../sections/HitPointsDisplay";
 // Service layer now handles these calculations
 import type { Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
@@ -189,119 +190,7 @@ export function StatsTab({ character, equippedArmor, modifiedStats, currentArmor
           {/* Hit Points - 1/3 */}
           <div className="bg-slate-700 rounded-lg p-4">
             <h3 className="text-lg font-semibold text-white mb-4">Hit Points</h3>
-            
-            {/* Current HP Display */}
-            <div className="text-center mb-4">
-              <div className="text-3xl font-bold text-red-400 mb-1">
-                {character.hitPoints}/{character.maxHitPoints}
-              </div>
-              {character.temporaryHitPoints && character.temporaryHitPoints > 0 && (
-                <div className="text-lg text-blue-400">
-                  +{character.temporaryHitPoints} temp
-                </div>
-              )}
-            </div>
-
-            {/* HP Adjustment Controls */}
-            <div className="space-y-3">
-              <div className="flex gap-2">
-                <button
-                  onClick={() => {
-                    const newHP = Math.min(character.hitPoints + 1, character.maxHitPoints);
-                    onUpdate({ hitPoints: newHP });
-                  }}
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm"
-                >
-                  +1 HP
-                </button>
-                <button
-                  onClick={() => {
-                    const currentTempHP = character.temporaryHitPoints || 0;
-                    if (currentTempHP > 0) {
-                      // Remove from temp HP first
-                      onUpdate({ temporaryHitPoints: Math.max(currentTempHP - 1, 0) });
-                    } else {
-                      // Only reduce actual HP if no temp HP
-                      const newHP = Math.max(character.hitPoints - 1, 0);
-                      onUpdate({ hitPoints: newHP });
-                    }
-                  }}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded text-sm"
-                >
-                  -1 HP
-                </button>
-              </div>
-
-              <div className="flex gap-2">
-                <button
-                  onClick={() => onUpdate({ hitPoints: character.maxHitPoints })}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded text-sm"
-                >
-                  Full Heal
-                </button>
-                <button
-                  onClick={() => {
-                    const tempHP = prompt("Add temporary hit points:");
-                    if (tempHP) {
-                      const value = parseInt(tempHP);
-                      if (!isNaN(value) && value > 0) {
-                        onUpdate({ temporaryHitPoints: Math.max(character.temporaryHitPoints || 0, value) });
-                      }
-                    }
-                  }}
-                  className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-3 rounded text-sm"
-                >
-                  Temp HP
-                </button>
-              </div>
-            </div>
-
-            {/* Death Saves (if unconscious) */}
-            {character.hitPoints === 0 && (
-              <div className="mt-4 pt-4 border-t border-slate-600">
-                <h4 className="text-sm font-semibold text-white mb-2">Death Saving Throws</h4>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div>
-                    <div className="text-slate-400 mb-1">Successes</div>
-                    <div className="flex gap-1">
-                      {[1, 2, 3].map(i => (
-                        <button
-                          key={i}
-                          onClick={() => {
-                            const newSuccesses = (character.deathSaveSuccesses || 0) === i ? i - 1 : i;
-                            onUpdate({ deathSaveSuccesses: newSuccesses });
-                          }}
-                          className={`w-4 h-4 rounded-full border ${
-                            (character.deathSaveSuccesses || 0) >= i 
-                              ? 'bg-green-600 border-green-600' 
-                              : 'border-slate-500'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-slate-400 mb-1">Failures</div>
-                    <div className="flex gap-1">
-                      {[1, 2, 3].map(i => (
-                        <button
-                          key={i}
-                          onClick={() => {
-                            const newFailures = (character.deathSaveFailures || 0) === i ? i - 1 : i;
-                            onUpdate({ deathSaveFailures: newFailures });
-                          }}
-                          className={`w-4 h-4 rounded-full border ${
-                            (character.deathSaveFailures || 0) >= i 
-                              ? 'bg-red-600 border-red-600' 
-                              : 'border-slate-500'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            <HitPointsDisplay character={character} onUpdate={onUpdate} />
           </div>
         </div>
 

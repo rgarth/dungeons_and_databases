@@ -1,8 +1,7 @@
 "use client";
 
 import { Heart, Shield, Plus, Minus } from "lucide-react";
-import { getModifier } from "@/lib/dnd/core";
-import { getHitDie, canPrepareSpells } from "@/lib/dnd/level-up";
+import { createDamageService } from "@/services/character/damage";
 import type { Spell } from "@/lib/dnd/spells";
 
 interface HitPointsDisplayProps {
@@ -26,6 +25,7 @@ interface HitPointsDisplayProps {
 }
 
 export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps) {
+  const damageService = createDamageService(character);
   const tempHp = character.temporaryHitPoints || 0;
   const hpPercentage = (character.hitPoints / character.maxHitPoints) * 100;
   const effectiveHpPercentage = tempHp > 0 
@@ -33,78 +33,82 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
     : hpPercentage;
 
   const handleHitPointChange = (change: number) => {
-    const newHp = Math.max(0, Math.min(character.maxHitPoints, character.hitPoints + change));
-    onUpdate({ hitPoints: newHp });
+    if (change < 0) {
+      // Taking damage - use centralized service
+      const result = damageService.takeDamage(Math.abs(change));
+      onUpdate({ 
+        hitPoints: result.newHitPoints, 
+        temporaryHitPoints: result.newTemporaryHitPoints 
+      });
+    } else {
+      // Healing - use centralized service
+      const result = damageService.heal(change);
+      const updates: { 
+        hitPoints: number; 
+        deathSaveSuccesses?: number; 
+        deathSaveFailures?: number; 
+      } = { hitPoints: result.newHitPoints };
+      
+      // Reset death saves if healed from 0 HP
+      if (result.deathSaveResets) {
+        updates.deathSaveSuccesses = 0;
+        updates.deathSaveFailures = 0;
+      }
+      
+      onUpdate(updates);
+    }
   };
 
   const handleTemporaryHitPointChange = (change: number) => {
-    const currentTempHp = character.temporaryHitPoints || 0;
-    const newTempHp = Math.max(0, currentTempHp + change);
+    const newTempHp = damageService.adjustTemporaryHP(change);
     onUpdate({ temporaryHitPoints: newTempHp });
   };
 
   const handleShortRest = async () => {
-    // D&D 5e Short Rest: Can spend Hit Dice to recover HP
-    const currentHp = character.hitPoints;
-    const maxHp = character.maxHitPoints;
+    const result = damageService.shortRest();
     
-    if (currentHp >= maxHp) {
-      alert("You're already at full health!");
+    if (result.hitPointsGained === 0) {
+      alert(result.message);
       return;
     }
     
-    // Calculate potential HP recovery (using average of hit die + CON modifier)
-    const hitDie = getHitDie(character.class);
-    const conModifier = getModifier(character.constitution);
-    const averageRecovery = Math.floor(hitDie / 2) + 1 + conModifier;
-    const maxRecovery = Math.floor(maxHp / 2); // Can't exceed half max HP from short rest
-    const actualRecovery = Math.min(averageRecovery, maxRecovery, maxHp - currentHp);
-    
-    const newHp = Math.min(maxHp, currentHp + actualRecovery);
-    onUpdate({ hitPoints: newHp });
-    
-    alert(`Short Rest completed! Recovered ${actualRecovery} hit points.`);
+    onUpdate({ hitPoints: result.newHitPoints });
+    alert(result.message);
   };
 
   const handleLongRest = async () => {
-    // D&D 5e Long Rest: Fully restore HP, spell slots, most class features
-    const updates: { hitPoints?: number; temporaryHitPoints?: number; spellsPrepared?: Spell[] } = {
-      hitPoints: character.maxHitPoints
-    };
+    const result = damageService.longRest();
     
-    // For classes that prepare spells daily, clear prepared spells so they can choose new ones
-    const needsSpellPrep = canPrepareSpells(character.class);
-    if (needsSpellPrep) {
-      updates.spellsPrepared = []; // Clear prepared spells - they need to choose new ones
+    const updates: { 
+      hitPoints: number; 
+      spellsPrepared?: Spell[]; 
+    } = { hitPoints: result.newHitPoints };
+    if (result.spellsPrepared !== undefined) {
+      updates.spellsPrepared = result.spellsPrepared;
     }
     
     onUpdate(updates);
-    
-    // Show appropriate message based on whether they need to prepare spells
-    const message = needsSpellPrep 
-      ? "Long Rest completed! Hit points fully restored and prepared spells cleared. Choose your spells for the new day!"
-      : "Long Rest completed! Hit points and spell slots fully restored.";
-    
-    alert(message);
+    alert(result.message);
   };
 
   const handleDeathSaveChange = (type: 'success' | 'failure', count: number) => {
-    const currentSuccesses = character.deathSaveSuccesses || 0;
-    const currentFailures = character.deathSaveFailures || 0;
+    const result = damageService.updateDeathSaves(type, count);
     
-    if (type === 'success') {
-      const newSuccesses = currentSuccesses === count ? count - 1 : count;
-      onUpdate({ deathSaveSuccesses: newSuccesses });
-      
-      // Auto-stabilize at 3 successes
-      if (newSuccesses >= 3) {
-        setTimeout(() => {
-          onUpdate({ hitPoints: 1, deathSaveSuccesses: 0, deathSaveFailures: 0 });
-        }, 1000);
-      }
-    } else {
-      const newFailures = currentFailures === count ? count - 1 : count;
-      onUpdate({ deathSaveFailures: newFailures });
+    // Update death saves
+    onUpdate({ 
+      deathSaveSuccesses: result.newSuccesses,
+      deathSaveFailures: result.newFailures 
+    });
+    
+    // Auto-stabilize if needed
+    if (result.autoStabilize) {
+      setTimeout(() => {
+        onUpdate({ 
+          hitPoints: result.autoStabilize!.newHitPoints,
+          deathSaveSuccesses: result.autoStabilize!.newSuccesses,
+          deathSaveFailures: result.autoStabilize!.newFailures 
+        });
+      }, 1000);
     }
   };
 

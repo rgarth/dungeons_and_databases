@@ -7,6 +7,7 @@ interface AvatarData {
     class: string;
     gender: string;
     displayName: string;
+    avatarNumber: number | null;
   }>;
   races: string[];
   classes: string[];

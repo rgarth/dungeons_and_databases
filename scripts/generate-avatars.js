@@ -101,6 +101,11 @@ function showUsage() {
   console.log('   pollinations  # Pollinations.ai (free, poor prompt following)');
   console.log('   huggingface   # Hugging Face (requires API key)');
   console.log('   leonardo      # Leonardo.ai (requires API key)');
+  console.log('🎭 Multi-Avatar Support:');
+  console.log('   - Base avatar: Race_Class_Gender.png');
+  console.log('   - Additional variations: Race_Class_Gender_1.png, Race_Class_Gender_2.png, etc.');
+  console.log('   - Running the script multiple times creates new variations automatically');
+  console.log('   - Users can choose from multiple avatar options per race/class/gender combo');
   console.log('💡 Examples:');
   console.log('   node scripts/generate-avatars.js                               # Generate all (auto provider)');
   console.log('   node scripts/generate-avatars.js --provider=deepai             # Force DeepAI for all');
@@ -108,6 +113,7 @@ function showUsage() {
   console.log('   node scripts/generate-avatars.js --test --provider=pollinations # Test with Pollinations');
   console.log('   node scripts/generate-avatars.js Dragonborn --provider=deepai  # All Dragonborn with DeepAI');
   console.log('   node scripts/generate-avatars.js Elf Ranger Female --force     # Single avatar, auto provider');
+  console.log('   node scripts/generate-avatars.js Human Fighter Male            # Create additional variation');
 }
 
 const filters = parseArguments(filteredArgs);
@@ -139,7 +145,6 @@ showGenerationPlan();
 // Configuration
 const CONFIG = {
   outputDir: './public/avatars',
-  progressFile: `./scripts/avatar-progress-${Date.now()}.json`,
   imageSize: '192x192',
   delayBetweenRequests: 2000, // 2 seconds between requests
   maxRetries: 3,
@@ -171,33 +176,7 @@ function ensureDirectoryExists(dirPath) {
   }
 }
 
-// Load or create progress file
-function loadProgress() {
-  // Use a generic progress file for resume capability
-  const genericProgressFile = './scripts/avatar-progress-current.json';
-  
-  if (fs.existsSync(genericProgressFile)) {
-    const data = fs.readFileSync(genericProgressFile, 'utf8');
-    return JSON.parse(data);
-  }
-  
-  return {
-    totalCombinations,
-    completed: [],
-    failed: [],
-    currentIndex: 0,
-    filters,
-    startTime: new Date().toISOString(),
-    lastUpdate: new Date().toISOString()
-  };
-}
 
-// Save progress
-function saveProgress(progress) {
-  progress.lastUpdate = new Date().toISOString();
-  const genericProgressFile = './scripts/avatar-progress-current.json';
-  fs.writeFileSync(genericProgressFile, JSON.stringify(progress, null, 2));
-}
 
 // Generate all combinations based on filters
 function generateAllCombinations() {
@@ -207,12 +186,16 @@ function generateAllCombinations() {
   for (const race of RACES) {
     for (const characterClass of CLASSES) {
       for (const gender of GENDERS) {
+          // Find the next available filename for this combination
+          const baseFilename = `${race}_${characterClass}_${gender}`;
+          const nextFilename = getNextAvailableFilename(baseFilename);
+          
           combinations.push({
             index,
             race,
             class: characterClass,
             gender,
-            filename: `${race}_${characterClass}_${gender}.png`
+            filename: nextFilename
           });
           index++;
       }
@@ -220,6 +203,30 @@ function generateAllCombinations() {
   }
   
   return combinations;
+}
+
+// Find the next available filename for a race/class/gender combination
+function getNextAvailableFilename(baseFilename) {
+  const outputDir = CONFIG.outputDir;
+  const baseFile = `${baseFilename}.png`;
+  const basePath = path.join(outputDir, baseFile);
+  
+  // If base file doesn't exist, use it
+  if (!fs.existsSync(basePath)) {
+    return baseFile;
+  }
+  
+  // Otherwise, find the next numbered variation
+  let counter = 1;
+  while (true) {
+    const numberedFile = `${baseFilename}_${counter}.png`;
+    const numberedPath = path.join(outputDir, numberedFile);
+    
+    if (!fs.existsSync(numberedPath)) {
+      return numberedFile;
+    }
+    counter++;
+  }
 }
 
 // Create prompt for AI image generation
@@ -902,51 +909,38 @@ async function saveAndResizeImage(buffer, outputPath) {
 }
 
 // Main generation function
-async function generateAvatars(forceRegeneration = false, userFilters = {}) {
+async function generateAvatars(forceRegeneration = false) {
   console.log('\n🚀 Starting D&D Avatar Generation');
   console.log(`📊 Total combinations: ${totalCombinations}`);
   
   // Setup
   ensureDirectoryExists(CONFIG.outputDir);
-  let progress = loadProgress();
   const combinations = generateAllCombinations();
+  const stats = {
+    generated: [],
+    failed: [],
+    skipped: [],
+    startTime: new Date().toISOString()
+  };
   
-  // Reset progress if force regeneration is enabled
+  console.log(`🎯 Will generate ${combinations.length} avatar(s)`);
   if (forceRegeneration) {
-    console.log('🔄 Force mode enabled - resetting progress...');
-    progress = {
-      totalCombinations: combinations.length,
-      completed: [],
-      failed: [],
-      currentIndex: 0,
-             filters: userFilters,
-      startTime: new Date().toISOString(),
-      lastUpdate: new Date().toISOString()
-    };
+    console.log('🔄 Force mode enabled - will overwrite existing files');
+  } else {
+    console.log('📁 Will create new variations for existing combinations');
   }
   
-  console.log(`📈 Progress: ${progress.completed.length}/${progress.totalCombinations} completed`);
-  console.log(`❌ Failed: ${progress.failed.length}`);
-  
-  // Start from where we left off
-  for (let i = progress.currentIndex; i < combinations.length; i++) {
+  // Process each combination
+  for (let i = 0; i < combinations.length; i++) {
     const combination = combinations[i];
     const outputPath = path.join(CONFIG.outputDir, combination.filename);
     
-    console.log(`🔍 Debug: Processing combination ${i+1}/${combinations.length}: ${combination.filename}`);
-    console.log(`🔍 Debug: Output path: ${outputPath}`);
-    console.log(`🔍 Debug: File exists: ${fs.existsSync(outputPath)}`);
-    console.log(`🔍 Debug: Force regenerate: ${forceRegeneration}`);
+    console.log(`\n🔄 Processing ${i+1}/${combinations.length}: ${combination.filename}`);
     
-    // Skip if already exists (unless force regeneration is enabled)
+    // Skip if already exists and not forcing regeneration
     if (fs.existsSync(outputPath) && !forceRegeneration) {
-      console.log(`⏭️  Skipping existing: ${combination.filename}`);
-      continue;
-    }
-    
-    // Skip if already completed (unless force regeneration is enabled)
-    if (progress.completed.includes(combination.filename) && !forceRegeneration) {
-      console.log(`✅ Already completed: ${combination.filename}`);
+      console.log(`⏭️  File already exists, skipping: ${combination.filename}`);
+      stats.skipped.push(combination.filename);
       continue;
     }
     
@@ -955,10 +949,10 @@ async function generateAvatars(forceRegeneration = false, userFilters = {}) {
       const result = await generateAvatarImage(combination, prompts);
       
       if (result.success) {
-        progress.completed.push(combination.filename);
-        console.log(`✅ Generated: ${combination.filename} (${progress.completed.length}/${progress.totalCombinations})`);
+        stats.generated.push(combination.filename);
+        console.log(`✅ Generated: ${combination.filename}`);
       } else {
-        progress.failed.push({
+        stats.failed.push({
           filename: combination.filename,
           error: result.error,
           timestamp: new Date().toISOString()
@@ -966,7 +960,7 @@ async function generateAvatars(forceRegeneration = false, userFilters = {}) {
         console.log(`❌ Failed: ${combination.filename} - ${result.error}`);
       }
     } catch (error) {
-      progress.failed.push({
+      stats.failed.push({
         filename: combination.filename,
         error: error.message,
         timestamp: new Date().toISOString()
@@ -974,32 +968,31 @@ async function generateAvatars(forceRegeneration = false, userFilters = {}) {
       console.log(`💥 Error: ${combination.filename} - ${error.message}`);
     }
     
-    // Update progress
-    progress.currentIndex = i + 1;
-    saveProgress(progress);
-    
-    // Show progress every 10 items
-    if ((i + 1) % 10 === 0) {
-      const percentComplete = ((progress.completed.length / progress.totalCombinations) * 100).toFixed(1);
-      console.log(`📊 Progress: ${percentComplete}% (${progress.completed.length}/${progress.totalCombinations})`);
-    }
-    
     // Add delay between requests
     if (i < combinations.length - 1) {
+      console.log(`⏳ Waiting ${CONFIG.delayBetweenRequests/1000}s before next generation...`);
       await new Promise(resolve => setTimeout(resolve, CONFIG.delayBetweenRequests));
     }
   }
   
   // Final summary
   console.log('\n🎉 Avatar generation complete!');
-  console.log(`✅ Successfully generated: ${progress.completed.length}`);
-  console.log(`❌ Failed: ${progress.failed.length}`);
+  console.log(`✅ Successfully generated: ${stats.generated.length}`);
+  console.log(`⏭️  Skipped (already exist): ${stats.skipped.length}`);
+  console.log(`❌ Failed: ${stats.failed.length}`);
   console.log(`📁 Output directory: ${CONFIG.outputDir}`);
   
-  if (progress.failed.length > 0) {
+  if (stats.failed.length > 0) {
     console.log('\n❌ Failed items:');
-    progress.failed.forEach(item => {
+    stats.failed.forEach(item => {
       console.log(`   - ${item.filename}: ${item.error}`);
+    });
+  }
+  
+  if (stats.generated.length > 0) {
+    console.log('\n🎨 Generated files:');
+    stats.generated.forEach(filename => {
+      console.log(`   - ${filename}`);
     });
   }
 }
@@ -1072,7 +1065,7 @@ if (testMode) {
 } else {
   // Run the generator normally
   if (import.meta.url === `file://${process.argv[1]}`) {
-    generateAvatars(forceRegenerate, filters).catch(console.error);
+    generateAvatars(forceRegenerate).catch(console.error);
   }
 }
 
