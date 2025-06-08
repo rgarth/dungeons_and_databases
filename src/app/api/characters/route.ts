@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       skills,
       weapons,
       inventoryWeapons,
-      inventoryArmor,
+      // inventoryArmor parameter not used - using processedInventoryArmor instead
       spellsKnown,
       spellsPrepared,
       spellSlots,
@@ -95,6 +95,65 @@ export async function POST(request: NextRequest) {
     if (!name || !race || !characterClass) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
+
+    console.log('=== SERVER-SIDE ARMOR PROCESSING ===');
+    console.log('Raw inventory from client:', inventory);
+
+    // Separate armor from general inventory (server-side database lookups)
+    const processedInventory: Array<{name: string; quantity: number}> = [];
+    const processedInventoryArmor: Array<{
+      name: string;
+      type: string;
+      baseAC: number;
+      maxDexBonus: number | null;
+      minStrength: number | null;
+      stealthDisadvantage: boolean;
+      weight: number;
+      cost: string;
+      description: string;
+    }> = [];
+
+    if (inventory && Array.isArray(inventory)) {
+      for (const item of inventory as Array<{name: string; quantity: number}>) {
+        const itemName = item.name;
+        console.log(`🔍 Checking if "${itemName}" is armor...`);
+        
+        // Check if this item exists in the armor database
+        const armorData = await prisma.armor.findFirst({
+          where: {
+            name: {
+              equals: itemName
+            }
+          }
+        });
+
+        if (armorData) {
+          console.log(`✅ Found armor in database: ${armorData.name}`);
+          // Convert to armor object and add to inventoryArmor
+          const armorObject = {
+            name: armorData.name,
+            type: armorData.type,
+            baseAC: armorData.baseAC,
+            maxDexBonus: armorData.maxDexBonus,
+            minStrength: armorData.minStrength,
+            stealthDisadvantage: armorData.stealthDisadvantage,
+            weight: armorData.weight,
+            cost: armorData.cost,
+            description: armorData.description
+          };
+          processedInventoryArmor.push(armorObject);
+          console.log(`✅ Added to armor inventory: ${armorObject.name}`);
+        } else {
+          console.log(`➡️ Not armor, adding to general inventory: ${itemName}`);
+          // Keep in general inventory
+          processedInventory.push(item);
+        }
+      }
+    }
+
+    console.log('=== FINAL SERVER PROCESSING ===');
+    console.log('General inventory:', processedInventory.map(item => typeof item === 'string' ? item : item.name));
+    console.log('Armor inventory:', processedInventoryArmor.map(armor => armor.name));
 
     // Use validation service for comprehensive validation
     const validationService = createCharacterValidationService();
@@ -149,11 +208,11 @@ export async function POST(request: NextRequest) {
         hitPoints: hitPoints || 10,
         maxHitPoints: maxHitPoints || 10,
         armorClass: armorClass || 10,
-        inventory: inventory || [],
+        inventory: processedInventory, // Use processed inventory without armor
         skills: skills || [],
         weapons: weapons || [],
         inventoryWeapons: inventoryWeapons || [],
-        inventoryArmor: inventoryArmor || [],
+        inventoryArmor: processedInventoryArmor, // Use processed armor inventory
         spellsKnown,
         spellsPrepared,
         spellSlots: spellSlots || {},
