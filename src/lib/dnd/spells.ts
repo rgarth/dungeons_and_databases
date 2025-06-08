@@ -647,10 +647,10 @@ export function getSpellSlots(characterClass: string, level: number): Record<num
   return {};
 }
 
-export function getClassSpells(characterClass: string, level: number): Spell[] {
-  // Determine maximum spell level this character can access
-  let maxSpellLevel = 0;
-  
+/**
+ * Get maximum spell level available for a class at a given character level
+ */
+export function getMaxSpellLevel(characterClass: string, level: number): number {
   switch (characterClass) {
     case 'Wizard':
     case 'Sorcerer':
@@ -659,39 +659,47 @@ export function getClassSpells(characterClass: string, level: number): Spell[] {
     case 'Druid':
     case 'Warlock':
       // Full casters
-      if (level >= 17) maxSpellLevel = 9;
-      else if (level >= 15) maxSpellLevel = 8;
-      else if (level >= 13) maxSpellLevel = 7;
-      else if (level >= 11) maxSpellLevel = 6;
-      else if (level >= 9) maxSpellLevel = 5;
-      else if (level >= 7) maxSpellLevel = 4;
-      else if (level >= 5) maxSpellLevel = 3;
-      else if (level >= 3) maxSpellLevel = 2;
-      else if (level >= 1) maxSpellLevel = 1;
+      if (level >= 17) return 9;
+      else if (level >= 15) return 8;
+      else if (level >= 13) return 7;
+      else if (level >= 11) return 6;
+      else if (level >= 9) return 5;
+      else if (level >= 7) return 4;
+      else if (level >= 5) return 3;
+      else if (level >= 3) return 2;
+      else if (level >= 1) return 1;
       break;
     case 'Paladin':
     case 'Ranger':
       // Half-casters start at level 2
-      if (level >= 17) maxSpellLevel = 5;
-      else if (level >= 13) maxSpellLevel = 4;
-      else if (level >= 9) maxSpellLevel = 3;
-      else if (level >= 5) maxSpellLevel = 2;
-      else if (level >= 2) maxSpellLevel = 1;
+      if (level >= 17) return 5;
+      else if (level >= 13) return 4;
+      else if (level >= 9) return 3;
+      else if (level >= 5) return 2;
+      else if (level >= 2) return 1;
       break;
     case 'Fighter': // Eldritch Knight
     case 'Rogue': // Arcane Trickster
       // Third-casters start at level 3
-      if (level >= 19) maxSpellLevel = 4;
-      else if (level >= 13) maxSpellLevel = 3;
-      else if (level >= 7) maxSpellLevel = 2;
-      else if (level >= 3) maxSpellLevel = 1;
+      if (level >= 19) return 4;
+      else if (level >= 13) return 3;
+      else if (level >= 7) return 2;
+      else if (level >= 3) return 1;
       break;
     default:
-      maxSpellLevel = 0;
+      return 0;
   }
-  
-  return SPELLS.filter(spell => 
-    spell.classes.includes(characterClass) && 
-    spell.level <= maxSpellLevel
-  );
+  return 0;
+}
+
+/**
+ * Note: This function now requires database access.
+ * Use getClassSpellsFromDatabase() or fetch spells from API instead.
+ * 
+ * @deprecated Use database-based spell filtering instead
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function getClassSpells(_characterClass: string, _level: number): Spell[] {
+  console.warn('getClassSpells() is deprecated - use database-based spell filtering instead');
+  return [];
 } 

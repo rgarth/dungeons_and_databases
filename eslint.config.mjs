@@ -10,11 +10,33 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  // First, explicitly ignore files and directories that cause noise
   {
-    // Disable linting for markdown files to reduce noise
-    ignores: ["**/*.md", "**/*.mdx"],
+    ignores: [
+      // Markdown files
+      "**/*.md", 
+      "**/*.mdx", 
+      "**/README.md", 
+      "**/docs/**/*.md",
+      // Next.js build output and generated files
+      ".next/**/*",
+      ".next/types/**/*",
+      "out/**/*",
+      // Dependencies
+      "node_modules/**/*",
+      // Build output and temporary files
+      "dist/**/*",
+      "build/**/*",
+      ".turbo/**/*",
+      // Scripts and generated files that shouldn't be linted
+      "scripts/**/*.js",
+      "cache_status_checker.js",
+      // Prisma generated files
+      "prisma/generated/**/*",
+    ],
   },
+  // Then apply Next.js rules to remaining files
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];
 
 export default eslintConfig;

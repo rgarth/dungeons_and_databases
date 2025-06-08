@@ -1,0 +1,21 @@
+# Ignore all markdown files to reduce noise in problems tab
+**/*.md
+**/*.mdx
+*.md
+*.mdx
+
+# Specific common markdown files
+README.md
+CHANGELOG.md
+LICENSE.md
+CONTRIBUTING.md
+
+# Documentation directories
+docs/
+documentation/
+
+# Node modules and build output (just in case)
+node_modules/
+.next/
+dist/
+build/ 

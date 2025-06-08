@@ -8,7 +8,8 @@ import {
   FIGHTING_STYLES,
   FEATS
 } from '@/lib/dnd/progression';
-import { SPELLS } from '@/lib/dnd/spells';
+import { getMaxSpellLevel } from '@/lib/dnd/spells';
+import { spellsData } from '../../../prisma/data/spells-data';
 
 export interface LevelUpOptions {
   availableChoices: LevelUpChoice[];
@@ -22,6 +23,7 @@ export interface LevelUpOptions {
     cantripsAvailable: string[];
     spellsToLearn: number;
     cantripsToLearn: number;
+    autoLearnSpells?: string[];
   };
 }
 
@@ -116,6 +118,10 @@ export class LevelUpService {
     const newClassLevel = currentClassLevel + 1;
     const newTotalLevel = currentTotalLevel + 1;
     
+    // Get progression data to check for auto-learned spells
+    const progression = this.getClassProgression(levelingClass, newClassLevel);
+    const spellOptions = progression ? this.getSpellOptions(character, levelingClass, newClassLevel, progression) : undefined;
+    
     // Create the new class level
     const newClassLevelData: ClassLevel = {
       class: levelingClass,
@@ -128,6 +134,22 @@ export class LevelUpService {
     // Process selected features
     const selectedFeatures: SelectedFeature[] = [];
     let featureId = 1;
+    
+    // Auto-learn spells if there were no choices to make
+    if (spellOptions?.autoLearnSpells && spellOptions.autoLearnSpells.length > 0) {
+      spellOptions.autoLearnSpells.forEach(spellName => {
+        selectedFeatures.push({
+          id: `${character.id}-${newTotalLevel}-${featureId++}`,
+          classSource: levelingClass,
+          classLevel: newClassLevel,
+          characterLevel: newTotalLevel,
+          featureType: 'spell',
+          name: 'Spell Learned (Auto)',
+          selection: spellName,
+          description: `Automatically learned spell: ${spellName}`
+        });
+      });
+    }
     
     Object.entries(choices).forEach(([choiceType, selection]) => {
       switch (choiceType) {
@@ -272,47 +294,53 @@ export class LevelUpService {
       return undefined; // Not a spellcasting class
     }
     
-    // Get available spells for this class
-    const availableSpells = SPELLS
-      .filter(spell => spell.classes.includes(className))
-      .filter(spell => spell.level <= this.getMaxSpellLevel(newLevel, className))
+    // Get available spells for this class that the character doesn't already know
+    const currentSpells = character.spellsKnown || [];
+    const maxSpellLevel = getMaxSpellLevel(className, newLevel);
+    
+    const availableSpells = spellsData
+      .filter(spell => {
+        // Parse classes array (it's stored as JSON string in database format)
+        let spellClasses: string[] = [];
+        try {
+          spellClasses = typeof spell.classes === 'string' ? JSON.parse(spell.classes) : spell.classes;
+        } catch {
+          spellClasses = [];
+        }
+        return spellClasses.includes(className);
+      })
+      .filter(spell => spell.level <= maxSpellLevel)
+      .filter(spell => spell.level > 0) // Exclude cantrips from main spell learning
+      .filter(spell => !currentSpells.includes(spell.name)) // Exclude already known spells
       .map(spell => spell.name);
     
-    const cantripsAvailable = SPELLS
-      .filter(spell => spell.classes.includes(className) && spell.level === 0)
+    const cantripsAvailable = spellsData
+      .filter(spell => {
+        let spellClasses: string[] = [];
+        try {
+          spellClasses = typeof spell.classes === 'string' ? JSON.parse(spell.classes) : spell.classes;
+        } catch {
+          spellClasses = [];
+        }
+        return spellClasses.includes(className) && spell.level === 0;
+      })
+      .filter(spell => !currentSpells.includes(spell.name)) // Exclude already known cantrips
       .map(spell => spell.name);
     
     // Calculate how many spells to learn
-    const currentSpells = character.spellsKnown || [];
-    const spellsToLearn = Math.max(0, (progression.spellsKnown || 0) - currentSpells.length);
+    const targetSpellsKnown = progression.spellsKnown || 0;
+    const spellsToLearn = Math.max(0, targetSpellsKnown - currentSpells.length);
+    
+    // If there are no choices to be made (available spells <= spells to learn), return 0 to skip the step
+    const actualSpellsToLearn = availableSpells.length <= spellsToLearn ? 0 : spellsToLearn;
     
     return {
       availableSpells,
       cantripsAvailable,
-      spellsToLearn,
-      cantripsToLearn: 0 // Will implement cantrip progression later
+      spellsToLearn: actualSpellsToLearn,
+      cantripsToLearn: 0, // Will implement cantrip progression later
+      autoLearnSpells: availableSpells.length <= spellsToLearn ? availableSpells.slice(0, spellsToLearn) : []
     };
-  }
-  
-  /**
-   * Get maximum spell level available for a class at a given level
-   */
-  private getMaxSpellLevel(classLevel: number, className: string): number {
-    // Simplified calculation - full casters get spell levels every 2 levels
-    const fullCasters = ['Wizard', 'Sorcerer', 'Cleric', 'Druid', 'Bard'];
-    
-    if (fullCasters.includes(className)) {
-      return Math.min(9, Math.ceil(classLevel / 2));
-    }
-    
-    // Half casters start at level 2 and progress slower
-    const halfCasters = ['Paladin', 'Ranger'];
-    if (halfCasters.includes(className)) {
-      return classLevel < 2 ? 0 : Math.min(5, Math.ceil((classLevel - 1) / 4) + 1);
-    }
-    
-    // Third casters (Eldritch Knight, Arcane Trickster)
-    return classLevel < 3 ? 0 : Math.min(4, Math.ceil((classLevel - 2) / 6) + 1);
   }
   
   /**
