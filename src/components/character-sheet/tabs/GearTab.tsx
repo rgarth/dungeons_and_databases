@@ -4,11 +4,14 @@ import { useState } from "react";
 import { Package, Shield, Wand2, Plus, X, Trash2, Sparkles, Scroll } from "lucide-react";
 import { createCharacterEquipment } from "@/services/character/equipment";
 import { createMagicalItemService, type DiceRoll } from "@/services/character/magical-items";
-import { WEAPONS, ARMOR } from "@/lib/dnd/equipment";
+// Note: Using database data instead of hardcoded arrays
+import { weaponsData } from '../../../../prisma/data/weapons-data';
+import { armorData } from '../../../../prisma/data/armor-data';
+import { spellsData } from '../../../../prisma/data/spells-data';
+import { magicalItemsData } from '../../../../prisma/data/magical-items-data';
 import type { Weapon, MagicalWeapon, Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
-import { SPELLS } from "@/lib/dnd/spells";
-import { MagicalItem, EquippedMagicalItem, MAGICAL_ITEMS, canAttuneMagicalItem, canEquipInSlot } from "@/lib/dnd/magical-items";
+import { MagicalItem, EquippedMagicalItem, MagicalItemType, MagicalItemRarity, canAttuneMagicalItem, canEquipInSlot } from "@/lib/dnd/magical-items";
 
 interface GearTabProps {
   character: {
@@ -117,8 +120,14 @@ export function GearTab({
   const currentArmorClass = equipment.calculateArmorClass(equippedArmor);
 
   const handleAddWeapon = () => {
-    const weapon = WEAPONS.find(w => w.name === selectedWeapon);
-    if (weapon) {
+    const weaponData = weaponsData.find(w => w.name === selectedWeapon);
+    if (weaponData) {
+      const weapon = {
+        ...weaponData,
+        type: weaponData.type as 'Simple' | 'Martial',
+        category: weaponData.category as 'Melee' | 'Ranged',
+        properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
+      } as Weapon;
       onAddWeapon(weapon);
       setSelectedWeapon("");
       setShowWeaponSelector(false);
@@ -126,8 +135,12 @@ export function GearTab({
   };
 
   const handleAddArmor = () => {
-    const armor = ARMOR.find(a => a.name === selectedArmor);
-    if (armor) {
+    const armorData_item = armorData.find(a => a.name === selectedArmor);
+    if (armorData_item) {
+      const armor = {
+        ...armorData_item,
+        type: armorData_item.type as 'Light' | 'Medium' | 'Heavy' | 'Shield'
+      } as Armor;
       onAddArmor(armor);
       setSelectedArmor("");
       setShowArmorSelector(false);
@@ -135,8 +148,14 @@ export function GearTab({
   };
 
   const handleAddMagicalItem = () => {
-    const item = MAGICAL_ITEMS.find(i => i.name === selectedMagicalItem);
-    if (item) {
+    const itemData = magicalItemsData.find(i => i.name === selectedMagicalItem);
+    if (itemData) {
+      const item = {
+        ...itemData,
+        type: itemData.type as MagicalItemType,
+        rarity: itemData.rarity as MagicalItemRarity,
+        effects: itemData.effects ? JSON.parse(itemData.effects) : []
+      } as MagicalItem;
       onAddMagicalItem(item);
       setSelectedMagicalItem("");
       setShowMagicalItemSelector(false);
@@ -148,7 +167,11 @@ export function GearTab({
   };
 
   const handleCreateSpellScroll = () => {
-    const spell = SPELLS.find(s => s.name === selectedSpell);
+    const spellData = spellsData.find(s => s.name === selectedSpell);
+    const spell = spellData ? {
+      ...spellData,
+      classes: spellData.classes ? JSON.parse(spellData.classes) : []
+    } as Spell : null;
     if (spell) {
       const scrollLevel = spell.level === 0 ? "Cantrip" : `${spell.level}${magicalItems.getOrdinalSuffix(spell.level)} Level`;
       const rarity: "Common" | "Uncommon" | "Rare" | "Very Rare" | "Legendary" = 
@@ -183,11 +206,11 @@ export function GearTab({
 
   // Filter spells by level for spell scroll creator
   const spellsForLevel = selectedSpellLevel >= 0 
-    ? SPELLS.filter(spell => spell.level === selectedSpellLevel)
-    : SPELLS;
+    ? spellsData.filter(spell => spell.level === selectedSpellLevel)
+    : spellsData;
 
   // Filter magical items based on search and filters
-  const filteredMagicalItems = MAGICAL_ITEMS.filter(item => {
+  const filteredMagicalItems = magicalItemsData.filter(item => {
     const matchesSearch = !magicalItemSearch || 
       item.name.toLowerCase().includes(magicalItemSearch.toLowerCase()) ||
       item.description.toLowerCase().includes(magicalItemSearch.toLowerCase());
@@ -199,8 +222,8 @@ export function GearTab({
   });
 
   // Get unique rarities and types for filter options
-  const availableRarities = [...new Set(MAGICAL_ITEMS.map(item => item.rarity))];
-  const availableTypes = [...new Set(MAGICAL_ITEMS.map(item => item.type))];
+  const availableRarities = [...new Set(magicalItemsData.map(item => item.rarity))];
+  const availableTypes = [...new Set(magicalItemsData.map(item => item.type))];
 
   // Helper to check if item is consumable using service
 
@@ -751,7 +774,7 @@ export function GearTab({
               className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white mb-4"
             >
               <option value="">Select weapon...</option>
-              {WEAPONS.map(weapon => (
+              {weaponsData.map(weapon => (
                 <option key={weapon.name} value={weapon.name}>
                   {weapon.name} ({weapon.damage} {weapon.damageType})
                 </option>
@@ -794,7 +817,7 @@ export function GearTab({
               className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white mb-4"
             >
               <option value="">Select armor...</option>
-              {ARMOR.map(armor => (
+              {armorData.map(armor => (
                 <option key={armor.name} value={armor.name}>
                   {armor.name} (AC {armor.baseAC}, {armor.type})
                 </option>

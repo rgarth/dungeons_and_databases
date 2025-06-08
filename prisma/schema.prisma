@@ -123,6 +123,20 @@ model MagicalItem {
   updatedAt           DateTime @updatedAt
 }
 
+model Treasure {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  type        String   // "Gemstone", "Art Object", "Mundane Treasure"
+  category    String?  // For gemstones: "10 gp", "50 gp", "100 gp", "500 gp", "1000 gp", "5000 gp"
+                       // For art objects: "25 gp", "250 gp", "750 gp", "2500 gp", "7500 gp"
+  value       Int      // Value in gold pieces
+  description String
+  weight      Float?   // Some treasures have no weight
+  appearance  String?  // Physical description for immersion
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model Character {
   id          String @id @default(cuid())
   name        String

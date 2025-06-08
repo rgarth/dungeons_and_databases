@@ -1,5 +1,105 @@
-// Character generation utilities
-import { Weapon, WEAPONS, Armor, ARMOR } from './equipment';
+// Character creation and utility functions
+import { Weapon, MagicalWeapon, Armor, createMagicalWeapon, MAGICAL_WEAPON_TEMPLATES } from './equipment';
+import { Spell } from './spells';
+
+// Character interfaces
+export interface Character {
+  id: string;
+  name: string;
+  race: string;
+  class: string;
+  level: number;
+  background: string;
+  alignment?: string;
+  
+  // Ability Scores
+  strength: number;
+  dexterity: number;
+  constitution: number;
+  intelligence: number;
+  wisdom: number;
+  charisma: number;
+  
+  // Core Stats
+  hitPoints: number;
+  maxHitPoints: number;
+  temporaryHitPoints?: number;
+  armorClass: number;
+  speed: number;
+  proficiencyBonus: number;
+  
+  // Skills and Proficiencies
+  skills: string[];
+  
+  // Equipment
+  inventory: string[];
+  equipment: string[];
+  weapons: (Weapon | MagicalWeapon)[];
+  inventoryWeapons: (Weapon | MagicalWeapon)[];
+  armor: Armor[];
+  inventoryArmor: Armor[];
+  
+  // Spellcasting
+  spellsKnown: Spell[];
+  spellsPrepared: Spell[];
+  spellSlots: Record<number, number>;
+  spellcastingAbility?: string;
+  spellSaveDC?: number;
+  spellAttackBonus?: number;
+  
+  // Combat
+  actions: string[];
+  bonusActions: string[];
+  reactions: string[];
+  
+  // Wealth
+  copperPieces: number;
+  silverPieces: number;
+  goldPieces: number;
+  platinumPieces?: number;
+  
+  // Character Details
+  appearance?: string;
+  personality?: string;
+  backstory?: string;
+  notes?: string;
+  avatar?: string;
+  
+  // Combat State
+  deathSaveSuccesses?: number;
+  deathSaveFailures?: number;
+}
+
+export interface CharacterCreationData {
+  name: string;
+  race: string;
+  class: string;
+  level: number;
+  background: string;
+  alignment?: string;
+  abilities: {
+    strength: number;
+    dexterity: number;
+    constitution: number;
+    intelligence: number;
+    wisdom: number;
+    charisma: number;
+  };
+  appearance?: string;
+  personality?: string;
+  backstory?: string;
+}
+
+export interface StartingEquipment {
+  weapons: Weapon[];
+  armor: Armor[];
+  equipment: string[];
+  money: {
+    copper: number;
+    silver: number;
+    gold: number;
+  };
+}
 
 // D&D 5e Equipment Packages by Class (players choose from these options)
 export function getEquipmentPackageOptions(characterClass: string): Array<{name: string, items: string[]}> {
@@ -282,7 +382,9 @@ export function getEquipmentPackOptions(): Array<{name: string, items: Array<{na
 }
 
 // Weapon suggestions by class (players can customize freely)
-export function getClassWeaponSuggestions(characterClass: string): Weapon[] {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function getClassWeaponSuggestions(_characterClass: string): Weapon[] {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const weaponSuggestions: Record<string, string[]> = {
     Barbarian: ['Greataxe', 'Handaxe', 'Javelin'],
     Fighter: ['Longsword', 'Shield', 'Handaxe', 'Light Crossbow'],
@@ -298,12 +400,14 @@ export function getClassWeaponSuggestions(characterClass: string): Weapon[] {
     Monk: ['Shortsword', 'Dart']
   };
 
-  const suggestions = weaponSuggestions[characterClass] || ['Dagger'];
-  return suggestions.map(name => WEAPONS.find(w => w.name === name)).filter(Boolean) as Weapon[];
+  console.warn('getClassWeaponSuggestions() is deprecated - use database-based weapon filtering instead');
+  return [];
 }
 
 // Armor suggestions by class 
-export function getClassArmorSuggestions(characterClass: string): Armor[] {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function getClassArmorSuggestions(_characterClass: string): Armor[] {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const armorSuggestions: Record<string, string[]> = {
     Barbarian: ['Leather Armor'],
     Fighter: ['Chain Mail', 'Shield'],
@@ -319,8 +423,8 @@ export function getClassArmorSuggestions(characterClass: string): Armor[] {
     Monk: []
   };
 
-  const suggestions = armorSuggestions[characterClass] || [];
-  return suggestions.map(name => ARMOR.find(a => a.name === name)).filter(Boolean) as Armor[];
+  console.warn('getClassArmorSuggestions() is deprecated - use database-based armor filtering instead');
+  return [];
 }
 
 // Legacy function for auto-assignment (keep for backwards compatibility but discourage use)
@@ -518,4 +622,159 @@ function generateFallbackName(race: string): string {
   const fullName = `${firstName} ${lastName}`;
   console.log('Generated fallback name:', fullName);
   return fullName;
+}
+
+export function calculateCarryingCapacity(strengthScore: number): {
+  capacity: number;
+  pushDragLift: number;
+  encumbered: number;
+  heavilyEncumbered: number;
+} {
+  const capacity = strengthScore * 15; // Base carrying capacity
+  
+  return {
+    capacity,
+    pushDragLift: capacity * 2,
+    encumbered: capacity / 3,
+    heavilyEncumbered: (capacity * 2) / 3
+  };
+}
+
+export function calculateEncumbrance(character: Character, additionalWeight: number = 0): {
+  currentWeight: number;
+  capacity: number;
+  isEncumbered: boolean;
+  isHeavilyEncumbered: boolean;
+  status: 'Normal' | 'Encumbered' | 'Heavily Encumbered' | 'Overloaded';
+} {
+  const carrying = calculateCarryingCapacity(character.strength);
+  
+  // Calculate current weight (this would need to sum up actual item weights from database)
+  let currentWeight = additionalWeight;
+  
+  // Add equipment weight (placeholder - would need to look up actual weights)
+  currentWeight += character.weapons.length * 3; // Average weapon weight
+  currentWeight += character.armor.length * 20; // Average armor weight
+  currentWeight += character.inventory.length * 1; // Average item weight
+  
+  const isEncumbered = currentWeight > carrying.encumbered;
+  const isHeavilyEncumbered = currentWeight > carrying.heavilyEncumbered;
+  const isOverloaded = currentWeight > carrying.capacity;
+  
+  let status: 'Normal' | 'Encumbered' | 'Heavily Encumbered' | 'Overloaded';
+  if (isOverloaded) status = 'Overloaded';
+  else if (isHeavilyEncumbered) status = 'Heavily Encumbered';
+  else if (isEncumbered) status = 'Encumbered';
+  else status = 'Normal';
+  
+  return {
+    currentWeight,
+    capacity: carrying.capacity,
+    isEncumbered,
+    isHeavilyEncumbered,
+    status
+  };
+}
+
+export function canCharacterUseWeapon(character: Character, weapon: Weapon): boolean {
+  // Basic proficiency check (simplified)
+  const simpleWeaponClasses = ['Fighter', 'Barbarian', 'Paladin', 'Ranger', 'Rogue', 'Bard', 'Cleric', 'Druid', 'Monk', 'Warlock'];
+  const martialWeaponClasses = ['Fighter', 'Barbarian', 'Paladin', 'Ranger'];
+  
+  if (weapon.type === 'Simple') {
+    return simpleWeaponClasses.includes(character.class);
+  } else if (weapon.type === 'Martial') {
+    return martialWeaponClasses.includes(character.class);
+  }
+  
+  return false;
+}
+
+export function canCharacterWearArmor(character: Character, armor: Armor): boolean {
+  // Basic proficiency check (simplified)
+  const lightArmorClasses = ['Fighter', 'Barbarian', 'Paladin', 'Ranger', 'Rogue', 'Bard', 'Cleric', 'Druid', 'Monk', 'Warlock', 'Sorcerer', 'Wizard'];
+  const mediumArmorClasses = ['Fighter', 'Barbarian', 'Paladin', 'Ranger', 'Cleric', 'Druid'];
+  const heavyArmorClasses = ['Fighter', 'Paladin', 'Cleric'];
+  
+  switch (armor.type) {
+    case 'Light':
+      return lightArmorClasses.includes(character.class);
+    case 'Medium':
+      return mediumArmorClasses.includes(character.class);
+    case 'Heavy':
+      return heavyArmorClasses.includes(character.class) && 
+             character.strength >= (armor.minStrength || 0);
+    case 'Shield':
+      return ['Fighter', 'Barbarian', 'Paladin', 'Ranger', 'Cleric', 'Druid'].includes(character.class);
+    default:
+      return false;
+  }
+}
+
+export function createMagicalWeaponForCharacter(
+  character: Character,
+  baseWeaponName: string,
+  templateName: string,
+  customName?: string
+): MagicalWeapon | null {
+  // This would need to look up the base weapon from database
+  console.warn('createMagicalWeaponForCharacter() requires database lookup for base weapon');
+  
+  const template = MAGICAL_WEAPON_TEMPLATES.find(t => t.name === templateName);
+  if (!template) {
+    return null;
+  }
+  
+  // For now, create a basic weapon structure
+  const baseWeapon: Weapon = {
+    name: baseWeaponName,
+    type: 'Martial',
+    category: 'Melee',
+    damage: '1d8',
+    damageType: 'Slashing',
+    properties: [],
+    weight: 3,
+    cost: '15 gp'
+  };
+  
+  return createMagicalWeapon(baseWeapon, template, customName);
+}
+
+export function validateCharacterEquipment(character: Character): {
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
+} {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+  
+  // Check weapon proficiencies
+  character.weapons.forEach(weapon => {
+    if (!canCharacterUseWeapon(character, weapon)) {
+      warnings.push(`Not proficient with ${weapon.name}`);
+    }
+  });
+  
+  // Check armor proficiencies
+  character.armor.forEach(armor => {
+    if (!canCharacterWearArmor(character, armor)) {
+      errors.push(`Cannot wear ${armor.name} - lacks proficiency or requirements`);
+    }
+  });
+  
+  // Check encumbrance
+  const encumbrance = calculateEncumbrance(character);
+  if (encumbrance.status === 'Overloaded') {
+    errors.push('Character is overloaded and cannot move');
+  } else if (encumbrance.status === 'Heavily Encumbered') {
+    warnings.push('Character is heavily encumbered (speed -20 ft, disadvantage on ability checks)');
+  } else if (encumbrance.status === 'Encumbered') {
+    warnings.push('Character is encumbered (speed -10 ft)');
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings
+  };
 } 

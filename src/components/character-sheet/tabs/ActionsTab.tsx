@@ -7,7 +7,8 @@ import { getSpellcastingType, canPrepareSpells, getSpellsPreparedCount } from "@
 import { getSpellsFromMagicalItems, type EquippedMagicalItem } from "@/lib/dnd/magical-items";
 import type { Weapon, MagicalWeapon } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
-import { SPELLS, getClassSpells } from "@/lib/dnd/spells";
+import { getClassSpells } from "@/lib/dnd/spells";
+import { findSpellByName } from "@/lib/dnd/spell-data-helper";
 import type { MagicalItem } from "@/lib/dnd/magical-items";
 import { CONDITIONS, getCondition, type ActiveCondition } from "@/lib/dnd/conditions";
 
@@ -105,7 +106,7 @@ export function ActionsTab({
       }
       
       // Find the actual spell
-      const spell = SPELLS.find((s: Spell) => s.name === spellName);
+      const spell = findSpellByName(spellName);
       
       if (!spell) return null;
       

@@ -1,11 +1,12 @@
 "use client";
 
 import { Package, Trash2, Plus, Minus, Coins, Zap } from "lucide-react";
-import { EQUIPMENT, EQUIPMENT_CATEGORIES, getEquipmentByCategory } from "@/lib/dnd/equipment";
-import { COMMON_TREASURES, STORY_TREASURES } from "@/lib/dnd/data";
+import { EQUIPMENT_CATEGORIES } from "@/lib/dnd/equipment";
+import { equipmentData } from "../../../../prisma/data/equipment-data";
 import type { InventoryItem } from "@/lib/dnd/equipment";
 import type { Treasure } from "@/lib/dnd/data";
-import { useState } from "react";
+import { getAllTreasures } from "@/lib/dnd/treasure-data-helper";
+import { useState, useEffect } from "react";
 
 interface InventoryTabProps {
   inventory: InventoryItem[];
@@ -35,11 +36,26 @@ export function InventoryTab({
   const [newTreasureName, setNewTreasureName] = useState("");
   const [newTreasureValue, setNewTreasureValue] = useState("");
   const [selectedTreasure, setSelectedTreasure] = useState("");
-  const [treasureAddMode, setTreasureAddMode] = useState<"common" | "story" | "custom">("common");
+  const [treasureAddMode, setTreasureAddMode] = useState<"database" | "custom">("database");
+  const [allTreasures, setAllTreasures] = useState<Treasure[]>([]);
+
+  // Load treasure database on component mount
+  useEffect(() => {
+    const loadTreasures = async () => {
+      try {
+        const treasureData = await getAllTreasures();
+        setAllTreasures(treasureData);
+      } catch (error) {
+        console.error('Error loading treasures:', error);
+      }
+    };
+    loadTreasures();
+  }, []);
 
   const handleAddItem = () => {
     if (addMode === "equipment" && selectedEquipment) {
-      const equipment = EQUIPMENT.find(e => e.name === selectedEquipment);
+      const allEquipment = equipmentData.filter(e => e.type === selectedCategory);
+      const equipment = allEquipment.find((e) => e.name === selectedEquipment);
       if (equipment) {
         const existingItemIndex = inventory.findIndex(item => item.name === equipment.name);
         let updatedInventory: InventoryItem[];
@@ -111,16 +127,16 @@ export function InventoryTab({
   const handleAddTreasure = () => {
     let treasureTemplate: Treasure | undefined;
     
-    if (treasureAddMode === "common" && selectedTreasure) {
-      treasureTemplate = COMMON_TREASURES.find(t => t.name === selectedTreasure);
-    } else if (treasureAddMode === "story" && selectedTreasure) {
-      treasureTemplate = STORY_TREASURES.find(t => t.name === selectedTreasure);
+    if (treasureAddMode === "database" && selectedTreasure) {
+      treasureTemplate = allTreasures.find(t => t.name === selectedTreasure);
     } else if (treasureAddMode === "custom" && newTreasureName.trim() && newTreasureValue.trim()) {
       const value = parseInt(newTreasureValue);
       if (!isNaN(value) && value > 0) {
         treasureTemplate = {
           name: newTreasureName.trim(),
-          value: value
+          type: "Custom",
+          value: value,
+          description: "Custom treasure item"
         };
       }
     }
@@ -194,7 +210,7 @@ export function InventoryTab({
                       className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
                     >
                       <option value="">Select item...</option>
-                      {getEquipmentByCategory(selectedCategory).filter(equipment => equipment.type !== 'Armor').map(equipment => (
+                      {equipmentData.filter(equipment => equipment.type === selectedCategory && equipment.type !== 'Armor').map(equipment => (
                         <option key={equipment.name} value={equipment.name}>
                           {equipment.name} ({equipment.cost})
                         </option>
@@ -356,24 +372,14 @@ export function InventoryTab({
             {/* Add Treasure Mode Toggle */}
             <div className="flex gap-1 mb-4">
               <button
-                onClick={() => setTreasureAddMode("common")}
+                onClick={() => setTreasureAddMode("database")}
                 className={`flex-1 py-2 px-2 rounded text-xs font-medium transition-colors ${
-                  treasureAddMode === "common" 
+                  treasureAddMode === "database" 
                     ? "bg-purple-600 text-white" 
                     : "bg-slate-600 text-slate-300 hover:bg-slate-500"
                 }`}
               >
-                Common
-              </button>
-              <button
-                onClick={() => setTreasureAddMode("story")}
-                className={`flex-1 py-2 px-2 rounded text-xs font-medium transition-colors ${
-                  treasureAddMode === "story" 
-                    ? "bg-purple-600 text-white" 
-                    : "bg-slate-600 text-slate-300 hover:bg-slate-500"
-                }`}
-              >
-                Story
+                Database
               </button>
               <button
                 onClick={() => setTreasureAddMode("custom")}
@@ -388,7 +394,7 @@ export function InventoryTab({
             </div>
 
             {/* Add Treasure */}
-            {(treasureAddMode === "common" || treasureAddMode === "story") ? (
+            {treasureAddMode === "database" ? (
               <div className="flex gap-2 mb-4">
                 <select
                   value={selectedTreasure}
@@ -396,9 +402,9 @@ export function InventoryTab({
                   className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
                 >
                   <option value="">Select treasure...</option>
-                  {(treasureAddMode === "common" ? COMMON_TREASURES : STORY_TREASURES).map(treasure => (
+                  {allTreasures.map(treasure => (
                     <option key={treasure.name} value={treasure.name}>
-                      {treasure.name} ({treasure.value} gp)
+                      {treasure.name} ({treasure.value} gp) - {treasure.type}
                     </option>
                   ))}
                 </select>

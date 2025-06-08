@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import { weaponsData } from './data/weapons-data'
 import { armorData } from './data/armor-data'
 import { equipmentData } from './data/equipment-data'
+import { treasureData } from './data/treasure-data'
 
 const prisma = new PrismaClient()
 
@@ -274,6 +275,7 @@ async function main() {
   await prisma.weapon.deleteMany()
   await prisma.armor.deleteMany()
   await prisma.equipment.deleteMany()
+  await prisma.treasure.deleteMany()
   
   console.log('🗑️  Cleared existing data')
   
@@ -304,6 +306,13 @@ async function main() {
     await prisma.equipment.create({ data: equipment })
   }
   console.log(`✅ Created ${equipmentData.length} equipment items`)
+  
+  // Seed treasures
+  console.log('💎 Seeding treasures...')
+  for (const treasure of treasureData) {
+    await prisma.treasure.create({ data: treasure })
+  }
+  console.log(`✅ Created ${treasureData.length} treasures`)
   
   console.log('🎉 Database seeding completed!')
 }

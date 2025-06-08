@@ -20,14 +20,18 @@ export function useGlobalAvatarPreloader() {
           console.log('Fetching avatar data for preloading...');
           const response = await fetch('/api/avatars');
           avatarData = await response.json();
-          cacheAvatarData(avatarData);
+          if (avatarData) {
+            cacheAvatarData(avatarData);
+          }
         }
 
-        // Start preloading images in background
-        console.log('Starting avatar image preloading...');
-        preloadAvatarImages(avatarData).then(() => {
-          console.log('Avatar preloading completed!');
-        }).catch(console.error);
+        // Start preloading images in background if we have data
+        if (avatarData) {
+          console.log('Starting avatar image preloading...');
+          preloadAvatarImages(avatarData).then(() => {
+            console.log('Avatar preloading completed!');
+          }).catch(console.error);
+        }
         
       } catch (error) {
         console.error('Failed to start avatar preloading:', error);

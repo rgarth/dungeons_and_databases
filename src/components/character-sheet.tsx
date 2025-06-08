@@ -4,9 +4,10 @@ import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp, FileTex
 import { useState, useEffect } from "react";
 import { getModifier } from "@/lib/dnd/core";
 import { Spell, getClassSpells } from "@/lib/dnd/spells";
-import { Weapon, MagicalWeapon, InventoryItem, WEAPONS, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, Armor, calculateArmorClass } from "@/lib/dnd/equipment";
+import { Weapon, MagicalWeapon, InventoryItem, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, Armor, calculateArmorClass } from "@/lib/dnd/equipment";
 import { Action, canEquipArmor } from "@/lib/dnd/combat";
 import { Treasure } from "@/lib/dnd/data";
+import { weaponsData } from "../../prisma/data/weapons-data";
 import { MagicalItem, EquippedMagicalItem, applyMagicalItemEffects } from "@/lib/dnd/magical-items";
 import { ActiveCondition } from "@/lib/dnd/conditions";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
@@ -259,10 +260,16 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
 
   const handleCreateMagicalWeapon = () => {
     if (selectedBaseWeapon && selectedMagicalTemplate) {
-      const baseWeapon = WEAPONS.find(w => w.name === selectedBaseWeapon);
+      const weaponData = weaponsData.find(w => w.name === selectedBaseWeapon);
       const template = MAGICAL_WEAPON_TEMPLATES.find(t => t.name === selectedMagicalTemplate);
       
-      if (baseWeapon && template) {
+      if (weaponData && template) {
+        const baseWeapon = {
+          ...weaponData,
+          type: weaponData.type as 'Simple' | 'Martial',
+          category: weaponData.category as 'Melee' | 'Ranged',
+          properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
+        } as Weapon;
         const magicalWeapon = createMagicalWeapon(baseWeapon, template, customWeaponName.trim() || undefined);
         const updatedInventoryWeapons = [...inventoryWeapons, magicalWeapon];
         setInventoryWeapons(updatedInventoryWeapons);
@@ -802,7 +809,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
                   className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
                 >
                   <option value="">Select base weapon...</option>
-                  {WEAPONS.map(weapon => (
+                  {weaponsData.map(weapon => (
                     <option key={weapon.name} value={weapon.name}>
                       {weapon.name} ({weapon.damage} {weapon.damageType})
                     </option>
