@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { createCharacterValidationService } from "@/services/api/character-validation";
 
 export async function GET() {
   try {
@@ -93,6 +94,34 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!name || !race || !characterClass) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+    // Use validation service for comprehensive validation
+    const validationService = createCharacterValidationService();
+    const validation = validationService.validateCharacterCreation({
+      name,
+      race,
+      class: characterClass,
+      subclass,
+      level,
+      alignment,
+      background,
+      strength,
+      dexterity,
+      constitution,
+      intelligence,
+      wisdom,
+      charisma,
+      hitPoints,
+      maxHitPoints,
+      armorClass,
+    });
+
+    if (!validation.isValid) {
+      return NextResponse.json({ 
+        error: "Validation failed", 
+        details: validation.errors 
+      }, { status: 400 });
     }
 
     const character = await prisma.character.create({
@@ -216,11 +245,56 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
+    
+    // Validate update data using validation service
+    const validationService = createCharacterValidationService();
+    
+    // Get current character data for context
+    const currentCharacter = await prisma.character.findFirst({
+      where: {
+        id: characterId,
+        userId: user.id,
+      },
+      select: {
+        class: true,
+        level: true,
+      },
+    });
+
+    if (!currentCharacter) {
+      return NextResponse.json({ error: "Character not found" }, { status: 404 });
+    }
+
+    // Validate the update
+    const validation = validationService.validateCharacterUpdate(
+      {
+        level: body.level,
+        subclass: body.subclass,
+        appearance: body.appearance,
+        personality: body.personality,
+        backstory: body.backstory,
+        notes: body.notes,
+      },
+      currentCharacter
+    );
+
+    if (!validation.isValid) {
+      return NextResponse.json({ 
+        error: "Validation failed", 
+        details: validation.errors 
+      }, { status: 400 });
+    }
+
     const updateData: Record<string, unknown> = {};
 
     // Handle level up updates
     if (body.level !== undefined) {
       updateData.level = body.level;
+    }
+    
+    // Handle subclass updates
+    if (body.subclass !== undefined) {
+      updateData.subclass = body.subclass;
     }
     if (body.hitPoints !== undefined) {
       updateData.hitPoints = body.hitPoints;

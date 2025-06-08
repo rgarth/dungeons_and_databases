@@ -5,6 +5,7 @@ import { useState } from "react";
 import { BookOpen, Edit3, Save, X, HelpCircle, FileText, Languages } from "lucide-react";
 import { AvatarSelector } from "../components/AvatarSelector";
 import { LANGUAGES, getRacialLanguages } from "@/lib/dnd/languages";
+import { createCharacterStoryService, type CharacterLimits } from "@/services/character/character-story";
 
 interface BackgroundTabProps {
   character: {
@@ -25,70 +26,8 @@ interface BackgroundTabProps {
   onUpdate: (updates: { appearance?: string; personality?: string; backstory?: string; notes?: string; avatar?: string | null; languages?: string[] }) => void;
 }
 
-// D&D Character Backstory Prompts
-const BACKSTORY_PROMPTS = [
-  {
-    question: "Where did you come from?",
-    placeholder: "Describe your homeland, city, or region..."
-  },
-  {
-    question: "What is your family like?",
-    placeholder: "Parents, siblings, family status, relationships..."
-  },
-  {
-    question: "Who was your childhood friend, mentor, or inspiration?",
-    placeholder: "Someone important in your early life..."
-  },
-  {
-    question: "What drove you to become an adventurer?",
-    placeholder: "The event, need, or calling that started your journey..."
-  },
-  {
-    question: "What is your greatest achievement before adventuring?",
-    placeholder: "Something you accomplished that you\'re proud of..."
-  },
-  {
-    question: "What is your most treasured possession and why?",
-    placeholder: "An item with special meaning to your character..."
-  },
-  {
-    question: "What is your greatest fear or weakness?",
-    placeholder: "Something that troubles or challenges you..."
-  },
-  {
-    question: "Who do you care about most in the world?",
-    placeholder: "Family, friends, loved ones still in your life..."
-  },
-  {
-    question: "What are your long-term goals or ambitions?",
-    placeholder: "What do you hope to achieve through adventuring..."
-  },
-  {
-    question: "What secret do you keep hidden from others?",
-    placeholder: "Something from your past you don\'t share..."
-  },
-  {
-    question: "How do others typically perceive you?",
-    placeholder: "First impressions, reputation, how you come across..."
-  },
-  {
-    question: "What would make you risk everything?",
-    placeholder: "Causes, people, or ideals worth great sacrifice..."
-  },
-  {
-    question: "What is your relationship with the gods or divine forces?",
-    placeholder: "Your deity, religious beliefs, spiritual practices, or lack thereof..."
-  }
-];
-
-// Character limits for different fields
-const CHARACTER_LIMITS = {
-  appearance: 1000,
-  personality: 1500,
-  backstory: 5000,
-  notes: 3000,
-  guidedAnswer: 500
-} as const;
+// Initialize character story service
+const storyService = createCharacterStoryService();
 
 export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
   const [isEditing, setIsEditing] = useState<string | null>(null);
@@ -139,19 +78,12 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
   };
 
   const compileGuidedAnswers = () => {
-    const answers: string[] = [];
-    BACKSTORY_PROMPTS.forEach((prompt, index) => {
-      const answer = guidedAnswers[index];
-      if (answer && answer.trim()) {
-        answers.push(`${prompt.question}\n${answer.trim()}`);
-      }
-    });
-    return answers.join('\n\n');
+    return storyService.compileGuidedAnswers(guidedAnswers);
   };
 
   const handleGuidedAnswerChange = (index: number, value: string) => {
-    // Apply character limit for guided answers
-    if (value.length <= CHARACTER_LIMITS.guidedAnswer) {
+    // Apply character limit for guided answers using service
+    if (storyService.validateGuidedAnswer(value)) {
       setGuidedAnswers(prev => ({
         ...prev,
         [index]: value
@@ -160,23 +92,18 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
   };
 
   const handleFieldChange = (field: keyof typeof editValues, value: string) => {
-    const limit = CHARACTER_LIMITS[field];
-    if (value.length <= limit) {
+    // Use service to validate character limits
+    if (storyService.isWithinLimit(value, field as keyof CharacterLimits)) {
       setEditValues(prev => ({ ...prev, [field]: value }));
     }
   };
 
-  const getCharacterCount = (field: keyof typeof editValues) => {
-    return editValues[field]?.length || 0;
-  };
-
   const getCharacterCountDisplay = (field: keyof typeof editValues) => {
-    const count = getCharacterCount(field);
-    const limit = CHARACTER_LIMITS[field];
-    const isNearLimit = count > limit * 0.8;
+    const text = editValues[field] || '';
+    const info = storyService.getCharacterCountInfo(text, field as keyof CharacterLimits);
     return (
-      <span className={`text-xs ${isNearLimit ? 'text-yellow-400' : 'text-slate-400'}`}>
-        {count}/{limit}
+      <span className={`text-xs ${info.displayClass}`}>
+        {info.count}/{info.limit}
       </span>
     );
   };
@@ -239,7 +166,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             </div>
             
             <div className="space-y-4 max-h-96 overflow-y-auto">
-              {BACKSTORY_PROMPTS.map((prompt, index) => (
+              {storyService.getBackstoryPrompts().map((prompt, index) => (
                 <div key={index} className="bg-slate-600 rounded-lg p-4">
                   <label className="block text-white font-medium mb-2">
                     {prompt.question}
@@ -252,9 +179,15 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                     rows={2}
                   />
                   <div className="flex justify-end mt-1">
-                    <span className={`text-xs ${(guidedAnswers[index]?.length || 0) > CHARACTER_LIMITS.guidedAnswer * 0.8 ? 'text-yellow-400' : 'text-slate-400'}`}>
-                      {guidedAnswers[index]?.length || 0}/{CHARACTER_LIMITS.guidedAnswer}
-                    </span>
+                    {(() => {
+                      const text = guidedAnswers[index] || '';
+                      const info = storyService.getGuidedAnswerCountInfo(text);
+                      return (
+                        <span className={`text-xs ${info.displayClass}`}>
+                          {info.count}/{info.limit}
+                        </span>
+                      );
+                    })()}
                   </div>
                 </div>
               ))}
