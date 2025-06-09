@@ -165,7 +165,7 @@ export default function Home() {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             character={character as any} 
             onCharacterDeleted={fetchCharacters}
-
+            onCharacterUpdated={fetchCharacters}
           />
         ))}
         

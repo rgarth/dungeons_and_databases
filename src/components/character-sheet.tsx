@@ -1,7 +1,7 @@
 "use client";
 
 import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp, FileText, Dices, ChevronDown } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getModifier } from "@/lib/dnd/core";
 import { Spell, getClassSpells } from "@/lib/dnd/spells";
 import { Weapon, MagicalWeapon, InventoryItem, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, Armor, calculateArmorClass } from "@/lib/dnd/equipment";
@@ -76,10 +76,10 @@ interface CharacterSheetProps {
   };
   onClose: () => void;
   onCharacterDeleted?: () => void;
-
+  onCharacterUpdated?: () => void;
 }
 
-export function CharacterSheet({ character, onClose, onCharacterDeleted }: CharacterSheetProps) {
+export function CharacterSheet({ character, onClose, onCharacterDeleted, onCharacterUpdated }: CharacterSheetProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showLevelUpModal, setShowLevelUpModal] = useState(false);
   const [showSpellPreparationModal, setShowSpellPreparationModal] = useState(false);
@@ -87,33 +87,21 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentCharacter, setCurrentCharacter] = useState(character);
   
+  // Add debouncing for character updates to prevent race conditions
+  const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pendingUpdatesRef = useRef<Record<string, unknown>>({});
+  
   // Sync currentCharacter with character prop when it changes (important for reopening characters)
   useEffect(() => {
+    console.log('CharacterSheet: Loading character');
     setCurrentCharacter(character);
-  }, [character]);
-  
-  // Sync all other state variables with character prop changes
-  useEffect(() => {
     setCopperPieces(character.copperPieces || 0);
     setSilverPieces(character.silverPieces || 0);
     setGoldPieces(character.goldPieces || 0);
     setTreasures(character.treasures || []);
     
-    setInventoryWeapons(() => {
-      if (!character.inventoryWeapons || !Array.isArray(character.inventoryWeapons)) {
-        return [];
-      }
-      return character.inventoryWeapons.map(weapon => {
-        if (typeof weapon === 'object' && weapon.name) {
-          return weapon;
-        }
-        return weapon;
-      });
-    });
-    
-    setEquippedWeapons(character.weapons || []);
-    setInventoryArmor(character.inventoryArmor || []);
-    setEquippedArmor(character.armor || []);
+    // Weapons and armor are now derived from character data
+    // No need to set state for weapons/armor
     
     // Initialize magical items state
     setEquippedMagicalItems(character.magicalItems || []);
@@ -130,6 +118,15 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       return (character.inventory as string[]).map(name => ({ name, quantity: 1 }));
     });
   }, [character]);
+  
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+      }
+    };
+  }, []);
   
   // Use currentCharacter instead of character throughout the component
   const displayCharacter = currentCharacter;
@@ -150,14 +147,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     name: character.name,
     inventoryWeapons: character.inventoryWeapons,
     inventoryArmor: character.inventoryArmor,
-    equippedWeapons: character.equippedWeapons,
-    armor: character.armor
+    weapons: character.weapons, // Database field for equipped weapons
+    armor: character.armor // Database field for equipped armor
   });
   
-  const [inventoryWeapons, setInventoryWeapons] = useState<(Weapon | MagicalWeapon)[]>([]);
-  const [equippedWeapons, setEquippedWeapons] = useState<(Weapon | MagicalWeapon)[]>([]);
-  const [inventoryArmor, setInventoryArmor] = useState<Armor[]>([]);
-  const [equippedArmor, setEquippedArmor] = useState<Armor[]>([]);
+  // Derived state from character weapons using equipped boolean
+  const equippedWeapons = currentCharacter.weapons?.filter(weapon => weapon.equipped) || [];
+  const inventoryWeapons = currentCharacter.weapons?.filter(weapon => !weapon.equipped) || [];
+  
+  // Derived state from character armor using equipped boolean  
+  const equippedArmor = currentCharacter.armor?.filter(armor => armor.equipped) || [];
+  const inventoryArmor = currentCharacter.armor?.filter(armor => !armor.equipped) || [];
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [equippedMagicalItems, setEquippedMagicalItems] = useState<EquippedMagicalItem[]>([]);
   const [inventoryMagicalItems, setInventoryMagicalItems] = useState<MagicalItem[]>([]);
@@ -241,22 +241,42 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     deathSaveSuccesses?: number;
     deathSaveFailures?: number;
   } | Record<string, unknown>) => {
-    try {
-      const response = await fetch(`/api/characters?id=${character.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates),
-      });
-      
-      if (!response.ok) {
-        console.error('Failed to update character:', response.status, response.statusText);
-      } else {
-        // Only update local character state, don't trigger parent refetch to avoid infinite loop
-        setCurrentCharacter(prev => ({ ...prev, ...updates }));
-      }
-    } catch (error) {
-      console.error('Error updating character:', error);
+    // Update local state immediately for responsive UI
+    setCurrentCharacter(prev => ({ ...prev, ...updates }));
+    
+    // Accumulate updates for debounced database save
+    pendingUpdatesRef.current = { ...pendingUpdatesRef.current, ...updates };
+    
+    // Clear existing timeout and set new one
+    if (updateTimeoutRef.current) {
+      clearTimeout(updateTimeoutRef.current);
     }
+    
+    updateTimeoutRef.current = setTimeout(async () => {
+      try {
+        const updatesToSend = { ...pendingUpdatesRef.current };
+        pendingUpdatesRef.current = {}; // Clear pending updates
+        
+        console.log('CharacterSheet: Sending debounced updates to database:', updatesToSend);
+        
+        const response = await fetch(`/api/characters?id=${character.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatesToSend),
+        });
+        
+        if (!response.ok) {
+          console.error('Failed to update character:', response.status, response.statusText);
+          const errorText = await response.text();
+          console.error('Error response:', errorText);
+        } else {
+          console.log('CharacterSheet: Debounced database update successful');
+          onCharacterUpdated?.();
+        }
+      } catch (error) {
+        console.error('Error updating character:', error);
+      }
+    }, 500); // 500ms debounce delay
   };
 
   const handleCreateMagicalWeapon = () => {
@@ -272,9 +292,10 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
           properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
         } as Weapon;
         const magicalWeapon = createMagicalWeapon(baseWeapon, template, customWeaponName.trim() || undefined);
-        const updatedInventoryWeapons = [...inventoryWeapons, magicalWeapon];
-        setInventoryWeapons(updatedInventoryWeapons);
-        updateCharacter({ inventoryWeapons: updatedInventoryWeapons });
+        
+        // Add weapon to inventory (unequipped)
+        const updatedWeapons = [...(currentCharacter.weapons || []), { ...magicalWeapon, equipped: false }];
+        updateCharacter({ weapons: updatedWeapons });
         
         // Reset form
         setSelectedBaseWeapon("");
@@ -285,6 +306,18 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     }
   };
 
+  const handleAddWeapon = (weapon: Weapon | MagicalWeapon) => {
+    // Add weapon to inventory (unequipped)
+    const updatedWeapons = [...(currentCharacter.weapons || []), { ...weapon, equipped: false }];
+    updateCharacter({ weapons: updatedWeapons });
+  };
+
+  const handleAddArmor = (armor: Armor) => {
+    // Add armor to inventory (unequipped)
+    const updatedArmor = [...(currentCharacter.armor || []), { ...armor, equipped: false }];
+    updateCharacter({ armor: updatedArmor });
+  };
+
   const handleEquipWeapon = (weapon: Weapon | MagicalWeapon, fromInventoryIndex: number) => {
     // Check if at weapon limit
     if (equippedWeapons.length >= weaponLimits.maxEquipped) {
@@ -292,47 +325,45 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       return;
     }
 
-    // Move from inventory to equipped
-    const updatedInventoryWeapons = inventoryWeapons.filter((_, i) => i !== fromInventoryIndex);
-    const updatedEquippedWeapons = [...equippedWeapons, weapon];
+    console.log('CharacterSheet: handleEquipWeapon called', { weapon: weapon.name, fromInventoryIndex });
     
-    setInventoryWeapons(updatedInventoryWeapons);
-    setEquippedWeapons(updatedEquippedWeapons);
-    updateCharacter({ 
-      weapons: updatedEquippedWeapons,
-      inventoryWeapons: updatedInventoryWeapons 
+    // Find the weapon in the full weapons array and toggle equipped status
+    const currentWeapons = currentCharacter.weapons || [];
+    const updatedWeapons = currentWeapons.map((w) => {
+      // Find the weapon by matching the unequipped weapon at the given inventory index
+      const unequippedWeapons = currentWeapons.filter(weapon => !weapon.equipped);
+      if (w === unequippedWeapons[fromInventoryIndex]) {
+        return { ...w, equipped: true };
+      }
+      return w;
     });
+
+    console.log('CharacterSheet: Updated weapons:', updatedWeapons);
+    updateCharacter({ weapons: updatedWeapons });
   };
 
-  const handleUnequipWeapon = (weaponIndex: number) => {
-    const weapon = equippedWeapons[weaponIndex];
-    const updatedEquippedWeapons = equippedWeapons.filter((_, i) => i !== weaponIndex);
-    const updatedInventoryWeapons = [...inventoryWeapons, weapon];
+  const handleUnequipWeapon = (weapon: Weapon | MagicalWeapon, fromEquippedIndex: number) => {
+    console.log('CharacterSheet: handleUnequipWeapon called', { weapon: weapon.name, fromEquippedIndex });
     
-    setEquippedWeapons(updatedEquippedWeapons);
-    setInventoryWeapons(updatedInventoryWeapons);
-    updateCharacter({ 
-      weapons: updatedEquippedWeapons,
-      inventoryWeapons: updatedInventoryWeapons 
+    // Find the weapon in the full weapons array and toggle equipped status
+    const currentWeapons = currentCharacter.weapons || [];
+    const updatedWeapons = currentWeapons.map((w) => {
+      // Find the weapon by matching the equipped weapon at the given equipped index
+      const currentEquippedWeapons = currentWeapons.filter(weapon => weapon.equipped);
+      if (w === currentEquippedWeapons[fromEquippedIndex]) {
+        return { ...w, equipped: false };
+      }
+      return w;
     });
-  };
 
-  const handleRemoveWeapon = (index: number, isEquipped: boolean = false) => {
-    if (isEquipped) {
-      const updatedWeapons = equippedWeapons.filter((_, i) => i !== index);
-      setEquippedWeapons(updatedWeapons);
-      updateCharacter({ weapons: updatedWeapons });
-    } else {
-      const updatedWeapons = inventoryWeapons.filter((_, i) => i !== index);
-      setInventoryWeapons(updatedWeapons);
-      updateCharacter({ inventoryWeapons: updatedWeapons });
-    }
+    console.log('CharacterSheet: Updated weapons:', updatedWeapons);
+    updateCharacter({ weapons: updatedWeapons });
   };
 
   const handleEquipArmor = (armor: Armor, fromInventoryIndex: number) => {
     // Check if armor type can be equipped by class
-    if (!canEquipArmor(armor.type, character.class)) {
-      alert(`${character.class} cannot equip ${armor.type.toLowerCase()} armor!`);
+    if (!canEquipArmor(armor.type, currentCharacter.class)) {
+      alert(`${currentCharacter.class} cannot equip ${armor.type.toLowerCase()} armor!`);
       return;
     }
 
@@ -350,47 +381,39 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       return;
     }
 
-    // Check strength requirement
-    if (armor.minStrength && character.strength < armor.minStrength) {
-      alert(`Requires ${armor.minStrength} Strength to equip this armor!`);
-      return;
-    }
-
-    // Move from inventory to equipped
-    const updatedInventoryArmor = inventoryArmor.filter((_, i) => i !== fromInventoryIndex);
-    const updatedEquippedArmor = [...equippedArmor, armor];
+    console.log('CharacterSheet: handleEquipArmor called', { armor: armor.name, fromInventoryIndex });
     
-    setInventoryArmor(updatedInventoryArmor);
-    setEquippedArmor(updatedEquippedArmor);
-    updateCharacter({ 
-      armor: updatedEquippedArmor,
-      inventoryArmor: updatedInventoryArmor 
+    // Find the armor in the full armor array and toggle equipped status
+    const currentArmor = currentCharacter.armor || [];
+    const updatedArmor = currentArmor.map((a) => {
+      // Find the armor by matching the unequipped armor at the given inventory index
+      const unequippedArmor = currentArmor.filter(armor => !armor.equipped);
+      if (a === unequippedArmor[fromInventoryIndex]) {
+        return { ...a, equipped: true };
+      }
+      return a;
     });
+
+    console.log('CharacterSheet: Updated armor:', updatedArmor);
+    updateCharacter({ armor: updatedArmor });
   };
 
-  const handleUnequipArmor = (armorIndex: number) => {
-    const armor = equippedArmor[armorIndex];
-    const updatedEquippedArmor = equippedArmor.filter((_, i) => i !== armorIndex);
-    const updatedInventoryArmor = [...inventoryArmor, armor];
+  const handleUnequipArmor = (armor: Armor, fromEquippedIndex: number) => {
+    console.log('CharacterSheet: handleUnequipArmor called', { armor: armor.name, fromEquippedIndex });
     
-    setEquippedArmor(updatedEquippedArmor);
-    setInventoryArmor(updatedInventoryArmor);
-    updateCharacter({ 
-      armor: updatedEquippedArmor,
-      inventoryArmor: updatedInventoryArmor 
+    // Find the armor in the full armor array and toggle equipped status
+    const currentArmor = currentCharacter.armor || [];
+    const updatedArmor = currentArmor.map((a) => {
+      // Find the armor by matching the equipped armor at the given equipped index
+      const currentEquippedArmor = currentArmor.filter(armor => armor.equipped);
+      if (a === currentEquippedArmor[fromEquippedIndex]) {
+        return { ...a, equipped: false };
+      }
+      return a;
     });
-  };
 
-  const handleRemoveArmor = (index: number, isEquipped: boolean = false) => {
-    if (isEquipped) {
-      const updatedArmor = equippedArmor.filter((_, i) => i !== index);
-      setEquippedArmor(updatedArmor);
-      updateCharacter({ armor: updatedArmor });
-    } else {
-      const updatedArmor = inventoryArmor.filter((_, i) => i !== index);
-      setInventoryArmor(updatedArmor);
-      updateCharacter({ inventoryArmor: updatedArmor });
-    }
+    console.log('CharacterSheet: Updated armor:', updatedArmor);
+    updateCharacter({ armor: updatedArmor });
   };
 
   // Magical Item handlers
@@ -580,6 +603,55 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     setShowSpellPreparationModal(false);
   };
 
+  // Wrapper functions to match GearTab interface expectations
+  const handleUnequipWeaponWrapper = (weaponIndex: number) => {
+    const weapon = equippedWeapons[weaponIndex];
+    if (weapon) {
+      handleUnequipWeapon(weapon, weaponIndex);
+    }
+  };
+
+  const handleUnequipArmorWrapper = (armorIndex: number) => {
+    const armor = equippedArmor[armorIndex];
+    if (armor) {
+      handleUnequipArmor(armor, armorIndex);
+    }
+  };
+
+  const handleRemoveWeapon = (index: number, isEquipped: boolean = false) => {
+    const currentWeapons = currentCharacter.weapons || [];
+    let updatedWeapons: (Weapon | MagicalWeapon)[];
+    
+    if (isEquipped) {
+      // Remove from equipped weapons
+      const weaponToRemove = equippedWeapons[index];
+      updatedWeapons = currentWeapons.filter(w => w !== weaponToRemove);
+    } else {
+      // Remove from inventory weapons
+      const weaponToRemove = inventoryWeapons[index];
+      updatedWeapons = currentWeapons.filter(w => w !== weaponToRemove);
+    }
+    
+    updateCharacter({ weapons: updatedWeapons });
+  };
+
+  const handleRemoveArmor = (index: number, isEquipped: boolean = false) => {
+    const currentArmor = currentCharacter.armor || [];
+    let updatedArmor: Armor[];
+    
+    if (isEquipped) {
+      // Remove from equipped armor
+      const armorToRemove = equippedArmor[index];
+      updatedArmor = currentArmor.filter(a => a !== armorToRemove);
+    } else {
+      // Remove from inventory armor
+      const armorToRemove = inventoryArmor[index];
+      updatedArmor = currentArmor.filter(a => a !== armorToRemove);
+    }
+    
+    updateCharacter({ armor: updatedArmor });
+  };
+
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
@@ -766,25 +838,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 inventoryMagicalItems={inventoryMagicalItems}
                 attunedItems={attunedItems}
                 onEquipWeapon={handleEquipWeapon}
-                onUnequipWeapon={handleUnequipWeapon}
+                onUnequipWeapon={handleUnequipWeaponWrapper}
                 onRemoveWeapon={handleRemoveWeapon}
                 onEquipArmor={handleEquipArmor}
-                onUnequipArmor={handleUnequipArmor}
+                onUnequipArmor={handleUnequipArmorWrapper}
                 onRemoveArmor={handleRemoveArmor}
                 onEquipMagicalItem={handleEquipMagicalItem}
                 onUnequipMagicalItem={handleUnequipMagicalItem}
                 onRemoveMagicalItem={handleRemoveMagicalItem}
                 onToggleAttunement={handleToggleAttunement}
-                onAddWeapon={(weapon) => {
-                  const updatedInventoryWeapons = [...inventoryWeapons, weapon];
-                  setInventoryWeapons(updatedInventoryWeapons);
-                  updateCharacter({ inventoryWeapons: updatedInventoryWeapons });
-                }}
-                onAddArmor={(armor) => {
-                  const updatedInventoryArmor = [...inventoryArmor, armor];
-                  setInventoryArmor(updatedInventoryArmor);
-                  updateCharacter({ inventoryArmor: updatedInventoryArmor });
-                }}
+                onAddWeapon={handleAddWeapon}
+                onAddArmor={handleAddArmor}
                 onAddMagicalItem={handleAddMagicalItem}
                 onOpenSpellPreparation={handleOpenSpellPreparation}
                 weaponLimits={weaponLimits}

@@ -6,7 +6,11 @@ import {
   getModifier,
   calculateHitPoints,
   getProficiencyBonus,
-  ABILITY_SCORES
+  ABILITY_SCORES,
+  RACES,
+  CLASSES,
+  BACKGROUNDS,
+  ALIGNMENTS
 } from '@/lib/dnd/core';
 import { getBackgroundSkills, getEquipmentPacksFromDatabase } from '@/lib/dnd/character';
 import { 
@@ -19,7 +23,7 @@ import {
 import { getSpellcastingType } from '@/lib/dnd/level-up';
 import { BASIC_ACTIONS, getClassActions } from '@/lib/dnd/combat';
 import { Spell } from '@/lib/dnd/spells';
-import { Weapon, Armor } from '@/lib/dnd/equipment';
+import { Weapon, MagicalWeapon, Armor } from '@/lib/dnd/equipment';
 
 
 export type StatMethod = 'rolling-assign' | 'standard' | 'pointbuy';
@@ -72,9 +76,8 @@ export interface CharacterCreationResult {
   // Equipment
   inventory: { name: string; quantity: number }[];
   skills: string[];
-  weapons: never[]; // No weapons equipped initially
-  inventoryWeapons: Weapon[];
-  inventoryArmor: Armor[];
+  weapons: (Weapon | MagicalWeapon)[]; // All weapons with equipped boolean
+  armor: Armor[];
   
   // Spellcasting
   spellsKnown?: Spell[] | null;
@@ -291,7 +294,7 @@ export class CharacterCreationService {
     let equipmentPackItems: { name: string; quantity: number }[] = [];
     if (data.selectedEquipmentPack !== undefined && equipmentPacks[data.selectedEquipmentPack]) {
       const selectedPack = equipmentPacks[data.selectedEquipmentPack];
-      equipmentPackItems = selectedPack.items.map((item: any) => ({
+      equipmentPackItems = selectedPack.items.map((item: { name: string; quantity: number }) => ({
         name: item.name,
         quantity: item.quantity
       }));
@@ -363,9 +366,10 @@ export class CharacterCreationService {
       // Equipment - server will handle armor separation
       inventory: generalInventory,
       skills: backgroundSkills,
-      weapons: [], // No weapons equipped initially
-      inventoryWeapons: data.selectedWeapons.flatMap(w => Array(w.quantity).fill(w.weapon)),
-      inventoryArmor: data.selectedArmor || [],
+      weapons: data.selectedWeapons.flatMap(w => 
+        Array(w.quantity).fill({ ...w.weapon, equipped: false })
+      ), // All weapons start unequipped
+      armor: data.selectedArmor?.map(armor => ({ ...armor, equipped: false })) || [],
       
       // Spellcasting
       spellsKnown: spellsKnown || undefined,

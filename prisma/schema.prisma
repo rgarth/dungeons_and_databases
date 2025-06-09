@@ -279,10 +279,12 @@ model Character {
   // Equipment & Inventory
   inventory Json? // Store inventory items as JSON
   equipment Json? // Store equipped items as JSON
-  weapons   Json? // Store equipped weapons as JSON
-  inventoryWeapons Json? // Store unequipped weapons in inventory as JSON
-  armor     Json? // Store equipped armor as JSON
-  inventoryArmor Json? // Store unequipped armor in inventory as JSON
+  weapons   Json? // Store ALL weapons the character owns as JSON
+  equippedWeapons Json? // Store subset of weapons that are currently equipped as JSON
+  inventoryWeapons Json? // Store unequipped weapons in inventory as JSON (DEPRECATED - use weapons + equippedWeapons instead)
+  armor     Json? // Store ALL armor the character owns as JSON  
+  equippedArmor Json? // Store subset of armor that is currently equipped as JSON
+  inventoryArmor Json? // Store unequipped armor in inventory as JSON (DEPRECATED - use armor + equippedArmor instead)
   magicalItems Json? // Store equipped magical items as JSON
   inventoryMagicalItems Json? // Store unequipped magical items in inventory as JSON
   attunedItems Json? // Store list of attuned magical item names (max 3)
