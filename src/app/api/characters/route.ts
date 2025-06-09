@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    console.log('=== SERVER-SIDE ARMOR PROCESSING ===');
+    console.log('=== SERVER-SIDE EQUIPMENT PROCESSING ===');
     console.log('Raw inventory from client:', inventory);
 
     // Helper method to check if an item is a placeholder that needs resolution
@@ -113,7 +113,23 @@ export async function POST(request: NextRequest) {
       return placeholders.includes(itemName);
     };
 
-    // Separate armor from general inventory (server-side database lookups)
+    // Helper method to normalize equipment names (handle naming differences between client and database)
+    const normalizeEquipmentName = (itemName: string): string => {
+      const nameMap: Record<string, string> = {
+        'Leather Armor': 'Leather',
+        'Studded Leather Armor': 'Studded Leather',
+        'Scale Mail': 'Scale Mail',
+        'Chain Mail': 'Chain Mail',
+        'Splint Armor': 'Splint',
+        'Plate Armor': 'Plate',
+        'Arrow (20)': 'Arrows (20)',
+        'Quiver of 20 Arrows': 'Arrows (20)',
+        'Quiver of 20 Bolts': 'Crossbow Bolts (20)'
+      };
+      return nameMap[itemName] || itemName;
+    };
+
+    // Separate armor and weapons from general inventory (server-side database lookups)
     const processedInventory: Array<{name: string; quantity: number}> = [];
     const processedInventoryArmor: Array<{
       name: string;
@@ -126,11 +142,23 @@ export async function POST(request: NextRequest) {
       cost: string;
       description: string;
     }> = [];
+    const processedInventoryWeapons: Array<{
+      name: string;
+      type: string;
+      category: string;
+      damage: string;
+      damageType: string;
+      properties: string[];
+      weight: number;
+      cost: string;
+      stackable: boolean;
+    }> = [];
 
     if (inventory && Array.isArray(inventory)) {
       for (const item of inventory as Array<{name: string; quantity: number}>) {
         const itemName = item.name;
-        console.log(`🔍 Checking if "${itemName}" is armor...`);
+        const normalizedName = normalizeEquipmentName(itemName);
+        console.log(`🔍 Checking if "${itemName}" (normalized: "${normalizedName}") is equipment...`);
         
         // Handle placeholder items that need resolution
         if (isPlaceholderItem(itemName)) {
@@ -138,11 +166,39 @@ export async function POST(request: NextRequest) {
           continue; // Skip placeholder items for now
         }
         
+        // Check if this item exists in the weapons database
+        const weaponData = await prisma.weapon.findFirst({
+          where: {
+            name: {
+              equals: normalizedName
+            }
+          }
+        });
+
+        if (weaponData) {
+          console.log(`✅ Found weapon in database: ${weaponData.name}`);
+          // Convert to weapon object and add to inventoryWeapons
+          const weaponObject = {
+            name: weaponData.name,
+            type: weaponData.type,
+            category: weaponData.category,
+            damage: weaponData.damage,
+            damageType: weaponData.damageType,
+            properties: weaponData.properties ? JSON.parse(weaponData.properties) : [],
+            weight: weaponData.weight,
+            cost: weaponData.cost,
+            stackable: weaponData.stackable
+          };
+          processedInventoryWeapons.push(weaponObject);
+          console.log(`✅ Added to weapon inventory: ${weaponObject.name}`);
+          continue; // Skip to next item
+        }
+        
         // Check if this item exists in the armor database
         const armorData = await prisma.armor.findFirst({
           where: {
             name: {
-              equals: itemName
+              equals: normalizedName
             }
           }
         });
@@ -164,7 +220,7 @@ export async function POST(request: NextRequest) {
           processedInventoryArmor.push(armorObject);
           console.log(`✅ Added to armor inventory: ${armorObject.name}`);
         } else {
-          console.log(`➡️ Not armor, adding to general inventory: ${itemName}`);
+          console.log(`➡️ Not weapon or armor, adding to general inventory: ${itemName}`);
           // Keep in general inventory
           processedInventory.push(item);
         }
@@ -173,6 +229,7 @@ export async function POST(request: NextRequest) {
 
     console.log('=== FINAL SERVER PROCESSING ===');
     console.log('General inventory:', processedInventory.map(item => typeof item === 'string' ? item : item.name));
+    console.log('Weapon inventory:', processedInventoryWeapons.map(weapon => weapon.name));
     console.log('Armor inventory:', processedInventoryArmor.map(armor => armor.name));
 
     // Use validation service for comprehensive validation
@@ -228,10 +285,10 @@ export async function POST(request: NextRequest) {
         hitPoints: hitPoints || 10,
         maxHitPoints: maxHitPoints || 10,
         armorClass: armorClass || 10,
-        inventory: processedInventory, // Use processed inventory without armor
+        inventory: processedInventory, // Use processed inventory without weapons or armor
         skills: skills || [],
         weapons: weapons || [],
-        inventoryWeapons: inventoryWeapons || [],
+        inventoryWeapons: [...(inventoryWeapons || []), ...processedInventoryWeapons], // Merge client weapons with processed weapons
         inventoryArmor: processedInventoryArmor, // Use processed armor inventory
         spellsKnown,
         spellsPrepared,

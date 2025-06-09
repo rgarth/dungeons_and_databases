@@ -14,14 +14,13 @@ import {
   getClassSpells, 
   getSpellSlots, 
   calculateSpellSaveDC, 
-  calculateSpellAttackBonus 
+  calculateSpellAttackBonus
 } from '@/lib/dnd/spells';
 import { getSpellcastingType } from '@/lib/dnd/level-up';
 import { BASIC_ACTIONS, getClassActions } from '@/lib/dnd/combat';
 import { Spell } from '@/lib/dnd/spells';
 import { Weapon, Armor } from '@/lib/dnd/equipment';
-import { getSubclassesForClass, choosesSubclassAtCreation } from '@/lib/dnd/subclasses';
-import { getStartingEquipment } from '@/lib/dnd/character';
+
 
 export type StatMethod = 'rolling-assign' | 'standard' | 'pointbuy';
 
@@ -161,140 +160,34 @@ export class CharacterCreationService {
 
   // Get character creation options
   async getCreationOptions(characterClass: string) {
-    // Fetch equipment packs from database
+    // Get spells for spellcasting classes
+    const spellcastingAbility = getSpellcastingAbility(characterClass);
+    let availableSpells: Spell[] = [];
+    
+    if (spellcastingAbility) {
+      availableSpells = getClassSpells(characterClass, 1);
+    }
+
+    // Get equipment packs from database
     let equipmentPacks = [];
     try {
       equipmentPacks = await getEquipmentPacksFromDatabase();
     } catch (error) {
       console.warn('Error fetching equipment packs:', error);
-      // Provide minimal fallback
-      equipmentPacks = [{
-        id: 'fallback',
-        name: 'Basic Adventurer Pack',
-        description: 'Basic starting equipment',
-        cost: '15 gp',
-        items: [
-          { name: 'Backpack', quantity: 1, type: 'Gear', cost: '2 gp', weight: 5, description: 'A backpack' },
-          { name: 'Rope', quantity: 1, type: 'Gear', cost: '2 gp', weight: 10, description: 'Hemp rope' }
-        ]
-      }];
+      equipmentPacks = [];
     }
-    
-    // Provide basic weapon suggestions instead of calling deprecated functions
-    const weaponSuggestions = this.getBasicWeaponSuggestions(characterClass);
-    const armorSuggestions = this.getBasicArmorSuggestions(characterClass);
-    
-    // Subclass info
-    const subclasses = getSubclassesForClass(characterClass);
-    const needsSubclassAtCreation = choosesSubclassAtCreation(characterClass);
-    
-    // Spellcasting info
-    const spellcastingAbility = getSpellcastingAbility(characterClass);
-    const canCastSpellsAtLevel1 = spellcastingAbility && getClassSpells(characterClass, 1).length > 0;
-    const availableSpells = canCastSpellsAtLevel1 ? getClassSpells(characterClass, 1) : [];
-    const spellSlots = canCastSpellsAtLevel1 ? getSpellSlots(characterClass, 1) : {};
-    
+
+    // All suggestions now come from database, not hardcoded functions
+    const weaponSuggestions: Weapon[] = []; // Will be populated from database
+    const armorSuggestions: Armor[] = []; // Will be populated from database
+
     return {
+      availableSpells,
       equipmentPacks,
       weaponSuggestions,
       armorSuggestions,
-      subclasses,
-      needsSubclassAtCreation,
-      spellcasting: {
-        ability: spellcastingAbility,
-        canCastAtLevel1: canCastSpellsAtLevel1,
-        availableSpells,
-        spellSlots
-      }
+      spellcastingAbility
     };
-  }
-
-  // Basic weapon suggestions (will be enhanced with database lookups later)
-  private getBasicWeaponSuggestions(characterClass: string): Weapon[] {
-    // For now, return common weapons that each class would use
-    // TODO: Replace with database lookups when weapon database is available
-    const basicWeapons: Record<string, Partial<Weapon>[]> = {
-      Barbarian: [
-        { name: 'Greataxe', type: 'Martial', category: 'Melee', damage: '1d12', damageType: 'slashing' },
-        { name: 'Handaxe', type: 'Simple', category: 'Melee', damage: '1d6', damageType: 'slashing' }
-      ],
-      Fighter: [
-        { name: 'Longsword', type: 'Martial', category: 'Melee', damage: '1d8', damageType: 'slashing' },
-        { name: 'Light Crossbow', type: 'Simple', category: 'Ranged', damage: '1d8', damageType: 'piercing' }
-      ],
-      Ranger: [
-        { name: 'Shortsword', type: 'Martial', category: 'Melee', damage: '1d6', damageType: 'piercing' },
-        { name: 'Longbow', type: 'Martial', category: 'Ranged', damage: '1d8', damageType: 'piercing' }
-      ],
-      Rogue: [
-        { name: 'Shortsword', type: 'Martial', category: 'Melee', damage: '1d6', damageType: 'piercing' },
-        { name: 'Shortbow', type: 'Martial', category: 'Ranged', damage: '1d6', damageType: 'piercing' }
-      ],
-      Cleric: [
-        { name: 'Warhammer', type: 'Martial', category: 'Melee', damage: '1d8', damageType: 'bludgeoning' },
-        { name: 'Light Crossbow', type: 'Simple', category: 'Ranged', damage: '1d8', damageType: 'piercing' }
-      ],
-      Wizard: [
-        { name: 'Quarterstaff', type: 'Simple', category: 'Melee', damage: '1d6', damageType: 'bludgeoning' },
-        { name: 'Dagger', type: 'Simple', category: 'Melee', damage: '1d4', damageType: 'piercing' }
-      ]
-    };
-
-    const suggestions = basicWeapons[characterClass] || basicWeapons.Fighter;
-    return suggestions.map(weapon => ({
-      name: weapon.name || 'Unknown',
-      type: weapon.type || 'Simple',
-      category: weapon.category || 'Melee',
-      damage: weapon.damage || '1d4',
-      damageType: weapon.damageType || 'bludgeoning',
-      properties: [],
-      weight: 2,
-      cost: '10 gp',
-      stackable: false
-    }));
-  }
-
-  // Basic armor suggestions (will be enhanced with database lookups later)
-  private getBasicArmorSuggestions(characterClass: string): Armor[] {
-    // For now, return armor that each class can typically use
-    // TODO: Replace with database lookups when armor database is available
-    const basicArmor: Record<string, Partial<Armor>[]> = {
-      Barbarian: [
-        { name: 'Leather', type: 'Light', baseAC: 11, stealthDisadvantage: false }
-      ],
-      Fighter: [
-        { name: 'Chain Mail', type: 'Heavy', baseAC: 16, minStrength: 13, stealthDisadvantage: true },
-        { name: 'Shield', type: 'Shield', baseAC: 2 }
-      ],
-      Ranger: [
-        { name: 'Scale Mail', type: 'Medium', baseAC: 14, maxDexBonus: 2, stealthDisadvantage: true },
-        { name: 'Shield', type: 'Shield', baseAC: 2 }
-      ],
-      Rogue: [
-        { name: 'Leather', type: 'Light', baseAC: 11, stealthDisadvantage: false },
-        { name: 'Studded Leather', type: 'Light', baseAC: 12, stealthDisadvantage: false }
-      ],
-      Cleric: [
-        { name: 'Scale Mail', type: 'Medium', baseAC: 14, maxDexBonus: 2, stealthDisadvantage: true },
-        { name: 'Shield', type: 'Shield', baseAC: 2 }
-      ],
-      Wizard: [], // Wizards typically don't wear armor
-      Sorcerer: [], // Sorcerers typically don't wear armor
-      Monk: [] // Monks don't wear armor
-    };
-
-    const suggestions = basicArmor[characterClass] || [];
-    return suggestions.map(armor => ({
-      name: armor.name || 'Leather',
-      type: armor.type || 'Light',
-      baseAC: armor.baseAC || 11,
-      maxDexBonus: armor.maxDexBonus,
-      minStrength: armor.minStrength,
-      stealthDisadvantage: armor.stealthDisadvantage || false,
-      weight: 10,
-      cost: '10 gp',
-      description: `Basic ${armor.type} armor for ${characterClass} class.`
-    }));
   }
 
   // Calculate spellcasting stats
@@ -376,19 +269,50 @@ export class CharacterCreationService {
     const maxHitPoints = calculateHitPoints(1, abilityScores.constitution, characterClass);
     const armorClass = 10 + getModifier(abilityScores.dexterity);
     
-    // Get starting equipment from the existing function
-    const startingEquipmentList = getStartingEquipment(characterClass, data.background);
+    // Fetch equipment packs to get selected pack items
+    let equipmentPacks = [];
+    try {
+      equipmentPacks = await getEquipmentPacksFromDatabase();
+    } catch (error) {
+      console.warn('Error fetching equipment packs during character creation:', error);
+      equipmentPacks = [];
+    }
+    
     console.log('=== CHARACTER CREATION DEBUG ===');
     console.log('Character Class:', characterClass);
     console.log('Background:', data.background);
-    console.log('Starting equipment list:', startingEquipmentList);
+    console.log('Selected Equipment Pack ID:', data.selectedEquipmentPack);
+    console.log('Available Equipment Packs:', equipmentPacks.length);
+    console.log('Selected Weapons:', data.selectedWeapons);
 
-    // The server-side API will handle armor separation and database lookups
-    // Here we just pass the equipment list as general inventory
-    const generalInventory: { name: string; quantity: number }[] = startingEquipmentList.map(item => ({
-      name: item,
-      quantity: 1
-    }));
+    // Get equipment pack items if a pack was selected
+    let equipmentPackItems: { name: string; quantity: number }[] = [];
+    if (data.selectedEquipmentPack !== undefined && equipmentPacks[data.selectedEquipmentPack]) {
+      const selectedPack = equipmentPacks[data.selectedEquipmentPack];
+      equipmentPackItems = selectedPack.items.map(item => ({
+        name: item.name,
+        quantity: item.quantity
+      }));
+      console.log('Selected equipment pack items:', equipmentPackItems);
+    }
+
+    // Background equipment (non-weapon/armor items)
+    const backgroundEquipment: Record<string, string[]> = {
+      Acolyte: ['Holy Symbol', 'Prayer Book', 'Incense (5)', 'Vestments', 'Common Clothes', 'Belt Pouch'],
+      Criminal: ['Crowbar', 'Dark Common Clothes', 'Hood', 'Belt Pouch'],
+      'Folk Hero': ['Artisan Tools', 'Shovel', 'Iron Pot', 'Common Clothes', 'Belt Pouch'],
+      Noble: ['Signet Ring', 'Scroll of Pedigree', 'Fine Clothes', 'Belt Pouch'],
+      Sage: ['Ink Bottle', 'Quill', 'Small Knife', 'Letter', 'Common Clothes', 'Belt Pouch'],
+      Soldier: ['Insignia of Rank', 'Trophy', 'Deck of Cards', 'Common Clothes', 'Belt Pouch']
+    };
+    
+    const backgroundItems = backgroundEquipment[data.background] || [];
+    
+    // Combine equipment pack items + background items
+    const generalInventory: { name: string; quantity: number }[] = [
+      ...equipmentPackItems,
+      ...backgroundItems.map(item => ({ name: item, quantity: 1 }))
+    ];
     
     const backgroundSkills = getBackgroundSkills(data.background);
     

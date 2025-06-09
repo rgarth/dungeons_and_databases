@@ -57,7 +57,7 @@ const DICE = (function() {
 
     var vars = { //todo: make these configurable on init
         frame_rate: 1 / 60,
-        scale: 100, //dice size
+        scale: 85, //dice size (reduced by 15%)
         
         material_options: {
             specular: 0x172022,
@@ -173,7 +173,7 @@ const DICE = (function() {
         this.w = this.cw;
         this.h = this.ch;
         this.aspect = Math.min(this.cw / this.w, this.ch / this.h);
-        vars.scale = Math.sqrt(this.w * this.w + this.h * this.h) / 8;
+        vars.scale = Math.sqrt(this.w * this.w + this.h * this.h) / 8 * 0.85;
         //console.log('scale = ' + vars.scale);
 
         this.renderer.setSize(this.cw * 2, this.ch * 2);

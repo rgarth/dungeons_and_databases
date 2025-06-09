@@ -1,6 +1,6 @@
 "use client";
 
-import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp, FileText, Dices } from "lucide-react";
+import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp, FileText, Dices, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getModifier } from "@/lib/dnd/core";
 import { Spell, getClassSpells } from "@/lib/dnd/spells";
@@ -634,74 +634,96 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
             </div>
           </div>
 
-          {/* Tab Navigation */}
-          <div className="flex items-end border-b border-slate-700">
-            <button
-              onClick={() => setActiveTab("stats")}
-              className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
-                activeTab === "stats"
-                  ? "text-purple-400 border-b-2 border-purple-400"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              <BarChart3 className="h-4 w-4" />
-              Stats
-            </button>
-            <button
-              onClick={() => setActiveTab("actions")}
-              className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
-                activeTab === "actions"
-                  ? "text-purple-400 border-b-2 border-purple-400"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              <Swords className="h-4 w-4" />
-              Actions
-            </button>
-            <button
-              onClick={() => setActiveTab("gear")}
-              className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
-                activeTab === "gear"
-                  ? "text-purple-400 border-b-2 border-purple-400"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              <Package className="h-4 w-4" />
-              Gear & Spells
-            </button>
-            <button
-              onClick={() => setActiveTab("inventory")}
-              className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
-                activeTab === "inventory"
-                  ? "text-purple-400 border-b-2 border-purple-400"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              <Coins className="h-4 w-4" />
-              Inventory
-            </button>
-            <button
-              onClick={() => setActiveTab("background")}
-              className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
-                activeTab === "background"
-                  ? "text-purple-400 border-b-2 border-purple-400"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              <FileText className="h-4 w-4" />
-              Background / Notes
-            </button>
-            <button
-              onClick={() => setActiveTab("dice")}
-              className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
-                activeTab === "dice"
-                  ? "text-purple-400 border-b-2 border-purple-400"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              <Dices className="h-4 w-4" />
-              Dice Roll
-            </button>
+          {/* Tab Navigation - Responsive */}
+          <div className="border-b border-slate-700">
+            {/* Desktop: Show all tabs in a row */}
+            <div className="hidden lg:flex items-end">
+              <button
+                onClick={() => setActiveTab("stats")}
+                className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
+                  activeTab === "stats"
+                    ? "text-purple-400 border-b-2 border-purple-400"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                <BarChart3 className="h-4 w-4" />
+                Stats
+              </button>
+              <button
+                onClick={() => setActiveTab("actions")}
+                className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
+                  activeTab === "actions"
+                    ? "text-purple-400 border-b-2 border-purple-400"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                <Swords className="h-4 w-4" />
+                Actions
+              </button>
+              <button
+                onClick={() => setActiveTab("gear")}
+                className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
+                  activeTab === "gear"
+                    ? "text-purple-400 border-b-2 border-purple-400"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                <Package className="h-4 w-4" />
+                Gear & Spells
+              </button>
+              <button
+                onClick={() => setActiveTab("inventory")}
+                className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
+                  activeTab === "inventory"
+                    ? "text-purple-400 border-b-2 border-purple-400"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                <Coins className="h-4 w-4" />
+                Inventory
+              </button>
+              <button
+                onClick={() => setActiveTab("background")}
+                className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
+                  activeTab === "background"
+                    ? "text-purple-400 border-b-2 border-purple-400"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                <FileText className="h-4 w-4" />
+                Background / Notes
+              </button>
+              <button
+                onClick={() => setActiveTab("dice")}
+                className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
+                  activeTab === "dice"
+                    ? "text-purple-400 border-b-2 border-purple-400"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                <Dices className="h-4 w-4" />
+                Dice Roll
+              </button>
+            </div>
+
+            {/* Mobile: Dropdown selector */}
+            <div className="lg:hidden relative">
+              <div className="relative">
+                <select
+                  value={activeTab}
+                  onChange={(e) => setActiveTab(e.target.value as typeof activeTab)}
+                  className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-white font-medium focus:border-purple-500 focus:outline-none appearance-none cursor-pointer"
+                >
+                  <option value="stats">📊 Stats</option>
+                  <option value="actions">⚔️ Actions</option>
+                  <option value="gear">📦 Gear & Spells</option>
+                  <option value="inventory">🪙 Inventory</option>
+                  <option value="background">📄 Background / Notes</option>
+                  <option value="dice">🎲 Dice Roll</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              </div>
+            </div>
           </div>
 
           {/* Tab Content */}

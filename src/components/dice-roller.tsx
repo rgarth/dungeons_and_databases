@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 
-
 // Declare global DICE object for TypeScript
 declare global {
   interface Window {
@@ -103,7 +102,7 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
             const container = diceContainerRef.current;
             container.style.width = '100%';
             container.style.height = '100%';
-            container.style.minHeight = '400px';
+            container.style.minHeight = '480px';
             container.style.position = 'relative';
             
             console.log('Container dimensions:', {
@@ -341,7 +340,7 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
           ref={diceContainerRef}
           className="absolute inset-0 w-full h-full"
           style={{ 
-            minHeight: '400px',
+            minHeight: '480px',
             background: diceBoxRef.current ? 'transparent' : '#1e293b'
           }}
         >
