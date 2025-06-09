@@ -1,10 +1,12 @@
 - No artifacts.
-- Less code is better than more code.
+- Less code is better than more code - keep files small, clean, and focused.
 - No fallback mechanisms — they hide real failures.
-- Rewrite existing components over adding new ones.
-- Flag obsolete files to keep the codebase lightweight.
+- Replace existing components entirely when improving them. Delete legacy versions immediately. Never leave old implementations as dead code.
+- Flag obsolete files to keep the codebase lightweight - actively remove unused code.
 - Avoid race conditions at all costs.
 - Take your time to ultrathink when on extended thinking mode — thinking is cheaper than fixing bugs.
-- Always double check everything you do for correctness and good design before continuing
-- no hardcoded values that should be in th datbase
-- sensible data structures with indexes
+- Always double check everything you do for correctness and good design before continuing.
+- No hardcoded values that should be in the database - keep data dynamic and configurable.
+- Sensible data structures with proper indexes for performance.
+- Single source of truth per feature - no duplicate implementations.
+- Modern code patterns in clean, focused files - but never alongside legacy versions.
