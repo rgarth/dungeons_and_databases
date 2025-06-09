@@ -6,12 +6,13 @@ import { createCharacterEquipment } from "@/services/character/equipment";
 import { createMagicalItemService, type DiceRoll } from "@/services/character/magical-items";
 // Note: Using database data instead of hardcoded arrays
 import { weaponsData } from '../../../../prisma/data/weapons-data';
-import { armorData } from '../../../../prisma/data/armor-data';
+
 import { spellsData } from '../../../../prisma/data/spells-data';
 import { magicalItemsData } from '../../../../prisma/data/magical-items-data';
 import type { Weapon, MagicalWeapon, Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
 import { MagicalItem, EquippedMagicalItem, MagicalItemType, MagicalItemRarity, canAttuneMagicalItem, canEquipInSlot } from "@/lib/dnd/magical-items";
+import { ArmorSelector } from "../../shared/ArmorSelector";
 
 interface GearTabProps {
   character: {
@@ -99,7 +100,7 @@ export function GearTab({
   const [showArmorSelector, setShowArmorSelector] = useState(false);
   const [showMagicalItemSelector, setShowMagicalItemSelector] = useState(false);
   const [selectedWeapon, setSelectedWeapon] = useState("");
-  const [selectedArmor, setSelectedArmor] = useState("");
+
   const [selectedMagicalItem, setSelectedMagicalItem] = useState("");
 
   // Filter states for magical items
@@ -134,18 +135,7 @@ export function GearTab({
     }
   };
 
-  const handleAddArmor = () => {
-    const armorData_item = armorData.find(a => a.name === selectedArmor);
-    if (armorData_item) {
-      const armor = {
-        ...armorData_item,
-        type: armorData_item.type as 'Light' | 'Medium' | 'Heavy' | 'Shield'
-      } as Armor;
-      onAddArmor(armor);
-      setSelectedArmor("");
-      setShowArmorSelector(false);
-    }
-  };
+
 
   const handleAddMagicalItem = () => {
     const itemData = magicalItemsData.find(i => i.name === selectedMagicalItem);
@@ -802,46 +792,18 @@ export function GearTab({
       )}
 
       {showArmorSelector && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-800 rounded-lg w-full max-w-md p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">Add Armor</h3>
-              <button
-                onClick={() => setShowArmorSelector(false)}
-                className="text-slate-400 hover:text-white"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <select
-              value={selectedArmor}
-              onChange={(e) => setSelectedArmor(e.target.value)}
-              className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white mb-4"
-            >
-              <option value="">Select armor...</option>
-              {armorData.map(armor => (
-                <option key={armor.name} value={armor.name}>
-                  {armor.name} (AC {armor.baseAC}, {armor.type})
-                </option>
-              ))}
-            </select>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowArmorSelector(false)}
-                className="flex-1 bg-slate-600 hover:bg-slate-500 text-white py-2 px-4 rounded"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAddArmor}
-                disabled={!selectedArmor}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-2 px-4 rounded"
-              >
-                Add Armor
-              </button>
-            </div>
-          </div>
-        </div>
+        <ArmorSelector
+          selectedArmor={[]}
+          onArmorSelectionChange={(armor) => {
+            // Add selected armor to inventory (the handler will handle multiple selections)
+            armor.forEach(item => onAddArmor(item));
+            setShowArmorSelector(false);
+          }}
+          onClose={() => setShowArmorSelector(false)}
+          isOpen={showArmorSelector}
+          characterClass={character.class}
+          showProficiencies={true}
+        />
       )}
 
       {showMagicalItemSelector && (
