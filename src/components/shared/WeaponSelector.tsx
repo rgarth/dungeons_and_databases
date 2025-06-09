@@ -216,8 +216,8 @@ export function WeaponSelector({
                 <div className="mb-4 p-3 bg-slate-700 rounded border border-amber-500/30">
                   <h5 className="text-sm font-semibold text-amber-300 mb-2">💡 Suggested for {characterClass}</h5>
                   <div className="text-xs text-slate-400 space-y-1">
-                    {weaponSuggestions.map(suggestion => (
-                      <div key={suggestion.weaponName} className="flex justify-between">
+                    {weaponSuggestions.map((suggestion, index) => (
+                      <div key={`suggestion-${suggestion.weaponName}-${index}`} className="flex justify-between">
                         <span>{suggestion.quantity}x {suggestion.weaponName}</span>
                         {suggestion.reason && <span className="text-slate-500">({suggestion.reason})</span>}
                       </div>
@@ -264,13 +264,13 @@ export function WeaponSelector({
                           {categoryName} {!isProficient && '(No Proficiency)'}
                         </h5>
                         <div className="space-y-1">
-                          {weapons.map((weapon: Weapon) => {
+                          {weapons.map((weapon: Weapon, weaponIndex: number) => {
                             const selectedWeapon = currentSelectedWeapons.find(sw => sw.weapon.name === weapon.name);
                             const quantity = selectedWeapon?.quantity || 0;
                             const canAdd = totalWeapons < maxWeapons;
                             
                             return (
-                              <div key={weapon.name} className={`flex items-center justify-between p-1.5 rounded text-xs ${
+                              <div key={`${categoryName}-${weapon.name}-${weaponIndex}`} className={`flex items-center justify-between p-1.5 rounded text-xs ${
                                 isProficient ? 'bg-slate-700' : 'bg-slate-600/50'
                               }`}>
                                 <div className="flex-1 min-w-0">
@@ -340,8 +340,8 @@ export function WeaponSelector({
                     Selected Weapons ({totalWeapons}/{maxWeapons})
                   </h4>
                   <div className="space-y-1">
-                    {currentSelectedWeapons.map(({ weapon, quantity }) => (
-                      <div key={weapon.name} className="text-sm text-slate-300">
+                    {currentSelectedWeapons.map(({ weapon, quantity }, index) => (
+                      <div key={`selected-${weapon.name}-${index}`} className="text-sm text-slate-300">
                         • {quantity}x {weapon.name} ({weapon.damage} {weapon.damageType})
                       </div>
                     ))}
