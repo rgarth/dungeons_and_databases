@@ -5,7 +5,7 @@ import { Package, Shield, Wand2, Plus, X, Trash2, Sparkles, Scroll } from "lucid
 import { createCharacterEquipment } from "@/services/character/equipment";
 import { createMagicalItemService, type DiceRoll } from "@/services/character/magical-items";
 // Note: Using database data instead of hardcoded arrays
-import { weaponsData } from '../../../../prisma/data/weapons-data';
+
 
 import { spellsData } from '../../../../prisma/data/spells-data';
 import { magicalItemsData } from '../../../../prisma/data/magical-items-data';
@@ -13,6 +13,7 @@ import type { Weapon, MagicalWeapon, Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
 import { MagicalItem, EquippedMagicalItem, MagicalItemType, MagicalItemRarity, canAttuneMagicalItem, canEquipInSlot } from "@/lib/dnd/magical-items";
 import { ArmorSelector } from "../../shared/ArmorSelector";
+import { WeaponSelector } from "../../shared/WeaponSelector";
 
 interface GearTabProps {
   character: {
@@ -47,6 +48,7 @@ interface GearTabProps {
   onRemoveMagicalItem: (index: number, isEquipped?: boolean) => void;
   onToggleAttunement: (itemName: string) => void;
   onAddWeapon: (weapon: Weapon | MagicalWeapon) => void;
+  onAddWeapons?: (weapons: (Weapon | MagicalWeapon)[]) => void;
   onAddArmor: (armor: Armor) => void;
   onAddMagicalItem: (item: MagicalItem) => void;
   onOpenSpellPreparation: () => void;
@@ -73,6 +75,7 @@ export function GearTab({
   onRemoveMagicalItem,
   onToggleAttunement,
   onAddWeapon,
+  onAddWeapons,
   onAddArmor,
   onAddMagicalItem,
   onOpenSpellPreparation,
@@ -99,7 +102,7 @@ export function GearTab({
   const [showWeaponSelector, setShowWeaponSelector] = useState(false);
   const [showArmorSelector, setShowArmorSelector] = useState(false);
   const [showMagicalItemSelector, setShowMagicalItemSelector] = useState(false);
-  const [selectedWeapon, setSelectedWeapon] = useState("");
+
 
   const [selectedMagicalItem, setSelectedMagicalItem] = useState("");
 
@@ -119,22 +122,6 @@ export function GearTab({
   const [potionRolls, setPotionRolls] = useState<DiceRoll | null>(null);
 
   const currentArmorClass = equipment.calculateArmorClass(equippedArmor);
-
-  const handleAddWeapon = () => {
-    const weaponData = weaponsData.find(w => w.name === selectedWeapon);
-    if (weaponData) {
-      const weapon = {
-        ...weaponData,
-        type: weaponData.type as 'Simple' | 'Martial',
-        category: weaponData.category as 'Melee' | 'Ranged',
-        properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
-      } as Weapon;
-      onAddWeapon(weapon);
-      setSelectedWeapon("");
-      setShowWeaponSelector(false);
-    }
-  };
-
 
 
   const handleAddMagicalItem = () => {
@@ -749,46 +736,34 @@ export function GearTab({
 
       {/* Item Selector Modals */}
       {showWeaponSelector && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-800 rounded-lg w-full max-w-md p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">Add Weapon</h3>
-              <button
-                onClick={() => setShowWeaponSelector(false)}
-                className="text-slate-400 hover:text-white"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <select
-              value={selectedWeapon}
-              onChange={(e) => setSelectedWeapon(e.target.value)}
-              className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white mb-4"
-            >
-              <option value="">Select weapon...</option>
-              {weaponsData.map(weapon => (
-                <option key={weapon.name} value={weapon.name}>
-                  {weapon.name} ({weapon.damage} {weapon.damageType})
-                </option>
-              ))}
-            </select>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowWeaponSelector(false)}
-                className="flex-1 bg-slate-600 hover:bg-slate-500 text-white py-2 px-4 rounded"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAddWeapon}
-                disabled={!selectedWeapon}
-                className="flex-1 bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50 text-white py-2 px-4 rounded"
-              >
-                Add Weapon
-              </button>
-            </div>
-          </div>
-        </div>
+        <WeaponSelector
+          title="Add Weapons to Inventory"
+          maxWeapons={10}
+          selectedWeapons={[]}
+          onConfirm={(weapons) => {
+            // Build complete list of weapons to add - root cause solution
+            const weaponsToAdd: (Weapon | MagicalWeapon)[] = [];
+            weapons.forEach(({ weapon, quantity }) => {
+              for (let i = 0; i < quantity; i++) {
+                weaponsToAdd.push(weapon);
+              }
+            });
+            
+            // Use new multi-weapon interface if available, fallback to single
+            if (onAddWeapons && weaponsToAdd.length > 0) {
+              onAddWeapons(weaponsToAdd);
+            } else {
+              // Fallback for backward compatibility
+              weaponsToAdd.forEach(weapon => onAddWeapon(weapon));
+            }
+            
+            setShowWeaponSelector(false);
+          }}
+          onCancel={() => setShowWeaponSelector(false)}
+          characterClass={character.class}
+          showSuggestions={true}
+          multiSelect={true}
+        />
       )}
 
       {showArmorSelector && (
@@ -866,9 +841,9 @@ export function GearTab({
             
             <div className="overflow-y-auto max-h-[50vh] mb-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
-                {filteredMagicalItems.map(item => (
+                {filteredMagicalItems.map((item, index) => (
                   <button
-                    key={item.name}
+                    key={`${item.name}-${index}`}
                     onClick={() => setSelectedMagicalItem(item.name)}
                     className={`text-left p-3 rounded border transition-colors ${
                       selectedMagicalItem === item.name
