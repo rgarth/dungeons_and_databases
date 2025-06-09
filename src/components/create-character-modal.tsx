@@ -842,6 +842,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           onArmorSelectionChange={(armor) => setSelectedArmor(armor)}
           onClose={() => setShowArmorSelector(false)}
           isOpen={showArmorSelector}
+          characterClass={characterClass}
+          showProficiencies={true}
         />
       )}
     </div>
