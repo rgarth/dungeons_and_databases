@@ -85,4 +85,9 @@ export function categorizeWeaponsByProficiency(weapons: Weapon[], proficiencies:
   });
 
   return { proficient, nonProficient };
+}
+
+export async function getClassArmorProficiencies(className: string): Promise<string[]> {
+  const proficiencies = await getClassProficiencies(className);
+  return proficiencies?.armor || [];
 } 

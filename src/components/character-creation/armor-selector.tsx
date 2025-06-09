@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Armor } from '../../lib/dnd/types';
+import { Armor } from '../../lib/dnd/equipment';
 import { armorData } from '../../../prisma/data/armor-data';
 
 interface ArmorSelectorProps {
@@ -7,19 +7,51 @@ interface ArmorSelectorProps {
   onArmorSelectionChange?: (armor: Armor[]) => void;
   onClose?: () => void;
   isOpen?: boolean;
+  characterClass?: string;
+  showProficiencies?: boolean;
 }
 
 export function ArmorSelector({
   selectedArmor = [],
   onArmorSelectionChange,
   onClose,
-  isOpen = true
+  isOpen = true,
+  characterClass,
+  showProficiencies = true
 }: ArmorSelectorProps) {
   const [internalSelectedArmor, setInternalSelectedArmor] = useState<Armor[]>(selectedArmor);
+  const [armorProficiencies, setArmorProficiencies] = useState<string[] | null>(null);
+  const [loadingProficiencies, setLoadingProficiencies] = useState(false);
 
   useEffect(() => {
     setInternalSelectedArmor(selectedArmor);
   }, [selectedArmor]);
+
+  // Load armor proficiencies when class changes
+  useEffect(() => {
+    if (!characterClass || !showProficiencies) return;
+    
+    const loadProficiencies = async () => {
+      setLoadingProficiencies(true);
+      try {
+        const response = await fetch(`/api/class-proficiencies?className=${encodeURIComponent(characterClass)}&includeArmor=true`);
+        if (response.ok) {
+          const data = await response.json();
+          // Extract armor proficiencies from the full proficiencies response
+          setArmorProficiencies(data?.armor || []);
+        } else {
+          setArmorProficiencies([]);
+        }
+      } catch (error) {
+        console.error('Failed to load armor proficiencies:', error);
+        setArmorProficiencies([]);
+      } finally {
+        setLoadingProficiencies(false);
+      }
+    };
+    
+    loadProficiencies();
+  }, [characterClass, showProficiencies]);
 
   const handleArmorToggle = (armor: Armor) => {
     const newSelection = internalSelectedArmor.some(a => a.name === armor.name)
@@ -33,13 +65,45 @@ export function ArmorSelector({
     }
   };
 
-  // Group armor by type
-  const groupedArmor = armorData.reduce((groups, armor) => {
-    const type = armor.type;
-    if (!groups[type]) groups[type] = [];
-    groups[type].push(armor);
-    return groups;
-  }, {} as Record<string, Armor[]>);
+  const isArmorProficient = (armor: Armor): boolean => {
+    if (!armorProficiencies) return true; // Show all if proficiencies not loaded
+    return armorProficiencies.includes(armor.type);
+  };
+
+  // Group armor by proficiency if we have proficiency data
+  let armorCategories: Record<string, Armor[]>;
+  
+  if (armorProficiencies && showProficiencies) {
+    const proficientArmor = armorData.filter(armor => isArmorProficient(armor));
+    const nonProficientArmor = armorData.filter(armor => !isArmorProficient(armor));
+    
+    armorCategories = {
+      'Proficient - Light Armor': proficientArmor.filter(a => a.type === 'Light'),
+      'Proficient - Medium Armor': proficientArmor.filter(a => a.type === 'Medium'),
+      'Proficient - Heavy Armor': proficientArmor.filter(a => a.type === 'Heavy'),
+      'Proficient - Shields': proficientArmor.filter(a => a.type === 'Shield'),
+      'Non-Proficient - Light Armor': nonProficientArmor.filter(a => a.type === 'Light'),
+      'Non-Proficient - Medium Armor': nonProficientArmor.filter(a => a.type === 'Medium'),
+      'Non-Proficient - Heavy Armor': nonProficientArmor.filter(a => a.type === 'Heavy'),
+      'Non-Proficient - Shields': nonProficientArmor.filter(a => a.type === 'Shield'),
+    };
+    
+    // Remove empty categories
+    Object.keys(armorCategories).forEach(key => {
+      if (armorCategories[key].length === 0) {
+        delete armorCategories[key];
+      }
+    });
+  } else {
+    // Fallback to basic type grouping
+    armorCategories = armorData.reduce((groups, armor) => {
+      const type = armor.type;
+      const key = `${type} Armor`;
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(armor);
+      return groups;
+    }, {} as Record<string, Armor[]>);
+  }
 
   if (!isOpen) return null;
 
@@ -57,12 +121,25 @@ export function ArmorSelector({
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
-          {Object.entries(groupedArmor).map(([type, armors]) => (
-            <div key={type} className="mb-6">
-              <h3 className="text-lg font-semibold text-white mb-3 capitalize">{type} Armor</h3>
+          {loadingProficiencies && (
+            <div className="text-center text-slate-400 mb-4">
+              Loading armor proficiencies...
+            </div>
+          )}
+          
+          {Object.entries(armorCategories).map(([categoryName, armors]) => (
+            <div key={categoryName} className="mb-6">
+              <h3 className={`text-lg font-semibold mb-3 capitalize ${
+                categoryName.includes('Proficient -') ? 'text-green-400' :
+                categoryName.includes('Non-Proficient -') ? 'text-red-400' :
+                'text-white'
+              }`}>
+                {categoryName}
+              </h3>
               <div className="space-y-2">
                 {armors.map((armor) => {
                   const isSelected = internalSelectedArmor.some(a => a.name === armor.name);
+                  const isProficient = isArmorProficient(armor);
                   
                   return (
                     <div
@@ -70,19 +147,29 @@ export function ArmorSelector({
                       className={`p-3 border rounded-lg cursor-pointer transition-colors ${
                         isSelected
                           ? 'border-purple-500 bg-purple-500/10'
-                          : 'border-slate-600 bg-slate-700 hover:border-slate-500'
+                          : isProficient 
+                            ? 'border-slate-600 bg-slate-700 hover:border-slate-500'
+                            : 'border-red-600/50 bg-red-900/10 hover:border-red-500/50'
                       }`}
                       onClick={() => handleArmorToggle(armor)}
                     >
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <span className={`font-medium ${isSelected ? 'text-purple-300' : 'text-white'}`}>
+                            <span className={`font-medium ${
+                              isSelected ? 'text-purple-300' : 
+                              isProficient ? 'text-white' : 'text-red-300'
+                            }`}>
                               {armor.name}
                             </span>
                             {isSelected && (
                               <span className="text-xs px-2 py-1 bg-purple-500 text-white rounded">
                                 Selected
+                              </span>
+                            )}
+                            {!isProficient && showProficiencies && (
+                              <span className="text-xs px-2 py-1 bg-red-600 text-white rounded">
+                                Not Proficient
                               </span>
                             )}
                           </div>
