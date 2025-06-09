@@ -312,6 +312,13 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     updateCharacter({ weapons: updatedWeapons });
   };
 
+  const handleAddWeapons = (weapons: (Weapon | MagicalWeapon)[]) => {
+    // Add multiple weapons to inventory at once - root cause solution
+    const weaponsWithEquipped = weapons.map(weapon => ({ ...weapon, equipped: false }));
+    const updatedWeapons = [...(currentCharacter.weapons || []), ...weaponsWithEquipped];
+    updateCharacter({ weapons: updatedWeapons });
+  };
+
   const handleAddArmor = (armor: Armor) => {
     // Add armor to inventory (unequipped)
     const updatedArmor = [...(currentCharacter.armor || []), { ...armor, equipped: false }];
@@ -847,8 +854,9 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
                 onUnequipMagicalItem={handleUnequipMagicalItem}
                 onRemoveMagicalItem={handleRemoveMagicalItem}
                 onToggleAttunement={handleToggleAttunement}
-                onAddWeapon={handleAddWeapon}
-                onAddArmor={handleAddArmor}
+                                 onAddWeapon={handleAddWeapon}
+                 onAddWeapons={handleAddWeapons}
+                 onAddArmor={handleAddArmor}
                 onAddMagicalItem={handleAddMagicalItem}
                 onOpenSpellPreparation={handleOpenSpellPreparation}
                 weaponLimits={weaponLimits}
