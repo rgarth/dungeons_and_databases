@@ -125,6 +125,70 @@ model MagicalItem {
   updatedAt           DateTime @updatedAt
 }
 
+model DndClass {
+  id                String              @id @default(cuid())
+  name              String              @unique // "Fighter", "Wizard", etc.
+  description       String              // Class description
+  hitDie            Int                 // Hit die size (6, 8, 10, 12)
+  primaryAbility    String              // "Strength", "Dexterity", etc.
+  savingThrows      Json                // Array of saving throw proficiencies
+  skillChoices      Json                // Available skill choices and number to choose
+  armorProficiencies  ClassArmorProficiency[]
+  weaponProficiencies ClassWeaponProficiency[]
+  weaponSuggestions   ClassWeaponSuggestion[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+}
+
+model ClassArmorProficiency {
+  id        String   @id @default(cuid())
+  class     DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+  classId   String
+  armorType String   // "Light", "Medium", "Heavy", "Shield"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([classId, armorType])
+}
+
+model ClassWeaponProficiency {
+  id           String   @id @default(cuid())
+  class        DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+  classId      String
+  proficiencyType String // "Simple", "Martial", "Specific"
+  weaponName   String?  // For specific weapons like "Longsword", null for Simple/Martial
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([classId, proficiencyType, weaponName])
+}
+
+model ClassWeaponSuggestion {
+  id         String   @id @default(cuid())
+  class      DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+  classId    String
+  weaponName String   // Specific weapon name to suggest
+  quantity   Int      @default(1) // How many to suggest
+  reason     String?  // Optional reason like "Primary weapon" or "Backup ranged option"
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([classId, weaponName])
+}
+
+model DndRace {
+  id                 String   @id @default(cuid())
+  name               String   @unique // "Human", "Elf", etc.
+  description        String   // Race description
+  abilityScoreIncrease Json   // Which abilities get bonuses
+  size               String   // "Medium", "Small"
+  speed              Int      // Base walking speed
+  traits             Json     // Array of racial traits
+  languages          Json     // Known languages
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
 model Treasure {
   id          String   @id @default(cuid())
   name        String   @unique

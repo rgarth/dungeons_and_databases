@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Proficiencies</title>
+</head>
+<body>
+    <h1>Class Weapon Proficiencies Test</h1>
+    
+    <div>
+        <h2>Fighter (Should have Simple + Martial)</h2>
+        <div id="fighter-result">Loading...</div>
+    </div>
+    
+    <div>
+        <h2>Wizard (Should have only 5 specific weapons)</h2>
+        <div id="wizard-result">Loading...</div>
+    </div>
+    
+    <div>
+        <h2>Rogue (Should have Simple + 4 specific martial)</h2>
+        <div id="rogue-result">Loading...</div>
+    </div>
+
+    <script>
+        async function testClass(className, elementId) {
+            try {
+                const response = await fetch(`/api/class-proficiencies?className=${className}`);
+                const data = await response.json();
+                document.getElementById(elementId).innerHTML = `
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById(elementId).innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        // Test all classes
+        testClass('Fighter', 'fighter-result');
+        testClass('Wizard', 'wizard-result');
+        testClass('Rogue', 'rogue-result');
+    </script>
+</body>
+</html> 
