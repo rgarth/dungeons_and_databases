@@ -8,8 +8,11 @@ import { generateFantasyName } from "@/lib/dnd/character";
 import { Spell } from "@/lib/dnd/spells";
 import { Weapon, Armor } from "@/lib/dnd/equipment";
 import { WeaponSuggestion } from "@/lib/dnd/weapon-suggestions";
+import { ArmorSuggestion } from "@/lib/dnd/armor-suggestions";
 import { WeaponSelector } from "./shared/WeaponSelector";
+import { ArmorSelector } from "./character-creation/armor-selector";
 import { weaponsData } from '../../prisma/data/weapons-data';
+import { armorData } from '../../prisma/data/armor-data';
 
 import { 
   type StatMethod, 
@@ -83,18 +86,46 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [loadingOptions, setLoadingOptions] = useState(true);
 
   const [weaponSuggestions, setWeaponSuggestions] = useState<WeaponSuggestion[]>([]);
+  const [armorSuggestions, setArmorSuggestions] = useState<ArmorSuggestion[]>([]);
+  const [selectedArmor, setSelectedArmor] = useState<Armor[]>([]);
   const [showWeaponSelector, setShowWeaponSelector] = useState(false);
+  const [showArmorSelector, setShowArmorSelector] = useState(false);
   
-
+  // Debug effect to track selectedArmor changes
+  useEffect(() => {
+    console.log('🔄 SELECTED ARMOR CHANGED:', selectedArmor.length, 'items');
+    if (selectedArmor.length > 0) {
+      console.log('Selected armor details:', selectedArmor.map(a => a.name));
+    }
+  }, [selectedArmor]);
+  
+  // Debug effect to track selectedArmor changes
+  useEffect(() => {
+    console.log('🔄 SELECTED ARMOR CHANGED:', selectedArmor.length, 'items');
+    console.log('Selected armor details:', selectedArmor.map(a => a.name));
+  }, [selectedArmor]);
+  
+  // Debug effect to monitor selectedArmor changes
+  useEffect(() => {
+    console.log('SELECTED ARMOR CHANGED:', selectedArmor);
+  }, [selectedArmor]);
+  
+  // Debug effect to monitor selectedArmor changes
+  useEffect(() => {
+    console.log('SELECTED ARMOR CHANGED:', selectedArmor);
+  }, [selectedArmor]);
 
   // Load creation options and proficiencies when class changes
   useEffect(() => {
     const loadCreationOptions = async () => {
       setLoadingOptions(true);
       try {
-        const [options, suggestions] = await Promise.all([
+        const [options, weaponSuggestions, armorSuggestions] = await Promise.all([
           characterCreationService.getCreationOptions(characterClass),
           fetch(`/api/weapon-suggestions?className=${encodeURIComponent(characterClass)}`)
+            .then(res => res.ok ? res.json() : [])
+            .catch(() => []),
+          fetch(`/api/armor-suggestions?className=${encodeURIComponent(characterClass)}`)
             .then(res => res.ok ? res.json() : [])
             .catch(() => [])
         ]);
@@ -110,9 +141,26 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             spellSlots: {} 
           }
         });
-        setWeaponSuggestions(suggestions);
+        console.log('🔥 RAW API RESPONSES:');
+        console.log('weaponSuggestions response:', weaponSuggestions);
+        console.log('armorSuggestions response:', armorSuggestions);
         
-        console.log('Loaded weapon suggestions for', characterClass, ':', suggestions);
+        setWeaponSuggestions(weaponSuggestions);
+        setArmorSuggestions(armorSuggestions);
+        
+        console.log('✅ SET STATE - Weapon suggestions for', characterClass, ':', weaponSuggestions);
+        console.log('✅ SET STATE - Armor suggestions for', characterClass, ':', armorSuggestions);
+        
+        // Temporary debug: Manually test armor suggestions for Ranger
+        if (characterClass === 'Ranger') {
+          console.log('RANGER DEBUG: Setting manual armor suggestions');
+          const manualArmorSuggestions = [
+            { armorName: 'Shield', reason: 'Backup protection' },
+            { armorName: 'Studded Leather', reason: 'Starting light armor' }
+          ];
+          setArmorSuggestions(manualArmorSuggestions);
+          console.log('RANGER DEBUG: Set manual armor suggestions:', manualArmorSuggestions);
+        }
       } catch (error) {
         console.error('Failed to load creation options:', error);
         // Fallback to basic options
@@ -126,6 +174,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         });
 
         setWeaponSuggestions([]);
+        setArmorSuggestions([]);
       } finally {
         setLoadingOptions(false);
       }
@@ -170,11 +219,48 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }
   }, [weaponSuggestions]);
 
-  // Reset weapon selections when class changes
+  // Apply armor suggestions when they're loaded
   useEffect(() => {
-    // Reset selections when class changes (suggestions will be applied by the above effect)
+    console.log('=== ARMOR SUGGESTIONS EFFECT ===');
+    console.log('armorSuggestions:', armorSuggestions);
+    console.log('armorSuggestions.length:', armorSuggestions.length);
+    
+    const suggestedArmor: Armor[] = [];
+    
+    if (armorSuggestions && armorSuggestions.length > 0) {
+      console.log('Processing armor suggestions...');
+      
+      armorSuggestions.forEach((suggestion, index) => {
+        console.log(`Processing suggestion ${index}:`, suggestion);
+        const armor = armorData.find(a => a.name === suggestion.armorName);
+        console.log('Found armor:', armor);
+        
+        if (armor) {
+          const processedArmor = {
+            ...armor,
+            type: armor.type as 'Light' | 'Medium' | 'Heavy' | 'Shield',
+            maxDexBonus: armor.maxDexBonus ?? undefined,
+            minStrength: armor.minStrength ?? undefined
+          };
+          suggestedArmor.push(processedArmor);
+          console.log('Added armor:', processedArmor.name);
+        }
+      });
+    } else {
+      console.log('No armor suggestions to process - clearing armor');
+    }
+    
+    console.log('Setting selectedArmor to:', suggestedArmor);
+    setSelectedArmor(suggestedArmor);
+  }, [armorSuggestions]);
+
+  // Reset weapon and armor selections when class changes
+  useEffect(() => {
+    // Reset selections when class changes (suggestions will be applied by the above effects)
     setSelectedWeapons([]);
+    // Don't clear armor here - let armor suggestions effect handle it
     setSubclass("");
+    console.log('RESET: Cleared weapons and subclass for class change to:', characterClass);
   }, [characterClass]);
 
   const handleStatMethodChange = (method: StatMethod) => {
@@ -248,8 +334,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     });
   };
 
-
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
@@ -262,6 +346,10 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
     setLoading(true);
     try {
+      console.log('🚀 CREATING CHARACTER WITH DATA:');
+      console.log('selectedWeapons:', selectedWeapons);
+      console.log('selectedArmor:', selectedArmor);
+      
       const creationData: CharacterCreationData = {
         name,
         race,
@@ -275,6 +363,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         randomScoreArray,
         selectedEquipmentPack,
         selectedWeapons,
+        selectedArmor,
         selectedSpells
       };
 
@@ -666,6 +755,47 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 </div>
               )}
             </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Starting Armor
+              </label>
+              
+              <button
+                type="button"
+                onClick={() => setShowArmorSelector(true)}
+                className="w-full p-3 bg-slate-700 hover:bg-slate-600 rounded-lg border border-slate-600 text-left transition-colors"
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <div className="text-sm text-white mb-1">Select Armor</div>
+                    <div className="text-xs text-slate-400">
+                      {selectedArmor.length > 0 
+                        ? `${selectedArmor.length} armor pieces selected`
+                        : 'Click to choose starting armor'
+                      }
+                    </div>
+                  </div>
+                  <div className="text-slate-400">→</div>
+                </div>
+              </button>
+
+              {/* Selected Armor Summary */}
+              {selectedArmor.length > 0 && (
+                <div className="mt-3 bg-slate-600 rounded-lg p-3">
+                  <h4 className="text-sm font-medium text-white mb-2">
+                    Selected Armor ({selectedArmor.length})
+                  </h4>
+                  <div className="space-y-1">
+                    {selectedArmor.map((armor) => (
+                      <div key={armor.name} className="text-sm text-slate-300">
+                        • {armor.name} (AC {armor.baseAC}{armor.maxDexBonus !== null ? ` + Dex (max ${armor.maxDexBonus})` : ' + Dex'})
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Submit */}
@@ -702,6 +832,16 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           characterClass={characterClass}
           showSuggestions={true}
           multiSelect={true}
+        />
+      )}
+
+      {/* Armor Selector Modal */}
+      {showArmorSelector && (
+        <ArmorSelector
+          selectedArmor={selectedArmor}
+          onArmorSelectionChange={(armor) => setSelectedArmor(armor)}
+          onClose={() => setShowArmorSelector(false)}
+          isOpen={showArmorSelector}
         />
       )}
     </div>

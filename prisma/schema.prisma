@@ -136,6 +136,7 @@ model DndClass {
   armorProficiencies  ClassArmorProficiency[]
   weaponProficiencies ClassWeaponProficiency[]
   weaponSuggestions   ClassWeaponSuggestion[]
+  armorSuggestions    ClassArmorSuggestion[]
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
 }
@@ -174,6 +175,18 @@ model ClassWeaponSuggestion {
   updatedAt  DateTime @updatedAt
 
   @@unique([classId, weaponName])
+}
+
+model ClassArmorSuggestion {
+  id         String   @id @default(cuid())
+  class      DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+  classId    String
+  armorName  String   // Specific armor name to suggest
+  reason     String?  // Optional reason like "Starting armor" or "Best available AC"
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([classId, armorName])
 }
 
 model DndRace {

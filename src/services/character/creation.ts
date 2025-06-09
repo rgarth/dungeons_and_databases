@@ -42,6 +42,7 @@ export interface CharacterCreationData {
   // Equipment & Spells
   selectedEquipmentPack: number;
   selectedWeapons: { weapon: Weapon; quantity: number }[];
+  selectedArmor: Armor[];
   selectedSpells: Spell[];
 }
 
@@ -284,12 +285,13 @@ export class CharacterCreationService {
     console.log('Selected Equipment Pack ID:', data.selectedEquipmentPack);
     console.log('Available Equipment Packs:', equipmentPacks.length);
     console.log('Selected Weapons:', data.selectedWeapons);
+    console.log('Selected Armor:', data.selectedArmor);
 
     // Get equipment pack items if a pack was selected
     let equipmentPackItems: { name: string; quantity: number }[] = [];
     if (data.selectedEquipmentPack !== undefined && equipmentPacks[data.selectedEquipmentPack]) {
       const selectedPack = equipmentPacks[data.selectedEquipmentPack];
-      equipmentPackItems = selectedPack.items.map(item => ({
+      equipmentPackItems = selectedPack.items.map((item: any) => ({
         name: item.name,
         quantity: item.quantity
       }));
@@ -363,7 +365,7 @@ export class CharacterCreationService {
       skills: backgroundSkills,
       weapons: [], // No weapons equipped initially
       inventoryWeapons: data.selectedWeapons.flatMap(w => Array(w.quantity).fill(w.weapon)),
-      inventoryArmor: [], // Server will populate this from inventory
+      inventoryArmor: data.selectedArmor || [],
       
       // Spellcasting
       spellsKnown: spellsKnown || undefined,
