@@ -3,7 +3,7 @@ import { prisma } from '../prisma';
 export interface WeaponSuggestion {
   weaponName: string;
   quantity: number;
-  reason?: string;
+  reason?: string | null;
 }
 
 export async function getWeaponSuggestionsForClass(className: string): Promise<WeaponSuggestion[]> {

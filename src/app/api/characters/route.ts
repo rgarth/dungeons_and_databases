@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       skills,
       weapons,
       inventoryWeapons,
-      // inventoryArmor parameter not used - using processedInventoryArmor instead
+      inventoryArmor, // Client-provided armor from suggestions
       spellsKnown,
       spellsPrepared,
       spellSlots,
@@ -227,10 +227,20 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Also include client-provided armor from suggestions
+    const clientArmor = inventoryArmor || [];
+    console.log('=== CLIENT-PROVIDED ARMOR ===');
+    console.log('Client inventoryArmor:', clientArmor);
+    
+    // Combine processed armor (from inventory) with client-provided armor (from suggestions)
+    const allInventoryArmor = [...processedInventoryArmor, ...clientArmor];
+
     console.log('=== FINAL SERVER PROCESSING ===');
     console.log('General inventory:', processedInventory.map(item => typeof item === 'string' ? item : item.name));
     console.log('Weapon inventory:', processedInventoryWeapons.map(weapon => weapon.name));
-    console.log('Armor inventory:', processedInventoryArmor.map(armor => armor.name));
+    console.log('Processed armor inventory:', processedInventoryArmor.map(armor => armor.name));
+    console.log('Client armor inventory:', clientArmor.map((armor: any) => armor.name));
+    console.log('Combined armor inventory:', allInventoryArmor.map(armor => armor.name));
 
     // Use validation service for comprehensive validation
     const validationService = createCharacterValidationService();
@@ -289,7 +299,7 @@ export async function POST(request: NextRequest) {
         skills: skills || [],
         weapons: weapons || [],
         inventoryWeapons: [...(inventoryWeapons || []), ...processedInventoryWeapons], // Merge client weapons with processed weapons
-        inventoryArmor: processedInventoryArmor, // Use processed armor inventory
+        inventoryArmor: allInventoryArmor, // Use combined armor inventory
         spellsKnown,
         spellsPrepared,
         spellSlots: spellSlots || {},
