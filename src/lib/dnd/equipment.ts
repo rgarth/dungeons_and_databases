@@ -12,6 +12,7 @@ export interface Weapon {
   weight: number;
   cost: string;
   stackable?: boolean;
+  equipped?: boolean; // Whether this weapon is currently equipped
 }
 
 export interface MagicalWeapon extends Weapon {
@@ -34,6 +35,7 @@ export interface Armor {
   weight: number;
   cost: string;
   description: string;
+  equipped?: boolean; // Whether this armor is currently equipped
 }
 
 // GENERAL EQUIPMENT

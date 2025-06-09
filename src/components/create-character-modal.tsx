@@ -10,7 +10,7 @@ import { Weapon, Armor } from "@/lib/dnd/equipment";
 import { WeaponSuggestion } from "@/lib/dnd/weapon-suggestions";
 import { ArmorSuggestion } from "@/lib/dnd/armor-suggestions";
 import { WeaponSelector } from "./shared/WeaponSelector";
-import { ArmorSelector } from "./character-creation/armor-selector";
+import { ArmorSelector } from "./shared/ArmorSelector";
 import { weaponsData } from '../../prisma/data/weapons-data';
 import { armorData } from '../../prisma/data/armor-data';
 

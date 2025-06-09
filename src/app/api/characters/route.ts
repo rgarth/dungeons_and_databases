@@ -76,7 +76,8 @@ export async function POST(request: NextRequest) {
       skills,
       weapons,
       inventoryWeapons,
-      inventoryArmor, // Client-provided armor from suggestions
+      armor, // Client-provided armor with equipped boolean
+      inventoryArmor, // Legacy - client-provided armor from suggestions
       spellsKnown,
       spellsPrepared,
       spellSlots,
@@ -227,19 +228,19 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Also include client-provided armor from suggestions
-    const clientArmor = inventoryArmor || [];
+    // Also include client-provided armor (with equipped boolean)
+    const clientArmor = armor || inventoryArmor || [];
     console.log('=== CLIENT-PROVIDED ARMOR ===');
-    console.log('Client inventoryArmor:', clientArmor);
+    console.log('Client armor (with equipped boolean):', clientArmor);
     
-    // Combine processed armor (from inventory) with client-provided armor (from suggestions)
+    // Combine processed armor (from inventory) with client-provided armor
     const allInventoryArmor = [...processedInventoryArmor, ...clientArmor];
 
     console.log('=== FINAL SERVER PROCESSING ===');
     console.log('General inventory:', processedInventory.map(item => typeof item === 'string' ? item : item.name));
     console.log('Weapon inventory:', processedInventoryWeapons.map(weapon => weapon.name));
     console.log('Processed armor inventory:', processedInventoryArmor.map(armor => armor.name));
-    console.log('Client armor inventory:', clientArmor.map((armor: any) => armor.name));
+    console.log('Client armor inventory:', clientArmor.map((armor: { name: string }) => armor.name));
     console.log('Combined armor inventory:', allInventoryArmor.map(armor => armor.name));
 
     // Use validation service for comprehensive validation
@@ -299,7 +300,8 @@ export async function POST(request: NextRequest) {
         skills: skills || [],
         weapons: weapons || [],
         inventoryWeapons: [...(inventoryWeapons || []), ...processedInventoryWeapons], // Merge client weapons with processed weapons
-        inventoryArmor: allInventoryArmor, // Use combined armor inventory
+        armor: allInventoryArmor, // New system: all armor with equipped boolean
+        inventoryArmor: allInventoryArmor, // Legacy compatibility
         spellsKnown,
         spellsPrepared,
         spellSlots: spellSlots || {},
