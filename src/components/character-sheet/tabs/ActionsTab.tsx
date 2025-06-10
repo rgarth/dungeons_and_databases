@@ -47,6 +47,8 @@ interface ActionsTabProps {
   onUseSpellScroll?: (scrollIndex: number) => void;
   onUpdateConditions?: (conditions: ActiveCondition[]) => void;
   onUpdateDeathSaves?: (successes: number, failures: number) => void;
+  onUseWeapon?: (weaponIndex: number) => void;
+  onRecoverWeapon?: (weaponIndex: number) => void;
 }
 
 export function ActionsTab({ 
@@ -58,7 +60,9 @@ export function ActionsTab({
   onOpenSpellPreparation,
   onUseSpellScroll,
   onUpdateConditions,
-  onUpdateDeathSaves
+  onUpdateDeathSaves,
+  onUseWeapon,
+  onRecoverWeapon
 }: ActionsTabProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _unused = onUpdateDeathSaves;
@@ -329,6 +333,11 @@ export function ActionsTab({
                   <div key={index} className="bg-slate-600 p-4 rounded-lg border-l-4 border-red-500">
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-white font-bold text-lg">{weapon.name}</span>
+                      {weapon.stackable && weapon.quantity && weapon.quantity > 1 && (
+                        <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded">
+                          {weapon.quantity} available
+                        </span>
+                      )}
                       {isMagical && (
                         <span className="text-xs bg-purple-900/50 text-purple-300 px-2 py-1 rounded">
                           {(weapon as MagicalWeapon).rarity}
@@ -362,6 +371,43 @@ export function ActionsTab({
                       <div>To Hit: 1d20 {abilityMod >= 0 ? '+' : ''}{abilityMod} ({abilityName}) {profBonus > 0 && `+${profBonus} (Prof)`} {magicalAttackBonus > 0 && `+${magicalAttackBonus} (Magic)`}</div>
                       <div>Damage: {weapon.damage} + {damageBonus >= 0 ? '+' : ''}{damageBonus} ({abilityName}{magicalDamageBonus > 0 && ` + Magic`})</div>
                       <div className="text-slate-400">Range: {weaponRange} • {weapon.category} {weapon.type}</div>
+                      
+                      {/* Ammunition Tracking for Ranged Weapons */}
+                      {weapon.properties.includes('Ammunition') && (() => {
+                        // Determine ammo type based on weapon
+                        let ammoType: string;
+                        if (weapon.name.toLowerCase().includes('crossbow')) {
+                          ammoType = 'Ammunition, Crossbow Bolts (20)';
+                        } else if (weapon.name.toLowerCase().includes('blowgun')) {
+                          ammoType = 'Ammunition, Blowgun Needles (50)';
+                        } else if (weapon.name.toLowerCase().includes('sling')) {
+                          ammoType = 'Ammunition, Sling Bullets (20)';
+                        } else {
+                          // Default to arrows for bows
+                          ammoType = 'Ammunition, Arrows (20)';
+                        }
+                        
+                        // Find ammo in equipped stackable weapons
+                        const ammo = equippedWeapons.find(w => 
+                          w.stackable && 
+                          w.name === ammoType && 
+                          w.quantity && w.quantity > 0
+                        );
+                        
+                        return (
+                          <div className="flex items-center gap-2 mt-1 p-2 bg-slate-800/50 rounded">
+                            <span className="text-yellow-400 font-medium">Ammo:</span>
+                            <span className={`font-bold ${ammo ? 'text-green-400' : 'text-red-400'}`}>
+                              {ammo ? `${ammo.quantity} ${ammoType.replace('Ammunition, ', '').replace(' (20)', '').replace(' (50)', '')}s` : `No ${ammoType.replace('Ammunition, ', '')}!`}
+                            </span>
+                            {!ammo && (
+                              <span className="text-red-300 text-xs">
+                                (Add {ammoType} from gear to use this weapon)
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
 
                     {/* Magical Properties */}
@@ -369,6 +415,41 @@ export function ActionsTab({
                       <div className="mt-3 p-2 bg-purple-900/20 rounded border border-purple-500/30">
                         <div className="text-purple-300 text-xs font-medium mb-1">Magical Properties:</div>
                         <div className="text-purple-200 text-xs">{(weapon as MagicalWeapon).magicalProperties}</div>
+                      </div>
+                    )}
+
+                    {/* Usage Buttons for Stackable Weapons */}
+                    {weapon.stackable && weapon.quantity && (onUseWeapon || onRecoverWeapon) && (
+                      <div className="mt-3 space-y-2">
+                        <div className="flex gap-2">
+                          {onUseWeapon && (
+                            <button
+                              onClick={() => onUseWeapon(index)}
+                              disabled={weapon.quantity <= 0}
+                              className="flex-1 border-2 border-red-500 text-red-400 hover:bg-red-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed text-sm px-3 py-2 rounded font-medium transition-all duration-200"
+                              title={`Use/Throw ${weapon.name} (${weapon.quantity} remaining)`}
+                            >
+                              {weapon.properties.includes('Thrown') ? 'Throw' : 'Use'} {weapon.name}
+                            </button>
+                          )}
+                          {onRecoverWeapon && (
+                            <button
+                              onClick={() => onRecoverWeapon(index)}
+                              className="flex-1 border-2 border-green-500 text-green-400 hover:bg-green-500 hover:text-white text-sm px-3 py-2 rounded font-medium transition-all duration-200"
+                              title={`Recover ${weapon.name} after combat`}
+                            >
+                              Recover
+                            </button>
+                          )}
+                          <div className="bg-slate-700 px-3 py-2 rounded text-xs text-slate-300 flex items-center min-w-fit">
+                            {weapon.quantity} left
+                          </div>
+                        </div>
+                        <div className="text-xs text-slate-400 italic">
+                          {weapon.properties.includes('Thrown') 
+                            ? 'Throw to attack at range, recover after combat'
+                            : 'Use for special attacks or effects'}
+                        </div>
                       </div>
                     )}
                   </div>

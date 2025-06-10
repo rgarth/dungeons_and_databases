@@ -301,7 +301,14 @@ export function GearTab({
                   {equippedWeapons.map((weapon, index) => (
                     <div key={index} className="bg-slate-600 rounded p-3 flex justify-between items-center">
                       <div>
-                        <span className="text-white font-medium">{weapon.name}</span>
+                        <span className="text-white font-medium">
+                          {weapon.name}
+                          {weapon.stackable && weapon.quantity && weapon.quantity > 1 && (
+                            <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-1 rounded">
+                              {weapon.quantity}
+                            </span>
+                          )}
+                        </span>
                         {'rarity' in weapon && (
                           <span className={`ml-2 text-xs ${magicalItems.getRarityColor(weapon.rarity)}`}>
                             {weapon.rarity}
@@ -312,15 +319,19 @@ export function GearTab({
                         </div>
                       </div>
                       <div className="flex gap-1">
-                        <button
-                          onClick={() => onUnequipWeapon(index)}
-                          className="p-1 text-slate-400 hover:text-white hover:bg-slate-500 rounded"
-                        >
-                          <Package className="h-4 w-4" />
-                        </button>
+                        {!weapon.stackable && (
+                          <button
+                            onClick={() => onUnequipWeapon(index)}
+                            className="p-1 text-slate-400 hover:text-white hover:bg-slate-500 rounded"
+                            title={`Unequip ${weapon.name}`}
+                          >
+                            <Package className="h-4 w-4" />
+                          </button>
+                        )}
                         <button
                           onClick={() => onRemoveWeapon(index, true)}
                           className="p-1 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded"
+                          title={weapon.stackable ? `Use/Remove ${weapon.name}` : `Remove ${weapon.name}`}
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -526,7 +537,14 @@ export function GearTab({
                   <div key={index} className="bg-slate-600 rounded p-3">
                     <div className="flex justify-between items-center">
                       <div>
-                        <span className="text-white font-medium">{weapon.name}</span>
+                        <span className="text-white font-medium">
+                          {weapon.name}
+                          {weapon.stackable && weapon.quantity && weapon.quantity > 1 && (
+                            <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-1 rounded">
+                              {weapon.quantity}
+                            </span>
+                          )}
+                        </span>
                         {'rarity' in weapon && (
                           <span className={`ml-2 text-xs ${magicalItems.getRarityColor(weapon.rarity)}`}>
                             {weapon.rarity}

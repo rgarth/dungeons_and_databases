@@ -148,21 +148,76 @@ export function WeaponSelector({
   // For legacy modal interface, check isOpen. For new interface, always render
   if (isOpen === false) return null;
 
-  // Convert weapons data to Weapon objects
-  const allWeapons: Weapon[] = weaponsData.map((weaponData: WeaponData) => ({
+  // Convert weapons data to Weapon objects and add ammunition
+  const baseWeapons: Weapon[] = weaponsData.map((weaponData: WeaponData) => ({
     ...weaponData,
     type: weaponData.type as 'Simple' | 'Martial',
     category: weaponData.category as 'Melee' | 'Ranged',
     properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
   }));
 
+  // Add ammunition as stackable weapons for easier selection
+  const ammunitionItems: Weapon[] = [
+    {
+      name: 'Ammunition, Arrows (20)',
+      type: 'Simple',
+      category: 'Ranged',
+      damage: '—',
+      damageType: '—',
+      properties: ['Ammunition'],
+      weight: 1,
+      cost: '1 gp',
+      stackable: true,
+      quantity: 20
+    },
+    {
+      name: 'Ammunition, Crossbow Bolts (20)',
+      type: 'Simple',
+      category: 'Ranged',
+      damage: '—',
+      damageType: '—',
+      properties: ['Ammunition'],
+      weight: 1.5,
+      cost: '1 gp',
+      stackable: true,
+      quantity: 20
+    },
+    {
+      name: 'Ammunition, Blowgun Needles (50)',
+      type: 'Simple',
+      category: 'Ranged',
+      damage: '—',
+      damageType: '—',
+      properties: ['Ammunition'],
+      weight: 1,
+      cost: '1 gp',
+      stackable: true,
+      quantity: 50
+    },
+    {
+      name: 'Ammunition, Sling Bullets (20)',
+      type: 'Simple',
+      category: 'Ranged',
+      damage: '—',
+      damageType: '—',
+      properties: ['Ammunition'],
+      weight: 1.5,
+      cost: '4 cp',
+      stackable: true,
+      quantity: 20
+    }
+  ];
+
+
+
   // Categorize by proficiency if we have proficiency data
   let weaponCategories: Record<string, Weapon[]>;
   
   if (weaponProficiencies) {
-    const { proficient, nonProficient } = categorizeWeaponsByProficiency(allWeapons, weaponProficiencies);
+    const { proficient, nonProficient } = categorizeWeaponsByProficiency(baseWeapons, weaponProficiencies);
     
     weaponCategories = {
+      'Ammunition': ammunitionItems,
       'Proficient - Simple Melee': proficient.filter(w => w.type === 'Simple' && w.category === 'Melee'),
       'Proficient - Simple Ranged': proficient.filter(w => w.type === 'Simple' && w.category === 'Ranged'),
       'Proficient - Martial Melee': proficient.filter(w => w.type === 'Martial' && w.category === 'Melee'),
@@ -182,10 +237,11 @@ export function WeaponSelector({
   } else {
     // Fallback to basic categorization
     weaponCategories = {
-      'Simple Melee': allWeapons.filter(w => w.type === 'Simple' && w.category === 'Melee'),
-      'Simple Ranged': allWeapons.filter(w => w.type === 'Simple' && w.category === 'Ranged'),
-      'Martial Melee': allWeapons.filter(w => w.type === 'Martial' && w.category === 'Melee'),
-      'Martial Ranged': allWeapons.filter(w => w.type === 'Martial' && w.category === 'Ranged'),
+      'Ammunition': ammunitionItems,
+      'Simple Melee': baseWeapons.filter(w => w.type === 'Simple' && w.category === 'Melee'),
+      'Simple Ranged': baseWeapons.filter(w => w.type === 'Simple' && w.category === 'Ranged'),
+      'Martial Melee': baseWeapons.filter(w => w.type === 'Martial' && w.category === 'Melee'),
+      'Martial Ranged': baseWeapons.filter(w => w.type === 'Martial' && w.category === 'Ranged'),
     };
   }
 
@@ -225,7 +281,7 @@ export function WeaponSelector({
                   </div>
                   <button
                     onClick={() => {
-                      // Apply suggestions
+                      // Apply suggestions - handle both weapons and ammunition
                       weaponSuggestions.forEach(suggestion => {
                         const weaponData = weaponsData.find(w => w.name === suggestion.weaponName);
                         if (weaponData) {
@@ -236,6 +292,21 @@ export function WeaponSelector({
                             properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
                           };
                           handleWeaponQuantityChange(weapon, suggestion.quantity);
+                        } else if (suggestion.weaponName.startsWith('Ammunition,')) {
+                          // Handle ammunition as a special stackable weapon
+                          const ammoWeapon: Weapon = {
+                            name: suggestion.weaponName,
+                            type: 'Simple',
+                            category: 'Ranged',
+                            damage: '—',
+                            damageType: '—',
+                            properties: ['Ammunition'],
+                            weight: 1,
+                            cost: '1 gp',
+                            stackable: true,
+                            quantity: 20 // Default quantity for ammunition packs
+                          };
+                          handleWeaponQuantityChange(ammoWeapon, suggestion.quantity);
                         }
                       });
                     }}
@@ -255,13 +326,14 @@ export function WeaponSelector({
                 {/* Organized weapon selection by category */}
                 <div className="grid grid-cols-2 gap-4 max-h-64 overflow-y-auto">
                   {Object.entries(weaponCategories).map(([categoryName, weapons]) => {
+                    const isAmmunition = categoryName === 'Ammunition';
                     const isProficient = !categoryName.startsWith('Non-Proficient');
-                    const headerColor = isProficient ? 'text-green-300' : 'text-orange-300';
+                    const headerColor = isAmmunition ? 'text-yellow-300' : isProficient ? 'text-green-300' : 'text-orange-300';
                     
                     return (
                       <div key={categoryName} className="bg-slate-800 rounded-lg p-3">
                         <h5 className={`text-xs font-semibold ${headerColor} mb-2`}>
-                          {categoryName} {!isProficient && '(No Proficiency)'}
+                          {isAmmunition ? '🏹 Ammunition' : categoryName} {!isProficient && !isAmmunition && '(No Proficiency)'}
                         </h5>
                         <div className="space-y-1">
                           {weapons.map((weapon: Weapon, weaponIndex: number) => {
