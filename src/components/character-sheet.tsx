@@ -308,44 +308,118 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     }
   };
 
-  const handleAddWeapon = (weapon: Weapon | MagicalWeapon) => {
-    // Use the multi-weapon handler for consistent grouping logic
-    handleAddWeapons([weapon]);
-  };
-
   const handleAddWeapons = (weapons: (Weapon | MagicalWeapon)[]) => {
-    // Group stackable weapons by name, add individual entries for non-stackable
-    const currentWeapons = [...(currentCharacter.weapons || [])];
+    // Separate weapons from ammunition items
+    const actualWeapons: (Weapon | MagicalWeapon)[] = [];
+    const ammunitionItems: { name: string; quantity: number }[] = [];
     
     weapons.forEach(weapon => {
-      if (weapon.stackable) {
-        // Find existing stackable weapon of same name
-        const existingIndex = currentWeapons.findIndex(w => 
-          w.name === weapon.name && w.stackable && 'quantity' in w
-        );
-        
-        if (existingIndex >= 0) {
-          // Increase quantity of existing stack
-          const existing = currentWeapons[existingIndex];
-          currentWeapons[existingIndex] = {
-            ...existing,
-            quantity: (existing.quantity || 1) + 1
-          };
+      console.log(`🔍 WEAPON DETECTION: "${weapon.name}" - damage: "${weapon.damage}", properties: ${JSON.stringify(weapon.properties)}`);
+      
+      // Check if this is actually ammunition (has "Ammunition" property and no damage)
+      const hasAmmunitionProperty = weapon.properties.some(prop => prop.startsWith('Ammunition'));
+      if (hasAmmunitionProperty && weapon.damage === '—') {
+        console.log(`✅ DETECTED AS AMMUNITION: ${weapon.name}`);
+        // This is ammunition, not a weapon
+        const existing = ammunitionItems.find(a => a.name === weapon.name);
+        if (existing) {
+          existing.quantity += 1;
         } else {
-          // Create new stack with quantity
-          currentWeapons.push({
-            ...weapon,
-            equipped: weapon.stackable ? true : false, // Auto-equip stackable items
-            quantity: 1
-          });
+          ammunitionItems.push({ name: weapon.name, quantity: 1 });
         }
       } else {
-        // Add non-stackable weapons individually
-        currentWeapons.push({ ...weapon, equipped: false });
+        console.log(`⚔️ DETECTED AS WEAPON: ${weapon.name}`);
+        // This is a real weapon
+        actualWeapons.push(weapon);
       }
     });
     
-    updateCharacter({ weapons: currentWeapons });
+    // Process real weapons
+    if (actualWeapons.length > 0) {
+      const currentWeapons = [...(currentCharacter.weapons || [])];
+      
+      actualWeapons.forEach(weapon => {
+        if (weapon.stackable) {
+          // Find existing stackable weapon of same name
+          const existingIndex = currentWeapons.findIndex(w => 
+            w.name === weapon.name && w.stackable && 'quantity' in w
+          );
+          
+          if (existingIndex >= 0) {
+            // Increase quantity of existing stack
+            const existing = currentWeapons[existingIndex];
+            currentWeapons[existingIndex] = {
+              ...existing,
+              quantity: (existing.quantity || 1) + 1
+            };
+          } else {
+            // Create new stack with quantity
+            currentWeapons.push({
+              ...weapon,
+              equipped: weapon.stackable ? true : false, // Auto-equip stackable items
+              quantity: 1
+            });
+          }
+        } else {
+          // Add non-stackable weapons individually
+          currentWeapons.push({ ...weapon, equipped: false });
+        }
+      });
+      
+      updateCharacter({ weapons: currentWeapons });
+    }
+    
+    // Process ammunition items
+    if (ammunitionItems.length > 0) {
+      const currentAmmunition = [...(currentCharacter.ammunition || [])];
+      
+      ammunitionItems.forEach(({ name, quantity }) => {
+        // Find existing ammunition of same type
+        const existingIndex = currentAmmunition.findIndex(a => a.name === name);
+        
+        if (existingIndex >= 0) {
+          // Add to existing ammunition
+          currentAmmunition[existingIndex] = {
+            ...currentAmmunition[existingIndex],
+            quantity: currentAmmunition[existingIndex].quantity + quantity
+          };
+        } else {
+          // Create new ammunition entry using proper D&D 5e data
+          const ammoData = {
+            'Arrow': {
+              compatibleWeapons: ['Longbow', 'Shortbow'],
+              weight: 0.05,
+              cost: '5 cp each'
+            },
+            'Crossbow Bolt': {
+              compatibleWeapons: ['Light Crossbow', 'Heavy Crossbow', 'Hand Crossbow'],
+              weight: 0.075,
+              cost: '5 cp each'
+            },
+            'Blowgun Needle': {
+              compatibleWeapons: ['Blowgun'],
+              weight: 0.02,
+              cost: '2 cp each'
+            },
+            'Sling Bullet': {
+              compatibleWeapons: ['Sling'],
+              weight: 0.075,
+              cost: '2 cp each'
+            }
+          }[name];
+          
+          if (ammoData) {
+            currentAmmunition.push({
+              name,
+              quantity,
+              ...ammoData
+            });
+          }
+        }
+      });
+      
+      updateCharacter({ ammunition: currentAmmunition });
+    }
   };
 
   const handleAddArmor = (armor: Armor) => {
@@ -921,9 +995,9 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
                 onUnequipMagicalItem={handleUnequipMagicalItem}
                 onRemoveMagicalItem={handleRemoveMagicalItem}
                 onToggleAttunement={handleToggleAttunement}
-                                 onAddWeapon={handleAddWeapon}
-                 onAddWeapons={handleAddWeapons}
-                 onAddArmor={handleAddArmor}
+                onAddWeapon={(weapon) => handleAddWeapons([weapon])}
+                onAddWeapons={handleAddWeapons}
+                onAddArmor={handleAddArmor}
                 onAddMagicalItem={handleAddMagicalItem}
                 onOpenSpellPreparation={handleOpenSpellPreparation}
                 weaponLimits={weaponLimits}

@@ -1,16 +1,12 @@
-import { 
-  AbilityScore, 
-  generateAbilityScores, 
-  generateRandomScoreArray, 
+import {
+  AbilityScore,
+  generateAbilityScores,
+  generateRandomScoreArray,
   calculatePointBuyRemaining,
   getModifier,
   calculateHitPoints,
   getProficiencyBonus,
-  ABILITY_SCORES,
-  RACES,
-  CLASSES,
-  BACKGROUNDS,
-  ALIGNMENTS
+  ABILITY_SCORES
 } from '@/lib/dnd/core';
 import { getBackgroundSkills, getEquipmentPacksFromDatabase } from '@/lib/dnd/character';
 import { 

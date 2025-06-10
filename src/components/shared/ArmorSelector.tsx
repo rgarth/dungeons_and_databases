@@ -65,6 +65,14 @@ export function ArmorSelector({
     }
   };
 
+  // Convert armor data to proper Armor types
+  const convertedArmorData: Armor[] = armorData.map(armor => ({
+    ...armor,
+    type: armor.type as 'Light' | 'Medium' | 'Heavy' | 'Shield',
+    maxDexBonus: armor.maxDexBonus ?? undefined,
+    minStrength: armor.minStrength ?? undefined
+  }));
+
   const isArmorProficient = (armor: Armor): boolean => {
     if (!armorProficiencies) return true; // Show all if proficiencies not loaded
     return armorProficiencies.includes(armor.type);
@@ -74,8 +82,8 @@ export function ArmorSelector({
   let armorCategories: Record<string, Armor[]>;
   
   if (armorProficiencies && showProficiencies) {
-    const proficientArmor = armorData.filter(armor => isArmorProficient(armor));
-    const nonProficientArmor = armorData.filter(armor => !isArmorProficient(armor));
+    const proficientArmor = convertedArmorData.filter(armor => isArmorProficient(armor));
+    const nonProficientArmor = convertedArmorData.filter(armor => !isArmorProficient(armor));
     
     armorCategories = {
       'Proficient - Light Armor': proficientArmor.filter(a => a.type === 'Light'),
@@ -96,7 +104,7 @@ export function ArmorSelector({
     });
   } else {
     // Fallback to basic type grouping
-    armorCategories = armorData.reduce((groups, armor) => {
+    armorCategories = convertedArmorData.reduce((groups, armor) => {
       const type = armor.type;
       const key = `${type} Armor`;
       if (!groups[key]) groups[key] = [];

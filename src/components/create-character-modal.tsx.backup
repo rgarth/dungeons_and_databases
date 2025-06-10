@@ -88,7 +88,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
   const [weaponSuggestions, setWeaponSuggestions] = useState<WeaponSuggestion[]>([]);
   const [armorSuggestions, setArmorSuggestions] = useState<ArmorSuggestion[]>([]);
-
+  const [ammunitionSuggestions, setAmmunitionSuggestions] = useState<{ammunitionName: string, quantity: number, reason?: string}[]>([]);
   const [selectedArmor, setSelectedArmor] = useState<Armor[]>([]);
   const [showWeaponSelector, setShowWeaponSelector] = useState(false);
   const [showArmorSelector, setShowArmorSelector] = useState(false);
@@ -122,12 +122,15 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     const loadCreationOptions = async () => {
       setLoadingOptions(true);
       try {
-        const [options, weaponSuggestions, armorSuggestions] = await Promise.all([
+        const [options, weaponSuggestions, armorSuggestions, ammunitionSuggestions] = await Promise.all([
           characterCreationService.getCreationOptions(characterClass),
           fetch(`/api/weapon-suggestions?className=${encodeURIComponent(characterClass)}`)
             .then(res => res.ok ? res.json() : [])
             .catch(() => []),
           fetch(`/api/armor-suggestions?className=${encodeURIComponent(characterClass)}`)
+            .then(res => res.ok ? res.json() : [])
+            .catch(() => []),
+          fetch(`/api/ammunition-suggestions?className=${encodeURIComponent(characterClass)}`)
             .then(res => res.ok ? res.json() : [])
             .catch(() => [])
         ]);
@@ -149,9 +152,11 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         
         setWeaponSuggestions(weaponSuggestions);
         setArmorSuggestions(armorSuggestions);
+        setAmmunitionSuggestions(ammunitionSuggestions);
         
         console.log('✅ SET STATE - Weapon suggestions for', characterClass, ':', weaponSuggestions);
         console.log('✅ SET STATE - Armor suggestions for', characterClass, ':', armorSuggestions);
+        console.log('✅ SET STATE - Ammunition suggestions for', characterClass, ':', ammunitionSuggestions);
         
         // Temporary debug: Manually test armor suggestions for Ranger
         if (characterClass === 'Ranger') {
@@ -262,72 +267,39 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     setSelectedArmor(suggestedArmor);
   }, [armorSuggestions]);
 
-  // Automatically add ammunition for ranged weapons
+  // Apply ammunition suggestions when they're loaded
   useEffect(() => {
-    console.log('🏹 AUTO-AMMUNITION EFFECT: Processing', selectedWeapons.length, 'selected weapons');
-    
-    const autoAmmunition: Ammunition[] = [];
-    const processedAmmoTypes = new Set<string>();
-    
-    // Process each selected weapon to find ammunition needs
-    for (const weaponSelection of selectedWeapons) {
-      const weapon = weaponSelection.weapon;
+    console.log('🏹 AMMUNITION SUGGESTIONS EFFECT:', ammunitionSuggestions.length, 'suggestions');
+    if (ammunitionSuggestions.length > 0) {
+      console.log('Processing ammunition suggestions:', ammunitionSuggestions);
       
-      // Check if weapon needs ammunition
-      // Check if weapon needs ammunition (look for properties that start with "Ammunition")
-      const hasAmmunitionProperty = weapon.properties.some(prop => prop.startsWith('Ammunition'));
+      // Convert ammunition suggestions to Ammunition objects
+      const suggestedAmmunition: Ammunition[] = [];
       
-      console.log(`🔍 AMMO CHECK: ${weapon.name} - properties: ${JSON.stringify(weapon.properties)}, hasAmmunition: ${hasAmmunitionProperty}`);
-      
-      if (hasAmmunitionProperty) {
-        let ammoType: string;
-        let quantity = 20; // Default D&D 5e starting quantity
-        
-        // Determine ammunition type based on weapon name
-        if (weapon.name.toLowerCase().includes('crossbow')) {
-          ammoType = 'Crossbow Bolt';
-        } else if (weapon.name.toLowerCase().includes('blowgun')) {
-          ammoType = 'Blowgun Needle';
-          quantity = 50; // Blowgun needles come in packs of 50
-        } else if (weapon.name.toLowerCase().includes('sling')) {
-          ammoType = 'Sling Bullet';
-        } else {
-          // Default to arrows for bows
-          ammoType = 'Arrow';
-        }
-        
-        // Only add each ammo type once
-        if (!processedAmmoTypes.has(ammoType)) {
-          processedAmmoTypes.add(ammoType);
-          
-          const ammo: Ammunition = {
-            name: ammoType,
-            quantity: quantity,
-            compatibleWeapons: ammoType === 'Arrow' ? ['Longbow', 'Shortbow'] :
-                             ammoType === 'Crossbow Bolt' ? ['Light Crossbow', 'Heavy Crossbow', 'Hand Crossbow'] :
-                             ammoType === 'Blowgun Needle' ? ['Blowgun'] :
-                             ammoType === 'Sling Bullet' ? ['Sling'] : [],
-            weight: ammoType === 'Arrow' ? 0.05 : 
-                   ammoType === 'Crossbow Bolt' ? 0.075 :
-                   ammoType === 'Blowgun Needle' ? 0.02 : 0.075,
-            cost: ammoType === 'Blowgun Needle' || ammoType === 'Sling Bullet' ? '2 cp each' : '5 cp each'
-          };
-          
-          autoAmmunition.push(ammo);
-          console.log(`✅ Auto-added ${quantity} ${ammoType}s for ${weapon.name}`);
-        }
+      for (const suggestion of ammunitionSuggestions) {
+        const ammo: Ammunition = {
+          name: suggestion.ammunitionName,
+          quantity: suggestion.quantity,
+          compatibleWeapons: suggestion.ammunitionName === 'Arrow' ? ['Longbow', 'Shortbow'] :
+                           suggestion.ammunitionName === 'Crossbow Bolt' ? ['Light Crossbow', 'Heavy Crossbow'] :
+                           suggestion.ammunitionName === 'Blowgun Needle' ? ['Blowgun'] :
+                           suggestion.ammunitionName === 'Sling Bullet' ? ['Sling'] : [],
+          weight: suggestion.ammunitionName === 'Arrow' ? 0.05 : 
+                 suggestion.ammunitionName === 'Crossbow Bolt' ? 0.075 :
+                 suggestion.ammunitionName === 'Blowgun Needle' ? 0.02 : 0.075,
+          cost: suggestion.ammunitionName === 'Blowgun Needle' || suggestion.ammunitionName === 'Sling Bullet' ? '2 cp each' : '5 cp each'
+        };
+        suggestedAmmunition.push(ammo);
       }
-    }
-    
-    console.log('Final auto-ammunition:', autoAmmunition);
-    setSelectedAmmunition(autoAmmunition);
-    
-    if (autoAmmunition.length > 0) {
-      console.log('✅ Set selectedAmmunition with auto-generated ammunition');
+      
+      console.log('Final suggestedAmmunition:', suggestedAmmunition);
+      setSelectedAmmunition(suggestedAmmunition);
+      console.log('✅ Set selectedAmmunition');
     } else {
-      console.log('No ranged weapons need ammunition');
+      console.log('No ammunition suggestions to process');
+      setSelectedAmmunition([]);
     }
-  }, [selectedWeapons]);
+  }, [ammunitionSuggestions]);
 
   // Reset weapon and armor selections when class changes
   useEffect(() => {

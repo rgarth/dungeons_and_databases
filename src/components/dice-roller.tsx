@@ -12,8 +12,8 @@ declare global {
         bind_swipe: (element: HTMLElement, beforeRoll?: ((notation: DiceResult) => number[] | null), afterRoll?: (notation: DiceResult) => void) => void;
       };
     };
-    THREE: any;
-    CANNON: any;
+    THREE: Record<string, unknown>;
+    CANNON: Record<string, unknown>;
   }
 }
 
@@ -178,7 +178,7 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
             container.style.display = 'block';
             
                          // Force a layout recalculation
-             const _ = container.offsetHeight;
+            void container.offsetHeight;
             
             console.log('Container dimensions:', {
               width: container.offsetWidth,
@@ -205,7 +205,7 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
             }
           } catch (error) {
             console.error('Failed to initialize dice box:', error);
-            setInitializationError(`Initialization failed: ${error.message}`);
+            setInitializationError(`Initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
           }
         }
       }, 100);
@@ -282,7 +282,7 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
     } catch (error) {
       console.error('Failed to roll dice:', error);
       setIsRolling(false);
-      setInitializationError(`Roll failed: ${error.message}`);
+      setInitializationError(`Roll failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
