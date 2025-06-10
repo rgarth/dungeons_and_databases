@@ -119,25 +119,7 @@ export async function getEquipmentPacksFromDatabase() {
   }
 }
 
-// Background skill proficiencies
-export function getBackgroundSkills(background: string): string[] {
-  const backgroundSkills: Record<string, string[]> = {
-    Acolyte: ['Insight', 'Religion'],
-    Criminal: ['Deception', 'Stealth'],
-    'Folk Hero': ['Animal Handling', 'Survival'],
-    Noble: ['History', 'Persuasion'],
-    Sage: ['Arcana', 'History'],
-    Soldier: ['Athletics', 'Intimidation'],
-    Charlatan: ['Deception', 'Sleight of Hand'],
-    Entertainer: ['Acrobatics', 'Performance'],
-    'Guild Artisan': ['Insight', 'Persuasion'],
-    Hermit: ['Medicine', 'Religion'],
-    Outlander: ['Athletics', 'Survival'],
-    Sailor: ['Athletics', 'Perception']
-  };
-  
-  return backgroundSkills[background] || [];
-}
+// Background skills are now fetched from the database via /api/backgrounds
 
 // Fantasy Name Generator using online API
 export async function generateFantasyName(race: string, gender?: string): Promise<string> {

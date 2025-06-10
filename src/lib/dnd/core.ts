@@ -3,26 +3,12 @@
 export const ABILITY_SCORES = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'] as const;
 export type AbilityScore = typeof ABILITY_SCORES[number];
 
-export const RACES = [
-  'Dragonborn', 'Dwarf', 'Elf', 'Gnome', 'Half-Elf', 'Halfling', 
-  'Half-Orc', 'Human', 'Tiefling'
-] as const;
-
-export const CLASSES = [
-  'Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Monk', 
-  'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard'
-] as const;
-
-export const BACKGROUNDS = [
-  'Acolyte', 'Criminal', 'Folk Hero', 'Noble', 'Sage', 'Soldier',
-  'Charlatan', 'Entertainer', 'Guild Artisan', 'Hermit', 'Outlander', 'Sailor'
-] as const;
-
-export const ALIGNMENTS = [
-  'Lawful Good', 'Neutral Good', 'Chaotic Good',
-  'Lawful Neutral', 'True Neutral', 'Chaotic Neutral',
-  'Lawful Evil', 'Neutral Evil', 'Chaotic Evil'
-] as const;
+// Note: RACES, CLASSES, BACKGROUNDS, and ALIGNMENTS are now stored in the database
+// Use the respective API endpoints to fetch this data:
+// - /api/races
+// - /api/classes  
+// - /api/backgrounds
+// - /api/alignments
 
 export const SKILLS = {
   Acrobatics: 'dexterity',
@@ -115,8 +101,8 @@ export function calculatePointBuyRemaining(scores: Record<AbilityScore, number>)
 }
 
 // Calculate hit points for a character
-export function calculateHitPoints(level: number, constitution: number, className: string): number {
-  const hitDie = getClassHitDie(className);
+// Note: hitDie should now be fetched from the database via /api/classes
+export function calculateHitPoints(level: number, constitution: number, hitDie: number): number {
   const conMod = getModifier(constitution);
   
   // First level: max hit die + con mod
@@ -125,12 +111,4 @@ export function calculateHitPoints(level: number, constitution: number, classNam
   const additionalHP = (level - 1) * (Math.floor(hitDie / 2) + 1 + conMod);
   
   return Math.max(1, baseHP + additionalHP);
-}
-
-function getClassHitDie(className: string): number {
-  const hitDice: Record<string, number> = {
-    Barbarian: 12, Bard: 8, Cleric: 8, Druid: 8, Fighter: 10, Monk: 8,
-    Paladin: 10, Ranger: 10, Rogue: 8, Sorcerer: 6, Warlock: 8, Wizard: 6
-  };
-  return hitDice[className] || 8;
 } 

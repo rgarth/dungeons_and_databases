@@ -46,6 +46,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   characters    Character[]
+  customWeapons CustomWeapon[] // Relation to custom weapons created by this user
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 }
@@ -77,8 +78,25 @@ model Weapon {
   weight     Float
   cost       String  // "10 gp", "5 sp", etc.
   stackable  Boolean @default(false)
+  customWeapons CustomWeapon[] // Relation to custom weapons based on this weapon
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+model CustomWeapon {
+  id            String   @id @default(cuid())
+  name          String   // Custom name like "Flamberge of Doom" or "+1 Longsword"
+  baseWeaponId  String   // Reference to base weapon
+  baseWeapon    Weapon   @relation(fields: [baseWeaponId], references: [id])
+  modifier      Int      @default(0) // +1, +2, +3 etc for magical bonus
+  customName    String?  // Optional custom name if different from auto-generated
+  description   String?  // Optional custom description
+  creator       User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId     String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([creatorId, name]) // Each player can only have one weapon with each name
 }
 
 model Armor {
@@ -200,6 +218,31 @@ model DndRace {
   languages          Json     // Known languages
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+}
+
+model Background {
+  id                String   @id @default(cuid())
+  name              String   @unique // "Acolyte", "Criminal", etc.
+  description       String   // Background description
+  skillProficiencies Json    // Array of skill proficiencies provided
+  languages         Json     // Known languages (if any)
+  equipment         Json     // Starting equipment array
+  feature           String   // Background feature name
+  featureDescription String  // Background feature description
+  suggestedCharacteristics Json? // Personality traits, ideals, bonds, flaws
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Alignment {
+  id          String   @id @default(cuid())
+  name        String   @unique // "Lawful Good", "Chaotic Evil", etc.
+  shortName   String   // "LG", "CE", etc.
+  description String   // Alignment description
+  ethicalAxis String   // "Lawful", "Neutral", "Chaotic"
+  moralAxis   String   // "Good", "Neutral", "Evil"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Treasure {
