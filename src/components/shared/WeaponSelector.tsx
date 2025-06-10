@@ -344,9 +344,11 @@ export function WeaponSelector({
                                     {weapon.name}
                                     {!isProficient && ' ⚠️'}
                                   </div>
-                                  <div className="text-slate-400 text-xs">
-                                    {weapon.damage} {weapon.damageType}
-                                  </div>
+                                  {!isAmmunition && (
+                                    <div className="text-slate-400 text-xs">
+                                      {weapon.damage} {weapon.damageType}
+                                    </div>
+                                  )}
                                 </div>
                                 <div className="flex items-center gap-1 ml-2">
                                   {multiSelect ? (
@@ -400,11 +402,14 @@ export function WeaponSelector({
                     Selected Weapons ({totalWeapons}/{maxWeapons})
                   </h4>
                   <div className="space-y-1">
-                    {currentSelectedWeapons.map(({ weapon, quantity }, index) => (
-                      <div key={`selected-${weapon.name}-${index}`} className="text-sm text-slate-300">
-                        • {quantity}x {weapon.name} ({weapon.damage} {weapon.damageType})
-                      </div>
-                    ))}
+                    {currentSelectedWeapons.map(({ weapon, quantity }, index) => {
+                      const isAmmunition = weapon.properties.some(prop => prop.startsWith('Ammunition')) && weapon.damage === '—';
+                      return (
+                        <div key={`selected-${weapon.name}-${index}`} className="text-sm text-slate-300">
+                          • {quantity}x {weapon.name}{!isAmmunition && ` (${weapon.damage} ${weapon.damageType})`}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}

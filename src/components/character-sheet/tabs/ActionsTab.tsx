@@ -388,44 +388,44 @@ export function ActionsTab({
                           ammoType = 'Arrow';
                         }
                         
-                        // Find ammo in character's ammunition
-                        const ammo = character.ammunition?.find(a => 
-                          a.name === ammoType && 
-                          a.quantity > 0
-                        );
+                        // Find ammo in character's ammunition (including 0 quantity)
+                        const ammo = character.ammunition?.find(a => a.name === ammoType);
+                        const hasAmmo = ammo && ammo.quantity > 0;
                         
                         return (
                           <div className="flex items-center justify-between gap-2 mt-1 p-2 bg-slate-800/50 rounded">
                             <div className="flex items-center gap-2">
                               <span className="text-yellow-400 font-medium">Ammo:</span>
-                              <span className={`font-bold ${ammo ? 'text-green-400' : 'text-red-400'}`}>
+                              <span className={`font-bold ${hasAmmo ? 'text-green-400' : 'text-red-400'}`}>
                                 {ammo ? `${ammo.quantity} ${ammo.name}s` : `No ${ammoType}s!`}
                               </span>
-                              {!ammo && (
+                              {!hasAmmo && !ammo && (
                                 <span className="text-red-300 text-xs">
                                   (Add {ammoType}s from gear)
                                 </span>
                               )}
                             </div>
                             
-                            {/* Ammunition Use/Recover Buttons */}
-                            {ammo && (onUseAmmunition || onRecoverAmmunition) && (
+                            {/* Ammunition Use/Recover Buttons - Always show if ammo type exists or can be recovered */}
+                            {(ammo || (onRecoverAmmunition && onUseAmmunition)) && (
                               <div className="flex gap-1">
                                 {onUseAmmunition && (
                                   <button
-                                    onClick={() => onUseAmmunition(ammo.name)}
-                                    disabled={ammo.quantity <= 0}
+                                    onClick={() => onUseAmmunition(ammo?.name || ammoType)}
+                                    disabled={!ammo || ammo.quantity <= 0}
                                     className="px-2 py-1 text-xs border border-red-500 text-red-400 hover:bg-red-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed rounded font-medium transition-all duration-200"
-                                    title={`Use ${ammo.name} (-1, ${ammo.quantity} remaining)`}
+                                    title={ammo && ammo.quantity > 0 
+                                      ? `Use ${ammo.name} (-1, ${ammo.quantity} remaining)` 
+                                      : `No ${ammoType}s to use`}
                                   >
                                     Use
                                   </button>
                                 )}
                                 {onRecoverAmmunition && (
                                   <button
-                                    onClick={() => onRecoverAmmunition(ammo.name)}
+                                    onClick={() => onRecoverAmmunition(ammo?.name || ammoType)}
                                     className="px-2 py-1 text-xs border border-green-500 text-green-400 hover:bg-green-500 hover:text-white rounded font-medium transition-all duration-200"
-                                    title={`Recover ${ammo.name} after combat (+1)`}
+                                    title={`Recover ${ammoType} after combat (+1)`}
                                   >
                                     +1
                                   </button>
