@@ -156,7 +156,14 @@ export function WeaponSelector({
     properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
   }));
 
-  // Add ammunition as stackable weapons for easier selection
+  // Remove ammunition from weapon selector - ammunition should be handled separately
+
+
+
+  // Categorize by proficiency if we have proficiency data
+  let weaponCategories: Record<string, Weapon[]>;
+  
+  // Define ammunition items that should always be available
   const ammunitionItems: Weapon[] = [
     {
       name: 'Arrow',
@@ -172,7 +179,7 @@ export function WeaponSelector({
     },
     {
       name: 'Crossbow Bolt',
-      type: 'Simple',
+      type: 'Simple', 
       category: 'Ranged',
       damage: '—',
       damageType: '—',
@@ -185,7 +192,7 @@ export function WeaponSelector({
     {
       name: 'Blowgun Needle',
       type: 'Simple',
-      category: 'Ranged',
+      category: 'Ranged', 
       damage: '—',
       damageType: '—',
       properties: ['Ammunition'],
@@ -198,7 +205,7 @@ export function WeaponSelector({
       name: 'Sling Bullet',
       type: 'Simple',
       category: 'Ranged',
-      damage: '—',
+      damage: '—', 
       damageType: '—',
       properties: ['Ammunition'],
       weight: 0.075,
@@ -207,17 +214,12 @@ export function WeaponSelector({
       quantity: 20
     }
   ];
-
-
-
-  // Categorize by proficiency if we have proficiency data
-  let weaponCategories: Record<string, Weapon[]>;
   
   if (weaponProficiencies) {
     const { proficient, nonProficient } = categorizeWeaponsByProficiency(baseWeapons, weaponProficiencies);
     
     weaponCategories = {
-      'Ammunition': ammunitionItems,
+      'Ammunition': ammunitionItems, // Always include ammunition
       'Proficient - Simple Melee': proficient.filter(w => w.type === 'Simple' && w.category === 'Melee'),
       'Proficient - Simple Ranged': proficient.filter(w => w.type === 'Simple' && w.category === 'Ranged'),
       'Proficient - Martial Melee': proficient.filter(w => w.type === 'Martial' && w.category === 'Melee'),
@@ -281,7 +283,7 @@ export function WeaponSelector({
                   </div>
                   <button
                     onClick={() => {
-                      // Apply suggestions - handle both weapons and ammunition
+                      // Apply weapon suggestions only
                       weaponSuggestions.forEach(suggestion => {
                         const weaponData = weaponsData.find(w => w.name === suggestion.weaponName);
                         if (weaponData) {
@@ -292,21 +294,8 @@ export function WeaponSelector({
                             properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
                           };
                           handleWeaponQuantityChange(weapon, suggestion.quantity);
-                        } else if (
-                          // Handle ammunition suggestions
-                          ['Arrow', 'Crossbow Bolt', 'Blowgun Needle', 'Sling Bullet'].includes(suggestion.weaponName)
-                        ) {
-                          // Find the ammunition in our ammunition items
-                          const ammoWeapon = ammunitionItems.find(ammo => ammo.name === suggestion.weaponName);
-                          if (ammoWeapon) {
-                            // Create a copy with the suggested quantity
-                            const ammoWithQuantity: Weapon = {
-                              ...ammoWeapon,
-                              quantity: suggestion.quantity
-                            };
-                            handleWeaponQuantityChange(ammoWithQuantity, 1);
-                          }
                         }
+                        // Note: Ammunition is handled automatically in character creation
                       });
                     }}
                     className="mt-2 text-xs bg-amber-600 hover:bg-amber-700 text-white px-2 py-1 rounded transition-colors"

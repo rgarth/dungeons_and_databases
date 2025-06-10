@@ -756,7 +756,7 @@ export function GearTab({
       {showWeaponSelector && (
         <WeaponSelector
           title="Add Weapons to Inventory"
-          maxWeapons={10}
+          maxWeapons={50}
           selectedWeapons={[]}
           onConfirm={(weapons) => {
             // Build complete list of weapons to add - root cause solution

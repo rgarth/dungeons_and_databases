@@ -307,7 +307,11 @@ export function ActionsTab({
               Weapon Attacks
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {equippedWeapons.map((weapon, index) => {
+              {equippedWeapons.filter(weapon => {
+                // Filter out ammunition items - they shouldn't appear as weapon attacks
+                const isAmmunition = weapon.properties.some(prop => prop.startsWith('Ammunition')) && weapon.damage === '—';
+                return !isAmmunition;
+              }).map((weapon, index) => {
                 const isMagical = 'magicalName' in weapon;
                 
                 // Use equipment service for weapon calculations
@@ -370,7 +374,7 @@ export function ActionsTab({
                       <div className="text-slate-400">Range: {weaponRange} • {weapon.category} {weapon.type}</div>
                       
                       {/* Ammunition Tracking for Ranged Weapons */}
-                      {weapon.properties.includes('Ammunition') && (() => {
+                      {weapon.properties.some(prop => prop.startsWith('Ammunition')) && (() => {
                         // Determine ammo type based on weapon
                         let ammoType: string;
                         if (weapon.name.toLowerCase().includes('crossbow')) {
@@ -391,15 +395,42 @@ export function ActionsTab({
                         );
                         
                         return (
-                          <div className="flex items-center gap-2 mt-1 p-2 bg-slate-800/50 rounded">
-                            <span className="text-yellow-400 font-medium">Ammo:</span>
-                            <span className={`font-bold ${ammo ? 'text-green-400' : 'text-red-400'}`}>
-                              {ammo ? `${ammo.quantity} ${ammo.name}s` : `No ${ammoType}s!`}
-                            </span>
-                            {!ammo && (
-                              <span className="text-red-300 text-xs">
-                                (Add {ammoType}s from gear to use this weapon)
+                          <div className="flex items-center justify-between gap-2 mt-1 p-2 bg-slate-800/50 rounded">
+                            <div className="flex items-center gap-2">
+                              <span className="text-yellow-400 font-medium">Ammo:</span>
+                              <span className={`font-bold ${ammo ? 'text-green-400' : 'text-red-400'}`}>
+                                {ammo ? `${ammo.quantity} ${ammo.name}s` : `No ${ammoType}s!`}
                               </span>
+                              {!ammo && (
+                                <span className="text-red-300 text-xs">
+                                  (Add {ammoType}s from gear)
+                                </span>
+                              )}
+                            </div>
+                            
+                            {/* Ammunition Use/Recover Buttons */}
+                            {ammo && (onUseAmmunition || onRecoverAmmunition) && (
+                              <div className="flex gap-1">
+                                {onUseAmmunition && (
+                                  <button
+                                    onClick={() => onUseAmmunition(ammo.name)}
+                                    disabled={ammo.quantity <= 0}
+                                    className="px-2 py-1 text-xs border border-red-500 text-red-400 hover:bg-red-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed rounded font-medium transition-all duration-200"
+                                    title={`Use ${ammo.name} (-1, ${ammo.quantity} remaining)`}
+                                  >
+                                    Use
+                                  </button>
+                                )}
+                                {onRecoverAmmunition && (
+                                  <button
+                                    onClick={() => onRecoverAmmunition(ammo.name)}
+                                    className="px-2 py-1 text-xs border border-green-500 text-green-400 hover:bg-green-500 hover:text-white rounded font-medium transition-all duration-200"
+                                    title={`Recover ${ammo.name} after combat (+1)`}
+                                  >
+                                    +1
+                                  </button>
+                                )}
+                              </div>
                             )}
                           </div>
                         );
@@ -418,62 +449,6 @@ export function ActionsTab({
                   </div>
                 );
               })}
-            </div>
-          </div>
-        )}
-
-        {/* Ammunition Section */}
-        {character.ammunition && character.ammunition.length > 0 && (
-          <div className="bg-slate-700 rounded-lg p-6">
-            <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-              <Swords className="h-6 w-6" />
-              Ammunition
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {character.ammunition.map((ammo, index) => (
-                <div key={index} className="bg-slate-600 p-4 rounded-lg border-l-4 border-yellow-500">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-white font-bold text-lg">{ammo.name}</span>
-                    <span className="text-2xl font-bold text-yellow-400">{ammo.quantity}</span>
-                  </div>
-                  
-                  <div className="text-xs text-slate-300 mb-3">
-                    <div>Compatible with: {ammo.compatibleWeapons.join(', ')}</div>
-                    <div>Weight: {ammo.weight} lbs each</div>
-                    <div>Cost: {ammo.cost}</div>
-                  </div>
-
-                  {/* Usage Buttons */}
-                  {(onUseAmmunition || onRecoverAmmunition) && (
-                    <div className="space-y-2">
-                      <div className="flex gap-2">
-                        {onUseAmmunition && (
-                          <button
-                            onClick={() => onUseAmmunition(ammo.name)}
-                            disabled={ammo.quantity <= 0}
-                            className="flex-1 border-2 border-red-500 text-red-400 hover:bg-red-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed text-sm px-3 py-2 rounded font-medium transition-all duration-200"
-                            title={`Use ${ammo.name} (${ammo.quantity} remaining)`}
-                          >
-                            Use {ammo.name}
-                          </button>
-                        )}
-                        {onRecoverAmmunition && (
-                          <button
-                            onClick={() => onRecoverAmmunition(ammo.name)}
-                            className="flex-1 border-2 border-green-500 text-green-400 hover:bg-green-500 hover:text-white text-sm px-3 py-2 rounded font-medium transition-all duration-200"
-                            title={`Recover ${ammo.name} after combat`}
-                          >
-                            Recover
-                          </button>
-                        )}
-                      </div>
-                      <div className="text-xs text-slate-400 italic">
-                        Use ammunition when attacking with ranged weapons, recover after combat
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
             </div>
           </div>
         )}
