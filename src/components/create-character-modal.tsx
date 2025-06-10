@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { X, Dice6, RefreshCw, Plus, Minus } from "lucide-react";
-import { RACES, CLASSES, BACKGROUNDS, ALIGNMENTS, ABILITY_SCORES } from "@/lib/dnd/core";
-import { AbilityScore } from "@/lib/dnd/core";
+import { ABILITY_SCORES, AbilityScore } from "@/lib/dnd/core";
 import { generateFantasyName } from "@/lib/dnd/character";
 import { Spell } from "@/lib/dnd/spells";
 import { Weapon, Armor, Ammunition } from "@/lib/dnd/equipment";
@@ -60,13 +59,20 @@ interface CreationOptions {
 export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateCharacterModalProps) {
   const characterCreationService = CharacterCreationService.getInstance();
 
+  // Database data
+  const [races, setRaces] = useState<string[]>([]);
+  const [classes, setClasses] = useState<string[]>([]);
+  const [backgrounds, setBackgrounds] = useState<string[]>([]);
+  const [alignments, setAlignments] = useState<string[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
+
   // Basic character info
   const [name, setName] = useState("");
-  const [race, setRace] = useState<typeof RACES[number]>(RACES[0]);
-  const [characterClass, setCharacterClass] = useState<typeof CLASSES[number]>(CLASSES[0]);
+  const [race, setRace] = useState<string>("");
+  const [characterClass, setCharacterClass] = useState<string>("");
   const [subclass, setSubclass] = useState<string>("");
-  const [background, setBackground] = useState<typeof BACKGROUNDS[number]>(BACKGROUNDS[0]);
-  const [alignment, setAlignment] = useState<typeof ALIGNMENTS[number]>(ALIGNMENTS[4]); // True Neutral
+  const [background, setBackground] = useState<string>("");
+  const [alignment, setAlignment] = useState<string>("");
   const [gender, setGender] = useState<string>('');
   
   // Ability scores
@@ -92,30 +98,206 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [selectedArmor, setSelectedArmor] = useState<Armor[]>([]);
   const [showWeaponSelector, setShowWeaponSelector] = useState(false);
   const [showArmorSelector, setShowArmorSelector] = useState(false);
-  
-  // Debug effect to track selectedArmor changes
+
+  // Load D&D data from database on component mount
   useEffect(() => {
-    console.log('🔄 SELECTED ARMOR CHANGED:', selectedArmor.length, 'items');
-    if (selectedArmor.length > 0) {
-      console.log('Selected armor details:', selectedArmor.map(a => a.name));
-    }
-  }, [selectedArmor]);
-  
-  // Debug effect to track selectedArmor changes
+    const loadDndData = async () => {
+      try {
+        const [racesRes, classesRes, backgroundsRes, alignmentsRes] = await Promise.all([
+          fetch('/api/races'),
+          fetch('/api/classes'),
+          fetch('/api/backgrounds'),
+          fetch('/api/alignments')
+        ]);
+
+        const [racesData, classesData, backgroundsData, alignmentsData] = await Promise.all([
+          racesRes.json(),
+          classesRes.json(),
+          backgroundsRes.json(),
+          alignmentsRes.json()
+        ]);
+
+        const raceNames = racesData.map((race: any) => race.name);
+        const classNames = classesData.map((cls: any) => cls.name);
+        const backgroundNames = backgroundsData.map((bg: any) => bg.name);
+        const alignmentNames = alignmentsData.map((align: any) => align.name);
+
+        setRaces(raceNames);
+        setClasses(classNames);
+        setBackgrounds(backgroundNames);
+        setAlignments(alignmentNames);
+
+        // Set default values to first item from each array
+        if (raceNames.length > 0 && !race) setRace(raceNames[0]);
+        if (classNames.length > 0 && !characterClass) setCharacterClass(classNames[0]);
+        if (backgroundNames.length > 0 && !background) setBackground(backgroundNames[0]);
+        if (alignmentNames.length > 0 && !alignment) setAlignment(alignmentNames[0]);
+
+        console.log('✅ Loaded D&D data from database:');
+        console.log('- Races:', raceNames.length);
+        console.log('- Classes:', classNames.length);
+        console.log('- Backgrounds:', backgroundNames.length);
+        console.log('- Alignments:', alignmentNames.length);
+
+      } catch (error) {
+        console.error('Failed to load D&D data:', error);
+      } finally {
+        setDataLoading(false);
+      }
+    };
+
+    loadDndData();
+  }, []);
+
+  // Load D&D data from database on component mount
   useEffect(() => {
-    console.log('🔄 SELECTED ARMOR CHANGED:', selectedArmor.length, 'items');
-    console.log('Selected armor details:', selectedArmor.map(a => a.name));
-  }, [selectedArmor]);
+    const loadDndData = async () => {
+      try {
+        const [racesRes, classesRes, backgroundsRes, alignmentsRes] = await Promise.all([
+          fetch('/api/races'),
+          fetch('/api/classes'),
+          fetch('/api/backgrounds'),
+          fetch('/api/alignments')
+        ]);
+
+        const [racesData, classesData, backgroundsData, alignmentsData] = await Promise.all([
+          racesRes.json(),
+          classesRes.json(),
+          backgroundsRes.json(),
+          alignmentsRes.json()
+        ]);
+
+        const raceNames = racesData.map((race: any) => race.name);
+        const classNames = classesData.map((cls: any) => cls.name);
+        const backgroundNames = backgroundsData.map((bg: any) => bg.name);
+        const alignmentNames = alignmentsData.map((align: any) => align.name);
+
+        setRaces(raceNames);
+        setClasses(classNames);
+        setBackgrounds(backgroundNames);
+        setAlignments(alignmentNames);
+
+        // Set default values to first item from each array
+        if (raceNames.length > 0 && !race) setRace(raceNames[0]);
+        if (classNames.length > 0 && !characterClass) setCharacterClass(classNames[0]);
+        if (backgroundNames.length > 0 && !background) setBackground(backgroundNames[0]);
+        if (alignmentNames.length > 0 && !alignment) setAlignment(alignmentNames[0]);
+
+        console.log('✅ Loaded D&D data from database:');
+        console.log('- Races:', raceNames.length);
+        console.log('- Classes:', classNames.length);
+        console.log('- Backgrounds:', backgroundNames.length);
+        console.log('- Alignments:', alignmentNames.length);
+
+      } catch (error) {
+        console.error('Failed to load D&D data:', error);
+      } finally {
+        setDataLoading(false);
+      }
+    };
+
+    loadDndData();
+  }, []);
   
-  // Debug effect to monitor selectedArmor changes
+  // Load D&D data from database on component mount
   useEffect(() => {
-    console.log('SELECTED ARMOR CHANGED:', selectedArmor);
-  }, [selectedArmor]);
+    const loadDndData = async () => {
+      try {
+        const [racesRes, classesRes, backgroundsRes, alignmentsRes] = await Promise.all([
+          fetch('/api/races'),
+          fetch('/api/classes'),
+          fetch('/api/backgrounds'),
+          fetch('/api/alignments')
+        ]);
+
+        const [racesData, classesData, backgroundsData, alignmentsData] = await Promise.all([
+          racesRes.json(),
+          classesRes.json(),
+          backgroundsRes.json(),
+          alignmentsRes.json()
+        ]);
+
+        const raceNames = racesData.map((race: any) => race.name);
+        const classNames = classesData.map((cls: any) => cls.name);
+        const backgroundNames = backgroundsData.map((bg: any) => bg.name);
+        const alignmentNames = alignmentsData.map((align: any) => align.name);
+
+        setRaces(raceNames);
+        setClasses(classNames);
+        setBackgrounds(backgroundNames);
+        setAlignments(alignmentNames);
+
+        // Set default values to first item from each array
+        if (raceNames.length > 0 && !race) setRace(raceNames[0]);
+        if (classNames.length > 0 && !characterClass) setCharacterClass(classNames[0]);
+        if (backgroundNames.length > 0 && !background) setBackground(backgroundNames[0]);
+        if (alignmentNames.length > 0 && !alignment) setAlignment(alignmentNames[0]);
+
+        console.log('✅ Loaded D&D data from database:');
+        console.log('- Races:', raceNames.length);
+        console.log('- Classes:', classNames.length);
+        console.log('- Backgrounds:', backgroundNames.length);
+        console.log('- Alignments:', alignmentNames.length);
+
+      } catch (error) {
+        console.error('Failed to load D&D data:', error);
+      } finally {
+        setDataLoading(false);
+      }
+    };
+
+    loadDndData();
+  }, []);
   
-  // Debug effect to monitor selectedArmor changes
+  // Load D&D data from database on component mount
   useEffect(() => {
-    console.log('SELECTED ARMOR CHANGED:', selectedArmor);
-  }, [selectedArmor]);
+    const loadDndData = async () => {
+      try {
+        const [racesRes, classesRes, backgroundsRes, alignmentsRes] = await Promise.all([
+          fetch('/api/races'),
+          fetch('/api/classes'),
+          fetch('/api/backgrounds'),
+          fetch('/api/alignments')
+        ]);
+
+        const [racesData, classesData, backgroundsData, alignmentsData] = await Promise.all([
+          racesRes.json(),
+          classesRes.json(),
+          backgroundsRes.json(),
+          alignmentsRes.json()
+        ]);
+
+        const raceNames = racesData.map((race: any) => race.name);
+        const classNames = classesData.map((cls: any) => cls.name);
+        const backgroundNames = backgroundsData.map((bg: any) => bg.name);
+        const alignmentNames = alignmentsData.map((align: any) => align.name);
+
+        setRaces(raceNames);
+        setClasses(classNames);
+        setBackgrounds(backgroundNames);
+        setAlignments(alignmentNames);
+
+        // Set default values to first item from each array
+        if (raceNames.length > 0 && !race) setRace(raceNames[0]);
+        if (classNames.length > 0 && !characterClass) setCharacterClass(classNames[0]);
+        if (backgroundNames.length > 0 && !background) setBackground(backgroundNames[0]);
+        if (alignmentNames.length > 0 && !alignment) setAlignment(alignmentNames[0]);
+
+        console.log('✅ Loaded D&D data from database:');
+        console.log('- Races:', raceNames.length);
+        console.log('- Classes:', classNames.length);
+        console.log('- Backgrounds:', backgroundNames.length);
+        console.log('- Alignments:', alignmentNames.length);
+
+      } catch (error) {
+        console.error('Failed to load D&D data:', error);
+      } finally {
+        setDataLoading(false);
+      }
+    };
+
+    loadDndData();
+  }, []);
 
   // Load creation options and proficiencies when class changes
   useEffect(() => {
@@ -535,10 +717,10 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               </label>
               <select
                 value={race}
-                onChange={(e) => setRace(e.target.value as typeof RACES[number])}
+                onChange={(e) => setRace(e.target.value)}
                 className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
               >
-                {RACES.map((r) => (
+                {races.map((r) => (
                   <option key={r} value={r}>{r}</option>
                 ))}
               </select>
@@ -550,10 +732,10 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               </label>
               <select
                 value={characterClass}
-                onChange={(e) => setCharacterClass(e.target.value as typeof CLASSES[number])}
+                onChange={(e) => setCharacterClass(e.target.value)}
                 className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
               >
-                {CLASSES.map((c) => (
+                {classes.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
@@ -589,10 +771,10 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               </label>
               <select
                 value={background}
-                onChange={(e) => setBackground(e.target.value as typeof BACKGROUNDS[number])}
+                onChange={(e) => setBackground(e.target.value)}
                 className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
               >
-                {BACKGROUNDS.map((b) => (
+                {backgrounds.map((b) => (
                   <option key={b} value={b}>{b}</option>
                 ))}
               </select>
@@ -604,10 +786,10 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               </label>
               <select
                 value={alignment}
-                onChange={(e) => setAlignment(e.target.value as typeof ALIGNMENTS[number])}
+                onChange={(e) => setAlignment(e.target.value)}
                 className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
               >
-                {ALIGNMENTS.map((a) => (
+                {alignments.map((a) => (
                   <option key={a} value={a}>{a}</option>
                 ))}
               </select>

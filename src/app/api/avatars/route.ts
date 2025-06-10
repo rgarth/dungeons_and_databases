@@ -1,16 +1,23 @@
 import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { RACES, CLASSES } from '@/lib/dnd/core';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export async function GET() {
   try {
     const avatarsPath = path.join(process.cwd(), 'public', 'avatars');
     const files = await fs.readdir(avatarsPath);
     
-    // Valid races and classes from D&D 5e SRD
-    const validRaces = new Set(RACES);
-    const validClasses = new Set(CLASSES);
+    // Get valid races and classes from database
+    const [racesData, classesData] = await Promise.all([
+      prisma.dndRace.findMany({ select: { name: true } }),
+      prisma.dndClass.findMany({ select: { name: true } })
+    ]);
+    
+    const validRaces = new Set(racesData.map(r => r.name));
+    const validClasses = new Set(classesData.map(c => c.name));
     
     // Filter for PNG files and parse the filename format Race_Class_Gender.png
     const avatars: Array<{
@@ -38,12 +45,12 @@ export async function GET() {
           const avatarNumber = parts.length === 4 ? parseInt(parts[3]) : null;
           
           // Validate race and class against D&D data
-          if (!validRaces.has(race as typeof RACES[number])) {
+          if (!validRaces.has(race)) {
             console.warn(`⚠️ Skipping avatar with invalid race: ${race} (file: ${file})`);
             return;
           }
           
-          if (!validClasses.has(characterClass as typeof CLASSES[number])) {
+          if (!validClasses.has(characterClass)) {
             console.warn(`⚠️ Skipping avatar with invalid class: ${characterClass} (file: ${file})`);
             return;
           }

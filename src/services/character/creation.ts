@@ -8,7 +8,7 @@ import {
   getProficiencyBonus,
   ABILITY_SCORES
 } from '@/lib/dnd/core';
-import { getBackgroundSkills, getEquipmentPacksFromDatabase } from '@/lib/dnd/character';
+import { getEquipmentPacksFromDatabase } from '@/lib/dnd/character';
 import { 
   getSpellcastingAbility, 
   getClassSpells, 
@@ -215,7 +215,7 @@ export class CharacterCreationService {
     selectedSpells: Spell[],
     abilityScores: Record<AbilityScore, number>
   ): { spellsKnown: Spell[] | null; spellsPrepared: Spell[] | null } {
-    if (selectedSpells.length === 0) {
+    if (!selectedSpells || selectedSpells.length === 0) {
       return { spellsKnown: null, spellsPrepared: null };
     }
 
@@ -264,11 +264,23 @@ export class CharacterCreationService {
   }
 
   // Create final character data
-  async createCharacter(data: CharacterCreationData): Promise<CharacterCreationResult> {
+  async createCharacter(data: CharacterCreationData, equipmentPackItems: { name: string; quantity: number }[] = []): Promise<CharacterCreationResult> {
     const { abilityScores, class: characterClass } = data;
     
+    // Get hit die from database - no fallback, this must succeed
+    const classResponse = await fetch('/api/classes');
+    if (!classResponse.ok) {
+      throw new Error('Failed to fetch class data for character creation');
+    }
+    const classData = await classResponse.json();
+    const foundClass = classData.find((c: { name: string; hitDie: number }) => c.name === characterClass);
+    if (!foundClass) {
+      throw new Error(`Class "${characterClass}" not found in database`);
+    }
+    const hitDie = foundClass.hitDie;
+    
     // Calculate basic stats
-    const maxHitPoints = calculateHitPoints(1, abilityScores.constitution, characterClass);
+    const maxHitPoints = calculateHitPoints(1, abilityScores.constitution, hitDie);
     const armorClass = 10 + getModifier(abilityScores.dexterity);
     
     // Fetch equipment packs to get selected pack items
@@ -288,9 +300,8 @@ export class CharacterCreationService {
     console.log('Selected Weapons:', data.selectedWeapons);
     console.log('Selected Armor:', data.selectedArmor);
 
-    // Get equipment pack items if a pack was selected
-    let equipmentPackItems: { name: string; quantity: number }[] = [];
-    if (data.selectedEquipmentPack !== undefined && equipmentPacks[data.selectedEquipmentPack]) {
+    // Get equipment pack items if a pack was selected (use passed parameter or fetch from pack)
+    if (equipmentPackItems.length === 0 && data.selectedEquipmentPack !== undefined && equipmentPacks[data.selectedEquipmentPack]) {
       const selectedPack = equipmentPacks[data.selectedEquipmentPack];
       equipmentPackItems = selectedPack.items.map((item: { name: string; quantity: number }) => ({
         name: item.name,
@@ -299,17 +310,18 @@ export class CharacterCreationService {
       console.log('Selected equipment pack items:', equipmentPackItems);
     }
 
-    // Background equipment (non-weapon/armor items)
-    const backgroundEquipment: Record<string, string[]> = {
-      Acolyte: ['Holy Symbol', 'Prayer Book', 'Incense (5)', 'Vestments', 'Common Clothes', 'Belt Pouch'],
-      Criminal: ['Crowbar', 'Dark Common Clothes', 'Hood', 'Belt Pouch'],
-      'Folk Hero': ['Artisan Tools', 'Shovel', 'Iron Pot', 'Common Clothes', 'Belt Pouch'],
-      Noble: ['Signet Ring', 'Scroll of Pedigree', 'Fine Clothes', 'Belt Pouch'],
-      Sage: ['Ink Bottle', 'Quill', 'Small Knife', 'Letter', 'Common Clothes', 'Belt Pouch'],
-      Soldier: ['Insignia of Rank', 'Trophy', 'Deck of Cards', 'Common Clothes', 'Belt Pouch']
-    };
-    
-    const backgroundItems = backgroundEquipment[data.background] || [];
+    // Get background equipment from database
+    let backgroundItems: string[] = [];
+    try {
+      const backgroundResponse = await fetch('/api/backgrounds');
+      if (backgroundResponse.ok) {
+        const backgrounds = await backgroundResponse.json();
+        const backgroundData = backgrounds.find((bg: { name: string; equipment: string[] }) => bg.name === data.background);
+        backgroundItems = backgroundData?.equipment || [];
+      }
+    } catch (error) {
+      console.warn('Failed to fetch background equipment, using empty array:', error);
+    }
     
     // Combine equipment pack items + background items
     const generalInventory: { name: string; quantity: number }[] = [
@@ -317,7 +329,18 @@ export class CharacterCreationService {
       ...backgroundItems.map(item => ({ name: item, quantity: 1 }))
     ];
     
-    const backgroundSkills = getBackgroundSkills(data.background);
+    // Get background skills from database
+    let backgroundSkills: string[] = [];
+    try {
+      const backgroundResponse = await fetch('/api/backgrounds');
+      if (backgroundResponse.ok) {
+        const backgrounds = await backgroundResponse.json();
+        const backgroundData = backgrounds.find((bg: { name: string; skillProficiencies: string[] }) => bg.name === data.background);
+        backgroundSkills = backgroundData?.skillProficiencies || [];
+      }
+    } catch (error) {
+      console.warn('Failed to fetch background skills, using empty array:', error);
+    }
     
     // Spellcasting
     const spellcastingAbility = getSpellcastingAbility(characterClass);
@@ -364,10 +387,10 @@ export class CharacterCreationService {
       // Equipment - server will handle armor separation
       inventory: generalInventory,
       skills: backgroundSkills,
-      weapons: data.selectedWeapons.flatMap(w => 
+      weapons: (data.selectedWeapons || []).flatMap(w => 
         Array(w.quantity).fill({ ...w.weapon, equipped: false })
       ), // All weapons start unequipped
-      armor: data.selectedArmor?.map(armor => ({ ...armor, equipped: false })) || [],
+      armor: (data.selectedArmor || []).map(armor => ({ ...armor, equipped: false })),
       ammunition: data.selectedAmmunition || [],
       
       // Spellcasting

@@ -15,6 +15,7 @@ import type { Spell } from "@/lib/dnd/spells";
 import { MagicalItem, EquippedMagicalItem, MagicalItemType, MagicalItemRarity, canAttuneMagicalItem, canEquipInSlot } from "@/lib/dnd/magical-items";
 import { ArmorSelector } from "../../shared/ArmorSelector";
 import { WeaponSelector } from "../../shared/WeaponSelector";
+import { CustomWeaponCreator } from "../components/CustomWeaponCreator";
 
 interface GearTabProps {
   character: {
@@ -109,6 +110,7 @@ export function GearTab({
   const [showWeaponSelector, setShowWeaponSelector] = useState(false);
   const [showArmorSelector, setShowArmorSelector] = useState(false);
   const [showMagicalItemSelector, setShowMagicalItemSelector] = useState(false);
+  const [showCustomWeaponCreator, setShowCustomWeaponCreator] = useState(false);
 
 
   const [selectedMagicalItem, setSelectedMagicalItem] = useState("");
@@ -652,12 +654,22 @@ export function GearTab({
           <div className="bg-slate-700 rounded-lg p-4">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-white">Weapons</h3>
-              <button
-                onClick={() => setShowWeaponSelector(true)}
-                className="bg-yellow-600 hover:bg-yellow-700 text-white p-2 rounded"
-              >
-                <Plus className="h-4 w-4" />
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowWeaponSelector(true)}
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white p-2 rounded"
+                  title="Add basic weapons"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => setShowCustomWeaponCreator(true)}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-2 rounded"
+                  title="Create magical weapons"
+                >
+                  <Sparkles className="h-4 w-4" />
+                </button>
+              </div>
             </div>
             {inventoryWeapons.length === 0 ? (
               <div className="text-slate-400 text-sm">
@@ -937,6 +949,37 @@ export function GearTab({
           isOpen={showArmorSelector}
           characterClass={character.class}
           showProficiencies={true}
+        />
+      )}
+
+      {showCustomWeaponCreator && (
+        <CustomWeaponCreator
+          isOpen={showCustomWeaponCreator}
+          onClose={() => setShowCustomWeaponCreator(false)}
+          onWeaponCreated={(customWeapon) => {
+            // Convert custom weapon to MagicalWeapon format for the character
+            const magicalWeapon: MagicalWeapon = {
+              name: customWeapon.name,
+              type: customWeapon.baseWeapon.type,
+              category: customWeapon.baseWeapon.category,
+              damage: customWeapon.baseWeapon.damage,
+              damageType: customWeapon.baseWeapon.damageType,
+              properties: customWeapon.baseWeapon.properties,
+              weight: customWeapon.baseWeapon.weight,
+              cost: customWeapon.baseWeapon.cost,
+              stackable: false,
+              baseName: customWeapon.baseWeapon.name,
+              magicalName: customWeapon.name,
+              attackBonus: customWeapon.modifier,
+              damageBonus: customWeapon.modifier,
+              magicalProperties: customWeapon.description || `A magical ${customWeapon.baseWeapon.name} with a +${customWeapon.modifier} enhancement bonus.`,
+              rarity: customWeapon.modifier === 0 ? 'Common' : 
+                     customWeapon.modifier === 1 ? 'Uncommon' :
+                     customWeapon.modifier === 2 ? 'Rare' : 'Very Rare'
+            };
+            
+            onAddWeapon(magicalWeapon);
+          }}
         />
       )}
 
