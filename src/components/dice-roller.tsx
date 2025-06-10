@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 
-// Declare global DICE object for TypeScript
+// Declare global objects for TypeScript
 declare global {
   interface Window {
     DICE: {
@@ -12,6 +12,8 @@ declare global {
         bind_swipe: (element: HTMLElement, beforeRoll?: ((notation: DiceResult) => number[] | null), afterRoll?: (notation: DiceResult) => void) => void;
       };
     };
+    THREE: any;
+    CANNON: any;
   }
 }
 
@@ -40,6 +42,7 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
   const [lastResult, setLastResult] = useState<DiceResult | null>(null);
   const [isRolling, setIsRolling] = useState(false);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
+  const [initializationError, setInitializationError] = useState<string | null>(null);
   
   // Individual dice counts (max 6 each)
   const [diceCounts, setDiceCounts] = useState({
@@ -55,32 +58,83 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
 
   // Load the required scripts
   useEffect(() => {
-    const loadScript = (src: string): Promise<void> => {
+    const loadScriptAndWait = (src: string, globalCheck: () => boolean): Promise<void> => {
       return new Promise((resolve, reject) => {
-        if (document.querySelector(`script[src="${src}"]`)) {
+        // Check if already loaded and available
+        if (globalCheck()) {
+          console.log(`${src} already available`);
           resolve();
+          return;
+        }
+
+        // Check if script tag already exists
+        const existingScript = document.querySelector(`script[src="${src}"]`);
+        if (existingScript) {
+          // Script exists but global not available yet, wait for it
+          const checkInterval = setInterval(() => {
+            if (globalCheck()) {
+              clearInterval(checkInterval);
+              console.log(`${src} became available`);
+              resolve();
+            }
+          }, 100);
+          
+          // Timeout after 10 seconds
+          setTimeout(() => {
+            clearInterval(checkInterval);
+            reject(new Error(`Timeout waiting for ${src} to become available`));
+          }, 10000);
           return;
         }
 
         const script = document.createElement('script');
         script.src = src;
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+        script.onload = () => {
+          console.log(`Script loaded: ${src}`);
+          // Wait for the global to be available
+          const checkInterval = setInterval(() => {
+            if (globalCheck()) {
+              clearInterval(checkInterval);
+              console.log(`${src} global available`);
+              resolve();
+            }
+          }, 10);
+          
+          // Timeout after 5 seconds
+          setTimeout(() => {
+            clearInterval(checkInterval);
+            reject(new Error(`${src} loaded but global not available`));
+          }, 5000);
+        };
+        script.onerror = () => {
+          console.error(`Failed to load script: ${src}`);
+          reject(new Error(`Failed to load script: ${src}`));
+        };
         document.head.appendChild(script);
       });
     };
 
     const loadScripts = async () => {
       try {
-        // Load dependencies in order
-        await loadScript('/three.min.js');
-        await loadScript('/cannon.min.js');
-        await loadScript('/dice.js');
+        console.log('Starting to load dice scripts...');
+        
+        // Load THREE.js and wait for window.THREE
+        await loadScriptAndWait('/three.min.js', () => !!window.THREE);
+        console.log('THREE.js loaded and available:', !!window.THREE);
+        
+        // Load Cannon.js and wait for window.CANNON
+        await loadScriptAndWait('/cannon.min.js', () => !!window.CANNON);
+        console.log('Cannon.js loaded and available:', !!window.CANNON);
+        
+        // Load dice.js and wait for window.DICE
+        await loadScriptAndWait('/dice.js', () => !!window.DICE);
+        console.log('Dice.js loaded and available:', !!window.DICE);
         
         setScriptsLoaded(true);
-        console.log('Dice scripts loaded successfully');
+        console.log('All dice scripts loaded successfully');
       } catch (error) {
         console.error('Failed to load dice scripts:', error);
+        setInitializationError(`Failed to load scripts: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     };
 
@@ -91,19 +145,40 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
   useEffect(() => {
     if (scriptsLoaded && diceContainerRef.current && !diceBoxRef.current) {
       console.log('Attempting to initialize dice box...');
-      console.log('window.DICE available:', !!window.DICE);
-      console.log('Container element:', diceContainerRef.current);
       
-      // Add a delay to ensure DOM is ready
+      // Check for required dependencies
+      if (!window.THREE) {
+        setInitializationError('THREE.js not loaded');
+        return;
+      }
+      
+      if (!window.CANNON) {
+        setInitializationError('Cannon.js not loaded');
+        return;
+      }
+      
+      if (!window.DICE) {
+        setInitializationError('DICE library not loaded');
+        return;
+      }
+      
+      console.log('All dependencies available, initializing dice box...');
+      
+      // Add a delay to ensure DOM is ready and container has proper dimensions
       setTimeout(() => {
-        if (window.DICE && diceContainerRef.current) {
+        if (diceContainerRef.current && window.DICE) {
           try {
-            // Give the container explicit dimensions
             const container = diceContainerRef.current;
+            
+            // Ensure container has explicit dimensions
             container.style.width = '100%';
             container.style.height = '100%';
             container.style.minHeight = '480px';
             container.style.position = 'relative';
+            container.style.display = 'block';
+            
+                         // Force a layout recalculation
+             const _ = container.offsetHeight;
             
             console.log('Container dimensions:', {
               width: container.offsetWidth,
@@ -112,23 +187,28 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
               clientHeight: container.clientHeight
             });
             
+            // Check if container has proper dimensions
+            if (container.clientWidth === 0 || container.clientHeight === 0) {
+              console.error('Container has zero dimensions');
+              setInitializationError('Container has zero dimensions');
+              return;
+            }
+            
             if (typeof window.DICE.dice_box === 'function') {
+              console.log('Creating dice box instance...');
               diceBoxRef.current = new window.DICE.dice_box(container);
+              console.log('Dice box initialized successfully:', !!diceBoxRef.current);
+              setInitializationError(null);
             } else {
               console.error('window.DICE.dice_box is not a constructor:', typeof window.DICE.dice_box);
+              setInitializationError('DICE.dice_box is not a constructor');
             }
-            console.log('Dice box initialized successfully:', diceBoxRef.current);
-            
-            // Force a re-render to update the fallback display
-            setLastResult(null);
           } catch (error) {
             console.error('Failed to initialize dice box:', error);
-            console.error('Error details:', error);
+            setInitializationError(`Initialization failed: ${error.message}`);
           }
-        } else {
-          console.error('DICE library not found on window object after delay');
         }
-      }, 500);
+      }, 100);
     }
   }, [scriptsLoaded]);
 
@@ -174,7 +254,14 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
   };
 
   const rollDice = () => {
-    if (!diceBoxRef.current || isRolling || getTotalDice() === 0) return;
+    if (!diceBoxRef.current || isRolling || getTotalDice() === 0) {
+      console.log('Cannot roll dice:', {
+        diceBoxExists: !!diceBoxRef.current,
+        isRolling,
+        totalDice: getTotalDice()
+      });
+      return;
+    }
 
     const notation = buildDiceNotation();
     console.log('Rolling dice with notation:', notation);
@@ -195,6 +282,7 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
     } catch (error) {
       console.error('Failed to roll dice:', error);
       setIsRolling(false);
+      setInitializationError(`Roll failed: ${error.message}`);
     }
   };
 
@@ -223,7 +311,28 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
   if (!scriptsLoaded) {
     return (
       <div className={`flex items-center justify-center h-64 ${className}`}>
-        <div className="text-slate-400">Loading dice roller...</div>
+        <div className="text-slate-400">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto mb-2"></div>
+          <div>Loading dice roller...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (initializationError) {
+    return (
+      <div className={`flex items-center justify-center h-64 ${className}`}>
+        <div className="text-red-400 text-center">
+          <div className="text-lg mb-2">⚠️</div>
+          <div>Dice roller failed to initialize</div>
+          <div className="text-xs mt-2 text-slate-400">{initializationError}</div>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Reload Page
+          </button>
+        </div>
       </div>
     );
   }
@@ -313,14 +422,14 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
           <div className="flex items-center gap-3">
             <button
               onClick={rollDice}
-              disabled={isRolling || totalDice === 0}
+              disabled={isRolling || totalDice === 0 || !diceBoxRef.current}
               className={`py-3 px-8 rounded-lg font-bold text-lg transition-colors ${
-                isRolling || totalDice === 0
+                isRolling || totalDice === 0 || !diceBoxRef.current
                   ? 'bg-slate-600 text-slate-400 cursor-not-allowed'
                   : 'bg-green-600 hover:bg-green-700 text-white shadow-lg'
               }`}
             >
-              {isRolling ? 'Rolling...' : totalDice === 0 ? 'Select Dice' : '🎲 ROLL'}
+              {isRolling ? 'Rolling...' : totalDice === 0 ? 'Select Dice' : !diceBoxRef.current ? 'Loading...' : '🎲 ROLL'}
             </button>
             
             <button
@@ -345,12 +454,14 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
           }}
         >
           {/* Fallback content when dice box not loaded */}
-          {!diceBoxRef.current && scriptsLoaded && (
+          {!diceBoxRef.current && !initializationError && (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-slate-400 text-center">
                 <div className="text-lg mb-2">🎲</div>
-                <div>3D Dice Loading...</div>
-                <div className="text-xs mt-2">Check browser console for details</div>
+                <div>3D Dice Initializing...</div>
+                <div className="text-xs mt-2">
+                  Dependencies: {window.THREE ? '✓' : '✗'} THREE.js, {window.CANNON ? '✓' : '✗'} Cannon.js, {window.DICE ? '✓' : '✗'} Dice.js
+                </div>
               </div>
             </div>
           )}

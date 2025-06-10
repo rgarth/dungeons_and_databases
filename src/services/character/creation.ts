@@ -23,7 +23,7 @@ import {
 import { getSpellcastingType } from '@/lib/dnd/level-up';
 import { BASIC_ACTIONS, getClassActions } from '@/lib/dnd/combat';
 import { Spell } from '@/lib/dnd/spells';
-import { Weapon, MagicalWeapon, Armor } from '@/lib/dnd/equipment';
+import { Weapon, MagicalWeapon, Armor, Ammunition } from '@/lib/dnd/equipment';
 
 
 export type StatMethod = 'rolling-assign' | 'standard' | 'pointbuy';
@@ -47,6 +47,7 @@ export interface CharacterCreationData {
   selectedEquipmentPack: number;
   selectedWeapons: { weapon: Weapon; quantity: number }[];
   selectedArmor: Armor[];
+  selectedAmmunition: Ammunition[];
   selectedSpells: Spell[];
 }
 
@@ -78,6 +79,7 @@ export interface CharacterCreationResult {
   skills: string[];
   weapons: (Weapon | MagicalWeapon)[]; // All weapons with equipped boolean
   armor: Armor[];
+  ammunition: Ammunition[];
   
   // Spellcasting
   spellsKnown?: Spell[] | null;
@@ -370,6 +372,7 @@ export class CharacterCreationService {
         Array(w.quantity).fill({ ...w.weapon, equipped: false })
       ), // All weapons start unequipped
       armor: data.selectedArmor?.map(armor => ({ ...armor, equipped: false })) || [],
+      ammunition: data.selectedAmmunition || [],
       
       // Spellcasting
       spellsKnown: spellsKnown || undefined,

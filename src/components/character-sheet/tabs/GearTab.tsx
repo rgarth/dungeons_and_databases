@@ -779,7 +779,7 @@ export function GearTab({
           }}
           onCancel={() => setShowWeaponSelector(false)}
           characterClass={character.class}
-          showSuggestions={true}
+          showSuggestions={false}
           multiSelect={true}
         />
       )}

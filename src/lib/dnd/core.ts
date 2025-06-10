@@ -75,7 +75,7 @@ export function rollAbilityScore(): number {
 
 // Generate 6 random ability scores for assignment
 export function generateRandomScoreArray(): number[] {
-  return Array.from({ length: 6 }, () => rollAbilityScore()).sort((a, b) => b - a);
+  return Array.from({ length: 6 }, () => rollAbilityScore());
 }
 
 // Generate a complete set of ability scores by method

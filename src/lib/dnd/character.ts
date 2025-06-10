@@ -1,5 +1,5 @@
 // Character creation and utility functions
-import { Weapon, MagicalWeapon, Armor, createMagicalWeapon, MAGICAL_WEAPON_TEMPLATES } from './equipment';
+import { Weapon, MagicalWeapon, Armor, Ammunition, createMagicalWeapon, MAGICAL_WEAPON_TEMPLATES } from './equipment';
 import { Spell } from './spells';
 
 // Character interfaces
@@ -38,6 +38,7 @@ export interface Character {
   inventoryWeapons: (Weapon | MagicalWeapon)[];
   armor: Armor[];
   inventoryArmor: Armor[];
+  ammunition: Ammunition[];
   
   // Spellcasting
   spellsKnown: Spell[];

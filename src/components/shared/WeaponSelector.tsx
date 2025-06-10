@@ -159,50 +159,50 @@ export function WeaponSelector({
   // Add ammunition as stackable weapons for easier selection
   const ammunitionItems: Weapon[] = [
     {
-      name: 'Ammunition, Arrows (20)',
+      name: 'Arrow',
       type: 'Simple',
       category: 'Ranged',
       damage: '—',
       damageType: '—',
       properties: ['Ammunition'],
-      weight: 1,
-      cost: '1 gp',
+      weight: 0.05,
+      cost: '5 cp each',
       stackable: true,
       quantity: 20
     },
     {
-      name: 'Ammunition, Crossbow Bolts (20)',
+      name: 'Crossbow Bolt',
       type: 'Simple',
       category: 'Ranged',
       damage: '—',
       damageType: '—',
       properties: ['Ammunition'],
-      weight: 1.5,
-      cost: '1 gp',
+      weight: 0.075,
+      cost: '5 cp each',
       stackable: true,
       quantity: 20
     },
     {
-      name: 'Ammunition, Blowgun Needles (50)',
+      name: 'Blowgun Needle',
       type: 'Simple',
       category: 'Ranged',
       damage: '—',
       damageType: '—',
       properties: ['Ammunition'],
-      weight: 1,
-      cost: '1 gp',
+      weight: 0.02,
+      cost: '2 cp each',
       stackable: true,
       quantity: 50
     },
     {
-      name: 'Ammunition, Sling Bullets (20)',
+      name: 'Sling Bullet',
       type: 'Simple',
       category: 'Ranged',
       damage: '—',
       damageType: '—',
       properties: ['Ammunition'],
-      weight: 1.5,
-      cost: '4 cp',
+      weight: 0.075,
+      cost: '2 cp each',
       stackable: true,
       quantity: 20
     }
@@ -292,21 +292,20 @@ export function WeaponSelector({
                             properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
                           };
                           handleWeaponQuantityChange(weapon, suggestion.quantity);
-                        } else if (suggestion.weaponName.startsWith('Ammunition,')) {
-                          // Handle ammunition as a special stackable weapon
-                          const ammoWeapon: Weapon = {
-                            name: suggestion.weaponName,
-                            type: 'Simple',
-                            category: 'Ranged',
-                            damage: '—',
-                            damageType: '—',
-                            properties: ['Ammunition'],
-                            weight: 1,
-                            cost: '1 gp',
-                            stackable: true,
-                            quantity: 20 // Default quantity for ammunition packs
-                          };
-                          handleWeaponQuantityChange(ammoWeapon, suggestion.quantity);
+                        } else if (
+                          // Handle ammunition suggestions
+                          ['Arrow', 'Crossbow Bolt', 'Blowgun Needle', 'Sling Bullet'].includes(suggestion.weaponName)
+                        ) {
+                          // Find the ammunition in our ammunition items
+                          const ammoWeapon = ammunitionItems.find(ammo => ammo.name === suggestion.weaponName);
+                          if (ammoWeapon) {
+                            // Create a copy with the suggested quantity
+                            const ammoWithQuantity: Weapon = {
+                              ...ammoWeapon,
+                              quantity: suggestion.quantity
+                            };
+                            handleWeaponQuantityChange(ammoWithQuantity, 1);
+                          }
                         }
                       });
                     }}

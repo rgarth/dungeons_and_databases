@@ -78,6 +78,7 @@ export async function POST(request: NextRequest) {
       inventoryWeapons,
       armor, // Client-provided armor with equipped boolean
       inventoryArmor, // Legacy - client-provided armor from suggestions
+      ammunition, // Client-provided ammunition
       spellsKnown,
       spellsPrepared,
       spellSlots,
@@ -302,6 +303,7 @@ export async function POST(request: NextRequest) {
         inventoryWeapons: [...(inventoryWeapons || []), ...processedInventoryWeapons], // Merge client weapons with processed weapons
         armor: allInventoryArmor, // New system: all armor with equipped boolean
         inventoryArmor: allInventoryArmor, // Legacy compatibility
+        ammunition: ammunition || [], // Ammunition array
         spellsKnown,
         spellsPrepared,
         spellSlots: spellSlots || {},
@@ -536,6 +538,11 @@ export async function PATCH(request: NextRequest) {
     // Handle inventory armor updates (unequipped armor)
     if (body.inventoryArmor !== undefined) {
       updateData.inventoryArmor = body.inventoryArmor;
+    }
+
+    // Handle ammunition updates
+    if (body.ammunition !== undefined) {
+      updateData.ammunition = body.ammunition;
     }
 
     // Handle magical items updates (equipped magical items)
