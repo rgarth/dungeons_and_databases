@@ -307,16 +307,43 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
   };
 
   const handleAddWeapon = (weapon: Weapon | MagicalWeapon) => {
-    // Add weapon to inventory (unequipped)
-    const updatedWeapons = [...(currentCharacter.weapons || []), { ...weapon, equipped: false }];
-    updateCharacter({ weapons: updatedWeapons });
+    // Use the multi-weapon handler for consistent grouping logic
+    handleAddWeapons([weapon]);
   };
 
   const handleAddWeapons = (weapons: (Weapon | MagicalWeapon)[]) => {
-    // Add multiple weapons to inventory at once - root cause solution
-    const weaponsWithEquipped = weapons.map(weapon => ({ ...weapon, equipped: false }));
-    const updatedWeapons = [...(currentCharacter.weapons || []), ...weaponsWithEquipped];
-    updateCharacter({ weapons: updatedWeapons });
+    // Group stackable weapons by name, add individual entries for non-stackable
+    const currentWeapons = [...(currentCharacter.weapons || [])];
+    
+    weapons.forEach(weapon => {
+      if (weapon.stackable) {
+        // Find existing stackable weapon of same name
+        const existingIndex = currentWeapons.findIndex(w => 
+          w.name === weapon.name && w.stackable && 'quantity' in w
+        );
+        
+        if (existingIndex >= 0) {
+          // Increase quantity of existing stack
+          const existing = currentWeapons[existingIndex];
+          currentWeapons[existingIndex] = {
+            ...existing,
+            quantity: (existing.quantity || 1) + 1
+          };
+        } else {
+          // Create new stack with quantity
+          currentWeapons.push({
+            ...weapon,
+            equipped: weapon.stackable ? true : false, // Auto-equip stackable items
+            quantity: 1
+          });
+        }
+      } else {
+        // Add non-stackable weapons individually
+        currentWeapons.push({ ...weapon, equipped: false });
+      }
+    });
+    
+    updateCharacter({ weapons: currentWeapons });
   };
 
   const handleAddArmor = (armor: Armor) => {
@@ -659,6 +686,85 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     updateCharacter({ armor: updatedArmor });
   };
 
+  const handleUseWeapon = (weaponIndex: number) => {
+    const weapon = equippedWeapons[weaponIndex];
+    if (!weapon || !weapon.stackable || !weapon.quantity || weapon.quantity <= 0) {
+      return;
+    }
+
+    // Create a copy of all weapons
+    const allWeapons = [...(currentCharacter.weapons || [])];
+    
+    // Find the weapon in the array and decrease quantity
+    const actualWeaponIndex = allWeapons.findIndex(w => 
+      w.name === weapon.name && 
+      w.equipped === true && 
+      w.stackable === true
+    );
+    
+    if (actualWeaponIndex !== -1) {
+      const updatedWeapons = [...allWeapons];
+      const currentQuantity = updatedWeapons[actualWeaponIndex].quantity || 1;
+      
+      if (currentQuantity > 1) {
+        // Decrease quantity
+        updatedWeapons[actualWeaponIndex] = {
+          ...updatedWeapons[actualWeaponIndex],
+          quantity: currentQuantity - 1
+        };
+      } else {
+        // Remove weapon entirely if quantity reaches 0
+        updatedWeapons.splice(actualWeaponIndex, 1);
+      }
+      
+      setCurrentCharacter(prev => ({ ...prev, weapons: updatedWeapons }));
+      updateCharacter({ weapons: updatedWeapons });
+    }
+  };
+
+  const handleRecoverWeapon = (weaponIndex: number) => {
+    const weapon = equippedWeapons[weaponIndex];
+    if (!weapon || !weapon.stackable) {
+      return;
+    }
+
+    // Create a copy of all weapons
+    const allWeapons = [...(currentCharacter.weapons || [])];
+    
+    // Find the weapon in the array and increase quantity
+    const actualWeaponIndex = allWeapons.findIndex(w => 
+      w.name === weapon.name && 
+      w.equipped === true && 
+      w.stackable === true
+    );
+    
+    if (actualWeaponIndex !== -1) {
+      const updatedWeapons = [...allWeapons];
+      const currentQuantity = updatedWeapons[actualWeaponIndex].quantity || 0;
+      
+      // Increase quantity by 1
+      updatedWeapons[actualWeaponIndex] = {
+        ...updatedWeapons[actualWeaponIndex],
+        quantity: currentQuantity + 1
+      };
+      
+      setCurrentCharacter(prev => ({ ...prev, weapons: updatedWeapons }));
+      updateCharacter({ weapons: updatedWeapons });
+    } else {
+      // If weapon doesn't exist, add it back with quantity 1
+      const recoveredWeapon = {
+        ...weapon,
+        quantity: 1,
+        equipped: true,
+        stackable: true
+      };
+      
+      const updatedWeapons = [...allWeapons, recoveredWeapon];
+      setCurrentCharacter(prev => ({ ...prev, weapons: updatedWeapons }));
+      updateCharacter({ weapons: updatedWeapons });
+    }
+  };
+
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
@@ -831,6 +937,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
                 onUseSpellScroll={handleUseSpellScroll}
                 onUpdateConditions={handleUpdateConditions}
                 onUpdateDeathSaves={handleUpdateDeathSaves}
+                onUseWeapon={handleUseWeapon}
+                onRecoverWeapon={handleRecoverWeapon}
               />
             )}
 

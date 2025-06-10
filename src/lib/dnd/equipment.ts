@@ -13,6 +13,7 @@ export interface Weapon {
   cost: string;
   stackable?: boolean;
   equipped?: boolean; // Whether this weapon is currently equipped
+  quantity?: number; // For stackable weapons - how many in this stack
 }
 
 export interface MagicalWeapon extends Weapon {

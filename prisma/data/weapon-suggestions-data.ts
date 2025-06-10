@@ -42,7 +42,9 @@ export const classWeaponSuggestionsData: ClassWeaponSuggestionsData[] = [
     className: "Fighter",
     suggestions: [
       { weaponName: "Longsword", quantity: 1, reason: "Versatile primary weapon" },
-      { weaponName: "Shield", quantity: 1, reason: "Classic sword and board" }
+      { weaponName: "Shield", quantity: 1, reason: "Classic sword and board" },
+      { weaponName: "Light Crossbow", quantity: 1, reason: "Ranged backup option" },
+      { weaponName: "Ammunition, Crossbow Bolts (20)", quantity: 1, reason: "Bolts for crossbow" }
     ]
   },
   {
@@ -63,14 +65,17 @@ export const classWeaponSuggestionsData: ClassWeaponSuggestionsData[] = [
     className: "Ranger",
     suggestions: [
       { weaponName: "Longsword", quantity: 1, reason: "Versatile melee weapon" },
-      { weaponName: "Longbow", quantity: 1, reason: "Classic ranger weapon" }
+      { weaponName: "Longbow", quantity: 1, reason: "Classic ranger weapon" },
+      { weaponName: "Ammunition, Arrows (20)", quantity: 1, reason: "Arrows for longbow" }
     ]
   },
   {
     className: "Rogue",
     suggestions: [
       { weaponName: "Rapier", quantity: 1, reason: "Finesse sneak attack weapon" },
-      { weaponName: "Dagger", quantity: 2, reason: "Thrown sneak attack option" }
+      { weaponName: "Dagger", quantity: 2, reason: "Thrown sneak attack option" },
+      { weaponName: "Shortbow", quantity: 1, reason: "Stealth ranged weapon" },
+      { weaponName: "Ammunition, Arrows (20)", quantity: 1, reason: "Arrows for shortbow" }
     ]
   },
   {
