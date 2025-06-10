@@ -282,6 +282,7 @@ model Character {
   weapons   Json? // Store ALL weapons the character owns as JSON
   equippedWeapons Json? // Store subset of weapons that are currently equipped as JSON
   inventoryWeapons Json? // Store unequipped weapons in inventory as JSON (DEPRECATED - use weapons + equippedWeapons instead)
+  ammunition Json? // Store ammunition (arrows, bolts, etc.) as JSON - separate from weapons
   armor     Json? // Store ALL armor the character owns as JSON  
   equippedArmor Json? // Store subset of armor that is currently equipped as JSON
   inventoryArmor Json? // Store unequipped armor in inventory as JSON (DEPRECATED - use armor + equippedArmor instead)

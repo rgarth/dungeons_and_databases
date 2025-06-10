@@ -4,7 +4,7 @@ import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp, FileTex
 import { useState, useEffect, useRef } from "react";
 import { getModifier } from "@/lib/dnd/core";
 import { Spell, getClassSpells } from "@/lib/dnd/spells";
-import { Weapon, MagicalWeapon, InventoryItem, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, Armor, calculateArmorClass } from "@/lib/dnd/equipment";
+import { Weapon, MagicalWeapon, InventoryItem, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, Armor, Ammunition, calculateArmorClass } from "@/lib/dnd/equipment";
 import { Action, canEquipArmor } from "@/lib/dnd/combat";
 import { Treasure } from "@/lib/dnd/data";
 import { weaponsData } from "../../prisma/data/weapons-data";
@@ -73,6 +73,7 @@ interface CharacterSheetProps {
     equippedWeapons?: (Weapon | MagicalWeapon)[];
     deathSaveSuccesses?: number;
     deathSaveFailures?: number;
+    ammunition?: Ammunition[];
   };
   onClose: () => void;
   onCharacterDeleted?: () => void;
@@ -240,6 +241,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     conditions?: ActiveCondition[];
     deathSaveSuccesses?: number;
     deathSaveFailures?: number;
+    ammunition?: Ammunition[];
   } | Record<string, unknown>) => {
     // Update local state immediately for responsive UI
     setCurrentCharacter(prev => ({ ...prev, ...updates }));
@@ -686,83 +688,40 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     updateCharacter({ armor: updatedArmor });
   };
 
-  const handleUseWeapon = (weaponIndex: number) => {
-    const weapon = equippedWeapons[weaponIndex];
-    if (!weapon || !weapon.stackable || !weapon.quantity || weapon.quantity <= 0) {
+  const handleUseAmmunition = (ammunitionName: string) => {
+    const currentAmmunition = currentCharacter.ammunition || [];
+    const ammoIndex = currentAmmunition.findIndex(a => a.name === ammunitionName);
+    
+    if (ammoIndex === -1 || currentAmmunition[ammoIndex].quantity <= 0) {
       return;
     }
 
-    // Create a copy of all weapons
-    const allWeapons = [...(currentCharacter.weapons || [])];
+    const updatedAmmunition = [...currentAmmunition];
+    updatedAmmunition[ammoIndex] = {
+      ...updatedAmmunition[ammoIndex],
+      quantity: updatedAmmunition[ammoIndex].quantity - 1
+    };
     
-    // Find the weapon in the array and decrease quantity
-    const actualWeaponIndex = allWeapons.findIndex(w => 
-      w.name === weapon.name && 
-      w.equipped === true && 
-      w.stackable === true
-    );
-    
-    if (actualWeaponIndex !== -1) {
-      const updatedWeapons = [...allWeapons];
-      const currentQuantity = updatedWeapons[actualWeaponIndex].quantity || 1;
-      
-      if (currentQuantity > 1) {
-        // Decrease quantity
-        updatedWeapons[actualWeaponIndex] = {
-          ...updatedWeapons[actualWeaponIndex],
-          quantity: currentQuantity - 1
-        };
-      } else {
-        // Remove weapon entirely if quantity reaches 0
-        updatedWeapons.splice(actualWeaponIndex, 1);
-      }
-      
-      setCurrentCharacter(prev => ({ ...prev, weapons: updatedWeapons }));
-      updateCharacter({ weapons: updatedWeapons });
-    }
+    setCurrentCharacter(prev => ({ ...prev, ammunition: updatedAmmunition }));
+    updateCharacter({ ammunition: updatedAmmunition });
   };
 
-  const handleRecoverWeapon = (weaponIndex: number) => {
-    const weapon = equippedWeapons[weaponIndex];
-    if (!weapon || !weapon.stackable) {
+  const handleRecoverAmmunition = (ammunitionName: string) => {
+    const currentAmmunition = currentCharacter.ammunition || [];
+    const ammoIndex = currentAmmunition.findIndex(a => a.name === ammunitionName);
+    
+    if (ammoIndex === -1) {
       return;
     }
 
-    // Create a copy of all weapons
-    const allWeapons = [...(currentCharacter.weapons || [])];
+    const updatedAmmunition = [...currentAmmunition];
+    updatedAmmunition[ammoIndex] = {
+      ...updatedAmmunition[ammoIndex],
+      quantity: updatedAmmunition[ammoIndex].quantity + 1
+    };
     
-    // Find the weapon in the array and increase quantity
-    const actualWeaponIndex = allWeapons.findIndex(w => 
-      w.name === weapon.name && 
-      w.equipped === true && 
-      w.stackable === true
-    );
-    
-    if (actualWeaponIndex !== -1) {
-      const updatedWeapons = [...allWeapons];
-      const currentQuantity = updatedWeapons[actualWeaponIndex].quantity || 0;
-      
-      // Increase quantity by 1
-      updatedWeapons[actualWeaponIndex] = {
-        ...updatedWeapons[actualWeaponIndex],
-        quantity: currentQuantity + 1
-      };
-      
-      setCurrentCharacter(prev => ({ ...prev, weapons: updatedWeapons }));
-      updateCharacter({ weapons: updatedWeapons });
-    } else {
-      // If weapon doesn't exist, add it back with quantity 1
-      const recoveredWeapon = {
-        ...weapon,
-        quantity: 1,
-        equipped: true,
-        stackable: true
-      };
-      
-      const updatedWeapons = [...allWeapons, recoveredWeapon];
-      setCurrentCharacter(prev => ({ ...prev, weapons: updatedWeapons }));
-      updateCharacter({ weapons: updatedWeapons });
-    }
+    setCurrentCharacter(prev => ({ ...prev, ammunition: updatedAmmunition }));
+    updateCharacter({ ammunition: updatedAmmunition });
   };
 
   return (
@@ -937,8 +896,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
                 onUseSpellScroll={handleUseSpellScroll}
                 onUpdateConditions={handleUpdateConditions}
                 onUpdateDeathSaves={handleUpdateDeathSaves}
-                onUseWeapon={handleUseWeapon}
-                onRecoverWeapon={handleRecoverWeapon}
+                onUseAmmunition={handleUseAmmunition}
+                onRecoverAmmunition={handleRecoverAmmunition}
               />
             )}
 

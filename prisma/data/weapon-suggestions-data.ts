@@ -4,9 +4,16 @@ export interface WeaponSuggestionData {
   reason?: string;
 }
 
+export interface AmmunitionSuggestionData {
+  ammunitionName: string;
+  quantity: number;
+  reason?: string;
+}
+
 export interface ClassWeaponSuggestionsData {
   className: string;
   suggestions: WeaponSuggestionData[];
+  ammunition?: AmmunitionSuggestionData[];
 }
 
 export const classWeaponSuggestionsData: ClassWeaponSuggestionsData[] = [
@@ -43,8 +50,10 @@ export const classWeaponSuggestionsData: ClassWeaponSuggestionsData[] = [
     suggestions: [
       { weaponName: "Longsword", quantity: 1, reason: "Versatile primary weapon" },
       { weaponName: "Shield", quantity: 1, reason: "Classic sword and board" },
-      { weaponName: "Light Crossbow", quantity: 1, reason: "Ranged backup option" },
-      { weaponName: "Ammunition, Crossbow Bolts (20)", quantity: 1, reason: "Bolts for crossbow" }
+      { weaponName: "Light Crossbow", quantity: 1, reason: "Ranged backup option" }
+    ],
+    ammunition: [
+      { ammunitionName: "Crossbow Bolt", quantity: 20, reason: "Bolts for crossbow" }
     ]
   },
   {
@@ -65,8 +74,10 @@ export const classWeaponSuggestionsData: ClassWeaponSuggestionsData[] = [
     className: "Ranger",
     suggestions: [
       { weaponName: "Longsword", quantity: 1, reason: "Versatile melee weapon" },
-      { weaponName: "Longbow", quantity: 1, reason: "Classic ranger weapon" },
-      { weaponName: "Ammunition, Arrows (20)", quantity: 1, reason: "Arrows for longbow" }
+      { weaponName: "Longbow", quantity: 1, reason: "Classic ranger weapon" }
+    ],
+    ammunition: [
+      { ammunitionName: "Arrow", quantity: 20, reason: "Arrows for longbow" }
     ]
   },
   {
@@ -74,8 +85,10 @@ export const classWeaponSuggestionsData: ClassWeaponSuggestionsData[] = [
     suggestions: [
       { weaponName: "Rapier", quantity: 1, reason: "Finesse sneak attack weapon" },
       { weaponName: "Dagger", quantity: 2, reason: "Thrown sneak attack option" },
-      { weaponName: "Shortbow", quantity: 1, reason: "Stealth ranged weapon" },
-      { weaponName: "Ammunition, Arrows (20)", quantity: 1, reason: "Arrows for shortbow" }
+      { weaponName: "Shortbow", quantity: 1, reason: "Stealth ranged weapon" }
+    ],
+    ammunition: [
+      { ammunitionName: "Arrow", quantity: 20, reason: "Arrows for shortbow" }
     ]
   },
   {

@@ -6,7 +6,7 @@ import { RACES, CLASSES, BACKGROUNDS, ALIGNMENTS, ABILITY_SCORES } from "@/lib/d
 import { AbilityScore } from "@/lib/dnd/core";
 import { generateFantasyName } from "@/lib/dnd/character";
 import { Spell } from "@/lib/dnd/spells";
-import { Weapon, Armor } from "@/lib/dnd/equipment";
+import { Weapon, Armor, Ammunition } from "@/lib/dnd/equipment";
 import { WeaponSuggestion } from "@/lib/dnd/weapon-suggestions";
 import { ArmorSuggestion } from "@/lib/dnd/armor-suggestions";
 import { WeaponSelector } from "./shared/WeaponSelector";
@@ -77,6 +77,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Equipment and spells
   const [selectedSpells, setSelectedSpells] = useState<Spell[]>([]);
   const [selectedWeapons, setSelectedWeapons] = useState<{weapon: Weapon, quantity: number}[]>([]);
+  const [selectedAmmunition, setSelectedAmmunition] = useState<Ammunition[]>([]);
   const [selectedEquipmentPack, setSelectedEquipmentPack] = useState<number>(0);
   
   // Loading states
@@ -87,6 +88,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
   const [weaponSuggestions, setWeaponSuggestions] = useState<WeaponSuggestion[]>([]);
   const [armorSuggestions, setArmorSuggestions] = useState<ArmorSuggestion[]>([]);
+  const [ammunitionSuggestions, setAmmunitionSuggestions] = useState<{ammunitionName: string, quantity: number, reason?: string}[]>([]);
   const [selectedArmor, setSelectedArmor] = useState<Armor[]>([]);
   const [showWeaponSelector, setShowWeaponSelector] = useState(false);
   const [showArmorSelector, setShowArmorSelector] = useState(false);
@@ -120,12 +122,15 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     const loadCreationOptions = async () => {
       setLoadingOptions(true);
       try {
-        const [options, weaponSuggestions, armorSuggestions] = await Promise.all([
+        const [options, weaponSuggestions, armorSuggestions, ammunitionSuggestions] = await Promise.all([
           characterCreationService.getCreationOptions(characterClass),
           fetch(`/api/weapon-suggestions?className=${encodeURIComponent(characterClass)}`)
             .then(res => res.ok ? res.json() : [])
             .catch(() => []),
           fetch(`/api/armor-suggestions?className=${encodeURIComponent(characterClass)}`)
+            .then(res => res.ok ? res.json() : [])
+            .catch(() => []),
+          fetch(`/api/ammunition-suggestions?className=${encodeURIComponent(characterClass)}`)
             .then(res => res.ok ? res.json() : [])
             .catch(() => [])
         ]);
@@ -147,9 +152,11 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         
         setWeaponSuggestions(weaponSuggestions);
         setArmorSuggestions(armorSuggestions);
+        setAmmunitionSuggestions(ammunitionSuggestions);
         
         console.log('✅ SET STATE - Weapon suggestions for', characterClass, ':', weaponSuggestions);
         console.log('✅ SET STATE - Armor suggestions for', characterClass, ':', armorSuggestions);
+        console.log('✅ SET STATE - Ammunition suggestions for', characterClass, ':', ammunitionSuggestions);
         
         // Temporary debug: Manually test armor suggestions for Ranger
         if (characterClass === 'Ranger') {
@@ -197,7 +204,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
   // Apply weapon suggestions when they're loaded
   useEffect(() => {
+    console.log('🔫 WEAPON SUGGESTIONS EFFECT:', weaponSuggestions.length, 'suggestions');
     if (weaponSuggestions.length > 0) {
+      console.log('Processing weapon suggestions:', weaponSuggestions);
       // Convert weapon suggestions to selected weapons
       const suggestedWeapons: {weapon: Weapon, quantity: number}[] = [];
       
@@ -215,7 +224,11 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         }
       }
       
+      console.log('Final suggestedWeapons:', suggestedWeapons);
       setSelectedWeapons(suggestedWeapons);
+      console.log('✅ Set selectedWeapons');
+    } else {
+      console.log('No weapon suggestions to process');
     }
   }, [weaponSuggestions]);
 
@@ -254,13 +267,48 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     setSelectedArmor(suggestedArmor);
   }, [armorSuggestions]);
 
+  // Apply ammunition suggestions when they're loaded
+  useEffect(() => {
+    console.log('🏹 AMMUNITION SUGGESTIONS EFFECT:', ammunitionSuggestions.length, 'suggestions');
+    if (ammunitionSuggestions.length > 0) {
+      console.log('Processing ammunition suggestions:', ammunitionSuggestions);
+      
+      // Convert ammunition suggestions to Ammunition objects
+      const suggestedAmmunition: Ammunition[] = [];
+      
+      for (const suggestion of ammunitionSuggestions) {
+        const ammo: Ammunition = {
+          name: suggestion.ammunitionName,
+          quantity: suggestion.quantity,
+          compatibleWeapons: suggestion.ammunitionName === 'Arrow' ? ['Longbow', 'Shortbow'] :
+                           suggestion.ammunitionName === 'Crossbow Bolt' ? ['Light Crossbow', 'Heavy Crossbow'] :
+                           suggestion.ammunitionName === 'Blowgun Needle' ? ['Blowgun'] :
+                           suggestion.ammunitionName === 'Sling Bullet' ? ['Sling'] : [],
+          weight: suggestion.ammunitionName === 'Arrow' ? 0.05 : 
+                 suggestion.ammunitionName === 'Crossbow Bolt' ? 0.075 :
+                 suggestion.ammunitionName === 'Blowgun Needle' ? 0.02 : 0.075,
+          cost: suggestion.ammunitionName === 'Blowgun Needle' || suggestion.ammunitionName === 'Sling Bullet' ? '2 cp each' : '5 cp each'
+        };
+        suggestedAmmunition.push(ammo);
+      }
+      
+      console.log('Final suggestedAmmunition:', suggestedAmmunition);
+      setSelectedAmmunition(suggestedAmmunition);
+      console.log('✅ Set selectedAmmunition');
+    } else {
+      console.log('No ammunition suggestions to process');
+      setSelectedAmmunition([]);
+    }
+  }, [ammunitionSuggestions]);
+
   // Reset weapon and armor selections when class changes
   useEffect(() => {
     // Reset selections when class changes (suggestions will be applied by the above effects)
     setSelectedWeapons([]);
+    setSelectedAmmunition([]);
     // Don't clear armor here - let armor suggestions effect handle it
     setSubclass("");
-    console.log('RESET: Cleared weapons and subclass for class change to:', characterClass);
+    console.log('RESET: Cleared weapons, ammunition and subclass for class change to:', characterClass);
   }, [characterClass]);
 
   const handleStatMethodChange = (method: StatMethod) => {
@@ -349,6 +397,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       console.log('🚀 CREATING CHARACTER WITH DATA:');
       console.log('selectedWeapons:', selectedWeapons);
       console.log('selectedArmor:', selectedArmor);
+      console.log('selectedAmmunition:', selectedAmmunition);
       
       const creationData: CharacterCreationData = {
         name,
@@ -364,6 +413,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         selectedEquipmentPack,
         selectedWeapons,
         selectedArmor,
+        selectedAmmunition,
         selectedSpells
       };
 
