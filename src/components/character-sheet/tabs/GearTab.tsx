@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { Package, Shield, Wand2, Plus, X, Trash2, Sparkles, Scroll } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Package, Shield, Wand2, Plus, X, Trash2, Sparkles, Scroll, AlertTriangle, CheckCircle } from "lucide-react";
 import { createCharacterEquipment } from "@/services/character/equipment";
 import { createMagicalItemService, type DiceRoll } from "@/services/character/magical-items";
+import { createEquipmentRulesEngine, type EquipmentValidationResult } from "@/lib/dnd/equipment-rules";
 // Note: Using database data instead of hardcoded arrays
 
 
@@ -48,7 +49,6 @@ interface GearTabProps {
   onRemoveMagicalItem: (index: number, isEquipped?: boolean) => void;
   onToggleAttunement: (itemName: string) => void;
   onAddWeapon: (weapon: Weapon | MagicalWeapon) => void;
-  onAddWeapons?: (weapons: (Weapon | MagicalWeapon)[]) => void;
   onAddArmor: (armor: Armor) => void;
   onAddMagicalItem: (item: MagicalItem) => void;
   onOpenSpellPreparation: () => void;
@@ -75,7 +75,6 @@ export function GearTab({
   onRemoveMagicalItem,
   onToggleAttunement,
   onAddWeapon,
-  onAddWeapons,
   onAddArmor,
   onAddMagicalItem,
   onOpenSpellPreparation,
@@ -94,9 +93,17 @@ export function GearTab({
     charisma: 10
   };
   
-  // Service instances for equipment calculations
-  const equipment = createCharacterEquipment(characterData);
-  const magicalItems = createMagicalItemService();
+  // Service instances for equipment calculations (memoized to prevent re-creation)
+  const [equipment] = useState(() => createCharacterEquipment(characterData));
+  const [magicalItems] = useState(() => createMagicalItemService());
+  
+  // Memoize equipment rules engine to prevent infinite re-renders
+  const [equipmentRules] = useState(() => createEquipmentRulesEngine({
+    class: character.class,
+    level: character.level,
+    strength: character.strength,
+    dexterity: character.dexterity
+  }));
 
   const [activeSection, setActiveSection] = useState<"equipped" | "inventory">("equipped");
   const [showWeaponSelector, setShowWeaponSelector] = useState(false);
@@ -121,8 +128,113 @@ export function GearTab({
   const [selectedPotion, setSelectedPotion] = useState<MagicalItem | null>(null);
   const [potionRolls, setPotionRolls] = useState<DiceRoll | null>(null);
 
+  // Equipment validation states
+  const [equipmentConflicts, setEquipmentConflicts] = useState<{
+    hasConflicts: boolean;
+    conflictSummary: string[];
+    suggestions: string[];
+  }>({ hasConflicts: false, conflictSummary: [], suggestions: [] });
+  const [pendingValidation, setPendingValidation] = useState<{
+    type: 'weapon' | 'armor';
+    item: Weapon | MagicalWeapon | Armor;
+    validation: EquipmentValidationResult;
+  } | null>(null);
+
   const currentArmorClass = equipment.calculateArmorClass(equippedArmor);
 
+  // Update equipment conflicts when equipment changes
+  useEffect(() => {
+    const updateConflicts = async () => {
+      const conflicts = await equipmentRules.getEquipmentConflictSummary(equippedWeapons, equippedArmor);
+      setEquipmentConflicts(conflicts);
+    };
+    updateConflicts();
+  }, [equippedWeapons, equippedArmor]);
+
+  // Validate equipment before adding
+  const validateAndAddWeapon = async (weapon: Weapon | MagicalWeapon, isEquipping: boolean = false): Promise<boolean> => {
+    const validation = await equipmentRules.validateWeaponEquip(weapon, equippedWeapons, equippedArmor, isEquipping);
+    
+    // If just adding to inventory, warnings are fine
+    if (!isEquipping) {
+      if (validation.warnings.length > 0) {
+        setPendingValidation({
+          type: 'weapon',
+          item: weapon,
+          validation
+        });
+      }
+      return true;
+    }
+    
+    // If equipping, check for conflicts
+    if (!validation.canEquip) {
+      setPendingValidation({
+        type: 'weapon',
+        item: weapon,
+        validation
+      });
+      return false;
+    }
+    
+    // Show warnings but allow equipping
+    if (validation.warnings.length > 0) {
+      setPendingValidation({
+        type: 'weapon', 
+        item: weapon,
+        validation
+      });
+      // Don't block equipping for warnings, just show them
+    }
+    
+    return true;
+  };
+
+  const validateAndAddArmor = async (armor: Armor, isEquipping: boolean = false): Promise<boolean> => {
+    const validation = await equipmentRules.validateArmorEquip(armor, equippedArmor, isEquipping);
+    
+    // If just adding to inventory, warnings are fine
+    if (!isEquipping) {
+      if (validation.warnings.length > 0) {
+        setPendingValidation({
+          type: 'armor',
+          item: armor,
+          validation
+        });
+      }
+      return true;
+    }
+    
+    // If equipping, check for conflicts
+    if (!validation.canEquip) {
+      setPendingValidation({
+        type: 'armor',
+        item: armor,
+        validation  
+      });
+      return false;
+    }
+    
+    return true;
+  };
+
+  // Enhanced weapon adding with validation
+  const handleAddValidatedWeapons = async (weapons: (Weapon | MagicalWeapon)[]) => {
+    for (const weapon of weapons) {
+      const canAdd = await validateAndAddWeapon(weapon, false); // Adding to inventory, not equipping
+      if (canAdd) {
+        onAddWeapon(weapon);
+      }
+    }
+  };
+
+  // Enhanced armor adding with validation  
+  const handleAddValidatedArmor = async (armor: Armor) => {
+    const canAdd = await validateAndAddArmor(armor, false); // Adding to inventory, not equipping
+    if (canAdd) {
+      onAddArmor(armor);
+    }
+  };
 
   const handleAddMagicalItem = () => {
     const itemData = magicalItemsData.find(i => i.name === selectedMagicalItem);
@@ -257,6 +369,31 @@ export function GearTab({
         <h2 className="text-2xl font-bold text-white mb-2">Gear & Spells</h2>
         <p className="text-slate-400">Manage your equipment, magical items, and spells</p>
       </div>
+
+      {/* Equipment Conflicts Display */}
+      {equipmentConflicts.hasConflicts && (
+        <div className="bg-orange-900/20 border border-orange-500 rounded-lg p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-orange-400 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <h3 className="text-orange-400 font-medium mb-2">Equipment Conflicts Detected</h3>
+              <div className="space-y-1 mb-3">
+                {equipmentConflicts.conflictSummary.map((conflict, index) => (
+                  <div key={index} className="text-orange-300 text-sm">{conflict}</div>
+                ))}
+              </div>
+              {equipmentConflicts.suggestions.length > 0 && (
+                <div className="space-y-1">
+                  <div className="text-orange-400 text-sm font-medium">Suggestions:</div>
+                  {equipmentConflicts.suggestions.map((suggestion, index) => (
+                    <div key={index} className="text-orange-200 text-sm">{suggestion}</div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Section Toggle */}
       <div className="flex gap-2 mb-6">
@@ -758,23 +895,25 @@ export function GearTab({
           title="Add Weapons to Inventory"
           maxWeapons={50}
           selectedWeapons={[]}
-          onConfirm={(weapons) => {
-            // Build complete list of weapons to add - root cause solution
+          onConfirm={async (weapons) => {
+            // Build complete list of weapons to add - preserve quantities for ammunition
             const weaponsToAdd: (Weapon | MagicalWeapon)[] = [];
             weapons.forEach(({ weapon, quantity }) => {
-              for (let i = 0; i < quantity; i++) {
-                weaponsToAdd.push(weapon);
+              // Check if this is ammunition (has "Ammunition" property and no damage)
+              const hasAmmunitionProperty = weapon.properties.some(prop => prop.startsWith('Ammunition'));
+              if (hasAmmunitionProperty && weapon.damage === '—') {
+                // For ammunition, add once with the quantity property set
+                weaponsToAdd.push({ ...weapon, quantity });
+              } else {
+                // For regular weapons, add individual copies (normal weapon behavior)
+                for (let i = 0; i < quantity; i++) {
+                  weaponsToAdd.push(weapon);
+                }
               }
             });
             
-            // Use new multi-weapon interface if available, fallback to single
-            if (onAddWeapons && weaponsToAdd.length > 0) {
-              onAddWeapons(weaponsToAdd);
-            } else {
-              // Fallback for backward compatibility
-              weaponsToAdd.forEach(weapon => onAddWeapon(weapon));
-            }
-            
+            // Use validation instead of direct addition
+            await handleAddValidatedWeapons(weaponsToAdd);
             setShowWeaponSelector(false);
           }}
           onCancel={() => setShowWeaponSelector(false)}
@@ -787,9 +926,11 @@ export function GearTab({
       {showArmorSelector && (
         <ArmorSelector
           selectedArmor={[]}
-          onArmorSelectionChange={(armor) => {
-            // Add selected armor to inventory (the handler will handle multiple selections)
-            armor.forEach(item => onAddArmor(item));
+          onArmorSelectionChange={async (armor) => {
+            // Add selected armor to inventory with validation
+            for (const item of armor) {
+              await handleAddValidatedArmor(item);
+            }
             setShowArmorSelector(false);
           }}
           onClose={() => setShowArmorSelector(false)}
@@ -1069,6 +1210,80 @@ export function GearTab({
                 </div>
               );
             })()}
+          </div>
+        </div>
+      )}
+
+      {/* Equipment Validation Modal */}
+      {pendingValidation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-slate-800 rounded-lg w-full max-w-md p-6">
+            <div className="flex items-start gap-3 mb-4">
+              {pendingValidation.validation.canEquip ? (
+                <CheckCircle className="h-6 w-6 text-yellow-400 mt-0.5 flex-shrink-0" />
+              ) : (
+                <AlertTriangle className="h-6 w-6 text-red-400 mt-0.5 flex-shrink-0" />
+              )}
+              <div className="flex-1">
+                <h3 className={`font-semibold mb-2 ${
+                  pendingValidation.validation.canEquip ? 'text-yellow-400' : 'text-red-400'
+                }`}>
+                  {pendingValidation.validation.canEquip ? 'Equipment Warning' : 'Cannot Equip Item'}
+                </h3>
+                <p className="text-white mb-2">
+                  Attempting to add: <strong>{pendingValidation.item.name}</strong>
+                </p>
+                
+                {/* Show conflicts */}
+                {pendingValidation.validation.conflicts.length > 0 && (
+                  <div className="mb-3">
+                    <div className="text-red-400 text-sm font-medium mb-1">Conflicts:</div>
+                    {pendingValidation.validation.conflicts.map((conflict, index) => (
+                      <div key={index} className="text-red-300 text-sm mb-1">
+                        • {conflict.message}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {/* Show warnings */}
+                {pendingValidation.validation.warnings.length > 0 && (
+                  <div className="mb-3">
+                    <div className="text-yellow-400 text-sm font-medium mb-1">Warnings:</div>
+                    {pendingValidation.validation.warnings.map((warning, index) => (
+                      <div key={index} className="text-yellow-300 text-sm mb-1">
+                        • {warning.message}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => setPendingValidation(null)}
+                className="flex-1 bg-slate-600 hover:bg-slate-500 text-white py-2 px-4 rounded"
+              >
+                Cancel
+              </button>
+              {pendingValidation.validation.canEquip && (
+                <button
+                  onClick={() => {
+                    // Allow equipping with warnings
+                    if (pendingValidation?.type === 'weapon') {
+                      onAddWeapon(pendingValidation.item as Weapon | MagicalWeapon);
+                    } else if (pendingValidation?.type === 'armor') {
+                      onAddArmor(pendingValidation.item as Armor);
+                    }
+                    setPendingValidation(null);
+                  }}
+                  className="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded"
+                >
+                  Add Anyway
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

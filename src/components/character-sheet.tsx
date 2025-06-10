@@ -320,12 +320,16 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
       const hasAmmunitionProperty = weapon.properties.some(prop => prop.startsWith('Ammunition'));
       if (hasAmmunitionProperty && weapon.damage === '—') {
         console.log(`✅ DETECTED AS AMMUNITION: ${weapon.name}`);
-        // This is ammunition, not a weapon
+        // This is ammunition, not a weapon - use the weapon's quantity property
+        const weaponQuantity = weapon.quantity || 1;
+        console.log(`🔢 AMMUNITION QUANTITY: ${weapon.name} has quantity ${weaponQuantity} (from weapon.quantity: ${weapon.quantity})`);
         const existing = ammunitionItems.find(a => a.name === weapon.name);
         if (existing) {
-          existing.quantity += 1;
+          existing.quantity += weaponQuantity;
+          console.log(`➕ ADDED TO EXISTING: ${weapon.name} now has ${existing.quantity} total`);
         } else {
-          ammunitionItems.push({ name: weapon.name, quantity: 1 });
+          ammunitionItems.push({ name: weapon.name, quantity: weaponQuantity });
+          console.log(`🆕 NEW AMMUNITION: ${weapon.name} with quantity ${weaponQuantity}`);
         }
       } else {
         console.log(`⚔️ DETECTED AS WEAPON: ${weapon.name}`);
@@ -371,54 +375,68 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     
     // Process ammunition items
     if (ammunitionItems.length > 0) {
-      const currentAmmunition = [...(currentCharacter.ammunition || [])];
+      console.log(`🏹 PROCESSING ${ammunitionItems.length} AMMUNITION ITEMS:`, ammunitionItems);
       
-      ammunitionItems.forEach(({ name, quantity }) => {
-        // Find existing ammunition of same type
-        const existingIndex = currentAmmunition.findIndex(a => a.name === name);
+      // Use the current ammunition state, which includes any updates from previous calls
+      setCurrentCharacter(prev => {
+        const currentAmmunition = [...(prev.ammunition || [])];
+        console.log(`📊 CURRENT AMMUNITION BEFORE PROCESSING:`, currentAmmunition.map(a => `${a.name}: ${a.quantity}`));
         
-        if (existingIndex >= 0) {
-          // Add to existing ammunition
-          currentAmmunition[existingIndex] = {
-            ...currentAmmunition[existingIndex],
-            quantity: currentAmmunition[existingIndex].quantity + quantity
-          };
-        } else {
-          // Create new ammunition entry using proper D&D 5e data
-          const ammoData = {
-            'Arrow': {
-              compatibleWeapons: ['Longbow', 'Shortbow'],
-              weight: 0.05,
-              cost: '5 cp each'
-            },
-            'Crossbow Bolt': {
-              compatibleWeapons: ['Light Crossbow', 'Heavy Crossbow', 'Hand Crossbow'],
-              weight: 0.075,
-              cost: '5 cp each'
-            },
-            'Blowgun Needle': {
-              compatibleWeapons: ['Blowgun'],
-              weight: 0.02,
-              cost: '2 cp each'
-            },
-            'Sling Bullet': {
-              compatibleWeapons: ['Sling'],
-              weight: 0.075,
-              cost: '2 cp each'
-            }
-          }[name];
+        ammunitionItems.forEach(({ name, quantity }) => {
+          console.log(`📦 PROCESSING AMMUNITION: ${name} with quantity ${quantity}`);
+          // Find existing ammunition of same type
+          const existingIndex = currentAmmunition.findIndex(a => a.name === name);
           
-          if (ammoData) {
-            currentAmmunition.push({
-              name,
-              quantity,
-              ...ammoData
-            });
+          if (existingIndex >= 0) {
+            // Add to existing ammunition
+            currentAmmunition[existingIndex] = {
+              ...currentAmmunition[existingIndex],
+              quantity: currentAmmunition[existingIndex].quantity + quantity
+            };
+            console.log(`➕ UPDATED EXISTING: ${name} now has ${currentAmmunition[existingIndex].quantity} total`);
+          } else {
+            // Create new ammunition entry using proper D&D 5e data
+            const ammoData = {
+              'Arrow': {
+                compatibleWeapons: ['Longbow', 'Shortbow'],
+                weight: 0.05,
+                cost: '5 cp each'
+              },
+              'Crossbow Bolt': {
+                compatibleWeapons: ['Light Crossbow', 'Heavy Crossbow', 'Hand Crossbow'],
+                weight: 0.075,
+                cost: '5 cp each'
+              },
+              'Blowgun Needle': {
+                compatibleWeapons: ['Blowgun'],
+                weight: 0.02,
+                cost: '2 cp each'
+              },
+              'Sling Bullet': {
+                compatibleWeapons: ['Sling'],
+                weight: 0.075,
+                cost: '2 cp each'
+              }
+            }[name];
+            
+            if (ammoData) {
+              currentAmmunition.push({
+                name,
+                quantity,
+                ...ammoData
+              });
+              console.log(`🆕 ADDED NEW: ${name} with quantity ${quantity}`);
+            }
           }
-        }
+        });
+        
+        console.log(`📊 FINAL AMMUNITION AFTER PROCESSING:`, currentAmmunition.map(a => `${a.name}: ${a.quantity}`));
+        
+        // Update both local state and trigger database update
+        const updatedCharacter = { ...prev, ammunition: currentAmmunition };
+        updateCharacter({ ammunition: currentAmmunition });
+        return updatedCharacter;
       });
-      
-      updateCharacter({ ammunition: currentAmmunition });
     }
   };
 
@@ -996,7 +1014,6 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
                 onRemoveMagicalItem={handleRemoveMagicalItem}
                 onToggleAttunement={handleToggleAttunement}
                 onAddWeapon={(weapon) => handleAddWeapons([weapon])}
-                onAddWeapons={handleAddWeapons}
                 onAddArmor={handleAddArmor}
                 onAddMagicalItem={handleAddMagicalItem}
                 onOpenSpellPreparation={handleOpenSpellPreparation}
