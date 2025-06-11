@@ -74,6 +74,11 @@ interface CharacterSheetProps {
     deathSaveSuccesses?: number;
     deathSaveFailures?: number;
     ammunition?: Ammunition[];
+    // Background characteristics (stored as separate fields in database)
+    personalityTraits?: string[];
+    ideals?: string[];
+    bonds?: string[];
+    flaws?: string[];
   };
   onClose: () => void;
   onCharacterDeleted?: () => void;
@@ -130,7 +135,18 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
   }, []);
   
   // Use currentCharacter instead of character throughout the component
-  const displayCharacter = currentCharacter;
+  const displayCharacter = {
+    ...currentCharacter,
+    // Transform separate background characteristic fields into combined object for BackgroundTab
+    backgroundCharacteristics: currentCharacter.personalityTraits || currentCharacter.ideals || currentCharacter.bonds || currentCharacter.flaws
+      ? {
+          personalityTraits: (currentCharacter.personalityTraits as string[]) || [],
+          ideals: (currentCharacter.ideals as string[]) || [],
+          bonds: (currentCharacter.bonds as string[]) || [],
+          flaws: (currentCharacter.flaws as string[]) || []
+        }
+      : undefined
+  };
   
   const [activeTab, setActiveTab] = useState<"stats" | "actions" | "gear" | "inventory" | "background" | "dice">("stats");
   const [showWeaponCreator, setShowWeaponCreator] = useState(false);
