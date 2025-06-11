@@ -64,6 +64,8 @@ export async function POST(request: NextRequest) {
       alignment,
       background,
       backgroundCharacteristics,
+      gender,
+      age,
       strength,
       dexterity,
       constitution,
@@ -93,6 +95,7 @@ export async function POST(request: NextRequest) {
       silverPieces,
       goldPieces,
       avatar,
+      fullBodyAvatar,
     } = body;
 
     // Validate required fields
@@ -295,6 +298,9 @@ export async function POST(request: NextRequest) {
         ideals: backgroundCharacteristics?.ideals || [],
         bonds: backgroundCharacteristics?.bonds || [],
         flaws: backgroundCharacteristics?.flaws || [],
+        // Personal information
+        gender: gender || null,
+        age: age || null,
         strength: strength || 10,
         dexterity: dexterity || 10,
         constitution: constitution || 10,
@@ -326,6 +332,7 @@ export async function POST(request: NextRequest) {
         deathSaveSuccesses: 0,
         deathSaveFailures: 0,
         avatar: avatar || null,
+        fullBodyAvatar: fullBodyAvatar || null,
         user: {
           connect: { id: user.id }
         },
@@ -583,6 +590,23 @@ export async function PATCH(request: NextRequest) {
     }
     if (body.avatar !== undefined) {
       updateData.avatar = body.avatar;
+    }
+    if (body.fullBodyAvatar !== undefined) {
+      updateData.fullBodyAvatar = body.fullBodyAvatar;
+    }
+    
+    // Handle personal information updates
+    if (body.name !== undefined) {
+      updateData.name = body.name;
+    }
+    if (body.gender !== undefined) {
+      updateData.gender = body.gender;
+    }
+    if (body.age !== undefined) {
+      updateData.age = body.age;
+    }
+    if (body.alignment !== undefined) {
+      updateData.alignment = body.alignment;
     }
     if (body.inspiration !== undefined) {
       updateData.inspiration = body.inspiration;

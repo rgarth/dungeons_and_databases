@@ -48,8 +48,8 @@ export async function POST(request: NextRequest) {
       
       return NextResponse.json({
         success: true,
-        fullBodyImage: processedImages.fullBody,
-        avatarImage: processedImages.avatar,
+        fullBodyImage: processedImages.fullBody,    // 192x256 - for background tab display
+        avatarImage: processedImages.avatar,        // 192x192 - for headers, cards, thumbnails
         prompt: prompt.slice(0, 500) // Return partial prompt for debugging
       });
     } else {

@@ -2,13 +2,15 @@
 /* eslint-disable react/no-unescaped-entities */
 
 import { useState } from "react";
-import { BookOpen, Edit3, Save, X, HelpCircle, FileText, Languages } from "lucide-react";
-import { AvatarSelector } from "../components/AvatarSelector";
+import { BookOpen, Edit3, Save, X, FileText, HelpCircle, Languages } from "lucide-react";
+import { createCharacterStoryService } from "@/services/character/character-story";
+import type { CharacterLimits } from "@/services/character/character-story";
 import { BackgroundSelector, type SelectedCharacteristics } from "../../shared/BackgroundSelector";
-import { LANGUAGES, getRacialLanguages } from "@/lib/dnd/languages";
-import { createCharacterStoryService, type CharacterLimits } from "@/services/character/character-story";
-import { AvatarGenerator } from "../../shared/AvatarGenerator";
-import type { CharacterAvatarData } from "@/app/api/generate-avatar/route";
+// AvatarSelector removed - now using inline avatar display
+import { AvatarGenerator } from '../../shared/AvatarGenerator';
+import type { CharacterAvatarData } from '@/app/api/generate-avatar/route';
+import { getRacialLanguages } from "@/lib/dnd/languages";
+import { LANGUAGES } from "@/lib/dnd/languages";
 
 interface BackgroundTabProps {
   character: {
@@ -19,20 +21,28 @@ interface BackgroundTabProps {
     level: number;
     background?: string;
     alignment?: string;
+    gender?: string;
+    age?: number;
     appearance?: string;
     personality?: string;
     backstory?: string;
     notes?: string;
     avatar?: string | null;
+    fullBodyAvatar?: string | null;
     languages?: string[];
     backgroundCharacteristics?: SelectedCharacteristics;
   };
   onUpdate: (updates: { 
+    name?: string;
+    gender?: string;
+    age?: number;
+    alignment?: string;
     appearance?: string; 
     personality?: string; 
     backstory?: string; 
     notes?: string; 
     avatar?: string | null; 
+    fullBodyAvatar?: string | null;
     languages?: string[];
     background?: string;
     backgroundCharacteristics?: SelectedCharacteristics;
@@ -53,6 +63,15 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
   });
   const [guidedAnswers, setGuidedAnswers] = useState<Record<number, string>>({});
   const [showBackgroundModal, setShowBackgroundModal] = useState(false);
+  
+  // Character summary edit state
+  const [isEditingSummary, setIsEditingSummary] = useState(false);
+  const [summaryEditValues, setSummaryEditValues] = useState({
+    name: character.name,
+    gender: character.gender || '',
+    age: character.age?.toString() || '',
+    alignment: character.alignment || ''
+  });
 
   const handleStartEdit = (field: string) => {
     setIsEditing(field);
@@ -88,6 +107,53 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
       personality: character.personality || '',
       backstory: character.backstory || '',
       notes: character.notes || ''
+    });
+  };
+
+  // Character summary edit handlers
+  const handleStartSummaryEdit = () => {
+    setIsEditingSummary(true);
+    setSummaryEditValues({
+      name: character.name,
+      gender: character.gender || '',
+      age: character.age?.toString() || '',
+      alignment: character.alignment || ''
+    });
+  };
+
+  const handleSaveSummary = () => {
+    const updates: {
+      name: string;
+      gender?: string;
+      age?: number;
+      alignment?: string;
+    } = {
+      name: summaryEditValues.name.trim(),
+      gender: summaryEditValues.gender.trim() || undefined,
+      alignment: summaryEditValues.alignment.trim() || undefined
+    };
+    
+    // Convert age to number if provided
+    if (summaryEditValues.age.trim()) {
+      const ageNum = parseInt(summaryEditValues.age.trim());
+      if (!isNaN(ageNum) && ageNum > 0) {
+        updates.age = ageNum;
+      }
+    } else {
+      updates.age = undefined;
+    }
+    
+    onUpdate(updates);
+    setIsEditingSummary(false);
+  };
+
+  const handleCancelSummary = () => {
+    setIsEditingSummary(false);
+    setSummaryEditValues({
+      name: character.name,
+      gender: character.gender || '',
+      age: character.age?.toString() || '',
+      alignment: character.alignment || ''
     });
   };
 
@@ -171,7 +237,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
         {/* Guided Editor */}
         {editMode === 'guided' && (
-          <div className="space-y-4">
+          <div className="space-y-4 max-h-96 overflow-y-auto">
             <div className="bg-slate-800 p-3 rounded-lg">
               <p className="text-slate-300 text-sm">
                 Answer any questions that interest you. Each answered question will be added to your backstory.
@@ -311,28 +377,118 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
       <div className="space-y-4">
         {/* Character Summary */}
         <div className="bg-slate-700 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-purple-400" />
-            Character Summary
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
-            <div>
-              <div className="text-slate-400 text-sm">Race</div>
-              <div className="text-white font-medium">{character.race}</div>
-            </div>
-            <div>
-              <div className="text-slate-400 text-sm">Class</div>
-              <div className="text-white font-medium">{character.class} {character.level}</div>
-            </div>
-            <div>
-              <div className="text-slate-400 text-sm">Background</div>
-              <div className="text-white font-medium">{character.background || 'Unknown'}</div>
-            </div>
-            <div>
-              <div className="text-slate-400 text-sm">Alignment</div>
-              <div className="text-white font-medium">{character.alignment || 'Unaligned'}</div>
-            </div>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-purple-400" />
+              Character Summary
+            </h3>
+            {!isEditingSummary && (
+              <button
+                onClick={handleStartSummaryEdit}
+                className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1 rounded-lg transition-colors flex items-center gap-2 text-sm"
+              >
+                <Edit3 className="h-4 w-4" />
+                Edit
+              </button>
+            )}
           </div>
+          
+          {isEditingSummary ? (
+            /* Edit Mode */
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-slate-400 text-sm mb-1">Name</label>
+                  <input
+                    type="text"
+                    value={summaryEditValues.name}
+                    onChange={(e) => setSummaryEditValues(prev => ({ ...prev, name: e.target.value }))}
+                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-400 text-sm mb-1">Gender</label>
+                  <select
+                    value={summaryEditValues.gender}
+                    onChange={(e) => setSummaryEditValues(prev => ({ ...prev, gender: e.target.value }))}
+                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                  >
+                    <option value="">Not specified</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Non-binary">Non-binary</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-400 text-sm mb-1">Age</label>
+                  <input
+                    type="number"
+                    value={summaryEditValues.age}
+                    onChange={(e) => setSummaryEditValues(prev => ({ ...prev, age: e.target.value }))}
+                    placeholder="Unknown"
+                    min="1"
+                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-400 text-sm mb-1">Alignment</label>
+                  <input
+                    type="text"
+                    value={summaryEditValues.alignment}
+                    onChange={(e) => setSummaryEditValues(prev => ({ ...prev, alignment: e.target.value }))}
+                    placeholder="Unaligned"
+                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex gap-2 justify-end">
+                <button
+                  onClick={handleCancelSummary}
+                  className="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <X className="h-4 w-4" />
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveSummary}
+                  className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <Save className="h-4 w-4" />
+                  Save
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* Display Mode */
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-center">
+              <div>
+                <div className="text-slate-400 text-sm">Name</div>
+                <div className="text-white font-medium">{character.name}</div>
+              </div>
+              <div>
+                <div className="text-slate-400 text-sm">Race</div>
+                <div className="text-white font-medium">{character.race}</div>
+              </div>
+              <div>
+                <div className="text-slate-400 text-sm">Class</div>
+                <div className="text-white font-medium">{character.class} {character.level}</div>
+              </div>
+              <div>
+                <div className="text-slate-400 text-sm">Gender</div>
+                <div className="text-white font-medium">{character.gender || 'Unknown'}</div>
+              </div>
+              <div>
+                <div className="text-slate-400 text-sm">Age</div>
+                <div className="text-white font-medium">{character.age || 'Unknown'}</div>
+              </div>
+              <div>
+                <div className="text-slate-400 text-sm">Alignment</div>
+                <div className="text-white font-medium">{character.alignment || 'Unaligned'}</div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Background Summary with Edit Button */}
@@ -404,50 +560,133 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           {/* Left Column - Character Information */}
           <div className="space-y-4">
-            {renderEditableSection(
-              "Appearance",
-              "appearance",
-              "Describe your character's physical appearance, clothing, distinctive features, etc.",
-              <Edit3 className="h-5 w-5 text-blue-400" />,
-              <AvatarSelector
-                selectedAvatar={character.avatar || undefined}
-                onAvatarSelect={(avatar) => onUpdate({ avatar })}
-              />
-            )}
-
-            {/* Avatar Generator Section */}
+            {/* Combined Appearance & Avatar Section */}
             <div className="bg-slate-700 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                <Edit3 className="h-5 w-5 text-purple-400" />
-                Generate New Avatar
+              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                <Edit3 className="h-5 w-5 text-blue-400" />
+                Appearance & Avatar
               </h3>
-                              <p className="text-slate-300 text-sm mb-4">
-                  Create a personalized AI-generated avatar based on your character's current traits and equipment.
-                  <br />
-                  <span className="text-slate-400 text-xs">
-                    💡 Uses appearance field above if filled, otherwise generates diverse, realistic features to fight AI bias.
-                  </span>
-                </p>
-              <AvatarGenerator
-                characterData={{
-                  race: character.race,
-                  class: character.class,
-                  gender: 'Male', // You might want to add gender field to character
-                  alignment: character.alignment,
-                  personalityTraits: character.backgroundCharacteristics?.personalityTraits || [],
-                  ideals: character.backgroundCharacteristics?.ideals || [],
-                  bonds: character.backgroundCharacteristics?.bonds || [],
-                  flaws: character.backgroundCharacteristics?.flaws || [],
-                  appearance: character.appearance || '',
-                  equippedWeapons: [], // You might want to get this from character's equipped items
-                  equippedArmor: [] // You might want to get this from character's equipped items
-                } as CharacterAvatarData}
-                onAvatarGenerated={(avatarDataUrl) => {
-                  // Automatically set as character avatar
-                  onUpdate({ avatar: avatarDataUrl });
-                }}
-                disabled={false}
-              />
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Left: Avatar Display */}
+                <div className="space-y-4">
+                  <h4 className="text-white font-medium">Character Portrait</h4>
+                  
+                  {/* Current Avatar Display */}
+                  {(character.fullBodyAvatar || character.avatar) ? (
+                    <div className="space-y-3">
+                      <img
+                        src={character.fullBodyAvatar || character.avatar || ''}
+                        alt={`${character.name} avatar`}
+                        className="w-48 h-60 mx-auto rounded-lg border-2 border-slate-500 object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                      <div className="text-center">
+                        <button
+                          onClick={() => onUpdate({ avatar: null, fullBodyAvatar: null })}
+                          className="text-red-400 hover:text-red-300 text-sm transition-colors"
+                        >
+                          Remove Avatar
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-48 h-60 mx-auto rounded-lg border-2 border-dashed border-slate-500 flex flex-col items-center justify-center text-slate-400">
+                      <Edit3 className="h-12 w-12 mb-2" />
+                      <span className="text-sm text-center">No avatar set<br />Generate one below</span>
+                    </div>
+                  )}
+
+                  {/* AI Provider Credit */}
+                  <div className="text-xs text-slate-500 text-center">
+                    <p>🤖 AI avatars by <span className="text-slate-400">Pollinations.ai</span></p>
+                  </div>
+                </div>
+
+                {/* Right: Appearance Text & Avatar Generation */}
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="text-white font-medium mb-2">Physical Description</h4>
+                    {isEditing === 'appearance' ? (
+                      <div className="space-y-3">
+                        <textarea
+                          value={editValues.appearance}
+                          onChange={(e) => handleFieldChange('appearance', e.target.value)}
+                          placeholder="Describe your character's physical appearance, clothing, distinctive features, scars, etc."
+                          className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
+                          rows={6}
+                        />
+                        <div className="flex justify-between items-center">
+                          <div className="flex justify-end">
+                            {getCharacterCountDisplay('appearance')}
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={handleCancel}
+                              className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-1 rounded text-sm transition-colors flex items-center gap-1"
+                            >
+                              <X className="h-3 w-3" />
+                              Cancel
+                            </button>
+                            <button
+                              onClick={() => handleSave('appearance')}
+                              className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded text-sm transition-colors flex items-center gap-1"
+                            >
+                              <Save className="h-3 w-3" />
+                              Save
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div 
+                        onClick={() => handleStartEdit('appearance')}
+                        className="min-h-[120px] cursor-pointer hover:bg-slate-600 rounded-lg p-3 border border-slate-600 hover:border-slate-500 transition-colors"
+                      >
+                        {character.appearance ? (
+                          <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{character.appearance}</p>
+                        ) : (
+                          <p className="text-slate-500 italic">Click to describe your character&apos;s physical appearance, clothing, distinctive features, etc.</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Avatar Generation */}
+                  <div className="border-t border-slate-600 pt-4">
+                    <h4 className="text-white font-medium mb-3">Generate AI Avatar</h4>
+                    <p className="text-slate-400 text-sm mb-3">
+                      Create a personalized portrait based on your character&apos;s traits and description.
+                    </p>
+                    
+                    <AvatarGenerator
+                      characterData={{
+                        race: character.race,
+                        class: character.class,
+                        gender: character.gender || 'Male',
+                        alignment: character.alignment,
+                        personalityTraits: character.backgroundCharacteristics?.personalityTraits || [],
+                        ideals: character.backgroundCharacteristics?.ideals || [],
+                        bonds: character.backgroundCharacteristics?.bonds || [],
+                        flaws: character.backgroundCharacteristics?.flaws || [],
+                        appearance: character.appearance || '',
+                        equippedWeapons: [], // You might want to get this from character's equipped items
+                        equippedArmor: [] // You might want to get this from character's equipped items
+                      } as CharacterAvatarData}
+                      onAvatarGenerated={(avatarDataUrl, fullBodyDataUrl) => {
+                        onUpdate({ 
+                          avatar: avatarDataUrl,
+                          fullBodyAvatar: fullBodyDataUrl
+                        });
+                      }}
+                      disabled={false}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Languages Section - Compact Design */}

@@ -85,6 +85,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   });
   const [alignment, setAlignment] = useState<string>("");
   const [gender, setGender] = useState<string>('');
+  const [age, setAge] = useState<string>('');
   
   // Ability scores
   const [statMethod, setStatMethod] = useState<StatMethod>('rolling-assign');
@@ -115,6 +116,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   
   // Avatar state
   const [generatedAvatar, setGeneratedAvatar] = useState<string>('');
+  const [generatedFullBodyAvatar, setGeneratedFullBodyAvatar] = useState<string>('');
 
   // Load D&D data from database on component mount
   useEffect(() => {
@@ -503,11 +505,14 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
       const characterData = await characterCreationService.createCharacter(creationData);
       
-      // Add background characteristics and avatar to the character data
+      // Add background characteristics, avatar, gender and age to the character data
       const characterDataWithBackground = {
         ...characterData,
         backgroundCharacteristics,
-        avatar: generatedAvatar || undefined
+        avatar: generatedAvatar || undefined,
+      fullBodyAvatar: generatedFullBodyAvatar || undefined,
+        gender: gender.trim() || undefined,
+        age: age.trim() ? parseInt(age.trim()) : undefined
       };
       
       const response = await fetch("/api/characters", {
@@ -562,7 +567,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           {currentStep === 'basic' && (
             <>
               {/* Basic Info */}
-              <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
+              <div className="space-y-4">
+                {/* Character Name */}
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-2">
                     Character Name *
@@ -588,21 +594,39 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Gender (for name generation)
-                  </label>
-                  <select
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
-                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-                  >
-                    <option value="">Not specified</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Non-binary">Non-binary</option>
-                    <option value="Other">Other</option>
-                  </select>
+                {/* Gender and Age */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Gender (for name generation)
+                    </label>
+                    <select
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    >
+                      <option value="">Not specified</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Non-binary">Non-binary</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Age (optional)
+                    </label>
+                    <input
+                      type="number"
+                      value={age}
+                      onChange={(e) => setAge(e.target.value)}
+                      placeholder="Unknown"
+                      min="1"
+                      max="999"
+                      className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -963,7 +987,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   <h3 className="text-lg font-semibold text-white mb-4">Generate Avatar (Optional)</h3>
                   <div className="bg-slate-800 rounded-lg p-4">
                     <p className="text-slate-300 text-sm mb-4">
-                      Create a personalized AI-generated avatar based on your character's traits, equipment, and background.
+                      Create a personalized AI-generated avatar based on your character&apos;s traits, equipment, and background.
                       <br />
                       <span className="text-slate-400 text-xs">
                         💡 Add custom appearance below, or leave blank for diverse, realistic features (fights AI bias toward young/white/thin).
@@ -998,9 +1022,10 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                         equippedWeapons: selectedWeapons.map(sw => sw.weapon.name),
                         equippedArmor: selectedArmor.map(armor => armor.name)
                       } as CharacterAvatarData}
-                      onAvatarGenerated={(avatarDataUrl) => {
+                      onAvatarGenerated={(avatarDataUrl, fullBodyDataUrl) => {
                         // Store the generated avatar for character creation
                         setGeneratedAvatar(avatarDataUrl);
+                        setGeneratedFullBodyAvatar(fullBodyDataUrl || avatarDataUrl);
                         console.log('🎨 Avatar generated and stored for character creation');
                       }}
                       disabled={!race || !characterClass || !background}

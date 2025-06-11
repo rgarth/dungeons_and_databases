@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Palette, Download, RefreshCw } from "lucide-react";
+import { Palette, RefreshCw } from "lucide-react";
 import type { CharacterAvatarData } from "@/app/api/generate-avatar/route";
 
 interface AvatarGeneratorProps {
   characterData: CharacterAvatarData;
-  onAvatarGenerated?: (avatarDataUrl: string) => void;
+  onAvatarGenerated?: (avatarDataUrl: string, fullBodyDataUrl?: string) => void;
   disabled?: boolean;
   className?: string;
 }
@@ -27,7 +27,7 @@ export function AvatarGenerator({
 }: AvatarGeneratorProps) {
   const [generating, setGenerating] = useState(false);
   const [result, setResult] = useState<GenerationResult | null>(null);
-  const [showFullPrompt, setShowFullPrompt] = useState(false);
+  // const [showFullPrompt, setShowFullPrompt] = useState(false); // Removed - no longer showing prompt debug
 
   const generateAvatar = async () => {
     if (!characterData.race || !characterData.class) {
@@ -60,7 +60,7 @@ export function AvatarGenerator({
             console.log('🖼️ Server returned uncropped image, cropping client-side...');
             finalAvatar = await cropImageClientSide(data.avatarImage);
           }
-          onAvatarGenerated(finalAvatar);
+          onAvatarGenerated(finalAvatar, data.fullBodyImage);
         }
       } else {
         const errorData = await response.json();
@@ -80,17 +80,7 @@ export function AvatarGenerator({
     }
   };
 
-  const downloadImage = () => {
-    if (!result?.fullBodyImage) return;
-
-    // Create download link
-    const link = document.createElement('a');
-    link.href = result.fullBodyImage;
-    link.download = `${characterData.race}_${characterData.class}_avatar.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  // downloadImage removed - no longer showing download button
 
   const cropImageClientSide = async (imageDataUrl: string): Promise<string> => {
     return new Promise((resolve) => {
@@ -166,88 +156,11 @@ export function AvatarGenerator({
         </div>
       )}
 
-      {/* Success Display */}
-      {result && result.success && (
-        <div className="space-y-3">
-          <div className="p-3 bg-green-900/20 border border-green-600/30 rounded-lg">
-            <p className="text-green-300 text-sm font-medium">✨ Avatar Generated Successfully!</p>
-            <p className="text-green-400 text-xs mt-1">
-              Your personalized {characterData.race} {characterData.class} avatar is ready.
-            </p>
-          </div>
 
-          {/* Avatar Preview */}
-          {result.avatarImage && (
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0">
-                <img
-                  src={result.avatarImage}
-                  alt={`${characterData.race} ${characterData.class} avatar`}
-                  className="w-32 h-32 object-cover rounded-lg border-2 border-purple-500"
-                />
-              </div>
-              
-              <div className="space-y-2 flex-1 min-w-0">
-                <h4 className="text-white font-medium">Your Avatar</h4>
-                <p className="text-slate-400 text-sm">
-                  Generated based on: {characterData.race} {characterData.class}
-                  {characterData.gender && ` • ${characterData.gender}`}
-                  {characterData.alignment && ` • ${characterData.alignment}`}
-                </p>
-                
-                {/* Equipment Info */}
-                {(characterData.equippedArmor?.length || characterData.equippedWeapons?.length) && (
-                  <div className="text-slate-400 text-xs">
-                    <span className="text-slate-500">Equipment: </span>
-                    {characterData.equippedArmor?.join(', ')}
-                    {characterData.equippedArmor?.length && characterData.equippedWeapons?.length && ', '}
-                    {characterData.equippedWeapons?.join(', ')}
-                  </div>
-                )}
-
-                {/* Personality Info */}
-                {characterData.personalityTraits?.length && (
-                  <div className="text-slate-400 text-xs">
-                    <span className="text-slate-500">Traits: </span>
-                    {characterData.personalityTraits[0]}
-                    {characterData.personalityTraits.length > 1 && ` (+${characterData.personalityTraits.length - 1} more)`}
-                  </div>
-                )}
-                
-                <button
-                  onClick={downloadImage}
-                  className="flex items-center gap-1 text-purple-400 hover:text-purple-300 text-sm transition-colors"
-                >
-                  <Download className="h-3 w-3" />
-                  Download Full Image
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Prompt Debug Info */}
-          {result.prompt && (
-            <div className="mt-3">
-              <button
-                onClick={() => setShowFullPrompt(!showFullPrompt)}
-                className="text-slate-400 hover:text-slate-300 text-xs underline"
-              >
-                {showFullPrompt ? 'Hide' : 'Show'} AI Prompt (Debug)
-              </button>
-              {showFullPrompt && (
-                <div className="mt-2 p-2 bg-slate-800 rounded text-xs text-slate-300 font-mono">
-                  {result.prompt}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
 
       {/* Usage Note */}
       <div className="text-xs text-slate-500">
-        <p>🤖 Powered by Pollinations.ai • Free AI avatar generation</p>
-        <p>💡 Each generation is unique and based on your character's traits</p>
+        <p>💡 Each generation is unique and based on your character&apos;s traits</p>
       </div>
     </div>
   );

@@ -27,6 +27,8 @@ interface CharacterSheetProps {
     level: number;
     background?: string;
     alignment?: string;
+    gender?: string;
+    age?: number;
     strength: number;
     dexterity: number;
     constitution: number;

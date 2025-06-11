@@ -4,10 +4,12 @@ import { Image } from "lucide-react";
 
 interface AvatarSelectorProps {
   selectedAvatar?: string;
+  fullBodyAvatar?: string;  // New: for showing full body in background tab
   onAvatarSelect: (avatar: string | null) => void;
+  showFullBody?: boolean;   // New: whether to show full body or cropped
 }
 
-export function AvatarSelector({ selectedAvatar, onAvatarSelect }: AvatarSelectorProps) {
+export function AvatarSelector({ selectedAvatar, fullBodyAvatar, onAvatarSelect, showFullBody = false }: AvatarSelectorProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -19,12 +21,12 @@ export function AvatarSelector({ selectedAvatar, onAvatarSelect }: AvatarSelecto
 
       {/* Current Selection */}
       <div className="flex items-center gap-4">
-        {selectedAvatar ? (
+        {(showFullBody ? fullBodyAvatar : selectedAvatar) ? (
           <>
             <img
-              src={selectedAvatar}
+              src={showFullBody ? fullBodyAvatar : selectedAvatar}
               alt="Current avatar"
-              className="w-24 h-24 rounded-lg border border-slate-500 object-cover"
+              className={`rounded-lg border border-slate-500 object-cover ${showFullBody ? 'w-32 h-40' : 'w-24 h-24'}`}
               onError={(e) => {
                 // Hide broken images
                 e.currentTarget.style.display = 'none';
@@ -32,7 +34,7 @@ export function AvatarSelector({ selectedAvatar, onAvatarSelect }: AvatarSelecto
             />
             <div className="flex-1">
               <div className="text-slate-300 text-sm font-medium">
-                Generated Avatar
+                {showFullBody ? 'Full Body Avatar' : 'Generated Avatar'}
               </div>
               <button
                 onClick={() => onAvatarSelect(null)}
