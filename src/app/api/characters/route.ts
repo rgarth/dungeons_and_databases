@@ -63,6 +63,7 @@ export async function POST(request: NextRequest) {
       level,
       alignment,
       background,
+      backgroundCharacteristics,
       strength,
       dexterity,
       constitution,
@@ -288,6 +289,11 @@ export async function POST(request: NextRequest) {
         selectedFeatures: JSON.stringify([]),
         alignment,
         background,
+        // Background characteristics  
+        personalityTraits: backgroundCharacteristics?.personalityTraits || [],
+        ideals: backgroundCharacteristics?.ideals || [],
+        bonds: backgroundCharacteristics?.bonds || [],
+        flaws: backgroundCharacteristics?.flaws || [],
         strength: strength || 10,
         dexterity: dexterity || 10,
         constitution: constitution || 10,
@@ -596,6 +602,14 @@ export async function PATCH(request: NextRequest) {
     // Handle conditions updates
     if (body.conditions !== undefined) {
       updateData.conditions = body.conditions;
+    }
+
+    // Handle background characteristics updates
+    if (body.backgroundCharacteristics !== undefined) {
+      updateData.personalityTraits = body.backgroundCharacteristics.personalityTraits || [];
+      updateData.ideals = body.backgroundCharacteristics.ideals || [];
+      updateData.bonds = body.backgroundCharacteristics.bonds || [];
+      updateData.flaws = body.backgroundCharacteristics.flaws || [];
     }
 
     // Verify the character belongs to the current user and update

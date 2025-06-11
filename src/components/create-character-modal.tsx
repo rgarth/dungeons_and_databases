@@ -10,6 +10,7 @@ import { WeaponSuggestion } from "@/lib/dnd/weapon-suggestions";
 import { ArmorSuggestion } from "@/lib/dnd/armor-suggestions";
 import { WeaponSelector } from "./shared/WeaponSelector";
 import { ArmorSelector } from "./shared/ArmorSelector";
+import { BackgroundSelector, type SelectedCharacteristics } from "./shared/BackgroundSelector";
 import { weaponsData } from '../../prisma/data/weapons-data';
 import { armorData } from '../../prisma/data/armor-data';
 
@@ -59,12 +60,13 @@ interface CreationOptions {
 export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateCharacterModalProps) {
   const characterCreationService = CharacterCreationService.getInstance();
 
+  // Creation step state
+  const [currentStep, setCurrentStep] = useState<'basic' | 'background'>('basic');
+
   // Database data
   const [races, setRaces] = useState<string[]>([]);
   const [classes, setClasses] = useState<string[]>([]);
-  const [backgrounds, setBackgrounds] = useState<string[]>([]);
   const [alignments, setAlignments] = useState<string[]>([]);
-  const [dataLoading, setDataLoading] = useState(true);
 
   // Basic character info
   const [name, setName] = useState("");
@@ -72,6 +74,12 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [characterClass, setCharacterClass] = useState<string>("");
   const [subclass, setSubclass] = useState<string>("");
   const [background, setBackground] = useState<string>("");
+  const [backgroundCharacteristics, setBackgroundCharacteristics] = useState<SelectedCharacteristics>({
+    personalityTraits: [],
+    ideals: [],
+    bonds: [],
+    flaws: []
+  });
   const [alignment, setAlignment] = useState<string>("");
   const [gender, setGender] = useState<string>('');
   
@@ -117,22 +125,22 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           alignmentsRes.json()
         ]);
 
-        const raceNames = racesData.map((race: any) => race.name);
-        const classNames = classesData.map((cls: any) => cls.name);
-        const backgroundNames = backgroundsData.map((bg: any) => bg.name);
-        const alignmentNames = alignmentsData.map((align: any) => align.name);
+        const raceNames = racesData.map((race: { name: string }) => race.name);
+        const classNames = classesData.map((cls: { name: string }) => cls.name);
+        const backgroundNames = backgroundsData.map((bg: { name: string }) => bg.name);
+        const alignmentNames = alignmentsData.map((align: { name: string }) => align.name);
 
         setRaces(raceNames);
         setClasses(classNames);
-        setBackgrounds(backgroundNames);
         setAlignments(alignmentNames);
 
         // Set default values to first item from each array
         if (raceNames.length > 0 && !race) setRace(raceNames[0]);
         if (classNames.length > 0 && !characterClass) setCharacterClass(classNames[0]);
-        if (backgroundNames.length > 0 && !background) setBackground(backgroundNames[0]);
+        // Don't auto-set background - let user choose in step 2
+        // if (backgroundNames.length > 0 && !background) setBackground(backgroundNames[0]);
         if (alignmentNames.length > 0 && !alignment) {
-          const trueNeutral = alignmentNames.find(align => align === 'True Neutral');
+          const trueNeutral = alignmentNames.find((align: string) => align === 'True Neutral');
           setAlignment(trueNeutral || alignmentNames[0]);
         }
 
@@ -144,8 +152,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
       } catch (error) {
         console.error('Failed to load D&D data:', error);
-      } finally {
-        setDataLoading(false);
       }
     };
 
@@ -447,6 +453,12 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Only create character if we're on the background step
+    if (currentStep !== 'background') {
+      return;
+    }
+    
     if (!name.trim()) return;
 
     // Validate required subclass selection
@@ -482,10 +494,16 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
       const characterData = await characterCreationService.createCharacter(creationData);
       
+      // Add background characteristics to the character data
+      const characterDataWithBackground = {
+        ...characterData,
+        backgroundCharacteristics
+      };
+      
       const response = await fetch("/api/characters", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(characterData),
+        body: JSON.stringify(characterDataWithBackground),
       });
 
       if (response.ok) {
@@ -518,7 +536,22 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Basic Info */}
+          {/* Step indicator */}
+          <div className="flex items-center justify-center mb-6">
+            <div className="flex items-center space-x-4">
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full ${currentStep === 'basic' ? 'bg-purple-600 text-white' : 'bg-slate-600 text-slate-300'}`}>
+                1
+              </div>
+              <div className="w-16 h-1 bg-slate-600 rounded"></div>
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full ${currentStep === 'background' ? 'bg-purple-600 text-white' : 'bg-slate-600 text-slate-300'}`}>
+                2
+              </div>
+            </div>
+          </div>
+
+                    {currentStep === 'basic' && (
+            <>
+              {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
@@ -618,20 +651,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               </div>
             )}
 
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Background
-              </label>
-              <select
-                value={background}
-                onChange={(e) => setBackground(e.target.value)}
-                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-              >
-                {backgrounds.map((b) => (
-                  <option key={b} value={b}>{b}</option>
-                ))}
-              </select>
-            </div>
+
 
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
@@ -910,23 +930,57 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               )}
             </div>
           </div>
+              </>
+            )}
+
+            {currentStep === 'background' && (
+              <>
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-4">Select Your Background</h3>
+                  <BackgroundSelector
+                    selectedBackground={background}
+                    selectedCharacteristics={backgroundCharacteristics}
+                    onBackgroundChange={setBackground}
+                    onCharacteristicsChange={setBackgroundCharacteristics}
+                    showCharacteristics={true}
+                    showFullDetails={true}
+                    compact={false}
+                    title="Background"
+                  />
+                </div>
+              </>
+            )}
 
           {/* Submit */}
           <div className="flex justify-end gap-4 pt-4 border-t border-slate-700">
             <button
               type="button"
-              onClick={onClose}
+              onClick={currentStep === 'basic' ? onClose : () => setCurrentStep('basic')}
               className="px-4 py-2 text-slate-400 hover:text-white transition-colors"
             >
-              Cancel
+              {currentStep === 'basic' ? 'Cancel' : 'Back'}
             </button>
-            <button
-              type="submit"
-              disabled={loading || !name.trim() || (needsSubclassAtCreation && !subclass) || (statMethod === 'pointbuy' && !pointBuyValidation.isValid)}
-              className="bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg transition-colors"
-            >
-              {loading ? 'Creating...' : 'Create Character'}
-            </button>
+            {currentStep === 'basic' ? (
+              <button
+                type="button"
+                onClick={() => {
+                  console.log('🎯 NEXT BUTTON CLICKED - Moving to background step');
+                  setCurrentStep('background');
+                }}
+                disabled={!name.trim() || (needsSubclassAtCreation && !subclass) || (statMethod === 'pointbuy' && !pointBuyValidation.isValid)}
+                className="bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg transition-colors"
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={loading || !background}
+                className="bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg transition-colors"
+              >
+                {loading ? 'Creating...' : 'Create Character'}
+              </button>
+            )}
           </div>
         </form>
       </div>

@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { BookOpen, Edit3, Save, X, HelpCircle, FileText, Languages } from "lucide-react";
 import { AvatarSelector } from "../components/AvatarSelector";
+import { BackgroundSelector, type SelectedCharacteristics } from "../../shared/BackgroundSelector";
 import { LANGUAGES, getRacialLanguages } from "@/lib/dnd/languages";
 import { createCharacterStoryService, type CharacterLimits } from "@/services/character/character-story";
 
@@ -22,8 +23,18 @@ interface BackgroundTabProps {
     notes?: string;
     avatar?: string | null;
     languages?: string[];
+    backgroundCharacteristics?: SelectedCharacteristics;
   };
-  onUpdate: (updates: { appearance?: string; personality?: string; backstory?: string; notes?: string; avatar?: string | null; languages?: string[] }) => void;
+  onUpdate: (updates: { 
+    appearance?: string; 
+    personality?: string; 
+    backstory?: string; 
+    notes?: string; 
+    avatar?: string | null; 
+    languages?: string[];
+    background?: string;
+    backgroundCharacteristics?: SelectedCharacteristics;
+  }) => void;
 }
 
 // Initialize character story service
@@ -39,6 +50,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     notes: character.notes || ''
   });
   const [guidedAnswers, setGuidedAnswers] = useState<Record<number, string>>({});
+  const [showBackgroundModal, setShowBackgroundModal] = useState(false);
 
   const handleStartEdit = (field: string) => {
     setIsEditing(field);
@@ -321,6 +333,71 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           </div>
         </div>
 
+        {/* Background Summary with Edit Button */}
+        <div className="bg-slate-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-purple-400" />
+              Background & Traits
+            </h3>
+            <button
+              onClick={() => setShowBackgroundModal(true)}
+              className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+            >
+              <Edit3 className="h-4 w-4" />
+              Edit Background
+            </button>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <div className="text-slate-400 text-sm mb-1">Background</div>
+              <div className="text-white font-medium">{character.background || 'No background selected'}</div>
+            </div>
+            
+            {character.backgroundCharacteristics && (
+              <>
+                <div>
+                  <div className="text-slate-400 text-sm mb-1">Personality Traits</div>
+                  <div className="text-white text-sm">
+                    {character.backgroundCharacteristics.personalityTraits.length > 0 
+                      ? character.backgroundCharacteristics.personalityTraits.join(', ')
+                      : 'None selected'
+                    }
+                  </div>
+                </div>
+                <div>
+                  <div className="text-slate-400 text-sm mb-1">Ideals</div>
+                  <div className="text-white text-sm">
+                    {character.backgroundCharacteristics.ideals.length > 0 
+                      ? character.backgroundCharacteristics.ideals.join(', ')
+                      : 'None selected'
+                    }
+                  </div>
+                </div>
+                <div>
+                  <div className="text-slate-400 text-sm mb-1">Bonds</div>
+                  <div className="text-white text-sm">
+                    {character.backgroundCharacteristics.bonds.length > 0 
+                      ? character.backgroundCharacteristics.bonds.join(', ')
+                      : 'None selected'
+                    }
+                  </div>
+                </div>
+                <div>
+                  <div className="text-slate-400 text-sm mb-1">Flaws</div>
+                  <div className="text-white text-sm">
+                    {character.backgroundCharacteristics.flaws.length > 0 
+                      ? character.backgroundCharacteristics.flaws.join(', ')
+                      : 'None selected'
+                    }
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           {/* Left Column - Character Information */}
@@ -423,19 +500,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               </div>
             </div>
 
-            {renderEditableSection(
-              "Personality",
-              "personality",
-              "Describe your character\'s personality traits, ideals, bonds, flaws, mannerisms, etc.",
-              <Edit3 className="h-5 w-5 text-green-400" />
-            )}
 
-            {renderEditableSection(
-              "Backstory",
-              "backstory",
-              "Tell your character\'s story - their background, history, motivations, and how they became an adventurer.",
-              <BookOpen className="h-5 w-5 text-orange-400" />
-            )}
           </div>
 
           {/* Right Column - Notes */}
@@ -449,6 +514,22 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           </div>
         </div>
       </div>
+      
+      {/* Background Modal */}
+      {showBackgroundModal && (
+        <BackgroundSelector
+          selectedBackground={character.background || ""}
+          selectedCharacteristics={character.backgroundCharacteristics}
+          onBackgroundChange={(background) => onUpdate({ background })}
+          onCharacteristicsChange={(backgroundCharacteristics) => onUpdate({ backgroundCharacteristics })}
+          showCharacteristics={true}
+          showFullDetails={true}
+          isModal={true}
+          title="Edit Background & Traits"
+          onConfirm={() => setShowBackgroundModal(false)}
+          onCancel={() => setShowBackgroundModal(false)}
+        />
+      )}
     </div>
   );
 } 
