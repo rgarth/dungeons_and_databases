@@ -75,7 +75,7 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
     { name: 'Rose Gold', value: '#be185d', primary: '#ec4899' },
     { name: 'Teal', value: '#0891b2', primary: '#06b6d4' },
     { name: 'Black', value: '#000000', primary: '#374151' },
-    { name: 'White', value: '#f8f8f8', primary: '#e5e7eb' },
+    { name: 'Cream', value: '#fffdd0', primary: '#e5e7eb' },
   ];
 
   // Function to update dice color in the dice.js vars

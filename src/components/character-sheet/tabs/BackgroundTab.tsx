@@ -7,6 +7,8 @@ import { AvatarSelector } from "../components/AvatarSelector";
 import { BackgroundSelector, type SelectedCharacteristics } from "../../shared/BackgroundSelector";
 import { LANGUAGES, getRacialLanguages } from "@/lib/dnd/languages";
 import { createCharacterStoryService, type CharacterLimits } from "@/services/character/character-story";
+import { AvatarGenerator } from "../../shared/AvatarGenerator";
+import type { CharacterAvatarData } from "@/app/api/generate-avatar/route";
 
 interface BackgroundTabProps {
   character: {
@@ -405,13 +407,48 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             {renderEditableSection(
               "Appearance",
               "appearance",
-              "Describe your character\'s physical appearance, clothing, distinctive features, etc.",
+              "Describe your character's physical appearance, clothing, distinctive features, etc.",
               <Edit3 className="h-5 w-5 text-blue-400" />,
               <AvatarSelector
                 selectedAvatar={character.avatar || undefined}
                 onAvatarSelect={(avatar) => onUpdate({ avatar })}
               />
             )}
+
+            {/* Avatar Generator Section */}
+            <div className="bg-slate-700 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                <Edit3 className="h-5 w-5 text-purple-400" />
+                Generate New Avatar
+              </h3>
+                              <p className="text-slate-300 text-sm mb-4">
+                  Create a personalized AI-generated avatar based on your character's current traits and equipment.
+                  <br />
+                  <span className="text-slate-400 text-xs">
+                    💡 Uses appearance field above if filled, otherwise generates diverse, realistic features to fight AI bias.
+                  </span>
+                </p>
+              <AvatarGenerator
+                characterData={{
+                  race: character.race,
+                  class: character.class,
+                  gender: 'Male', // You might want to add gender field to character
+                  alignment: character.alignment,
+                  personalityTraits: character.backgroundCharacteristics?.personalityTraits || [],
+                  ideals: character.backgroundCharacteristics?.ideals || [],
+                  bonds: character.backgroundCharacteristics?.bonds || [],
+                  flaws: character.backgroundCharacteristics?.flaws || [],
+                  appearance: character.appearance || '',
+                  equippedWeapons: [], // You might want to get this from character's equipped items
+                  equippedArmor: [] // You might want to get this from character's equipped items
+                } as CharacterAvatarData}
+                onAvatarGenerated={(avatarDataUrl) => {
+                  // Automatically set as character avatar
+                  onUpdate({ avatar: avatarDataUrl });
+                }}
+                disabled={false}
+              />
+            </div>
 
             {/* Languages Section - Compact Design */}
             <div className="bg-slate-700 rounded-lg p-4">

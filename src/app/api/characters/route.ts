@@ -92,6 +92,7 @@ export async function POST(request: NextRequest) {
       copperPieces,
       silverPieces,
       goldPieces,
+      avatar,
     } = body;
 
     // Validate required fields
@@ -324,6 +325,7 @@ export async function POST(request: NextRequest) {
         goldPieces: goldPieces || 0,
         deathSaveSuccesses: 0,
         deathSaveFailures: 0,
+        avatar: avatar || null,
         user: {
           connect: { id: user.id }
         },
