@@ -105,7 +105,7 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
             {/* Avatar */}
             {character.avatar && (
               <img
-                src={`/avatars/${character.avatar}`}
+                src={character.avatar}
                 alt={`${character.name} avatar`}
                 className="w-16 h-16 rounded-lg border border-slate-600 object-cover"
                 onError={(e) => {

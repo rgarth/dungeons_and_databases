@@ -842,7 +842,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
               {/* Avatar or default icon */}
               {displayCharacter.avatar ? (
                 <img
-                  src={`/avatars/${displayCharacter.avatar}`}
+                  src={displayCharacter.avatar}
                   alt={`${displayCharacter.name} avatar`}
                   className="w-16 h-16 rounded-lg border-2 border-purple-400 object-cover"
                   onError={(e) => {

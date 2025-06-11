@@ -9,7 +9,7 @@ import { Weapon, MagicalWeapon, Armor, InventoryItem } from "@/lib/dnd/equipment
 import { Spell } from "@/lib/dnd/spells";
 import { Action } from "@/lib/dnd/combat";
 import { Treasure } from "@/lib/dnd/data";
-import { useAppStartupPreloader } from "@/hooks/useAppStartupPreloader";
+
 
 // Use a simplified interface for the character list view
 interface CharacterListItem {
@@ -68,8 +68,7 @@ export default function Home() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [loading, setLoading] = useState(true);
   
-  // Start app-wide avatar preloading after authentication
-  const { isPreloading, preloadProgress } = useAppStartupPreloader();
+
 
   useEffect(() => {
     if (session) {
@@ -137,13 +136,6 @@ export default function Home() {
         </div>
         
         <div className="flex items-center gap-4">
-          {/* Avatar preload status */}
-          {isPreloading && (
-            <div className="text-xs text-slate-400">
-              Loading avatars: {preloadProgress.loaded}/{preloadProgress.total}
-            </div>
-          )}
-          
           <div className="flex items-center gap-2 text-slate-300">
             <User className="h-5 w-5" />
             <span>{session.user?.name}</span>

@@ -11,6 +11,7 @@ import { ArmorSuggestion } from "@/lib/dnd/armor-suggestions";
 import { WeaponSelector } from "./shared/WeaponSelector";
 import { ArmorSelector } from "./shared/ArmorSelector";
 import { BackgroundSelector, type SelectedCharacteristics } from "./shared/BackgroundSelector";
+import { AvatarGenerator } from './shared/AvatarGenerator';
 import { weaponsData } from '../../prisma/data/weapons-data';
 import { armorData } from '../../prisma/data/armor-data';
 
@@ -19,6 +20,8 @@ import {
   type CharacterCreationData,
   CharacterCreationService
 } from "@/services/character/creation";
+
+import type { CharacterAvatarData } from '@/app/api/generate-avatar/route';
 
 interface CreateCharacterModalProps {
   onClose: () => void;
@@ -106,6 +109,12 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [selectedArmor, setSelectedArmor] = useState<Armor[]>([]);
   const [showWeaponSelector, setShowWeaponSelector] = useState(false);
   const [showArmorSelector, setShowArmorSelector] = useState(false);
+
+  // Appearance field
+  const [appearance, setAppearance] = useState<string>('');
+  
+  // Avatar state
+  const [generatedAvatar, setGeneratedAvatar] = useState<string>('');
 
   // Load D&D data from database on component mount
   useEffect(() => {
@@ -494,10 +503,11 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
       const characterData = await characterCreationService.createCharacter(creationData);
       
-      // Add background characteristics to the character data
+      // Add background characteristics and avatar to the character data
       const characterDataWithBackground = {
         ...characterData,
-        backgroundCharacteristics
+        backgroundCharacteristics,
+        avatar: generatedAvatar || undefined
       };
       
       const response = await fetch("/api/characters", {
@@ -549,392 +559,391 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             </div>
           </div>
 
-                    {currentStep === 'basic' && (
+          {currentStep === 'basic' && (
             <>
               {/* Basic Info */}
-          <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Character Name *
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 pr-12 text-white focus:border-purple-500 focus:outline-none"
-                  placeholder="Enter character name"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={handleGenerateName}
-                  disabled={generatingName}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-slate-400 hover:text-purple-400 transition-colors disabled:opacity-50"
-                  title="Generate fantasy name"
-                >
-                  <RefreshCw className={`h-4 w-4 ${generatingName ? 'animate-spin' : ''}`} />
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Gender (for name generation)
-              </label>
-              <select
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-              >
-                <option value="">Not specified</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Non-binary">Non-binary</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Race
-              </label>
-              <select
-                value={race}
-                onChange={(e) => setRace(e.target.value)}
-                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-              >
-                {races.map((r) => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Class
-              </label>
-              <select
-                value={characterClass}
-                onChange={(e) => setCharacterClass(e.target.value)}
-                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-              >
-                {classes.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </div>
-
-            {needsSubclassAtCreation && (
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Subclass *
-                </label>
-                <select
-                  value={subclass}
-                  onChange={(e) => setSubclass(e.target.value)}
-                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-                  required={needsSubclassAtCreation}
-                >
-                  <option value="">Choose subclass...</option>
-                  {subclasses.map((sub) => (
-                    <option key={sub.name} value={sub.name}>{sub.name}</option>
-                  ))}
-                </select>
-                {subclass && (
-                  <p className="text-xs text-slate-400 mt-1">
-                    {subclasses.find(s => s.name === subclass)?.description}
-                  </p>
-                )}
-              </div>
-            )}
-
-
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Alignment
-              </label>
-              <select
-                value={alignment}
-                onChange={(e) => setAlignment(e.target.value)}
-                className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-              >
-                {alignments.map((a) => (
-                  <option key={a} value={a}>{a}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Ability Scores */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white">Ability Scores</h3>
-              <div className="flex items-center gap-2">
-                <select
-                  value={statMethod}
-                  onChange={(e) => handleStatMethodChange(e.target.value as StatMethod)}
-                  className="bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm focus:border-purple-500 focus:outline-none"
-                >
-                  <option value="rolling-assign">Roll & Assign</option>
-                  <option value="standard">Standard Array</option>
-                  <option value="pointbuy">Point Buy</option>
-                </select>
-                <button
-                  type="button"
-                  onClick={handleGenerateStats}
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors"
-                >
-                  <Dice6 className="h-4 w-4" />
-                  {statMethod === 'rolling-assign' ? 'Reroll' : 'Regenerate'}
-                </button>
-              </div>
-            </div>
-
-            {statMethod === 'rolling-assign' && randomScoreArray.length > 0 && (
-              <div className="mb-4 p-3 bg-slate-700 rounded-lg">
-                <p className="text-sm text-slate-300 mb-2">Rolled scores (drag to assign):</p>
-                <div className="flex gap-2">
-                  {randomScoreArray.map((score, index) => (
-                    <div key={index} className="bg-slate-600 px-2 py-1 rounded text-center text-white font-mono">
-                      {score}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {statMethod === 'pointbuy' && (
-              <div className="mb-4 p-3 bg-slate-700 rounded-lg">
-                <p className="text-sm text-slate-300">
-                  Points remaining: <span className={`font-bold ${pointBuyValidation.remaining === 0 ? 'text-green-400' : pointBuyValidation.remaining < 0 ? 'text-red-400' : 'text-yellow-400'}`}>
-                    {pointBuyValidation.remaining}
-                  </span>
-                </p>
-              </div>
-            )}
-
-            <div className="grid grid-cols-3 gap-4">
-              {ABILITY_SCORES.map((ability) => (
-                <div
-                  key={ability}
-                  className="bg-slate-700 rounded-lg p-3"
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleDrop(e, ability)}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-slate-300">{ability}</span>
-                    <span className="text-lg font-bold text-white">{abilityScores[ability] || 10}</span>
-                  </div>
-                  
-                  {statMethod === 'pointbuy' && (
-                    <div className="flex items-center justify-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handlePointBuyChange(ability, -1)}
-                        className="w-6 h-6 bg-slate-600 hover:bg-slate-500 rounded flex items-center justify-center text-white text-sm"
-                        disabled={(abilityScores[ability] || 10) <= 8}
-                      >
-                        <Minus className="h-3 w-3" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handlePointBuyChange(ability, 1)}
-                        className="w-6 h-6 bg-slate-600 hover:bg-slate-500 rounded flex items-center justify-center text-white text-sm"
-                        disabled={(abilityScores[ability] || 10) >= 15}
-                      >
-                        <Plus className="h-3 w-3" />
-                      </button>
-                    </div>
-                  )}
-
-                  {(statMethod === 'rolling-assign' || statMethod === 'standard') && (
-                    <div
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, ability)}
-                      className="w-full text-center py-1 text-xs text-slate-400 cursor-move"
-                    >
-                      Drag to swap
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Spellcasting */}
-          {spellcasting.canCastAtLevel1 && (
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Spellcasting</h3>
-              <div className="mb-4 p-3 bg-slate-700 rounded-lg">
-                <div className="grid grid-cols-2 gap-4 text-sm text-slate-300">
-                  <div>Spellcasting Ability: <span className="text-white">{spellcasting.ability}</span></div>
-                  <div>Spell Save DC: <span className="text-white">{spellcastingStats?.spellSaveDC || '--'}</span></div>
-                  <div>Spell Attack Bonus: <span className="text-white">+{spellcastingStats?.spellAttackBonus || '--'}</span></div>
-                  <div>Selected Spells: <span className="text-white">{selectedSpells.length}</span></div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-48 overflow-y-auto">
-                {spellcasting.availableSpells.map((spell) => (
-                  <label
-                    key={spell.name}
-                    className={`flex items-center p-2 rounded cursor-pointer transition-colors ${
-                      selectedSpells.some(s => s.name === spell.name)
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedSpells.some(s => s.name === spell.name)}
-                      onChange={() => handleSpellToggle(spell)}
-                      className="sr-only"
-                    />
-                    <div>
-                      <div className="font-medium text-sm">{spell.name}</div>
-                      <div className="text-xs opacity-75">{spell.school} {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}</div>
-                    </div>
-                  </label>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Equipment */}
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Starting Equipment</h3>
-            
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Equipment Pack
-              </label>
-              {loadingOptions ? (
-                <div className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-400">
-                  Loading equipment packs...
-                </div>
-              ) : (
+              <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
                 <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Character Name *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 pr-12 text-white focus:border-purple-500 focus:outline-none"
+                      placeholder="Enter character name"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={handleGenerateName}
+                      disabled={generatingName}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-slate-400 hover:text-purple-400 transition-colors disabled:opacity-50"
+                      title="Generate fantasy name"
+                    >
+                      <RefreshCw className={`h-4 w-4 ${generatingName ? 'animate-spin' : ''}`} />
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Gender (for name generation)
+                  </label>
                   <select
-                    value={selectedEquipmentPack}
-                    onChange={(e) => setSelectedEquipmentPack(Number(e.target.value))}
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
                   >
-                    {creationOptions?.equipmentPacks?.map((pack, index) => (
-                      <option key={pack.id || index} value={index}>
-                        {pack.name} ({pack.cost})
-                      </option>
-                    )) || []}
+                    <option value="">Not specified</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Non-binary">Non-binary</option>
+                    <option value="Other">Other</option>
                   </select>
-                  
-                  {/* Show selected pack details */}
-                  {creationOptions?.equipmentPacks?.[selectedEquipmentPack] && (
-                    <div className="mt-2 p-3 bg-slate-700 rounded-lg">
-                      <div className="text-sm text-slate-300 mb-2">
-                        {creationOptions.equipmentPacks[selectedEquipmentPack].description}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Race
+                  </label>
+                  <select
+                    value={race}
+                    onChange={(e) => setRace(e.target.value)}
+                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                  >
+                    {races.map((r) => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Class
+                  </label>
+                  <select
+                    value={characterClass}
+                    onChange={(e) => setCharacterClass(e.target.value)}
+                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                  >
+                    {classes.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {needsSubclassAtCreation && (
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Subclass *
+                    </label>
+                    <select
+                      value={subclass}
+                      onChange={(e) => setSubclass(e.target.value)}
+                      className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                      required={needsSubclassAtCreation}
+                    >
+                      <option value="">Choose subclass...</option>
+                      {subclasses.map((sub) => (
+                        <option key={sub.name} value={sub.name}>{sub.name}</option>
+                      ))}
+                    </select>
+                    {subclass && (
+                      <p className="text-xs text-slate-400 mt-1">
+                        {subclasses.find(s => s.name === subclass)?.description}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Alignment
+                  </label>
+                  <select
+                    value={alignment}
+                    onChange={(e) => setAlignment(e.target.value)}
+                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                  >
+                    {alignments.map((a) => (
+                      <option key={a} value={a}>{a}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Ability Scores */}
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-white">Ability Scores</h3>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={statMethod}
+                      onChange={(e) => handleStatMethodChange(e.target.value as StatMethod)}
+                      className="bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm focus:border-purple-500 focus:outline-none"
+                    >
+                      <option value="rolling-assign">Roll & Assign</option>
+                      <option value="standard">Standard Array</option>
+                      <option value="pointbuy">Point Buy</option>
+                    </select>
+                    <button
+                      type="button"
+                      onClick={handleGenerateStats}
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors"
+                    >
+                      <Dice6 className="h-4 w-4" />
+                      {statMethod === 'rolling-assign' ? 'Reroll' : 'Regenerate'}
+                    </button>
+                  </div>
+                </div>
+
+                {statMethod === 'rolling-assign' && randomScoreArray.length > 0 && (
+                  <div className="mb-4 p-3 bg-slate-700 rounded-lg">
+                    <p className="text-sm text-slate-300 mb-2">Rolled scores (drag to assign):</p>
+                    <div className="flex gap-2">
+                      {randomScoreArray.map((score, index) => (
+                        <div key={index} className="bg-slate-600 px-2 py-1 rounded text-center text-white font-mono">
+                          {score}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {statMethod === 'pointbuy' && (
+                  <div className="mb-4 p-3 bg-slate-700 rounded-lg">
+                    <p className="text-sm text-slate-300">
+                      Points remaining: <span className={`font-bold ${pointBuyValidation.remaining === 0 ? 'text-green-400' : pointBuyValidation.remaining < 0 ? 'text-red-400' : 'text-yellow-400'}`}>
+                        {pointBuyValidation.remaining}
+                      </span>
+                    </p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-3 gap-4">
+                  {ABILITY_SCORES.map((ability) => (
+                    <div
+                      key={ability}
+                      className="bg-slate-700 rounded-lg p-3"
+                      onDragOver={handleDragOver}
+                      onDrop={(e) => handleDrop(e, ability)}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-slate-300">{ability}</span>
+                        <span className="text-lg font-bold text-white">{abilityScores[ability] || 10}</span>
                       </div>
-                      <div className="text-xs text-slate-400">
-                        <strong>Contains:</strong>{' '}
-                        {creationOptions.equipmentPacks[selectedEquipmentPack].items
-                          .map(item => `${item.quantity}x ${item.name}`)
-                          .join(', ')}
+                      
+                      {statMethod === 'pointbuy' && (
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handlePointBuyChange(ability, -1)}
+                            className="w-6 h-6 bg-slate-600 hover:bg-slate-500 rounded flex items-center justify-center text-white text-sm"
+                            disabled={(abilityScores[ability] || 10) <= 8}
+                          >
+                            <Minus className="h-3 w-3" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handlePointBuyChange(ability, 1)}
+                            className="w-6 h-6 bg-slate-600 hover:bg-slate-500 rounded flex items-center justify-center text-white text-sm"
+                            disabled={(abilityScores[ability] || 10) >= 15}
+                          >
+                            <Plus className="h-3 w-3" />
+                          </button>
+                        </div>
+                      )}
+
+                      {(statMethod === 'rolling-assign' || statMethod === 'standard') && (
+                        <div
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, ability)}
+                          className="w-full text-center py-1 text-xs text-slate-400 cursor-move"
+                        >
+                          Drag to swap
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Spellcasting */}
+              {spellcasting.canCastAtLevel1 && (
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-4">Spellcasting</h3>
+                  <div className="mb-4 p-3 bg-slate-700 rounded-lg">
+                    <div className="grid grid-cols-2 gap-4 text-sm text-slate-300">
+                      <div>Spellcasting Ability: <span className="text-white">{spellcasting.ability}</span></div>
+                      <div>Spell Save DC: <span className="text-white">{spellcastingStats?.spellSaveDC || '--'}</span></div>
+                      <div>Spell Attack Bonus: <span className="text-white">+{spellcastingStats?.spellAttackBonus || '--'}</span></div>
+                      <div>Selected Spells: <span className="text-white">{selectedSpells.length}</span></div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-48 overflow-y-auto">
+                    {spellcasting.availableSpells.map((spell) => (
+                      <label
+                        key={spell.name}
+                        className={`flex items-center p-2 rounded cursor-pointer transition-colors ${
+                          selectedSpells.some(s => s.name === spell.name)
+                            ? 'bg-purple-600 text-white'
+                            : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedSpells.some(s => s.name === spell.name)}
+                          onChange={() => handleSpellToggle(spell)}
+                          className="sr-only"
+                        />
+                        <div>
+                          <div className="font-medium text-sm">{spell.name}</div>
+                          <div className="text-xs opacity-75">{spell.school} {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}</div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Equipment */}
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-4">Starting Equipment</h3>
+                
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Equipment Pack
+                  </label>
+                  {loadingOptions ? (
+                    <div className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-400">
+                      Loading equipment packs...
+                    </div>
+                  ) : (
+                    <div>
+                      <select
+                        value={selectedEquipmentPack}
+                        onChange={(e) => setSelectedEquipmentPack(Number(e.target.value))}
+                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                      >
+                        {creationOptions?.equipmentPacks?.map((pack, index) => (
+                          <option key={pack.id || index} value={index}>
+                            {pack.name} ({pack.cost})
+                          </option>
+                        )) || []}
+                      </select>
+                      
+                      {/* Show selected pack details */}
+                      {creationOptions?.equipmentPacks?.[selectedEquipmentPack] && (
+                        <div className="mt-2 p-3 bg-slate-700 rounded-lg">
+                          <div className="text-sm text-slate-300 mb-2">
+                            {creationOptions.equipmentPacks[selectedEquipmentPack].description}
+                          </div>
+                          <div className="text-xs text-slate-400">
+                            <strong>Contains:</strong>{' '}
+                            {creationOptions.equipmentPacks[selectedEquipmentPack].items
+                              .map(item => `${item.quantity}x ${item.name}`)
+                              .join(', ')}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Starting Weapons
+                  </label>
+                  
+                  <button
+                    type="button"
+                    onClick={() => setShowWeaponSelector(true)}
+                    className="w-full p-3 bg-slate-700 hover:bg-slate-600 rounded-lg border border-slate-600 text-left transition-colors"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <div className="text-sm text-white mb-1">Select Weapons</div>
+                        <div className="text-xs text-slate-400">
+                          {selectedWeapons.length > 0 
+                            ? `${selectedWeapons.reduce((sum, sw) => sum + sw.quantity, 0)} weapons selected`
+                            : 'Click to choose starting weapons'
+                          }
+                        </div>
+                      </div>
+                      <div className="text-slate-400">→</div>
+                    </div>
+                  </button>
+
+                  {/* Selected Weapons Summary */}
+                  {selectedWeapons.length > 0 && (
+                    <div className="mt-3 bg-slate-600 rounded-lg p-3">
+                      <h4 className="text-sm font-medium text-white mb-2">
+                        Selected Weapons ({selectedWeapons.reduce((sum, sw) => sum + sw.quantity, 0)})
+                      </h4>
+                      <div className="space-y-1">
+                        {selectedWeapons.map(({ weapon, quantity }) => (
+                          <div key={weapon.name} className="text-sm text-slate-300">
+                            • {quantity}x {weapon.name} ({weapon.damage} {weapon.damageType})
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
                 </div>
-              )}
-            </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Starting Weapons
-              </label>
-              
-              <button
-                type="button"
-                onClick={() => setShowWeaponSelector(true)}
-                className="w-full p-3 bg-slate-700 hover:bg-slate-600 rounded-lg border border-slate-600 text-left transition-colors"
-              >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <div className="text-sm text-white mb-1">Select Weapons</div>
-                    <div className="text-xs text-slate-400">
-                      {selectedWeapons.length > 0 
-                        ? `${selectedWeapons.reduce((sum, sw) => sum + sw.quantity, 0)} weapons selected`
-                        : 'Click to choose starting weapons'
-                      }
-                    </div>
-                  </div>
-                  <div className="text-slate-400">→</div>
-                </div>
-              </button>
-
-              {/* Selected Weapons Summary */}
-              {selectedWeapons.length > 0 && (
-                <div className="mt-3 bg-slate-600 rounded-lg p-3">
-                  <h4 className="text-sm font-medium text-white mb-2">
-                    Selected Weapons ({selectedWeapons.reduce((sum, sw) => sum + sw.quantity, 0)})
-                  </h4>
-                  <div className="space-y-1">
-                    {selectedWeapons.map(({ weapon, quantity }) => (
-                      <div key={weapon.name} className="text-sm text-slate-300">
-                        • {quantity}x {weapon.name} ({weapon.damage} {weapon.damageType})
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Starting Armor
+                  </label>
+                  
+                  <button
+                    type="button"
+                    onClick={() => setShowArmorSelector(true)}
+                    className="w-full p-3 bg-slate-700 hover:bg-slate-600 rounded-lg border border-slate-600 text-left transition-colors"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <div className="text-sm text-white mb-1">Select Armor</div>
+                        <div className="text-xs text-slate-400">
+                          {selectedArmor.length > 0 
+                            ? `${selectedArmor.length} armor pieces selected`
+                            : 'Click to choose starting armor'
+                          }
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Starting Armor
-              </label>
-              
-              <button
-                type="button"
-                onClick={() => setShowArmorSelector(true)}
-                className="w-full p-3 bg-slate-700 hover:bg-slate-600 rounded-lg border border-slate-600 text-left transition-colors"
-              >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <div className="text-sm text-white mb-1">Select Armor</div>
-                    <div className="text-xs text-slate-400">
-                      {selectedArmor.length > 0 
-                        ? `${selectedArmor.length} armor pieces selected`
-                        : 'Click to choose starting armor'
-                      }
+                      <div className="text-slate-400">→</div>
                     </div>
-                  </div>
-                  <div className="text-slate-400">→</div>
-                </div>
-              </button>
+                  </button>
 
-              {/* Selected Armor Summary */}
-              {selectedArmor.length > 0 && (
-                <div className="mt-3 bg-slate-600 rounded-lg p-3">
-                  <h4 className="text-sm font-medium text-white mb-2">
-                    Selected Armor ({selectedArmor.length})
-                  </h4>
-                  <div className="space-y-1">
-                    {selectedArmor.map((armor) => (
-                      <div key={armor.name} className="text-sm text-slate-300">
-                        • {armor.name} (AC {armor.baseAC}{armor.maxDexBonus !== null ? ` + Dex (max ${armor.maxDexBonus})` : ' + Dex'})
+                  {/* Selected Armor Summary */}
+                  {selectedArmor.length > 0 && (
+                    <div className="mt-3 bg-slate-600 rounded-lg p-3">
+                      <h4 className="text-sm font-medium text-white mb-2">
+                        Selected Armor ({selectedArmor.length})
+                      </h4>
+                      <div className="space-y-1">
+                        {selectedArmor.map((armor) => (
+                          <div key={armor.name} className="text-sm text-slate-300">
+                            • {armor.name} (AC {armor.baseAC}{armor.maxDexBonus !== null ? ` + Dex (max ${armor.maxDexBonus})` : ' + Dex'})
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
-              </>
-            )}
+              </div>
+            </>
+          )}
 
-            {currentStep === 'background' && (
-              <>
+          {currentStep === 'background' && (
+            <>
+              <div className="space-y-6">
                 <div>
                   <h3 className="text-lg font-semibold text-white mb-4">Select Your Background</h3>
                   <BackgroundSelector
@@ -948,8 +957,59 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     title="Background"
                   />
                 </div>
-              </>
-            )}
+
+                {/* Avatar Generator */}
+                <div className="border-t border-slate-700 pt-6">
+                  <h3 className="text-lg font-semibold text-white mb-4">Generate Avatar (Optional)</h3>
+                  <div className="bg-slate-800 rounded-lg p-4">
+                    <p className="text-slate-300 text-sm mb-4">
+                      Create a personalized AI-generated avatar based on your character's traits, equipment, and background.
+                      <br />
+                      <span className="text-slate-400 text-xs">
+                        💡 Add custom appearance below, or leave blank for diverse, realistic features (fights AI bias toward young/white/thin).
+                      </span>
+                    </p>
+                    
+                    {/* Appearance Field */}
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-slate-300 mb-2">
+                        Appearance (Optional)
+                      </label>
+                      <textarea
+                        placeholder="Describe physical features, scars, distinctive marks, etc. Leave blank for AI to create diverse, realistic appearance."
+                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none text-sm"
+                        rows={2}
+                        value={appearance || ''}
+                        onChange={(e) => setAppearance(e.target.value)}
+                      />
+                    </div>
+
+                    <AvatarGenerator
+                      characterData={{
+                        race,
+                        class: characterClass,
+                        gender: gender || 'Male', // Use selected gender or default
+                        alignment,
+                        personalityTraits: backgroundCharacteristics?.personalityTraits || [],
+                        ideals: backgroundCharacteristics?.ideals || [],
+                        bonds: backgroundCharacteristics?.bonds || [],
+                        flaws: backgroundCharacteristics?.flaws || [],
+                        appearance: appearance || '',
+                        equippedWeapons: selectedWeapons.map(sw => sw.weapon.name),
+                        equippedArmor: selectedArmor.map(armor => armor.name)
+                      } as CharacterAvatarData}
+                      onAvatarGenerated={(avatarDataUrl) => {
+                        // Store the generated avatar for character creation
+                        setGeneratedAvatar(avatarDataUrl);
+                        console.log('🎨 Avatar generated and stored for character creation');
+                      }}
+                      disabled={!race || !characterClass || !background}
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Submit */}
           <div className="flex justify-end gap-4 pt-4 border-t border-slate-700">
