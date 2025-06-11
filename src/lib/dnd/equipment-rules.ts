@@ -272,32 +272,35 @@ export class EquipmentRulesEngine {
       });
     }
 
-    // Rule 2: Two-handed weapon + any other weapon conflict
+    // Rule 2: Combat reminders for two-handed weapons (warnings only)
     if (newWeaponIsTwoHanded && currentWeapons.length > 0) {
-      errors.push({
-        type: 'wielding',
-        severity: 'error',
-        message: `Cannot equip ${newWeapon.name} (two-handed) while holding other weapons. Must unequip: ${currentWeapons.map(w => w.name).join(', ')}.`,
-        conflictingItems: [newWeapon.name, ...currentWeapons.map(w => w.name)]
-      });
+      const conflictingMelee = currentWeapons.filter(w => w.category === 'Melee' || !this.isTwoHanded(w));
+      if (conflictingMelee.length > 0) {
+        warnings.push({
+          type: 'wielding',
+          severity: 'warning',
+          message: `${newWeapon.name} requires both hands when attacking. Cannot use simultaneously with melee weapons in combat.`,
+          conflictingItems: [newWeapon.name, ...conflictingMelee.map(w => w.name)]
+        });
+      }
     }
 
-    // Rule 3: Adding weapon when already have two-handed weapon
+    // Rule 3: Combat reminders when adding weapon with existing two-handed weapon
     if (!newWeaponIsTwoHanded && currentTwoHandedWeapons.length > 0) {
-      errors.push({
+      warnings.push({
         type: 'wielding',
-        severity: 'error',
-        message: `Cannot equip ${newWeapon.name} while using two-handed weapon: ${currentTwoHandedWeapons.map(w => w.name).join(', ')}.`,
+        severity: 'warning',
+        message: `Can equip ${newWeapon.name}, but cannot use simultaneously with two-handed weapons in combat.`,
         conflictingItems: [newWeapon.name, ...currentTwoHandedWeapons.map(w => w.name)]
       });
     }
 
-    // Rule 4: Hand limits (2 hands total)
-    if (!newWeaponIsTwoHanded && currentOneHandedWeapons.length >= 2) {
-      errors.push({
+    // Rule 4: Practical carrying limits (more lenient)
+    if (!newWeaponIsTwoHanded && currentOneHandedWeapons.length >= 4) {
+      warnings.push({
         type: 'wielding',
-        severity: 'error',
-        message: `Cannot equip ${newWeapon.name}. Already holding maximum weapons (2 hands occupied).`,
+        severity: 'warning',
+        message: `Carrying many weapons (${currentOneHandedWeapons.length + 1}). Remember you only have 2 hands for combat.`,
         conflictingItems: [newWeapon.name, ...currentOneHandedWeapons.map(w => w.name)]
       });
     }
@@ -319,7 +322,7 @@ export class EquipmentRulesEngine {
   }
 
   /**
-   * Check ranged weapon conflicts (can't use bow and crossbow simultaneously)
+   * Check ranged weapon conflicts (advisory only)
    */
   private checkRangedWeaponConflicts(
     newWeapon: Weapon | MagicalWeapon,
@@ -338,11 +341,11 @@ export class EquipmentRulesEngine {
         ) && weapon.name !== newWeapon.name
       );
       
-      if (conflictingRanged.length > 0) {
+      if (conflictingRanged.length >= 2) {
         conflicts.push({
           type: 'wielding',
-          severity: 'error',
-          message: `Cannot equip multiple ranged weapons. Unequip: ${conflictingRanged.map(w => w.name).join(', ')}.`,
+          severity: 'warning',
+          message: `Multiple ranged weapons equipped. You can only use one type per turn in combat.`,
           conflictingItems: [newWeapon.name, ...conflictingRanged.map(w => w.name)]
         });
       }
@@ -417,28 +420,19 @@ export class EquipmentRulesEngine {
     const twoHandedWeapons = equippedWeapons.filter(w => this.isTwoHanded(w));
     const oneHandedWeapons = equippedWeapons.filter(w => !this.isTwoHanded(w));
 
-    // Two-handed + shield conflict
+    // Only report genuine conflicts, not combat limitations
+    
+    // Two-handed + shield conflict (real conflict - can't hold both simultaneously)
     if (twoHandedWeapons.length > 0 && hasShield) {
-      conflictSummary.push(`Two-handed weapon ${twoHandedWeapons[0].name} conflicts with shield`);
-      suggestions.push('Unequip either the shield or the two-handed weapon');
+      conflictSummary.push(`⚠️ ${twoHandedWeapons[0].name} (two-handed) + shield: Cannot use both simultaneously in combat`);
+      suggestions.push('Choose either two-handed weapon or shield + one-handed weapon for combat');
     }
 
-    // Multiple two-handed weapons
-    if (twoHandedWeapons.length > 1) {
-      conflictSummary.push(`Multiple two-handed weapons: ${twoHandedWeapons.map(w => w.name).join(', ')}`);
-      suggestions.push('Unequip all but one two-handed weapon');
-    }
-
-    // Too many one-handed weapons
-    if (oneHandedWeapons.length > 2) {
-      conflictSummary.push(`Too many weapons equipped (${oneHandedWeapons.length}). Maximum is 2 for dual wielding.`);
-      suggestions.push('Unequip excess weapons to free up hands');
-    }
-
-    // Two-handed + one-handed conflict
-    if (twoHandedWeapons.length > 0 && oneHandedWeapons.length > 0) {
-      conflictSummary.push(`Two-handed weapon conflicts with other weapons`);
-      suggestions.push('Two-handed weapons require both hands - unequip other weapons');
+    // Excessive weapon carrying (practical reminder)
+    const totalWeapons = twoHandedWeapons.length + oneHandedWeapons.length;
+    if (totalWeapons > 5) {
+      conflictSummary.push(`📦 Carrying many weapons (${totalWeapons}). Consider storing some to reduce weight.`);
+      suggestions.push('Store unused weapons to manage encumbrance');
     }
 
     return {

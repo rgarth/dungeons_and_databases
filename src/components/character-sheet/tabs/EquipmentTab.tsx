@@ -122,20 +122,21 @@ export function EquipmentTab({
               
               {/* D&D Combat Usage Information */}
               <div className="mb-4 text-sm text-blue-300 bg-blue-900/20 p-3 rounded">
-                <div className="font-medium mb-1">⚔️ D&D 5e Combat:</div>
+                <div className="font-medium mb-1">⚔️ D&D 5e Combat Rules:</div>
                 <div className="text-xs space-y-1">
-                  <div>• <strong>Melee weapons:</strong> Used when adjacent to enemies</div>
-                  <div>• <strong>Ranged weapons:</strong> Used for distant targets (crossbows, bows)</div>
-                  <div>• <strong>Two-handed weapons:</strong> Require both hands when attacking</div>
-                  <div>• <strong>Switching:</strong> Free to draw/sheath weapons once per turn</div>
+                  <div>• <strong>Action economy:</strong> Choose weapons based on situation each turn</div>
+                  <div>• <strong>Two-handed weapons:</strong> Need both hands when attacking (longbow, greatsword)</div>
+                  <div>• <strong>Dual wielding:</strong> Two light weapons for bonus action attack</div>
+                  <div>• <strong>Drawing/sheathing:</strong> One weapon per turn as free interaction</div>
+                  <div>• <strong>Example:</strong> Ranger can carry longbow + longsword + daggers, use what fits the situation</div>
                 </div>
               </div>
               
-              {/* Show shield compatibility warning if relevant */}
+              {/* Show shield compatibility reminder if relevant */}
               {equippedArmor.some(armor => armor.type === 'Shield') && 
                equippedWeapons.some(weapon => weapon.properties.includes('Two-handed')) && (
-                <div className="mb-3 text-sm text-orange-300 bg-orange-900/20 p-2 rounded">
-                  ⚠️ Shield + Two-handed weapon: Can&apos;t use both simultaneously in combat
+                <div className="mb-3 text-sm text-blue-300 bg-blue-900/20 p-2 rounded">
+                  💡 <strong>Combat note:</strong> Shield + two-handed weapon equipped. Choose one style per turn: shield + one-handed weapon OR two-handed weapon.
                 </div>
               )}
               
