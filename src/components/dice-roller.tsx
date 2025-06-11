@@ -11,6 +11,11 @@ declare global {
         start_throw: (beforeRoll?: ((notation: DiceResult) => number[] | null), afterRoll?: (notation: DiceResult) => void) => void;
         bind_swipe: (element: HTMLElement, beforeRoll?: ((notation: DiceResult) => number[] | null), afterRoll?: (notation: DiceResult) => void) => void;
       };
+      vars?: {
+        dice_color: string;
+        label_color: string;
+      };
+      clearMaterialCache?: () => void;
     };
     THREE: Record<string, unknown>;
     CANNON: Record<string, unknown>;
@@ -55,6 +60,51 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
   });
   
   const [modifier, setModifier] = useState(0);
+  
+  // Dice color state
+  const [diceColor, setDiceColor] = useState('#202020');
+
+  // Predefined color options
+  const colorOptions = [
+    { name: 'Dark Gray', value: '#202020', primary: '#202020' },
+    { name: 'Royal Blue', value: '#1e40af', primary: '#3b82f6' },
+    { name: 'Emerald', value: '#059669', primary: '#10b981' },
+    { name: 'Ruby Red', value: '#dc2626', primary: '#ef4444' },
+    { name: 'Purple', value: '#7c3aed', primary: '#8b5cf6' },
+    { name: 'Orange', value: '#ea580c', primary: '#f97316' },
+    { name: 'Rose Gold', value: '#be185d', primary: '#ec4899' },
+    { name: 'Teal', value: '#0891b2', primary: '#06b6d4' },
+    { name: 'Black', value: '#000000', primary: '#374151' },
+    { name: 'White', value: '#f8f8f8', primary: '#e5e7eb' },
+  ];
+
+  // Function to update dice color in the dice.js vars
+  const updateDiceColor = (color: string) => {
+    setDiceColor(color);
+    
+    // Update the global dice.js color variables if they exist
+    if (typeof window !== 'undefined' && window.DICE && window.DICE.vars) {
+      window.DICE.vars.dice_color = color;
+      // Optionally adjust label color for contrast
+      const isDark = isColorDark(color);
+      window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
+      
+      // Clear material cache so new dice use the updated colors
+      if (window.DICE.clearMaterialCache) {
+        window.DICE.clearMaterialCache();
+      }
+    }
+  };
+
+  // Helper function to determine if a color is dark
+  const isColorDark = (color: string): boolean => {
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness < 128;
+  };
 
   // Load the required scripts
   useEffect(() => {
@@ -379,6 +429,28 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
           ))}
         </div>
         
+        {/* Color Selector */}
+        <div className="mb-4">
+          <div className="flex items-center gap-3">
+            <span className="text-slate-300 text-sm font-medium">Dice Color:</span>
+            <div className="flex gap-2 flex-wrap">
+              {colorOptions.map((color) => (
+                <button
+                  key={color.value}
+                  onClick={() => updateDiceColor(color.value)}
+                  className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
+                    diceColor === color.value 
+                      ? 'border-white shadow-lg ring-2 ring-blue-400' 
+                      : 'border-slate-500 hover:border-slate-300'
+                  }`}
+                  style={{ backgroundColor: color.primary }}
+                  title={color.name}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Bottom Controls Row */}
         <div className="flex items-center justify-between gap-4">
           {/* Modifier */}

@@ -878,6 +878,18 @@ const DICE = (function() {
         return;
     }
 
+    // Expose vars object for external modification
+    that.vars = vars;
+
+    // Function to clear cached materials when colors change
+    that.clearMaterialCache = function() {
+        if (threeD_dice) {
+            threeD_dice.dice_material = null;
+            threeD_dice.d4_material = null;
+            threeD_dice.d100_material = null;
+        }
+    };
+
     return that;
 }());
 
