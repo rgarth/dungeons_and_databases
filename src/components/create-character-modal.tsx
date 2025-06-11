@@ -1008,28 +1008,69 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                       />
                     </div>
 
-                    <AvatarGenerator
-                      characterData={{
-                        race,
-                        class: characterClass,
-                        gender: gender || 'Male', // Use selected gender or default
-                        alignment,
-                        personalityTraits: backgroundCharacteristics?.personalityTraits || [],
-                        ideals: backgroundCharacteristics?.ideals || [],
-                        bonds: backgroundCharacteristics?.bonds || [],
-                        flaws: backgroundCharacteristics?.flaws || [],
-                        appearance: appearance || '',
-                        equippedWeapons: selectedWeapons.map(sw => sw.weapon.name),
-                        equippedArmor: selectedArmor.map(armor => armor.name)
-                      } as CharacterAvatarData}
-                      onAvatarGenerated={(avatarDataUrl, fullBodyDataUrl) => {
-                        // Store the generated avatar for character creation
-                        setGeneratedAvatar(avatarDataUrl);
-                        setGeneratedFullBodyAvatar(fullBodyDataUrl || avatarDataUrl);
-                        console.log('🎨 Avatar generated and stored for character creation');
-                      }}
-                      disabled={!race || !characterClass || !background}
-                    />
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* Left: Avatar Preview */}
+                      <div className="space-y-3">
+                        <h4 className="text-white font-medium">Avatar Preview</h4>
+                        {generatedFullBodyAvatar ? (
+                          <div className="space-y-3">
+                            <img
+                              src={generatedFullBodyAvatar}
+                              alt="Generated character avatar"
+                              className="w-48 h-60 mx-auto rounded-lg border-2 border-purple-500 object-cover"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                              }}
+                            />
+                            <div className="text-center">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setGeneratedAvatar('');
+                                  setGeneratedFullBodyAvatar('');
+                                }}
+                                className="text-red-400 hover:text-red-300 text-sm transition-colors"
+                              >
+                                Remove Avatar
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="w-48 h-60 mx-auto rounded-lg border-2 border-dashed border-slate-500 flex flex-col items-center justify-center text-slate-400">
+                            <div className="text-4xl mb-2">🎨</div>
+                            <span className="text-sm text-center">No avatar generated<br />Click generate below</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Right: Avatar Generation */}
+                      <div className="space-y-4">
+                        <h4 className="text-white font-medium">Generate AI Avatar</h4>
+                        <AvatarGenerator
+                          characterData={{
+                            race,
+                            class: characterClass,
+                            gender: gender || 'Male', // Use selected gender or default
+                            alignment,
+                            personalityTraits: backgroundCharacteristics?.personalityTraits || [],
+                            ideals: backgroundCharacteristics?.ideals || [],
+                            bonds: backgroundCharacteristics?.bonds || [],
+                            flaws: backgroundCharacteristics?.flaws || [],
+                            appearance: appearance || '',
+                            equippedWeapons: selectedWeapons.map(sw => sw.weapon.name),
+                            equippedArmor: selectedArmor.map(armor => armor.name)
+                          } as CharacterAvatarData}
+                          onAvatarGenerated={(avatarDataUrl, fullBodyDataUrl) => {
+                            // Store the generated avatar for character creation
+                            setGeneratedAvatar(avatarDataUrl);
+                            setGeneratedFullBodyAvatar(fullBodyDataUrl || avatarDataUrl);
+                            console.log('🎨 Avatar generated and stored for character creation');
+                          }}
+                          disabled={!race || !characterClass || !background}
+                          className="w-full"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
