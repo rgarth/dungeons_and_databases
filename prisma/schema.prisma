@@ -295,6 +295,8 @@ model Character {
   selectedFeatures Json? // Array of SelectedFeature objects for level-up choices
   background  String?
   alignment   String?
+  gender      String? // Character gender (optional)
+  age         Int? // Character age (optional, can be unknown)
   
   // Core Stats
   strength     Int @default(10)
@@ -362,7 +364,8 @@ model Character {
   flaws            Json? // Array of selected flaws from background
   backstory    String?
   notes        String?
-  avatar       String? // Store selected avatar filename (e.g., "Human_Fighter_Male.png")
+  avatar       String? // Store cropped avatar (192x192) for headers, cards, thumbnails
+  fullBodyAvatar String? // Store full body avatar (192x256) for background tab display
   inspiration  Boolean @default(false) // DM-awarded inspiration (binary: have it or don't)
   languages    Json? // Store known languages as JSON array
   conditions   Json? // Store active conditions as JSON array
