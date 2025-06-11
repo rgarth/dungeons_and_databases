@@ -165,10 +165,17 @@ export class CharacterCreationService {
     // Get spells for spellcasting classes
     const spellcastingAbility = getSpellcastingAbility(characterClass);
     let availableSpells: Spell[] = [];
+    let canCastAtLevel1 = false;
     
     if (spellcastingAbility) {
       availableSpells = getClassSpells(characterClass, 1);
+      canCastAtLevel1 = availableSpells.length > 0;
     }
+
+    // Get subclasses from hardcoded data (until we move to database)
+    const { getSubclassesForClass, choosesSubclassAtCreation } = await import('@/lib/dnd/subclasses');
+    const subclasses = getSubclassesForClass(characterClass);
+    const needsSubclassAtCreation = choosesSubclassAtCreation(characterClass);
 
     // Get equipment packs from database
     let equipmentPacks = [];
@@ -184,11 +191,17 @@ export class CharacterCreationService {
     const armorSuggestions: Armor[] = []; // Will be populated from database
 
     return {
-      availableSpells,
       equipmentPacks,
       weaponSuggestions,
       armorSuggestions,
-      spellcastingAbility
+      subclasses,
+      needsSubclassAtCreation,
+      spellcasting: {
+        ability: spellcastingAbility,
+        canCastAtLevel1,
+        availableSpells,
+        spellSlots: spellcastingAbility ? getSpellSlots(characterClass, 1) : {}
+      }
     };
   }
 
