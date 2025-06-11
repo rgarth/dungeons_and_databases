@@ -355,6 +355,11 @@ model Character {
   // Character Details
   appearance   String?
   personality  String?
+  // D&D 5e Background Personality Features
+  personalityTraits Json? // Array of selected personality traits from background
+  ideals           Json? // Array of selected ideals from background  
+  bonds            Json? // Array of selected bonds from background
+  flaws            Json? // Array of selected flaws from background
   backstory    String?
   notes        String?
   avatar       String? // Store selected avatar filename (e.g., "Human_Fighter_Male.png")
