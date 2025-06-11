@@ -131,7 +131,10 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         if (raceNames.length > 0 && !race) setRace(raceNames[0]);
         if (classNames.length > 0 && !characterClass) setCharacterClass(classNames[0]);
         if (backgroundNames.length > 0 && !background) setBackground(backgroundNames[0]);
-        if (alignmentNames.length > 0 && !alignment) setAlignment(alignmentNames[0]);
+        if (alignmentNames.length > 0 && !alignment) {
+          const trueNeutral = alignmentNames.find(align => align === 'True Neutral');
+          setAlignment(trueNeutral || alignmentNames[0]);
+        }
 
         console.log('✅ Loaded D&D data from database:');
         console.log('- Races:', raceNames.length);
