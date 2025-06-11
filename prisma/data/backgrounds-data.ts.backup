@@ -1,0 +1,162 @@
+export interface BackgroundData {
+  name: string;
+  description: string;
+  skillProficiencies: string[];
+  languages: string[];
+  equipment: string[];
+  feature: string;
+  featureDescription: string;
+  suggestedCharacteristics?: {
+    personalityTraits: string[];
+    ideals: string[];
+    bonds: string[];
+    flaws: string[];
+  };
+}
+
+export const backgroundsData: BackgroundData[] = [
+  {
+    name: "Acolyte",
+    description: "You have spent your life in the service of a temple to a specific god or pantheon of gods.",
+    skillProficiencies: ["Insight", "Religion"],
+    languages: ["Two of your choice"],
+    equipment: ["Holy Symbol", "Prayer Book", "Incense (5)", "Vestments", "Common Clothes", "Belt Pouch"],
+    feature: "Shelter of the Faithful",
+    featureDescription: "As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity.",
+    suggestedCharacteristics: {
+      personalityTraits: [
+        "I idolize a particular hero of my faith, and constantly refer to that person's deeds and example.",
+        "I can find common ground between the fiercest enemies, empathizing with them and always working toward peace.",
+        "I see omens in every event and action. The gods try to speak to us, we just need to listen.",
+        "Nothing can shake my optimistic attitude.",
+        "I quote (or misquote) sacred texts and proverbs in almost every situation.",
+        "I am tolerant (or intolerant) of other faiths and respect (or condemn) the worship of other gods.",
+        "I've enjoyed fine food, drink, and high society among my temple's elite. Rough living grates on me.",
+        "I've spent so long in the temple that I have little practical experience dealing with people in the outside world."
+      ],
+      ideals: [
+        "Tradition. The ancient traditions of worship and sacrifice must be preserved and upheld. (Lawful)",
+        "Charity. I always try to help those in need, no matter what the personal cost. (Good)",
+        "Change. We must help bring about the changes the gods are constantly working in the world. (Chaotic)",
+        "Power. I hope to one day rise to the top of my faith's religious hierarchy. (Lawful)",
+        "Faith. I trust that my deity will guide my actions. I have faith that if I work hard, things will go well. (Lawful)",
+        "Aspiration. I seek to prove myself worthy of my god's favor by matching my actions against his or her teachings. (Any)"
+      ],
+      bonds: [
+        "I would die to recover an ancient relic of my faith that was lost long ago.",
+        "I will someday get revenge on the corrupt temple hierarchy who branded me a heretic.",
+        "I owe my life to the priest who took me in when my parents died.",
+        "Everything I do is for the common people.",
+        "I will do anything to protect the temple where I served.",
+        "I seek to preserve a sacred text that my enemies consider heretical and seek to destroy."
+      ],
+      flaws: [
+        "I judge others harshly, and myself even more severely.",
+        "I put too much trust in those who wield power within my temple's hierarchy.",
+        "My piety sometimes leads me to blindly trust those that profess faith in my god.",
+        "I am inflexible in my thinking.",
+        "I am suspicious of strangers and expect the worst of them.",
+        "Once I pick a goal, I become obsessed with it to the detriment of everything else in my life."
+      ]
+    }
+  },
+  {
+    name: "Criminal",
+    description: "You are an experienced criminal with a history of breaking the law.",
+    skillProficiencies: ["Deception", "Stealth"],
+    languages: [],
+    equipment: ["Crowbar", "Dark Common Clothes with Hood", "Belt Pouch"],
+    feature: "Criminal Contact",
+    featureDescription: "You have a reliable and trustworthy contact who acts as your liaison to a network of other criminals."
+  },
+  {
+    name: "Folk Hero",
+    description: "You come from a humble social rank, but you are destined for so much more.",
+    skillProficiencies: ["Animal Handling", "Survival"],
+    languages: [],
+    equipment: ["Artisan's Tools", "Shovel", "Set of Artisan Tools", "Common Clothes", "Belt Pouch"],
+    feature: "Rustic Hospitality",
+    featureDescription: "Since you come from the ranks of the common folk, you fit in among them with ease."
+  },
+  {
+    name: "Noble",
+    description: "You understand wealth, power, and privilege.",
+    skillProficiencies: ["History", "Persuasion"],
+    languages: ["One of your choice"],
+    equipment: ["Signet Ring", "Scroll of Pedigree", "Fine Clothes", "Purse"],
+    feature: "Position of Privilege",
+    featureDescription: "Thanks to your noble birth, people are inclined to think the best of you."
+  },
+  {
+    name: "Sage",
+    description: "You spent years learning the lore of the multiverse.",
+    skillProficiencies: ["Arcana", "History"],
+    languages: ["Two of your choice"],
+    equipment: ["Bottle of Black Ink", "Quill", "Small Knife", "Letter", "Common Clothes", "Belt Pouch"],
+    feature: "Researcher",
+    featureDescription: "When you attempt to learn or recall a piece of lore, if you do not know that information, you often know where and from whom you can obtain it."
+  },
+  {
+    name: "Soldier",
+    description: "War has been your life for as long as you care to remember.",
+    skillProficiencies: ["Athletics", "Intimidation"],
+    languages: [],
+    equipment: ["Insignia of Rank", "Trophy", "Deck of Cards", "Common Clothes", "Belt Pouch"],
+    feature: "Military Rank",
+    featureDescription: "You have a military rank from your career as a soldier."
+  },
+  {
+    name: "Charlatan",
+    description: "You have always had a way with people.",
+    skillProficiencies: ["Deception", "Sleight of Hand"],
+    languages: [],
+    equipment: ["Forgery Kit", "Disguise Kit", "Signet Ring", "Fine Clothes", "Belt Pouch"],
+    feature: "False Identity",
+    featureDescription: "You have created a second identity that includes documentation, established acquaintances, and disguises."
+  },
+  {
+    name: "Entertainer",
+    description: "You thrive in front of an audience.",
+    skillProficiencies: ["Acrobatics", "Performance"],
+    languages: [],
+    equipment: ["Musical Instrument", "Favor of an Admirer", "Costume", "Belt Pouch"],
+    feature: "By Popular Demand",
+    featureDescription: "You can always find a place to perform, usually in an inn or tavern."
+  },
+  {
+    name: "Guild Artisan",
+    description: "You are a member of an artisan's guild.",
+    skillProficiencies: ["Insight", "Persuasion"],
+    languages: ["One of your choice"],
+    equipment: ["Artisan's Tools", "Letter of Introduction", "Traveler's Clothes", "Belt Pouch"],
+    feature: "Guild Membership",
+    featureDescription: "As an established and respected member of a guild, you can rely on certain benefits that membership provides."
+  },
+  {
+    name: "Hermit",
+    description: "You lived in seclusion for a formative part of your life.",
+    skillProficiencies: ["Medicine", "Religion"],
+    languages: ["One of your choice"],
+    equipment: ["Herbalism Kit", "Scroll", "Winter Blanket", "Traveler's Clothes", "Belt Pouch"],
+    feature: "Discovery",
+    featureDescription: "The quiet seclusion of your extended hermitage gave you access to a unique and powerful discovery."
+  },
+  {
+    name: "Outlander",
+    description: "You grew up in the wilds, far from civilization.",
+    skillProficiencies: ["Athletics", "Survival"],
+    languages: ["One of your choice"],
+    equipment: ["Staff", "Hunting Trap", "Traveler's Clothes", "Belt Pouch"],
+    feature: "Wanderer",
+    featureDescription: "You have an excellent memory for maps and geography, and you can always recall the general layout of terrain."
+  },
+  {
+    name: "Sailor",
+    description: "You sailed on a seagoing vessel for years.",
+    skillProficiencies: ["Athletics", "Perception"],
+    languages: [],
+    equipment: ["Belaying Pin", "Silk Rope (50 feet)", "Lucky Charm", "Common Clothes", "Belt Pouch"],
+    feature: "Ship's Passage",
+    featureDescription: "When you need to, you can secure free passage on a sailing ship for yourself and your adventuring companions."
+  }
+];
