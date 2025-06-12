@@ -16,7 +16,7 @@ async function seedBackgrounds() {
         equipment: background.equipment,
         feature: background.feature,
         featureDescription: background.featureDescription,
-        suggestedCharacteristics: background.suggestedCharacteristics || null,
+        suggestedCharacteristics: background.suggestedCharacteristics || undefined,
       },
       create: {
         name: background.name,
@@ -26,7 +26,7 @@ async function seedBackgrounds() {
         equipment: background.equipment,
         feature: background.feature,
         featureDescription: background.featureDescription,
-        suggestedCharacteristics: background.suggestedCharacteristics || null,
+        suggestedCharacteristics: background.suggestedCharacteristics || undefined,
       },
     });
   }
