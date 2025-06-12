@@ -105,8 +105,8 @@ export function PDFExport({ character, className }: PDFExportProps) {
 
   const exportToPDF = async () => {
     try {
-      // Load the D&D 5e character sheet PDF with /DA entries for font control
-      const response = await fetch('/dnd-5e-character-sheet-with-da.pdf');
+      // Load the original D&D 5e character sheet PDF with all form fields
+      const response = await fetch('/dnd-5e-character-sheet.pdf');
       if (!response.ok) {
         throw new Error('Could not load character sheet template');
       }
@@ -116,12 +116,11 @@ export function PDFExport({ character, className }: PDFExportProps) {
       const form = pdfDoc.getForm();
       
       // Helper function to safely fill text fields
-      const fillField = (fieldName: string, value: string | number | undefined, fontSize: number = 10) => {
+      const fillField = (fieldName: string, value: string | number | undefined) => {
         try {
           const field = form.getTextField(fieldName);
           if (field && value !== undefined) {
             field.setText(String(value));
-            field.setFontSize(fontSize);
           }
         } catch (error) {
           console.warn(`Could not fill field '${fieldName}':`, error);
@@ -282,7 +281,7 @@ export function PDFExport({ character, className }: PDFExportProps) {
         ...(character.inventoryArmor || []).map(a => a.name),
         ...(character.inventoryItems || []).map(i => i.name)
       ].join(', ');
-      fillField('Equipment', equipmentList, 8);
+      fillField('Equipment', equipmentList);
 
       // Money
       fillField('CP', character.copper || 0);
@@ -305,27 +304,27 @@ export function PDFExport({ character, className }: PDFExportProps) {
         ? character.flaws.join(', ') 
         : character.flaws || '';
         
-      fillField('PersonalityTraits ', personalityTraits, 8);
-      fillField('Ideals', ideals, 8);
-      fillField('Bonds', bonds, 8);
-      fillField('Flaws', flaws, 8);
+      fillField('PersonalityTraits ', personalityTraits);
+      fillField('Ideals', ideals);
+      fillField('Bonds', bonds);
+      fillField('Flaws', flaws);
 
       // Features and traits
-      fillField('Features and Traits', character.features?.join(', ') || '', 8);
-      fillField('Feat+Traits', character.features?.join(', ') || '', 8);
+      fillField('Features and Traits', character.features?.join(', ') || '');
+      fillField('Feat+Traits', character.features?.join(', ') || '');
 
       // Proficiencies and languages
       const proficiencies = [
         ...(character.languages || []),
         ...(character.proficiencies || [])
       ].join(', ');
-      fillField('ProficienciesLang', proficiencies, 8);
+      fillField('ProficienciesLang', proficiencies);
       
       // Additional character information
-      fillField('Allies', character.allies || '', 8);
-      fillField('FactionName', character.faction || '', 8);
-      fillField('Backstory', character.backstory || '', 8);
-      fillField('Treasure', character.treasures?.map(t => t.name).join(', ') || '', 8);
+      fillField('Allies', character.allies || '');
+      fillField('FactionName', character.faction || '');
+      fillField('Backstory', character.backstory || '');
+      fillField('Treasure', character.treasures?.map(t => t.name).join(', ') || '');
 
       // Spellcasting information (if character has spells)
       if (character.spellsKnown && character.spellsKnown.length > 0) {
@@ -345,7 +344,7 @@ export function PDFExport({ character, className }: PDFExportProps) {
         const spellNames = character.spellsKnown.map(spell => spell.name);
         for (let i = 0; i < Math.min(spellNames.length, 20); i++) {
           const spellFieldNumber = 1014 + i;
-          fillField(`Spells ${spellFieldNumber}`, spellNames[i], 8);
+          fillField(`Spells ${spellFieldNumber}`, spellNames[i]);
         }
       }
 
@@ -360,7 +359,7 @@ export function PDFExport({ character, className }: PDFExportProps) {
       ).join('\n') || '';
       
       const combinedText = [attacksText, spellsText].filter(Boolean).join('\n\n');
-      fillField('AttacksSpellcasting', combinedText, 8);
+      fillField('AttacksSpellcasting', combinedText);
 
       // Save the PDF
       const pdfBytes = await pdfDoc.save();
