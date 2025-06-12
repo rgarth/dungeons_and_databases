@@ -1052,6 +1052,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                             class: characterClass,
                             gender: gender || 'Male', // Use selected gender or default
                             alignment,
+                            background,
                             personalityTraits: backgroundCharacteristics?.personalityTraits || [],
                             ideals: backgroundCharacteristics?.ideals || [],
                             bonds: backgroundCharacteristics?.bonds || [],

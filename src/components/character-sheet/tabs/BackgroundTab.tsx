@@ -32,27 +32,23 @@ interface BackgroundTabProps {
     languages?: string[];
     backgroundCharacteristics?: SelectedCharacteristics;
   };
+  equippedWeapons: { name: string }[];
+  equippedArmor: { name: string }[];
   onUpdate: (updates: { 
-    name?: string;
-    gender?: string;
-    age?: number;
-    alignment?: string;
     appearance?: string; 
     personality?: string; 
     backstory?: string; 
     notes?: string; 
-    avatar?: string | null; 
-    fullBodyAvatar?: string | null;
     languages?: string[];
-    background?: string;
-    backgroundCharacteristics?: SelectedCharacteristics;
+    avatar?: string;
+    fullBodyAvatar?: string;
   }) => void;
 }
 
 // Initialize character story service
 const storyService = createCharacterStoryService();
 
-export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
+export function BackgroundTab({ character, equippedWeapons, equippedArmor, onUpdate }: BackgroundTabProps) {
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<'freeform' | 'guided'>('freeform');
   const [editValues, setEditValues] = useState({
@@ -675,13 +671,14 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                         class: character.class,
                         gender: character.gender || 'Male',
                         alignment: character.alignment,
+                        background: character.background,
                         personalityTraits: character.backgroundCharacteristics?.personalityTraits || [],
                         ideals: character.backgroundCharacteristics?.ideals || [],
                         bonds: character.backgroundCharacteristics?.bonds || [],
                         flaws: character.backgroundCharacteristics?.flaws || [],
                         appearance: character.appearance || '',
-                        equippedWeapons: [], // You might want to get this from character's equipped items
-                        equippedArmor: [] // You might want to get this from character's equipped items
+                        equippedWeapons: character.equippedWeapons?.map(w => w.name) || [],
+                        equippedArmor: character.equippedArmor?.map(a => a.name) || []
                       } as CharacterAvatarData}
                       onAvatarGenerated={(avatarDataUrl, fullBodyDataUrl) => {
                         onUpdate({ 
