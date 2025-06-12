@@ -12,3 +12,4 @@
 - Modern code patterns in clean, focused files - but never alongside legacy versions.
 - Before running a development daemon, check if it is already running and kill the last instance to avoid port conflicts.
 - **Dev server restart command**: `pkill -f "npm run dev" ; pkill -f "next dev" ; sleep 5 ; npm run dev`
+- **Pivot confirmation required**: When you have to pivot on directions, explain why and wait for confirmation.
