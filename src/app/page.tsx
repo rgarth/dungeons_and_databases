@@ -151,7 +151,38 @@ export default function Home() {
 
       {/* Characters Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {characters.map((character) => (
+        {/* Loading State */}
+        {loading && (
+          <>
+            {/* Loading skeleton cards */}
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-slate-800 rounded-lg p-6 border border-slate-700 animate-pulse">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-16 h-16 bg-slate-700 rounded-lg"></div>
+                    <div>
+                      <div className="h-6 bg-slate-700 rounded w-32 mb-2"></div>
+                      <div className="h-4 bg-slate-700 rounded w-24"></div>
+                    </div>
+                  </div>
+                  <div className="h-8 bg-slate-700 rounded w-16"></div>
+                </div>
+                <div className="space-y-3">
+                  <div className="h-4 bg-slate-700 rounded w-full"></div>
+                  <div className="h-4 bg-slate-700 rounded w-3/4"></div>
+                </div>
+              </div>
+            ))}
+            {/* Loading create button */}
+            <div className="border-2 border-dashed border-slate-600 rounded-lg p-8 flex flex-col items-center justify-center gap-4 min-h-[200px] animate-pulse">
+              <div className="h-12 w-12 bg-slate-700 rounded"></div>
+              <div className="h-6 bg-slate-700 rounded w-40"></div>
+            </div>
+          </>
+        )}
+
+        {/* Actual Characters */}
+        {!loading && characters.map((character) => (
           <CharacterCard 
             key={character.id} 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -162,17 +193,19 @@ export default function Home() {
         ))}
         
         {/* Create New Character Card */}
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="border-2 border-dashed border-slate-600 hover:border-purple-500 rounded-lg p-8 flex flex-col items-center justify-center gap-4 text-slate-400 hover:text-purple-400 transition-colors min-h-[200px]"
-        >
-          <Plus className="h-12 w-12" />
-          <span className="text-lg font-semibold">Create New Character</span>
-        </button>
+        {!loading && (
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="border-2 border-dashed border-slate-600 hover:border-purple-500 rounded-lg p-8 flex flex-col items-center justify-center gap-4 text-slate-400 hover:text-purple-400 transition-colors min-h-[200px]"
+          >
+            <Plus className="h-12 w-12" />
+            <span className="text-lg font-semibold">Create New Character</span>
+          </button>
+        )}
       </div>
 
       {/* Empty State */}
-      {characters.length === 0 && (
+      {!loading && characters.length === 0 && (
         <div className="text-center py-12">
           <Shield className="h-16 w-16 text-slate-600 mx-auto mb-4" />
           <h2 className="text-2xl font-semibold text-slate-300 mb-2">
