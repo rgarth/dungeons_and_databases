@@ -22,7 +22,7 @@
     "db:seed:check": "npx tsx prisma/seed-production.ts --skip-if-exists",
     "db:studio": "prisma studio",
     "deploy:prepare": "npm run db:generate && npm run db:migrate && npm run db:seed:check",
-    "deploy:full": "npm run build && npm run deploy:prepare"
+    "deploy:full": "npm run build"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed-production.ts --skip-if-exists"
@@ -37,6 +37,7 @@
     "lucide-react": "^0.511.0",
     "next": "15.3.3",
     "next-auth": "^4.24.11",
+    "pdf-lib": "^1.17.1",
     "prisma": "^6.8.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

@@ -15,6 +15,7 @@ import { LevelUpWizard } from "./character-sheet/LevelUpWizard";
 import { getSpellcastingType, getSpellsPreparedCount } from "@/lib/dnd/level-up";
 import { StatsTab, ActionsTab, GearTab, InventoryTab, BackgroundTab } from "./character-sheet/";
 import { DiceRoller } from "./dice-roller";
+import { PDFExport } from "./character-sheet/PDFExport";
 
 
 interface CharacterSheetProps {
@@ -891,6 +892,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
               <div className="flex items-center gap-2 flex-shrink-0">
                 {/* Desktop buttons */}
                 <div className="hidden md:flex items-center gap-2">
+                  <PDFExport character={displayCharacter} />
                   <button
                     onClick={() => setShowLevelUpModal(true)}
                     className="flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm"
@@ -921,12 +923,15 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
                   {/* Dropdown menu */}
                   {showActionsMenu && (
                     <div className="absolute right-0 top-full mt-1 bg-slate-700 rounded-lg border border-slate-600 shadow-lg z-10 min-w-[140px]">
+                      <div className="px-3 py-2 border-b border-slate-600">
+                        <PDFExport character={displayCharacter} className="w-full justify-center" />
+                      </div>
                       <button
                         onClick={() => {
                           setShowLevelUpModal(true);
                           setShowActionsMenu(false);
                         }}
-                        className="flex items-center gap-2 w-full px-3 py-2 text-left text-white hover:bg-slate-600 rounded-t-lg transition-colors"
+                        className="flex items-center gap-2 w-full px-3 py-2 text-left text-white hover:bg-slate-600 transition-colors"
                       >
                         <TrendingUp className="h-4 w-4 text-green-400" />
                         Level Up
