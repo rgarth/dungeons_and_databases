@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { Weapon } from './equipment';
-
-const prisma = new PrismaClient();
 
 export interface ClassProficiencies {
   armor: string[];
