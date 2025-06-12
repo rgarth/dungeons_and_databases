@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Plus, Star, Zap } from "lucide-react";
+import { X, Plus, Star, Zap, Sparkles } from "lucide-react";
 import { Weapon } from "@/lib/dnd/equipment";
 import { weaponsData } from '../../../../prisma/data/weapons-data';
+import { generateMagicWeaponName } from '@/lib/dnd/magic-weapon-names';
 
 interface CustomWeapon {
   id: string;
@@ -225,13 +226,24 @@ export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: Custom
                   <label className="block text-sm font-medium text-slate-300 mb-2">
                     Custom Name (Optional)
                   </label>
-                  <input
-                    type="text"
-                    value={customName}
-                    onChange={(e) => setCustomName(e.target.value)}
-                    placeholder={generateWeaponName() || "e.g., Flamberge of Doom"}
-                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={customName}
+                      onChange={(e) => setCustomName(e.target.value)}
+                      placeholder={generateWeaponName() || "e.g., Flamberge of Doom"}
+                      className="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setCustomName(generateMagicWeaponName())}
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-3 py-2 rounded-lg transition-all flex items-center gap-1 whitespace-nowrap"
+                      title="Generate random magic weapon name"
+                    >
+                      <Sparkles className="h-4 w-4" />
+                      Generate
+                    </button>
+                  </div>
                   <div className="text-xs text-slate-400 mt-1">
                     Leave blank to use: {generateWeaponName()}
                   </div>
