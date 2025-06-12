@@ -189,25 +189,28 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
   
   // Base style elements
   const consistentStyle = {
-    artStyle: "Digital fantasy character portrait",
-    lighting: "professional portrait lighting, soft shadows", 
+    artStyle: "Photorealistic portrait photography",
+    lighting: "professional portrait lighting, soft shadows, natural lighting", 
     composition: "PORTRAIT SHOT, head and shoulders only, bust shot, upper body portrait, close-up character portrait, NOT full body, looking at camera",
-    quality: "highly detailed, clean art style, professional illustration",
-          background: "simple neutral background, fantasy RPG character portrait, portrait photography style",
-    format: "fantasy character art, detailed illustration"
+    quality: "highly detailed, photorealistic, professional photography",
+    background: "simple neutral background, studio portrait photography",
+    format: "realistic photography, detailed photorealism"
   };
 
   // Strong race descriptions with distinctive features
   const raceDescriptions: Record<string, string> = {
-    'Human': 'human character with human facial features',
+    'Human': 'single human character, one person only, individual human warrior, solo character with human facial features',
     'Elf': 'elf character with long pointed ears, ethereal features, angular face',
     'Dwarf': 'dwarf character with thick beard, stocky build, broad shoulders',
-    'Halfling': 'halfling character, small stature, round face, curly hair',
+    'Halfling': 'halfling character, small adult stature, mature adult face, adult proportions, NOT child, NOT young, adult halfling person',
     'Dragonborn': 'DRAGONBORN RACE with scaled skin covering face and body, draconic heritage, reptilian eyes, pronounced snout',
-    'Gnome': 'gnome character, very small build, large nose, bright eyes',
-    'Half-Elf': 'half-elf character with slightly pointed ears, mixed heritage features',
-    'Half-Orc': 'half-orc character with tusks, green-tinged skin, muscular build',
-    'Tiefling': 'tiefling character with curved horns, tail, infernal heritage, colored skin'
+    'Gnome': 'small ADULT humanoid adventurer, mature adult person 3-4 feet tall, ADULT FACE with wrinkles and age lines, pointy ears like elf, intelligent sparkling eyes, high cheekbones, prominent nose, earth-toned skin, clean-shaven ADULT face, NO BEARD, ADULT proportions not child, weathered mature features, fantasy adventurer clothing, small ADULT person with elf-like features, humanoid ADULT not lawn ornament, NOT CHILD, NOT YOUNG FACE, mature adult character',
+    'Tiefling': 'tiefling character with horns, tail, infernal heritage, unusual skin color',
+    'Half-Orc': 'half-orc character with greenish skin, prominent tusks, muscular build',
+    'Half-Elf': 'half-elf character with slightly pointed ears, human-elf hybrid features',
+    'Goliath': 'goliath character with stone-like skin markings, massive build, giant heritage',
+    'Aasimar': 'aasimar character with celestial heritage, glowing eyes, radiant features',
+    'Tabaxi': 'tabaxi character with cat-like features, feline face, fur covering body'
   };
 
   // Practical class descriptions
