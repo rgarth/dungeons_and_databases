@@ -307,6 +307,7 @@ export class CharacterCreationService {
     
     console.log('=== CHARACTER CREATION DEBUG ===');
     console.log('Character Class:', characterClass);
+    console.log('Character Race:', data.race);
     console.log('Background:', data.background);
     console.log('Selected Equipment Pack ID:', data.selectedEquipmentPack);
     console.log('Available Equipment Packs:', equipmentPacks.length);
@@ -314,13 +315,32 @@ export class CharacterCreationService {
     console.log('Selected Armor:', data.selectedArmor);
 
     // Get equipment pack items if a pack was selected (use passed parameter or fetch from pack)
+    let packItems: { name: string; quantity: number }[] = [];
     if (equipmentPackItems.length === 0 && data.selectedEquipmentPack !== undefined && equipmentPacks[data.selectedEquipmentPack]) {
       const selectedPack = equipmentPacks[data.selectedEquipmentPack];
-      equipmentPackItems = selectedPack.items.map((item: { name: string; quantity: number }) => ({
+      packItems = selectedPack.items.map((item: { name: string; quantity: number }) => ({
         name: item.name,
         quantity: item.quantity
       }));
-      console.log('Selected equipment pack items:', equipmentPackItems);
+      console.log('Selected equipment pack items:', packItems);
+    } else {
+      packItems = equipmentPackItems;
+    }
+
+    // Get race equipment from database (most races don't have starting equipment)
+    let raceItems: string[] = [];
+    try {
+      const raceResponse = await fetch('/api/races');
+      if (raceResponse.ok) {
+        const races = await raceResponse.json();
+        const raceData = races.find((race: { name: string; equipment?: string[] }) => race.name === data.race);
+        raceItems = raceData?.equipment || [];
+        if (raceItems.length > 0) {
+          console.log(`Race ${data.race} provides equipment:`, raceItems);
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to fetch race equipment, using empty array:', error);
     }
 
     // Get background equipment from database
@@ -331,16 +351,39 @@ export class CharacterCreationService {
         const backgrounds = await backgroundResponse.json();
         const backgroundData = backgrounds.find((bg: { name: string; equipment: string[] }) => bg.name === data.background);
         backgroundItems = backgroundData?.equipment || [];
+        if (backgroundItems.length > 0) {
+          console.log(`Background ${data.background} provides equipment:`, backgroundItems);
+        }
       }
     } catch (error) {
       console.warn('Failed to fetch background equipment, using empty array:', error);
     }
     
-    // Combine equipment pack items + background items
-    const generalInventory: { name: string; quantity: number }[] = [
-      ...equipmentPackItems,
+    // Combine all equipment sources with duplicate prevention
+    const allEquipmentSources = [
+      ...packItems,
+      ...raceItems.map(item => ({ name: item, quantity: 1 })),
       ...backgroundItems.map(item => ({ name: item, quantity: 1 }))
     ];
+    
+    // Merge duplicates by combining quantities
+    const equipmentMap = new Map<string, number>();
+    allEquipmentSources.forEach(item => {
+      const currentQuantity = equipmentMap.get(item.name) || 0;
+      equipmentMap.set(item.name, currentQuantity + item.quantity);
+    });
+    
+    // Convert back to array format
+    const generalInventory: { name: string; quantity: number }[] = Array.from(equipmentMap.entries()).map(([name, quantity]) => ({
+      name,
+      quantity
+    }));
+    
+    console.log('=== EQUIPMENT COMBINATION SUMMARY ===');
+    console.log('Equipment Pack items:', packItems.length);
+    console.log('Race equipment items:', raceItems.length);
+    console.log('Background equipment items:', backgroundItems.length);
+    console.log('Final combined inventory (duplicates merged):', generalInventory.length);
     
     // Get background skills from database
     let backgroundSkills: string[] = [];
@@ -411,13 +454,13 @@ export class CharacterCreationService {
       spellsPrepared: spellsPrepared || undefined,
       spellSlots,
       spellcastingAbility: spellcastingAbility || undefined,
-      spellSaveDC: spellcastingStats?.spellSaveDC,
-      spellAttackBonus: spellcastingStats?.spellAttackBonus,
+      spellSaveDC: spellcastingStats?.spellSaveDC || undefined,
+      spellAttackBonus: spellcastingStats?.spellAttackBonus || undefined,
       
       // Actions
-      actions: allActions.filter(action => action.available),
-      bonusActions: allActions.filter(action => action.type === 'Bonus Action' && action.available),
-      reactions: allActions.filter(action => action.type === 'Reaction' && action.available),
+      actions: allActions.filter(action => action.type === 'Action'),
+      bonusActions: allActions.filter(action => action.type === 'Bonus Action'),
+      reactions: allActions.filter(action => action.type === 'Reaction'),
       
       // Currency
       copperPieces: 0,
