@@ -55,13 +55,9 @@ export function AvatarGenerator({
         setResult(data);
         
         if (data.success && data.avatarImage && onAvatarGenerated) {
-          // If the avatar and full body are the same, crop client-side
-          let finalAvatar = data.avatarImage;
-          if (data.avatarImage === data.fullBodyImage) {
-            console.log('🖼️ Server returned uncropped image, cropping client-side...');
-            finalAvatar = await cropImageClientSide(data.avatarImage);
-          }
-          onAvatarGenerated(finalAvatar, data.fullBodyImage);
+          // Server now provides optimized images - use them directly
+          console.log('🖼️ Server provided optimized avatar and full body images');
+          onAvatarGenerated(data.avatarImage, data.fullBodyImage);
         }
       } else {
         const errorData = await response.json();
@@ -81,41 +77,7 @@ export function AvatarGenerator({
     }
   };
 
-  // downloadImage removed - no longer showing download button
-
-  const cropImageClientSide = async (imageDataUrl: string): Promise<string> => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        // Create canvas for cropping
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        if (!ctx) {
-          resolve(imageDataUrl); // Return original if can't get context
-          return;
-        }
-        
-        // Set canvas to square (192x192)
-        canvas.width = 192;
-        canvas.height = 192;
-        
-        // Draw the top portion of the image (preserving the head)
-        // Source: take top 192x192 from original 192x256 image
-        ctx.drawImage(img, 0, 0, 192, 192, 0, 0, 192, 192);
-        
-        // Convert to data URL
-        const croppedDataUrl = canvas.toDataURL('image/png');
-        resolve(croppedDataUrl);
-      };
-      
-      img.onerror = () => {
-        resolve(imageDataUrl); // Return original if image load fails
-      };
-      
-      img.src = imageDataUrl;
-    });
-  };
+  // Client-side cropping removed - now handled server-side with Sharp for better performance
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -140,7 +102,7 @@ export function AvatarGenerator({
             🎨 Creating your personalized avatar using AI...
           </p>
           <p className="text-blue-400 text-xs mt-1">
-            Using Leonardo AI for high-quality fantasy art, with Pollinations fallback.
+            Using FLUX.1 Schnell for fast, high-quality fantasy art, with Pollinations fallback.
           </p>
           <p className="text-green-400 text-xs mt-1">
             ✅ Anti-trope protection: Realistic armor, practical clothing, respectful character design
@@ -182,7 +144,7 @@ export function AvatarGenerator({
       {/* Usage Note */}
       <div className="text-xs text-slate-500">
         <p>💡 Each generation is unique and based on your character&apos;s traits</p>
-        <p>🚀 Uses Flux1 when available, falls back to free service</p>
+        <p>🚀 Uses FLUX.1 Schnell via Replicate, falls back to Pollinations</p>
       </div>
     </div>
   );

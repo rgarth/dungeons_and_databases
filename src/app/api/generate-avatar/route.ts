@@ -7,6 +7,7 @@ export interface CharacterAvatarData {
   class: string;
   gender?: string;
   alignment?: string;
+  background?: string;
   personalityTraits?: string[];
   ideals?: string[];
   bonds?: string[];
@@ -32,11 +33,12 @@ export async function POST(request: NextRequest) {
 
     console.log(`🎨 Generating avatar with prompt: ${prompt.substring(0, 100)}...`);
 
-    // Try Leonardo AI first, fallback to Pollinations
-    let avatarResult = await generateWithLeonardoAI(prompt, seed);
+    // Try FLUX.1 Schnell via Replicate first (faster, better for D&D content)
+    let avatarResult = await generateWithFluxSchnell(prompt, seed);
     
+    // Fallback to Pollinations if FLUX.1 Schnell fails
     if (!avatarResult.success) {
-      console.log('⚠️ Leonardo AI failed, falling back to Pollinations:', avatarResult.error);
+      console.log('⚠️ FLUX.1 Schnell failed, falling back to Pollinations:', avatarResult.error);
       avatarResult = await generateWithPollinations(prompt, seed);
     }
 
@@ -62,88 +64,89 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function generateWithLeonardoAI(prompt: string, seed: number) {
+async function generateWithFluxSchnell(prompt: string, seed: number) {
   try {
-    const leonardoApiKey = process.env.LEONARDO_API_KEY;
+    const replicateToken = process.env.REPLICATE_API_TOKEN;
     
-    if (!leonardoApiKey) {
-      throw new Error('Leonardo AI API key not configured');
+    if (!replicateToken) {
+      throw new Error('Replicate API token not configured');
     }
 
-    console.log('🎨 Trying Leonardo AI...');
+    console.log('🚀 Trying FLUX.1 Schnell via Replicate...');
 
-    const response = await fetch('https://cloud.leonardo.ai/api/rest/v1/generations', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${leonardoApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt: prompt,
-        modelId: "6bef9f1b-29cb-40c7-b9df-32b51c1f67d3", // Leonardo Anime XL
-        width: 512,
-        height: 768,
-        num_images: 1,
-        guidance_scale: 7,
-        seed: seed,
-        presetStyle: "DYNAMIC",
-        scheduler: "DPM_SOLVER",
-        public: false,
-        promptMagic: true
-      }),
+    // Import Replicate dynamically
+    const Replicate = (await import('replicate')).default;
+    const replicate = new Replicate({
+      auth: replicateToken,
     });
 
-    if (!response.ok) {
-      throw new Error(`Leonardo AI API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const generationId = data.sdGenerationJob.generationId;
-
-    // Poll for completion
-    let attempts = 0;
-    const maxAttempts = 30;
-    
-    while (attempts < maxAttempts) {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const statusResponse = await fetch(`https://cloud.leonardo.ai/api/rest/v1/generations/${generationId}`, {
-        headers: {
-          'Authorization': `Bearer ${leonardoApiKey}`,
-        },
-      });
-
-      if (statusResponse.ok) {
-        const statusData = await statusResponse.json();
-        
-        if (statusData.generations_by_pk?.status === 'COMPLETE' && statusData.generations_by_pk?.generated_images?.length > 0) {
-          const imageUrl = statusData.generations_by_pk.generated_images[0].url;
-          
-          // Convert to base64
-          const imageResponse = await fetch(imageUrl);
-          const imageBuffer = await imageResponse.arrayBuffer();
-          const base64Image = `data:image/jpeg;base64,${Buffer.from(imageBuffer).toString('base64')}`;
-          
-          console.log('✅ Leonardo AI generation successful');
-          return {
-            success: true,
-            fullBodyImage: base64Image,
-            avatarImage: base64Image,
-            service: '🎨 Leonardo AI (Premium)'
-          };
+    const output = await replicate.run(
+      "black-forest-labs/flux-schnell",
+      {
+        input: {
+          prompt: prompt,
+          aspect_ratio: "2:3", // Portrait orientation for better character framing
+          num_outputs: 1,
+          seed: seed,
+          num_inference_steps: 4, // Fast generation with Schnell
+          output_format: "jpg",
+          output_quality: 90
         }
       }
-      
-      attempts++;
-    }
+    );
 
-    throw new Error('Leonardo AI generation timeout');
+    // Handle output - FLUX.1 Schnell returns an array of URLs
+    const imageUrl = Array.isArray(output) ? output[0] : output;
+    
+    if (!imageUrl) {
+      throw new Error('No image URL returned from FLUX.1 Schnell');
+    }
+    
+    // Convert to base64 and resize for efficiency
+    const imageResponse = await fetch(imageUrl);
+    const originalBuffer = await imageResponse.arrayBuffer();
+    
+    // Debug: Log original image size
+    console.log(`📏 FLUX.1 Schnell original size: ${originalBuffer.byteLength} bytes`);
+    
+    // Resize image to reasonable dimensions for avatars using Sharp
+    const sharp = (await import('sharp')).default;
+    
+    // Keep original aspect ratio for full body, just resize to reasonable dimensions
+    const resizedFullBody = await sharp(Buffer.from(originalBuffer))
+      .resize(512, 768, { 
+        fit: 'inside', // Keep aspect ratio, don't crop
+        withoutEnlargement: true
+      })
+      .jpeg({ quality: 85 })
+      .toBuffer();
+    
+    // Only crop for the square avatar
+    const resizedAvatar = await sharp(Buffer.from(originalBuffer))
+      .resize(192, 192, { 
+        fit: 'cover',
+        position: 'top' // Focus on head/upper body
+      })
+      .jpeg({ quality: 85 })
+      .toBuffer();
+    
+    const fullBodyBase64 = `data:image/jpeg;base64,${resizedFullBody.toString('base64')}`;
+    const avatarBase64 = `data:image/jpeg;base64,${resizedAvatar.toString('base64')}`;
+    
+    console.log(`📏 Resized full body: ${resizedFullBody.byteLength} bytes, avatar: ${resizedAvatar.byteLength} bytes`);
+    console.log('✅ FLUX.1 Schnell generation successful');
+    return {
+      success: true,
+      fullBodyImage: fullBodyBase64,
+      avatarImage: avatarBase64,
+      service: '🚀 FLUX.1 Schnell (Replicate)'
+    };
 
   } catch (error) {
-    console.error('Leonardo AI error:', error);
+    console.error('FLUX.1 Schnell error:', error);
     return {
       success: false,
-      error: `Leonardo AI generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      error: `FLUX.1 Schnell generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
     };
   }
 }
@@ -188,23 +191,23 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
   const consistentStyle = {
     artStyle: "Digital fantasy character portrait",
     lighting: "professional portrait lighting, soft shadows", 
-    composition: "full body character portrait, standing pose, looking at camera",
+    composition: "PORTRAIT SHOT, head and shoulders only, bust shot, upper body portrait, close-up character portrait, NOT full body, looking at camera",
     quality: "highly detailed, clean art style, professional illustration",
-    background: "simple neutral background, fantasy RPG character portrait",
+          background: "simple neutral background, fantasy RPG character portrait, portrait photography style",
     format: "fantasy character art, detailed illustration"
   };
 
-  // Conservative race descriptions
+  // Strong race descriptions with distinctive features
   const raceDescriptions: Record<string, string> = {
-    'Human': 'human character',
-    'Elf': 'elf character with pointed ears',
-    'Dwarf': 'dwarf character with beard',
-    'Halfling': 'halfling character, small stature',
-    'Dragonborn': 'dragonborn character with draconic features',
-    'Gnome': 'gnome character, small build',
-    'Half-Elf': 'half-elf character',
-    'Half-Orc': 'half-orc character',
-    'Tiefling': 'tiefling character with horns'
+    'Human': 'human character with human facial features',
+    'Elf': 'elf character with long pointed ears, ethereal features, angular face',
+    'Dwarf': 'dwarf character with thick beard, stocky build, broad shoulders',
+    'Halfling': 'halfling character, small stature, round face, curly hair',
+    'Dragonborn': 'DRAGONBORN RACE with scaled skin covering face and body, draconic heritage, reptilian eyes, pronounced snout',
+    'Gnome': 'gnome character, very small build, large nose, bright eyes',
+    'Half-Elf': 'half-elf character with slightly pointed ears, mixed heritage features',
+    'Half-Orc': 'half-orc character with tusks, green-tinged skin, muscular build',
+    'Tiefling': 'tiefling character with curved horns, tail, infernal heritage, colored skin'
   };
 
   // Practical class descriptions
