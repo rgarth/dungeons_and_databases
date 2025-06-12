@@ -17,6 +17,7 @@ interface GenerationResult {
   avatarImage?: string;
   prompt?: string;
   error?: string;
+  service?: string;
 }
 
 export function AvatarGenerator({ 
@@ -139,8 +140,30 @@ export function AvatarGenerator({
             🎨 Creating your personalized avatar using AI...
           </p>
           <p className="text-blue-400 text-xs mt-1">
-            This may take 10-30 seconds. Using character data: {characterData.race} {characterData.class}
-            {characterData.gender && ` (${characterData.gender})`}
+            Using Leonardo AI for high-quality fantasy art, with Pollinations fallback.
+          </p>
+          <p className="text-green-400 text-xs mt-1">
+            ✅ Anti-trope protection: Realistic armor, practical clothing, respectful character design
+          </p>
+          <p className="text-blue-400 text-xs">
+            Character: {characterData.race} {characterData.class} ({characterData.gender || 'Unspecified'})
+          </p>
+        </div>
+      )}
+
+      {/* Success Message */}
+      {result && result.success && (
+        <div className="p-3 bg-green-900/20 border border-green-600/30 rounded-lg">
+          <p className="text-green-300 text-sm">
+            ✅ Avatar generated successfully!
+          </p>
+          {result.service && (
+            <p className="text-green-400 text-xs mt-1">
+              Generated using: {result.service}
+            </p>
+          )}
+          <p className="text-green-400 text-xs">
+            🛡️ Respectful fantasy design with practical armor and realistic proportions
           </p>
         </div>
       )}
@@ -150,17 +173,16 @@ export function AvatarGenerator({
         <div className="p-3 bg-red-900/20 border border-red-600/30 rounded-lg">
           <p className="text-red-300 text-sm font-medium">Avatar Generation Failed</p>
           <p className="text-red-400 text-xs mt-1">{result.error}</p>
-                     <p className="text-red-400 text-xs mt-2">
-             💡 Try again - sometimes the AI service is busy. Each generation is unique!
-           </p>
+          <p className="text-red-400 text-xs mt-2">
+            💡 Try again - sometimes the AI service is busy. Each generation is unique!
+          </p>
         </div>
       )}
-
-
 
       {/* Usage Note */}
       <div className="text-xs text-slate-500">
         <p>💡 Each generation is unique and based on your character&apos;s traits</p>
+        <p>🚀 Uses Flux1 when available, falls back to free service</p>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ A modern D&D 5e character management application built with Next.js, Prisma, and
 
 - **Complete D&D 5e SRD Content** - 554 items ready for gameplay
 - **Character Management** - Create, edit, and manage D&D characters
+- **AI Avatar Generation** - Create personalized character portraits with Flux1 + fallback
 - **Equipment System** - Full weapon, armor, and equipment database
 - **Spell Management** - Comprehensive spell system with all spell levels
 - **User Authentication** - Secure user accounts with NextAuth
@@ -167,6 +168,40 @@ All D&D content is from the **System Reference Document 5.1 (SRD 5.1)** by Wizar
 
 ### Disclaimer
 **Dungeons & Dragons** and **D&D** are trademarks of Wizards of the Coast LLC. This application is not affiliated with, endorsed, sponsored, or specifically approved by Wizards of the Coast LLC.
+
+## 🎨 AI Avatar Generation
+
+Generate unique character portraits using advanced AI models:
+
+### Features
+- **Leonardo AI Integration** - Premium quality fantasy art via Leonardo AI API
+- **Anti-Trope Protection** - Built-in safeguards against problematic fantasy stereotypes
+- **Smart Fallback** - Automatic fallback to free Pollinations service
+- **Character-Based Prompts** - Avatars generated from race, class, gender, and equipment
+- **Respectful Design** - Realistic armor, practical clothing, normal proportions
+
+### Anti-Trope Safeguards
+- ✅ **Practical Armor** - Full coverage, realistic protection (no chainmail bikinis!)
+- ✅ **Realistic Proportions** - Normal body shapes and sizes
+- ✅ **Functional Clothing** - Appropriate adventuring gear
+- ✅ **Respectful Poses** - Confident stances, not sexualized
+- ✅ **Grounded Fantasy** - Believable character designs
+
+### Setup (Optional)
+```bash
+# Add to .env.local for premium Leonardo AI generation
+LEONARDO_API_KEY=your_leonardo_api_key_here
+```
+
+**Without API key**: Uses free Pollinations service (still excellent quality!)
+**With API key**: Premium Leonardo AI with specialized fantasy models
+
+### Leonardo AI Pricing
+- **Free Tier**: 150 tokens daily (~4,500 avatars/month)
+- **Apprentice**: $10/month - 8,500 tokens (~25,000 avatars)
+- **Cost per avatar**: ~$0.0004 (much cheaper than other services!)
+
+Get your API key at: https://leonardo.ai
 
 ---
 

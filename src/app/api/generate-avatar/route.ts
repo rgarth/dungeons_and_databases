@@ -25,51 +25,166 @@ export async function POST(request: NextRequest) {
     }
 
     const characterData: CharacterAvatarData = await request.json();
+    console.log('🎨 Generating avatar for character:', characterData);
+
+    const prompt = createDynamicAvatarPrompt(characterData);
+    const seed = Math.floor(Math.random() * 1000000);
+
+    console.log(`🎨 Generating avatar with prompt: ${prompt.substring(0, 100)}...`);
+
+    // Try Leonardo AI first, fallback to Pollinations
+    let avatarResult = await generateWithLeonardoAI(prompt, seed);
     
-    // Validate required fields
-    if (!characterData.race || !characterData.class) {
-      return NextResponse.json({ error: "Race and class are required" }, { status: 400 });
+    if (!avatarResult.success) {
+      console.log('⚠️ Leonardo AI failed, falling back to Pollinations:', avatarResult.error);
+      avatarResult = await generateWithPollinations(prompt, seed);
     }
 
-    // Generate avatar prompt based on character data
-    const prompt = createDynamicAvatarPrompt(characterData);
-    
-    // Generate seed based on character data for consistency
-    const seed = generateCharacterSeed(characterData);
-    
-    console.log('🎨 Generating avatar with prompt:', prompt.slice(0, 200) + '...');
-    
-    // Generate avatar using Pollinations
-    const avatarResult = await generateWithPollinations(prompt, seed);
-    
-    if (avatarResult.success && avatarResult.buffer) {
-      // Process the image - create both full body and cropped versions
-      const processedImages = await processAvatarImages(avatarResult.buffer);
-      
-      return NextResponse.json({
-        success: true,
-        fullBodyImage: processedImages.fullBody,    // 192x256 - for background tab display
-        avatarImage: processedImages.avatar,        // 192x192 - for headers, cards, thumbnails
-        prompt: prompt.slice(0, 500) // Return partial prompt for debugging
-      });
-    } else {
-      console.error('Avatar generation failed:', avatarResult.error);
+    if (!avatarResult.success) {
       return NextResponse.json({ 
-        error: "Failed to generate avatar", 
-        details: avatarResult.error 
+        error: avatarResult.error || "Failed to generate avatar" 
       }, { status: 500 });
     }
-    
+
+    return NextResponse.json({
+      success: true,
+      fullBodyImage: avatarResult.fullBodyImage,
+      avatarImage: avatarResult.avatarImage,
+      prompt: prompt,
+      service: avatarResult.service
+    });
+
   } catch (error) {
-    console.error("Error generating avatar:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error('Avatar generation error:', error);
+    return NextResponse.json({ 
+      error: "Internal server error" 
+    }, { status: 500 });
+  }
+}
+
+async function generateWithLeonardoAI(prompt: string, seed: number) {
+  try {
+    const leonardoApiKey = process.env.LEONARDO_API_KEY;
+    
+    if (!leonardoApiKey) {
+      throw new Error('Leonardo AI API key not configured');
+    }
+
+    console.log('🎨 Trying Leonardo AI...');
+
+    const response = await fetch('https://cloud.leonardo.ai/api/rest/v1/generations', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${leonardoApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        modelId: "6bef9f1b-29cb-40c7-b9df-32b51c1f67d3", // Leonardo Anime XL
+        width: 512,
+        height: 768,
+        num_images: 1,
+        guidance_scale: 7,
+        seed: seed,
+        presetStyle: "DYNAMIC",
+        scheduler: "DPM_SOLVER",
+        public: false,
+        promptMagic: true
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Leonardo AI API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const generationId = data.sdGenerationJob.generationId;
+
+    // Poll for completion
+    let attempts = 0;
+    const maxAttempts = 30;
+    
+    while (attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const statusResponse = await fetch(`https://cloud.leonardo.ai/api/rest/v1/generations/${generationId}`, {
+        headers: {
+          'Authorization': `Bearer ${leonardoApiKey}`,
+        },
+      });
+
+      if (statusResponse.ok) {
+        const statusData = await statusResponse.json();
+        
+        if (statusData.generations_by_pk?.status === 'COMPLETE' && statusData.generations_by_pk?.generated_images?.length > 0) {
+          const imageUrl = statusData.generations_by_pk.generated_images[0].url;
+          
+          // Convert to base64
+          const imageResponse = await fetch(imageUrl);
+          const imageBuffer = await imageResponse.arrayBuffer();
+          const base64Image = `data:image/jpeg;base64,${Buffer.from(imageBuffer).toString('base64')}`;
+          
+          console.log('✅ Leonardo AI generation successful');
+          return {
+            success: true,
+            fullBodyImage: base64Image,
+            avatarImage: base64Image,
+            service: '🎨 Leonardo AI (Premium)'
+          };
+        }
+      }
+      
+      attempts++;
+    }
+
+    throw new Error('Leonardo AI generation timeout');
+
+  } catch (error) {
+    console.error('Leonardo AI error:', error);
+    return {
+      success: false,
+      error: `Leonardo AI generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+    };
+  }
+}
+
+async function generateWithPollinations(prompt: string, seed: number) {
+  try {
+    console.log('🌐 Using Pollinations fallback...');
+    
+    const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${seed}&width=192&height=256&model=flux`;
+    console.log('🌐 Pollinations URL:', pollinationsUrl);
+
+    const response = await fetch(pollinationsUrl);
+    
+    if (!response.ok) {
+      throw new Error(`Pollinations API error: ${response.status}`);
+    }
+
+    const imageBuffer = await response.arrayBuffer();
+    const base64Image = `data:image/jpeg;base64,${Buffer.from(imageBuffer).toString('base64')}`;
+    
+    console.log('✅ Pollinations generation successful');
+    return {
+      success: true,
+      fullBodyImage: base64Image,
+      avatarImage: base64Image,
+      service: '🌐 Pollinations (Free)'
+    };
+
+  } catch (error) {
+    console.error('Pollinations error:', error);
+    return {
+      success: false,
+      error: `Pollinations generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+    };
   }
 }
 
 function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
-  const { race, class: characterClass, gender, alignment, personalityTraits, appearance, equippedWeapons, equippedArmor } = data;
+  const { race, class: characterClass, gender } = data;
   
-  // Base style elements (from your script)
+  // Base style elements
   const consistentStyle = {
     artStyle: "Digital fantasy character portrait",
     lighting: "professional portrait lighting, soft shadows", 
@@ -79,264 +194,60 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
     format: "fantasy character art, detailed illustration"
   };
 
-  // Race descriptions (adapted from your script)
+  // Conservative race descriptions
   const raceDescriptions: Record<string, string> = {
-    'Dragonborn': 'DRAGONBORN RACE with scaled skin covering face and body, draconic heritage, reptilian eyes, pronounced snout',
-    'Dwarf': gender?.toLowerCase() === 'female' ? 
-      'DWARF RACE with braided hair, stocky muscular build, shorter stature, traditional dwarven features' :
-      'DWARF RACE with thick prominent beard, stocky muscular build, shorter stature, traditional dwarven features',
-    'Elf': 'ELF RACE with distinctively POINTED EARS, tall slender build, angular facial features, ethereal elven beauty',
-    'Gnome': 'GNOME RACE with very small size, large expressive eyes, tiny delicate stature, diminutive proportions',
-    'Half-Elf': 'HALF-ELF RACE with moderately pointed ears, mixed heritage features, blend of human and elven traits',
-    'Halfling': 'HALFLING RACE with small size, notably curly hair, round cheerful face, hobbit-like features',
-    'Half-Orc': 'HALF-ORC RACE with prominent tusks protruding from mouth, large muscular build, orcish features',
-    'Human': 'HUMAN RACE character with normal human proportions, ordinary human facial structure, realistic human features',
-    'Tiefling': 'TIEFLING RACE with prominent curved horns on head, visible tail, otherworldly skin tone, fiendish heritage'
+    'Human': 'human character',
+    'Elf': 'elf character with pointed ears',
+    'Dwarf': 'dwarf character with beard',
+    'Halfling': 'halfling character, small stature',
+    'Dragonborn': 'dragonborn character with draconic features',
+    'Gnome': 'gnome character, small build',
+    'Half-Elf': 'half-elf character',
+    'Half-Orc': 'half-orc character',
+    'Tiefling': 'tiefling character with horns'
   };
 
-  // Class styles (adapted from your script)
-  const classStyles: Record<string, string> = {
-    'Barbarian': 'wearing fur armor, tribal tattoos, fierce expression, primal warrior aesthetic',
-    'Bard': 'holding musical instrument, colorful noble clothes, charismatic smile, artistic flair',
-    'Cleric': 'wearing holy symbol, white and silver robes, serene expression, divine blessing aura',
-    'Druid': 'earth-toned robes, wooden staff, calm nature-connected look, natural materials',
-    'Fighter': 'chainmail armor, sword visible, confident warrior stance, battle-ready appearance',
-    'Monk': 'simple brown robes, peaceful expression, disciplined posture, martial arts stance',
-    'Paladin': 'gleaming plate armor, holy symbol prominent, righteous bearing, divine radiance',
-    'Ranger': 'green leather armor, bow visible, alert forest-wise expression, outdoor gear',
-    'Rogue': 'dark leather armor, daggers visible, cunning suspicious look, stealthy appearance',
-    'Sorcerer': 'elegant colorful robes, magical energy effects, confident pose, arcane symbols',
-    'Warlock': 'dark ornate robes, mysterious symbols, intense gaze, otherworldly aura',
-    'Wizard': 'blue robes, pointed hat, spellbook, scholarly wise look, magical implements'
+  // Practical class descriptions
+  const classDescriptions: Record<string, string> = {
+    'Fighter': 'warrior with practical armor and weapon',
+    'Wizard': 'spellcaster with scholarly robes',
+    'Rogue': 'stealthy character with practical leather armor',
+    'Cleric': 'holy warrior with practical armor and symbol',
+    'Ranger': 'forest guardian with practical gear and bow',
+    'Paladin': 'holy knight with practical armor',
+    'Barbarian': 'tribal warrior with practical gear',
+    'Bard': 'performer with practical clothing',
+    'Druid': 'nature guardian with natural materials',
+    'Monk': 'martial artist with simple robes',
+    'Sorcerer': 'magical character with practical clothing',
+    'Warlock': 'mystical character with practical attire'
   };
 
-  // Equipment integration
-  let equipmentDesc = '';
-  if (equippedArmor && equippedArmor.length > 0) {
-    equipmentDesc += `wearing ${equippedArmor.join(' and ')}, `;
-  }
-  if (equippedWeapons && equippedWeapons.length > 0) {
-    equipmentDesc += `wielding ${equippedWeapons.join(' and ')}, `;
-  }
-
-  // Personality integration
-  let personalityDesc = '';
-  if (personalityTraits && personalityTraits.length > 0) {
-    const trait = personalityTraits[0]; // Use first trait for visual cues
-    if (trait.includes('confident') || trait.includes('optimistic')) {
-      personalityDesc += 'confident expression, upright posture, ';
-    } else if (trait.includes('suspicious') || trait.includes('cautious')) {
-      personalityDesc += 'wary expression, alert stance, ';
-    } else if (trait.includes('calm') || trait.includes('serene')) {
-      personalityDesc += 'peaceful expression, relaxed posture, ';
-    } else if (trait.includes('fierce') || trait.includes('aggressive')) {
-      personalityDesc += 'intense expression, powerful stance, ';
-    }
-  }
-
-  // Alignment influence on expression/posture
-  let alignmentDesc = '';
-  if (alignment) {
-    if (alignment.includes('Good')) {
-      alignmentDesc += 'noble bearing, kind eyes, ';
-    } else if (alignment.includes('Evil')) {
-      alignmentDesc += 'sinister aura, calculating gaze, ';
-    }
-    if (alignment.includes('Lawful')) {
-      alignmentDesc += 'disciplined posture, orderly appearance, ';
-    } else if (alignment.includes('Chaotic')) {
-      alignmentDesc += 'dynamic pose, unpredictable energy, ';
-    }
-  }
-
-  // Gender specification
-  const genderSpec = gender ? `${gender.toUpperCase()} CHARACTER, ${gender.toLowerCase()} person, ` : '';
-
-  // Custom appearance integration vs anti-bias prompts
-  let appearancePrompts = '';
-  if (appearance && appearance.trim()) {
-    // Use custom appearance if provided
-    appearancePrompts = `${appearance}, `;
-  } else {
-    // Fight AI biases with explicit diversity prompts when no appearance specified
-    appearancePrompts = generateAntiBiasPrompts(gender);
-  }
-
-  // Build the complete prompt
-  const promptParts = [
-    // Gender and race first
-    genderSpec,
-    raceDescriptions[race] || race,
-    
-    // Class and equipment
-    classStyles[characterClass] || characterClass,
-    equipmentDesc,
-    
-    // Personality and alignment
-    personalityDesc,
-    alignmentDesc,
-    
-    // Appearance (custom or anti-bias)
-    appearancePrompts,
-    
-    // Technical specifications
-    consistentStyle.artStyle,
-    consistentStyle.composition,
-    consistentStyle.lighting,
-    consistentStyle.background,
-    consistentStyle.quality,
-    
-    // Final touches
-    'adult proportions, fantasy character design, detailed illustration, professional fantasy art'
+  // Anti-trope prompts - VERY IMPORTANT
+  const antiTropePrompts = [
+    'PRACTICAL ARMOR, realistic protection, full coverage',
+    'NO CHAINMAIL BIKINI, NO REVEALING ARMOR',
+    'REALISTIC PROPORTIONS, normal body shape',
+    'FUNCTIONAL CLOTHING, appropriate for adventure',
+    'MODEST ATTIRE, practical adventuring gear',
+    'REALISTIC FANTASY, grounded character design',
+    'NO SEXUALIZED POSES, confident stance',
+    'PRACTICAL EQUIPMENT, functional gear'
   ];
 
-  return promptParts.filter(Boolean).join(', ');
-}
-
-function generateAntiBiasPrompts(gender?: string): string {
-  // Strong anti-bias prompts to fight AI stereotypes
-  const skinToneOptions = [
-    'DARK BROWN SKIN, deep melanin rich complexion',
-    'BLACK SKIN TONE, very dark pigmentation', 
-    'MEDIUM BROWN SKIN, rich ethnic features',
-    'TAN OLIVE SKIN, Mediterranean complexion',
-    'BRONZE SKIN TONE, warm dark coloring'
-  ];
-  
-  const bodyTypeOptions = [
-    'AVERAGE BODY TYPE, normal proportions, not thin',
-    'OVERWEIGHT BUILD, fuller figure, heavier set',
-    'STOCKY PHYSIQUE, broad build, solid frame',
-    'ROUND BODY SHAPE, soft curves, larger size',
-    'THICK BUILD, substantial frame, not skinny'
-  ];
-  
-  const realisticFeatures = [
-    'weathered face with wrinkles',
-    'battle scars and marks',
-    'imperfect teeth',
-    'aged appearance',
-    'rugged features', 
-    'worn hands',
-    'realistic imperfections',
-    'lived-in face'
-  ];
-  
-  // Extra anti-youth bias for female characters
-  const femaleAgingPrompts = gender?.toLowerCase() === 'female' ? [
-    'MIDDLE-AGED WOMAN, mature female',
-    'NOT YOUNG, aged woman',
-    'experienced older woman',
-    'weathered mature features'
-  ] : [];
-  
-  // Pick random options for variety
-  const skinTone = skinToneOptions[Math.floor(Math.random() * skinToneOptions.length)];
-  const bodyType = bodyTypeOptions[Math.floor(Math.random() * bodyTypeOptions.length)];
-  const features = realisticFeatures.slice(0, 2 + Math.floor(Math.random() * 2)).join(', ');
-  
-  const antiBiasPrompts = [
-    skinTone,
-    bodyType,
-    features,
-    ...femaleAgingPrompts,
-    'NOT WHITE SKIN, NOT PALE COMPLEXION',
-    'NOT THIN BODY, NOT SKINNY FRAME', 
-    'NOT YOUNG FACE, NOT PERFECT BEAUTY',
-    'ordinary everyday person, realistic diversity'
-  ];
-  
-  return antiBiasPrompts.join(', ') + ', ';
-}
-
-function generateCharacterSeed(data: CharacterAvatarData): number {
-  // Create deterministic seed based on character data
-  const seedString = [
-    data.race,
-    data.class,
-    data.gender || '',
-    data.alignment || '',
-    (data.personalityTraits || []).join(''),
-    data.appearance || ''
-  ].join('_');
-  
-  // Simple hash function
-  let hash = 0;
-  for (let i = 0; i < seedString.length; i++) {
-    const char = seedString.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
+  // Simple gender handling
+  let genderPrefix = '';
+  if (gender === 'Male') {
+    genderPrefix = 'male ';
+  } else if (gender === 'Female') {
+    genderPrefix = 'female ';
   }
-  
-  return Math.abs(hash);
-}
 
-async function generateWithPollinations(prompt: string, seed: number) {
-  try {
-    // Pollinations API - generate 192px wide image for better cropping
-    const params = new URLSearchParams({
-      seed: seed.toString(),
-      width: '192',
-      height: '256', // Taller for full body, we'll crop to square later
-      model: 'flux'
-    });
-    
-    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?${params}`;
-    console.log('🌐 Pollinations URL:', url);
-    
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'User-Agent': 'DungeonsAndDatabases/1.0'
-      }
-    });
-    
-    if (response.ok) {
-      const buffer = await response.arrayBuffer();
-      return { success: true, buffer: Buffer.from(buffer) };
-    } else {
-      return { success: false, error: `HTTP ${response.status}: ${response.statusText}` };
-    }
-  } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
-  }
-}
+  const raceDesc = raceDescriptions[race] || 'fantasy character';
+  const classDesc = classDescriptions[characterClass] || 'adventurer';
 
-async function processAvatarImages(buffer: Buffer) {
-  try {
-    // Convert to base64 for easier handling
-    const base64Full = buffer.toString('base64');
-    const dataUrlFull = `data:image/png;base64,${base64Full}`;
-    
-    // Create a cropped avatar (192x192) by cutting off the bottom 64 pixels
-    // This preserves the head which is at the top of the image
-    const croppedAvatar = await cropImageFromTop(buffer);
-    
-    return {
-      fullBody: dataUrlFull,  // 192x256 full body
-      avatar: croppedAvatar   // 192x192 cropped from top
-    };
-  } catch (error) {
-    console.error('Error processing avatar images:', error);
-    throw new Error('Failed to process avatar images');
-  }
-}
+  // Build prompt with strong anti-trope elements
+  const prompt = `${genderPrefix}${raceDesc}, ${classDesc}, ${antiTropePrompts.join(', ')}, ${consistentStyle.artStyle}, ${consistentStyle.composition}, ${consistentStyle.lighting}, ${consistentStyle.background}, ${consistentStyle.quality}, ${consistentStyle.format}`;
 
-async function cropImageFromTop(buffer: Buffer): Promise<string> {
-  try {
-    // Try to use sharp if available
-    const sharp = (await import('sharp')).default;
-    const croppedBuffer = await sharp(buffer)
-      .extract({ left: 0, top: 0, width: 192, height: 192 }) // Take top 192x192 pixels
-      .png()
-      .toBuffer();
-    
-    const base64Cropped = croppedBuffer.toString('base64');
-    return `data:image/png;base64,${base64Cropped}`;
-  } catch {
-    console.log('Sharp not available, returning original image');
-    // Fallback: return original image
-    const base64 = buffer.toString('base64');
-    return `data:image/png;base64,${base64}`;
-  }
+  return prompt;
 } 
