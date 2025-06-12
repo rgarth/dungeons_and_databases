@@ -394,17 +394,17 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
     <div className={`h-full flex flex-col ${className}`}>
       {/* Top Controls Bar - Tile Layout */}
       <div className="bg-slate-800 border-b border-slate-600 p-4">
-        {/* Dice Tiles Grid */}
-        <div className="grid grid-cols-6 gap-3 mb-4">
+        {/* Dice Tiles Grid - Responsive: 3 cols on mobile, 6 on desktop */}
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-3 mb-4">
           {diceTypes.map(dice => (
-            <div key={dice.key} className="bg-slate-700 rounded-lg p-3 text-center border border-slate-600">
+            <div key={dice.key} className="bg-slate-700 rounded-lg p-2 md:p-3 text-center border border-slate-600">
               {/* Dice Label */}
-              <div className={`font-bold text-lg ${dice.color} mb-2`}>
+              <div className={`font-bold text-sm md:text-lg ${dice.color} mb-1 md:mb-2`}>
                 {dice.label}
               </div>
               
               {/* Count Display */}
-              <div className="text-white font-mono text-xl mb-3">
+              <div className="text-white font-mono text-lg md:text-xl mb-2 md:mb-3">
                 {diceCounts[dice.key]}
               </div>
               
@@ -413,14 +413,14 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
                 <button
                   onClick={() => updateDiceCount(dice.key, -1)}
                   disabled={diceCounts[dice.key] === 0}
-                  className="flex-1 h-8 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded text-sm font-bold transition-colors"
+                  className="flex-1 h-7 md:h-8 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded text-xs md:text-sm font-bold transition-colors"
                 >
                   −
                 </button>
                 <button
                   onClick={() => updateDiceCount(dice.key, 1)}
                   disabled={totalDice >= 10}
-                  className="flex-1 h-8 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded text-sm font-bold transition-colors"
+                  className="flex-1 h-7 md:h-8 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded text-xs md:text-sm font-bold transition-colors"
                 >
                   +
                 </button>
@@ -431,14 +431,14 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
         
         {/* Color Selector */}
         <div className="mb-4">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
             <span className="text-slate-300 text-sm font-medium">Dice Color:</span>
             <div className="flex gap-2 flex-wrap">
               {colorOptions.map((color) => (
                 <button
                   key={color.value}
                   onClick={() => updateDiceColor(color.value)}
-                  className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
+                  className={`w-7 h-7 md:w-8 md:h-8 rounded-full border-2 transition-all hover:scale-110 ${
                     diceColor === color.value 
                       ? 'border-white shadow-lg ring-2 ring-blue-400' 
                       : 'border-slate-500 hover:border-slate-300'
@@ -451,8 +451,8 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
           </div>
         </div>
 
-        {/* Bottom Controls Row */}
-        <div className="flex items-center justify-between gap-4">
+        {/* Bottom Controls - Stack on mobile */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           {/* Modifier */}
           <div className="flex items-center gap-2">
             <span className="text-slate-300 text-sm font-medium">Modifier:</span>
@@ -474,7 +474,7 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
           </div>
           
           {/* Status Display */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 md:gap-3">
             {/* Total Dice Counter */}
             <span className={`text-sm font-medium px-3 py-2 rounded ${
               totalDice >= 10 ? 'bg-red-600 text-white' : 'bg-slate-700 text-slate-300'
@@ -484,18 +484,18 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
             
             {/* Notation Preview */}
             {notation && (
-              <span className="text-slate-300 text-sm font-mono bg-slate-700 px-3 py-2 rounded">
+              <span className="text-slate-300 text-sm font-mono bg-slate-700 px-3 py-2 rounded break-all">
                 {notation}
               </span>
             )}
           </div>
           
           {/* Action Buttons */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <button
               onClick={rollDice}
               disabled={isRolling || totalDice === 0 || !diceBoxRef.current}
-              className={`py-3 px-8 rounded-lg font-bold text-lg transition-colors ${
+              className={`py-2 md:py-3 px-4 md:px-8 rounded-lg font-bold text-sm md:text-lg transition-colors flex-1 sm:flex-none ${
                 isRolling || totalDice === 0 || !diceBoxRef.current
                   ? 'bg-slate-600 text-slate-400 cursor-not-allowed'
                   : 'bg-green-600 hover:bg-green-700 text-white shadow-lg'
@@ -507,7 +507,7 @@ export function DiceRoller({ className = "" }: DiceRollerProps) {
             <button
               onClick={clearAll}
               disabled={totalDice === 0 && modifier === 0}
-              className="py-3 px-4 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+              className="py-2 md:py-3 px-3 md:px-4 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors text-sm md:text-base"
             >
               Clear
             </button>

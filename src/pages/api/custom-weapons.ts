@@ -41,14 +41,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           customName: weapon.customName,
           description: weapon.description,
           modifier: weapon.modifier,
-          baseWeapon: weapon.baseWeapon,
+          baseWeapon: {
+            ...weapon.baseWeapon,
+            // Ensure properties is always an array
+            properties: typeof weapon.baseWeapon.properties === 'string' 
+              ? JSON.parse(weapon.baseWeapon.properties) 
+              : weapon.baseWeapon.properties
+          },
           // Calculate enhanced stats
           enhancedDamage: weapon.modifier > 0 ? `${weapon.baseWeapon.damage} + ${weapon.modifier}` : weapon.baseWeapon.damage,
           enhancedToHit: weapon.modifier > 0 ? `+${weapon.modifier}` : '+0',
           type: weapon.baseWeapon.type,
           category: weapon.baseWeapon.category,
           damageType: weapon.baseWeapon.damageType,
-          properties: weapon.baseWeapon.properties,
+          properties: typeof weapon.baseWeapon.properties === 'string' 
+            ? JSON.parse(weapon.baseWeapon.properties) 
+            : weapon.baseWeapon.properties,
           weight: weapon.baseWeapon.weight,
           cost: weapon.baseWeapon.cost,
           createdAt: weapon.createdAt
@@ -115,13 +123,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           customName: newCustomWeapon.customName,
           description: newCustomWeapon.description,
           modifier: newCustomWeapon.modifier,
-          baseWeapon: newCustomWeapon.baseWeapon,
+          baseWeapon: {
+            ...newCustomWeapon.baseWeapon,
+            // Ensure properties is always an array
+            properties: typeof newCustomWeapon.baseWeapon.properties === 'string' 
+              ? JSON.parse(newCustomWeapon.baseWeapon.properties) 
+              : newCustomWeapon.baseWeapon.properties
+          },
           enhancedDamage: newCustomWeapon.modifier > 0 ? `${newCustomWeapon.baseWeapon.damage} + ${newCustomWeapon.modifier}` : newCustomWeapon.baseWeapon.damage,
           enhancedToHit: newCustomWeapon.modifier > 0 ? `+${newCustomWeapon.modifier}` : '+0',
           type: newCustomWeapon.baseWeapon.type,
           category: newCustomWeapon.baseWeapon.category,
           damageType: newCustomWeapon.baseWeapon.damageType,
-          properties: newCustomWeapon.baseWeapon.properties,
+          properties: typeof newCustomWeapon.baseWeapon.properties === 'string' 
+            ? JSON.parse(newCustomWeapon.baseWeapon.properties) 
+            : newCustomWeapon.baseWeapon.properties,
           weight: newCustomWeapon.baseWeapon.weight,
           cost: newCustomWeapon.baseWeapon.cost,
           createdAt: newCustomWeapon.createdAt

@@ -1,6 +1,6 @@
 "use client";
 
-import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp, FileText, Dices, ChevronDown } from "lucide-react";
+import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp, FileText, Dices, ChevronDown, MoreVertical } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { getModifier } from "@/lib/dnd/core";
 import { Spell, getClassSpells } from "@/lib/dnd/spells";
@@ -94,10 +94,12 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
   const [tempPreparedSpells, setTempPreparedSpells] = useState<Spell[]>([]);
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentCharacter, setCurrentCharacter] = useState(character);
+  const [showActionsMenu, setShowActionsMenu] = useState(false);
   
   // Add debouncing for character updates to prevent race conditions
   const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pendingUpdatesRef = useRef<Record<string, unknown>>({});
+  const actionsMenuRef = useRef<HTMLDivElement>(null);
   
   // Sync currentCharacter with character prop when it changes (important for reopening characters)
   useEffect(() => {
@@ -126,6 +128,20 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
       return (character.inventory as string[]).map(name => ({ name, quantity: 1 }));
     });
   }, [character]);
+
+  // Close actions menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (actionsMenuRef.current && !actionsMenuRef.current.contains(event.target as Node)) {
+        setShowActionsMenu(false);
+      }
+    };
+
+    if (showActionsMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showActionsMenu]);
   
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -335,7 +351,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
       console.log(`🔍 WEAPON DETECTION: "${weapon.name}" - damage: "${weapon.damage}", properties: ${JSON.stringify(weapon.properties)}`);
       
       // Check if this is actually ammunition (has "Ammunition" property and no damage)
-      const hasAmmunitionProperty = weapon.properties.some(prop => prop.startsWith('Ammunition'));
+      const hasAmmunitionProperty = weapon.properties.some((prop: string) => prop.startsWith('Ammunition'));
       if (hasAmmunitionProperty && weapon.damage === '—') {
         console.log(`✅ DETECTED AS AMMUNITION: ${weapon.name}`);
         // This is ammunition, not a weapon - use the weapon's quantity property
@@ -838,53 +854,106 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
         <div className="bg-slate-800 rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
-          {/* Header */}
-          <div className="flex justify-between items-center p-6 border-b border-slate-700">
-            <div className="flex items-center gap-4">
-              {/* Avatar or default icon */}
-              {displayCharacter.avatar ? (
-                <img
-                  src={displayCharacter.avatar}
-                  alt={`${displayCharacter.name} avatar`}
-                  className="w-16 h-16 rounded-lg border-2 border-purple-400 object-cover"
-                  onError={(e) => {
-                    // Fallback to User icon if avatar fails to load
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                  }}
-                />
-              ) : null}
-              <User className={`h-8 w-8 text-purple-400 ${displayCharacter.avatar ? 'hidden' : ''}`} />
-              <div>
-                <h1 className="text-3xl font-bold text-white">{displayCharacter.name}</h1>
-                <p className="text-slate-300">
-                  Level {displayCharacter.level} {displayCharacter.race} {displayCharacter.class}
-                  {displayCharacter.background && ` • ${displayCharacter.background}`}
-                </p>
+          {/* Header - Compact & Responsive */}
+          <div className="p-4 border-b border-slate-700">
+            {/* Main header row */}
+            <div className="flex items-center justify-between">
+              {/* Avatar and basic info - always visible */}
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                {/* Avatar or default icon */}
+                {displayCharacter.avatar ? (
+                  <img
+                    src={displayCharacter.avatar}
+                    alt={`${displayCharacter.name} avatar`}
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg border-2 border-purple-400 object-cover flex-shrink-0"
+                    onError={(e) => {
+                      // Fallback to User icon if avatar fails to load
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                    }}
+                  />
+                ) : null}
+                <User className={`h-6 w-6 sm:h-7 sm:w-7 text-purple-400 flex-shrink-0 ${displayCharacter.avatar ? 'hidden' : ''}`} />
+                
+                {/* Character info */}
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-xl sm:text-2xl font-bold text-white truncate">{displayCharacter.name}</h1>
+                  <p className="text-slate-300 text-sm sm:text-base truncate">
+                    Level {displayCharacter.level} {displayCharacter.race} {displayCharacter.class}
+                    {displayCharacter.background && (
+                      <span className="hidden sm:inline"> • {displayCharacter.background}</span>
+                    )}
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setShowLevelUpModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-                title="Level Up"
-              >
-                <TrendingUp className="h-4 w-4" />
-                Level Up
-              </button>
-              <button
-                onClick={() => setShowDeleteDialog(true)}
-                className="text-red-400 hover:text-red-300 transition-colors p-2 rounded-lg hover:bg-red-500/10"
-                title="Delete Character"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
-              <button
-                onClick={onClose}
-                className="text-slate-400 hover:text-white transition-colors text-xl"
-              >
-                ✕
-              </button>
+
+              {/* Actions - Desktop: buttons, Mobile: hamburger menu */}
+              <div className="flex items-center gap-2 flex-shrink-0">
+                {/* Desktop buttons */}
+                <div className="hidden md:flex items-center gap-2">
+                  <button
+                    onClick={() => setShowLevelUpModal(true)}
+                    className="flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm"
+                    title="Level Up"
+                  >
+                    <TrendingUp className="h-4 w-4" />
+                    <span className="hidden lg:inline">Level Up</span>
+                  </button>
+                  <button
+                    onClick={() => setShowDeleteDialog(true)}
+                    className="text-red-400 hover:text-red-300 transition-colors p-2 rounded-lg hover:bg-red-500/10"
+                    title="Delete Character"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+
+                {/* Mobile hamburger menu */}
+                <div className="md:hidden relative" ref={actionsMenuRef}>
+                  <button
+                    onClick={() => setShowActionsMenu(!showActionsMenu)}
+                    className="text-slate-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-slate-700"
+                    title="Actions"
+                  >
+                    <MoreVertical className="h-5 w-5" />
+                  </button>
+                  
+                  {/* Dropdown menu */}
+                  {showActionsMenu && (
+                    <div className="absolute right-0 top-full mt-1 bg-slate-700 rounded-lg border border-slate-600 shadow-lg z-10 min-w-[140px]">
+                      <button
+                        onClick={() => {
+                          setShowLevelUpModal(true);
+                          setShowActionsMenu(false);
+                        }}
+                        className="flex items-center gap-2 w-full px-3 py-2 text-left text-white hover:bg-slate-600 rounded-t-lg transition-colors"
+                      >
+                        <TrendingUp className="h-4 w-4 text-green-400" />
+                        Level Up
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowDeleteDialog(true);
+                          setShowActionsMenu(false);
+                        }}
+                        className="flex items-center gap-2 w-full px-3 py-2 text-left text-red-400 hover:bg-slate-600 rounded-b-lg transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Close button - always visible */}
+                <button
+                  onClick={onClose}
+                  className="text-slate-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-slate-700"
+                  title="Close"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
             </div>
           </div>
 
