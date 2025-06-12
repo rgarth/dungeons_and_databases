@@ -32,9 +32,11 @@ interface BackgroundTabProps {
     languages?: string[];
     backgroundCharacteristics?: SelectedCharacteristics;
   };
-  equippedWeapons: { name: string }[];
-  equippedArmor: { name: string }[];
   onUpdate: (updates: { 
+    name?: string;
+    gender?: string;
+    age?: number;
+    alignment?: string;
     appearance?: string; 
     personality?: string; 
     backstory?: string; 
@@ -42,13 +44,15 @@ interface BackgroundTabProps {
     languages?: string[];
     avatar?: string;
     fullBodyAvatar?: string;
+    background?: string;
+    backgroundCharacteristics?: SelectedCharacteristics;
   }) => void;
 }
 
 // Initialize character story service
 const storyService = createCharacterStoryService();
 
-export function BackgroundTab({ character, equippedWeapons, equippedArmor, onUpdate }: BackgroundTabProps) {
+export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<'freeform' | 'guided'>('freeform');
   const [editValues, setEditValues] = useState({
@@ -589,7 +593,7 @@ export function BackgroundTab({ character, equippedWeapons, equippedArmor, onUpd
                       />
                       <div className="text-center">
                         <button
-                          onClick={() => onUpdate({ avatar: null, fullBodyAvatar: null })}
+                          onClick={() => onUpdate({ avatar: undefined, fullBodyAvatar: undefined })}
                           className="text-red-400 hover:text-red-300 text-sm transition-colors"
                         >
                           Remove Avatar
@@ -677,8 +681,8 @@ export function BackgroundTab({ character, equippedWeapons, equippedArmor, onUpd
                         bonds: character.backgroundCharacteristics?.bonds || [],
                         flaws: character.backgroundCharacteristics?.flaws || [],
                         appearance: character.appearance || '',
-                        equippedWeapons: character.equippedWeapons?.map(w => w.name) || [],
-                        equippedArmor: character.equippedArmor?.map(a => a.name) || []
+                        equippedWeapons: [],
+                        equippedArmor: []
                       } as CharacterAvatarData}
                       onAvatarGenerated={(avatarDataUrl, fullBodyDataUrl) => {
                         onUpdate({ 
