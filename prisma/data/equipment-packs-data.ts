@@ -26,19 +26,19 @@ export const equipmentPacksData: EquipmentPackData[] = [
     cost: "16 gp",
     items: [
       { equipmentName: "Backpack", quantity: 1 },
-      { equipmentName: "Ball Bearings (1000)", quantity: 1 },
+      { equipmentName: "Ball Bearings (bag of 1,000)", quantity: 1 },
       { equipmentName: "String (10 feet)", quantity: 1 },
       { equipmentName: "Bell", quantity: 1 },
       { equipmentName: "Candle", quantity: 5 },
       { equipmentName: "Crowbar", quantity: 1 },
       { equipmentName: "Hammer", quantity: 1 },
       { equipmentName: "Piton", quantity: 10 },
-      { equipmentName: "Hooded Lantern", quantity: 1 },
+      { equipmentName: "Lantern, Hooded", quantity: 1 },
       { equipmentName: "Oil (flask)", quantity: 2 },
       { equipmentName: "Rations (1 day)", quantity: 5 },
       { equipmentName: "Tinderbox", quantity: 1 },
       { equipmentName: "Waterskin", quantity: 1 },
-      { equipmentName: "Hempen Rope (50 feet)", quantity: 1 }
+      { equipmentName: "Rope, Hempen (50 feet)", quantity: 1 }
     ]
   },
   {
@@ -48,7 +48,7 @@ export const equipmentPacksData: EquipmentPackData[] = [
     items: [
       { equipmentName: "Chest", quantity: 1 },
       { equipmentName: "Case, Map or Scroll", quantity: 2 },
-      { equipmentName: "Fine Clothes", quantity: 1 },
+      { equipmentName: "Clothes, Fine", quantity: 1 },
       { equipmentName: "Ink (1 ounce bottle)", quantity: 1 },
       { equipmentName: "Ink Pen", quantity: 1 },
       { equipmentName: "Lamp", quantity: 1 },
@@ -72,7 +72,7 @@ export const equipmentPacksData: EquipmentPackData[] = [
       { equipmentName: "Tinderbox", quantity: 1 },
       { equipmentName: "Rations (1 day)", quantity: 10 },
       { equipmentName: "Waterskin", quantity: 1 },
-      { equipmentName: "Hempen Rope (50 feet)", quantity: 1 }
+      { equipmentName: "Rope, Hempen (50 feet)", quantity: 1 }
     ]
   },
   {
@@ -82,7 +82,7 @@ export const equipmentPacksData: EquipmentPackData[] = [
     items: [
       { equipmentName: "Backpack", quantity: 1 },
       { equipmentName: "Bedroll", quantity: 1 },
-      { equipmentName: "Costume Clothes", quantity: 2 },
+      { equipmentName: "Clothes, Costume", quantity: 2 },
       { equipmentName: "Candle", quantity: 5 },
       { equipmentName: "Rations (1 day)", quantity: 5 },
       { equipmentName: "Waterskin", quantity: 1 },
@@ -101,7 +101,7 @@ export const equipmentPacksData: EquipmentPackData[] = [
       { equipmentName: "Torch", quantity: 10 },
       { equipmentName: "Rations (1 day)", quantity: 10 },
       { equipmentName: "Waterskin", quantity: 1 },
-      { equipmentName: "Hempen Rope (50 feet)", quantity: 1 }
+      { equipmentName: "Rope, Hempen (50 feet)", quantity: 1 }
     ]
   },
   {
