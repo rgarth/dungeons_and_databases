@@ -10,10 +10,8 @@
 // Note: After seeding, the database becomes the source of truth.
 // Application code should use /api/equipment-packs, not the seed data.
 
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../src/lib/prisma';
 import { equipmentPacksData } from './data/equipment-packs-data';
-
-const prisma = new PrismaClient();
 
 async function seedEquipmentPacks() {
   console.log('📦 Seeding equipment packs...');
