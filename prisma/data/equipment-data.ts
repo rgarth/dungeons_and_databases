@@ -789,61 +789,69 @@ export const equipmentData = [
     stackable: true
   },
 
-  // Equipment Packs
+  // Missing Equipment Pack Items
   {
-    name: "Burglar's Pack",
-    type: "Equipment Pack",
-    cost: "16 gp",
-    weight: 46.5,
-    description: "Includes a backpack, a bag of 1,000 ball bearings, 10 feet of string, a bell, 5 candles, a crowbar, a hammer, 10 pitons, a hooded lantern, 2 flasks of oil, 5 days rations, a tinderbox, a waterskin, and 50 feet of hempen rope strapped to the side of the pack.",
+    name: "String (10 feet)",
+    type: "Adventuring Gear",
+    cost: "1 cp",
+    weight: 0,
+    description: "10 feet of string for various uses.",
+    stackable: true
+  },
+  {
+    name: "Disguise Kit",
+    type: "Tool",
+    cost: "25 gp",
+    weight: 3,
+    description: "This pouch of cosmetics, hair dye, and small props lets you create disguises that change your physical appearance.",
     stackable: false
   },
   {
-    name: "Diplomat's Pack",
-    type: "Equipment Pack",
-    cost: "39 gp",
-    weight: 46,
-    description: "Includes a chest, 2 cases for maps and scrolls, a set of fine clothes, a bottle of ink, an ink pen, a lamp, 2 flasks of oil, 5 sheets of paper, a vial of perfume, sealing wax, and soap.",
+    name: "Alms Box",
+    type: "Adventuring Gear",
+    cost: "2 gp",
+    weight: 1,
+    description: "A small box for collecting charitable donations.",
     stackable: false
   },
   {
-    name: "Dungeoneer's Pack",
-    type: "Equipment Pack",
-    cost: "12 gp",
-    weight: 61.5,
-    description: "Includes a backpack, a crowbar, a hammer, 10 pitons, 10 torches, a tinderbox, 10 days of rations, a waterskin, and 50 feet of hempen rope strapped to the side of the pack.",
+    name: "Incense (1 block)",
+    type: "Adventuring Gear",
+    cost: "1 sp",
+    weight: 0,
+    description: "A block of incense that burns for 1 hour when lit.",
+    stackable: true
+  },
+  {
+    name: "Censer",
+    type: "Adventuring Gear",
+    cost: "5 gp",
+    weight: 1,
+    description: "A container for burning incense during religious ceremonies.",
     stackable: false
   },
   {
-    name: "Entertainer's Pack",
-    type: "Equipment Pack",
-    cost: "40 gp",
-    weight: 38,
-    description: "Includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit.",
+    name: "Vestments",
+    type: "Adventuring Gear",
+    cost: "5 gp",
+    weight: 4,
+    description: "Religious robes and ceremonial garments worn by clergy.",
     stackable: false
   },
   {
-    name: "Explorer's Pack",
-    type: "Equipment Pack",
-    cost: "10 gp",
-    weight: 59,
-    description: "Includes a backpack, a bedroll, a mess kit, a tinderbox, 10 torches, 10 days of rations, a waterskin, and 50 feet of hempen rope strapped to the side of the pack.",
-    stackable: false
+    name: "Little Bag of Sand",
+    type: "Adventuring Gear",
+    cost: "1 cp",
+    weight: 0,
+    description: "A small bag of sand used for drying ink or other purposes.",
+    stackable: true
   },
   {
-    name: "Priest's Pack",
-    type: "Equipment Pack",
-    cost: "19 gp",
-    weight: 24,
-    description: "Includes a backpack, a blanket, 10 candles, a tinderbox, an alms box, 2 blocks of incense, a censer, vestments, 2 days of rations, and a waterskin.",
-    stackable: false
-  },
-  {
-    name: "Scholar's Pack",
-    type: "Equipment Pack",
-    cost: "40 gp",
-    weight: 22,
-    description: "Includes a backpack, a book of lore, a bottle of ink, an ink pen, 10 sheets of parchment, a little bag of sand, and a small knife.",
+    name: "Small Knife",
+    type: "Tool",
+    cost: "2 gp",
+    weight: 0.5,
+    description: "A small utility knife for cutting and carving.",
     stackable: false
   }
 ] 

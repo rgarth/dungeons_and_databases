@@ -105,6 +105,10 @@ export async function seedCompleteDatabase(options: SeedOptions = {}) {
     
     await runSeedingScript('prisma/seed-production.ts', 'items seeding')
     
+    console.log('🚀 Beginning equipment packs seeding...')
+    
+    await runSeedingScript('prisma/seed-equipment-packs.ts', 'equipment packs seeding')
+    
     // Validate results
     const finalCounts = await checkExistingData()
     

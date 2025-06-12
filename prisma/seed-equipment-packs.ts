@@ -50,43 +50,10 @@ async function seedEquipmentPacks() {
       
       // Add items to the pack
       for (const itemData of packData.items) {
-        // Find the equipment item in the database with flexible matching
-        let equipment = await prisma.equipment.findFirst({
-          where: {
-            OR: [
-              { name: { equals: itemData.equipmentName } },
-              { name: { contains: itemData.equipmentName.split(' ')[0] } },
-              { name: { contains: itemData.equipmentName.replace(/\s*\([^)]*\)/g, '').trim() } }
-            ]
-          }
+        // Find the equipment item in the database with EXACT matching first
+        const equipment = await prisma.equipment.findFirst({
+          where: { name: { equals: itemData.equipmentName } }
         });
-        
-        if (!equipment) {
-          // Try common name mappings
-          const nameMapping: Record<string, string> = {
-            'Ball Bearings (1000)': 'Ball bearings',
-            'String (10 feet)': 'String',
-            'Oil (flask)': 'Oil',
-            'Rations (1 day)': 'Rations',
-            'Hempen Rope (50 feet)': 'Rope, hempen',
-            'Case, Map or Scroll': 'Case',
-            'Ink (1 ounce bottle)': 'Ink',
-            'Paper (one sheet)': 'Paper',
-            'Perfume (vial)': 'Perfume',
-            'Costume Clothes': 'Costume',
-            'Incense (1 block)': 'Incense',
-            'Parchment (one sheet)': 'Parchment',
-            'Little Bag of Sand': 'Sand',
-            'Small Knife': 'Knife'
-          };
-          
-          const mappedName = nameMapping[itemData.equipmentName];
-          if (mappedName) {
-            equipment = await prisma.equipment.findFirst({
-              where: { name: { contains: mappedName } }
-            });
-          }
-        }
         
         if (!equipment) {
           const errorMsg = `❌ Equipment not found: "${itemData.equipmentName}" in pack "${packData.name}"`;
@@ -95,9 +62,18 @@ async function seedEquipmentPacks() {
           continue;
         }
         
-        // Create the pack item relationship
-        await prisma.equipmentPackItem.create({
-          data: {
+        // Use upsert to handle potential duplicates gracefully
+        await prisma.equipmentPackItem.upsert({
+          where: {
+            packId_equipmentId: {
+              packId: pack.id,
+              equipmentId: equipment.id
+            }
+          },
+          update: {
+            quantity: itemData.quantity,
+          },
+          create: {
             packId: pack.id,
             equipmentId: equipment.id,
             quantity: itemData.quantity,

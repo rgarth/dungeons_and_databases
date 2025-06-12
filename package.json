@@ -17,6 +17,7 @@
     "db:seed:prod": "npx tsx prisma/seed-production.ts",
     "db:seed:complete": "npx tsx prisma/seed-complete.ts",
     "db:seed:complete:force": "npx tsx prisma/seed-complete.ts --force",
+    "db:seed:equipment-packs": "npx tsx prisma/seed-equipment-packs.ts",
     "db:seed:force": "npx tsx prisma/seed-production.ts --force",
     "db:seed:check": "npx tsx prisma/seed-production.ts --skip-if-exists",
     "db:studio": "prisma studio",
