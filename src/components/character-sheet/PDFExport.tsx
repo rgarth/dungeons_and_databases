@@ -105,8 +105,8 @@ export function PDFExport({ character, className }: PDFExportProps) {
 
   const exportToPDF = async () => {
     try {
-      // Load the original D&D 5e character sheet PDF with all form fields
-      const response = await fetch('/dnd-5e-character-sheet.pdf');
+      // Load the D&D 5e character sheet PDF with /DA entries for font control
+      const response = await fetch('/dnd-5e-character-sheet-with-da.pdf');
       if (!response.ok) {
         throw new Error('Could not load character sheet template');
       }
@@ -282,7 +282,7 @@ export function PDFExport({ character, className }: PDFExportProps) {
         ...(character.inventoryArmor || []).map(a => a.name),
         ...(character.inventoryItems || []).map(i => i.name)
       ].join(', ');
-      fillField('Equipment', equipmentList, 8); // Smaller font for equipment list
+      fillField('Equipment', equipmentList, 8);
 
       // Money
       fillField('CP', character.copper || 0);
@@ -305,21 +305,21 @@ export function PDFExport({ character, className }: PDFExportProps) {
         ? character.flaws.join(', ') 
         : character.flaws || '';
         
-      fillField('PersonalityTraits ', personalityTraits, 8); // Smaller font for traits
+      fillField('PersonalityTraits ', personalityTraits, 8);
       fillField('Ideals', ideals, 8);
       fillField('Bonds', bonds, 8);
       fillField('Flaws', flaws, 8);
 
       // Features and traits
-      fillField('Features and Traits', character.features?.join(', ') || '', 8); // Smaller font
-      fillField('Feat+Traits', character.features?.join(', ') || '', 8); // Alternative field name
+      fillField('Features and Traits', character.features?.join(', ') || '', 8);
+      fillField('Feat+Traits', character.features?.join(', ') || '', 8);
 
       // Proficiencies and languages
       const proficiencies = [
         ...(character.languages || []),
         ...(character.proficiencies || [])
       ].join(', ');
-      fillField('ProficienciesLang', proficiencies, 8); // Smaller font
+      fillField('ProficienciesLang', proficiencies, 8);
       
       // Additional character information
       fillField('Allies', character.allies || '', 8);
@@ -360,7 +360,7 @@ export function PDFExport({ character, className }: PDFExportProps) {
       ).join('\n') || '';
       
       const combinedText = [attacksText, spellsText].filter(Boolean).join('\n\n');
-      fillField('AttacksSpellcasting', combinedText, 8); // Smaller font for attacks
+      fillField('AttacksSpellcasting', combinedText, 8);
 
       // Save the PDF
       const pdfBytes = await pdfDoc.save();
