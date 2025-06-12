@@ -8,6 +8,14 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Dungeons & Databases - D&D Character Manager",
   description: "Create and manage your D&D characters with ease",
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.png', type: 'image/png' }
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/favicon.png'
+  }
 };
 
 export default function RootLayout({
