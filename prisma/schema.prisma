@@ -175,7 +175,7 @@ model ClassWeaponProficiency {
   updatedAt       DateTime @updatedAt
   class           DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
 
-  @@unique([classId, proficiencyType, weaponName])
+  @@index([classId, proficiencyType, weaponName])
 }
 
 model ClassWeaponSuggestion {

@@ -56,34 +56,44 @@ export async function seedClasses() {
 
   // Seed weapon proficiencies
   console.log('⚔️  Seeding weapon proficiencies...')
-  for (const weaponProf of classWeaponProficiencies) {
-    const dndClass = await prisma.dndClass.findUnique({
-      where: { name: weaponProf.className }
-    })
+  await seedWeaponProficiencies()
 
-    if (dndClass) {
-      // For Simple/Martial proficiencies, check if it already exists
-      const existingProf = await prisma.classWeaponProficiency.findFirst({
-        where: {
-          classId: dndClass.id,
-          proficiencyType: weaponProf.proficiencyType,
-          weaponName: weaponProf.weaponName
-        }
-      })
+  // After seeding, log the count of a table to verify data insertion
+  const count = await prisma.dndClass.count();
+  console.log(`Count of DndClass after seeding: ${count}`);
+}
 
-      if (!existingProf) {
-        await prisma.classWeaponProficiency.create({
-          data: {
-            classId: dndClass.id,
-            proficiencyType: weaponProf.proficiencyType,
-            weaponName: weaponProf.weaponName
-          }
-        })
+async function seedWeaponProficiencies() {
+  console.log('Seeding weapon proficiencies...');
+  for (const proficiency of classWeaponProficiencies) {
+    const dndClass = await prisma.dndClass.findFirst({
+      where: { name: proficiency.className }
+    });
+
+    if (!dndClass) {
+      console.warn(`Class ${proficiency.className} not found, skipping weapon proficiency`);
+      continue;
+    }
+
+    const existingProficiency = await prisma.classWeaponProficiency.findFirst({
+      where: {
+        classId: dndClass.id,
+        proficiencyType: proficiency.proficiencyType,
+        weaponName: proficiency.weaponName
       }
+    });
+
+    if (!existingProficiency) {
+      await prisma.classWeaponProficiency.create({
+        data: {
+          classId: dndClass.id,
+          proficiencyType: proficiency.proficiencyType,
+          weaponName: proficiency.weaponName
+        }
+      });
     }
   }
-
-  console.log(`✅ Seeded ${classWeaponProficiencies.length} weapon proficiencies`)
+  console.log('✅ Seeded weapon proficiencies');
 }
 
 async function main() {

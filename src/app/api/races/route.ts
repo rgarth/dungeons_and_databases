@@ -29,7 +29,14 @@ export async function GET() {
       }
     });
 
-    return NextResponse.json(races);
+    // Parse JSON fields
+    const parsedRaces = races.map(race => ({
+      ...race,
+      traits: JSON.parse(race.traits as string),
+      languages: JSON.parse(race.languages as string)
+    }));
+
+    return NextResponse.json(parsedRaces);
   } catch (error) {
     console.error('Failed to fetch races:', error);
     return NextResponse.json({ error: 'Failed to fetch races' }, { status: 500 });

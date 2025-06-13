@@ -8,6 +8,8 @@ import { seedRaces } from './seed-races'
 import { seedMagicalItems } from './seed-magical-items'
 import { seedSpells } from './seed-spells'
 import { seedWeapons } from './seed-weapons'
+import { seedArmor } from './seed-armor'
+import { seedTreasures } from './seed-treasures'
 
 async function main() {
   console.log('Starting complete database seed...')
@@ -23,9 +25,12 @@ async function main() {
     const magicalItemCount = await prisma.magicalItem.count()
     const spellCount = await prisma.spell.count()
     const weaponCount = await prisma.weapon.count()
+    const armorCount = await prisma.armor.count()
+    const treasureCount = await prisma.treasure.count()
 
     const totalCount = alignmentCount + classCount + backgroundCount + equipmentCount + 
-      equipmentPackCount + raceCount + magicalItemCount + spellCount + weaponCount
+      equipmentPackCount + raceCount + magicalItemCount + spellCount + weaponCount +
+      armorCount + treasureCount
 
     // Only seed if database is empty or --force flag is used
     if (totalCount > 0 && !process.argv.includes('--force')) {
@@ -43,6 +48,8 @@ async function main() {
     await seedMagicalItems()
     await seedSpells()
     await seedWeapons()
+    await seedArmor()
+    await seedTreasures()
 
     // Print final counts
     console.log('\nFinal database contents:')
@@ -55,6 +62,8 @@ async function main() {
     console.log(`Magical Items: ${await prisma.magicalItem.count()}`)
     console.log(`Spells: ${await prisma.spell.count()}`)
     console.log(`Weapons: ${await prisma.weapon.count()}`)
+    console.log(`Armor: ${await prisma.armor.count()}`)
+    console.log(`Treasures: ${await prisma.treasure.count()}`)
   } catch (error) {
     console.error('Error during seeding:', error)
     throw error
