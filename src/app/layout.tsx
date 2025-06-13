@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/providers/session-provider";
+import { QueryProvider } from "@/components/providers/query-provider";
+import { DndDataProvider } from "@/components/providers/dnd-data-provider";
 import { initializeServerCache } from '@/lib/server/init';
 
 const inter = Inter({ subsets: ["latin"] });
@@ -30,11 +32,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SessionProvider>
-          <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-            {children}
-          </main>
-        </SessionProvider>
+        <QueryProvider>
+          <SessionProvider>
+            <DndDataProvider>
+              <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+                {children}
+              </main>
+            </DndDataProvider>
+          </SessionProvider>
+        </QueryProvider>
       </body>
     </html>
   );

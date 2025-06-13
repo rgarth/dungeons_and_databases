@@ -1,7 +1,6 @@
-import { AbilityScore } from '@/lib/dnd/core';
-import { Character } from '@prisma/client';
+import { AbilityScore } from '@/types/ability-scores';
 
-interface RacialAbilityScoreIncrease {
+export interface RacialAbilityScoreIncrease {
   ability: AbilityScore;
   increase: number;
 }
@@ -10,43 +9,26 @@ export interface RacialTrait {
   name: string;
   description: string;
   type: 'passive' | 'active';
-  effect?: {
-    type: 'darkvision' | 'resistance' | 'advantage' | 'skill' | 'other';
-    value?: number | string;
-  };
+  effect?: Record<string, unknown>;
 }
 
 export class RacialFeaturesService {
-  private static instance: RacialFeaturesService;
-  private character: Character;
-
-  private constructor(character: Character) {
-    this.character = character;
-  }
-
-  public static getInstance(character: Character): RacialFeaturesService {
-    if (!RacialFeaturesService.instance) {
-      RacialFeaturesService.instance = new RacialFeaturesService(character);
-    }
-    return RacialFeaturesService.instance;
-  }
-
   // Parse ability score increase string into structured data
-  private parseAbilityScoreIncrease(increaseStr: string): RacialAbilityScoreIncrease[] {
+  private static parseAbilityScoreIncrease(increaseStr: string): RacialAbilityScoreIncrease[] {
     const increases: RacialAbilityScoreIncrease[] = [];
     
     // Handle "All ability scores increase by X"
     if (increaseStr.toLowerCase().includes('all ability scores')) {
       const match = increaseStr.match(/increase by (\d+)/i);
       const value = match ? parseInt(match[1]) : 1;
-      return ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].map(ability => ({
+      return ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].map((ability: string) => ({
         ability: ability as AbilityScore,
         increase: value
       }));
     }
 
     // Handle specific ability increases
-    const parts = increaseStr.split(',').map(part => part.trim());
+    const parts = increaseStr.split(',').map((part: string) => part.trim());
     for (const part of parts) {
       const match = part.match(/(\w+)\s*\+\s*(\d+)/i);
       if (match) {
@@ -60,16 +42,16 @@ export class RacialFeaturesService {
   }
 
   // Apply racial ability score increases to base scores
-  public async applyRacialAbilityScores(abilityScores: Record<string, number>): Promise<Record<string, number>> {
-    const race = await fetch(`/api/races/${encodeURIComponent(this.character.race)}`).then(res => res.json());
-    if (!race) {
-      console.warn(`Race ${this.character.race} not found`);
+  public static async applyRacialAbilityScores(abilityScores: Record<string, number>, race: string): Promise<Record<string, number>> {
+    const raceData = await fetch(`/api/races/${encodeURIComponent(race)}`).then(res => res.json());
+    if (!raceData) {
+      console.warn(`Race ${race} not found`);
       return abilityScores;
     }
 
-    const increases = race.abilityScoreIncrease.split(',');
+    const increases = raceData.abilityScoreIncrease.split(',');
     for (const increase of increases) {
-      const [ability, value] = increase.trim().split('+').map(s => s.trim());
+      const [ability, value] = increase.trim().split('+').map((s: string) => s.trim());
       if (ability && value) {
         const currentScore = abilityScores[ability.toLowerCase()] || 10;
         abilityScores[ability.toLowerCase()] = currentScore + parseInt(value);
@@ -80,25 +62,38 @@ export class RacialFeaturesService {
   }
 
   // Get racial traits for a race
-  public async getRacialTraits(): Promise<Array<{ name: string; description: string; type: string; effect?: any }>> {
-    const race = await fetch(`/api/races/${encodeURIComponent(this.character.race)}`).then(res => res.json());
-    if (!race) {
-      console.warn(`Race ${this.character.race} not found`);
+  public static async getRacialTraits(race: string): Promise<RacialTrait[]> {
+    const raceData = await fetch(`/api/races/${encodeURIComponent(race)}`).then(res => res.json());
+    if (!raceData) {
+      console.warn(`Race ${race} not found`);
+      return [];
+    }
+
+    // Parse the traits JSON string into an array
+    const traitNames = JSON.parse(raceData.traits as string);
+    if (!Array.isArray(traitNames)) {
+      console.warn(`Invalid traits format for race ${race}`);
       return [];
     }
 
     const traits = await Promise.all(
-      race.traits.map(async (traitName: string) => {
+      traitNames.map(async (traitName: string) => {
         const response = await fetch(`/api/racial-traits/${encodeURIComponent(traitName)}`);
         if (!response.ok) {
           console.warn(`Trait ${traitName} not found`);
           return null;
         }
-        return response.json();
+        const trait = await response.json();
+        return {
+          name: trait.name,
+          description: trait.description,
+          type: trait.type as 'passive' | 'active',
+          effect: trait.effect
+        } as RacialTrait;
       })
     );
 
-    return traits.filter(trait => trait !== null);
+    return traits.filter((trait): trait is RacialTrait => trait !== null);
   }
 
   // Helper to get trait descriptions
