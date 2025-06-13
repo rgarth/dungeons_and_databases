@@ -594,19 +594,6 @@ export const magicalItemsData = [
     stackable: false
   },
   {
-    name: 'Winged Boots',
-    type: 'Wondrous Item',
-    rarity: 'Uncommon',
-    requiresAttunement: true,
-    description: 'While you wear these boots, you have a flying speed equal to your walking speed. You can use the boots to fly for up to 4 hours, all at once or in several shorter flights, each one using a minimum of 1 minute from the duration.',
-    weight: 1,
-    cost: '8000 gp',
-    effects: JSON.stringify([
-      { type: 'special', description: 'Grants flying speed equal to walking speed (4 hours per day)' }
-    ]),
-    stackable: false
-  },
-  {
     name: 'Amulet of Natural Armor +1',
     type: 'Wondrous Item',
     rarity: 'Uncommon',
@@ -1139,19 +1126,6 @@ export const magicalItemsData = [
     cost: '6000 gp',
     effects: JSON.stringify([
       { type: 'special', description: 'See through solid matter for 1 minute (once per day)' }
-    ]),
-    stackable: false
-  },
-  {
-    name: 'Amulet of the Planes',
-    type: 'Wondrous Item',
-    rarity: 'Very Rare',
-    requiresAttunement: true,
-    description: 'While wearing this amulet, you can use an action to name a location that you are familiar with on another plane of existence. Then make a DC 15 Intelligence check. On a successful check, you cast the plane shift spell.',
-    weight: 1,
-    cost: '160000 gp',
-    effects: JSON.stringify([
-      { type: 'spell_effect', target: 'plane_shift', description: 'Cast Plane Shift (DC 15 Intelligence check or random destination)' }
     ]),
     stackable: false
   },

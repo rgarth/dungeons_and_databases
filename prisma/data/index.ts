@@ -9,9 +9,33 @@ import { armorData } from './armor-data'
 import { equipmentData } from './equipment-data'
 import { spellsData } from './spells-data'
 import { treasureData } from './treasure-data'
+import { classesData, classArmorProficiencies, classWeaponProficiencies } from './classes-data'
+import { backgroundsData } from './backgrounds-data'
+import { racesData } from './races-data'
+import { alignmentsData } from './alignments-data'
+import { magicalItemsData } from './magical-items-data'
+import { equipmentPacksData } from './equipment-packs-data'
+import { classWeaponSuggestionsData } from './weapon-suggestions-data'
+import { classArmorSuggestionsData } from './armor-suggestions-data'
 
 // Export all data
-export { weaponsData, armorData, equipmentData, spellsData, treasureData }
+export {
+  weaponsData,
+  armorData,
+  equipmentData,
+  spellsData,
+  treasureData,
+  classesData,
+  classArmorProficiencies,
+  classWeaponProficiencies,
+  backgroundsData,
+  racesData,
+  alignmentsData,
+  magicalItemsData,
+  equipmentPacksData,
+  classWeaponSuggestionsData,
+  classArmorSuggestionsData
+}
 
 // Export counts for validation
 export const contentCounts = {
@@ -20,5 +44,25 @@ export const contentCounts = {
   armor: armorData.length,
   equipment: equipmentData.length,
   treasures: treasureData.length,
-  total: spellsData.length + weaponsData.length + armorData.length + equipmentData.length + treasureData.length
+  classes: classesData.length,
+  backgrounds: backgroundsData.length,
+  races: racesData.length,
+  alignments: alignmentsData.length,
+  magicalItems: magicalItemsData.length,
+  equipmentPacks: equipmentPacksData.length,
+  weaponSuggestions: classWeaponSuggestionsData.length,
+  armorSuggestions: classArmorSuggestionsData.length,
+  total: spellsData.length + 
+         weaponsData.length + 
+         armorData.length + 
+         equipmentData.length + 
+         treasureData.length +
+         classesData.length +
+         backgroundsData.length +
+         racesData.length +
+         alignmentsData.length +
+         magicalItemsData.length +
+         equipmentPacksData.length +
+         classWeaponSuggestionsData.length +
+         classArmorSuggestionsData.length
 } 

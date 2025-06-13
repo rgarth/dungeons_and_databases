@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/providers/session-provider";
+import { initializeServerCache } from '@/lib/server/init';
 
 const inter = Inter({ subsets: ["latin"] });
+
+// Initialize server cache
+initializeServerCache().catch(console.error);
 
 export const metadata: Metadata = {
   title: "Dungeons & Databases - D&D Character Manager",

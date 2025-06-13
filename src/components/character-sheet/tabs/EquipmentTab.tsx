@@ -90,7 +90,7 @@ export function EquipmentTab({
         ...weaponData,
         type: weaponData.type as 'Simple' | 'Martial',
         category: weaponData.category as 'Melee' | 'Ranged',
-        properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
+        properties: weaponData.properties ? weaponData.properties.split(',').map(p => p.trim()).filter(Boolean) : []
       } as Weapon : null;
       const template = MAGICAL_WEAPON_TEMPLATES.find(t => t.name === selectedMagicalTemplate);
       
@@ -243,7 +243,7 @@ export function EquipmentTab({
                       ...weaponData,
                       type: weaponData.type as 'Simple' | 'Martial',
                       category: weaponData.category as 'Melee' | 'Ranged',
-                      properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
+                      properties: weaponData.properties ? weaponData.properties.split(',').map(p => p.trim()).filter(Boolean) : []
                     } as Weapon : null;
                     setSelectedWeapon(weapon);
                   }}

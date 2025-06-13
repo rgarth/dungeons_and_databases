@@ -192,7 +192,7 @@ export async function POST(request: NextRequest) {
             category: weaponData.category,
             damage: weaponData.damage,
             damageType: weaponData.damageType,
-            properties: weaponData.properties ? JSON.parse(weaponData.properties) : [],
+            properties: weaponData.properties ? weaponData.properties.split(',').map(p => p.trim()).filter(Boolean) : [],
             weight: weaponData.weight,
             cost: weaponData.cost,
             stackable: weaponData.stackable

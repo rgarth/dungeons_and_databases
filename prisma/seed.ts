@@ -1,8 +1,21 @@
 import { PrismaClient } from '@prisma/client'
-import { weaponsData } from './data/weapons-data'
-import { armorData } from './data/armor-data'
-import { equipmentData } from './data/equipment-data'
-import { treasureData } from './data/treasure-data'
+import {
+  weaponsData,
+  armorData,
+  equipmentData,
+  spellsData,
+  treasureData,
+  classesData,
+  classArmorProficiencies,
+  classWeaponProficiencies,
+  backgroundsData,
+  racesData,
+  alignmentsData,
+  magicalItemsData,
+  equipmentPacksData,
+  classWeaponSuggestionsData,
+  classArmorSuggestionsData
+} from './data'
 
 const prisma = new PrismaClient()
 
@@ -10,272 +23,32 @@ const prisma = new PrismaClient()
 // Source: System Reference Document 5.1 by Wizards of the Coast LLC
 // Licensed under Creative Commons Attribution 4.0 International License
 // https://dnd.wizards.com/resources/systems-reference-document
-const spellsData = [
-  // Cantrips (Level 0)
-  {
-    name: "Acid Splash",
-    level: 0,
-    school: "Conjuration",
-    castingTime: "1 action",
-    range: "60 feet",
-    components: "V, S",
-    duration: "Instantaneous",
-    description: "Choose one or two creatures within range. Make a ranged spell attack against each target. On hit, deal 1d6 acid damage.",
-    classes: JSON.stringify(["Sorcerer", "Wizard"])
-  },
-  {
-    name: "Chill Touch",
-    level: 0,
-    school: "Necromancy",
-    castingTime: "1 action",
-    range: "120 feet",
-    components: "V, S",
-    duration: "1 round",
-    description: "Make a ranged spell attack. On hit, deal 1d8 necrotic damage and target can't regain hit points until start of your next turn.",
-    classes: JSON.stringify(["Sorcerer", "Warlock", "Wizard"])
-  },
-  {
-    name: "Dancing Lights",
-    level: 0,
-    school: "Evocation",
-    castingTime: "1 action",
-    range: "120 feet",
-    components: "V, S, M",
-    duration: "1 minute",
-    description: "Create up to four torch-sized lights that hover in the air for the duration.",
-    classes: JSON.stringify(["Bard", "Sorcerer", "Wizard"])
-  },
-  {
-    name: "Druidcraft",
-    level: 0,
-    school: "Transmutation",
-    castingTime: "1 action",
-    range: "30 feet",
-    components: "V, S",
-    duration: "Instantaneous",
-    description: "Create small nature effects: predict weather, bloom flowers, create sensory effects.",
-    classes: JSON.stringify(["Druid"])
-  },
-  {
-    name: "Eldritch Blast",
-    level: 0,
-    school: "Evocation",
-    castingTime: "1 action",
-    range: "120 feet",
-    components: "V, S",
-    duration: "Instantaneous",
-    description: "A beam of crackling energy. Make a ranged spell attack for 1d10 force damage.",
-    classes: JSON.stringify(["Warlock"])
-  },
-  {
-    name: "Fire Bolt",
-    level: 0,
-    school: "Evocation",
-    castingTime: "1 action",
-    range: "120 feet",
-    components: "V, S",
-    duration: "Instantaneous",
-    description: "A mote of fire streaks toward a creature or object. Make a ranged spell attack. On hit, deal 1d10 fire damage.",
-    classes: JSON.stringify(["Sorcerer", "Wizard"])
-  },
-  {
-    name: "Guidance",
-    level: 0,
-    school: "Divination",
-    castingTime: "1 action",
-    range: "Touch",
-    components: "V, S",
-    duration: "1 minute",
-    description: "Touch a willing creature. Once before the spell ends, it can roll 1d4 and add result to one ability check.",
-    classes: JSON.stringify(["Cleric", "Druid"])
-  },
-  {
-    name: "Light",
-    level: 0,
-    school: "Evocation",
-    castingTime: "1 action",
-    range: "Touch",
-    components: "V, M",
-    duration: "1 hour",
-    description: "Touch an object to make it shed bright light in 20-foot radius and dim light 20 feet beyond.",
-    classes: JSON.stringify(["Bard", "Cleric", "Sorcerer", "Wizard"])
-  },
-  {
-    name: "Mage Hand",
-    level: 0,
-    school: "Conjuration",
-    castingTime: "1 action",
-    range: "30 feet",
-    components: "V, S",
-    duration: "1 minute",
-    description: "A spectral hand appears and can manipulate objects, open doors, or retrieve items up to 10 pounds.",
-    classes: JSON.stringify(["Bard", "Sorcerer", "Warlock", "Wizard"])
-  },
-  {
-    name: "Mending",
-    level: 0,
-    school: "Transmutation",
-    castingTime: "1 minute",
-    range: "Touch",
-    components: "V, S, M",
-    duration: "Instantaneous",
-    description: "Repair a single break or tear in an object you touch.",
-    classes: JSON.stringify(["Bard", "Cleric", "Druid", "Sorcerer", "Wizard"])
-  },
-  {
-    name: "Message",
-    level: 0,
-    school: "Transmutation",
-    castingTime: "1 action",
-    range: "120 feet",
-    components: "V, S, M",
-    duration: "1 round",
-    description: "Point toward a creature and whisper a message. The target can hear the message and can whisper a reply.",
-    classes: JSON.stringify(["Bard", "Sorcerer", "Wizard"])
-  },
-  {
-    name: "Minor Illusion",
-    level: 0,
-    school: "Illusion",
-    castingTime: "1 action",
-    range: "30 feet",
-    components: "S, M",
-    duration: "1 minute",
-    description: "Create a sound or image of an object for 1 minute.",
-    classes: JSON.stringify(["Bard", "Sorcerer", "Warlock", "Wizard"])
-  },
-  {
-    name: "Poison Spray",
-    level: 0,
-    school: "Conjuration",
-    castingTime: "1 action",
-    range: "10 feet",
-    components: "V, S",
-    duration: "Instantaneous",
-    description: "Extend your hand toward a creature. Target must make Constitution save or take 1d12 poison damage.",
-    classes: JSON.stringify(["Druid", "Sorcerer", "Warlock", "Wizard"])
-  },
-  {
-    name: "Prestidigitation",
-    level: 0,
-    school: "Transmutation",
-    castingTime: "1 action",
-    range: "10 feet",
-    components: "V, S",
-    duration: "1 hour",
-    description: "A minor magical trick: light a candle, clean an object, chill/warm food, etc.",
-    classes: JSON.stringify(["Bard", "Sorcerer", "Warlock", "Wizard"])
-  },
-  {
-    name: "Produce Flame",
-    level: 0,
-    school: "Conjuration",
-    castingTime: "1 action",
-    range: "Self",
-    components: "V, S",
-    duration: "10 minutes",
-    description: "A flickering flame appears in your hand. Shed bright light 10 feet, dim light additional 10 feet.",
-    classes: JSON.stringify(["Druid"])
-  },
-  {
-    name: "Ray of Frost",
-    level: 0,
-    school: "Evocation",
-    castingTime: "1 action",
-    range: "60 feet",
-    components: "V, S",
-    duration: "Instantaneous",
-    description: "Ranged spell attack deals 1d8 cold damage and reduces target's speed by 10 feet until end of its next turn.",
-    classes: JSON.stringify(["Sorcerer", "Wizard"])
-  },
-  {
-    name: "Resistance",
-    level: 0,
-    school: "Abjuration",
-    castingTime: "1 action",
-    range: "Touch",
-    components: "V, S, M",
-    duration: "1 minute",
-    description: "Touch willing creature. Once before spell ends, target can roll 1d4 and add to one saving throw.",
-    classes: JSON.stringify(["Cleric", "Druid"])
-  },
-  {
-    name: "Sacred Flame",
-    level: 0,
-    school: "Evocation",
-    castingTime: "1 action",
-    range: "60 feet",
-    components: "V, S",
-    duration: "Instantaneous",
-    description: "Divine flame descends on a creature. Target makes Dex save or takes 1d8 radiant damage.",
-    classes: JSON.stringify(["Cleric"])
-  },
-  {
-    name: "Shocking Grasp",
-    level: 0,
-    school: "Evocation",
-    castingTime: "1 action",
-    range: "Touch",
-    components: "V, S",
-    duration: "Instantaneous",
-    description: "Lightning springs from your hand. Make melee spell attack for 1d8 lightning damage.",
-    classes: JSON.stringify(["Sorcerer", "Wizard"])
-  },
-  {
-    name: "Spare the Dying",
-    level: 0,
-    school: "Necromancy",
-    castingTime: "1 action",
-    range: "Touch",
-    components: "V, S",
-    duration: "Instantaneous",
-    description: "Touch a living creature with 0 hit points. The creature becomes stable.",
-    classes: JSON.stringify(["Cleric"])
-  },
-  {
-    name: "Thaumaturgy",
-    level: 0,
-    school: "Transmutation",
-    castingTime: "1 action",
-    range: "30 feet",
-    components: "V",
-    duration: "1 minute",
-    description: "Manifest minor wonder: amplify voice, flicker flames, open/close doors, etc.",
-    classes: JSON.stringify(["Cleric"])
-  },
-  {
-    name: "True Strike",
-    level: 0,
-    school: "Divination",
-    castingTime: "1 action",
-    range: "30 feet",
-    components: "S",
-    duration: "1 round",
-    description: "Extend your hand toward a creature. On your next turn, you gain advantage on your first attack roll against the target.",
-    classes: JSON.stringify(["Bard", "Sorcerer", "Warlock", "Wizard"])
-  },
-  {
-    name: "Vicious Mockery",
-    level: 0,
-    school: "Enchantment",
-    castingTime: "1 action",
-    range: "60 feet",
-    components: "V",
-    duration: "Instantaneous",
-    description: "Unleash string of insults. Target makes Wis save or takes 1d4 psychic damage and has disadvantage on next attack.",
-    classes: JSON.stringify(["Bard"])
-  }
-]
+
+// Type guard for Prisma error
+function isPrismaError(e: unknown): e is { code: string } {
+  return typeof e === 'object' && e !== null && 'code' in e && typeof (e as { code: unknown }).code === 'string';
+}
 
 async function main() {
   console.log('🌱 Starting database seed...')
   
-  // Clear existing data
-  await prisma.spell.deleteMany()
-  await prisma.weapon.deleteMany()
-  await prisma.armor.deleteMany()
-  await prisma.equipment.deleteMany()
+  // Clear existing data in correct order (respecting foreign key constraints)
+  await prisma.equipmentPackItem.deleteMany()
+  await prisma.equipmentPack.deleteMany()
+  await prisma.classWeaponSuggestion.deleteMany()
+  await prisma.classArmorSuggestion.deleteMany()
+  await prisma.classWeaponProficiency.deleteMany()
+  await prisma.classArmorProficiency.deleteMany()
+  await prisma.dndClass.deleteMany()
+  await prisma.background.deleteMany()
+  await prisma.dndRace.deleteMany()
+  await prisma.alignment.deleteMany()
+  await prisma.magicalItem.deleteMany()
   await prisma.treasure.deleteMany()
+  await prisma.equipment.deleteMany()
+  await prisma.armor.deleteMany()
+  await prisma.weapon.deleteMany()
+  await prisma.spell.deleteMany()
   
   console.log('🗑️  Cleared existing data')
   
@@ -313,6 +86,207 @@ async function main() {
     await prisma.treasure.create({ data: treasure })
   }
   console.log(`✅ Created ${treasureData.length} treasures`)
+  
+  // Seed classes
+  console.log('🧙‍♂️ Seeding classes...')
+  for (const classData of classesData) {
+    await prisma.dndClass.create({
+      data: {
+        name: classData.name,
+        description: classData.description,
+        hitDie: classData.hitDie,
+        primaryAbility: classData.primaryAbility,
+        savingThrows: JSON.stringify(classData.savingThrows),
+        skillChoices: JSON.stringify(classData.skillChoices)
+      }
+    })
+  }
+  console.log(`✅ Created ${classesData.length} classes`)
+
+  // Seed armor proficiencies
+  console.log('🛡️ Seeding armor proficiencies...')
+  for (const prof of classArmorProficiencies) {
+    const classRecord = await prisma.dndClass.findUnique({
+      where: { name: prof.className }
+    })
+    if (classRecord) {
+      await prisma.classArmorProficiency.create({
+        data: {
+          classId: classRecord.id,
+          armorType: prof.armorType
+        }
+      })
+    }
+  }
+
+  // Seed weapon proficiencies
+  console.log('⚔️ Seeding weapon proficiencies...')
+  for (const prof of classWeaponProficiencies) {
+    const classRecord = await prisma.dndClass.findUnique({
+      where: { name: prof.className }
+    })
+    if (classRecord) {
+      await prisma.classWeaponProficiency.create({
+        data: {
+          classId: classRecord.id,
+          proficiencyType: prof.proficiencyType,
+          weaponName: prof.weaponName
+        }
+      })
+    }
+  }
+
+  // Seed weapon suggestions
+  console.log('⚔️ Seeding weapon suggestions...')
+  for (const suggestion of classWeaponSuggestionsData) {
+    const classRecord = await prisma.dndClass.findUnique({
+      where: { name: suggestion.className }
+    })
+    if (classRecord) {
+      for (const weapon of suggestion.suggestions) {
+        await prisma.classWeaponSuggestion.create({
+          data: {
+            classId: classRecord.id,
+            weaponName: weapon.weaponName,
+            quantity: weapon.quantity,
+            reason: weapon.reason
+          }
+        })
+      }
+    }
+  }
+
+  // Seed armor suggestions
+  console.log('🛡️ Seeding armor suggestions...')
+  for (const suggestion of classArmorSuggestionsData) {
+    const classRecord = await prisma.dndClass.findUnique({
+      where: { name: suggestion.className }
+    })
+    if (classRecord) {
+      for (const armor of suggestion.suggestions) {
+        await prisma.classArmorSuggestion.create({
+          data: {
+            classId: classRecord.id,
+            armorName: armor.armorName,
+            reason: armor.reason
+          }
+        })
+      }
+    }
+  }
+  
+  // Seed backgrounds
+  console.log('👥 Seeding backgrounds...')
+  for (const background of backgroundsData) {
+    await prisma.background.create({
+      data: {
+        name: background.name,
+        description: background.description,
+        skillProficiencies: JSON.stringify(background.skillProficiencies),
+        languages: JSON.stringify(background.languages),
+        equipment: JSON.stringify(background.equipment),
+        feature: background.feature,
+        featureDescription: background.featureDescription,
+        suggestedCharacteristics: background.suggestedCharacteristics ? JSON.stringify(background.suggestedCharacteristics) : undefined
+      }
+    })
+  }
+  console.log(`✅ Created ${backgroundsData.length} backgrounds`)
+
+  // Seed races
+  console.log('🧝‍♂️ Seeding races...')
+  for (const race of racesData) {
+    await prisma.dndRace.create({
+      data: {
+        name: race.name,
+        description: race.description,
+        abilityScoreIncrease: JSON.stringify(race.abilityScoreIncrease),
+        size: race.size,
+        speed: race.speed,
+        traits: JSON.stringify(race.traits),
+        languages: JSON.stringify(race.languages)
+      }
+    })
+  }
+  console.log(`✅ Created ${racesData.length} races`)
+
+  // Seed alignments
+  console.log('⚖️ Seeding alignments...')
+  for (const alignment of alignmentsData) {
+    await prisma.alignment.create({
+      data: {
+        name: alignment.name,
+        shortName: alignment.shortName,
+        description: alignment.description,
+        ethicalAxis: alignment.ethicalAxis,
+        moralAxis: alignment.moralAxis
+      }
+    })
+  }
+  console.log(`✅ Created ${alignmentsData.length} alignments`)
+
+  // Seed magical items
+  console.log('✨ Seeding magical items...')
+  const magicalItemNames = new Set<string>()
+  for (const item of magicalItemsData) {
+    if (magicalItemNames.has(item.name)) {
+      console.warn(`⚠️ Duplicate magical item skipped: ${item.name}`)
+      continue
+    }
+    magicalItemNames.add(item.name)
+    try {
+      await prisma.magicalItem.create({
+        data: {
+          name: item.name,
+          type: item.type,
+          rarity: item.rarity,
+          requiresAttunement: item.requiresAttunement,
+          description: item.description,
+          weight: item.weight,
+          cost: item.cost,
+          effects: item.effects ? JSON.stringify(item.effects) : undefined,
+          stackable: item.stackable,
+          consumable: item.consumable
+        }
+      })
+    } catch (e: unknown) {
+      if (isPrismaError(e) && e.code === 'P2002') {
+        console.warn(`⚠️ Duplicate magical item in DB skipped: ${item.name}`)
+      } else {
+        console.error(`❌ Error seeding magical item: ${item.name}`, e)
+      }
+    }
+  }
+  console.log(`✅ Created magical items (skipped duplicates)`)
+
+  // Seed equipment packs
+  console.log('🎒 Seeding equipment packs...')
+  for (const pack of equipmentPacksData) {
+    const createdPack = await prisma.equipmentPack.create({
+      data: {
+        name: pack.name,
+        description: pack.description,
+        cost: pack.cost
+      }
+    })
+
+    // Create pack items
+    for (const item of pack.items) {
+      const equipment = await prisma.equipment.findUnique({
+        where: { name: item.equipmentName }
+      })
+      if (equipment) {
+        await prisma.equipmentPackItem.create({
+          data: {
+            packId: createdPack.id,
+            equipmentId: equipment.id,
+            quantity: item.quantity
+          }
+        })
+      }
+    }
+  }
+  console.log(`✅ Created ${equipmentPacksData.length} equipment packs`)
   
   console.log('🎉 Database seeding completed!')
 }

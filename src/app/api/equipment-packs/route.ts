@@ -1,27 +1,24 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { cachedEquipmentPacks } from '@/lib/server/init';
 
-interface EquipmentPackResponse {
-  id: string;
-  name: string;
-  description: string;
-  cost: string;
-  items: Array<{
-    name: string;
-    quantity: number;
-    type: string;
-    cost: string;
-    weight: number;
-    description: string | null;
-  }>;
-}
-
-export async function GET(): Promise<NextResponse<EquipmentPackResponse[] | { error: string }>> {
+export async function GET() {
   try {
-    const equipmentPacks = await prisma.equipmentPack.findMany({
-      include: {
+    // Return cached data if available
+    if (cachedEquipmentPacks) {
+      return NextResponse.json(cachedEquipmentPacks);
+    }
+
+    // Fallback to database if cache is not initialized
+    const packs = await prisma.equipmentPack.findMany({
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        cost: true,
         items: {
-          include: {
+          select: {
+            quantity: true,
             equipment: {
               select: {
                 name: true,
@@ -31,11 +28,6 @@ export async function GET(): Promise<NextResponse<EquipmentPackResponse[] | { er
                 description: true
               }
             }
-          },
-          orderBy: {
-            equipment: {
-              name: 'asc'
-            }
           }
         }
       },
@@ -44,8 +36,8 @@ export async function GET(): Promise<NextResponse<EquipmentPackResponse[] | { er
       }
     });
 
-    // Transform to match the expected format
-    const formattedPacks: EquipmentPackResponse[] = equipmentPacks.map(pack => ({
+    // Transform the data to match the expected response type
+    const transformedPacks = packs.map(pack => ({
       id: pack.id,
       name: pack.name,
       description: pack.description,
@@ -55,17 +47,14 @@ export async function GET(): Promise<NextResponse<EquipmentPackResponse[] | { er
         quantity: item.quantity,
         type: item.equipment.type,
         cost: item.equipment.cost,
-        weight: item.equipment.weight || 0,
+        weight: item.equipment.weight,
         description: item.equipment.description
       }))
     }));
 
-    return NextResponse.json(formattedPacks);
+    return NextResponse.json(transformedPacks);
   } catch (error) {
-    console.error('Error fetching equipment packs:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch equipment packs' },
-      { status: 500 }
-    );
+    console.error('Failed to fetch equipment packs:', error);
+    return NextResponse.json({ error: 'Failed to fetch equipment packs' }, { status: 500 });
   }
 } 
