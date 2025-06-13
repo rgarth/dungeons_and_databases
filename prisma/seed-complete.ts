@@ -10,6 +10,8 @@ import { seedSpells } from './seed-spells'
 import { seedWeapons } from './seed-weapons'
 import { seedArmor } from './seed-armor'
 import { seedTreasures } from './seed-treasures'
+import { seedWeaponSuggestions } from './seed-weapon-suggestions'
+import { seedArmorSuggestions } from './seed-armor-suggestions'
 
 async function main() {
   console.log('Starting complete database seed...')
@@ -50,6 +52,8 @@ async function main() {
     await seedWeapons()
     await seedArmor()
     await seedTreasures()
+    await seedWeaponSuggestions()
+    await seedArmorSuggestions()
 
     // Print final counts
     console.log('\nFinal database contents:')
