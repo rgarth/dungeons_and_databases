@@ -26,6 +26,7 @@
     "@auth/prisma-adapter": "^2.9.1",
     "@prisma/client": "^6.8.2",
     "@tailwindcss/postcss": "^4",
+    "@tanstack/react-query": "^5.80.7",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
