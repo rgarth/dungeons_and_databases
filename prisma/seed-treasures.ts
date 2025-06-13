@@ -14,54 +14,56 @@ import { treasureData } from './data/treasure-data'
 
 const prisma = new PrismaClient()
 
-async function main() {
+async function seedTreasures() {
   console.log('💎 Starting treasure database seeding...')
   
+  // Check existing treasures
+  const existingTreasures = await prisma.treasure.findMany()
+  console.log(`ℹ️  Found ${existingTreasures.length} existing treasures`)
+  
+  // Clear existing treasures for fresh seed
+  console.log('🔄 Clearing existing treasures for fresh seed...')
+  await prisma.treasure.deleteMany()
+  
+  console.log('💎 Seeding D&D 5e treasures...')
+  
+  // Process items sequentially to avoid connection pool issues
+  for (const treasure of treasureData) {
+    try {
+      await prisma.treasure.create({
+        data: {
+          name: treasure.name,
+          type: treasure.type,
+          category: treasure.category,
+          value: treasure.value,
+          description: treasure.description,
+          weight: treasure.weight,
+          appearance: treasure.appearance
+        }
+      })
+      console.log(`  ✅ Added treasure: ${treasure.name}`)
+    } catch (error) {
+      console.error(`❌ Failed to add treasure ${treasure.name}:`, error)
+    }
+  }
+  
+  console.log(`✅ Seeded ${treasureData.length} treasures`)
+}
+
+async function main() {
   try {
-    // Check if treasures already exist
-    const existingCount = await prisma.treasure.count()
-    
-    if (existingCount > 0) {
-      console.log(`ℹ️  Found ${existingCount} existing treasures`)
-      console.log('🔄 Clearing existing treasures for fresh seed...')
-      await prisma.treasure.deleteMany()
-    }
-    
-    console.log('💎 Seeding D&D 5e treasures...')
-    
-    // Seed treasures in batches for better performance
-    const batchSize = 20
-    for (let i = 0; i < treasureData.length; i += batchSize) {
-      const batch = treasureData.slice(i, i + batchSize)
-      await Promise.all(
-        batch.map(treasure => prisma.treasure.create({ data: treasure }))
-      )
-      console.log(`   ✓ Seeded batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(treasureData.length / batchSize)}`)
-    }
-    
-    // Verify seeding
-    const finalCount = await prisma.treasure.count()
-    console.log(`✅ Successfully seeded ${finalCount} treasures`)
-    
-    // Log treasure categories for verification
-    const categories = await prisma.treasure.groupBy({
-      by: ['type', 'category'],
-      _count: { _all: true },
-      orderBy: [{ type: 'asc' }, { category: 'asc' }]
-    })
-    
-    console.log('\n📊 Treasure Distribution:')
-    categories.forEach(({ type, category, _count }) => {
-      console.log(`   ${type} (${category}): ${_count._all} items`)
-    })
-    
-    console.log('\n🎉 Treasure seeding completed successfully!')
-    
+    await seedTreasures()
+    console.log('🎉 Treasure seeding completed successfully!')
   } catch (error) {
     console.error('❌ Error seeding treasures:', error)
-    throw error
+    process.exit(1)
+  } finally {
+    await prisma.$disconnect()
   }
 }
+
+// Run the seeding
+main()
 
 // Handle both direct execution and module import
 const isDirectExecution = process.argv[1]?.endsWith('seed-treasures.ts')

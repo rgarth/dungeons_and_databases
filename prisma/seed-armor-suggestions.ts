@@ -3,7 +3,7 @@ import { classArmorSuggestionsData } from './data/armor-suggestions-data';
 
 const prisma = new PrismaClient();
 
-async function main() {
+export async function seedArmorSuggestions() {
   console.log('🛡️  Seeding armor suggestions...');
 
   // Clear existing suggestions
@@ -39,11 +39,20 @@ async function main() {
   console.log('\n✅ Armor suggestions seeding completed!');
 }
 
-main()
-  .catch((error) => {
+// Keep the main function for direct execution
+async function main() {
+  try {
+    await seedArmorSuggestions();
+    console.log('🎉 Armor suggestions seeding completed successfully!');
+  } catch (error) {
     console.error('❌ Error seeding armor suggestions:', error);
     process.exit(1);
-  })
-  .finally(async () => {
+  } finally {
     await prisma.$disconnect();
-  }); 
+  }
+}
+
+// Only run if this file is executed directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main();
+} 

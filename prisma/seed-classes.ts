@@ -1,10 +1,8 @@
-import { PrismaClient } from '@prisma/client';
-import { classesData, classArmorProficiencies, classWeaponProficiencies } from './data/classes-data';
+import prisma from './client'
+import { classesData, classArmorProficiencies, classWeaponProficiencies } from './data/classes-data'
 
-const prisma = new PrismaClient();
-
-async function seedClasses() {
-  console.log('🎭 Seeding D&D classes...');
+export async function seedClasses() {
+  console.log('🎭 Seeding D&D classes...')
   
   // First, seed the classes
   for (const classData of classesData) {
@@ -25,17 +23,17 @@ async function seedClasses() {
         savingThrows: JSON.stringify(classData.savingThrows),
         skillChoices: JSON.stringify(classData.skillChoices)
       }
-    });
+    })
   }
 
-  console.log(`✅ Seeded ${classesData.length} classes`);
+  console.log(`✅ Seeded ${classesData.length} classes`)
 
   // Seed armor proficiencies
-  console.log('🛡️  Seeding armor proficiencies...');
+  console.log('🛡️  Seeding armor proficiencies...')
   for (const armorProf of classArmorProficiencies) {
     const dndClass = await prisma.dndClass.findUnique({
       where: { name: armorProf.className }
-    });
+    })
 
     if (dndClass) {
       await prisma.classArmorProficiency.upsert({
@@ -50,18 +48,18 @@ async function seedClasses() {
           classId: dndClass.id,
           armorType: armorProf.armorType
         }
-      });
+      })
     }
   }
 
-  console.log(`✅ Seeded ${classArmorProficiencies.length} armor proficiencies`);
+  console.log(`✅ Seeded ${classArmorProficiencies.length} armor proficiencies`)
 
   // Seed weapon proficiencies
-  console.log('⚔️  Seeding weapon proficiencies...');
+  console.log('⚔️  Seeding weapon proficiencies...')
   for (const weaponProf of classWeaponProficiencies) {
     const dndClass = await prisma.dndClass.findUnique({
       where: { name: weaponProf.className }
-    });
+    })
 
     if (dndClass) {
       // For Simple/Martial proficiencies, check if it already exists
@@ -71,7 +69,7 @@ async function seedClasses() {
           proficiencyType: weaponProf.proficiencyType,
           weaponName: weaponProf.weaponName
         }
-      });
+      })
 
       if (!existingProf) {
         await prisma.classWeaponProficiency.create({
@@ -80,12 +78,12 @@ async function seedClasses() {
             proficiencyType: weaponProf.proficiencyType,
             weaponName: weaponProf.weaponName
           }
-        });
+        })
       }
     }
   }
 
-  console.log(`✅ Seeded ${classWeaponProficiencies.length} weapon proficiencies`);
+  console.log(`✅ Seeded ${classWeaponProficiencies.length} weapon proficiencies`)
 }
 
 async function main() {

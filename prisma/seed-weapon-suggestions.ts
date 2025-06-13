@@ -3,7 +3,7 @@ import { classWeaponSuggestionsData } from './data/weapon-suggestions-data';
 
 const prisma = new PrismaClient();
 
-async function main() {
+export async function seedWeaponSuggestions() {
   console.log('🗡️  Seeding weapon suggestions...');
 
   // Clear existing suggestions
@@ -40,11 +40,20 @@ async function main() {
   console.log('\n✅ Weapon suggestions seeding completed!');
 }
 
-main()
-  .catch((error) => {
+// Keep the main function for direct execution
+async function main() {
+  try {
+    await seedWeaponSuggestions();
+    console.log('🎉 Weapon suggestions seeding completed successfully!');
+  } catch (error) {
     console.error('❌ Error seeding weapon suggestions:', error);
     process.exit(1);
-  })
-  .finally(async () => {
+  } finally {
     await prisma.$disconnect();
-  }); 
+  }
+}
+
+// Only run if this file is executed directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main();
+} 

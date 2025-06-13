@@ -1,156 +1,73 @@
-import { prisma } from '../src/lib/prisma'
-import { exec } from 'child_process'
-import { promisify } from 'util'
+import prisma from './client'
+import { seedAlignments } from './seed-alignments'
+import { seedClasses } from './seed-classes'
+import { seedBackgrounds } from './seed-backgrounds'
+import { seedEquipment } from './seed-equipment'
+import { seedEquipmentPacks } from './seed-equipment-packs'
+import { seedRaces } from './seed-races'
+import { seedMagicalItems } from './seed-magical-items'
+import { seedSpells } from './seed-spells'
+import { seedWeapons } from './seed-weapons'
 
-const execAsync = promisify(exec)
-
-interface SeedOptions {
-  force?: boolean
-  skipIfExists?: boolean
-  environment?: 'development' | 'production' | 'test'
-}
-
-// Check if data already exists in database
-async function checkExistingData() {
-  console.log('🔍 Checking existing data in database...')
-  
-  // Use sequential queries to avoid connection pool exhaustion
-  const spellCount = await prisma.spell.count()
-  const weaponCount = await prisma.weapon.count()
-  const armorCount = await prisma.armor.count()
-  const equipmentCount = await prisma.equipment.count()
-  const magicalItemCount = await prisma.magicalItem.count()
-  const treasureCount = await prisma.treasure.count()
-  const alignmentCount = await prisma.alignment.count()
-  const raceCount = await prisma.dndRace.count()
-  const classCount = await prisma.dndClass.count()
-  const backgroundCount = await prisma.background.count()
-  const weaponSuggestionCount = await prisma.classWeaponSuggestion.count()
-  const armorSuggestionCount = await prisma.classArmorSuggestion.count()
-  
-  const totals = {
-    spells: spellCount,
-    weapons: weaponCount,
-    armor: armorCount,
-    equipment: equipmentCount,
-    magicalItems: magicalItemCount,
-    treasures: treasureCount,
-    alignments: alignmentCount,
-    races: raceCount,
-    classes: classCount,
-    backgrounds: backgroundCount,
-    weaponSuggestions: weaponSuggestionCount,
-    armorSuggestions: armorSuggestionCount
-  }
-  
-  console.log('📊 Current database contents:')
-  Object.entries(totals).forEach(([key, count]) => {
-    console.log(`  ${key}: ${count}`)
-  })
-  
-  const totalItems = Object.values(totals).reduce((sum, count) => sum + count, 0)
-  const hasData = totalItems > 0
-  
-  console.log(`📈 Total items in database: ${totalItems}`)
-  
-  return { hasData, totals }
-}
-
-// Run individual seeding script sequentially
-async function runSeedingScript(scriptPath: string, description: string) {
-  console.log(`🚀 Running ${description}...`)
-  try {
-    const { stdout, stderr } = await execAsync(`npx tsx ${scriptPath}`)
-    if (stdout) console.log(stdout.trim())
-    if (stderr) console.error(stderr.trim())
-  } catch (error) {
-    console.error(`❌ Failed to run ${description}:`, error)
-    throw error
-  }
-}
-
-// Main seeding function with sequential execution
-async function seedCompleteDatabase(options: SeedOptions = {}) {
-  const { force = false, skipIfExists = false, environment = 'development' } = options
-  
-  console.log(`🌱 Starting COMPLETE D&D database seeding (${environment})...`)
-  
-  if (force) {
-    console.log('⚠️  FORCE mode enabled - will overwrite existing data')
-  }
-  
-  const { hasData } = await checkExistingData()
-  
-  if (hasData && skipIfExists) {
-    console.log('✅ Database already contains data and --skip-if-exists flag is set. Skipping seeding.')
-    return
-  }
-  
-  if (hasData && !force) {
-    console.log('⚠️  Database already contains data. Use --force to overwrite or --skip-if-exists to skip.')
-    console.log('   Example: npm run db:seed:complete:force')
-    return
-  }
-  
-  console.log('\n🚀 Starting sequential seeding process...')
-  
-  // Run seeding scripts SEQUENTIALLY to avoid connection pool exhaustion
-  const seedingSteps = [
-    { script: 'prisma/seed-alignments.ts', description: 'Alignments' },
-    { script: 'prisma/seed-races.ts', description: 'Races' },
-    { script: 'prisma/seed-classes.ts', description: 'Classes' },
-    { script: 'prisma/seed-backgrounds.ts', description: 'Backgrounds' },
-    { script: 'prisma/seed.ts', description: 'Core Items (Spells, Weapons, Armor, Equipment)' },
-    { script: 'prisma/seed-treasures.ts', description: 'Magical Items & Treasures' },
-    { script: 'prisma/seed-weapon-suggestions.ts', description: 'Weapon Suggestions' },
-    { script: 'prisma/seed-armor-suggestions.ts', description: 'Armor Suggestions' },
-    { script: 'prisma/seed-equipment-packs.ts', description: 'Equipment Packs' }
-  ]
-  
-  for (const step of seedingSteps) {
-    await runSeedingScript(step.script, step.description)
-    // Small delay between scripts to allow connection cleanup
-    await new Promise(resolve => setTimeout(resolve, 1000))
-  }
-  
-  // Final verification
-  console.log('\n🔍 Final verification...')
-  const { totals } = await checkExistingData()
-  
-  console.log('\n🎉 COMPLETE D&D database seeding finished!')
-  console.log('📊 Final database contents:')
-  Object.entries(totals).forEach(([key, count]) => {
-    console.log(`  ✅ ${key}: ${count}`)
-  })
-  
-  const totalItems = Object.values(totals).reduce((sum, count) => sum + count, 0)
-  console.log(`\n📈 Total items seeded: ${totalItems}`)
-  
-  if (totalItems > 1000) {
-    console.log('🚀 Database is ready for D&D adventures!')
-  } else {
-    console.log('⚠️  Seeding may be incomplete. Check individual script outputs above.')
-  }
-}
-
-// CLI execution
 async function main() {
-  const args = process.argv.slice(2)
-  const force = args.includes('--force')
-  const skipIfExists = args.includes('--skip-if-exists')
-  const environment = process.env.NODE_ENV as SeedOptions['environment']
-  
+  console.log('Starting complete database seed...')
+
   try {
-    await seedCompleteDatabase({ force, skipIfExists, environment })
+    // Check if database is empty
+    const alignmentCount = await prisma.alignment.count()
+    const classCount = await prisma.dndClass.count()
+    const backgroundCount = await prisma.background.count()
+    const equipmentCount = await prisma.equipment.count()
+    const equipmentPackCount = await prisma.equipmentPack.count()
+    const raceCount = await prisma.dndRace.count()
+    const magicalItemCount = await prisma.magicalItem.count()
+    const spellCount = await prisma.spell.count()
+    const weaponCount = await prisma.weapon.count()
+
+    const totalCount = alignmentCount + classCount + backgroundCount + equipmentCount + 
+      equipmentPackCount + raceCount + magicalItemCount + spellCount + weaponCount
+
+    // Only seed if database is empty or --force flag is used
+    if (totalCount > 0 && !process.argv.includes('--force')) {
+      console.log('Database already contains data. Use --force to reseed.')
+      return
+    }
+
+    // Seed in order of dependencies
+    await seedAlignments()
+    await seedClasses()
+    await seedBackgrounds()
+    await seedEquipment()
+    await seedEquipmentPacks()
+    await seedRaces()
+    await seedMagicalItems()
+    await seedSpells()
+    await seedWeapons()
+
+    // Print final counts
+    console.log('\nFinal database contents:')
+    console.log(`Alignments: ${await prisma.alignment.count()}`)
+    console.log(`Classes: ${await prisma.dndClass.count()}`)
+    console.log(`Backgrounds: ${await prisma.background.count()}`)
+    console.log(`Equipment: ${await prisma.equipment.count()}`)
+    console.log(`Equipment Packs: ${await prisma.equipmentPack.count()}`)
+    console.log(`Races: ${await prisma.dndRace.count()}`)
+    console.log(`Magical Items: ${await prisma.magicalItem.count()}`)
+    console.log(`Spells: ${await prisma.spell.count()}`)
+    console.log(`Weapons: ${await prisma.weapon.count()}`)
   } catch (error) {
-    console.error('Complete database seeding failed:', error)
-    process.exit(1)
+    console.error('Error during seeding:', error)
+    throw error
   } finally {
     await prisma.$disconnect()
   }
 }
 
-// Only run if this file is executed directly
+// Only run if this file is being run directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   main()
+    .catch((e) => {
+      console.error(e)
+      process.exit(1)
+    })
 } 

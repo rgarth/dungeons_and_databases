@@ -79,9 +79,9 @@ export async function POST(request: NextRequest) {
       skills,
       weapons,
       inventoryWeapons,
-      armor, // Client-provided armor with equipped boolean
-      inventoryArmor, // Legacy - client-provided armor from suggestions
-      ammunition, // Client-provided ammunition
+      armor,
+      inventoryArmor,
+      ammunition,
       spellsKnown,
       spellsPrepared,
       spellSlots,
@@ -96,6 +96,7 @@ export async function POST(request: NextRequest) {
       goldPieces,
       avatar,
       fullBodyAvatar,
+      racialTraits
     } = body;
 
     // Validate required fields
@@ -313,19 +314,20 @@ export async function POST(request: NextRequest) {
         inventory: processedInventory, // Use processed inventory without weapons or armor
         skills: skills || [],
         weapons: weapons || [],
-        inventoryWeapons: [...(inventoryWeapons || []), ...processedInventoryWeapons], // Merge client weapons with processed weapons
-        armor: allInventoryArmor, // New system: all armor with equipped boolean
-        inventoryArmor: allInventoryArmor, // Legacy compatibility
-        ammunition: ammunition || [], // Ammunition array
-        spellsKnown,
-        spellsPrepared,
-        spellSlots: spellSlots || {},
-        spellcastingAbility,
-        spellSaveDC,
-        spellAttackBonus,
+        inventoryWeapons: [...(inventoryWeapons || []), ...processedInventoryWeapons],
+        ammunition: ammunition || [],
+        armor: allInventoryArmor,
+        inventoryArmor: allInventoryArmor,
+        spellsKnown: spellsKnown || null,
+        spellsPrepared: spellsPrepared || null,
+        spellSlots: spellSlots || null,
+        spellcastingAbility: spellcastingAbility || null,
+        spellSaveDC: spellSaveDC || null,
+        spellAttackBonus: spellAttackBonus || null,
         actions: actions || [],
         bonusActions: bonusActions || [],
         reactions: reactions || [],
+        racialTraits: racialTraits || [],
         copperPieces: copperPieces || 0,
         silverPieces: silverPieces || 0,
         goldPieces: goldPieces || 0,
@@ -333,9 +335,7 @@ export async function POST(request: NextRequest) {
         deathSaveFailures: 0,
         avatar: avatar || null,
         fullBodyAvatar: fullBodyAvatar || null,
-        user: {
-          connect: { id: user.id }
-        },
+        userId: user.id
       },
     });
 
