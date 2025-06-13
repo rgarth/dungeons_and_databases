@@ -14,6 +14,7 @@ import { AvatarGenerator } from './shared/AvatarGenerator';
 import { weaponsData } from '../../prisma/data/weapons-data';
 import { armorData } from '../../prisma/data/armor-data';
 import { generateFantasyName } from "@/lib/dnd/character";
+import { useDndData } from "@/components/providers/dnd-data-provider";
 
 import { 
   type StatMethod, 
@@ -22,16 +23,15 @@ import {
 } from "@/services/character/creation";
 
 import type { CharacterAvatarData } from '@/app/api/generate-avatar/route';
-import { dndDataService } from '@/services/character/dnd-data';
+
+interface ApiResponse {
+  id: string;
+  name: string;
+}
 
 interface CreateCharacterModalProps {
   onClose: () => void;
   onCharacterCreated: () => void;
-}
-
-interface Subclass {
-  name: string;
-  description?: string;
 }
 
 interface CreationOptions {
@@ -61,6 +61,11 @@ interface CreationOptions {
   };
 }
 
+interface Subclass {
+  name: string;
+  description?: string;
+}
+
 export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateCharacterModalProps) {
   const characterCreationService = CharacterCreationService.getInstance();
 
@@ -68,10 +73,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [currentStep, setCurrentStep] = useState<'basic' | 'background'>('basic');
 
   // Database data with React Query
-  const { data: races = [] } = dndDataService.useRaces();
-  const { data: classes = [] } = dndDataService.useClasses();
-  const { data: backgrounds = [] } = dndDataService.useBackgrounds();
-  const { data: alignments = [] } = dndDataService.useAlignments();
+  const { races, classes, backgrounds, alignments } = useDndData();
 
   // Basic character info
   const [name, setName] = useState("");
@@ -122,10 +124,10 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
   // Set default values when data is loaded
   useEffect(() => {
-    if (races.length > 0 && !race) setRace(races[0]);
-    if (classes.length > 0 && !characterClass) setCharacterClass(classes[0]);
-    if (backgrounds.length > 0 && !background) setBackground(backgrounds[0]);
-    if (alignments.length > 0 && !alignment) setAlignment(alignments[0]);
+    if (races?.length > 0 && !race) setRace(races[0].name);
+    if (classes?.length > 0 && !characterClass) setCharacterClass(classes[0].name);
+    if (backgrounds?.length > 0 && !background) setBackground(backgrounds[0].name);
+    if (alignments?.length > 0 && !alignment) setAlignment("True Neutral");
   }, [races, classes, backgrounds, alignments]);
 
   // Load creation options and proficiencies when class changes
@@ -560,12 +562,12 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   <label className="block text-sm font-medium text-slate-300 mb-2">Race</label>
                   <select
                     value={race}
-                    onChange={(e) => setRace(e.target.value as typeof races[number])}
+                    onChange={(e) => setRace(e.target.value)}
                     className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
                     style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                   >
-                    {races.map((r: string) => (
-                      <option key={r} value={r}>{r}</option>
+                    {races?.map((r) => (
+                      <option key={r.id} value={r.name}>{r.name}</option>
                     ))}
                   </select>
                 </div>
@@ -573,12 +575,12 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   <label className="block text-sm font-medium text-slate-300 mb-2">Class</label>
                   <select
                     value={characterClass}
-                    onChange={(e) => setCharacterClass(e.target.value as typeof classes[number])}
+                    onChange={(e) => setCharacterClass(e.target.value)}
                     className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
                     style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                   >
-                    {classes.map((c: string) => (
-                      <option key={c} value={c}>{c}</option>
+                    {classes?.map((c) => (
+                      <option key={c.id} value={c.name}>{c.name}</option>
                     ))}
                   </select>
                 </div>
@@ -594,8 +596,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
                     style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                   >
-                    {alignments.map((a: string) => (
-                      <option key={a} value={a}>{a}</option>
+                    {alignments.map((a) => (
+                      <option key={a.id} value={a.name}>{a.name}</option>
                     ))}
                   </select>
                 </div>
@@ -726,7 +728,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-48 overflow-y-auto">
                     {spellcasting.availableSpells.map((spell) => (
                       <label
-                        key={spell.name}
+                        key={String(spell.name)}
                         className={`flex items-center p-2 rounded cursor-pointer transition-colors ${
                           selectedSpells.some(s => s.name === spell.name)
                             ? 'bg-purple-600 text-white'
@@ -769,7 +771,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                         className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
                       >
                         {creationOptions?.equipmentPacks?.map((pack, index) => (
-                          <option key={pack.id || index} value={index}>
+                          <option key={String(pack.id || `pack-${index}`)} value={index}>
                             {pack.name} ({pack.cost})
                           </option>
                         )) || []}
@@ -824,8 +826,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                         Selected Weapons ({selectedWeapons.reduce((sum, sw) => sum + sw.quantity, 0)})
                       </h4>
                       <div className="space-y-1">
-                        {selectedWeapons.map(({ weapon, quantity }) => (
-                          <div key={weapon.name} className="text-sm text-slate-300">
+                        {selectedWeapons.map(({ weapon, quantity }: { weapon: Weapon; quantity: number }, index: number) => (
+                          <div key={`${String(weapon.name)}-${index}`} className="text-sm text-slate-300">
                             • {quantity}x {weapon.name} ({weapon.damage} {weapon.damageType})
                           </div>
                         ))}
@@ -865,8 +867,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                         Selected Armor ({selectedArmor.length})
                       </h4>
                       <div className="space-y-1">
-                        {selectedArmor.map((armor) => (
-                          <div key={armor.name} className="text-sm text-slate-300">
+                        {selectedArmor.map((armor: Armor, index: number) => (
+                          <div key={`${armor.name}-${index}`} className="text-sm text-slate-300">
                             • {armor.name} (AC {armor.baseAC}{armor.maxDexBonus !== null ? ` + Dex (max ${armor.maxDexBonus})` : ' + Dex'})
                           </div>
                         ))}

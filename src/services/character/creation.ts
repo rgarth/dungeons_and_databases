@@ -21,6 +21,7 @@ import { BASIC_ACTIONS, getClassActions } from '@/lib/dnd/combat';
 import { Spell } from '@/lib/dnd/spells';
 import { Weapon, MagicalWeapon, Armor, Ammunition } from '@/lib/dnd/equipment';
 import { RacialFeaturesService, type RacialTrait } from './racial-features';
+import { Character } from '@/types/character';
 
 
 export type StatMethod = 'rolling-assign' | 'standard' | 'pointbuy';
@@ -102,12 +103,9 @@ export interface CharacterCreationResult {
 
 export class CharacterCreationService {
   private static instance: CharacterCreationService;
-  private racialFeaturesService: RacialFeaturesService;
-  
-  private constructor() {
-    this.racialFeaturesService = RacialFeaturesService.getInstance();
-  }
-  
+
+  private constructor() {}
+
   public static getInstance(): CharacterCreationService {
     if (!CharacterCreationService.instance) {
       CharacterCreationService.instance = new CharacterCreationService();
@@ -288,10 +286,10 @@ export class CharacterCreationService {
     const { abilityScores, class: characterClass, race } = data;
     
     // Apply racial ability score increases
-    const finalAbilityScores = await this.racialFeaturesService.applyRacialAbilityScores(abilityScores, race);
+    const finalAbilityScores = await RacialFeaturesService.applyRacialAbilityScores(abilityScores, race);
     
     // Get racial traits
-    const racialTraits = await this.racialFeaturesService.getRacialTraits(race);
+    const racialTraits = await RacialFeaturesService.getRacialTraits(race);
     
     // Get hit die from database - no fallback, this must succeed
     const classResponse = await fetch('/api/classes');
