@@ -12,8 +12,7 @@ const createPrismaClient = () => {
         url: process.env.DATABASE_URL,
       },
     },
-    // Configure connection pool for Aiven's 20-connection limit
-    // Use conservative settings to avoid exhausting connections
+    // Configure logging
     log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
   });
 };
