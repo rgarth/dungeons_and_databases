@@ -490,6 +490,14 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }
   };
 
+  const handleNext = () => {
+    if (currentStep === 'basic') {
+      setCurrentStep('background');
+      // Scroll to top when changing tabs
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
       <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[95vh] overflow-y-auto">
@@ -997,7 +1005,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           <div className="flex justify-end gap-4 pt-4 border-t border-slate-700">
             <button
               type="button"
-              onClick={currentStep === 'basic' ? onClose : () => setCurrentStep('basic')}
+              onClick={handleNext}
               className="px-4 py-2 text-slate-400 hover:text-white transition-colors"
             >
               {currentStep === 'basic' ? 'Cancel' : 'Back'}

@@ -69,35 +69,33 @@ export class RacialFeaturesService {
       return [];
     }
 
-    // Parse the traits JSON string into an array
-    const traitNames = JSON.parse(raceData.traits as string);
-    if (!Array.isArray(traitNames)) {
+    // Handle traits whether they're already parsed or need parsing
+    let traitNames: string[];
+    if (typeof raceData.traits === 'string') {
+      try {
+        traitNames = JSON.parse(raceData.traits);
+      } catch (e) {
+        console.warn(`Failed to parse traits for race ${race}:`, e);
+        return [];
+      }
+    } else if (Array.isArray(raceData.traits)) {
+      traitNames = raceData.traits;
+    } else {
       console.warn(`Invalid traits format for race ${race}`);
       return [];
     }
 
-    const traits = await Promise.all(
-      traitNames.map(async (traitName: string) => {
-        const response = await fetch(`/api/racial-traits/${encodeURIComponent(traitName)}`);
-        if (!response.ok) {
-          console.warn(`Trait ${traitName} not found`);
-          return null;
-        }
-        const trait = await response.json();
-        return {
-          name: trait.name,
-          description: trait.description,
-          type: trait.type as 'passive' | 'active',
-          effect: trait.effect
-        } as RacialTrait;
-      })
-    );
-
-    return traits.filter((trait): trait is RacialTrait => trait !== null);
+    // Convert trait names to RacialTrait objects using the helper methods
+    return traitNames.map(traitName => ({
+      name: traitName,
+      description: this.getTraitDescription(traitName),
+      type: this.getTraitType(traitName),
+      effect: this.getTraitEffect(traitName)
+    }));
   }
 
   // Helper to get trait descriptions
-  private getTraitDescription(trait: string): string {
+  private static getTraitDescription(trait: string): string {
     const descriptions: Record<string, string> = {
       'Darkvision': 'You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light.',
       'Dwarven Resilience': 'You have advantage on saving throws against poison, and you have resistance against poison damage.',
@@ -126,7 +124,7 @@ export class RacialFeaturesService {
   }
 
   // Helper to determine if a trait is active or passive
-  private getTraitType(trait: string): 'passive' | 'active' {
+  private static getTraitType(trait: string): 'passive' | 'active' {
     const activeTraits = [
       'Breath Weapon',
       'Healing Hands',
@@ -138,7 +136,7 @@ export class RacialFeaturesService {
   }
 
   // Helper to get trait effects
-  private getTraitEffect(trait: string): RacialTrait['effect'] {
+  private static getTraitEffect(trait: string): RacialTrait['effect'] {
     const effects: Record<string, RacialTrait['effect']> = {
       'Darkvision': { type: 'darkvision', value: 60 },
       'Dwarven Resilience': { type: 'resistance', value: 'poison' },
