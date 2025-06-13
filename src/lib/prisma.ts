@@ -18,9 +18,9 @@ const createPrismaClient = () => {
   });
 };
 
+// Ensure single instance in development
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
-// Ensure single instance in development
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }

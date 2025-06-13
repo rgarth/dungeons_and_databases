@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Dice6, RefreshCw, Plus, Minus } from "lucide-react";
+import { X, Dice6, Plus, Minus, RefreshCw } from "lucide-react";
 import { ABILITY_SCORES, AbilityScore } from "@/lib/dnd/core";
-import { generateFantasyName } from "@/lib/dnd/character";
 import { Spell } from "@/lib/dnd/spells";
 import { Weapon, Armor, Ammunition } from "@/lib/dnd/equipment";
 import { WeaponSuggestion } from "@/lib/dnd/weapon-suggestions";
@@ -14,6 +13,7 @@ import { BackgroundSelector, type SelectedCharacteristics } from "./shared/Backg
 import { AvatarGenerator } from './shared/AvatarGenerator';
 import { weaponsData } from '../../prisma/data/weapons-data';
 import { armorData } from '../../prisma/data/armor-data';
+import { generateFantasyName } from "@/lib/dnd/character";
 
 import { 
   type StatMethod, 
@@ -85,7 +85,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   });
   const [alignment, setAlignment] = useState<string>("");
   const [gender, setGender] = useState<string>('');
-  const [age, setAge] = useState<string>('');
+  const [age, setAge] = useState<number | ''>('');
   
   // Ability scores
   const [statMethod, setStatMethod] = useState<StatMethod>('rolling-assign');
@@ -148,12 +148,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         // Set default values to first item from each array
         if (raceNames.length > 0 && !race) setRace(raceNames[0]);
         if (classNames.length > 0 && !characterClass) setCharacterClass(classNames[0]);
-        // Don't auto-set background - let user choose in step 2
-        // if (backgroundNames.length > 0 && !background) setBackground(backgroundNames[0]);
-        if (alignmentNames.length > 0 && !alignment) {
-          const trueNeutral = alignmentNames.find((align: string) => align === 'True Neutral');
-          setAlignment(trueNeutral || alignmentNames[0]);
-        }
+        if (backgroundNames.length > 0 && !background) setBackground(backgroundNames[0]);
+        if (alignmentNames.length > 0 && !alignment) setAlignment(alignmentNames[0]);
 
         console.log('✅ Loaded D&D data from database:');
         console.log('- Races:', raceNames.length);
@@ -172,6 +168,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Load creation options and proficiencies when class changes
   useEffect(() => {
     const loadCreationOptions = async () => {
+      if (!characterClass) return; // Don't load if no class selected
+      
       setLoadingOptions(true);
       try {
         const [options, weaponSuggestions, armorSuggestions] = await Promise.all([
@@ -195,26 +193,12 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             spellSlots: {} 
           }
         });
-        console.log('🔥 RAW API RESPONSES:');
-        console.log('weaponSuggestions response:', weaponSuggestions);
-        console.log('armorSuggestions response:', armorSuggestions);
         
         setWeaponSuggestions(weaponSuggestions);
         setArmorSuggestions(armorSuggestions);
         
         console.log('✅ SET STATE - Weapon suggestions for', characterClass, ':', weaponSuggestions);
         console.log('✅ SET STATE - Armor suggestions for', characterClass, ':', armorSuggestions);
-        
-        // Temporary debug: Manually test armor suggestions for Ranger
-        if (characterClass === 'Ranger') {
-          console.log('RANGER DEBUG: Setting manual armor suggestions');
-          const manualArmorSuggestions = [
-            { armorName: 'Shield', reason: 'Backup protection' },
-            { armorName: 'Studded Leather', reason: 'Starting light armor' }
-          ];
-          setArmorSuggestions(manualArmorSuggestions);
-          console.log('RANGER DEBUG: Set manual armor suggestions:', manualArmorSuggestions);
-        }
       } catch (error) {
         console.error('Failed to load creation options:', error);
         // Fallback to basic options
@@ -408,18 +392,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }
   };
 
-  const handleGenerateName = async () => {
-    setGeneratingName(true);
-    try {
-      const generatedName = await generateFantasyName(race, gender || undefined);
-      setName(generatedName);
-    } catch (error) {
-      console.error('Failed to generate name:', error);
-    } finally {
-      setGeneratingName(false);
-    }
-  };
-
   const handlePointBuyChange = (ability: AbilityScore, change: number) => {
     if (statMethod !== 'pointbuy') return;
     
@@ -510,9 +482,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         ...characterData,
         backgroundCharacteristics,
         avatar: generatedAvatar || undefined,
-      fullBodyAvatar: generatedFullBodyAvatar || undefined,
+        fullBodyAvatar: generatedFullBodyAvatar || undefined,
         gender: gender.trim() || undefined,
-        age: age.trim() ? parseInt(age.trim()) : undefined
+        age: age.toString().trim() ? parseInt(age.toString().trim()) : undefined
       };
       
       const response = await fetch("/api/characters", {
@@ -534,6 +506,24 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Calculate derived values
   const pointBuyValidation = characterCreationService.validatePointBuy(abilityScores);
   const spellcastingStats = characterCreationService.calculateSpellcastingStats(characterClass, abilityScores);
+
+  // Ensure age is handled correctly without trimming
+  const handleAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setAge(value === '' ? '' : Number(value));
+  };
+
+  const handleGenerateName = async () => {
+    setGeneratingName(true);
+    try {
+      const generatedName = await generateFantasyName(race, gender || undefined);
+      setName(generatedName);
+    } catch (error) {
+      console.error('Failed to generate name:', error);
+    } finally {
+      setGeneratingName(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
@@ -566,21 +556,17 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
           {currentStep === 'basic' && (
             <>
-              {/* Basic Info */}
-              <div className="space-y-4">
-                {/* Character Name */}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Character Name *
-                  </label>
+              {/* First row: Name and Age */}
+              <div className="flex items-end gap-4 mb-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Name</label>
                   <div className="relative">
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 pr-12 text-white focus:border-purple-500 focus:outline-none"
-                      placeholder="Enter character name"
-                      required
+                      className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                      placeholder="Character Name"
                     />
                     <button
                       type="button"
@@ -593,123 +579,89 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     </button>
                   </div>
                 </div>
-
-                {/* Gender and Age */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                      Gender (for name generation)
-                    </label>
-                    <select
-                      value={gender}
-                      onChange={(e) => setGender(e.target.value)}
-                      className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-                    >
-                      <option value="">Not specified</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Non-binary">Non-binary</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                      Age (optional)
-                    </label>
-                    <input
-                      type="number"
-                      value={age}
-                      onChange={(e) => setAge(e.target.value)}
-                      placeholder="Unknown"
-                      min="1"
-                      max="999"
-                      className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none"
-                    />
-                  </div>
+                <div style={{ minWidth: 60 }}>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Age</label>
+                  <input
+                    type="number"
+                    value={age}
+                    onChange={handleAgeChange}
+                    className="w-20 bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    placeholder="Age"
+                  />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Second row: Race | Class */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Race
-                  </label>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Race</label>
                   <select
                     value={race}
-                    onChange={(e) => setRace(e.target.value)}
-                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    onChange={(e) => setRace(e.target.value as typeof races[number])}
+                    className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
+                    style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                   >
-                    {races.map((r) => (
+                    {races.map((r: string) => (
                       <option key={r} value={r}>{r}</option>
                     ))}
                   </select>
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Class
-                  </label>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Class</label>
                   <select
                     value={characterClass}
-                    onChange={(e) => setCharacterClass(e.target.value)}
-                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    onChange={(e) => setCharacterClass(e.target.value as typeof classes[number])}
+                    className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
+                    style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                   >
-                    {classes.map((c) => (
+                    {classes.map((c: string) => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>
                 </div>
+              </div>
 
-                {needsSubclassAtCreation && (
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
-                      Subclass *
-                    </label>
-                    <select
-                      value={subclass}
-                      onChange={(e) => setSubclass(e.target.value)}
-                      className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-                      required={needsSubclassAtCreation}
-                    >
-                      <option value="">Choose subclass...</option>
-                      {subclasses.map((sub) => (
-                        <option key={sub.name} value={sub.name}>{sub.name}</option>
-                      ))}
-                    </select>
-                    {subclass && (
-                      <p className="text-xs text-slate-400 mt-1">
-                        {subclasses.find(s => s.name === subclass)?.description}
-                      </p>
-                    )}
-                  </div>
-                )}
-
+              {/* Third row: Alignment | Gender */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Alignment
-                  </label>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Alignment</label>
                   <select
                     value={alignment}
                     onChange={(e) => setAlignment(e.target.value)}
-                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
+                    style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                   >
-                    {alignments.map((a) => (
+                    {alignments.map((a: string) => (
                       <option key={a} value={a}>{a}</option>
                     ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Gender (for name generation)</label>
+                  <select
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
+                    className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
+                    style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
+                  >
+                    <option value="">Not specified</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Non-binary">Non-binary</option>
+                    <option value="Other">Other</option>
                   </select>
                 </div>
               </div>
 
               {/* Ability Scores */}
               <div>
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                   <h3 className="text-lg font-semibold text-white">Ability Scores</h3>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
                     <select
                       value={statMethod}
                       onChange={(e) => handleStatMethodChange(e.target.value as StatMethod)}
-                      className="bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm focus:border-purple-500 focus:outline-none"
+                      className="flex-1 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm focus:border-purple-500 focus:outline-none"
                     >
                       <option value="rolling-assign">Roll & Assign</option>
                       <option value="standard">Standard Array</option>
@@ -718,7 +670,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     <button
                       type="button"
                       onClick={handleGenerateStats}
-                      className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors"
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors whitespace-nowrap"
                     >
                       <Dice6 className="h-4 w-4" />
                       {statMethod === 'rolling-assign' ? 'Reroll' : 'Regenerate'}
@@ -749,36 +701,34 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   </div>
                 )}
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {ABILITY_SCORES.map((ability) => (
                     <div
                       key={ability}
-                      className="bg-slate-700 rounded-lg p-3"
+                      className="bg-slate-700 rounded-lg p-3 flex flex-col items-center"
                       onDragOver={handleDragOver}
                       onDrop={(e) => handleDrop(e, ability)}
                     >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-slate-300">{ability}</span>
-                        <span className="text-lg font-bold text-white">{abilityScores[ability] || 10}</span>
-                      </div>
+                      <div className="text-sm font-medium text-slate-300 mb-2">{ability}</div>
+                      <div className="text-2xl font-bold text-white mb-2">{abilityScores[ability] || 10}</div>
                       
                       {statMethod === 'pointbuy' && (
-                        <div className="flex items-center justify-center gap-2">
+                        <div className="flex items-center justify-center gap-2 mt-auto">
                           <button
                             type="button"
                             onClick={() => handlePointBuyChange(ability, -1)}
-                            className="w-6 h-6 bg-slate-600 hover:bg-slate-500 rounded flex items-center justify-center text-white text-sm"
+                            className="w-8 h-8 bg-slate-600 hover:bg-slate-500 rounded-full flex items-center justify-center text-white text-sm"
                             disabled={(abilityScores[ability] || 10) <= 8}
                           >
-                            <Minus className="h-3 w-3" />
+                            <Minus className="h-4 w-4" />
                           </button>
                           <button
                             type="button"
                             onClick={() => handlePointBuyChange(ability, 1)}
-                            className="w-6 h-6 bg-slate-600 hover:bg-slate-500 rounded flex items-center justify-center text-white text-sm"
+                            className="w-8 h-8 bg-slate-600 hover:bg-slate-500 rounded-full flex items-center justify-center text-white text-sm"
                             disabled={(abilityScores[ability] || 10) >= 15}
                           >
-                            <Plus className="h-3 w-3" />
+                            <Plus className="h-4 w-4" />
                           </button>
                         </div>
                       )}
@@ -787,7 +737,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                         <div
                           draggable
                           onDragStart={(e) => handleDragStart(e, ability)}
-                          className="w-full text-center py-1 text-xs text-slate-400 cursor-move"
+                          className="w-full text-center py-2 mt-auto text-xs text-slate-400 cursor-move bg-slate-600 rounded hover:bg-slate-500 transition-colors"
                         >
                           Drag to swap
                         </div>

@@ -20,6 +20,7 @@ import { getSpellcastingType } from '@/lib/dnd/level-up';
 import { BASIC_ACTIONS, getClassActions } from '@/lib/dnd/combat';
 import { Spell } from '@/lib/dnd/spells';
 import { Weapon, MagicalWeapon, Armor, Ammunition } from '@/lib/dnd/equipment';
+import { RacialFeaturesService, type RacialTrait } from './racial-features';
 
 
 export type StatMethod = 'rolling-assign' | 'standard' | 'pointbuy';
@@ -94,12 +95,18 @@ export interface CharacterCreationResult {
   copperPieces: number;
   silverPieces: number;
   goldPieces: number;
+
+  // Racial traits
+  racialTraits: RacialTrait[];
 }
 
 export class CharacterCreationService {
   private static instance: CharacterCreationService;
+  private racialFeaturesService: RacialFeaturesService;
   
-  private constructor() {}
+  private constructor() {
+    this.racialFeaturesService = RacialFeaturesService.getInstance();
+  }
   
   public static getInstance(): CharacterCreationService {
     if (!CharacterCreationService.instance) {
@@ -278,7 +285,13 @@ export class CharacterCreationService {
 
   // Create final character data
   async createCharacter(data: CharacterCreationData, equipmentPackItems: { name: string; quantity: number }[] = []): Promise<CharacterCreationResult> {
-    const { abilityScores, class: characterClass } = data;
+    const { abilityScores, class: characterClass, race } = data;
+    
+    // Apply racial ability score increases
+    const finalAbilityScores = await this.racialFeaturesService.applyRacialAbilityScores(abilityScores, race);
+    
+    // Get racial traits
+    const racialTraits = await this.racialFeaturesService.getRacialTraits(race);
     
     // Get hit die from database - no fallback, this must succeed
     const classResponse = await fetch('/api/classes');
@@ -292,9 +305,9 @@ export class CharacterCreationService {
     }
     const hitDie = foundClass.hitDie;
     
-    // Calculate basic stats
-    const maxHitPoints = calculateHitPoints(1, abilityScores.constitution, hitDie);
-    const armorClass = 10 + getModifier(abilityScores.dexterity);
+    // Calculate basic stats using final ability scores
+    const maxHitPoints = calculateHitPoints(1, finalAbilityScores.constitution, hitDie);
+    const armorClass = 10 + getModifier(finalAbilityScores.dexterity);
     
     // Fetch equipment packs to get selected pack items
     let equipmentPacks = [];
@@ -400,11 +413,11 @@ export class CharacterCreationService {
     
     // Spellcasting
     const spellcastingAbility = getSpellcastingAbility(characterClass);
-    const spellcastingStats = this.calculateSpellcastingStats(characterClass, abilityScores);
+    const spellcastingStats = this.calculateSpellcastingStats(characterClass, finalAbilityScores);
     const { spellsKnown, spellsPrepared } = this.determineSpellPreparation(
       characterClass, 
       data.selectedSpells, 
-      abilityScores
+      finalAbilityScores
     );
     const spellSlots = spellcastingAbility ? getSpellSlots(characterClass, 1) : undefined;
     
@@ -427,13 +440,13 @@ export class CharacterCreationService {
       alignment: data.alignment,
       background: data.background,
       
-      // Ability scores
-      strength: abilityScores.strength,
-      dexterity: abilityScores.dexterity,
-      constitution: abilityScores.constitution,
-      intelligence: abilityScores.intelligence,
-      wisdom: abilityScores.wisdom,
-      charisma: abilityScores.charisma,
+      // Ability scores with racial increases applied
+      strength: finalAbilityScores.strength,
+      dexterity: finalAbilityScores.dexterity,
+      constitution: finalAbilityScores.constitution,
+      intelligence: finalAbilityScores.intelligence,
+      wisdom: finalAbilityScores.wisdom,
+      charisma: finalAbilityScores.charisma,
       
       // Combat stats
       hitPoints: maxHitPoints,
@@ -465,7 +478,10 @@ export class CharacterCreationService {
       // Currency
       copperPieces: 0,
       silverPieces: 0,
-      goldPieces: startingGold
+      goldPieces: startingGold,
+
+      // Racial traits
+      racialTraits
     };
   }
 }

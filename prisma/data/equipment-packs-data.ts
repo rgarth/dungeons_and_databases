@@ -18,12 +18,16 @@ export interface EquipmentPackData {
   }>;
 }
 
-// SEED DATA - Use database for actual application data
-export const equipmentPacksData: EquipmentPackData[] = [
+// Complete D&D 5e SRD Equipment Packs Database
+// Source: System Reference Document 5.1 by Wizards of the Coast LLC
+// Licensed under Creative Commons Attribution 4.0 International License
+// https://dnd.wizards.com/resources/systems-reference-document
+
+export const equipmentPacksData = [
   {
     name: "Burglar's Pack",
-    description: "For rogues and sneaky characters",
     cost: "16 gp",
+    description: "A pack containing essential tools for stealth and infiltration.",
     items: [
       { equipmentName: "Backpack", quantity: 1 },
       { equipmentName: "Ball Bearings (bag of 1,000)", quantity: 1 },
@@ -43,8 +47,8 @@ export const equipmentPacksData: EquipmentPackData[] = [
   },
   {
     name: "Diplomat's Pack",
-    description: "For negotiators and courtly characters",
     cost: "39 gp",
+    description: "A pack containing items useful for formal occasions and negotiations.",
     items: [
       { equipmentName: "Chest", quantity: 1 },
       { equipmentName: "Case, Map or Scroll", quantity: 2 },
@@ -61,8 +65,8 @@ export const equipmentPacksData: EquipmentPackData[] = [
   },
   {
     name: "Dungeoneer's Pack",
-    description: "For exploring dungeons and underground adventures",
     cost: "12 gp",
+    description: "A pack containing essential items for exploring dungeons and caves.",
     items: [
       { equipmentName: "Backpack", quantity: 1 },
       { equipmentName: "Crowbar", quantity: 1 },
@@ -77,8 +81,8 @@ export const equipmentPacksData: EquipmentPackData[] = [
   },
   {
     name: "Entertainer's Pack",
-    description: "For bards and performers",
     cost: "40 gp",
+    description: "A pack containing items useful for performers and entertainers.",
     items: [
       { equipmentName: "Backpack", quantity: 1 },
       { equipmentName: "Bedroll", quantity: 1 },
@@ -91,8 +95,8 @@ export const equipmentPacksData: EquipmentPackData[] = [
   },
   {
     name: "Explorer's Pack",
-    description: "For wilderness exploration and outdoor adventures",
     cost: "10 gp",
+    description: "A pack containing essential items for wilderness exploration.",
     items: [
       { equipmentName: "Backpack", quantity: 1 },
       { equipmentName: "Bedroll", quantity: 1 },
@@ -106,8 +110,8 @@ export const equipmentPacksData: EquipmentPackData[] = [
   },
   {
     name: "Priest's Pack",
-    description: "For clerics and religious characters",
     cost: "19 gp",
+    description: "A pack containing items useful for religious ceremonies and spiritual guidance.",
     items: [
       { equipmentName: "Backpack", quantity: 1 },
       { equipmentName: "Blanket", quantity: 1 },
@@ -123,8 +127,8 @@ export const equipmentPacksData: EquipmentPackData[] = [
   },
   {
     name: "Scholar's Pack",
-    description: "For wizards and learned characters",
     cost: "40 gp",
+    description: "A pack containing items useful for research and study.",
     items: [
       { equipmentName: "Backpack", quantity: 1 },
       { equipmentName: "Book", quantity: 1 },
@@ -135,4 +139,4 @@ export const equipmentPacksData: EquipmentPackData[] = [
       { equipmentName: "Small Knife", quantity: 1 }
     ]
   }
-]; 
+] 
