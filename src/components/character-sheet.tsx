@@ -326,7 +326,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
           ...weaponData,
           type: weaponData.type as 'Simple' | 'Martial',
           category: weaponData.category as 'Melee' | 'Ranged',
-          properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
+          properties: weaponData.properties ? weaponData.properties.split(',').map(p => p.trim()).filter(Boolean) : []
         } as Weapon;
         const magicalWeapon = createMagicalWeapon(baseWeapon, template, customWeaponName.trim() || undefined);
         

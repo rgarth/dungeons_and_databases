@@ -22,20 +22,8 @@ interface WeaponData {
   properties: string;
   weight: number;
   cost: string;
-  stackable: boolean;
-}
-
-// Interface matching the structure of weaponsData
-interface WeaponData {
-  name: string;
-  type: string;
-  category: string;
-  damage: string;
-  damageType: string;
-  properties: string;
-  weight: number;
-  cost: string;
-  stackable: boolean;
+  description: string;
+  stackable?: boolean;
 }
 
 interface WeaponSelectorProps {
@@ -153,7 +141,7 @@ export function WeaponSelector({
     ...weaponData,
     type: weaponData.type as 'Simple' | 'Martial',
     category: weaponData.category as 'Melee' | 'Ranged',
-    properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
+    properties: weaponData.properties ? weaponData.properties.split(', ').filter(Boolean) : []
   }));
 
   // Remove ammunition from weapon selector - ammunition should be handled separately
@@ -291,7 +279,7 @@ export function WeaponSelector({
                             ...weaponData,
                             type: weaponData.type as 'Simple' | 'Martial',
                             category: weaponData.category as 'Melee' | 'Ranged',
-                            properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
+                            properties: weaponData.properties ? weaponData.properties.split(', ').filter(Boolean) : []
                           };
                           handleWeaponQuantityChange(weapon, suggestion.quantity);
                         }

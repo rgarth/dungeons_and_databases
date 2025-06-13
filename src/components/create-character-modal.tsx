@@ -22,6 +22,7 @@ import {
 } from "@/services/character/creation";
 
 import type { CharacterAvatarData } from '@/app/api/generate-avatar/route';
+import { dndDataService } from '@/services/character/dnd-data';
 
 interface CreateCharacterModalProps {
   onClose: () => void;
@@ -66,10 +67,11 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Creation step state
   const [currentStep, setCurrentStep] = useState<'basic' | 'background'>('basic');
 
-  // Database data
-  const [races, setRaces] = useState<string[]>([]);
-  const [classes, setClasses] = useState<string[]>([]);
-  const [alignments, setAlignments] = useState<string[]>([]);
+  // Database data with React Query
+  const { data: races = [] } = dndDataService.useRaces();
+  const { data: classes = [] } = dndDataService.useClasses();
+  const { data: backgrounds = [] } = dndDataService.useBackgrounds();
+  const { data: alignments = [] } = dndDataService.useAlignments();
 
   // Basic character info
   const [name, setName] = useState("");
@@ -118,52 +120,13 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [generatedAvatar, setGeneratedAvatar] = useState<string>('');
   const [generatedFullBodyAvatar, setGeneratedFullBodyAvatar] = useState<string>('');
 
-  // Load D&D data from database on component mount
+  // Set default values when data is loaded
   useEffect(() => {
-    const loadDndData = async () => {
-      try {
-        const [racesRes, classesRes, backgroundsRes, alignmentsRes] = await Promise.all([
-          fetch('/api/races'),
-          fetch('/api/classes'),
-          fetch('/api/backgrounds'),
-          fetch('/api/alignments')
-        ]);
-
-        const [racesData, classesData, backgroundsData, alignmentsData] = await Promise.all([
-          racesRes.json(),
-          classesRes.json(),
-          backgroundsRes.json(),
-          alignmentsRes.json()
-        ]);
-
-        const raceNames = racesData.map((race: { name: string }) => race.name);
-        const classNames = classesData.map((cls: { name: string }) => cls.name);
-        const backgroundNames = backgroundsData.map((bg: { name: string }) => bg.name);
-        const alignmentNames = alignmentsData.map((align: { name: string }) => align.name);
-
-        setRaces(raceNames);
-        setClasses(classNames);
-        setAlignments(alignmentNames);
-
-        // Set default values to first item from each array
-        if (raceNames.length > 0 && !race) setRace(raceNames[0]);
-        if (classNames.length > 0 && !characterClass) setCharacterClass(classNames[0]);
-        if (backgroundNames.length > 0 && !background) setBackground(backgroundNames[0]);
-        if (alignmentNames.length > 0 && !alignment) setAlignment(alignmentNames[0]);
-
-        console.log('✅ Loaded D&D data from database:');
-        console.log('- Races:', raceNames.length);
-        console.log('- Classes:', classNames.length);
-        console.log('- Backgrounds:', backgroundNames.length);
-        console.log('- Alignments:', alignmentNames.length);
-
-      } catch (error) {
-        console.error('Failed to load D&D data:', error);
-      }
-    };
-
-    loadDndData();
-  }, []);
+    if (races.length > 0 && !race) setRace(races[0]);
+    if (classes.length > 0 && !characterClass) setCharacterClass(classes[0]);
+    if (backgrounds.length > 0 && !background) setBackground(backgrounds[0]);
+    if (alignments.length > 0 && !alignment) setAlignment(alignments[0]);
+  }, [races, classes, backgrounds, alignments]);
 
   // Load creation options and proficiencies when class changes
   useEffect(() => {
@@ -249,7 +212,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             ...weaponData,
             type: weaponData.type as 'Simple' | 'Martial',
             category: weaponData.category as 'Melee' | 'Ranged',
-            properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
+            properties: weaponData.properties ? weaponData.properties.split(',').map(p => p.trim()).filter(Boolean) : []
           };
           suggestedWeapons.push({ weapon, quantity: suggestion.quantity });
         }

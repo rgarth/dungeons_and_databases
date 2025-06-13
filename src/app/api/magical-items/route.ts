@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { MagicalItem } from '@prisma/client';
+import { cachedMagicalItems } from '@/lib/server/init';
+
+// Cache the magical items data in memory
+let cachedMagicalItems: MagicalItem[] | null = null;
 
 export async function GET(request: NextRequest) {
   try {
+    // Return cached data if available
+    if (cachedMagicalItems) {
+      return NextResponse.json(cachedMagicalItems);
+    }
+
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type');
     const rarity = searchParams.get('rarity');
@@ -49,6 +59,9 @@ export async function GET(request: NextRequest) {
         { name: 'asc' }
       ]
     });
+
+    // Cache the results
+    cachedMagicalItems = magicalItems;
 
     // Parse the effects JSON for each item
     const itemsWithParsedEffects = magicalItems.map(item => ({
