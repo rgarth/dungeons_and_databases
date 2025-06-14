@@ -121,109 +121,14 @@ export async function getEquipmentPacksFromDatabase() {
 
 // Background skills are now fetched from the database via /api/backgrounds
 
-// Fantasy Name Generator using online API
+// Fantasy Name Generator using fantasy-names npm package
 export async function generateFantasyName(race: string, gender?: string): Promise<string> {
   try {
-    // Map D&D races to IronArachne API format (direct matches!)
-    const raceMapping: Record<string, string> = {
-      'Dragonborn': 'dragonborn',
-      'Dwarf': 'dwarf',
-      'Elf': 'elf', 
-      'Gnome': 'gnome',
-      'Half-Elf': 'half-elf',
-      'Halfling': 'halfling',
-      'Half-Orc': 'half-orc',
-      'Human': 'human',
-      'Tiefling': 'tiefling'
-    };
-
-    const apiRace = raceMapping[race];
-    if (!apiRace) {
-      console.log('Race not found in mapping, using fallback');
-      return generateFallbackName(race);
-    }
-
-    // Determine name type based on gender
-    let nameType = 'given'; // Default gender-neutral for non-binary/other
-    if (gender === 'Male') {
-      nameType = 'male';
-    } else if (gender === 'Female') {
-      nameType = 'female';
-    }
-
-    console.log(`Trying API calls for race: ${apiRace}, nameType: ${nameType}`);
-
-    // Get first name and family name
-    const [firstNameResponse, familyNameResponse] = await Promise.all([
-      fetch(`https://names.ironarachne.com/race/${apiRace}/${nameType}/1`),
-      fetch(`https://names.ironarachne.com/race/${apiRace}/family/1`)
-    ]);
-
-    console.log(`API responses: ${firstNameResponse.status}, ${familyNameResponse.status}`);
-
-    if (!firstNameResponse.ok || !familyNameResponse.ok) {
-      console.log(`API failed with status codes: ${firstNameResponse.status}, ${familyNameResponse.status}`);
-      throw new Error(`API returned ${firstNameResponse.status} or ${familyNameResponse.status}`);
-    }
-
-    const [firstNames, familyNames] = await Promise.all([
-      firstNameResponse.json(),
-      familyNameResponse.json()
-    ]);
-
-    console.log('API responses:', { firstNames, familyNames });
-    
-    // Handle different possible response formats
-    let firstName = '';
-    let familyName = '';
-    
-    // Try to extract names from various possible formats
-    if (typeof firstNames === 'object' && firstNames !== null) {
-      if (Array.isArray(firstNames) && firstNames.length > 0) {
-        firstName = firstNames[0];
-      } else if (firstNames.names && Array.isArray(firstNames.names)) {
-        firstName = firstNames.names[0];
-      } else if (firstNames.name) {
-        firstName = firstNames.name;
-      } else if (typeof firstNames === 'string') {
-        firstName = firstNames;
-      } else {
-        // Try to get the first property value if it's a string
-        const values = Object.values(firstNames);
-        if (values.length > 0 && typeof values[0] === 'string') {
-          firstName = values[0];
-        }
-      }
-    }
-    
-    if (typeof familyNames === 'object' && familyNames !== null) {
-      if (Array.isArray(familyNames) && familyNames.length > 0) {
-        familyName = familyNames[0];
-      } else if (familyNames.names && Array.isArray(familyNames.names)) {
-        familyName = familyNames.names[0];
-      } else if (familyNames.name) {
-        familyName = familyNames.name;
-      } else if (typeof familyNames === 'string') {
-        familyName = familyNames;
-      } else {
-        // Try to get the first property value if it's a string
-        const values = Object.values(familyNames);
-        if (values.length > 0 && typeof values[0] === 'string') {
-          familyName = values[0];
-        }
-      }
-    }
-    
-    if (firstName && familyName) {
-      const fullName = `${firstName} ${familyName}`;
-      console.log('Generated API name:', fullName);
-      return fullName;
-    }
-    
-    console.log('Could not extract names from API response, using fallback');
-    console.log('firstName extracted:', firstName, 'familyName extracted:', familyName);
-    // Fallback to local generation if API fails
-    return generateFallbackName(race);
+    const fantasyNames = require('fantasy-names');
+    const nameType = gender === 'Male' ? 'male' : gender === 'Female' ? 'female' : 'given';
+    const generatedName = fantasyNames('dungeon and dragons', race.toLowerCase(), 1)[0];
+    console.log('Generated name:', generatedName);
+    return generatedName;
   } catch (error) {
     console.error('Error generating fantasy name:', error);
     return generateFallbackName(race);
