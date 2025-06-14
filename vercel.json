@@ -1,6 +1,13 @@
 {
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "preview": false,
+      "development": false
+    }
+  },
   "buildCommand": "prisma generate && next build",
-  "installCommand": "npm ci",
+  "installCommand": "npm install",
   "framework": "nextjs",
   "functions": {
     "app/api/**/*.ts": {
