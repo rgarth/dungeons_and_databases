@@ -6,23 +6,44 @@ const prisma = new PrismaClient()
 async function seedSpells() {
   console.log('🧙‍♂️ Seeding spells...')
   
-  // Clear existing spells
-  await prisma.spell.deleteMany()
-  console.log('✅ Cleared existing spells')
+  try {
+    // Clear existing spells
+    await prisma.spell.deleteMany()
+    console.log('✅ Cleared existing spells')
 
-  // Add new spells
-  for (const spell of spellsData) {
-    try {
-      await prisma.spell.create({
-        data: spell
-      })
-      console.log(`✅ Added spell: ${spell.name}`)
-    } catch (error) {
-      console.error(`❌ Failed to add spell ${spell.name}:`, error)
+    // Add new spells
+    for (const spell of spellsData) {
+      try {
+        const spellData = {
+          ...spell,
+          classes: JSON.stringify(JSON.parse(spell.classes))
+        }
+        
+        await prisma.spell.create({
+          data: spellData
+        })
+        console.log(`✅ Added spell: ${spell.name}`)
+      } catch (error) {
+        console.error(`❌ Failed to add spell ${spell.name}:`, error)
+      }
     }
-  }
 
-  console.log('🎉 Spells seeding completed!')
+    console.log('🎉 Spells seeding completed!')
+  } catch (error) {
+    console.error('❌ Error during spells seeding:', error)
+    throw error
+  } finally {
+    await prisma.$disconnect()
+  }
+}
+
+// Only run if this file is being run directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  seedSpells()
+    .catch((e) => {
+      console.error(e)
+      process.exit(1)
+    })
 }
 
 export { seedSpells } 
