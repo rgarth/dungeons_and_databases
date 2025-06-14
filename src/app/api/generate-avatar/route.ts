@@ -187,14 +187,14 @@ async function generateWithPollinations(prompt: string, seed: number) {
 function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
   const { race, class: characterClass, gender } = data;
   
-  // Base style elements - more diverse and inclusive
+  // Base style elements - realistic photo style
   const consistentStyle = {
-    artStyle: "Fantasy character portrait, diverse representation",
-    lighting: "dramatic lighting, natural shadows, studio quality", 
+    artStyle: "Photorealistic portrait photography, professional studio quality",
+    lighting: "professional portrait lighting, soft shadows, natural lighting", 
     composition: "PORTRAIT SHOT, head and shoulders only, bust shot, upper body portrait, close-up character portrait, NOT full body, looking at camera",
-    quality: "highly detailed, fantasy art style, professional quality",
-    background: "simple neutral background, fantasy character portrait",
-    format: "fantasy character art, detailed character design"
+    quality: "highly detailed, photorealistic, professional photography",
+    background: "simple neutral background, studio portrait photography",
+    format: "realistic photography, detailed photorealism"
   };
 
   // Diverse race descriptions with distinctive features
@@ -266,7 +266,7 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
   const raceDesc = raceDescriptions[race] || 'fantasy character';
   const classDesc = classDescriptions[characterClass] || 'adventurer';
 
-  // Build prompt with strong anti-bias elements
+  // Build prompt with strong anti-bias elements and realistic photo style
   const prompt = `${genderPrefix}${raceDesc}, ${classDesc}, ${antiBiasPrompts.join(', ')}, ${consistentStyle.artStyle}, ${consistentStyle.composition}, ${consistentStyle.lighting}, ${consistentStyle.background}, ${consistentStyle.quality}, ${consistentStyle.format}`;
 
   return prompt;
