@@ -197,6 +197,14 @@ export function BackgroundSelector({
     );
   }
   
+  if (!currentBackground) {
+    return (
+      <div className="text-slate-400 p-4 bg-slate-800/20 rounded-lg">
+        Please select a background
+      </div>
+    );
+  }
+  
   const content = (
     <div className={`${compact ? 'space-y-4' : 'space-y-6'}`}>
       {/* Background Selection */}
