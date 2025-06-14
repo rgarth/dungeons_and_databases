@@ -199,34 +199,34 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
 
   // Diverse race descriptions with distinctive features
   const raceDescriptions: Record<string, string> = {
-    'Human': 'human character with diverse features, individual warrior, unique facial characteristics, varied skin tones, diverse human features',
-    'Elf': 'elf character with long pointed ears, ethereal features, angular face, diverse skin tones, varied hair textures, unique elven features',
-    'Dwarf': 'dwarf character with thick beard, stocky build, broad shoulders, diverse skin tones, varied hair textures, unique dwarven features',
-    'Halfling': 'halfling character, small adult stature, mature adult face, adult proportions, diverse skin tones, varied hair textures, unique halfling features',
-    'Dragonborn': 'dragonborn character with scaled skin covering face and body, draconic heritage, reptilian eyes, pronounced snout, varied scale colors, unique draconic features',
-    'Gnome': 'small adult humanoid adventurer, mature adult person 3-4 feet tall, adult face with wrinkles and age lines, pointy ears like elf, intelligent sparkling eyes, high cheekbones, prominent nose, diverse skin tones, varied hair textures, unique gnomish features',
-    'Tiefling': 'tiefling character with horns, tail, infernal heritage, varied skin colors, unique infernal features, diverse horn styles',
-    'Half-Orc': 'half-orc character with greenish skin, prominent tusks, muscular build, varied skin tones, unique orcish features, diverse facial structures',
-    'Half-Elf': 'half-elf character with slightly pointed ears, human-elf hybrid features, diverse skin tones, varied hair textures, unique mixed heritage features',
-    'Goliath': 'goliath character with stone-like skin markings, massive build, giant heritage, varied skin tones, unique stone patterns, diverse facial features',
-    'Aasimar': 'aasimar character with celestial heritage, glowing eyes, radiant features, diverse skin tones, varied hair textures, unique celestial features',
-    'Tabaxi': 'tabaxi character with cat-like features, feline face, fur covering body, varied fur patterns, unique feline features, diverse cat-like characteristics'
+    'Human': 'older human character with mature features, weathered face, wrinkles, gray hair, heavier build, individual warrior, unique facial characteristics, varied skin tones, diverse human features',
+    'Elf': 'older elf character with long pointed ears, ethereal features, angular face, weathered features, gray hair, heavier build, diverse skin tones, varied hair textures, unique elven features',
+    'Dwarf': 'older dwarf character with thick gray beard, stocky build, broad shoulders, weathered face, heavier build, diverse skin tones, varied hair textures, unique dwarven features',
+    'Halfling': 'older halfling character, small adult stature, mature adult face with wrinkles, weathered features, gray hair, heavier build, adult proportions, diverse skin tones, varied hair textures, unique halfling features',
+    'Dragonborn': 'older dragonborn character with scaled skin covering face and body, weathered scales, gray scales, heavier build, draconic heritage, reptilian eyes, pronounced snout, varied scale colors, unique draconic features',
+    'Gnome': 'older small adult humanoid adventurer, mature adult person 3-4 feet tall, adult face with wrinkles and age lines, gray hair, heavier build, pointy ears like elf, intelligent sparkling eyes, high cheekbones, prominent nose, diverse skin tones, varied hair textures, unique gnomish features',
+    'Tiefling': 'older tiefling character with horns, tail, infernal heritage, weathered features, gray hair, heavier build, varied skin colors, unique infernal features, diverse horn styles',
+    'Half-Orc': 'older half-orc character with greenish skin, prominent tusks, weathered features, gray hair, heavier build, muscular build, varied skin tones, unique orcish features, diverse facial structures',
+    'Half-Elf': 'older half-elf character with slightly pointed ears, human-elf hybrid features, weathered face, gray hair, heavier build, diverse skin tones, varied hair textures, unique mixed heritage features',
+    'Goliath': 'older goliath character with stone-like skin markings, weathered features, gray hair, heavier build, massive build, giant heritage, varied skin tones, unique stone patterns, diverse facial features',
+    'Aasimar': 'older aasimar character with celestial heritage, weathered features, gray hair, heavier build, glowing eyes, radiant features, diverse skin tones, varied hair textures, unique celestial features',
+    'Tabaxi': 'older tabaxi character with cat-like features, weathered fur, gray fur, heavier build, feline face, fur covering body, varied fur patterns, unique feline features, diverse cat-like characteristics'
   };
 
   // Practical class descriptions with diverse elements
   const classDescriptions: Record<string, string> = {
-    'Fighter': 'warrior with practical armor and weapon, diverse combat style, unique warrior features',
-    'Wizard': 'spellcaster with scholarly robes, diverse magical style, unique arcane features',
-    'Rogue': 'stealthy character with practical leather armor, diverse stealth style, unique rogue features',
-    'Cleric': 'holy warrior with practical armor and symbol, diverse religious style, unique divine features',
-    'Ranger': 'forest guardian with practical gear and bow, diverse wilderness style, unique ranger features',
-    'Paladin': 'holy knight with practical armor, diverse holy style, unique paladin features',
-    'Barbarian': 'tribal warrior with practical gear, diverse tribal style, unique barbarian features',
-    'Bard': 'performer with practical clothing, diverse performance style, unique bard features',
-    'Druid': 'nature guardian with natural materials, diverse nature style, unique druid features',
-    'Monk': 'martial artist with simple robes, diverse martial style, unique monk features',
-    'Sorcerer': 'magical character with practical clothing, diverse magical style, unique sorcerer features',
-    'Warlock': 'mystical character with practical attire, diverse mystical style, unique warlock features'
+    'Fighter': 'older warrior with practical armor and weapon, weathered features, gray hair, heavier build, diverse combat style, unique warrior features',
+    'Wizard': 'older spellcaster with scholarly robes, weathered features, gray hair, heavier build, diverse magical style, unique arcane features',
+    'Rogue': 'older stealthy character with practical leather armor, weathered features, gray hair, heavier build, diverse stealth style, unique rogue features',
+    'Cleric': 'older holy warrior with practical armor and symbol, weathered features, gray hair, heavier build, diverse religious style, unique divine features',
+    'Ranger': 'older forest guardian with practical gear and bow, weathered features, gray hair, heavier build, diverse wilderness style, unique ranger features',
+    'Paladin': 'older holy knight with practical armor, weathered features, gray hair, heavier build, diverse holy style, unique paladin features',
+    'Barbarian': 'older tribal warrior with practical gear, weathered features, gray hair, heavier build, diverse tribal style, unique barbarian features',
+    'Bard': 'older performer with practical clothing, weathered features, gray hair, heavier build, diverse performance style, unique bard features',
+    'Druid': 'older nature guardian with natural materials, weathered features, gray hair, heavier build, diverse nature style, unique druid features',
+    'Monk': 'older martial artist with simple robes, weathered features, gray hair, heavier build, diverse martial style, unique monk features',
+    'Sorcerer': 'older magical character with practical clothing, weathered features, gray hair, heavier build, diverse magical style, unique sorcerer features',
+    'Warlock': 'older mystical character with practical attire, weathered features, gray hair, heavier build, diverse mystical style, unique warlock features'
   };
 
   // Comprehensive anti-bias and anti-trope prompts
