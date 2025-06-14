@@ -1,3 +1,31 @@
-import { Character } from './character';
-
-export type CharacterCreationData = Omit<Character, 'id' | 'createdAt' | 'updatedAt' | 'userId'>; 
+export interface CharacterCreationData {
+  name: string;
+  race: string;
+  class: string;
+  subclass?: string | null;
+  level: number;
+  background: string;
+  alignment: string;
+  hitPoints: number;
+  maxHitPoints: number;
+  armorClass: number;
+  abilityScores: {
+    strength: number;
+    dexterity: number;
+    constitution: number;
+    intelligence: number;
+    wisdom: number;
+    charisma: number;
+  };
+  selectedWeapons: string[];
+  selectedArmor: string[];
+  selectedSpells: string[];
+  backgroundCharacteristics: {
+    personalityTraits: string[];
+    ideals: string[];
+    bonds: string[];
+    flaws: string[];
+  };
+  avatarUrl?: string;
+  fullBodyUrl?: string;
+} 

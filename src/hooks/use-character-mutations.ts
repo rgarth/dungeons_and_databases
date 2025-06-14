@@ -36,25 +36,48 @@ export function useCharacterMutations() {
       // Show toast for optimistic update
       toast.loading('Creating character...', { id: 'create-character' });
 
+      // Create optimistic character
+      const optimisticCharacter = {
+        ...newCharacter,
+        id: 'temp-' + Date.now(), // Temporary ID
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        userId: session?.user?.email || '', // Use email as userId
+        isOptimistic: true, // Flag to indicate this is an optimistic update
+      };
+
       // Optimistically update to the new value
       queryClient.setQueryData<Character[]>(['characters'], (old = []) => [
         ...old,
-        {
-          ...newCharacter,
-          id: 'temp-' + Date.now(), // Temporary ID
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          userId: session?.user?.email || '', // Use email as userId
-          isOptimistic: true, // Flag to indicate this is an optimistic update
-        },
+        optimisticCharacter,
       ]);
 
       // Return a context object with the snapshotted value
-      return { previousCharacters };
+      return { previousCharacters, optimisticCharacter };
     },
-    onSuccess: () => {
+    onSuccess: (data, variables, context) => {
       // Show success toast
       toast.success('Character created successfully!', { id: 'create-character' });
+      
+      // Update the optimistic character with the real data but keep isOptimistic flag
+      queryClient.setQueryData<Character[]>(['characters'], (old = []) => 
+        old.map(char => 
+          char.id === context?.optimisticCharacter.id 
+            ? { ...data, isOptimistic: true } 
+            : char
+        )
+      );
+
+      // Wait 2 seconds before removing the optimistic flag
+      setTimeout(() => {
+        queryClient.setQueryData<Character[]>(['characters'], (old = []) => 
+          old.map(char => 
+            char.id === context?.optimisticCharacter.id 
+              ? { ...char, isOptimistic: false } 
+              : char
+          )
+        );
+      }, 2000);
     },
     onError: (err, newCharacter, context) => {
       // Show error toast
@@ -66,8 +89,10 @@ export function useCharacterMutations() {
       }
     },
     onSettled: () => {
-      // Always refetch after error or success to ensure data is in sync
-      queryClient.invalidateQueries({ queryKey: ['characters'] });
+      // Add a small delay before invalidating to allow the optimistic state to be visible
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['characters'] });
+      }, 2000); // 2 second delay
     },
   });
 
