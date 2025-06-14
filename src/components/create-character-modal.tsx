@@ -518,7 +518,17 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form 
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            // Only submit if we're on the background step and the submit button was clicked
+            const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement;
+            if (currentStep === 'background' && submitter?.getAttribute('type') === 'submit') {
+              handleSubmit(e);
+            }
+          }} 
+          className="p-6 space-y-6"
+        >
           {/* Step indicator */}
           <div className="flex items-center justify-center mb-6">
             <div className="flex items-center space-x-4">
@@ -1018,7 +1028,10 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             {currentStep === 'basic' ? (
               <button
                 type="button"
-                onClick={handleNext}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNext();
+                }}
                 disabled={!name.trim() || (needsSubclassAtCreation && !subclass) || (statMethod === 'pointbuy' && !pointBuyValidation.isValid)}
                 className="bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg transition-colors"
               >
