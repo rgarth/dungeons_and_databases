@@ -344,10 +344,10 @@ model Character {
   inspiration           Boolean  @default(false)
   languages             Json?
   conditions            Json?
-  racialTraits          Json?
   userId                String
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
+  racialTraits          Json?
   user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
