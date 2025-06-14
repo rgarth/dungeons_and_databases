@@ -14,8 +14,7 @@ const createPrismaClient = () => {
         url: process.env.DATABASE_URL,
       },
     },
-    // Configure logging
-    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+    log: ['error', 'warn'],
   });
 };
 

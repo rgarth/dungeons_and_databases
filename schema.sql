@@ -71,6 +71,7 @@ CREATE TABLE "Weapon" (
     "stackable" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "description" TEXT,
 
     CONSTRAINT "Weapon_pkey" PRIMARY KEY ("id")
 );
@@ -363,6 +364,7 @@ CREATE TABLE "Character" (
     "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "racialTraits" JSONB,
 
     CONSTRAINT "Character_pkey" PRIMARY KEY ("id")
 );
@@ -401,7 +403,7 @@ CREATE UNIQUE INDEX "DndClass_name_key" ON "DndClass"("name");
 CREATE UNIQUE INDEX "ClassArmorProficiency_classId_armorType_key" ON "ClassArmorProficiency"("classId", "armorType");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ClassWeaponProficiency_classId_proficiencyType_weaponName_key" ON "ClassWeaponProficiency"("classId", "proficiencyType", "weaponName");
+CREATE INDEX "ClassWeaponProficiency_classId_proficiencyType_weaponName_idx" ON "ClassWeaponProficiency"("classId", "proficiencyType", "weaponName");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ClassWeaponSuggestion_classId_weaponName_key" ON "ClassWeaponSuggestion"("classId", "weaponName");
@@ -426,6 +428,9 @@ CREATE UNIQUE INDEX "EquipmentPack_name_key" ON "EquipmentPack"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "EquipmentPackItem_packId_equipmentId_key" ON "EquipmentPackItem"("packId", "equipmentId");
+
+-- CreateIndex
+CREATE INDEX "Character_userId_idx" ON "Character"("userId");
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -452,10 +457,11 @@ ALTER TABLE "ClassWeaponSuggestion" ADD CONSTRAINT "ClassWeaponSuggestion_classI
 ALTER TABLE "ClassArmorSuggestion" ADD CONSTRAINT "ClassArmorSuggestion_classId_fkey" FOREIGN KEY ("classId") REFERENCES "DndClass"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "EquipmentPackItem" ADD CONSTRAINT "EquipmentPackItem_packId_fkey" FOREIGN KEY ("packId") REFERENCES "EquipmentPack"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "EquipmentPackItem" ADD CONSTRAINT "EquipmentPackItem_equipmentId_fkey" FOREIGN KEY ("equipmentId") REFERENCES "Equipment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "EquipmentPackItem" ADD CONSTRAINT "EquipmentPackItem_packId_fkey" FOREIGN KEY ("packId") REFERENCES "EquipmentPack"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Character" ADD CONSTRAINT "Character_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
