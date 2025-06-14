@@ -58,6 +58,7 @@ interface Character {
   avatar?: string;
   equippedWeapons?: (Weapon | MagicalWeapon)[];
   isOptimistic?: boolean;
+  userId: string;
 }
 
 interface CharacterCardProps {
@@ -67,9 +68,11 @@ interface CharacterCardProps {
 }
 
 export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdated }: CharacterCardProps) {
+  console.log('CharacterCard received character:', character);
   const [showSheet, setShowSheet] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { deleteCharacter } = useCharacterMutations();
+  const isOptimistic = character.isOptimistic;
   const hpPercentage = (character.hitPoints / character.maxHitPoints) * 100;
 
   const handleDelete = async () => {
@@ -120,7 +123,7 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
             <div className="bg-purple-600 text-white text-sm font-semibold px-2 py-1 rounded">
               Lv. {character.level}
             </div>
-            {character.isOptimistic && (
+            {isOptimistic && (
               <div className="flex items-center gap-2 text-yellow-400 text-sm">
                 <RefreshCw className="h-4 w-4 animate-spin" />
                 <span>Syncing...</span>
