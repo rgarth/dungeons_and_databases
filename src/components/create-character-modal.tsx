@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { X, Dice6, Plus, Minus, RefreshCw } from "lucide-react";
 import { ABILITY_SCORES, AbilityScore } from "@/lib/dnd/core";
 import { Spell } from "@/lib/dnd/spells";
-import { Weapon, Armor, Ammunition } from "@/lib/dnd/equipment";
+import { Weapon, Armor, Ammunition, InventoryItem } from "@/lib/dnd/equipment";
 import { WeaponSuggestion } from "@/lib/dnd/weapon-suggestions";
 import { ArmorSuggestion } from "@/lib/dnd/armor-suggestions";
 import { WeaponSelector } from "./shared/WeaponSelector";
@@ -18,15 +18,17 @@ import { useDndData } from "@/components/providers/dnd-data-provider";
 
 import { 
   type StatMethod, 
-  type CharacterCreationData,
   CharacterCreationService
 } from "@/services/character/creation";
 
 import type { CharacterAvatarData } from '@/app/api/generate-avatar/route';
+import { useCharacterMutations } from '@/hooks/use-character-mutations';
+import { toast } from 'react-hot-toast';
+import { useSession } from 'next-auth/react';
+import { Race, Class } from '@/types/dnd';
 
 interface CreateCharacterModalProps {
   onClose: () => void;
-  onCharacterCreated: () => void;
 }
 
 interface CreationOptions {
@@ -61,8 +63,17 @@ interface Subclass {
   description?: string;
 }
 
-export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateCharacterModalProps) {
+export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
   const characterCreationService = CharacterCreationService.getInstance();
+  const { createCharacter } = useCharacterMutations();
+  const { data: session } = useSession();
+
+  // Re-add required state variables (remove unused setters)
+  const [maxHitPoints] = useState(0);
+  const [selectedSkills] = useState<string[]>([]);
+  const [generatedAppearance] = useState<string>('');
+  const [generatedPersonality] = useState<string>('');
+  const [generatedBackstory] = useState<string>('');
 
   // Creation step state
   const [currentStep, setCurrentStep] = useState<'basic' | 'background'>('basic');
@@ -94,11 +105,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Equipment and spells
   const [selectedSpells, setSelectedSpells] = useState<Spell[]>([]);
   const [selectedWeapons, setSelectedWeapons] = useState<{weapon: Weapon, quantity: number}[]>([]);
-  const [selectedAmmunition, setSelectedAmmunition] = useState<Ammunition[]>([]);
   const [selectedEquipmentPack, setSelectedEquipmentPack] = useState<number>(0);
   
   // Loading states
-  const [loading, setLoading] = useState(false);
   const [generatingName, setGeneratingName] = useState(false);
   const [creationOptions, setCreationOptions] = useState<CreationOptions | null>(null);
   const [loadingOptions, setLoadingOptions] = useState(true);
@@ -116,6 +125,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Avatar state
   const [generatedAvatar, setGeneratedAvatar] = useState<string>('');
   const [generatedFullBodyAvatar, setGeneratedFullBodyAvatar] = useState<string>('');
+
+  // New state variables
+  const proficiencyBonus = 2;
 
   // Set default values when data is loaded
   useEffect(() => {
@@ -189,7 +201,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   }, [characterClass]);
 
   // Get creation options from state (with fallback)
-  const { subclasses = [], needsSubclassAtCreation = false, spellcasting = { ability: null, canCastAtLevel1: false, availableSpells: [], spellSlots: {} } } = creationOptions || {};
+  const { needsSubclassAtCreation = false, spellcasting = { ability: null, canCastAtLevel1: false, availableSpells: [], spellSlots: {} } } = creationOptions || {};
 
   // Initialize ability scores on mount
   useEffect(() => {
@@ -323,7 +335,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }
     
     console.log('Final auto-ammunition:', autoAmmunition);
-    setSelectedAmmunition(autoAmmunition);
+    // setSelectedAmmunition(autoAmmunition);
     
     if (autoAmmunition.length > 0) {
       console.log('✅ Set selectedAmmunition with auto-generated ammunition');
@@ -336,10 +348,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   useEffect(() => {
     // Reset selections when class changes (suggestions will be applied by the above effects)
     setSelectedWeapons([]);
-    setSelectedAmmunition([]);
     // Don't clear armor here - let armor suggestions effect handle it
     setSubclass("");
-    console.log('RESET: Cleared weapons, ammunition and subclass for class change to:', characterClass);
+    console.log('RESET: Cleared weapons and subclass for class change to:', characterClass);
   }, [characterClass]);
 
   const handleStatMethodChange = (method: StatMethod) => {
@@ -401,72 +412,164 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Only create character if we're on the background step
-    if (currentStep !== 'background') {
+  const calculateArmorClass = () => {
+    const dexMod = Math.floor((abilityScores.dexterity - 10) / 2);
+    const baseAC = 10 + dexMod;
+    // Add armor bonus if wearing armor
+    const armorBonus = selectedArmor?.[0]?.baseAC || 0;
+    return baseAC + armorBonus;
+  };
+
+  const calculateSpeed = () => {
+    const baseSpeed = 30; // Default speed
+    const raceData = races.find(r => r.name === race) as Race | undefined;
+    return raceData?.speed || baseSpeed;
+  };
+
+  const calculateSpellSlots = () => {
+    // Default spell slots for level 1
+    return {
+      1: 2
+    };
+  };
+
+  const getSpellcastingAbility = () => {
+    const classData = classes.find(c => c.name === characterClass) as Class | undefined;
+    return classData?.spellcastingAbility || 'intelligence';
+  };
+
+  const calculateSpellSaveDC = () => {
+    const ability = getSpellcastingAbility() as keyof typeof abilityScores;
+    const abilityMod = Math.floor((abilityScores[ability] - 10) / 2);
+    return 8 + abilityMod + proficiencyBonus;
+  };
+
+  const calculateSpellAttackBonus = () => {
+    const ability = getSpellcastingAbility() as keyof typeof abilityScores;
+    const abilityMod = Math.floor((abilityScores[ability] - 10) / 2);
+    return abilityMod + proficiencyBonus;
+  };
+
+  const calculateActions = () => {
+    // Default actions based on class and weapons
+    return [];
+  };
+
+  const calculateBonusActions = () => {
+    // Default bonus actions based on class
+    return [];
+  };
+
+  const calculateReactions = () => {
+    // Default reactions based on class
+    return [];
+  };
+
+  const handleSubmit = async () => {
+    if (!session?.user) {
+      toast.error('You must be logged in to create a character');
       return;
     }
-    
-    if (!name.trim()) return;
 
-    // Validate required subclass selection
-    if (needsSubclassAtCreation && !subclass) {
-      alert(`Please select a ${characterClass} subclass.`);
-      return;
-    }
+    // Validate required fields
+    const validationErrors: string[] = [];
+    if (!name?.trim()) validationErrors.push('Character name is required');
+    if (!race?.trim()) validationErrors.push('Character race is required');
+    if (!characterClass?.trim()) validationErrors.push('Character class is required');
+    if (!background?.trim()) validationErrors.push('Character background is required');
+    if (!alignment?.trim()) validationErrors.push('Character alignment is required');
 
-    setLoading(true);
-    try {
-      console.log('🚀 CREATING CHARACTER WITH DATA:');
-      console.log('selectedWeapons:', selectedWeapons);
-      console.log('selectedArmor:', selectedArmor);
-      console.log('selectedAmmunition:', selectedAmmunition);
-      
-      const creationData: CharacterCreationData = {
-        name,
-        race,
-        class: characterClass,
-        subclass: subclass || undefined,
-        background,
-        alignment,
-        gender,
-        statMethod,
-        abilityScores,
-        randomScoreArray,
-        selectedEquipmentPack,
-        selectedWeapons,
-        selectedArmor,
-        selectedAmmunition,
-        selectedSpells
-      };
-
-      const characterData = await characterCreationService.createCharacter(creationData);
-      
-      // Add background characteristics, avatar, gender and age to the character data
-      const characterDataWithBackground = {
-        ...characterData,
-        backgroundCharacteristics,
-        avatar: generatedAvatar || undefined,
-        fullBodyAvatar: generatedFullBodyAvatar || undefined,
-        gender: gender.trim() || undefined,
-        age: age.toString().trim() ? parseInt(age.toString().trim()) : undefined
-      };
-      
-      const response = await fetch("/api/characters", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(characterDataWithBackground),
-      });
-
-      if (response.ok) {
-        onCharacterCreated();
+    // Validate ability scores
+    const requiredAbilityScores = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'] as const;
+    for (const score of requiredAbilityScores) {
+      if (typeof abilityScores[score] !== 'number' || abilityScores[score] < 1 || abilityScores[score] > 20) {
+        validationErrors.push(`${score.charAt(0).toUpperCase() + score.slice(1)} must be between 1 and 20`);
       }
+    }
+
+    // If there are validation errors, show them and return
+    if (validationErrors.length > 0) {
+      toast.error(validationErrors.join('\n'));
+      return;
+    }
+
+    try {
+      const inventory: InventoryItem[] = (typeof selectedEquipmentPack === 'number' && creationOptions?.equipmentPacks)
+        ? [{
+            name: creationOptions.equipmentPacks[selectedEquipmentPack]?.name || '',
+            quantity: 1
+          }]
+        : [];
+
+      // Map selectedWeapons to Weapon[] (strip quantity field)
+      const weapons = selectedWeapons.map(w => w.weapon);
+
+      // Ensure all required fields have valid values
+      const characterData = {
+        name: name.trim(),
+        race: race.trim(),
+        class: characterClass.trim(),
+        level: 1,
+        hitPoints: maxHitPoints || 10,
+        maxHitPoints: maxHitPoints || 10,
+        armorClass: calculateArmorClass(),
+        background: background.trim(),
+        alignment: alignment.trim(),
+        strength: abilityScores.strength || 10,
+        dexterity: abilityScores.dexterity || 10,
+        constitution: abilityScores.constitution || 10,
+        intelligence: abilityScores.intelligence || 10,
+        wisdom: abilityScores.wisdom || 10,
+        charisma: abilityScores.charisma || 10,
+        speed: calculateSpeed(),
+        proficiencyBonus,
+        skills: selectedSkills,
+        inventory,
+        weapons,
+        armor: selectedArmor,
+        spellsKnown: selectedSpells,
+        spellsPrepared: selectedSpells,
+        spellSlots: calculateSpellSlots(),
+        spellcastingAbility: getSpellcastingAbility(),
+        spellSaveDC: calculateSpellSaveDC(),
+        spellAttackBonus: calculateSpellAttackBonus(),
+        actions: calculateActions(),
+        bonusActions: calculateBonusActions(),
+        reactions: calculateReactions(),
+        appearance: generatedAppearance || '',
+        personality: generatedPersonality || '',
+        backstory: generatedBackstory || '',
+        avatar: generatedAvatar || '',
+        fullBodyAvatar: generatedFullBodyAvatar || '',
+        backgroundCharacteristics: backgroundCharacteristics || {
+          personalityTraits: [],
+          ideals: [],
+          bonds: [],
+          flaws: []
+        }
+      };
+
+      // Show loading toast
+      const loadingToast = toast.loading('Creating your character...');
+
+      // Create character
+      await createCharacter.mutateAsync(characterData, {
+        onSuccess: () => {
+          // Update loading toast to success
+          toast.dismiss(loadingToast);
+          toast.success('Character created successfully!');
+          onClose();
+        },
+        onError: (error) => {
+          // Update loading toast to error
+          toast.dismiss(loadingToast);
+          toast.error('Failed to create character. Please try again.');
+          console.error('Error creating character:', error);
+        }
+      });
     } catch (error) {
-      console.error("Failed to create character:", error);
-    } finally {
-      setLoading(false);
+      console.error('Error creating character:', error);
+      toast.error('Failed to create character');
     }
   };
 
@@ -524,7 +627,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             // Only submit if we're on the background step and the submit button was clicked
             const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement;
             if (currentStep === 'background' && submitter?.getAttribute('type') === 'submit') {
-              handleSubmit(e);
+              handleSubmit();
             }
           }} 
           className="p-6 space-y-6"
@@ -1040,10 +1143,10 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             ) : (
               <button
                 type="submit"
-                disabled={loading || !background}
+                disabled={!background}
                 className="bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg transition-colors"
               >
-                {loading ? 'Creating...' : 'Create Character'}
+                {loadingOptions ? 'Creating...' : 'Create Character'}
               </button>
             )}
           </div>

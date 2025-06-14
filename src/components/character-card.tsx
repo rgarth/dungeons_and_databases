@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, Shield, Trash2 } from "lucide-react";
+import { Heart, Shield, Trash2, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { CharacterSheet } from "./character-sheet";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
@@ -8,6 +8,8 @@ import { Weapon, MagicalWeapon, Armor, InventoryItem } from "@/lib/dnd/equipment
 import { Spell } from "@/lib/dnd/spells";
 import { Action } from "@/lib/dnd/combat";
 import { Treasure } from "@/lib/dnd/data";
+import { useCharacterMutations } from '@/hooks/use-character-mutations';
+import { toast } from 'react-hot-toast';
 
 interface Character {
   id: string;
@@ -55,6 +57,7 @@ interface Character {
   notes?: string;
   avatar?: string;
   equippedWeapons?: (Weapon | MagicalWeapon)[];
+  isOptimistic?: boolean;
 }
 
 interface CharacterCardProps {
@@ -66,26 +69,17 @@ interface CharacterCardProps {
 export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdated }: CharacterCardProps) {
   const [showSheet, setShowSheet] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const { deleteCharacter } = useCharacterMutations();
   const hpPercentage = (character.hitPoints / character.maxHitPoints) * 100;
 
-  const handleDeleteCharacter = async () => {
-    setIsDeleting(true);
+  const handleDelete = async () => {
     try {
-      const response = await fetch(`/api/characters?id=${character.id}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        setShowDeleteDialog(false);
-        onCharacterDeleted?.();
-      } else {
-        console.error('Failed to delete character');
-      }
+      await deleteCharacter.mutateAsync(character.id);
+      toast.success('Character deleted successfully');
+      onCharacterDeleted?.();
     } catch (error) {
       console.error('Error deleting character:', error);
-    } finally {
-      setIsDeleting(false);
+      toast.error('Failed to delete character');
     }
   };
 
@@ -126,6 +120,12 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
             <div className="bg-purple-600 text-white text-sm font-semibold px-2 py-1 rounded">
               Lv. {character.level}
             </div>
+            {character.isOptimistic && (
+              <div className="flex items-center gap-2 text-yellow-400 text-sm">
+                <RefreshCw className="h-4 w-4 animate-spin" />
+                <span>Syncing...</span>
+              </div>
+            )}
             <button
               onClick={handleDeleteClick}
               className="text-red-400 hover:text-red-300 transition-colors p-2 rounded-lg hover:bg-red-500/10"
@@ -181,9 +181,8 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
       <DeleteConfirmationDialog
         isOpen={showDeleteDialog}
         characterName={character.name}
-        onConfirm={handleDeleteCharacter}
+        onConfirm={handleDelete}
         onCancel={() => setShowDeleteDialog(false)}
-        isDeleting={isDeleting}
       />
     </>
   );
