@@ -6,28 +6,72 @@
 // Used for initial database setup and production deployment
 //
 // Usage: 
-//   Development: npx tsx prisma/seed-treasures.ts
-//   Production:  node -r tsx/cjs prisma/seed-treasures.ts
+//   Development: npx tsx prisma/seed-treasures.ts [--force]
+//   Production:  node -r tsx/cjs prisma/seed-treasures.ts [--force]
+//
+// Options:
+//   --force    Delete all existing treasures before seeding
 
 import { PrismaClient } from '@prisma/client'
 import { treasureData } from './data/treasure-data'
 
 const prisma = new PrismaClient()
 
-async function seedTreasures() {
+async function seedTreasures(force: boolean = false) {
   console.log('💎 Starting treasure database seeding...')
   
   // Check existing treasures
   const existingTreasures = await prisma.treasure.findMany()
   console.log(`ℹ️  Found ${existingTreasures.length} existing treasures`)
   
-  // Clear existing treasures for fresh seed
-  console.log('🔄 Clearing existing treasures for fresh seed...')
-  await prisma.treasure.deleteMany()
+  if (force) {
+    console.log('🔄 Force flag detected - clearing existing treasures...')
+    await prisma.treasure.deleteMany()
+    console.log('✅ Cleared existing treasures')
+  } else {
+    // Create a map of existing treasure names for quick lookup
+    const existingNames = new Set(existingTreasures.map(t => t.name))
+    
+    // Filter out treasures that already exist
+    const newTreasures = treasureData.filter(t => !existingNames.has(t.name))
+    
+    if (newTreasures.length === 0) {
+      console.log('✅ All treasures already exist in database')
+      return
+    }
+    
+    console.log(`🔄 Adding ${newTreasures.length} new treasures...`)
+    
+    // Process items sequentially to avoid connection pool issues
+    for (const treasure of newTreasures) {
+      try {
+        await prisma.treasure.create({
+          data: {
+            name: treasure.name,
+            type: treasure.type,
+            category: treasure.category,
+            value: treasure.value,
+            description: treasure.description,
+            weight: treasure.weight,
+            appearance: treasure.appearance
+          }
+        })
+        console.log(`  ✅ Added treasure: ${treasure.name}`)
+      } catch (error) {
+        console.error(`❌ Failed to add treasure ${treasure.name}:`, error)
+        // Continue with next treasure instead of throwing
+      }
+    }
+    
+    console.log(`✅ Successfully added ${newTreasures.length} new treasures`)
+    return
+  }
   
-  console.log('💎 Seeding D&D 5e treasures...')
+  // If we're here, we either cleared the data or this is a fresh database
+  console.log('🔄 Adding all treasures...')
   
   // Process items sequentially to avoid connection pool issues
+  let successCount = 0
   for (const treasure of treasureData) {
     try {
       await prisma.treasure.create({
@@ -42,17 +86,20 @@ async function seedTreasures() {
         }
       })
       console.log(`  ✅ Added treasure: ${treasure.name}`)
+      successCount++
     } catch (error) {
       console.error(`❌ Failed to add treasure ${treasure.name}:`, error)
+      // Continue with next treasure instead of throwing
     }
   }
   
-  console.log(`✅ Seeded ${treasureData.length} treasures`)
+  console.log(`✅ Successfully added ${successCount} treasures`)
 }
 
 async function main() {
   try {
-    await seedTreasures()
+    const force = process.argv.includes('--force')
+    await seedTreasures(force)
     console.log('🎉 Treasure seeding completed successfully!')
   } catch (error) {
     console.error('❌ Error seeding treasures:', error)
@@ -62,13 +109,8 @@ async function main() {
   }
 }
 
-// Run the seeding
-main()
-
-// Handle both direct execution and module import
-const isDirectExecution = process.argv[1]?.endsWith('seed-treasures.ts')
-
-if (isDirectExecution) {
+// Only run if this file is being executed directly
+if (process.argv[1]?.endsWith('seed-treasures.ts')) {
   main()
     .catch((e) => {
       console.error(e)
