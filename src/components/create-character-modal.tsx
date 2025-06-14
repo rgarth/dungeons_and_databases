@@ -24,11 +24,6 @@ import {
 
 import type { CharacterAvatarData } from '@/app/api/generate-avatar/route';
 
-interface ApiResponse {
-  id: string;
-  name: string;
-}
-
 interface CreateCharacterModalProps {
   onClose: () => void;
   onCharacterCreated: () => void;
@@ -126,9 +121,16 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   useEffect(() => {
     if (races?.length > 0 && !race) setRace(races[0].name);
     if (classes?.length > 0 && !characterClass) setCharacterClass(classes[0].name);
-    if (backgrounds?.length > 0 && !background) setBackground(backgrounds[0].name);
-    if (alignments?.length > 0 && !alignment) setAlignment("True Neutral");
-  }, [races, classes, backgrounds, alignments]);
+    if (backgrounds?.length > 0 && !background) {
+      const folkHero = backgrounds.find(b => b.name === 'Folk Hero');
+      setBackground(folkHero ? folkHero.name : backgrounds[0].name);
+    }
+    if (alignments?.length > 0 && !alignment) setAlignment('True Neutral');
+    if (creationOptions && creationOptions.equipmentPacks && creationOptions.equipmentPacks.length > 0 && !selectedEquipmentPack) {
+      const explorerPackIndex = creationOptions.equipmentPacks.findIndex(p => p.name === "Explorer's Pack");
+      setSelectedEquipmentPack(explorerPackIndex >= 0 ? explorerPackIndex : 0);
+    }
+  }, [races, classes, backgrounds, alignments, creationOptions]);
 
   // Load creation options and proficiencies when class changes
   useEffect(() => {
@@ -493,14 +495,17 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const handleNext = () => {
     if (currentStep === 'basic') {
       setCurrentStep('background');
-      // Scroll to top when changing tabs
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Scroll the modal content to top
+      const modalContent = document.querySelector('.modal-content');
+      if (modalContent) {
+        modalContent.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
-      <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[95vh] overflow-y-auto">
+      <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[95vh] overflow-y-auto modal-content">
         <div className="flex justify-between items-center p-6 border-b border-slate-700">
           <h2 className="text-2xl font-bold text-white">Create New Character</h2>
           <div className="flex items-center gap-3">
@@ -779,7 +784,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                         className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
                       >
                         {creationOptions?.equipmentPacks?.map((pack, index) => (
-                          <option key={String(pack.id || `pack-${index}`)} value={index}>
+                          <option key={String(pack.id)} value={index}>
                             {pack.name} ({pack.cost})
                           </option>
                         )) || []}
@@ -1005,7 +1010,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           <div className="flex justify-end gap-4 pt-4 border-t border-slate-700">
             <button
               type="button"
-              onClick={handleNext}
+              onClick={currentStep === 'basic' ? onClose : () => setCurrentStep('basic')}
               className="px-4 py-2 text-slate-400 hover:text-white transition-colors"
             >
               {currentStep === 'basic' ? 'Cancel' : 'Back'}
@@ -1013,10 +1018,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             {currentStep === 'basic' ? (
               <button
                 type="button"
-                onClick={() => {
-                  console.log('🎯 NEXT BUTTON CLICKED - Moving to background step');
-                  setCurrentStep('background');
-                }}
+                onClick={handleNext}
                 disabled={!name.trim() || (needsSubclassAtCreation && !subclass) || (statMethod === 'pointbuy' && !pointBuyValidation.isValid)}
                 className="bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg transition-colors"
               >
