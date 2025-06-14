@@ -1,12 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 
+// PrismaClient is attached to the `global` object in development to prevent
+// exhausting your database connection limit.
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-// Configure Prisma for Aiven's connection limits
+// Configure Prisma for Vercel's serverless environment
 const createPrismaClient = () => {
-  const client = new PrismaClient({
+  return new PrismaClient({
     datasources: {
       db: {
         url: process.env.DATABASE_URL,
@@ -15,19 +17,13 @@ const createPrismaClient = () => {
     // Configure logging
     log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
   });
-
-  // Add cleanup on process exit
-  if (process.env.NODE_ENV !== 'production') {
-    process.on('beforeExit', async () => {
-      await client.$disconnect();
-    });
-  }
-
-  return client;
 };
 
-// Ensure single instance in development
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
+// In production, we want to create a new Prisma client for each request
+// In development, we want to reuse the same client
+export const prisma = process.env.NODE_ENV === 'production' 
+  ? createPrismaClient()
+  : globalForPrisma.prisma ?? createPrismaClient();
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
