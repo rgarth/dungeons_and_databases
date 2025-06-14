@@ -1,19 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-type RouteContext = {
-  params: {
-    name: string;
-  };
-};
-
 export async function GET(
   request: NextRequest,
-  context: RouteContext
+  { params }: { params: { name: string } }
 ) {
   try {
     const race = await prisma.dndRace.findUnique({
-      where: { name: context.params.name }
+      where: { name: params.name }
     });
 
     if (!race) {
