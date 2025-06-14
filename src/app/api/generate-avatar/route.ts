@@ -199,34 +199,34 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
 
   // Diverse race descriptions with distinctive features
   const raceDescriptions: Record<string, string> = {
-    'Human': 'older human character with mature features, weathered face, wrinkles, gray hair, heavier build, individual warrior, unique facial characteristics, varied skin tones, diverse human features',
-    'Elf': 'older elf character with long pointed ears, ethereal features, angular face, weathered features, gray hair, heavier build, diverse skin tones, varied hair textures, unique elven features',
-    'Dwarf': 'older dwarf character with thick gray beard, stocky build, broad shoulders, weathered face, heavier build, diverse skin tones, varied hair textures, unique dwarven features',
-    'Halfling': 'older halfling character, small adult stature, mature adult face with wrinkles, weathered features, gray hair, heavier build, adult proportions, diverse skin tones, varied hair textures, unique halfling features',
-    'Dragonborn': 'older dragonborn character with scaled skin covering face and body, weathered scales, gray scales, heavier build, draconic heritage, reptilian eyes, pronounced snout, varied scale colors, unique draconic features',
-    'Gnome': 'older small adult humanoid adventurer, mature adult person 3-4 feet tall, adult face with wrinkles and age lines, gray hair, heavier build, pointy ears like elf, intelligent sparkling eyes, high cheekbones, prominent nose, diverse skin tones, varied hair textures, unique gnomish features',
-    'Tiefling': 'older tiefling character with horns, tail, infernal heritage, weathered features, gray hair, heavier build, varied skin colors, unique infernal features, diverse horn styles',
-    'Half-Orc': 'older half-orc character with greenish skin, prominent tusks, weathered features, gray hair, heavier build, muscular build, varied skin tones, unique orcish features, diverse facial structures',
-    'Half-Elf': 'older half-elf character with slightly pointed ears, human-elf hybrid features, weathered face, gray hair, heavier build, diverse skin tones, varied hair textures, unique mixed heritage features',
-    'Goliath': 'older goliath character with stone-like skin markings, weathered features, gray hair, heavier build, massive build, giant heritage, varied skin tones, unique stone patterns, diverse facial features',
-    'Aasimar': 'older aasimar character with celestial heritage, weathered features, gray hair, heavier build, glowing eyes, radiant features, diverse skin tones, varied hair textures, unique celestial features',
-    'Tabaxi': 'older tabaxi character with cat-like features, weathered fur, gray fur, heavier build, feline face, fur covering body, varied fur patterns, unique feline features, diverse cat-like characteristics'
+    'Human': 'human character with diverse features, weathered face, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, individual warrior, unique facial characteristics, varied skin tones, diverse human features, realistic imperfections',
+    'Elf': 'elf character with long pointed ears, ethereal features, angular face, weathered features, wrinkles, scars, varied body types, overweight, underweight, average weight, diverse skin tones, varied hair textures, unique elven features, realistic imperfections',
+    'Dwarf': 'dwarf character with thick beard, stocky build, broad shoulders, weathered face, wrinkles, scars, varied body types, overweight, underweight, average weight, diverse skin tones, varied hair textures, unique dwarven features, realistic imperfections',
+    'Halfling': 'halfling character, small adult stature, mature adult face with wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, adult proportions, diverse skin tones, varied hair textures, unique halfling features, realistic imperfections',
+    'Dragonborn': 'dragonborn character with scaled skin covering face and body, weathered scales, scars, blemishes, varied body types, overweight, underweight, average weight, draconic heritage, reptilian eyes, pronounced snout, varied scale colors, unique draconic features, realistic imperfections',
+    'Gnome': 'small adult humanoid adventurer, mature adult person 3-4 feet tall, adult face with wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, pointy ears like elf, intelligent sparkling eyes, high cheekbones, prominent nose, diverse skin tones, varied hair textures, unique gnomish features, realistic imperfections',
+    'Tiefling': 'tiefling character with horns, tail, infernal heritage, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, varied skin colors, unique infernal features, diverse horn styles, realistic imperfections',
+    'Half-Orc': 'half-orc character with greenish skin, prominent tusks, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, varied skin tones, unique orcish features, diverse facial structures, realistic imperfections',
+    'Half-Elf': 'half-elf character with slightly pointed ears, human-elf hybrid features, weathered face, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, diverse skin tones, varied hair textures, unique mixed heritage features, realistic imperfections',
+    'Goliath': 'goliath character with stone-like skin markings, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, giant heritage, varied skin tones, unique stone patterns, diverse facial features, realistic imperfections',
+    'Aasimar': 'aasimar character with celestial heritage, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, glowing eyes, radiant features, diverse skin tones, varied hair textures, unique celestial features, realistic imperfections',
+    'Tabaxi': 'tabaxi character with cat-like features, weathered fur, scars, blemishes, varied body types, overweight, underweight, average weight, feline face, fur covering body, varied fur patterns, unique feline features, diverse cat-like characteristics, realistic imperfections'
   };
 
   // Practical class descriptions with diverse elements
   const classDescriptions: Record<string, string> = {
-    'Fighter': 'older warrior with practical armor and weapon, weathered features, gray hair, heavier build, diverse combat style, unique warrior features',
-    'Wizard': 'older spellcaster with scholarly robes, weathered features, gray hair, heavier build, diverse magical style, unique arcane features',
-    'Rogue': 'older stealthy character with practical leather armor, weathered features, gray hair, heavier build, diverse stealth style, unique rogue features',
-    'Cleric': 'older holy warrior with practical armor and symbol, weathered features, gray hair, heavier build, diverse religious style, unique divine features',
-    'Ranger': 'older forest guardian with practical gear and bow, weathered features, gray hair, heavier build, diverse wilderness style, unique ranger features',
-    'Paladin': 'older holy knight with practical armor, weathered features, gray hair, heavier build, diverse holy style, unique paladin features',
-    'Barbarian': 'older tribal warrior with practical gear, weathered features, gray hair, heavier build, diverse tribal style, unique barbarian features',
-    'Bard': 'older performer with practical clothing, weathered features, gray hair, heavier build, diverse performance style, unique bard features',
-    'Druid': 'older nature guardian with natural materials, weathered features, gray hair, heavier build, diverse nature style, unique druid features',
-    'Monk': 'older martial artist with simple robes, weathered features, gray hair, heavier build, diverse martial style, unique monk features',
-    'Sorcerer': 'older magical character with practical clothing, weathered features, gray hair, heavier build, diverse magical style, unique sorcerer features',
-    'Warlock': 'older mystical character with practical attire, weathered features, gray hair, heavier build, diverse mystical style, unique warlock features'
+    'Fighter': 'warrior with practical armor and weapon, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, diverse combat style, unique warrior features, realistic imperfections',
+    'Wizard': 'spellcaster with scholarly robes, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, diverse magical style, unique arcane features, realistic imperfections',
+    'Rogue': 'stealthy character with practical leather armor, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, diverse stealth style, unique rogue features, realistic imperfections',
+    'Cleric': 'holy warrior with practical armor and symbol, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, diverse religious style, unique divine features, realistic imperfections',
+    'Ranger': 'forest guardian with practical gear and bow, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, diverse wilderness style, unique ranger features, realistic imperfections',
+    'Paladin': 'holy knight with practical armor, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, diverse holy style, unique paladin features, realistic imperfections',
+    'Barbarian': 'tribal warrior with practical gear, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, diverse tribal style, unique barbarian features, realistic imperfections',
+    'Bard': 'performer with practical clothing, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, diverse performance style, unique bard features, realistic imperfections',
+    'Druid': 'nature guardian with natural materials, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, diverse nature style, unique druid features, realistic imperfections',
+    'Monk': 'martial artist with simple robes, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, diverse martial style, unique monk features, realistic imperfections',
+    'Sorcerer': 'magical character with practical clothing, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, diverse magical style, unique sorcerer features, realistic imperfections',
+    'Warlock': 'mystical character with practical attire, weathered features, wrinkles, scars, blemishes, varied body types, overweight, underweight, average weight, diverse mystical style, unique warlock features, realistic imperfections'
   };
 
   // Comprehensive anti-bias and anti-trope prompts
@@ -234,13 +234,13 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
     'DIVERSE REPRESENTATION, varied features, unique characteristics',
     'PRACTICAL ARMOR, realistic protection, full coverage',
     'NO CHAINMAIL BIKINI, NO REVEALING ARMOR',
-    'REALISTIC PROPORTIONS, normal body shape',
+    'REALISTIC PROPORTIONS, varied body types',
     'FUNCTIONAL CLOTHING, appropriate for adventure',
     'MODEST ATTIRE, practical adventuring gear',
     'REALISTIC FANTASY, grounded character design',
     'NO SEXUALIZED POSES, confident stance',
     'PRACTICAL EQUIPMENT, functional gear',
-    'NO AGE BIAS, mature features, varied age representation',
+    'NO AGE BIAS, varied age representation',
     'NO BEAUTY BIAS, unique features, diverse appearances',
     'NO GENDER STEREOTYPES, practical character design',
     'NO RACIAL STEREOTYPES, unique racial features',
@@ -250,7 +250,12 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
     'DIVERSE FACIAL FEATURES, unique characteristics',
     'DIVERSE BODY TYPES, realistic proportions',
     'DIVERSE EXPRESSIONS, unique personality',
-    'DIVERSE STYLES, varied cultural elements'
+    'DIVERSE STYLES, varied cultural elements',
+    'REALISTIC IMPERFECTIONS, scars, blemishes, wrinkles',
+    'VARIED HEALTH CONDITIONS, realistic representation',
+    'NO IDEALIZED BEAUTY, diverse appearances',
+    'REALISTIC WEAR AND TEAR, lived-in look',
+    'DIVERSE PHYSICAL CONDITIONS, varied abilities'
   ];
 
   // Gender-neutral handling
