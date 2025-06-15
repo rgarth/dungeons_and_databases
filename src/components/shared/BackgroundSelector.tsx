@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { BookOpen, Scroll, Languages, Coins, Lightbulb, Heart, Anchor, Zap } from "lucide-react";
+import { useDndData } from "@/components/providers/dnd-data-provider";
 
 export interface BackgroundData {
   name: string;
@@ -72,9 +73,7 @@ export function BackgroundSelector({
     flaws: 1
   }
 }: BackgroundSelectorProps) {
-  const [backgrounds, setBackgrounds] = useState<BackgroundData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { backgrounds } = useDndData();
   
   // Internal state for characteristics
   const [internalCharacteristics, setInternalCharacteristics] = useState<SelectedCharacteristics>({
@@ -86,26 +85,6 @@ export function BackgroundSelector({
   
   // Use provided characteristics or internal state
   const currentCharacteristics = selectedCharacteristics || internalCharacteristics;
-  
-  // Load backgrounds from API
-  useEffect(() => {
-    const loadBackgrounds = async () => {
-      try {
-        const response = await fetch('/api/backgrounds');
-        if (!response.ok) {
-          throw new Error('Failed to load backgrounds');
-        }
-        const data = await response.json();
-        setBackgrounds(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load backgrounds');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadBackgrounds();
-  }, []);
   
   // Initialize characteristics when selectedBackground changes
   useEffect(() => {
@@ -181,7 +160,7 @@ export function BackgroundSelector({
   
   const currentBackground = backgrounds.find(bg => bg.name === selectedBackground);
   
-  if (loading) {
+  if (!backgrounds.length) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
@@ -189,20 +168,8 @@ export function BackgroundSelector({
     );
   }
   
-  if (error) {
-    return (
-      <div className="text-red-400 p-4 bg-red-900/20 rounded-lg">
-        {error}
-      </div>
-    );
-  }
-  
   if (!currentBackground) {
-    return (
-      <div className="text-slate-400 p-4 bg-slate-800/20 rounded-lg">
-        Please select a background
-      </div>
-    );
+    return null;
   }
   
   const content = (

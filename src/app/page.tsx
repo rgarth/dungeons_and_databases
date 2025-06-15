@@ -41,7 +41,7 @@ export default function Home() {
         <div className="bg-slate-800 p-8 rounded-lg shadow-xl max-w-md w-full">
           <h1 className="text-2xl font-bold text-white mb-6 text-center">Dungeons & Databases</h1>
           <button
-            onClick={() => signIn()}
+            onClick={() => signIn('google')}
             className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition-colors"
           >
             Sign In

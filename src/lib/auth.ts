@@ -11,6 +11,10 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+  pages: {
+    signIn: '/api/auth/signin/google',
+    error: '/',
+  },
   callbacks: {
     session: ({ session, user }) => ({
       ...session,
