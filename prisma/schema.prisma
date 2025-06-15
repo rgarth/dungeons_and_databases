@@ -217,17 +217,17 @@ model DndRace {
 }
 
 model Background {
-  id                       String   @id @default(cuid())
-  name                     String   @unique
-  description              String
-  skillProficiencies       Json
-  languages                Json
-  equipment                Json
-  feature                  String
-  featureDescription       String
+  id                    String   @id @default(cuid())
+  name                  String   @unique
+  description           String
+  skillProficiencies    Json
+  languages             Json
+  equipment             Json
+  feature               String
+  featureDescription    String
   suggestedCharacteristics Json?
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 }
 
 model Alignment {

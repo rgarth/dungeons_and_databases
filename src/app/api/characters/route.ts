@@ -12,6 +12,11 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Debug logging
+    console.log('=== DEBUG INFO ===');
+    console.log('Database URL:', process.env.DATABASE_URL);
+    console.log('User Email:', session.user.email);
+
     // Find user by email since session.user.id might not be available
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
@@ -21,6 +26,9 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // More debug logging
+    console.log('User ID:', user.id);
+
     const characters = await prisma.character.findMany({
       where: {
         userId: user.id,
@@ -29,6 +37,9 @@ export async function GET() {
         updatedAt: 'desc',
       },
     });
+
+    // Log character count
+    console.log('Found characters:', characters.length);
 
     return NextResponse.json(characters);
   } catch (error) {

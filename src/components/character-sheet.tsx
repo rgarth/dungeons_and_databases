@@ -130,6 +130,35 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     });
   }, [character]);
 
+  // Clean up all state when unmounting
+  useEffect(() => {
+    return () => {
+      // Clear any pending timeouts
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+      }
+      
+      // Reset all state
+      setShowDeleteDialog(false);
+      setShowLevelUpModal(false);
+      setShowSpellPreparationModal(false);
+      setTempPreparedSpells([]);
+      setIsDeleting(false);
+      setShowActionsMenu(false);
+      setCopperPieces(0);
+      setSilverPieces(0);
+      setGoldPieces(0);
+      setTreasures([]);
+      setInventory([]);
+      setEquippedMagicalItems([]);
+      setInventoryMagicalItems([]);
+      setAttunedItems([]);
+      
+      // Clear refs
+      pendingUpdatesRef.current = {};
+    };
+  }, []);
+
   // Close actions menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

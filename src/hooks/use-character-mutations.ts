@@ -36,14 +36,49 @@ export function useCharacterMutations() {
       // Show toast for optimistic update
       toast.loading('Creating character...', { id: 'create-character' });
 
-      // Create optimistic character
-      const optimisticCharacter = {
+      // Create optimistic character with all required fields
+      const optimisticCharacter: Character = {
         ...newCharacter,
         id: 'temp-' + Date.now(), // Temporary ID
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         userId: session?.user?.email || '', // Use email as userId
         isOptimistic: true, // Flag to indicate this is an optimistic update
+        // Add required fields with default values
+        strength: newCharacter.abilityScores?.strength || 10,
+        dexterity: newCharacter.abilityScores?.dexterity || 10,
+        constitution: newCharacter.abilityScores?.constitution || 10,
+        intelligence: newCharacter.abilityScores?.intelligence || 10,
+        wisdom: newCharacter.abilityScores?.wisdom || 10,
+        charisma: newCharacter.abilityScores?.charisma || 10,
+        speed: 30,
+        proficiencyBonus: 2,
+        skills: [],
+        inventory: [],
+        weapons: [],
+        armor: null,
+        spellsKnown: [],
+        spellsPrepared: [],
+        spellSlots: {},
+        spellcastingAbility: '',
+        spellSaveDC: 0,
+        spellAttackBonus: 0,
+        actions: [],
+        bonusActions: [],
+        reactions: [],
+        appearance: '',
+        personality: '',
+        backstory: '',
+        avatar: '',
+        fullBodyAvatar: '',
+        backgroundCharacteristics: {
+          personalityTraits: [],
+          ideals: [],
+          bonds: [],
+          flaws: []
+        },
+        // Ensure subclass is undefined, not null
+        subclass: newCharacter.subclass || undefined
       };
 
       // Optimistically update to the new value
@@ -55,29 +90,12 @@ export function useCharacterMutations() {
       // Return a context object with the snapshotted value
       return { previousCharacters, optimisticCharacter };
     },
-    onSuccess: (data, variables, context) => {
+    onSuccess: () => {
       // Show success toast
       toast.success('Character created successfully!', { id: 'create-character' });
       
-      // Update the optimistic character with the real data but keep isOptimistic flag
-      queryClient.setQueryData<Character[]>(['characters'], (old = []) => 
-        old.map(char => 
-          char.id === context?.optimisticCharacter.id 
-            ? { ...data, isOptimistic: true } 
-            : char
-        )
-      );
-
-      // Wait 2 seconds before removing the optimistic flag
-      setTimeout(() => {
-        queryClient.setQueryData<Character[]>(['characters'], (old = []) => 
-          old.map(char => 
-            char.id === context?.optimisticCharacter.id 
-              ? { ...char, isOptimistic: false } 
-              : char
-          )
-        );
-      }, 2000);
+      // Immediately invalidate the cache to get fresh data
+      queryClient.invalidateQueries({ queryKey: ['characters'] });
     },
     onError: (err, newCharacter, context) => {
       // Show error toast
@@ -89,10 +107,8 @@ export function useCharacterMutations() {
       }
     },
     onSettled: () => {
-      // Add a small delay before invalidating to allow the optimistic state to be visible
-      setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ['characters'] });
-      }, 2000); // 2 second delay
+      // Immediately invalidate to ensure we have the latest data
+      queryClient.invalidateQueries({ queryKey: ['characters'] });
     },
   });
 

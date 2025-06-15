@@ -18,7 +18,9 @@ export async function GET() {
         type: true,
         value: true,
         description: true,
-        effects: true,
+        category: true,
+        weight: true,
+        appearance: true,
         createdAt: true,
         updatedAt: true
       },

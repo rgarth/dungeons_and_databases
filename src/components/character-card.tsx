@@ -1,7 +1,7 @@
 "use client";
 
 import { Heart, Shield, Trash2, RefreshCw } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CharacterSheet } from "./character-sheet";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import { Weapon, MagicalWeapon, Armor, InventoryItem } from "@/lib/dnd/equipment";
@@ -68,12 +68,16 @@ interface CharacterCardProps {
 }
 
 export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdated }: CharacterCardProps) {
-  console.log('CharacterCard received character:', character);
   const [showSheet, setShowSheet] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { deleteCharacter } = useCharacterMutations();
   const isOptimistic = character.isOptimistic;
   const hpPercentage = (character.hitPoints / character.maxHitPoints) * 100;
+
+  // Clean up sheet state when character changes
+  useEffect(() => {
+    setShowSheet(false);
+  }, [character.id]);
 
   const handleDelete = async () => {
     try {
@@ -89,6 +93,12 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent opening character sheet
     setShowDeleteDialog(true);
+  };
+
+  const handleCloseSheet = () => {
+    setShowSheet(false);
+    // Force a re-render of the character card
+    onCharacterUpdated?.();
   };
   
   return (
@@ -171,7 +181,7 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
       {showSheet && (
         <CharacterSheet
           character={character}
-          onClose={() => setShowSheet(false)}
+          onClose={handleCloseSheet}
           onCharacterDeleted={() => {
             setShowSheet(false);
             onCharacterDeleted?.();
