@@ -185,7 +185,7 @@ async function generateWithPollinations(prompt: string, seed: number) {
 }
 
 function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
-  const { race, class: characterClass, gender } = data;
+  const { race, class: characterClass, gender, alignment } = data;
   
   // Base style elements - realistic photo style
   const consistentStyle = {
@@ -197,19 +197,35 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
     format: "realistic photography, detailed photorealism"
   };
 
+  // Alignment-based expressions
+  const alignmentExpressions = {
+    'Lawful Good': 'friendly smile, determined look, confident smirk, serious expression, thoughtful gaze',
+    'Neutral Good': 'friendly smile, awkward smile, shy expression, thoughtful gaze, serious expression',
+    'Chaotic Good': 'mischievous grin, confident smirk, determined look, friendly smile, intense stare',
+    'Lawful Neutral': 'serious expression, determined look, thoughtful gaze, confident smirk, intense stare',
+    'Neutral': 'neutral expression, thoughtful gaze, serious expression, awkward smile, shy expression',
+    'Chaotic Neutral': 'mischievous grin, intense stare, awkward smile, confident smirk, serious expression',
+    'Lawful Evil': 'scowl, angry expression, malevolent gaze, serious expression, intense stare',
+    'Neutral Evil': 'frown, angry expression, malevolent gaze, serious expression, intense stare',
+    'Chaotic Evil': 'scowl, angry expression, malevolent gaze, intense stare, mischievous grin'
+  };
+
+  // Get expressions based on alignment, default to neutral if not specified
+  const expressions = alignment ? alignmentExpressions[alignment as keyof typeof alignmentExpressions] : alignmentExpressions['Neutral'];
+
   // Diverse race descriptions with distinctive features
   const raceDescriptions: Record<string, string> = {
     'Human': 'human character with diverse features, weathered face, wrinkles, scars, blemishes, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, diverse human features, realistic imperfections',
-    'Elf': 'elf character with long pointed ears, ethereal features, angular face, weathered features, wrinkles, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique elven features, realistic imperfections',
+    'Elf': 'elf character with long pointed ears, ethereal features, angular face, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique elven features, realistic imperfections',
     'Dwarf': 'dwarf character with thick beard, stocky build, broad shoulders, weathered face, wrinkles, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique dwarven features, realistic imperfections',
     'Halfling': 'halfling character, small adult stature, mature adult face with wrinkles, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique halfling features, realistic imperfections',
     'Dragonborn': 'dragonborn character with scaled skin covering face and body, weathered scales, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark scales, brown scales, black scales, olive scales, tan scales, varied scale colors, unique draconic features, realistic imperfections',
     'Gnome': 'small adult humanoid adventurer, mature adult person 3-4 feet tall, adult face with wrinkles, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique gnomish features, realistic imperfections',
-    'Tiefling': 'tiefling character with horns, tail, infernal heritage, weathered features, wrinkles, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin colors, unique infernal features, diverse horn styles, realistic imperfections',
-    'Half-Orc': 'half-orc character with greenish skin, prominent tusks, weathered features, wrinkles, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, unique orcish features, diverse facial structures, realistic imperfections',
-    'Half-Elf': 'half-elf character with slightly pointed ears, human-elf hybrid features, weathered face, wrinkles, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique mixed heritage features, realistic imperfections',
-    'Goliath': 'goliath character with stone-like skin markings, weathered features, wrinkles, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, unique stone patterns, diverse facial features, realistic imperfections',
-    'Aasimar': 'aasimar character with celestial heritage, weathered features, wrinkles, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique celestial features, realistic imperfections',
+    'Tiefling': 'tiefling character with horns, tail, infernal heritage, weathered features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin colors, unique infernal features, diverse horn styles, realistic imperfections',
+    'Half-Orc': 'half-orc character with greenish skin, prominent tusks, weathered features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, unique orcish features, diverse facial structures, realistic imperfections',
+    'Half-Elf': 'half-elf character with slightly pointed ears, human-elf hybrid features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique mixed heritage features, realistic imperfections',
+    'Goliath': 'goliath character with stone-like skin markings, weathered features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, unique stone patterns, diverse facial features, realistic imperfections',
+    'Aasimar': 'aasimar character with celestial heritage, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique celestial features, realistic imperfections',
     'Tabaxi': 'tabaxi character with cat-like features, weathered fur, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark fur, brown fur, black fur, olive fur, tan fur, varied fur patterns, unique feline features, diverse cat-like characteristics, realistic imperfections'
   };
 
@@ -282,7 +298,7 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
   const classDesc = classDescriptions[characterClass] || 'adventurer';
 
   // Build prompt with strong anti-bias elements and realistic photo style
-  const prompt = `${genderPrefix}${raceDesc}, ${classDesc}, ${antiBiasPrompts.join(', ')}, ${consistentStyle.artStyle}, ${consistentStyle.composition}, ${consistentStyle.lighting}, ${consistentStyle.background}, ${consistentStyle.quality}, ${consistentStyle.format}`;
+  const prompt = `${genderPrefix}${raceDesc}, ${classDesc}, ${expressions}, ${antiBiasPrompts.join(', ')}, ${consistentStyle.artStyle}, ${consistentStyle.composition}, ${consistentStyle.lighting}, ${consistentStyle.background}, ${consistentStyle.quality}, ${consistentStyle.format}`;
 
   return prompt;
 } 
