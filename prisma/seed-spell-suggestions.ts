@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from './client';
 import { classSpellSuggestionsData } from './data/spell-suggestions-data';
-
-const prisma = new PrismaClient();
 
 export async function seedSpellSuggestions() {
   console.log('🧙‍♂️ Seeding spell suggestions...');
@@ -47,8 +45,6 @@ export async function seedSpellSuggestions() {
   } catch (error) {
     console.error('❌ Error seeding spell suggestions:', error);
     throw error;
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
