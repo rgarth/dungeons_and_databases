@@ -4,18 +4,6 @@ export const halfElfNames: NameComponents = {
   patterns: [
     {
       parts: [
-        { type: 'givenName', gender: 'male' }
-      ],
-      separator: ' '
-    },
-    {
-      parts: [
-        { type: 'givenName', gender: 'female' }
-      ],
-      separator: ' '
-    },
-    {
-      parts: [
         { type: 'givenName', gender: 'male' },
         { type: 'familyName' }
       ],
@@ -27,29 +15,44 @@ export const halfElfNames: NameComponents = {
         { type: 'familyName' }
       ],
       separator: ' '
+    },
+    {
+      parts: [
+        { type: 'givenName', gender: 'neutral' },
+        { type: 'familyName' }
+      ],
+      separator: ' '
     }
   ],
   parts: {
-    givenName: [
-      // Male names
-      'Adran', 'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
-      'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo', 'Immeral',
-      'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
-      'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis',
-      // Female names
-      'Adrie', 'Althaea', 'Anastrianna', 'Andraste', 'Antinua', 'Bethrynna', 'Birel',
-      'Caelynn', 'Drusilia', 'Enna', 'Felosial', 'Ielenia', 'Jelenneth', 'Keyleth',
-      'Leshanna', 'Lia', 'Meriele', 'Mialee', 'Naivara', 'Quelenna', 'Quillathe',
-      'Sariel', 'Shanairra', 'Shava', 'Silaqui', 'Theirastra', 'Thia', 'Vadania',
-      'Valanthe', 'Xanaphia'
-    ],
+    givenName: {
+      male: [
+        'Adran', 'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
+        'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo', 'Immeral',
+        'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
+        'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
+      ],
+      female: [
+        'Adrie', 'Althaea', 'Anastrianna', 'Andraste', 'Antinua', 'Bethrynna', 'Birel',
+        'Caelynn', 'Drusilia', 'Enna', 'Felosial', 'Ielenia', 'Jelenneth', 'Keyleth',
+        'Leshanna', 'Lia', 'Meriele', 'Mialee', 'Naivara', 'Quelenna', 'Quillathe',
+        'Sariel', 'Shanairra', 'Shava', 'Silaqui', 'Theirastra', 'Thia', 'Vadania',
+        'Valanthe', 'Xanaphia'
+      ],
+      neutral: [
+        'Adran', 'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
+        'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo', 'Immeral',
+        'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
+        'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
+      ]
+    },
     familyName: [
       'Amakiir', 'Amastacia', 'Galanodel', 'Holimion', 'Ilphelkiir', 'Liadon',
       'Meliamne', 'Naïlo', 'Siannodel', 'Xiloscient'
     ]
   },
   cultures: {
-    elven: {
+    high: {
       patterns: [
         {
           parts: [
@@ -57,18 +60,47 @@ export const halfElfNames: NameComponents = {
             { type: 'familyName' }
           ],
           separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'female' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'neutral' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
         }
       ],
       parts: {
-        givenName: [
-          'Adran', 'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
-          'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo', 'Immeral',
-          'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
-          'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
-        ]
+        givenName: {
+          male: [
+            'Adran', 'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
+            'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo', 'Immeral',
+            'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
+            'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
+          ],
+          female: [
+            'Adrie', 'Althaea', 'Anastrianna', 'Andraste', 'Antinua', 'Bethrynna', 'Birel',
+            'Caelynn', 'Drusilia', 'Enna', 'Felosial', 'Ielenia', 'Jelenneth', 'Keyleth',
+            'Leshanna', 'Lia', 'Meriele', 'Mialee', 'Naivara', 'Quelenna', 'Quillathe',
+            'Sariel', 'Shanairra', 'Shava', 'Silaqui', 'Theirastra', 'Thia', 'Vadania',
+            'Valanthe', 'Xanaphia'
+          ],
+          neutral: [
+            'Adran', 'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
+            'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo', 'Immeral',
+            'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
+            'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
+          ]
+        }
       }
     },
-    human: {
+    wood: {
       patterns: [
         {
           parts: [
@@ -76,15 +108,44 @@ export const halfElfNames: NameComponents = {
             { type: 'familyName' }
           ],
           separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'female' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'neutral' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
         }
       ],
       parts: {
-        givenName: [
-          'Adran', 'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
-          'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo', 'Immeral',
-          'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
-          'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
-        ]
+        givenName: {
+          male: [
+            'Adran', 'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
+            'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo', 'Immeral',
+            'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
+            'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
+          ],
+          female: [
+            'Adrie', 'Althaea', 'Anastrianna', 'Andraste', 'Antinua', 'Bethrynna', 'Birel',
+            'Caelynn', 'Drusilia', 'Enna', 'Felosial', 'Ielenia', 'Jelenneth', 'Keyleth',
+            'Leshanna', 'Lia', 'Meriele', 'Mialee', 'Naivara', 'Quelenna', 'Quillathe',
+            'Sariel', 'Shanairra', 'Shava', 'Silaqui', 'Theirastra', 'Thia', 'Vadania',
+            'Valanthe', 'Xanaphia'
+          ],
+          neutral: [
+            'Adran', 'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
+            'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo', 'Immeral',
+            'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
+            'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
+          ]
+        }
       }
     }
   }

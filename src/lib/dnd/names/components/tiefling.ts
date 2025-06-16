@@ -4,47 +4,45 @@ export const tieflingNames: NameComponents = {
   patterns: [
     {
       parts: [
-        { type: 'givenName', gender: 'male' }
-      ],
-      separator: ' '
-    },
-    {
-      parts: [
-        { type: 'givenName', gender: 'female' }
-      ],
-      separator: ' '
-    },
-    {
-      parts: [
         { type: 'givenName', gender: 'male' },
-        { type: 'epithet' }
+        { type: 'familyName' }
       ],
       separator: ' '
     },
     {
       parts: [
         { type: 'givenName', gender: 'female' },
-        { type: 'epithet' }
+        { type: 'familyName' }
+      ],
+      separator: ' '
+    },
+    {
+      parts: [
+        { type: 'givenName', gender: 'neutral' },
+        { type: 'familyName' }
       ],
       separator: ' '
     }
   ],
   parts: {
-    givenName: [
-      // Male names
-      'Akmenos', 'Amnon', 'Barakas', 'Damakos', 'Ekemon', 'Iados', 'Kairon',
-      'Leucis', 'Melech', 'Mordai', 'Morthos', 'Pelaios', 'Skamos', 'Therai',
-      // Female names
-      'Akta', 'Anakis', 'Bryseis', 'Criella', 'Damaia', 'Ea', 'Kallista',
-      'Lerissa', 'Makaria', 'Nemeia', 'Orianna', 'Phelaia', 'Rieta'
-    ],
-    epithet: [
-      'the Virtuous', 'the Pure', 'the Righteous', 'the Just', 'the Noble',
-      'the Honorable', 'the True', 'the Faithful', 'the Loyal', 'the Steadfast',
-      'the Resolute', 'the Determined', 'the Strong', 'the Brave', 'the Bold',
-      'the Daring', 'the Courageous', 'the Valiant', 'the Proud', 'the Noble',
-      'the Wise', 'the Learned', 'the Knowledgeable', 'the Scholarly', 'the Studious',
-      'the Kind', 'the Gentle', 'the Sweet', 'the Loving', 'the Caring'
+    givenName: {
+      male: [
+        'Akmenos', 'Amnon', 'Barakas', 'Damakos', 'Ekemon', 'Iados', 'Kairon',
+        'Leucis', 'Melech', 'Mordai', 'Morthos', 'Pelaios', 'Skamos', 'Therai'
+      ],
+      female: [
+        'Akta', 'Anakis', 'Bryseis', 'Criella', 'Damaia', 'Ea', 'Kallista',
+        'Lerissa', 'Makaria', 'Nemeia', 'Orianna', 'Phelaia', 'Rieta'
+      ],
+      neutral: [
+        'Akmenos', 'Amnon', 'Barakas', 'Damakos', 'Ekemon', 'Iados', 'Kairon',
+        'Leucis', 'Melech', 'Mordai', 'Morthos', 'Pelaios', 'Skamos', 'Therai'
+      ]
+    },
+    familyName: [
+      'Art', 'Carrion', 'Chant', 'Creed', 'Despair', 'Excellence', 'Fear',
+      'Glory', 'Hope', 'Ideal', 'Music', 'Nowhere', 'Open', 'Poetry', 'Quest',
+      'Random', 'Reverence', 'Sorrow', 'Temerity', 'Torment', 'Weary'
     ]
   },
   cultures: {
@@ -53,35 +51,81 @@ export const tieflingNames: NameComponents = {
         {
           parts: [
             { type: 'givenName', gender: 'male' },
-            { type: 'epithet' }
+            { type: 'familyName' }
+          ],
+          separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'female' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'neutral' },
+            { type: 'familyName' }
           ],
           separator: ' '
         }
       ],
       parts: {
-        epithet: [
-          'the Infernal', 'the Hellborn', 'the Fiendish', 'the Diabolic', 'the Demonic',
-          'the Abyssal', 'the Nether', 'the Dark', 'the Shadow', 'the Void',
-          'the Cursed', 'the Marked', 'the Branded', 'the Scarred', 'the Tainted'
-        ]
+        givenName: {
+          male: [
+            'Akmenos', 'Amnon', 'Barakas', 'Damakos', 'Ekemon', 'Iados', 'Kairon',
+            'Leucis', 'Melech', 'Mordai', 'Morthos', 'Pelaios', 'Skamos', 'Therai'
+          ],
+          female: [
+            'Akta', 'Anakis', 'Bryseis', 'Criella', 'Damaia', 'Ea', 'Kallista',
+            'Lerissa', 'Makaria', 'Nemeia', 'Orianna', 'Phelaia', 'Rieta'
+          ],
+          neutral: [
+            'Akmenos', 'Amnon', 'Barakas', 'Damakos', 'Ekemon', 'Iados', 'Kairon',
+            'Leucis', 'Melech', 'Mordai', 'Morthos', 'Pelaios', 'Skamos', 'Therai'
+          ]
+        }
       }
     },
-    virtuous: {
+    abyssal: {
       patterns: [
         {
           parts: [
             { type: 'givenName', gender: 'male' },
-            { type: 'epithet' }
+            { type: 'familyName' }
+          ],
+          separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'female' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'neutral' },
+            { type: 'familyName' }
           ],
           separator: ' '
         }
       ],
       parts: {
-        epithet: [
-          'the Virtuous', 'the Pure', 'the Righteous', 'the Just', 'the Noble',
-          'the Honorable', 'the True', 'the Faithful', 'the Loyal', 'the Steadfast',
-          'the Resolute', 'the Determined', 'the Strong', 'the Brave', 'the Bold'
-        ]
+        givenName: {
+          male: [
+            'Akmenos', 'Amnon', 'Barakas', 'Damakos', 'Ekemon', 'Iados', 'Kairon',
+            'Leucis', 'Melech', 'Mordai', 'Morthos', 'Pelaios', 'Skamos', 'Therai'
+          ],
+          female: [
+            'Akta', 'Anakis', 'Bryseis', 'Criella', 'Damaia', 'Ea', 'Kallista',
+            'Lerissa', 'Makaria', 'Nemeia', 'Orianna', 'Phelaia', 'Rieta'
+          ],
+          neutral: [
+            'Akmenos', 'Amnon', 'Barakas', 'Damakos', 'Ekemon', 'Iados', 'Kairon',
+            'Leucis', 'Melech', 'Mordai', 'Morthos', 'Pelaios', 'Skamos', 'Therai'
+          ]
+        }
       }
     }
   }

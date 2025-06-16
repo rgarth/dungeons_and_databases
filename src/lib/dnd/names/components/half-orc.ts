@@ -4,18 +4,6 @@ export const halfOrcNames: NameComponents = {
   patterns: [
     {
       parts: [
-        { type: 'givenName', gender: 'male' }
-      ],
-      separator: ' '
-    },
-    {
-      parts: [
-        { type: 'givenName', gender: 'female' }
-      ],
-      separator: ' '
-    },
-    {
-      parts: [
         { type: 'givenName', gender: 'male' },
         { type: 'familyName' }
       ],
@@ -27,25 +15,36 @@ export const halfOrcNames: NameComponents = {
         { type: 'familyName' }
       ],
       separator: ' '
+    },
+    {
+      parts: [
+        { type: 'givenName', gender: 'neutral' },
+        { type: 'familyName' }
+      ],
+      separator: ' '
     }
   ],
   parts: {
-    givenName: [
-      // Male names
-      'Dench', 'Feng', 'Gell', 'Henk', 'Holg', 'Imsh', 'Keth', 'Krusk', 'Mhurren',
-      'Ront', 'Shump', 'Thokk',
-      // Female names
-      'Baggi', 'Emen', 'Engong', 'Kansif', 'Myev', 'Neega', 'Ovak', 'Ownka', 'Shautha',
-      'Sutha', 'Vola', 'Volen', 'Yevelda'
-    ],
+    givenName: {
+      male: [
+        'Dench', 'Feng', 'Gell', 'Henk', 'Holg', 'Imsh', 'Keth', 'Krusk', 'Mhurren', 'Ront',
+        'Shump', 'Thokk'
+      ],
+      female: [
+        'Baggi', 'Emen', 'Engong', 'Kansif', 'Myev', 'Neega', 'Ovak', 'Ownka', 'Shautha', 'Sutha',
+        'Vola', 'Volen', 'Yevelda'
+      ],
+      neutral: [
+        'Dench', 'Feng', 'Gell', 'Henk', 'Holg', 'Imsh', 'Keth', 'Krusk', 'Mhurren', 'Ront',
+        'Shump', 'Thokk'
+      ]
+    },
     familyName: [
-      'Amblecrown', 'Buckman', 'Dundragon', 'Evenwood', 'Greycastle', 'Tallstag',
-      'Bersk', 'Chernin', 'Dotsk', 'Kulenov', 'Marsk', 'Nemetsk', 'Shemov', 'Starag',
-      'Brightwood', 'Helder', 'Hornraven', 'Lackman', 'Stormwind', 'Windrivver'
+      'Bersk', 'Chernin', 'Dotsk', 'Kulenov', 'Marsk', 'Nemetsk', 'Shemov', 'Starag'
     ]
   },
   cultures: {
-    tribal: {
+    orcish: {
       patterns: [
         {
           parts: [
@@ -53,13 +52,37 @@ export const halfOrcNames: NameComponents = {
             { type: 'familyName' }
           ],
           separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'female' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'neutral' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
         }
       ],
       parts: {
-        givenName: [
-          'Dench', 'Feng', 'Gell', 'Henk', 'Holg', 'Imsh', 'Keth', 'Krusk', 'Mhurren',
-          'Ront', 'Shump', 'Thokk'
-        ]
+        givenName: {
+          male: [
+            'Dench', 'Feng', 'Gell', 'Henk', 'Holg', 'Imsh', 'Keth', 'Krusk', 'Mhurren', 'Ront',
+            'Shump', 'Thokk'
+          ],
+          female: [
+            'Baggi', 'Emen', 'Engong', 'Kansif', 'Myev', 'Neega', 'Ovak', 'Ownka', 'Shautha', 'Sutha',
+            'Vola', 'Volen', 'Yevelda'
+          ],
+          neutral: [
+            'Dench', 'Feng', 'Gell', 'Henk', 'Holg', 'Imsh', 'Keth', 'Krusk', 'Mhurren', 'Ront',
+            'Shump', 'Thokk'
+          ]
+        }
       }
     },
     human: {
@@ -70,13 +93,37 @@ export const halfOrcNames: NameComponents = {
             { type: 'familyName' }
           ],
           separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'female' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'neutral' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
         }
       ],
       parts: {
-        givenName: [
-          'Dench', 'Feng', 'Gell', 'Henk', 'Holg', 'Imsh', 'Keth', 'Krusk', 'Mhurren',
-          'Ront', 'Shump', 'Thokk'
-        ]
+        givenName: {
+          male: [
+            'Dench', 'Feng', 'Gell', 'Henk', 'Holg', 'Imsh', 'Keth', 'Krusk', 'Mhurren', 'Ront',
+            'Shump', 'Thokk'
+          ],
+          female: [
+            'Baggi', 'Emen', 'Engong', 'Kansif', 'Myev', 'Neega', 'Ovak', 'Ownka', 'Shautha', 'Sutha',
+            'Vola', 'Volen', 'Yevelda'
+          ],
+          neutral: [
+            'Dench', 'Feng', 'Gell', 'Henk', 'Holg', 'Imsh', 'Keth', 'Krusk', 'Mhurren', 'Ront',
+            'Shump', 'Thokk'
+          ]
+        }
       }
     }
   }
