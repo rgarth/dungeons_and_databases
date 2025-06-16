@@ -568,8 +568,21 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep === 'basic') {
+      // If no name is provided, generate one
+      if (!name.trim()) {
+        setGeneratingName(true);
+        try {
+          const generatedName = await generateFantasyName(race, gender || undefined);
+          setName(generatedName);
+        } catch (error) {
+          console.error('Failed to generate name:', error);
+        } finally {
+          setGeneratingName(false);
+        }
+      }
+      
       setCurrentStep('background');
       // Scroll the modal content to top
       const modalContent = document.querySelector('.modal-content');
@@ -1090,7 +1103,7 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
                   e.preventDefault();
                   handleNext();
                 }}
-                disabled={!name.trim() || (needsSubclassAtCreation && !subclass) || (statMethod === 'pointbuy' && !pointBuyValidation.isValid)}
+                disabled={(needsSubclassAtCreation && !subclass) || (statMethod === 'pointbuy' && !pointBuyValidation.isValid)}
                 className="bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg transition-colors"
               >
                 Next
