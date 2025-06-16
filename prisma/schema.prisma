@@ -154,6 +154,7 @@ model DndClass {
   armorSuggestions    ClassArmorSuggestion[]
   weaponProficiencies ClassWeaponProficiency[]
   weaponSuggestions   ClassWeaponSuggestion[]
+  spellSuggestions    ClassSpellSuggestion[]
 }
 
 model ClassArmorProficiency {
@@ -202,6 +203,19 @@ model ClassArmorSuggestion {
   class     DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   @@unique([classId, armorName])
+}
+
+model ClassSpellSuggestion {
+  id            String   @id @default(cuid())
+  classId       String
+  spellName     String
+  level         Int      // 0 for cantrips
+  reason        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  class         DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@index([classId])
 }
 
 model DndRace {
