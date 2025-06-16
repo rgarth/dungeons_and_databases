@@ -36,7 +36,7 @@ export interface Character {
   equipment: string[];
   weapons: (Weapon | MagicalWeapon)[];
   inventoryWeapons: (Weapon | MagicalWeapon)[];
-  armor: Armor[];
+  armor?: Armor[];
   inventoryArmor: Armor[];
   ammunition: Ammunition[];
   
@@ -296,7 +296,7 @@ export function calculateEncumbrance(character: Character, additionalWeight: num
   
   // Add equipment weight (placeholder - would need to look up actual weights)
   currentWeight += character.weapons.length * 3; // Average weapon weight
-  currentWeight += character.armor.length * 20; // Average armor weight
+  currentWeight += (character.armor?.length ?? 0) * 20; // Average armor weight
   currentWeight += character.inventory.length * 1; // Average item weight
   
   const isEncumbered = currentWeight > carrying.encumbered;
@@ -398,11 +398,13 @@ export function validateCharacterEquipment(character: Character): {
   });
   
   // Check armor proficiencies
-  character.armor.forEach(armor => {
-    if (!canCharacterWearArmor(character, armor)) {
-      errors.push(`Cannot wear ${armor.name} - lacks proficiency or requirements`);
-    }
-  });
+  if (character.armor) {
+    character.armor.forEach(armor => {
+      if (!canCharacterWearArmor(character, armor)) {
+        errors.push(`Cannot wear ${armor.name} - lacks proficiency or requirements`);
+      }
+    });
+  }
   
   // Check encumbrance
   const encumbrance = calculateEncumbrance(character);

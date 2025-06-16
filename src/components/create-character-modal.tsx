@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Dice6, Plus, Minus, RefreshCw } from "lucide-react";
+import { X, Dice6, RefreshCw } from "lucide-react";
 import { ABILITY_SCORES, AbilityScore } from "@/lib/dnd/core";
 import { Spell } from "@/lib/dnd/spells";
 import { Weapon, Armor, Ammunition, InventoryItem } from "@/lib/dnd/equipment";
@@ -11,7 +11,6 @@ import { WeaponSelector } from "./shared/WeaponSelector";
 import { ArmorSelector } from "./shared/ArmorSelector";
 import { BackgroundSelector, type SelectedCharacteristics } from "./shared/BackgroundSelector";
 import { AvatarGenerator } from './shared/AvatarGenerator';
-import { weaponsData } from '../../prisma/data/weapons-data';
 import { armorData } from '../../prisma/data/armor-data';
 import { generateFantasyName } from "@/lib/dnd/character";
 import { useDndData } from "@/components/providers/dnd-data-provider";
@@ -26,6 +25,7 @@ import { useCharacterMutations } from '@/hooks/use-character-mutations';
 import { toast } from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 import { Race, Class } from '@/types/dnd';
+import Image from 'next/image';
 
 interface CreateCharacterModalProps {
   onClose: () => void;
@@ -129,6 +129,15 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
   // New state variables
   const proficiencyBonus = 2;
 
+  // Add getModifier function
+  const getModifier = (score: number): string => {
+    const modifier = Math.floor((score - 10) / 2);
+    return modifier >= 0 ? `+${modifier}` : `${modifier}`;
+  };
+
+  // Remove unused state
+  const [tappedAbility, setTappedAbility] = useState<AbilityScore | undefined>(undefined);
+
   // Set default values when data is loaded
   useEffect(() => {
     if (races?.length > 0 && !race) setRace(races[0].name);
@@ -215,31 +224,8 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
   // Apply weapon suggestions when they're loaded
   useEffect(() => {
     console.log('🔫 WEAPON SUGGESTIONS EFFECT:', weaponSuggestions.length, 'suggestions');
-    if (weaponSuggestions.length > 0) {
-      console.log('Processing weapon suggestions:', weaponSuggestions);
-      // Convert weapon suggestions to selected weapons
-      const suggestedWeapons: {weapon: Weapon, quantity: number}[] = [];
-      
-      for (const suggestion of weaponSuggestions) {
-        // Find the weapon in the weapons data
-        const weaponData = weaponsData.find(w => w.name === suggestion.weaponName);
-        if (weaponData) {
-          const weapon: Weapon = {
-            ...weaponData,
-            type: weaponData.type as 'Simple' | 'Martial',
-            category: weaponData.category as 'Melee' | 'Ranged',
-            properties: weaponData.properties ? weaponData.properties.split(',').map(p => p.trim()).filter(Boolean) : []
-          };
-          suggestedWeapons.push({ weapon, quantity: suggestion.quantity });
-        }
-      }
-      
-      console.log('Final suggestedWeapons:', suggestedWeapons);
-      setSelectedWeapons(suggestedWeapons);
-      console.log('✅ Set selectedWeapons');
-    } else {
-      console.log('No weapon suggestions to process');
-    }
+    // Remove auto-selection of weapons
+    setSelectedWeapons([]);
   }, [weaponSuggestions]);
 
   // Apply armor suggestions when they're loaded
@@ -370,30 +356,18 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
     }
   };
 
-  const handlePointBuyChange = (ability: AbilityScore, change: number) => {
-    if (statMethod !== 'pointbuy') return;
-    
-    const newScores = characterCreationService.applyPointBuyChange(abilityScores, ability, change);
-    if (newScores) {
+  const handleTap = (ability: AbilityScore) => {
+    if (!tappedAbility) {
+      // First tap - store the ability
+      setTappedAbility(ability);
+    } else if (tappedAbility !== ability) {
+      // Second tap on different ability - swap them
+      const newScores = characterCreationService.swapAbilityScores(abilityScores, tappedAbility, ability);
       setAbilityScores(newScores);
-    }
-  };
-
-  const handleDragStart = (e: React.DragEvent, fromAbility: AbilityScore) => {
-    e.dataTransfer.setData('text/plain', fromAbility);
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (e: React.DragEvent, toAbility: AbilityScore) => {
-    e.preventDefault();
-    const fromAbility = e.dataTransfer.getData('text/plain') as AbilityScore;
-    
-    if (fromAbility && fromAbility !== toAbility) {
-      const newScores = characterCreationService.swapAbilityScores(abilityScores, fromAbility, toAbility);
-      setAbilityScores(newScores);
+      setTappedAbility(undefined);
+    } else {
+      // Second tap on same ability - clear selection
+      setTappedAbility(undefined);
     }
   };
 
@@ -541,12 +515,11 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
         backstory: generatedBackstory || '',
         avatar: generatedAvatar || '',
         fullBodyAvatar: generatedFullBodyAvatar || '',
-        backgroundCharacteristics: backgroundCharacteristics || {
-          personalityTraits: [],
-          ideals: [],
-          bonds: [],
-          flaws: []
-        }
+        backgroundCharacteristics,
+        abilityScores,
+        selectedWeapons: selectedWeapons.map(w => w.weapon.name),
+        selectedArmor: selectedArmor.map(a => a.name),
+        selectedSpells: selectedSpells.map(s => s.name)
       };
 
       // Show loading toast
@@ -797,40 +770,22 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
                     <div
                       key={ability}
                       className="bg-slate-700 rounded-lg p-3 flex flex-col items-center"
-                      onDragOver={handleDragOver}
-                      onDrop={(e) => handleDrop(e, ability)}
                     >
                       <div className="text-sm font-medium text-slate-300 mb-2">{ability}</div>
-                      <div className="text-2xl font-bold text-white mb-2">{abilityScores[ability] || 10}</div>
-                      
-                      {statMethod === 'pointbuy' && (
-                        <div className="flex items-center justify-center gap-2 mt-auto">
-                          <button
-                            type="button"
-                            onClick={() => handlePointBuyChange(ability, -1)}
-                            className="w-8 h-8 bg-slate-600 hover:bg-slate-500 rounded-full flex items-center justify-center text-white text-sm"
-                            disabled={(abilityScores[ability] || 10) <= 8}
-                          >
-                            <Minus className="h-4 w-4" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handlePointBuyChange(ability, 1)}
-                            className="w-8 h-8 bg-slate-600 hover:bg-slate-500 rounded-full flex items-center justify-center text-white text-sm"
-                            disabled={(abilityScores[ability] || 10) >= 15}
-                          >
-                            <Plus className="h-4 w-4" />
-                          </button>
-                        </div>
-                      )}
-
+                      <div className="text-2xl font-bold text-white">
+                        {abilityScores[ability]}
+                      </div>
+                      <div className="text-xs text-slate-400">
+                        {getModifier(abilityScores[ability])}
+                      </div>
                       {(statMethod === 'rolling-assign' || statMethod === 'standard') && (
                         <div
-                          draggable
-                          onDragStart={(e) => handleDragStart(e, ability)}
-                          className="w-full text-center py-2 mt-auto text-xs text-slate-400 cursor-move bg-slate-600 rounded hover:bg-slate-500 transition-colors"
+                          onClick={() => handleTap(ability)}
+                          className={`w-full text-center py-2 mt-auto text-xs text-slate-400 cursor-pointer bg-slate-600 rounded hover:bg-slate-500 transition-colors ${
+                            tappedAbility === ability ? 'bg-slate-400' : ''
+                          }`}
                         >
-                          Drag to swap
+                          {tappedAbility === ability ? 'Tap another to swap' : 'Tap to select'}
                         </div>
                       )}
                     </div>
@@ -1055,13 +1010,13 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
                         <h4 className="text-white font-medium">Avatar Preview</h4>
                         {generatedFullBodyAvatar ? (
                           <div className="space-y-3">
-                            <img
+                            <Image
                               src={generatedFullBodyAvatar}
                               alt="Generated character avatar"
+                              width={200}
+                              height={200}
                               className="w-48 h-60 mx-auto rounded-lg border-2 border-purple-500 object-cover"
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none';
-                              }}
+                              priority
                             />
                             <div className="text-center">
                               <button
@@ -1157,7 +1112,6 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
       {showWeaponSelector && (
         <WeaponSelector
           title="Select Starting Weapons"
-          maxWeapons={5}
           selectedWeapons={selectedWeapons.map(sw => ({ weapon: sw.weapon, quantity: sw.quantity }))}
           onConfirm={(weapons) => {
             setSelectedWeapons(weapons);
@@ -1166,7 +1120,6 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
           onCancel={() => setShowWeaponSelector(false)}
           characterClass={characterClass}
           showSuggestions={true}
-          multiSelect={true}
         />
       )}
 
@@ -1174,8 +1127,11 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
       {showArmorSelector && (
         <ArmorSelector
           selectedArmor={selectedArmor}
-          onArmorSelectionChange={(armor) => setSelectedArmor(armor)}
-          onClose={() => setShowArmorSelector(false)}
+          onConfirm={(armor) => {
+            setSelectedArmor(armor);
+            setShowArmorSelector(false);
+          }}
+          onCancel={() => setShowArmorSelector(false)}
           isOpen={showArmorSelector}
           characterClass={characterClass}
           showProficiencies={true}

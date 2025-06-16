@@ -147,6 +147,7 @@ model DndClass {
   primaryAbility      String
   savingThrows        Json
   skillChoices        Json
+  phbDescription      String?
   createdAt           DateTime                 @default(now())
   updatedAt           DateTime                 @updatedAt
   armorProficiencies  ClassArmorProficiency[]
@@ -179,16 +180,16 @@ model ClassWeaponProficiency {
 }
 
 model ClassWeaponSuggestion {
-  id         String   @id @default(cuid())
-  classId    String
-  weaponName String
-  quantity   Int      @default(1)
-  reason     String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  class      DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+  id            String   @id @default(cuid())
+  classId       String
+  weaponName    String
+  quantity      Int      @default(1)
+  reason        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  class         DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
 
-  @@unique([classId, weaponName])
+  @@index([classId])
 }
 
 model ClassArmorSuggestion {

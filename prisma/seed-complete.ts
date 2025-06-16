@@ -36,27 +36,53 @@ async function main() {
 
     // Only seed if database is empty or --force flag is used
     if (totalCount > 0 && !process.argv.includes('--force')) {
-      console.log('Database already contains data. Use --force to reseed.')
+      console.log('\n⚠️  Database already contains data. Skipping seeds:')
+      if (alignmentCount > 0) console.log('  ⏭️  Skipping alignments (count: ' + alignmentCount + ')')
+      if (classCount > 0) console.log('  ⏭️  Skipping classes (count: ' + classCount + ')')
+      if (backgroundCount > 0) console.log('  ⏭️  Skipping backgrounds (count: ' + backgroundCount + ')')
+      if (equipmentCount > 0) console.log('  ⏭️  Skipping equipment (count: ' + equipmentCount + ')')
+      if (equipmentPackCount > 0) console.log('  ⏭️  Skipping equipment packs (count: ' + equipmentPackCount + ')')
+      if (raceCount > 0) console.log('  ⏭️  Skipping races (count: ' + raceCount + ')')
+      if (magicalItemCount > 0) console.log('  ⏭️  Skipping magical items (count: ' + magicalItemCount + ')')
+      if (spellCount > 0) console.log('  ⏭️  Skipping spells (count: ' + spellCount + ')')
+      if (weaponCount > 0) console.log('  ⏭️  Skipping weapons (count: ' + weaponCount + ')')
+      if (armorCount > 0) console.log('  ⏭️  Skipping armor (count: ' + armorCount + ')')
+      if (treasureCount > 0) console.log('  ⏭️  Skipping treasures (count: ' + treasureCount + ')')
+      console.log('\nUse --force to reseed everything.')
       return
     }
 
     // Seed in order of dependencies
+    console.log('\n🌱 Starting seeds in order:')
+    console.log('1. Seeding alignments...')
     await seedAlignments()
+    console.log('2. Seeding classes...')
     await seedClasses()
+    console.log('3. Seeding backgrounds...')
     await seedBackgrounds()
+    console.log('4. Seeding equipment...')
     await seedEquipment()
+    console.log('5. Seeding equipment packs...')
     await seedEquipmentPacks()
+    console.log('6. Seeding races...')
     await seedRaces()
+    console.log('7. Seeding magical items...')
     await seedMagicalItems()
+    console.log('8. Seeding spells...')
     await seedSpells()
+    console.log('9. Seeding weapons...')
     await seedWeapons()
+    console.log('10. Seeding armor...')
     await seedArmor()
+    console.log('11. Seeding treasures...')
     await seedTreasures()
+    console.log('12. Seeding weapon suggestions...')
     await seedWeaponSuggestions()
+    console.log('13. Seeding armor suggestions...')
     await seedArmorSuggestions()
 
     // Print final counts
-    console.log('\nFinal database contents:')
+    console.log('\n✅ Final database contents:')
     console.log(`Alignments: ${await prisma.alignment.count()}`)
     console.log(`Classes: ${await prisma.dndClass.count()}`)
     console.log(`Backgrounds: ${await prisma.background.count()}`)
@@ -69,7 +95,7 @@ async function main() {
     console.log(`Armor: ${await prisma.armor.count()}`)
     console.log(`Treasures: ${await prisma.treasure.count()}`)
   } catch (error) {
-    console.error('Error during seeding:', error)
+    console.error('❌ Error during seeding:', error)
     throw error
   } finally {
     await prisma.$disconnect()

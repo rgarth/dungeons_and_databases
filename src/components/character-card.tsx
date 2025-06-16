@@ -4,62 +4,9 @@ import { Heart, Shield, Trash2, RefreshCw } from "lucide-react";
 import { useState, useEffect } from "react";
 import { CharacterSheet } from "./character-sheet";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
-import { Weapon, MagicalWeapon, Armor, InventoryItem } from "@/lib/dnd/equipment";
-import { Spell } from "@/lib/dnd/spells";
-import { Action } from "@/lib/dnd/combat";
-import { Treasure } from "@/lib/dnd/data";
 import { useCharacterMutations } from '@/hooks/use-character-mutations';
 import { toast } from 'react-hot-toast';
-
-interface Character {
-  id: string;
-  name: string;
-  race: string;
-  class: string;
-  subclass?: string;
-  level: number;
-  hitPoints: number;
-  maxHitPoints: number;
-  armorClass: number;
-  background?: string;
-  alignment?: string;
-  strength: number;
-  dexterity: number;
-  constitution: number;
-  intelligence: number;
-  wisdom: number;
-  charisma: number;
-  speed: number;
-  proficiencyBonus: number;
-  skills?: string[];
-  inventory?: InventoryItem[] | string[];
-  equipment?: string[];
-  weapons?: (Weapon | MagicalWeapon)[];
-  inventoryWeapons?: (Weapon | MagicalWeapon)[];
-  armor?: Armor[];
-  inventoryArmor?: Armor[];
-  spellsKnown?: Spell[]; // All spells known or in spellbook
-  spellsPrepared?: Spell[]; // Currently prepared/equipped spells
-  spellSlots?: Record<number, number>;
-  spellcastingAbility?: string;
-  spellSaveDC?: number;
-  spellAttackBonus?: number;
-  actions?: Action[];
-  bonusActions?: Action[];
-  reactions?: Action[];
-  copperPieces?: number;
-  silverPieces?: number;
-  goldPieces?: number;
-  treasures?: Treasure[];
-  appearance?: string;
-  personality?: string;
-  backstory?: string;
-  notes?: string;
-  avatar?: string;
-  equippedWeapons?: (Weapon | MagicalWeapon)[];
-  isOptimistic?: boolean;
-  userId: string;
-}
+import { Character } from '@/types/character';
 
 interface CharacterCardProps {
   character: Character;
@@ -123,16 +70,16 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
             )}
             
             <div>
-              <h3 className="text-xl font-bold text-white mb-1">{character.name}</h3>
-              <p className="text-slate-400">
+              <h3 className="text-xl font-bold text-white">{character.name}</h3>
+              <p className="text-slate-400 text-sm mt-1">
                 {character.race} {character.class}
               </p>
+              <div className="bg-purple-600 text-white text-sm font-semibold px-2 py-0.5 rounded mt-2 inline-block">
+                Level {character.level}
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="bg-purple-600 text-white text-sm font-semibold px-2 py-1 rounded">
-              Lv. {character.level}
-            </div>
             {isOptimistic && (
               <div className="flex items-center gap-2 text-yellow-400 text-sm">
                 <RefreshCw className="h-4 w-4 animate-spin" />

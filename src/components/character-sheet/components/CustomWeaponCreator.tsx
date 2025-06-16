@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { X, Plus, Star, Zap, Sparkles } from "lucide-react";
 import { Weapon } from "@/lib/dnd/equipment";
-import { weaponsData } from '../../../../prisma/data/weapons-data';
-import { generateMagicWeaponName } from '@/lib/dnd/magic-weapon-names';
+import { generateMagicWeaponName } from "@/lib/dnd/magic-weapon-names";
 
 interface CustomWeapon {
   id: string;
@@ -31,29 +30,46 @@ interface CustomWeaponCreatorProps {
 }
 
 export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: CustomWeaponCreatorProps) {
-  const [baseWeaponId, setBaseWeaponId] = useState<string>('');
-  const [modifier, setModifier] = useState<number>(1);
-  const [customName, setCustomName] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
+  const [baseWeaponId, setBaseWeaponId] = useState('');
+  const [modifier, setModifier] = useState(1);
+  const [customName, setCustomName] = useState('');
+  const [description, setDescription] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [customWeapons, setCustomWeapons] = useState<CustomWeapon[]>([]);
   const [loadingCustomWeapons, setLoadingCustomWeapons] = useState(false);
-  const [weaponsMap, setWeaponsMap] = useState<Map<string, Weapon>>(new Map());
+  const [weapons, setWeapons] = useState<Weapon[]>([]);
+  const [loadingWeapons, setLoadingWeapons] = useState(false);
 
-  // Initialize weapons map
+  // Load weapons from the database
   useEffect(() => {
-    const map = new Map<string, Weapon>();
-    weaponsData.forEach(weaponData => {
-      const weapon: Weapon = {
-        ...weaponData,
-        type: weaponData.type as 'Simple' | 'Martial',
-        category: weaponData.category as 'Melee' | 'Ranged',
-        properties: weaponData.properties ? JSON.parse(weaponData.properties) : []
-      };
-      map.set(weaponData.name, weapon);
-    });
-    setWeaponsMap(map);
+    const loadWeapons = async () => {
+      setLoadingWeapons(true);
+      try {
+        const response = await fetch('/api/weapons');
+        if (response.ok) {
+          const data = await response.json();
+          setWeapons(data);
+        } else {
+          console.error('Failed to load weapons');
+        }
+      } catch (error) {
+        console.error('Error loading weapons:', error);
+      } finally {
+        setLoadingWeapons(false);
+      }
+    };
+
+    loadWeapons();
   }, []);
+
+  // Create a map of weapon IDs to their full data
+  const weaponsMap = useMemo(() => {
+    const map = new Map<string, Weapon>();
+    weapons.forEach(weapon => {
+      map.set(weapon.id, weapon);
+    });
+    return map;
+  }, [weapons]);
 
   // Load existing custom weapons when component opens
   useEffect(() => {
@@ -196,10 +212,11 @@ export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: Custom
                     value={baseWeaponId}
                     onChange={(e) => setBaseWeaponId(e.target.value)}
                     className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    disabled={loadingWeapons}
                   >
                     <option value="">Select base weapon...</option>
-                    {weaponsData.map(weapon => (
-                      <option key={weapon.name} value={weapon.name}>
+                    {weapons.map(weapon => (
+                      <option key={weapon.id} value={weapon.id}>
                         {weapon.name} ({weapon.damage} {weapon.damageType}, {weapon.type})
                       </option>
                     ))}
