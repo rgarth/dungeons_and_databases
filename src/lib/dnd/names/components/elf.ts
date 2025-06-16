@@ -17,6 +17,14 @@ export const elfNames: NameComponents = {
         { type: 'familyName' }
       ],
       separator: ' '
+    },
+    {
+      parts: [
+        { type: 'prefix' },
+        { type: 'givenName', gender: 'neutral' },
+        { type: 'familyName' }
+      ],
+      separator: ' '
     }
   ],
   parts: {
@@ -35,19 +43,27 @@ export const elfNames: NameComponents = {
       'Xar', 'Xel', 'Xer', 'Xil', 'Xir', 'Xor', 'Yal', 'Yar', 'Yel', 'Yer',
       'Yil', 'Yir', 'Yor', 'Zal', 'Zar', 'Zel', 'Zer', 'Zil', 'Zir', 'Zor'
     ],
-    givenName: [
-      // Male names
-      'Adran', 'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
-      'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo', 'Immeral',
-      'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
-      'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis',
-      // Female names
-      'Adrie', 'Althaea', 'Anastrianna', 'Andraste', 'Antinua', 'Bethrynna', 'Birel',
-      'Caelynn', 'Drusilia', 'Enna', 'Felosial', 'Ielenia', 'Jelenneth', 'Keyleth',
-      'Leshanna', 'Lia', 'Meriele', 'Mialee', 'Naivara', 'Quelenna', 'Quillathe',
-      'Sariel', 'Shanairra', 'Shava', 'Silaqui', 'Theirastra', 'Thia', 'Vadania',
-      'Valanthe', 'Xanaphia'
-    ],
+    givenName: {
+      male: [
+        'Adran', 'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
+        'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo', 'Immeral',
+        'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
+        'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
+      ],
+      female: [
+        'Adrie', 'Althaea', 'Anastrianna', 'Andraste', 'Antinua', 'Bethrynna', 'Birel',
+        'Caelynn', 'Drusilia', 'Enna', 'Felosial', 'Ielenia', 'Jelenneth', 'Keyleth',
+        'Leshanna', 'Lia', 'Meriele', 'Mialee', 'Naivara', 'Quelenna', 'Quillathe',
+        'Sariel', 'Shanairra', 'Shava', 'Silaqui', 'Theirastra', 'Thia', 'Vadania',
+        'Valanthe', 'Xanaphia'
+      ],
+      neutral: [
+        'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
+        'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo',
+        'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
+        'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
+      ]
+    },
     familyName: [
       'Amakiir', 'Amastacia', 'Galanodel', 'Holimion', 'Ilphelkiir', 'Liadon',
       'Meliamne', 'Naïlo', 'Siannodel', 'Xiloscient'
@@ -63,13 +79,50 @@ export const elfNames: NameComponents = {
             { type: 'familyName' }
           ],
           separator: ' '
+        },
+        {
+          parts: [
+            { type: 'prefix' },
+            { type: 'givenName', gender: 'female' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
+        },
+        {
+          parts: [
+            { type: 'prefix' },
+            { type: 'givenName', gender: 'neutral' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
         }
       ],
       parts: {
         prefix: [
           'Ael', 'Aer', 'Aeth', 'Al', 'Am', 'Ar', 'Ara', 'Ari', 'Aur', 'Be',
           'Ber', 'Bhel', 'Car', 'Cela', 'Dae', 'Dar', 'Del', 'Eil', 'Eir', 'El'
-        ]
+        ],
+        givenName: {
+          male: [
+            'Adran', 'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
+            'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo', 'Immeral',
+            'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
+            'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
+          ],
+          female: [
+            'Adrie', 'Althaea', 'Anastrianna', 'Andraste', 'Antinua', 'Bethrynna', 'Birel',
+            'Caelynn', 'Drusilia', 'Enna', 'Felosial', 'Ielenia', 'Jelenneth', 'Keyleth',
+            'Leshanna', 'Lia', 'Meriele', 'Mialee', 'Naivara', 'Quelenna', 'Quillathe',
+            'Sariel', 'Shanairra', 'Shava', 'Silaqui', 'Theirastra', 'Thia', 'Vadania',
+            'Valanthe', 'Xanaphia'
+          ],
+          neutral: [
+            'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
+            'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo',
+            'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
+            'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
+          ]
+        }
       }
     },
     wood: {
@@ -81,13 +134,50 @@ export const elfNames: NameComponents = {
             { type: 'familyName' }
           ],
           separator: ' '
+        },
+        {
+          parts: [
+            { type: 'prefix' },
+            { type: 'givenName', gender: 'female' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
+        },
+        {
+          parts: [
+            { type: 'prefix' },
+            { type: 'givenName', gender: 'neutral' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
         }
       ],
       parts: {
         prefix: [
           'Fa', 'Fae', 'Far', 'Fen', 'Gal', 'Gar', 'Gil', 'Hal', 'Har', 'Hel',
           'Iar', 'Il', 'Ili', 'Im', 'In', 'Iri', 'Kal', 'Kar', 'Kor', 'La'
-        ]
+        ],
+        givenName: {
+          male: [
+            'Adran', 'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
+            'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo', 'Immeral',
+            'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
+            'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
+          ],
+          female: [
+            'Adrie', 'Althaea', 'Anastrianna', 'Andraste', 'Antinua', 'Bethrynna', 'Birel',
+            'Caelynn', 'Drusilia', 'Enna', 'Felosial', 'Ielenia', 'Jelenneth', 'Keyleth',
+            'Leshanna', 'Lia', 'Meriele', 'Mialee', 'Naivara', 'Quelenna', 'Quillathe',
+            'Sariel', 'Shanairra', 'Shava', 'Silaqui', 'Theirastra', 'Thia', 'Vadania',
+            'Valanthe', 'Xanaphia'
+          ],
+          neutral: [
+            'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
+            'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo',
+            'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
+            'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
+          ]
+        }
       }
     },
     drow: {
@@ -99,6 +189,22 @@ export const elfNames: NameComponents = {
             { type: 'familyName' }
           ],
           separator: ' '
+        },
+        {
+          parts: [
+            { type: 'prefix' },
+            { type: 'givenName', gender: 'female' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
+        },
+        {
+          parts: [
+            { type: 'prefix' },
+            { type: 'givenName', gender: 'neutral' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
         }
       ],
       parts: {
@@ -107,10 +213,27 @@ export const elfNames: NameComponents = {
           'Lar', 'Lor', 'Mal', 'Mar', 'Mel', 'Mer', 'Mir', 'Mor', 'Nal', 'Nar',
           'Nor', 'Olo', 'Or', 'Ora', 'Ori', 'Pha', 'Phel', 'Phor', 'Qua', 'Quar'
         ],
-        familyName: [
-          'Amakiir', 'Amastacia', 'Galanodel', 'Holimion', 'Ilphelkiir', 'Liadon',
-          'Meliamne', 'Naïlo', 'Siannodel', 'Xiloscient'
-        ]
+        givenName: {
+          male: [
+            'Adran', 'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
+            'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo', 'Immeral',
+            'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
+            'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
+          ],
+          female: [
+            'Adrie', 'Althaea', 'Anastrianna', 'Andraste', 'Antinua', 'Bethrynna', 'Birel',
+            'Caelynn', 'Drusilia', 'Enna', 'Felosial', 'Ielenia', 'Jelenneth', 'Keyleth',
+            'Leshanna', 'Lia', 'Meriele', 'Mialee', 'Naivara', 'Quelenna', 'Quillathe',
+            'Sariel', 'Shanairra', 'Shava', 'Silaqui', 'Theirastra', 'Thia', 'Vadania',
+            'Valanthe', 'Xanaphia'
+          ],
+          neutral: [
+            'Aelar', 'Aramil', 'Arannis', 'Aust', 'Beiro', 'Berrian', 'Carric',
+            'Enialis', 'Erdan', 'Erevan', 'Galinndan', 'Hadarai', 'Heian', 'Himo',
+            'Ivellios', 'Laucian', 'Mindartis', 'Paelias', 'Peren', 'Quarion', 'Riardon',
+            'Rolen', 'Soveliss', 'Thamior', 'Tharivol', 'Theren', 'Varis'
+          ]
+        }
       }
     }
   }

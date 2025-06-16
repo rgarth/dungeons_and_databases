@@ -4,51 +4,47 @@ export const aasimarNames: NameComponents = {
   patterns: [
     {
       parts: [
-        { type: 'givenName', gender: 'male' }
-      ],
-      separator: ' '
-    },
-    {
-      parts: [
-        { type: 'givenName', gender: 'female' }
-      ],
-      separator: ' '
-    },
-    {
-      parts: [
         { type: 'givenName', gender: 'male' },
-        { type: 'epithet' }
+        { type: 'familyName' }
       ],
       separator: ' '
     },
     {
       parts: [
         { type: 'givenName', gender: 'female' },
-        { type: 'epithet' }
+        { type: 'familyName' }
+      ],
+      separator: ' '
+    },
+    {
+      parts: [
+        { type: 'givenName', gender: 'neutral' },
+        { type: 'familyName' }
       ],
       separator: ' '
     }
   ],
   parts: {
-    givenName: [
-      // Male names
-      'Aritian', 'Beltin', 'Cernan', 'Dorn', 'Erdan', 'Falken', 'Gryphero',
-      'Hacian', 'Icarus', 'Jirus', 'Kosj', 'Lasker', 'Mantis', 'Namen', 'Ormus',
-      'Peregrine', 'Quillan', 'Rezen', 'Sontar', 'Tarkus', 'Uther', 'Varis',
-      'Wolvar', 'Xavian', 'Zethus',
-      // Female names
-      'Arianna', 'Beltina', 'Cerna', 'Dorna', 'Erdana', 'Falka', 'Gryphena',
-      'Hacia', 'Icarina', 'Jira', 'Kosja', 'Laskera', 'Mantisa', 'Namena',
-      'Ormusa', 'Peregrina', 'Quilla', 'Rezena', 'Sontara', 'Tarkusa', 'Uthera',
-      'Varisa', 'Wolvara', 'Xaviana', 'Zethusa'
-    ],
-    epithet: [
-      'the Celestial', 'the Divine', 'the Holy', 'the Sacred', 'the Blessed',
-      'the Chosen', 'the Favored', 'the Exalted', 'the Glorious', 'the Great',
-      'the Pure', 'the Righteous', 'the Just', 'the Noble', 'the Honorable',
-      'the True', 'the Faithful', 'the Loyal', 'the Steadfast', 'the Resolute',
-      'the Determined', 'the Strong', 'the Brave', 'the Bold', 'the Daring',
-      'the Courageous', 'the Valiant', 'the Proud', 'the Noble', 'the Wise'
+    givenName: {
+      male: [
+        'Aritian', 'Beltin', 'Cernan', 'Domitian', 'Elian', 'Gareth', 'Harken',
+        'Icarus', 'Jareth', 'Kael', 'Lucian', 'Marius', 'Nerius', 'Oren', 'Pelius',
+        'Quillan', 'Rael', 'Soren', 'Tavian', 'Uriel', 'Varian', 'Xander', 'Zareth'
+      ],
+      female: [
+        'Aria', 'Brielle', 'Celeste', 'Diana', 'Elena', 'Faye', 'Gwen', 'Helena',
+        'Iris', 'Jade', 'Kira', 'Luna', 'Mira', 'Nova', 'Ophelia', 'Phoebe',
+        'Quinn', 'Raven', 'Serena', 'Talia', 'Uma', 'Vera', 'Xena', 'Zara'
+      ],
+      neutral: [
+        'Aritian', 'Beltin', 'Cernan', 'Domitian', 'Elian', 'Gareth', 'Harken',
+        'Icarus', 'Jareth', 'Kael', 'Lucian', 'Marius', 'Nerius', 'Oren', 'Pelius',
+        'Quillan', 'Rael', 'Soren', 'Tavian', 'Uriel', 'Varian', 'Xander', 'Zareth'
+      ]
+    },
+    familyName: [
+      'Brightwing', 'Celestial', 'Dawnbringer', 'Eveningstar', 'Heavenly',
+      'Lightbringer', 'Morningstar', 'Radiant', 'Shining', 'Starborn'
     ]
   },
   cultures: {
@@ -57,28 +53,88 @@ export const aasimarNames: NameComponents = {
         {
           parts: [
             { type: 'givenName', gender: 'male' },
-            { type: 'epithet' }
+            { type: 'familyName' }
+          ],
+          separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'female' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'neutral' },
+            { type: 'familyName' }
           ],
           separator: ' '
         }
       ],
       parts: {
-        epithet: [
-          'the Celestial', 'the Divine', 'the Holy', 'the Sacred', 'the Blessed',
-          'the Chosen', 'the Favored', 'the Exalted', 'the Glorious', 'the Great',
-          'the Pure', 'the Righteous', 'the Just', 'the Noble', 'the Honorable'
-        ]
+        givenName: {
+          male: [
+            'Aritian', 'Beltin', 'Cernan', 'Domitian', 'Elian', 'Gareth', 'Harken',
+            'Icarus', 'Jareth', 'Kael', 'Lucian', 'Marius', 'Nerius', 'Oren', 'Pelius',
+            'Quillan', 'Rael', 'Soren', 'Tavian', 'Uriel', 'Varian', 'Xander', 'Zareth'
+          ],
+          female: [
+            'Aria', 'Brielle', 'Celeste', 'Diana', 'Elena', 'Faye', 'Gwen', 'Helena',
+            'Iris', 'Jade', 'Kira', 'Luna', 'Mira', 'Nova', 'Ophelia', 'Phoebe',
+            'Quinn', 'Raven', 'Serena', 'Talia', 'Uma', 'Vera', 'Xena', 'Zara'
+          ],
+          neutral: [
+            'Aritian', 'Beltin', 'Cernan', 'Domitian', 'Elian', 'Gareth', 'Harken',
+            'Icarus', 'Jareth', 'Kael', 'Lucian', 'Marius', 'Nerius', 'Oren', 'Pelius',
+            'Quillan', 'Rael', 'Soren', 'Tavian', 'Uriel', 'Varian', 'Xander', 'Zareth'
+          ]
+        }
       }
     },
-    mortal: {
+    fallen: {
       patterns: [
         {
           parts: [
-            { type: 'givenName', gender: 'male' }
+            { type: 'givenName', gender: 'male' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'female' },
+            { type: 'familyName' }
+          ],
+          separator: ' '
+        },
+        {
+          parts: [
+            { type: 'givenName', gender: 'neutral' },
+            { type: 'familyName' }
           ],
           separator: ' '
         }
-      ]
+      ],
+      parts: {
+        givenName: {
+          male: [
+            'Aritian', 'Beltin', 'Cernan', 'Domitian', 'Elian', 'Gareth', 'Harken',
+            'Icarus', 'Jareth', 'Kael', 'Lucian', 'Marius', 'Nerius', 'Oren', 'Pelius',
+            'Quillan', 'Rael', 'Soren', 'Tavian', 'Uriel', 'Varian', 'Xander', 'Zareth'
+          ],
+          female: [
+            'Aria', 'Brielle', 'Celeste', 'Diana', 'Elena', 'Faye', 'Gwen', 'Helena',
+            'Iris', 'Jade', 'Kira', 'Luna', 'Mira', 'Nova', 'Ophelia', 'Phoebe',
+            'Quinn', 'Raven', 'Serena', 'Talia', 'Uma', 'Vera', 'Xena', 'Zara'
+          ],
+          neutral: [
+            'Aritian', 'Beltin', 'Cernan', 'Domitian', 'Elian', 'Gareth', 'Harken',
+            'Icarus', 'Jareth', 'Kael', 'Lucian', 'Marius', 'Nerius', 'Oren', 'Pelius',
+            'Quillan', 'Rael', 'Soren', 'Tavian', 'Uriel', 'Varian', 'Xander', 'Zareth'
+          ]
+        }
+      }
     }
   }
 } 

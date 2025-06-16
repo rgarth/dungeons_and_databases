@@ -11,6 +11,7 @@ export * from './generators/gnome'
 export * from './generators/half-elf'
 export * from './generators/half-orc'
 export * from './generators/dwarf'
+export * from './generators/tabaxi'
 
 import { ElfNameGenerator } from './generators/elf'
 import { HumanNameGenerator } from './generators/human'
@@ -23,7 +24,8 @@ import { GnomeNameGenerator } from './generators/gnome'
 import { HalfElfNameGenerator } from './generators/half-elf'
 import { HalfOrcNameGenerator } from './generators/half-orc'
 import { DwarfNameGenerator } from './generators/dwarf'
-import { Race } from './types'
+import { TabaxiNameGenerator } from './generators/tabaxi'
+import { Race, Gender } from './types'
 
 export const nameGenerators = {
   elf: new ElfNameGenerator(),
@@ -36,10 +38,11 @@ export const nameGenerators = {
   gnome: new GnomeNameGenerator(),
   'half-elf': new HalfElfNameGenerator(),
   'half-orc': new HalfOrcNameGenerator(),
-  dwarf: new DwarfNameGenerator()
+  dwarf: new DwarfNameGenerator(),
+  tabaxi: new TabaxiNameGenerator()
 } as const
 
-export function generateName(race: string, gender?: 'male' | 'female', culture?: string): string {
+export function generateName(race: string, gender?: Gender, culture?: string): string {
   // Map race names to our internal format
   const raceMap: Record<string, Race> = {
     'Dragonborn': 'dragonborn',
@@ -52,7 +55,8 @@ export function generateName(race: string, gender?: 'male' | 'female', culture?:
     'Human': 'human',
     'Tiefling': 'tiefling',
     'Goliath': 'goliath',
-    'Aasimar': 'aasimar'
+    'Aasimar': 'aasimar',
+    'Tabaxi': 'tabaxi'
   }
 
   const mappedRace = raceMap[race]

@@ -1,29 +1,47 @@
-export type Gender = 'male' | 'female'
-
-export type NamePartType = 'givenName' | 'familyName' | 'clanName' | 'nickname' | 'tribalName' | 'elvenName' | 'humanName' | 'epithet' | 'prefix'
+export type Gender = 'male' | 'female' | 'neutral'
 
 export interface NamePart {
   type: NamePartType
-  gender?: Gender
+  gender?: Gender  // Only used for given names
 }
+
+export type NamePartType = 'givenName' | 'familyName' | 'nickname' | 'epithet' | 'prefix' | 'clanName'
 
 export interface NamePattern {
   parts: NamePart[]
   separator: string
-  weight?: number // Optional weight for pattern selection
+  weight?: number
 }
 
 export interface NameComponents {
   patterns: NamePattern[]
   parts: {
-    [key: string]: string[]
+    givenName: {
+      male: string[]
+      female: string[]
+      neutral: string[]
+    }
+    familyName?: string[]
+    nickname?: string[]
+    epithet?: string[]
+    prefix?: string[]
+    clanName?: string[]
   }
   cultures?: {
     [key: string]: {
       patterns: NamePattern[]
-      parts: {
-        [key: string]: string[]
-      }
+      parts: Partial<{
+        givenName: {
+          male: string[]
+          female: string[]
+          neutral: string[]
+        }
+        familyName: string[]
+        nickname: string[]
+        epithet: string[]
+        prefix: string[]
+        clanName: string[]
+      }>
     }
   }
 }
@@ -45,16 +63,4 @@ export type Race =
   | 'tiefling'
   | 'goliath'
   | 'aasimar'
-  | 'yuan-ti'
-  | 'aasimar'
-  | 'tabaxi'
-  | 'firbolg'
-  | 'kenku'
-  | 'lizardfolk'
-  | 'triton'
-  | 'bugbear'
-  | 'goblin'
-  | 'hobgoblin'
-  | 'kobold'
-  | 'orc'
-  | 'yuan-ti' 
+  | 'tabaxi' 
