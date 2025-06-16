@@ -3,6 +3,7 @@ import { getModifier } from './core';
 
 // WEAPONS
 export interface Weapon {
+  id?: string; // Make id optional since it's not needed for weapon selection
   name: string;
   type: 'Simple' | 'Martial';
   category: 'Melee' | 'Ranged';
@@ -14,6 +15,9 @@ export interface Weapon {
   stackable?: boolean;
   equipped?: boolean; // Whether this weapon is currently equipped
   quantity?: number; // For stackable weapons - how many in this stack
+  description?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface MagicalWeapon extends Weapon {

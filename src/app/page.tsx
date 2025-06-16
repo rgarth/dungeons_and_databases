@@ -56,9 +56,9 @@ export default function Home() {
       {/* Header */}
       <header className="bg-slate-800 border-b border-slate-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-white">Dungeons & Databases</h1>
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-4">
+            <h1 className="text-2xl font-bold text-white text-center">Dungeons & Databases</h1>
+            <div className="flex items-center justify-center gap-4">
               <button
                 onClick={() => setShowCreateModal(true)}
                 className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition-colors flex items-center gap-2"

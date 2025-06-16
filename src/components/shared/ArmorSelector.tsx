@@ -9,6 +9,8 @@ interface ArmorSelectorProps {
   isOpen?: boolean;
   characterClass?: string;
   showProficiencies?: boolean;
+  onConfirm?: (armor: Armor[]) => void;
+  onCancel?: () => void;
 }
 
 export function ArmorSelector({
@@ -17,7 +19,9 @@ export function ArmorSelector({
   onClose,
   isOpen = true,
   characterClass,
-  showProficiencies = true
+  showProficiencies = true,
+  onConfirm,
+  onCancel
 }: ArmorSelectorProps) {
   const [internalSelectedArmor, setInternalSelectedArmor] = useState<Armor[]>(selectedArmor);
   const [armorProficiencies, setArmorProficiencies] = useState<string[] | null>(null);
@@ -121,7 +125,7 @@ export function ArmorSelector({
         <div className="flex justify-between items-center p-6 border-b border-slate-700">
           <h2 className="text-2xl font-bold text-white">Select Armor</h2>
           <button
-            onClick={onClose}
+            onClick={onClose || onCancel}
             className="text-slate-400 hover:text-white transition-colors"
           >
             ✕
@@ -199,12 +203,18 @@ export function ArmorSelector({
           ))}
         </div>
 
-        <div className="flex justify-end gap-3 p-6 border-t border-slate-700">
+        <div className="p-6 border-t border-slate-700 flex justify-end gap-3">
           <button
-            onClick={onClose}
-            className="px-4 py-2 text-slate-400 hover:text-white transition-colors"
+            onClick={onCancel || onClose}
+            className="px-4 py-2 text-slate-300 hover:text-white transition-colors"
           >
-            Close
+            Cancel
+          </button>
+          <button
+            onClick={() => onConfirm?.(internalSelectedArmor)}
+            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+          >
+            Confirm Selection
           </button>
         </div>
       </div>

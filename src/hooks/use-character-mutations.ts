@@ -56,7 +56,7 @@ export function useCharacterMutations() {
         skills: [],
         inventory: [],
         weapons: [],
-        armor: null,
+        armor: [],
         spellsKnown: [],
         spellsPrepared: [],
         spellSlots: {},

@@ -5,6 +5,7 @@ import { Plus, Minus, X } from "lucide-react";
 import { Weapon } from "@/lib/dnd/equipment";
 import { weaponsData } from '../../../prisma/data/weapons-data';
 import { categorizeWeaponsByProficiency } from "@/lib/dnd/proficiencies";
+import { classWeaponSuggestionsData } from '../../../prisma/data/weapon-suggestions-data';
 
 export interface WeaponSuggestion {
   weaponName: string;
@@ -27,15 +28,12 @@ interface WeaponData {
 }
 
 interface WeaponSelectorProps {
-  // New interface (conditional rendering)
   title?: string;
-  maxWeapons?: number;
   selectedWeapons: {weapon: Weapon, quantity: number}[];
   onConfirm: (weapons: {weapon: Weapon, quantity: number}[]) => void;
   onCancel: () => void;
   characterClass: string;
   showSuggestions?: boolean;
-  multiSelect?: boolean;
   
   // Legacy interface (modal with isOpen)
   isOpen?: boolean;
@@ -52,13 +50,10 @@ export function WeaponSelector({
   onConfirm,
   onCancel,
   title = "Select Weapons",
-  maxWeapons = 5,
-  showSuggestions = true,
-  multiSelect = true
+  showSuggestions = true
 }: WeaponSelectorProps) {
   const [weaponProficiencies, setWeaponProficiencies] = useState<{ simple: boolean; martial: boolean; specific: string[] } | null>(null);
   const [weaponSuggestions, setWeaponSuggestions] = useState<WeaponSuggestion[]>([]);
-  const [loadingProficiencies, setLoadingProficiencies] = useState(false);
   
   // For new interface, manage internal state. For legacy interface, use props
   const [internalSelectedWeapons, setInternalSelectedWeapons] = useState<{weapon: Weapon, quantity: number}[]>(initialSelectedWeapons || []);
@@ -100,13 +95,39 @@ export function WeaponSelector({
     }
   };
 
+  // Handle applying suggestions
+  const handleApplySuggestion = () => {
+    const suggestedWeapons: {weapon: Weapon, quantity: number}[] = [];
+    
+    for (const suggestion of weaponSuggestions) {
+      const weaponData = weaponsData.find(w => w.name === suggestion.weaponName);
+      if (weaponData) {
+        const weapon: Weapon = {
+          ...weaponData,
+          type: weaponData.type as 'Simple' | 'Martial',
+          category: weaponData.category as 'Melee' | 'Ranged',
+          properties: weaponData.properties ? weaponData.properties.split(', ').filter(Boolean) : []
+        };
+        suggestedWeapons.push({ weapon, quantity: suggestion.quantity });
+      }
+    }
+
+    if (onWeaponQuantityChange) {
+      // Legacy interface - clear existing selections
+      currentSelectedWeapons.forEach(sw => onWeaponQuantityChange(sw.weapon, 0));
+      // Add suggested weapons
+      suggestedWeapons.forEach(sw => onWeaponQuantityChange(sw.weapon, sw.quantity));
+    } else {
+      // New interface - update internal state
+      setInternalSelectedWeapons(suggestedWeapons);
+    }
+  };
 
   // Load proficiencies and suggestions when class changes
   useEffect(() => {
     if (!characterClass) return;
     
     const loadData = async () => {
-      setLoadingProficiencies(true);
       try {
         const [proficiencies, suggestions] = await Promise.all([
           fetch(`/api/class-proficiencies?className=${encodeURIComponent(characterClass)}`)
@@ -125,8 +146,6 @@ export function WeaponSelector({
         console.error('Failed to load weapon data:', error);
         setWeaponProficiencies({ simple: false, martial: false, specific: [] });
         setWeaponSuggestions([]);
-      } finally {
-        setLoadingProficiencies(false);
       }
     };
     
@@ -145,8 +164,6 @@ export function WeaponSelector({
   }));
 
   // Remove ammunition from weapon selector - ammunition should be handled separately
-
-
 
   // Categorize by proficiency if we have proficiency data
   let weaponCategories: Record<string, Weapon[]>;
@@ -235,192 +252,108 @@ export function WeaponSelector({
     };
   }
 
-  const totalWeapons = currentSelectedWeapons.reduce((sum, sw) => sum + sw.quantity, 0);
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
-      <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[95vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col">
         <div className="flex justify-between items-center p-6 border-b border-slate-700">
-          <h2 className="text-xl font-bold text-white">{title}</h2>
-          <button
-            onClick={handleClose}
-            className="text-slate-400 hover:text-white transition-colors"
-          >
-            <X className="h-6 w-6" />
-          </button>
-        </div>
-
-        <div className="p-6">
-          {loadingProficiencies ? (
-            <div className="text-center text-slate-400 py-8">
-              Loading weapon proficiencies...
-            </div>
-          ) : (
-            <>
-              {/* Database-driven weapon suggestions */}
-              {showSuggestions && weaponSuggestions.length > 0 && (
-                <div className="mb-4 p-3 bg-slate-700 rounded border border-amber-500/30">
-                  <h5 className="text-sm font-semibold text-amber-300 mb-2">💡 Suggested for {characterClass}</h5>
-                  <div className="text-xs text-slate-400 space-y-1">
-                    {weaponSuggestions.map((suggestion, index) => (
-                      <div key={`suggestion-${suggestion.weaponName}-${index}`} className="flex justify-between">
-                        <span>{suggestion.quantity}x {suggestion.weaponName}</span>
-                        {suggestion.reason && <span className="text-slate-500">({suggestion.reason})</span>}
-                      </div>
-                    ))}
-                  </div>
+          <div>
+            <h2 className="text-2xl font-bold text-white">{title}</h2>
+            <p className="text-sm text-slate-400 mt-1">
+              Select weapons to add to your inventory.
+            </p>
+            {characterClass && (
+              <div className="mt-2 p-3 bg-yellow-900/50 rounded-lg">
+                <div className="text-xs text-yellow-200 mb-2">D&D 5e Starting Equipment:</div>
+                <div className="text-xs text-yellow-100">{classWeaponSuggestionsData.find(c => c.className.toLowerCase() === characterClass.toLowerCase())?.phbDescription}</div>
+              </div>
+            )}
+            {showSuggestions && weaponSuggestions.length > 0 && (
+              <div className="mt-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-slate-400">
+                    Suggested starting weapons for {characterClass}:
+                  </p>
                   <button
-                    onClick={() => {
-                      // Apply weapon suggestions only
-                      weaponSuggestions.forEach(suggestion => {
-                        const weaponData = weaponsData.find(w => w.name === suggestion.weaponName);
-                        if (weaponData) {
-                          const weapon: Weapon = {
-                            ...weaponData,
-                            type: weaponData.type as 'Simple' | 'Martial',
-                            category: weaponData.category as 'Melee' | 'Ranged',
-                            properties: weaponData.properties ? weaponData.properties.split(', ').filter(Boolean) : []
-                          };
-                          handleWeaponQuantityChange(weapon, suggestion.quantity);
-                        }
-                        // Note: Ammunition is handled automatically in character creation
-                      });
-                    }}
-                    className="mt-2 text-xs bg-amber-600 hover:bg-amber-700 text-white px-2 py-1 rounded transition-colors"
+                    onClick={handleApplySuggestion}
+                    className="px-3 py-1 text-sm bg-amber-600 hover:bg-amber-700 text-white rounded-md transition-colors"
                   >
                     Apply Suggestions
                   </button>
                 </div>
-              )}
-
-              {/* Weapon selection */}
-              <div className="mb-4 p-3 bg-slate-700 rounded-lg max-h-80 overflow-y-auto">
-                <div className="text-xs text-slate-400 mb-3">
-                  ✓ Select up to {maxWeapons} total weapons. {multiSelect && "Use +/- for multiples (daggers, javelins, etc.)"}
+                <div className="mt-1 space-y-1">
+                  {weaponSuggestions.map((suggestion, index) => (
+                    <div key={index} className="text-sm text-slate-300">
+                      {suggestion.quantity}x {suggestion.weaponName}
+                      {suggestion.reason && <span className="text-slate-400"> - {suggestion.reason}</span>}
+                    </div>
+                  ))}
                 </div>
-                
-                {/* Organized weapon selection by category */}
-                <div className="grid grid-cols-2 gap-4 max-h-64 overflow-y-auto">
-                  {Object.entries(weaponCategories).map(([categoryName, weapons]) => {
-                    const isAmmunition = categoryName === 'Ammunition';
-                    const isProficient = !categoryName.startsWith('Non-Proficient');
-                    const headerColor = isAmmunition ? 'text-yellow-300' : isProficient ? 'text-green-300' : 'text-orange-300';
+              </div>
+            )}
+          </div>
+          <button
+            onClick={handleClose}
+            className="text-slate-400 hover:text-white transition-colors"
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {Object.entries(weaponCategories).map(([category, weapons]) => (
+              <div key={category} className="space-y-2">
+                <h3 className="text-lg font-semibold text-white">{category}</h3>
+                <div className="space-y-2">
+                  {weapons.map((weapon) => {
+                    const selected = currentSelectedWeapons.find(sw => sw.weapon.name === weapon.name);
+                    const quantity = selected?.quantity || 0;
                     
                     return (
-                      <div key={categoryName} className="bg-slate-800 rounded-lg p-3">
-                        <h5 className={`text-xs font-semibold ${headerColor} mb-2`}>
-                          {isAmmunition ? '🏹 Ammunition' : categoryName} {!isProficient && !isAmmunition && '(No Proficiency)'}
-                        </h5>
-                        <div className="space-y-1">
-                          {weapons.map((weapon: Weapon, weaponIndex: number) => {
-                            const selectedWeapon = currentSelectedWeapons.find(sw => sw.weapon.name === weapon.name);
-                            const quantity = selectedWeapon?.quantity || 0;
-                            const canAdd = totalWeapons < maxWeapons;
-                            
-                            return (
-                              <div key={`${categoryName}-${weapon.name}-${weaponIndex}`} className={`flex items-center justify-between p-1.5 rounded text-xs ${
-                                isProficient ? 'bg-slate-700' : 'bg-slate-600/50'
-                              }`}>
-                                <div className="flex-1 min-w-0">
-                                  <div className={`${
-                                    quantity > 0 
-                                      ? 'font-medium text-white' 
-                                      : isProficient 
-                                        ? 'text-slate-300' 
-                                        : 'text-slate-400'
-                                  } truncate`}>
-                                    {weapon.name}
-                                    {!isProficient && ' ⚠️'}
-                                  </div>
-                                  {!isAmmunition && (
-                                    <div className="text-slate-400 text-xs">
-                                      {weapon.damage} {weapon.damageType}
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-1 ml-2">
-                                  {multiSelect ? (
-                                    <>
-                                      <button
-                                        type="button"
-                                        onClick={() => handleWeaponQuantityChange(weapon, Math.max(0, quantity - 1))}
-                                        disabled={quantity <= 0}
-                                        className="w-4 h-4 bg-slate-500 hover:bg-slate-400 disabled:opacity-50 disabled:cursor-not-allowed rounded flex items-center justify-center text-white text-xs"
-                                      >
-                                        <Minus className="h-2.5 w-2.5" />
-                                      </button>
-                                      <span className="w-5 text-center text-white font-mono text-xs">{quantity}</span>
-                                      <button
-                                        type="button"
-                                        onClick={() => handleWeaponQuantityChange(weapon, quantity + 1)}
-                                        disabled={!canAdd}
-                                        className="w-4 h-4 bg-slate-500 hover:bg-slate-400 disabled:opacity-50 disabled:cursor-not-allowed rounded flex items-center justify-center text-white text-xs"
-                                      >
-                                        <Plus className="h-2.5 w-2.5" />
-                                      </button>
-                                    </>
-                                  ) : (
-                                    <button
-                                      type="button"
-                                      onClick={() => handleWeaponQuantityChange(weapon, quantity > 0 ? 0 : 1)}
-                                      className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
-                                        quantity > 0 
-                                          ? 'bg-green-600 hover:bg-green-700 text-white'
-                                          : 'bg-slate-500 hover:bg-slate-400 text-white'
-                                      }`}
-                                    >
-                                      {quantity > 0 ? 'Selected' : 'Select'}
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
+                      <div key={weapon.name} className="flex items-center justify-between p-2 bg-slate-700/50 rounded">
+                        <div className="flex-1">
+                          <div className="text-white">{weapon.name}</div>
+                          <div className="text-xs text-slate-400">
+                            {weapon.damage} {weapon.damageType} • {weapon.properties.join(', ')}
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => handleWeaponQuantityChange(weapon, Math.max(0, quantity - 1))}
+                            className="p-1 text-slate-400 hover:text-white transition-colors"
+                          >
+                            <Minus size={16} />
+                          </button>
+                          <span className="text-white w-8 text-center">{quantity}</span>
+                          <button
+                            onClick={() => handleWeaponQuantityChange(weapon, quantity + 1)}
+                            className="p-1 text-slate-400 hover:text-white transition-colors"
+                          >
+                            <Plus size={16} />
+                          </button>
                         </div>
                       </div>
                     );
                   })}
                 </div>
               </div>
-
-              {/* Selected Weapons Summary */}
-              {currentSelectedWeapons.length > 0 && (
-                <div className="bg-slate-600 rounded-lg p-3 mb-4">
-                  <h4 className="text-sm font-medium text-white mb-2">
-                    Selected Weapons ({totalWeapons}/{maxWeapons})
-                  </h4>
-                  <div className="space-y-1">
-                    {currentSelectedWeapons.map(({ weapon, quantity }, index) => {
-                      const isAmmunition = weapon.properties.some(prop => prop.startsWith('Ammunition')) && weapon.damage === '—';
-                      return (
-                        <div key={`selected-${weapon.name}-${index}`} className="text-sm text-slate-300">
-                          • {quantity}x {weapon.name}{!isAmmunition && ` (${weapon.damage} ${weapon.damageType})`}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Action buttons */}
-          <div className="flex justify-end gap-4 pt-4 border-t border-slate-700">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="px-4 py-2 text-slate-400 hover:text-white transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleConfirm}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors"
-            >
-              Confirm Selection
-            </button>
+            ))}
           </div>
+        </div>
+
+        <div className="p-6 border-t border-slate-700 flex justify-end space-x-4">
+          <button
+            onClick={handleClose}
+            className="px-4 py-2 text-slate-400 hover:text-white transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleConfirm}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+          >
+            Confirm
+          </button>
         </div>
       </div>
     </div>

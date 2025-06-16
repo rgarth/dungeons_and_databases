@@ -1,4 +1,6 @@
-import { Weapon, MagicalWeapon, Armor, InventoryItem, Spell, Action } from './game';
+import { Weapon, MagicalWeapon, Armor, InventoryItem } from '@/lib/dnd/equipment';
+import { Spell } from '@/lib/dnd/spells';
+import { Action } from '@/lib/dnd/combat';
 import { Treasure } from '@/lib/dnd/data';
 
 export interface Character {
@@ -24,7 +26,7 @@ export interface Character {
   skills: string[];
   inventory: InventoryItem[];
   weapons: (Weapon | MagicalWeapon)[];
-  armor: Armor | null;
+  armor?: Armor[];
   spellsKnown: Spell[];
   spellsPrepared: Spell[];
   spellSlots: Record<number, number>;

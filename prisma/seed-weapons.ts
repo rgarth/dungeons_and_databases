@@ -3,41 +3,38 @@ import { weaponsData } from './data/weapons-data'
 
 const prisma = new PrismaClient()
 
-async function seedWeapons() {
+export async function seedWeapons() {
   console.log('⚔️ Seeding weapons...')
   
   try {
-    // Clear existing weapons
+    // First delete custom weapons that reference these weapons
+    await prisma.customWeapon.deleteMany()
+    console.log('✅ Cleared custom weapons')
+
+    // Then clear existing weapons
     await prisma.weapon.deleteMany()
     console.log('✅ Cleared existing weapons')
 
-    // Add new weapons
+    // Create new weapons
     for (const weapon of weaponsData) {
-      try {
-        const weaponData = {
+      await prisma.weapon.create({
+        data: {
           name: weapon.name,
           type: weapon.type,
           category: weapon.category,
-          cost: weapon.cost,
           damage: weapon.damage,
           damageType: weapon.damageType,
-          weight: weapon.weight,
           properties: weapon.properties,
-          ...(weapon.description && { description: weapon.description })
+          weight: weapon.weight,
+          cost: weapon.cost,
+          description: weapon.description
         }
-        
-        await prisma.weapon.create({
-          data: weaponData
-        })
-        console.log(`✅ Added weapon: ${weapon.name}`)
-      } catch (error) {
-        console.error(`❌ Failed to add weapon ${weapon.name}:`, error)
-      }
+      })
     }
 
-    console.log('🎉 Weapons seeding completed!')
+    console.log(`✅ Seeded ${weaponsData.length} weapons`)
   } catch (error) {
-    console.error('❌ Error during weapons seeding:', error)
+    console.error('❌ Error seeding weapons:', error)
     throw error
   } finally {
     await prisma.$disconnect()
@@ -51,6 +48,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       console.error(e)
       process.exit(1)
     })
-}
-
-export { seedWeapons } 
+} 
