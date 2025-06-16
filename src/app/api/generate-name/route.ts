@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateName } from "@/lib/dnd/name-generator";
+import { generateName } from "@/lib/dnd/names";
 
 export async function GET(request: NextRequest) {
   try {
