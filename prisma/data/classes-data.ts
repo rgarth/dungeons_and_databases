@@ -13,7 +13,8 @@ export const classesData = [
     skillChoices: {
       available: ["Animal Handling", "Athletics", "Intimidation", "Nature", "Perception", "Survival"],
       choose: 2
-    }
+    },
+    phbDescription: "(a) a greataxe or (b) any martial melee weapon, (a) two handaxes or (b) any simple weapon"
   },
   {
     name: "Bard", 
@@ -24,7 +25,8 @@ export const classesData = [
     skillChoices: {
       available: ["Any"], // Bards can choose any 3 skills
       choose: 3
-    }
+    },
+    phbDescription: "(a) a rapier, (b) a longsword, or (c) any simple weapon, (a) a diplomat's pack or (b) an entertainer's pack, (a) a lute or (b) any other musical instrument"
   },
   {
     name: "Cleric",
@@ -35,7 +37,8 @@ export const classesData = [
     skillChoices: {
       available: ["History", "Insight", "Medicine", "Persuasion", "Religion"],
       choose: 2
-    }
+    },
+    phbDescription: "(a) a mace or (b) a warhammer, (a) scale mail, (b) leather armor, or (c) chain mail, (a) a light crossbow and 20 bolts or (b) any simple weapon, (a) a priest's pack or (b) an explorer's pack, A shield and a holy symbol"
   },
   {
     name: "Druid",
@@ -46,7 +49,8 @@ export const classesData = [
     skillChoices: {
       available: ["Arcana", "Animal Handling", "Insight", "Medicine", "Nature", "Perception", "Religion", "Survival"],
       choose: 2
-    }
+    },
+    phbDescription: "(a) a wooden shield or (b) any simple weapon, (a) a scimitar or (b) any simple melee weapon, Leather armor, an explorer's pack, and a druidic focus"
   },
   {
     name: "Fighter",
@@ -57,7 +61,8 @@ export const classesData = [
     skillChoices: {
       available: ["Acrobatics", "Animal Handling", "Athletics", "History", "Insight", "Intimidation", "Perception", "Survival"],
       choose: 2
-    }
+    },
+    phbDescription: "(a) chain mail or (b) leather armor, longbow, and 20 arrows, (a) a martial weapon and a shield or (b) two martial weapons, (a) a light crossbow and 20 bolts or (b) two handaxes, (a) a dungeoneer's pack or (b) an explorer's pack"
   },
   {
     name: "Monk",
@@ -68,7 +73,8 @@ export const classesData = [
     skillChoices: {
       available: ["Acrobatics", "Athletics", "History", "Insight", "Religion", "Stealth"],
       choose: 2
-    }
+    },
+    phbDescription: "(a) a shortsword or (b) any simple weapon, (a) a dungeoneer's pack or (b) an explorer's pack, 10 darts"
   },
   {
     name: "Paladin",
@@ -79,7 +85,8 @@ export const classesData = [
     skillChoices: {
       available: ["Athletics", "Insight", "Intimidation", "Medicine", "Persuasion", "Religion"],
       choose: 2
-    }
+    },
+    phbDescription: "(a) a martial weapon and a shield or (b) two martial weapons, (a) five javelins or (b) any simple melee weapon, (a) a priest's pack or (b) an explorer's pack, Chain mail and a holy symbol"
   },
   {
     name: "Ranger",
@@ -90,7 +97,8 @@ export const classesData = [
     skillChoices: {
       available: ["Animal Handling", "Athletics", "Insight", "Investigation", "Nature", "Perception", "Stealth", "Survival"],
       choose: 3
-    }
+    },
+    phbDescription: "(a) scale mail or (b) leather armor, (a) two shortswords or (b) two simple melee weapons, (a) a dungeoneer's pack or (b) an explorer's pack, A longbow and a quiver of 20 arrows"
   },
   {
     name: "Rogue",
@@ -101,7 +109,8 @@ export const classesData = [
     skillChoices: {
       available: ["Acrobatics", "Athletics", "Deception", "Insight", "Intimidation", "Investigation", "Perception", "Performance", "Persuasion", "Sleight of Hand", "Stealth"],
       choose: 4
-    }
+    },
+    phbDescription: "(a) a rapier or (b) a shortsword, (a) a shortbow and quiver of 20 arrows or (b) a shortsword, (a) a burglar's pack, (b) a dungeoneer's pack, or (c) an explorer's pack, Leather armor, two daggers, and thieves' tools"
   },
   {
     name: "Sorcerer",
@@ -112,7 +121,8 @@ export const classesData = [
     skillChoices: {
       available: ["Arcana", "Deception", "Insight", "Intimidation", "Persuasion", "Religion"],
       choose: 2
-    }
+    },
+    phbDescription: "(a) a light crossbow and 20 bolts or (b) any simple weapon, (a) a component pouch or (b) an arcane focus, (a) a dungeoneer's pack or (b) an explorer's pack, Two daggers"
   },
   {
     name: "Warlock",
@@ -123,7 +133,8 @@ export const classesData = [
     skillChoices: {
       available: ["Arcana", "Deception", "History", "Intimidation", "Investigation", "Nature", "Religion"],
       choose: 2
-    }
+    },
+    phbDescription: "(a) a light crossbow and 20 bolts or (b) any simple weapon, (a) a component pouch or (b) an arcane focus, (a) a scholar's pack or (b) a dungeoneer's pack, Leather armor, any simple weapon, and two daggers"
   },
   {
     name: "Wizard",
@@ -134,7 +145,8 @@ export const classesData = [
     skillChoices: {
       available: ["Arcana", "History", "Insight", "Investigation", "Medicine", "Religion"],
       choose: 2
-    }
+    },
+    phbDescription: "(a) a spellbook, (a) a quarterstaff or (b) a dagger, (a) a component pouch or (b) an arcane focus, (a) a scholar's pack or (b) an explorer's pack"
   }
 ];
 
