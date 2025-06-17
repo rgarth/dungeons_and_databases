@@ -14,7 +14,10 @@
       "maxDuration": 30
     }
   },
+  "regions": ["iad1"],
   "env": {
-    "SKIP_ENV_VALIDATION": "1"
+    "SKIP_ENV_VALIDATION": "1",
+    "DATABASE_URL": "@database_url",
+    "DIRECT_URL": "@direct_url"
   }
 } 

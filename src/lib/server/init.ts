@@ -1,6 +1,7 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 import { DndRace, DndClass, Alignment, EquipmentPack, Armor, MagicalItem, Treasure } from '@prisma/client';
 import { BackgroundData } from '@/components/shared/BackgroundSelector';
+import { withRetry } from '@/lib/db-helpers';
 
 // Cache objects
 export let cachedRaces: DndRace[] | null = null;
@@ -29,7 +30,7 @@ export async function initializeServerCache() {
   console.log('🔄 Initializing server cache...');
   
   try {
-    // Fetch all static D&D data in parallel
+    // Fetch all static D&D data in parallel with retries
     const [
       races,
       classes,
@@ -40,19 +41,19 @@ export async function initializeServerCache() {
       magicalItems,
       treasures
     ] = await Promise.all([
-      prisma.dndRace.findMany({
+      withRetry(() => prisma.dndRace.findMany({
         orderBy: { name: 'asc' }
-      }),
-      prisma.dndClass.findMany({
+      })),
+      withRetry(() => prisma.dndClass.findMany({
         orderBy: { name: 'asc' }
-      }),
-      prisma.background.findMany({
+      })),
+      withRetry(() => prisma.background.findMany({
         orderBy: { name: 'asc' }
-      }),
-      prisma.alignment.findMany({
+      })),
+      withRetry(() => prisma.alignment.findMany({
         orderBy: { name: 'asc' }
-      }),
-      prisma.equipmentPack.findMany({
+      })),
+      withRetry(() => prisma.equipmentPack.findMany({
         select: {
           id: true,
           name: true,
@@ -76,14 +77,14 @@ export async function initializeServerCache() {
           updatedAt: true
         },
         orderBy: { name: 'asc' }
-      }),
-      prisma.armor.findMany({
+      })),
+      withRetry(() => prisma.armor.findMany({
         orderBy: { name: 'asc' }
-      }),
-      prisma.magicalItem.findMany({
+      })),
+      withRetry(() => prisma.magicalItem.findMany({
         orderBy: { name: 'asc' }
-      }),
-      prisma.treasure.findMany({
+      })),
+      withRetry(() => prisma.treasure.findMany({
         select: {
           id: true,
           name: true,
@@ -97,7 +98,7 @@ export async function initializeServerCache() {
           updatedAt: true
         },
         orderBy: { name: 'asc' }
-      })
+      }))
     ]);
 
     // Parse JSON fields in backgrounds
