@@ -54,6 +54,7 @@ export function WeaponSelector({
 }: WeaponSelectorProps) {
   const [weaponProficiencies, setWeaponProficiencies] = useState<{ simple: boolean; martial: boolean; specific: string[] } | null>(null);
   const [weaponSuggestions, setWeaponSuggestions] = useState<WeaponSuggestion[]>([]);
+  const [phbDescription, setPhbDescription] = useState<string | null>(null);
   
   // For new interface, manage internal state. For legacy interface, use props
   const [internalSelectedWeapons, setInternalSelectedWeapons] = useState<{weapon: Weapon, quantity: number}[]>(initialSelectedWeapons || []);
@@ -123,13 +124,13 @@ export function WeaponSelector({
     }
   };
 
-  // Load proficiencies and suggestions when class changes
+  // Load proficiencies, suggestions, and phbDescription when class changes
   useEffect(() => {
     if (!characterClass) return;
     
     const loadData = async () => {
       try {
-        const [proficiencies, suggestions] = await Promise.all([
+        const [proficiencies, suggestions, classData] = await Promise.all([
           fetch(`/api/class-proficiencies?className=${encodeURIComponent(characterClass)}`)
             .then(res => res.ok ? res.json() : { simple: false, martial: false, specific: [] })
             .catch(() => ({ simple: false, martial: false, specific: [] })),
@@ -137,15 +138,20 @@ export function WeaponSelector({
             ? fetch(`/api/weapon-suggestions?className=${encodeURIComponent(characterClass)}`)
                 .then(res => res.ok ? res.json() : [])
                 .catch(() => [])
-            : Promise.resolve([])
+            : Promise.resolve([]),
+          fetch(`/api/classes/${encodeURIComponent(characterClass)}`)
+            .then(res => res.ok ? res.json() : null)
+            .catch(() => null)
         ]);
         
         setWeaponProficiencies(proficiencies);
         setWeaponSuggestions(suggestions);
+        setPhbDescription(classData?.phbDescription || null);
       } catch (error) {
         console.error('Failed to load weapon data:', error);
         setWeaponProficiencies({ simple: false, martial: false, specific: [] });
         setWeaponSuggestions([]);
+        setPhbDescription(null);
       }
     };
     
@@ -264,7 +270,7 @@ export function WeaponSelector({
             {characterClass && (
               <div className="mt-2 p-3 bg-yellow-900/50 rounded-lg">
                 <div className="text-xs text-yellow-200 mb-2">D&D 5e Starting Equipment:</div>
-                <div className="text-xs text-yellow-100">{classWeaponSuggestionsData.find(c => c.className.toLowerCase() === characterClass.toLowerCase())?.phbDescription}</div>
+                <div className="text-xs text-yellow-100">{phbDescription}</div>
               </div>
             )}
             {showSuggestions && weaponSuggestions.length > 0 && (

@@ -13,7 +13,8 @@ export async function seedClasses() {
         hitDie: classData.hitDie,
         primaryAbility: classData.primaryAbility,
         savingThrows: JSON.stringify(classData.savingThrows),
-        skillChoices: JSON.stringify(classData.skillChoices)
+        skillChoices: JSON.stringify(classData.skillChoices),
+        phbDescription: classData.phbDescription
       },
       create: {
         name: classData.name,
@@ -21,7 +22,8 @@ export async function seedClasses() {
         hitDie: classData.hitDie,
         primaryAbility: classData.primaryAbility,
         savingThrows: JSON.stringify(classData.savingThrows),
-        skillChoices: JSON.stringify(classData.skillChoices)
+        skillChoices: JSON.stringify(classData.skillChoices),
+        phbDescription: classData.phbDescription
       }
     })
   }
