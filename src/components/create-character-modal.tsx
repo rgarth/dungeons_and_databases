@@ -29,6 +29,7 @@ import Image from 'next/image';
 
 interface CreateCharacterModalProps {
   onClose: () => void;
+  onCharacterCreated: () => void;
 }
 
 interface CreationOptions {
@@ -63,7 +64,7 @@ interface Subclass {
   description?: string;
 }
 
-export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
+export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateCharacterModalProps) {
   const characterCreationService = CharacterCreationService.getInstance();
   const { createCharacter } = useCharacterMutations();
   const { data: session } = useSession();
@@ -137,6 +138,9 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
 
   // Remove unused state
   const [tappedAbility, setTappedAbility] = useState<AbilityScore | undefined>(undefined);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Set default values when data is loaded
   useEffect(() => {
@@ -439,110 +443,52 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
     return [];
   };
 
-  const handleSubmit = async () => {
-    if (!session?.user) {
-      toast.error('You must be logged in to create a character');
-      return;
-    }
-
-    // Validate required fields
-    const validationErrors: string[] = [];
-    if (!name?.trim()) validationErrors.push('Character name is required');
-    if (!race?.trim()) validationErrors.push('Character race is required');
-    if (!characterClass?.trim()) validationErrors.push('Character class is required');
-    if (!background?.trim()) validationErrors.push('Character background is required');
-    if (!alignment?.trim()) validationErrors.push('Character alignment is required');
-
-    // Validate ability scores
-    const requiredAbilityScores = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'] as const;
-    for (const score of requiredAbilityScores) {
-      if (typeof abilityScores[score] !== 'number' || abilityScores[score] < 1 || abilityScores[score] > 20) {
-        validationErrors.push(`${score.charAt(0).toUpperCase() + score.slice(1)} must be between 1 and 20`);
-      }
-    }
-
-    // If there are validation errors, show them and return
-    if (validationErrors.length > 0) {
-      toast.error(validationErrors.join('\n'));
-      return;
-    }
-
+  const handleCreateCharacter = async () => {
+    if (isSubmitting) return; // Prevent multiple submissions
+    
+    setIsSubmitting(true);
+    setSubmitError(null);
+    
     try {
-      const inventory: InventoryItem[] = (typeof selectedEquipmentPack === 'number' && creationOptions?.equipmentPacks)
-        ? [{
-            name: creationOptions.equipmentPacks[selectedEquipmentPack]?.name || '',
-            quantity: 1
-          }]
-        : [];
-
-      // Map selectedWeapons to Weapon[] (strip quantity field)
-      const weapons = selectedWeapons.map(w => w.weapon);
-
-      // Ensure all required fields have valid values
+      // Close modal immediately to prevent multiple clicks
+      onClose();
+      
+      // Create character
       const characterData = {
-        name: name.trim(),
-        race: race.trim(),
-        class: characterClass.trim(),
-        level: 1,
-        hitPoints: maxHitPoints || 10,
-        maxHitPoints: maxHitPoints || 10,
-        armorClass: calculateArmorClass(),
-        background: background.trim(),
-        alignment: alignment.trim(),
-        strength: abilityScores.strength || 10,
-        dexterity: abilityScores.dexterity || 10,
-        constitution: abilityScores.constitution || 10,
-        intelligence: abilityScores.intelligence || 10,
-        wisdom: abilityScores.wisdom || 10,
-        charisma: abilityScores.charisma || 10,
-        speed: calculateSpeed(),
-        proficiencyBonus,
-        skills: selectedSkills,
-        inventory,
-        weapons,
-        armor: selectedArmor,
-        spellsKnown: selectedSpells,
-        spellsPrepared: selectedSpells,
-        spellSlots: calculateSpellSlots(),
-        spellcastingAbility: getSpellcastingAbility(),
-        spellSaveDC: calculateSpellSaveDC(),
-        spellAttackBonus: calculateSpellAttackBonus(),
-        actions: calculateActions(),
-        bonusActions: calculateBonusActions(),
-        reactions: calculateReactions(),
-        appearance: generatedAppearance || '',
-        personality: generatedPersonality || '',
-        backstory: generatedBackstory || '',
-        avatar: generatedAvatar || '',
-        fullBodyAvatar: generatedFullBodyAvatar || '',
-        backgroundCharacteristics,
+        name,
+        race,
+        class: characterClass,
+        subclass,
+        background,
+        alignment,
+        gender,
         abilityScores,
-        selectedWeapons: selectedWeapons.map(w => w.weapon.name),
-        selectedArmor: selectedArmor.map(a => a.name),
-        selectedSpells: selectedSpells.map(s => s.name)
+        selectedSpells,
+        selectedWeapons,
+        selectedAmmunition: autoAmmunition,
+        selectedArmor,
+        selectedEquipmentPack
       };
 
-      // Show loading toast
-      const loadingToast = toast.loading('Creating your character...');
-
-      // Create character
-      await createCharacter.mutateAsync(characterData, {
-        onSuccess: () => {
-          // Update loading toast to success
-          toast.dismiss(loadingToast);
-          toast.success('Character created successfully!');
-          onClose();
-        },
-        onError: (error) => {
-          // Update loading toast to error
-          toast.dismiss(loadingToast);
-          toast.error('Failed to create character. Please try again.');
-          console.error('Error creating character:', error);
-        }
+      const response = await fetch('/api/characters', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(characterData)
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to create character');
+      }
+
+      // Notify parent component
+      onCharacterCreated();
     } catch (error) {
       console.error('Error creating character:', error);
-      toast.error('Failed to create character');
+      setSubmitError(error instanceof Error ? error.message : 'Failed to create character');
+      // Reopen modal if there's an error
+      onClose();
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -613,7 +559,7 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
             // Only submit if we're on the background step and the submit button was clicked
             const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement;
             if (currentStep === 'background' && submitter?.getAttribute('type') === 'submit') {
-              handleSubmit();
+              handleCreateCharacter();
             }
           }} 
           className="p-6 space-y-6"
@@ -1111,10 +1057,21 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
             ) : (
               <button
                 type="submit"
-                disabled={!background}
-                className="bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg transition-colors"
+                disabled={isSubmitting || !background}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  isSubmitting
+                    ? 'bg-slate-600 cursor-not-allowed'
+                    : 'bg-amber-600 hover:bg-amber-700 text-white'
+                }`}
               >
-                {loadingOptions ? 'Creating...' : 'Create Character'}
+                {isSubmitting ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Creating Character...
+                  </div>
+                ) : (
+                  'Create Character'
+                )}
               </button>
             )}
           </div>

@@ -1,4 +1,4 @@
-import { prisma } from '../prisma';
+import { prisma } from '@/lib/prisma';
 
 export interface WeaponSuggestion {
   weaponName: string;
@@ -6,7 +6,21 @@ export interface WeaponSuggestion {
   reason?: string | null;
 }
 
+// Cache for weapon suggestions
+const weaponSuggestionsCache = new Map<string, {
+  data: WeaponSuggestion[];
+  timestamp: number;
+}>();
+
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 export async function getWeaponSuggestionsForClass(className: string): Promise<WeaponSuggestion[]> {
+  // Check cache first
+  const cached = weaponSuggestionsCache.get(className);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+
   try {
     const suggestions = await prisma.classWeaponSuggestion.findMany({
       where: {
@@ -22,6 +36,12 @@ export async function getWeaponSuggestionsForClass(className: string): Promise<W
       orderBy: {
         weaponName: 'asc'
       }
+    });
+
+    // Update cache
+    weaponSuggestionsCache.set(className, {
+      data: suggestions,
+      timestamp: Date.now()
     });
 
     return suggestions;
