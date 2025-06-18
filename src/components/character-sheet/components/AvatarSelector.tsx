@@ -1,6 +1,7 @@
 "use client";
 
-import { Image } from "lucide-react";
+import { Image as ImageIcon } from "lucide-react";
+import Image from "next/image";
 
 interface AvatarSelectorProps {
   selectedAvatar?: string;
@@ -14,7 +15,7 @@ export function AvatarSelector({ selectedAvatar, fullBodyAvatar, onAvatarSelect,
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h4 className="text-white font-medium flex items-center gap-2">
-          <Image className="h-4 w-4 text-blue-400" />
+          <ImageIcon className="h-4 w-4 text-blue-400" />
           Current Avatar
         </h4>
       </div>
@@ -23,9 +24,11 @@ export function AvatarSelector({ selectedAvatar, fullBodyAvatar, onAvatarSelect,
       <div className="flex items-center gap-4">
         {(showFullBody ? fullBodyAvatar : selectedAvatar) ? (
           <>
-            <img
-              src={showFullBody ? fullBodyAvatar : selectedAvatar}
-              alt="Current avatar"
+            <Image
+              src={showFullBody ? fullBodyAvatar! : selectedAvatar!}
+              alt={showFullBody ? "Character full body" : "Character avatar"}
+              width={showFullBody ? 128 : 96}
+              height={showFullBody ? 160 : 96}
               className={`rounded-lg border border-slate-500 object-cover ${showFullBody ? 'w-32 h-40' : 'w-24 h-24'}`}
               onError={(e) => {
                 // Hide broken images
@@ -47,7 +50,7 @@ export function AvatarSelector({ selectedAvatar, fullBodyAvatar, onAvatarSelect,
         ) : (
           <div className="flex items-center gap-4">
             <div className="w-24 h-24 rounded-lg border-2 border-dashed border-slate-500 flex items-center justify-center">
-              <Image className="h-8 w-8 text-slate-500" />
+              <ImageIcon className="h-8 w-8 text-slate-500" />
             </div>
             <div className="text-slate-400 text-sm">
               No avatar set. Use &quot;Generate New Avatar&quot; below to create one.

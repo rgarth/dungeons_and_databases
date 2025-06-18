@@ -7,6 +7,7 @@ import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import { useCharacterMutations } from '@/hooks/use-character-mutations';
 import { toast } from 'react-hot-toast';
 import { Character } from '@/types/character';
+import Image from 'next/image';
 
 interface CharacterCardProps {
   character: Character;
@@ -57,17 +58,13 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-start gap-3">
             {/* Avatar */}
-            {character.avatar && (
-              <img
-                src={character.avatar}
-                alt={`${character.name} avatar`}
-                className="w-16 h-16 rounded-lg border border-slate-600 object-cover"
-                onError={(e) => {
-                  // Hide broken images
-                  e.currentTarget.style.display = 'none';
-                }}
-              />
-            )}
+            <Image 
+              src={character.avatar || '/default-avatar.png'} 
+              alt={`${character.name}'s avatar`}
+              width={96}
+              height={96}
+              className="w-24 h-24 rounded-full object-cover"
+            />
             
             <div>
               <h3 className="text-xl font-bold text-white">{character.name}</h3>

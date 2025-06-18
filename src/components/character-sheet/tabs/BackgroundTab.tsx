@@ -11,6 +11,7 @@ import { AvatarGenerator } from '../../shared/AvatarGenerator';
 import type { CharacterAvatarData } from '@/app/api/generate-avatar/route';
 import { getRacialLanguages } from "@/lib/dnd/languages";
 import { LANGUAGES } from "@/lib/dnd/languages";
+import Image from 'next/image';
 
 interface BackgroundTabProps {
   character: {
@@ -518,8 +519,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 <div>
                   <div className="text-slate-400 text-sm mb-1">Personality Traits</div>
                   <div className="text-white text-sm space-y-1">
-                    {character.backgroundCharacteristics.personalityTraits.length > 0 
-                      ? character.backgroundCharacteristics.personalityTraits.map((trait, index) => (
+                    {((character.backgroundCharacteristics?.personalityTraits ?? []).length > 0) 
+                      ? (character.backgroundCharacteristics?.personalityTraits ?? []).map((trait, index) => (
                           <div key={index}>• {trait}</div>
                         ))
                       : <div className="text-slate-500">None selected</div>
@@ -529,8 +530,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 <div>
                   <div className="text-slate-400 text-sm mb-1">Ideals</div>
                   <div className="text-white text-sm space-y-1">
-                    {character.backgroundCharacteristics.ideals.length > 0 
-                      ? character.backgroundCharacteristics.ideals.map((ideal, index) => (
+                    {((character.backgroundCharacteristics?.ideals ?? []).length > 0) 
+                      ? (character.backgroundCharacteristics?.ideals ?? []).map((ideal, index) => (
                           <div key={index}>• {ideal}</div>
                         ))
                       : <div className="text-slate-500">None selected</div>
@@ -540,8 +541,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 <div>
                   <div className="text-slate-400 text-sm mb-1">Bonds</div>
                   <div className="text-white text-sm space-y-1">
-                    {character.backgroundCharacteristics.bonds.length > 0 
-                      ? character.backgroundCharacteristics.bonds.map((bond, index) => (
+                    {((character.backgroundCharacteristics?.bonds ?? []).length > 0) 
+                      ? (character.backgroundCharacteristics?.bonds ?? []).map((bond, index) => (
                           <div key={index}>• {bond}</div>
                         ))
                       : <div className="text-slate-500">None selected</div>
@@ -551,8 +552,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 <div>
                   <div className="text-slate-400 text-sm mb-1">Flaws</div>
                   <div className="text-white text-sm space-y-1">
-                    {character.backgroundCharacteristics.flaws.length > 0 
-                      ? character.backgroundCharacteristics.flaws.map((flaw, index) => (
+                    {((character.backgroundCharacteristics?.flaws ?? []).length > 0) 
+                      ? (character.backgroundCharacteristics?.flaws ?? []).map((flaw, index) => (
                           <div key={index}>• {flaw}</div>
                         ))
                       : <div className="text-slate-500">None selected</div>
@@ -583,13 +584,12 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   {/* Current Avatar Display */}
                   {(character.fullBodyAvatar || character.avatar) ? (
                     <div className="space-y-3">
-                      <img
-                        src={character.fullBodyAvatar || character.avatar || ''}
-                        alt={`${character.name} avatar`}
-                        className="w-48 h-60 mx-auto rounded-lg border-2 border-slate-500 object-cover"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
+                      <Image 
+                        src={character.fullBodyAvatar || character.avatar || '/default-avatar.png'} 
+                        alt={`${character.name}'s avatar`}
+                        width={192}
+                        height={192}
+                        className="w-48 h-48 rounded-lg object-cover"
                       />
                       <div className="text-center">
                         <button
