@@ -16,6 +16,7 @@ import { getSpellcastingType, getSpellsPreparedCount } from "@/lib/dnd/level-up"
 import { StatsTab, ActionsTab, GearTab, InventoryTab, BackgroundTab } from "./character-sheet/";
 import { DiceRoller } from "./dice-roller";
 import { PDFExport } from "./character-sheet/PDFExport";
+import Image from 'next/image';
 
 
 interface CharacterSheetProps {
@@ -892,15 +893,12 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 {/* Avatar or default icon */}
                 {displayCharacter.avatar ? (
-                  <img
-                    src={displayCharacter.avatar}
-                    alt={`${displayCharacter.name} avatar`}
-                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg border-2 border-purple-400 object-cover flex-shrink-0"
-                    onError={(e) => {
-                      // Fallback to User icon if avatar fails to load
-                      e.currentTarget.style.display = 'none';
-                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                    }}
+                  <Image 
+                    src={displayCharacter.avatar} 
+                    alt={`${displayCharacter.name}'s avatar`}
+                    width={96}
+                    height={96}
+                    className="w-24 h-24 rounded-full object-cover"
                   />
                 ) : null}
                 <User className={`h-6 w-6 sm:h-7 sm:w-7 text-purple-400 flex-shrink-0 ${displayCharacter.avatar ? 'hidden' : ''}`} />

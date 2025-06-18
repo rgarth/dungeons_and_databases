@@ -151,7 +151,7 @@ export function GearTab({
       setEquipmentConflicts(conflicts);
     };
     updateConflicts();
-  }, [equippedWeapons, equippedArmor]);
+  }, [equippedWeapons, equippedArmor, equipmentRules]);
 
   // Validate equipment before adding
   const validateAndAddWeapon = async (weapon: Weapon | MagicalWeapon, isEquipping: boolean = false): Promise<boolean> => {

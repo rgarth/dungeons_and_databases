@@ -1,3 +1,14 @@
+export interface SelectedCharacteristics {
+  race: string;
+  class: string;
+  background: string;
+  alignment: string;
+  personalityTraits?: string[];
+  ideals?: string[];
+  bonds?: string[];
+  flaws?: string[];
+}
+
 export interface CharacterCreationData {
   name: string;
   race: string;

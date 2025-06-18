@@ -21,7 +21,6 @@ import { BASIC_ACTIONS, getClassActions } from '@/lib/dnd/combat';
 import { Spell } from '@/lib/dnd/spells';
 import { Weapon, MagicalWeapon, Armor, Ammunition } from '@/lib/dnd/equipment';
 import { RacialFeaturesService, type RacialTrait } from './racial-features';
-import { Character } from '@/types/character';
 
 
 export type StatMethod = 'rolling-assign' | 'standard' | 'pointbuy';

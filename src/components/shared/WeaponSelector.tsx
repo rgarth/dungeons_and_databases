@@ -5,7 +5,6 @@ import { Plus, Minus, X } from "lucide-react";
 import { Weapon } from "@/lib/dnd/equipment";
 import { weaponsData } from '../../../prisma/data/weapons-data';
 import { categorizeWeaponsByProficiency } from "@/lib/dnd/proficiencies";
-import { classWeaponSuggestionsData } from '../../../prisma/data/weapon-suggestions-data';
 
 export interface WeaponSuggestion {
   weaponName: string;
