@@ -905,7 +905,6 @@ export function GearTab({
       {showWeaponSelector && (
         <WeaponSelector
           title="Add Weapons to Inventory"
-          maxWeapons={50}
           selectedWeapons={[]}
           onConfirm={async (weapons) => {
             // Build complete list of weapons to add - preserve quantities for ammunition
@@ -931,7 +930,6 @@ export function GearTab({
           onCancel={() => setShowWeaponSelector(false)}
           characterClass={character.class}
           showSuggestions={false}
-          multiSelect={true}
         />
       )}
 
