@@ -109,10 +109,12 @@ export default function Home() {
               key={character.id}
               character={character}
               onCharacterDeleted={() => {
-                // React Query will automatically refetch the characters
+                // Invalidate the characters query to refetch the updated list
+                queryClient.invalidateQueries({ queryKey: ['characters'] });
               }}
               onCharacterUpdated={() => {
-                // React Query will automatically refetch the characters
+                // Invalidate the characters query to refetch the updated list
+                queryClient.invalidateQueries({ queryKey: ['characters'] });
               }}
             />
           ))}

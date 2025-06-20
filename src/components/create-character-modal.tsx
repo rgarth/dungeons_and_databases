@@ -418,6 +418,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     setIsSubmitting(true);
     
     try {
+      // Get equipment items from the selected pack
+      const selectedPackItems = creationOptions?.equipmentPacks?.[selectedEquipmentPack]?.items || [];
+      
       // Create character
       const characterData = {
         name,
@@ -428,13 +431,23 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         alignment,
         gender,
         abilityScores,
-        selectedSpells,
-        selectedWeapons,
-        selectedArmor,
-        selectedAmmunition,
-        selectedEquipmentPack,
+        spellsKnown: selectedSpells,
+        spellsPrepared: selectedSpells, // For level 1, known = prepared
+        spellSlots: creationOptions?.spellcasting?.spellSlots || {},
+        spellcastingAbility: creationOptions?.spellcasting?.ability || null,
+        inventory: selectedPackItems, // Send actual equipment items, not pack reference
+        inventoryWeapons: selectedWeapons,
+        inventoryArmor: selectedArmor,
+        ammunition: selectedAmmunition,
         avatar: generatedFullBodyAvatar || undefined
       };
+
+      console.log('🎯 CREATING CHARACTER WITH EQUIPMENT:');
+      console.log('Selected Weapons:', selectedWeapons);
+      console.log('Selected Armor:', selectedArmor);
+      console.log('Selected Ammunition:', selectedAmmunition);
+      console.log('Equipment Pack Items:', selectedPackItems);
+      console.log('✅ Character creation data prepared successfully');
 
       const response = await fetch('/api/characters', {
         method: 'POST',
