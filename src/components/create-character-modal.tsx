@@ -11,6 +11,7 @@ import { ArmorSuggestion } from "@/lib/dnd/armor-suggestions";
 import { WeaponSelector } from "@/components/shared/WeaponSelector";
 import { ArmorSelector } from "@/components/shared/ArmorSelector";
 import { armorData } from '../../prisma/data/armor-data';
+import { weaponsData } from '../../prisma/data/weapons-data';
 import { Character } from "@/types/character";
 
 import { 
@@ -94,6 +95,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Equipment and spells
   const [selectedSpells, setSelectedSpells] = useState<Spell[]>([]);
   const [selectedWeapons, setSelectedWeapons] = useState<{weapon: Weapon, quantity: number}[]>([]);
+  const [selectedAmmunition, setSelectedAmmunition] = useState<Ammunition[]>([]);
   const [selectedEquipmentPack, setSelectedEquipmentPack] = useState<number>(0);
   
   // Loading states
@@ -192,8 +194,34 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Apply weapon suggestions when they're loaded
   useEffect(() => {
     console.log('🔫 WEAPON SUGGESTIONS EFFECT:', weaponSuggestions.length, 'suggestions');
-    // Remove auto-selection of weapons
-    setSelectedWeapons([]);
+    
+    if (weaponSuggestions && weaponSuggestions.length > 0) {
+      console.log('Processing weapon suggestions...');
+      
+      const suggestedWeapons: {weapon: Weapon, quantity: number}[] = [];
+      
+      weaponSuggestions.forEach((suggestion, index) => {
+        console.log(`Processing weapon suggestion ${index}:`, suggestion);
+        // Find the weapon in the weapons data
+        const weaponData = weaponsData.find(w => w.name === suggestion.weaponName);
+        if (weaponData) {
+          const weapon: Weapon = {
+            ...weaponData,
+            type: weaponData.type as 'Simple' | 'Martial',
+            category: weaponData.category as 'Melee' | 'Ranged',
+            properties: weaponData.properties ? weaponData.properties.split(', ').filter(Boolean) : []
+          };
+          suggestedWeapons.push({ weapon, quantity: suggestion.quantity });
+          console.log('Added weapon:', weapon.name, 'quantity:', suggestion.quantity);
+        }
+      });
+      
+      console.log('Setting selectedWeapons to:', suggestedWeapons);
+      setSelectedWeapons(suggestedWeapons);
+    } else {
+      console.log('No weapon suggestions to process - clearing weapons');
+      setSelectedWeapons([]);
+    }
   }, [weaponSuggestions]);
 
   // Apply armor suggestions when they're loaded
@@ -289,7 +317,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }
     
     console.log('Final auto-ammunition:', autoAmmunition);
-    // setSelectedAmmunition(autoAmmunition);
+    setSelectedAmmunition(autoAmmunition);
     
     if (autoAmmunition.length > 0) {
       console.log('✅ Set selectedAmmunition with auto-generated ammunition');
@@ -373,8 +401,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         selectedSpells,
         selectedWeapons,
         selectedArmor,
+        selectedAmmunition,
         selectedEquipmentPack,
-        avatarUrl: generatedFullBodyAvatar || undefined
+        avatar: generatedFullBodyAvatar || undefined
       };
 
       const response = await fetch('/api/characters', {
