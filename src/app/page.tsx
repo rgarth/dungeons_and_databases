@@ -5,12 +5,13 @@ import { useState } from "react";
 import { Plus, LogOut } from "lucide-react";
 import { CharacterCard } from "../components/character-card";
 import { CreateCharacterModal } from "../components/create-character-modal";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Character } from "@/types/character";
 
 export default function Home() {
   const { data: session, status } = useSession();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const queryClient = useQueryClient();
 
   // Fetch characters using React Query
   const { data: characters = [], isLoading } = useQuery<Character[]>({
@@ -24,6 +25,28 @@ export default function Home() {
     },
     enabled: !!session, // Only fetch when we have a session
   });
+
+  // Handle character creation
+  const handleCharacterCreated = (newCharacter: Character) => {
+    // Optimistically add the new character to the list with syncing state
+    const optimisticCharacter = {
+      ...newCharacter,
+      isOptimistic: true
+    };
+    
+    queryClient.setQueryData(['characters'], (oldData: Character[] | undefined) => {
+      if (!oldData) return [optimisticCharacter];
+      return [...oldData, optimisticCharacter];
+    });
+    
+    // Close the modal
+    setShowCreateModal(false);
+    
+    // Refetch the characters after a short delay to get the final state from the database
+    setTimeout(() => {
+      queryClient.invalidateQueries({ queryKey: ['characters'] });
+    }, 2000);
+  };
 
   // Show spinner while auth is loading OR while we have a session but haven't loaded characters yet
   if (status === "loading" || (session && isLoading)) {
@@ -98,7 +121,10 @@ export default function Home() {
 
       {/* Create Character Modal */}
       {showCreateModal && (
-        <CreateCharacterModal onClose={() => setShowCreateModal(false)} />
+        <CreateCharacterModal 
+          onClose={() => setShowCreateModal(false)} 
+          onCharacterCreated={handleCharacterCreated}
+        />
       )}
     </div>
   );
