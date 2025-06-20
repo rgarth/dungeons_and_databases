@@ -11,6 +11,9 @@ interface ArmorSelectorProps {
   showProficiencies?: boolean;
   onConfirm?: (armor: Armor[]) => void;
   onCancel?: () => void;
+  
+  // Cached data props for instant loading
+  cachedArmorProficiencies?: string[] | null;
 }
 
 export function ArmorSelector({
@@ -21,7 +24,8 @@ export function ArmorSelector({
   characterClass,
   showProficiencies = true,
   onConfirm,
-  onCancel
+  onCancel,
+  cachedArmorProficiencies
 }: ArmorSelectorProps) {
   const [internalSelectedArmor, setInternalSelectedArmor] = useState<Armor[]>(selectedArmor);
   const [armorProficiencies, setArmorProficiencies] = useState<string[] | null>(null);
@@ -35,6 +39,13 @@ export function ArmorSelector({
   useEffect(() => {
     if (!characterClass || !showProficiencies) return;
     
+    // If we have cached data, use it immediately
+    if (cachedArmorProficiencies !== undefined) {
+      setArmorProficiencies(cachedArmorProficiencies);
+      console.log('🚀 Using cached armor proficiencies for', characterClass);
+      return;
+    }
+    
     const loadProficiencies = async () => {
       setLoadingProficiencies(true);
       try {
@@ -46,6 +57,7 @@ export function ArmorSelector({
         } else {
           setArmorProficiencies([]);
         }
+        console.log('📡 Fetched armor proficiencies for', characterClass);
       } catch (error) {
         console.error('Failed to load armor proficiencies:', error);
         setArmorProficiencies([]);
@@ -55,7 +67,7 @@ export function ArmorSelector({
     };
     
     loadProficiencies();
-  }, [characterClass, showProficiencies]);
+  }, [characterClass, showProficiencies, cachedArmorProficiencies]);
 
   const handleArmorToggle = (armor: Armor) => {
     const newSelection = internalSelectedArmor.some(a => a.name === armor.name)

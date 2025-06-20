@@ -108,6 +108,12 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [armorSuggestions, setArmorSuggestions] = useState<ArmorSuggestion[]>([]);
   const [selectedArmor, setSelectedArmor] = useState<Armor[]>([]);
 
+  // Cached suggestions for instant loading in modals
+  const [cachedWeaponSuggestions, setCachedWeaponSuggestions] = useState<WeaponSuggestion[]>([]);
+  const [cachedWeaponProficiencies, setCachedWeaponProficiencies] = useState<{ simple: boolean; martial: boolean; specific: string[] } | null>(null);
+  const [cachedArmorProficiencies, setCachedArmorProficiencies] = useState<string[] | null>(null);
+  const [cachedPhbDescription, setCachedPhbDescription] = useState<string | null>(null);
+
   // Creation step state
   const [currentStep, setCurrentStep] = useState<'basic' | 'background'>('basic');
 
@@ -135,6 +141,14 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }
   }, [races, classes, backgrounds, alignments, creationOptions, race, characterClass, background, alignment, selectedEquipmentPack]);
 
+  // Clear cached data when class changes
+  useEffect(() => {
+    setCachedWeaponSuggestions([]);
+    setCachedWeaponProficiencies(null);
+    setCachedArmorProficiencies(null);
+    setCachedPhbDescription(null);
+  }, [characterClass]);
+
   // Load creation options and proficiencies when class changes
   useEffect(() => {
     const loadCreationOptions = async () => {
@@ -142,14 +156,23 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       
       setLoadingOptions(true);
       try {
-        const [options, weaponSuggestions, armorSuggestions] = await Promise.all([
+        const [options, weaponSuggestions, armorSuggestions, weaponProficiencies, armorProficiencies, classData] = await Promise.all([
           characterCreationService.getCreationOptions(characterClass),
           fetch(`/api/weapon-suggestions?className=${encodeURIComponent(characterClass)}`)
             .then(res => res.ok ? res.json() : [])
             .catch(() => []),
           fetch(`/api/armor-suggestions?className=${encodeURIComponent(characterClass)}`)
             .then(res => res.ok ? res.json() : [])
-            .catch(() => [])
+            .catch(() => []),
+          fetch(`/api/class-proficiencies?className=${encodeURIComponent(characterClass)}`)
+            .then(res => res.ok ? res.json() : { simple: false, martial: false, specific: [] })
+            .catch(() => ({ simple: false, martial: false, specific: [] })),
+          fetch(`/api/class-proficiencies?className=${encodeURIComponent(characterClass)}&includeArmor=true`)
+            .then(res => res.ok ? res.json() : { armor: [] })
+            .catch(() => ({ armor: [] })),
+          fetch(`/api/classes/${encodeURIComponent(characterClass)}`)
+            .then(res => res.ok ? res.json() : null)
+            .catch(() => null)
         ]);
         
         setCreationOptions({
@@ -167,8 +190,15 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         setWeaponSuggestions(weaponSuggestions);
         setArmorSuggestions(armorSuggestions);
         
+        // Cache all the data for instant loading in modals
+        setCachedWeaponSuggestions(weaponSuggestions);
+        setCachedWeaponProficiencies(weaponProficiencies);
+        setCachedArmorProficiencies(armorProficiencies.armor || []);
+        setCachedPhbDescription(classData?.phbDescription || null);
+        
         console.log('✅ SET STATE - Weapon suggestions for', characterClass, ':', weaponSuggestions);
         console.log('✅ SET STATE - Armor suggestions for', characterClass, ':', armorSuggestions);
+        console.log('✅ CACHED - All suggestions and proficiencies for', characterClass);
       } catch (error) {
         console.error('Error loading creation options:', error);
       } finally {
@@ -1015,6 +1045,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           onCancel={() => setShowWeaponSelector(false)}
           characterClass={characterClass}
           showSuggestions={true}
+          cachedWeaponSuggestions={cachedWeaponSuggestions}
+          cachedWeaponProficiencies={cachedWeaponProficiencies}
+          cachedPhbDescription={cachedPhbDescription}
         />
       )}
 
@@ -1030,6 +1063,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           isOpen={showArmorSelector}
           characterClass={characterClass}
           showProficiencies={true}
+          cachedArmorProficiencies={cachedArmorProficiencies}
         />
       )}
     </div>

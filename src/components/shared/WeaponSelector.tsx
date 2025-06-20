@@ -9,7 +9,7 @@ import { categorizeWeaponsByProficiency } from "@/lib/dnd/proficiencies";
 export interface WeaponSuggestion {
   weaponName: string;
   quantity: number;
-  reason?: string;
+  reason?: string | null;
 }
 
 // Interface matching the structure of weaponsData
@@ -34,6 +34,11 @@ interface WeaponSelectorProps {
   characterClass: string;
   showSuggestions?: boolean;
   
+  // Cached data props for instant loading
+  cachedWeaponSuggestions?: WeaponSuggestion[];
+  cachedWeaponProficiencies?: { simple: boolean; martial: boolean; specific: string[] } | null;
+  cachedPhbDescription?: string | null;
+  
   // Legacy interface (modal with isOpen)
   isOpen?: boolean;
   onClose?: () => void;
@@ -49,11 +54,14 @@ export function WeaponSelector({
   onConfirm,
   onCancel,
   title = "Select Weapons",
-  showSuggestions = true
+  showSuggestions = true,
+  cachedWeaponSuggestions,
+  cachedWeaponProficiencies,
+  cachedPhbDescription
 }: WeaponSelectorProps) {
-  const [weaponProficiencies, setWeaponProficiencies] = useState<{ simple: boolean; martial: boolean; specific: string[] } | null>(null);
-  const [weaponSuggestions, setWeaponSuggestions] = useState<WeaponSuggestion[]>([]);
-  const [phbDescription, setPhbDescription] = useState<string | null>(null);
+  const [weaponProficiencies, setWeaponProficiencies] = useState<{ simple: boolean; martial: boolean; specific: string[] } | null>(cachedWeaponProficiencies || null);
+  const [weaponSuggestions, setWeaponSuggestions] = useState<WeaponSuggestion[]>(cachedWeaponSuggestions || []);
+  const [phbDescription, setPhbDescription] = useState<string | null>(cachedPhbDescription || null);
   
   // For new interface, manage internal state. For legacy interface, use props
   const [internalSelectedWeapons, setInternalSelectedWeapons] = useState<{weapon: Weapon, quantity: number}[]>(initialSelectedWeapons || []);
@@ -127,6 +135,15 @@ export function WeaponSelector({
   useEffect(() => {
     if (!characterClass) return;
     
+    // If we have cached data, use it immediately
+    if (cachedWeaponSuggestions && cachedWeaponProficiencies && cachedPhbDescription !== undefined) {
+      setWeaponSuggestions(cachedWeaponSuggestions);
+      setWeaponProficiencies(cachedWeaponProficiencies);
+      setPhbDescription(cachedPhbDescription);
+      console.log('🚀 Using cached weapon data for', characterClass);
+      return;
+    }
+    
     const loadData = async () => {
       try {
         const [proficiencies, suggestions, classData] = await Promise.all([
@@ -146,6 +163,7 @@ export function WeaponSelector({
         setWeaponProficiencies(proficiencies);
         setWeaponSuggestions(suggestions);
         setPhbDescription(classData?.phbDescription || null);
+        console.log('📡 Fetched weapon data for', characterClass);
       } catch (error) {
         console.error('Failed to load weapon data:', error);
         setWeaponProficiencies({ simple: false, martial: false, specific: [] });
@@ -155,7 +173,7 @@ export function WeaponSelector({
     };
     
     loadData();
-  }, [characterClass, showSuggestions]);
+  }, [characterClass, showSuggestions, cachedWeaponSuggestions, cachedWeaponProficiencies, cachedPhbDescription]);
 
   // For legacy modal interface, check isOpen. For new interface, always render
   if (isOpen === false) return null;

@@ -13,11 +13,16 @@ const eslintConfig = [
   // First, explicitly ignore files and directories that cause noise
   {
     ignores: [
+      // Jest configuration
+      "jest.config.js",
+      "jest.setup.js",
       // Markdown files
       "**/*.md", 
       "**/*.mdx", 
       "**/README.md", 
       "**/docs/**/*.md",
+      // Cursor configuration
+      ".cursorrules",
       // Next.js build output and generated files
       ".next/**/*",
       ".next/types/**/*",
@@ -33,6 +38,11 @@ const eslintConfig = [
       "cache_status_checker.js",
       // Prisma generated files
       "prisma/generated/**/*",
+      // TypeScript declaration files
+      "**/*.d.ts",
+      // Environment files
+      ".env*",
+      "!.env.example",
     ],
   },
   // Then apply Next.js rules to remaining files
