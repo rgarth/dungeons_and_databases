@@ -58,13 +58,19 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-start gap-3">
             {/* Avatar */}
-            <Image 
-              src={character.avatar || '/default-avatar.png'} 
-              alt={`${character.name}'s avatar`}
-              width={96}
-              height={96}
-              className="w-24 h-24 rounded-full object-cover"
-            />
+            {character.avatar ? (
+              <Image 
+                src={character.avatar} 
+                alt={`${character.name}'s avatar`}
+                width={96}
+                height={96}
+                className="w-24 h-24 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-2xl font-bold">
+                {character.name.charAt(0).toUpperCase()}
+              </div>
+            )}
             
             <div>
               <h3 className="text-xl font-bold text-white">{character.name}</h3>
