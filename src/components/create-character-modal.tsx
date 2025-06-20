@@ -11,6 +11,7 @@ import { ArmorSuggestion } from "@/lib/dnd/armor-suggestions";
 import { WeaponSelector } from "@/components/shared/WeaponSelector";
 import { ArmorSelector } from "@/components/shared/ArmorSelector";
 import { armorData } from '../../prisma/data/armor-data';
+import { Character } from "@/types/character";
 
 import { 
   type StatMethod,
@@ -26,6 +27,7 @@ import { ABILITY_SCORES } from "@/lib/dnd/core";
 
 interface CreateCharacterModalProps {
   onClose: () => void;
+  onCharacterCreated?: (character: Character) => void;
 }
 
 interface CreationOptions {
@@ -60,7 +62,7 @@ interface Subclass {
   description?: string;
 }
 
-export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
+export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateCharacterModalProps) {
   // Add missing state variables
   const [showWeaponSelector, setShowWeaponSelector] = useState(false);
   const [showArmorSelector, setShowArmorSelector] = useState(false);
@@ -358,9 +360,6 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
     setIsSubmitting(true);
     
     try {
-      // Close modal immediately to prevent multiple clicks
-      onClose();
-      
       // Create character
       const characterData = {
         name,
@@ -374,7 +373,8 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
         selectedSpells,
         selectedWeapons,
         selectedArmor,
-        selectedEquipmentPack
+        selectedEquipmentPack,
+        avatarUrl: generatedFullBodyAvatar || undefined
       };
 
       const response = await fetch('/api/characters', {
@@ -387,12 +387,16 @@ export function CreateCharacterModal({ onClose }: CreateCharacterModalProps) {
         throw new Error('Failed to create character');
       }
 
-      // Notify parent component
+      const createdCharacter = await response.json();
+      
+      // Notify parent component with the created character
+      onCharacterCreated?.(createdCharacter);
+      
+      // Close modal after successful creation
       onClose();
     } catch (error) {
       console.error('Error creating character:', error);
-      // Reopen modal if there's an error
-      onClose();
+      // Don't close modal on error - let user try again
     } finally {
       setIsSubmitting(false);
     }
