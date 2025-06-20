@@ -117,149 +117,47 @@ export async function POST(request: NextRequest) {
 
     console.log('=== SERVER-SIDE EQUIPMENT PROCESSING ===');
     console.log('Raw inventory from client:', inventory);
-
-    // Helper method to check if an item is a placeholder that needs resolution
-    const isPlaceholderItem = (itemName: string): boolean => {
-      const placeholders = [
-        'Simple Weapon',
-        'Martial Weapon', 
-        'Light Armor',
-        'Medium Armor',
-        'Heavy Armor',
-        'Any Weapon',
-        'Any Armor'
-      ];
-      return placeholders.includes(itemName);
-    };
-
-    // Helper method to normalize equipment names (handle naming differences between client and database)
-    const normalizeEquipmentName = (itemName: string): string => {
-      const nameMap: Record<string, string> = {
-        'Leather Armor': 'Leather',
-        'Studded Leather Armor': 'Studded Leather',
-        'Scale Mail': 'Scale Mail',
-        'Chain Mail': 'Chain Mail',
-        'Splint Armor': 'Splint',
-        'Plate Armor': 'Plate',
-        'Arrow (20)': 'Arrows (20)',
-        'Quiver of 20 Arrows': 'Arrows (20)',
-        'Quiver of 20 Bolts': 'Crossbow Bolts (20)'
-      };
-      return nameMap[itemName] || itemName;
-    };
+    console.log('Client-provided weapons:', inventoryWeapons);
+    console.log('Client-provided armor:', inventoryArmor);
 
     // Separate armor and weapons from general inventory (server-side database lookups)
     const processedInventory: Array<{name: string; quantity: number}> = [];
-    const processedInventoryArmor: Array<{
-      name: string;
-      type: string;
-      baseAC: number;
-      maxDexBonus: number | null;
-      minStrength: number | null;
-      stealthDisadvantage: boolean;
-      weight: number;
-      cost: string;
-      description: string;
-    }> = [];
-    const processedInventoryWeapons: Array<{
-      name: string;
-      type: string;
-      category: string;
-      damage: string;
-      damageType: string;
-      properties: string[];
-      weight: number;
-      cost: string;
-      stackable: boolean;
-    }> = [];
 
+    // Process inventory items (equipment pack items) - no need to scan for weapons/armor
     if (inventory && Array.isArray(inventory)) {
       for (const item of inventory as Array<{name: string; quantity: number}>) {
         const itemName = item.name;
-        const normalizedName = normalizeEquipmentName(itemName);
-        console.log(`🔍 Checking if "${itemName}" (normalized: "${normalizedName}") is equipment...`);
-        
-        // Handle placeholder items that need resolution
-        if (isPlaceholderItem(itemName)) {
-          console.log(`⚠️ Skipping placeholder item: ${itemName} (needs manual selection)`);
-          continue; // Skip placeholder items for now
-        }
-        
-        // Check if this item exists in the weapons database
-        const weaponData = await prisma.weapon.findFirst({
-          where: {
-            name: {
-              equals: normalizedName
-            }
-          }
-        });
-
-        if (weaponData) {
-          console.log(`✅ Found weapon in database: ${weaponData.name}`);
-          // Convert to weapon object and add to inventoryWeapons
-          const weaponObject = {
-            name: weaponData.name,
-            type: weaponData.type,
-            category: weaponData.category,
-            damage: weaponData.damage,
-            damageType: weaponData.damageType,
-            properties: weaponData.properties ? weaponData.properties.split(',').map(p => p.trim()).filter(Boolean) : [],
-            weight: weaponData.weight,
-            cost: weaponData.cost,
-            stackable: weaponData.stackable
-          };
-          processedInventoryWeapons.push(weaponObject);
-          console.log(`✅ Added to weapon inventory: ${weaponObject.name}`);
-          continue; // Skip to next item
-        }
-        
-        // Check if this item exists in the armor database
-        const armorData = await prisma.armor.findFirst({
-          where: {
-            name: {
-              equals: normalizedName
-            }
-          }
-        });
-
-        if (armorData) {
-          console.log(`✅ Found armor in database: ${armorData.name}`);
-          // Convert to armor object and add to inventoryArmor
-          const armorObject = {
-            name: armorData.name,
-            type: armorData.type,
-            baseAC: armorData.baseAC,
-            maxDexBonus: armorData.maxDexBonus,
-            minStrength: armorData.minStrength,
-            stealthDisadvantage: armorData.stealthDisadvantage,
-            weight: armorData.weight,
-            cost: armorData.cost,
-            description: armorData.description
-          };
-          processedInventoryArmor.push(armorObject);
-          console.log(`✅ Added to armor inventory: ${armorObject.name}`);
-        } else {
-          console.log(`➡️ Not weapon or armor, adding to general inventory: ${itemName}`);
-          // Keep in general inventory
-          processedInventory.push(item);
-        }
+        console.log(`📦 Adding to general inventory: ${itemName}`);
+        processedInventory.push(item);
       }
     }
 
-    // Also include client-provided armor (with equipped boolean)
+    // Use client-provided weapons and armor directly
     const clientArmor = armor || inventoryArmor || [];
     console.log('=== CLIENT-PROVIDED ARMOR ===');
     console.log('Client armor (with equipped boolean):', clientArmor);
     
-    // Combine processed armor (from inventory) with client-provided armor
-    const allInventoryArmor = [...processedInventoryArmor, ...clientArmor];
+    const clientWeapons = weapons || inventoryWeapons || [];
+    console.log('=== CLIENT-PROVIDED WEAPONS ===');
+    console.log('Client weapons:', clientWeapons);
+    
+    // Add equipped property to weapons and armor for character sheet compatibility
+    const weaponsWithEquipped = clientWeapons.map((weapon: { weapon?: { name: string }; name?: string; [key: string]: unknown }) => ({
+      ...weapon,
+      equipped: false // All weapons start unequipped
+    }));
+    
+    const armorWithEquipped = clientArmor.map((armor: { name: string; [key: string]: unknown }) => ({
+      ...armor,
+      equipped: false // All armor starts unequipped
+    }));
 
     console.log('=== FINAL SERVER PROCESSING ===');
     console.log('General inventory:', processedInventory.map(item => typeof item === 'string' ? item : item.name));
-    console.log('Weapon inventory:', processedInventoryWeapons.map(weapon => weapon.name));
-    console.log('Processed armor inventory:', processedInventoryArmor.map(armor => armor.name));
+    console.log('Client weapon inventory:', clientWeapons.map((weapon: { weapon?: { name: string }; name?: string }) => weapon.weapon?.name || weapon.name || 'Unknown weapon'));
+    console.log('Combined weapon inventory:', weaponsWithEquipped.map((weapon: { weapon?: { name: string }; name?: string; equipped?: boolean }) => `${weapon.weapon?.name || weapon.name || 'Unknown weapon'} (equipped: ${weapon.equipped})`));
     console.log('Client armor inventory:', clientArmor.map((armor: { name: string }) => armor.name));
-    console.log('Combined armor inventory:', allInventoryArmor.map(armor => armor.name));
+    console.log('Combined armor inventory:', armorWithEquipped.map((armor: { name: string; equipped?: boolean }) => `${armor.name} (equipped: ${armor.equipped})`));
 
     // Use validation service for comprehensive validation
     const validationService = createCharacterValidationService();
@@ -324,11 +222,11 @@ export async function POST(request: NextRequest) {
         armorClass: armorClass || 10,
         inventory: processedInventory, // Use processed inventory without weapons or armor
         skills: skills || [],
-        weapons: weapons || [],
-        inventoryWeapons: [...(inventoryWeapons || []), ...processedInventoryWeapons],
+        weapons: weaponsWithEquipped,
+        inventoryWeapons: weaponsWithEquipped,
         ammunition: ammunition || [],
-        armor: allInventoryArmor,
-        inventoryArmor: allInventoryArmor,
+        armor: armorWithEquipped,
+        inventoryArmor: armorWithEquipped,
         spellsKnown: spellsKnown || null,
         spellsPrepared: spellsPrepared || null,
         spellSlots: spellSlots || null,

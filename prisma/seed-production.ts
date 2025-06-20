@@ -1,24 +1,40 @@
 import { PrismaClient } from '@prisma/client'
-import { spellsData, weaponsData, armorData, equipmentData, contentCounts } from './data'
+import { spellsData, weaponsData, armorData, equipmentData } from './data'
 import { magicalItemsData } from './data/magical-items-data'
 import { treasureData } from './data/treasure-data'
+import { seedRaces } from './seed-races'
+import { seedClasses } from './seed-classes'
+import { seedBackgrounds } from './seed-backgrounds'
+import { seedAlignments } from './seed-alignments'
+import { seedEquipmentPacks } from './seed-equipment-packs'
+import { seedWeaponSuggestions } from './seed-weapon-suggestions'
+import { seedArmorSuggestions } from './seed-armor-suggestions'
+import { seedSpellSuggestions } from './seed-spell-suggestions'
 
 const prisma = new PrismaClient()
 
 interface SeedOptions {
-  force?: boolean // Force re-seed even if data exists
-  skipIfExists?: boolean // Skip seeding if data already exists
+  force?: boolean
+  skipIfExists?: boolean
   environment?: 'development' | 'production' | 'test'
 }
 
 async function checkExistingData() {
-  const [spellCount, weaponCount, armorCount, equipmentCount, magicalItemCount, treasureCount] = await Promise.all([
+  const [spellCount, weaponCount, armorCount, equipmentCount, magicalItemCount, treasureCount, raceCount, classCount, backgroundCount, alignmentCount, equipmentPackCount, weaponSuggestionCount, armorSuggestionCount, spellSuggestionCount] = await Promise.all([
     prisma.spell.count(),
     prisma.weapon.count(),
     prisma.armor.count(),
     prisma.equipment.count(),
     prisma.magicalItem.count(),
-    prisma.treasure.count()
+    prisma.treasure.count(),
+    prisma.dndRace.count(),
+    prisma.dndClass.count(),
+    prisma.background.count(),
+    prisma.alignment.count(),
+    prisma.equipmentPack.count(),
+    prisma.classWeaponSuggestion.count(),
+    prisma.classArmorSuggestion.count(),
+    prisma.classSpellSuggestion.count()
   ])
   
   return {
@@ -28,7 +44,15 @@ async function checkExistingData() {
     equipment: equipmentCount,
     magicalItems: magicalItemCount,
     treasures: treasureCount,
-    total: spellCount + weaponCount + armorCount + equipmentCount + magicalItemCount + treasureCount
+    races: raceCount,
+    classes: classCount,
+    backgrounds: backgroundCount,
+    alignments: alignmentCount,
+    equipmentPacks: equipmentPackCount,
+    weaponSuggestions: weaponSuggestionCount,
+    armorSuggestions: armorSuggestionCount,
+    spellSuggestions: spellSuggestionCount,
+    total: spellCount + weaponCount + armorCount + equipmentCount + magicalItemCount + treasureCount + raceCount + classCount + backgroundCount + alignmentCount + equipmentPackCount + weaponSuggestionCount + armorSuggestionCount + spellSuggestionCount
   }
 }
 
@@ -36,140 +60,113 @@ async function clearExistingData() {
   console.log('🗑️  Clearing existing D&D content...')
   
   // Clear in order to avoid foreign key constraints
-  await prisma.spell.deleteMany()
-  await prisma.weapon.deleteMany()
-  await prisma.armor.deleteMany()
-  await prisma.equipment.deleteMany()
+  await prisma.equipmentPackItem.deleteMany()
+  await prisma.equipmentPack.deleteMany()
+  await prisma.classWeaponSuggestion.deleteMany()
+  await prisma.classArmorSuggestion.deleteMany()
+  await prisma.classSpellSuggestion.deleteMany()
+  await prisma.classWeaponProficiency.deleteMany()
+  await prisma.classArmorProficiency.deleteMany()
+  await prisma.dndClass.deleteMany()
+  await prisma.background.deleteMany()
+  await prisma.dndRace.deleteMany()
+  await prisma.alignment.deleteMany()
   await prisma.magicalItem.deleteMany()
   await prisma.treasure.deleteMany()
+  await prisma.equipment.deleteMany()
+  await prisma.armor.deleteMany()
+  await prisma.weapon.deleteMany()
+  await prisma.spell.deleteMany()
   
   console.log('✅ Existing content cleared')
 }
 
 async function seedSpells() {
-  console.log('📜 Seeding spells...')
-  
-  for (const spell of spellsData) {
-    await prisma.spell.upsert({
-      where: { name: spell.name },
-      update: spell,
-      create: spell
-    })
-  }
-  
-  console.log(`✅ Seeded ${spellsData.length} spells`)
+  console.log('📚 Seeding spells...')
+  const createdSpells = await prisma.spell.createMany({
+    data: spellsData,
+    skipDuplicates: true
+  })
+  console.log(`✅ Created ${createdSpells.count} spells`)
 }
 
 async function seedWeapons() {
   console.log('⚔️  Seeding weapons...')
-  
-  for (const weapon of weaponsData) {
-    await prisma.weapon.upsert({
-      where: { name: weapon.name },
-      update: weapon,
-      create: weapon
-    })
-  }
-  
-  console.log(`✅ Seeded ${weaponsData.length} weapons`)
+  const createdWeapons = await prisma.weapon.createMany({
+    data: weaponsData,
+    skipDuplicates: true
+  })
+  console.log(`✅ Created ${createdWeapons.count} weapons`)
 }
 
 async function seedArmor() {
   console.log('🛡️  Seeding armor...')
-  
-  for (const armor of armorData) {
-    await prisma.armor.upsert({
-      where: { name: armor.name },
-      update: armor,
-      create: armor
-    })
-  }
-  
-  console.log(`✅ Seeded ${armorData.length} armor pieces`)
+  const createdArmor = await prisma.armor.createMany({
+    data: armorData,
+    skipDuplicates: true
+  })
+  console.log(`✅ Created ${createdArmor.count} armor pieces`)
 }
 
 async function seedEquipment() {
   console.log('🎒 Seeding equipment...')
-  
-  for (const equipment of equipmentData) {
-    await prisma.equipment.upsert({
-      where: { name: equipment.name },
-      update: equipment,
-      create: equipment
-    })
-  }
-  
-  console.log(`✅ Seeded ${equipmentData.length} equipment items`)
+  const createdEquipment = await prisma.equipment.createMany({
+    data: equipmentData,
+    skipDuplicates: true
+  })
+  console.log(`✅ Created ${createdEquipment.count} equipment items`)
 }
 
 async function seedMagicalItems() {
   console.log('✨ Seeding magical items...')
-  
-  for (const item of magicalItemsData) {
-    await prisma.magicalItem.upsert({
-      where: { name: item.name },
-      update: item,
-      create: item
-    })
-  }
-  
-  console.log(`✅ Seeded ${magicalItemsData.length} magical items`)
+  const createdMagicalItems = await prisma.magicalItem.createMany({
+    data: magicalItemsData,
+    skipDuplicates: true
+  })
+  console.log(`✅ Created ${createdMagicalItems.count} magical items`)
 }
 
 async function seedTreasures() {
-  console.log('💎 Seeding treasures...')
-  
-  for (const treasure of treasureData) {
-    await prisma.treasure.upsert({
-      where: { name: treasure.name },
-      update: treasure,
-      create: treasure
-    })
-  }
-  
-  console.log(`✅ Seeded ${treasureData.length} treasures`)
+  console.log('💰 Seeding treasures...')
+  const createdTreasures = await prisma.treasure.createMany({
+    data: treasureData,
+    skipDuplicates: true
+  })
+  console.log(`✅ Created ${createdTreasures.count} treasures`)
 }
 
 async function validateSeeding() {
-  console.log('🔍 Validating seeded data...')
+  console.log('🔍 Validating seeding results...')
+  const counts = await checkExistingData()
   
-  const finalCounts = await checkExistingData()
+  console.log('📊 Final counts:')
+  console.log(`  Spells: ${counts.spells}`)
+  console.log(`  Weapons: ${counts.weapons}`)
+  console.log(`  Armor: ${counts.armor}`)
+  console.log(`  Equipment: ${counts.equipment}`)
+  console.log(`  Magical Items: ${counts.magicalItems}`)
+  console.log(`  Treasures: ${counts.treasures}`)
+  console.log(`  Races: ${counts.races}`)
+  console.log(`  Classes: ${counts.classes}`)
+  console.log(`  Backgrounds: ${counts.backgrounds}`)
+  console.log(`  Alignments: ${counts.alignments}`)
+  console.log(`  Equipment Packs: ${counts.equipmentPacks}`)
+  console.log(`  Weapon Suggestions: ${counts.weaponSuggestions}`)
+  console.log(`  Armor Suggestions: ${counts.armorSuggestions}`)
+  console.log(`  Spell Suggestions: ${counts.spellSuggestions}`)
+  console.log(`  Total: ${counts.total} items`)
   
-  const validation = {
-    spells: finalCounts.spells === contentCounts.spells,
-    weapons: finalCounts.weapons === contentCounts.weapons,
-    armor: finalCounts.armor === contentCounts.armor,
-    equipment: finalCounts.equipment === contentCounts.equipment,
-    treasures: finalCounts.treasures === contentCounts.treasures
-  }
-  
-  const allValid = Object.values(validation).every(Boolean)
-  
-  if (allValid) {
-    console.log('✅ Data validation successful!')
-    console.log(`📊 Total items: ${finalCounts.total}`)
-  } else {
-    console.error('❌ Data validation failed!')
-    console.error('Expected:', contentCounts)
-    console.error('Actual:', finalCounts)
-    throw new Error('Seeding validation failed')
-  }
-  
-  return finalCounts
+  return counts
 }
 
 export async function seedDatabase(options: SeedOptions = {}) {
-  const {
-    force = false,
-    skipIfExists = false,
-    environment = process.env.NODE_ENV as SeedOptions['environment'] || 'development'
-  } = options
-  
-  console.log(`🌱 Starting D&D database seeding (${environment})...`)
-  console.log(`📦 Content to seed: ${contentCounts.total} items total`)
+  const { force = false, skipIfExists = false, environment = 'development' } = options
   
   try {
-    // Check existing data
+    console.log('🚀 Starting D&D database seeding...')
+    console.log(`🌍 Environment: ${environment}`)
+    
+    // Check for existing data
     const existingCounts = await checkExistingData()
     const hasExistingData = existingCounts.total > 0
     
@@ -192,17 +189,26 @@ export async function seedDatabase(options: SeedOptions = {}) {
       }
     }
     
-    // Perform seeding
+    // Perform seeding in order to respect foreign key dependencies
     console.log('🚀 Beginning content seeding...')
     
-    await Promise.all([
-      seedSpells(),
-      seedWeapons(), 
-      seedArmor(),
-      seedEquipment(),
-      seedMagicalItems(),
-      seedTreasures()
-    ])
+    // First, seed independent tables (no foreign keys)
+    await seedAlignments()
+    await seedRaces()
+    await seedBackgrounds()
+    await seedSpells()
+    await seedWeapons()
+    await seedArmor()
+    await seedEquipment()
+    await seedMagicalItems()
+    await seedTreasures()
+    
+    // Then seed dependent tables (with foreign keys)
+    await seedClasses() // Depends on weapons, armor, spells
+    await seedEquipmentPacks() // Depends on equipment
+    await seedWeaponSuggestions() // Depends on classes and weapons
+    await seedArmorSuggestions() // Depends on classes and armor
+    await seedSpellSuggestions() // Depends on spells
     
     // Validate results
     const finalCounts = await validateSeeding()
@@ -237,4 +243,4 @@ async function main() {
 // Only run if this file is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   main()
-} 
+}
