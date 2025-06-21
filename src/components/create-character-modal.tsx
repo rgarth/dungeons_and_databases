@@ -87,6 +87,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [background, setBackground] = useState<string>("");
   const [alignment, setAlignment] = useState<string>("");
   const [gender, setGender] = useState<string>('');
+  const [age, setAge] = useState<number | undefined>(undefined);
   
   // Ability scores
   const [statMethod, setStatMethod] = useState<StatMethod>('rolling-assign');
@@ -614,6 +615,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         background,
         alignment,
         gender,
+        age,
         // Flatten ability scores to individual properties
         strength: abilityScores.strength,
         dexterity: abilityScores.dexterity,
@@ -1069,6 +1071,18 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     </button>
                   </div>
                 </div>
+                <div className="w-32">
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Age (Optional)</label>
+                  <input
+                    type="number"
+                    value={age || ''}
+                    onChange={(e) => setAge(e.target.value ? parseInt(e.target.value) : undefined)}
+                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    placeholder="Age"
+                    min="1"
+                    max="1000"
+                  />
+                </div>
               </div>
 
               {/* Second row: Race | Class */}
@@ -1488,6 +1502,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                             gender: gender || 'Male', // Use selected gender or default
                             alignment,
                             background,
+                            age, // Add age support
                             personalityTraits: backgroundCharacteristics?.personalityTraits || [],
                             ideals: backgroundCharacteristics?.ideals || [],
                             bonds: backgroundCharacteristics?.bonds || [],
