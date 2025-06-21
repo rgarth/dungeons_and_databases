@@ -148,6 +148,7 @@ model DndClass {
   savingThrows        Json
   skillChoices        Json
   phbDescription      String?
+  startingGoldFormula String?
   createdAt           DateTime                 @default(now())
   updatedAt           DateTime                 @updatedAt
   armorProficiencies  ClassArmorProficiency[]
@@ -238,6 +239,8 @@ model Background {
   skillProficiencies    Json
   languages             Json
   equipment             Json
+  startingGold          Int      @default(0)
+  startingGoldFormula   String?
   feature               String
   featureDescription    String
   suggestedCharacteristics Json?

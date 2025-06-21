@@ -19,6 +19,8 @@ export async function GET() {
         skillProficiencies: true,
         languages: true,
         equipment: true,
+        startingGold: true,
+        startingGoldFormula: true,
         feature: true,
         featureDescription: true,
         suggestedCharacteristics: true,
@@ -69,6 +71,8 @@ export async function GET() {
         skillProficiencies: safeParse(background.skillProficiencies),
         languages: safeParse(background.languages),
         equipment: safeParse(background.equipment),
+        startingGold: background.startingGold,
+        startingGoldFormula: background.startingGoldFormula,
         feature: background.feature,
         featureDescription: background.featureDescription,
         suggestedCharacteristics: parseSuggestedCharacteristics(background.suggestedCharacteristics)

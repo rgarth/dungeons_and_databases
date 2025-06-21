@@ -16,7 +16,8 @@ export async function seedClasses() {
           primaryAbility: classData.primaryAbility,
           savingThrows: JSON.stringify(classData.savingThrows),
           skillChoices: JSON.stringify(classData.skillChoices),
-          phbDescription: classData.phbDescription
+          phbDescription: classData.phbDescription,
+          startingGoldFormula: classData.startingGoldFormula
         },
         create: {
           name: classData.name,
@@ -25,7 +26,8 @@ export async function seedClasses() {
           primaryAbility: classData.primaryAbility,
           savingThrows: JSON.stringify(classData.savingThrows),
           skillChoices: JSON.stringify(classData.skillChoices),
-          phbDescription: classData.phbDescription
+          phbDescription: classData.phbDescription,
+          startingGoldFormula: classData.startingGoldFormula
         }
       })
       console.log(`Created/Updated class: ${result.name} with ID: ${result.id}`)

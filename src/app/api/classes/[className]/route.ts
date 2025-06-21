@@ -20,7 +20,8 @@ export async function GET(
         primaryAbility: true,
         savingThrows: true,
         skillChoices: true,
-        phbDescription: true
+        phbDescription: true,
+        startingGoldFormula: true
       }
     });
 

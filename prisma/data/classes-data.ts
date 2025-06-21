@@ -14,7 +14,8 @@ export const classesData = [
       available: ["Animal Handling", "Athletics", "Intimidation", "Nature", "Perception", "Survival"],
       choose: 2
     },
-    phbDescription: "(a) a greataxe or (b) any martial melee weapon, (a) two handaxes or (b) any simple weapon"
+    phbDescription: "(a) a greataxe or (b) any martial melee weapon, (a) two handaxes or (b) any simple weapon",
+    startingGoldFormula: "2d4*10"
   },
   {
     name: "Bard", 
@@ -26,7 +27,8 @@ export const classesData = [
       available: ["Any"], // Bards can choose any 3 skills
       choose: 3
     },
-    phbDescription: "(a) a rapier, (b) a longsword, or (c) any simple weapon, (a) a diplomat's pack or (b) an entertainer's pack, (a) a lute or (b) any other musical instrument"
+    phbDescription: "(a) a rapier, (b) a longsword, or (c) any simple weapon, (a) a diplomat's pack or (b) an entertainer's pack, (a) a lute or (b) any other musical instrument",
+    startingGoldFormula: "5d4*10"
   },
   {
     name: "Cleric",
@@ -38,7 +40,8 @@ export const classesData = [
       available: ["History", "Insight", "Medicine", "Persuasion", "Religion"],
       choose: 2
     },
-    phbDescription: "(a) a mace or (b) a warhammer, (a) scale mail, (b) leather armor, or (c) chain mail, (a) a light crossbow and 20 bolts or (b) any simple weapon, (a) a priest's pack or (b) an explorer's pack, A shield and a holy symbol"
+    phbDescription: "(a) a mace or (b) a warhammer, (a) scale mail, (b) leather armor, or (c) chain mail, (a) a light crossbow and 20 bolts or (b) any simple weapon, (a) a priest's pack or (b) an explorer's pack, A shield and a holy symbol",
+    startingGoldFormula: "5d4*10"
   },
   {
     name: "Druid",
@@ -50,7 +53,8 @@ export const classesData = [
       available: ["Arcana", "Animal Handling", "Insight", "Medicine", "Nature", "Perception", "Religion", "Survival"],
       choose: 2
     },
-    phbDescription: "(a) a wooden shield or (b) any simple weapon, (a) a scimitar or (b) any simple melee weapon, Leather armor, an explorer's pack, and a druidic focus"
+    phbDescription: "(a) a wooden shield or (b) any simple weapon, (a) a scimitar or (b) any simple melee weapon, Leather armor, an explorer's pack, and a druidic focus",
+    startingGoldFormula: "2d4*10"
   },
   {
     name: "Fighter",
@@ -62,7 +66,8 @@ export const classesData = [
       available: ["Acrobatics", "Animal Handling", "Athletics", "History", "Insight", "Intimidation", "Perception", "Survival"],
       choose: 2
     },
-    phbDescription: "(a) chain mail or (b) leather armor, longbow, and 20 arrows, (a) a martial weapon and a shield or (b) two martial weapons, (a) a light crossbow and 20 bolts or (b) two handaxes, (a) a dungeoneer's pack or (b) an explorer's pack"
+    phbDescription: "(a) chain mail or (b) leather armor, longbow, and 20 arrows, (a) a martial weapon and a shield or (b) two martial weapons, (a) a light crossbow and 20 bolts or (b) two handaxes, (a) a dungeoneer's pack or (b) an explorer's pack",
+    startingGoldFormula: "5d4*10"
   },
   {
     name: "Monk",
@@ -74,7 +79,8 @@ export const classesData = [
       available: ["Acrobatics", "Athletics", "History", "Insight", "Religion", "Stealth"],
       choose: 2
     },
-    phbDescription: "(a) a shortsword or (b) any simple weapon, (a) a dungeoneer's pack or (b) an explorer's pack, 10 darts"
+    phbDescription: "(a) a shortsword or (b) any simple weapon, (a) a dungeoneer's pack or (b) an explorer's pack, 10 darts",
+    startingGoldFormula: "5d4"
   },
   {
     name: "Paladin",
@@ -86,7 +92,8 @@ export const classesData = [
       available: ["Athletics", "Insight", "Intimidation", "Medicine", "Persuasion", "Religion"],
       choose: 2
     },
-    phbDescription: "(a) a martial weapon and a shield or (b) two martial weapons, (a) five javelins or (b) any simple melee weapon, (a) a priest's pack or (b) an explorer's pack, Chain mail and a holy symbol"
+    phbDescription: "(a) a martial weapon and a shield or (b) two martial weapons, (a) five javelins or (b) any simple melee weapon, (a) a priest's pack or (b) an explorer's pack, Chain mail and a holy symbol",
+    startingGoldFormula: "5d4*10"
   },
   {
     name: "Ranger",
@@ -98,7 +105,8 @@ export const classesData = [
       available: ["Animal Handling", "Athletics", "Insight", "Investigation", "Nature", "Perception", "Stealth", "Survival"],
       choose: 3
     },
-    phbDescription: "(a) scale mail or (b) leather armor, (a) two shortswords or (b) two simple melee weapons, (a) a dungeoneer's pack or (b) an explorer's pack, A longbow and a quiver of 20 arrows"
+    phbDescription: "(a) scale mail or (b) leather armor, (a) two shortswords or (b) two simple melee weapons, (a) a dungeoneer's pack or (b) an explorer's pack, A longbow and a quiver of 20 arrows",
+    startingGoldFormula: "5d4*10"
   },
   {
     name: "Rogue",
@@ -110,7 +118,8 @@ export const classesData = [
       available: ["Acrobatics", "Athletics", "Deception", "Insight", "Intimidation", "Investigation", "Perception", "Performance", "Persuasion", "Sleight of Hand", "Stealth"],
       choose: 4
     },
-    phbDescription: "(a) a rapier or (b) a shortsword, (a) a shortbow and quiver of 20 arrows or (b) a shortsword, (a) a burglar's pack, (b) a dungeoneer's pack, or (c) an explorer's pack, Leather armor, two daggers, and thieves' tools"
+    phbDescription: "(a) a rapier or (b) a shortsword, (a) a shortbow and quiver of 20 arrows or (b) a shortsword, (a) a burglar's pack, (b) a dungeoneer's pack, or (c) an explorer's pack, Leather armor, two daggers, and thieves' tools",
+    startingGoldFormula: "4d4*10"
   },
   {
     name: "Sorcerer",
@@ -122,7 +131,8 @@ export const classesData = [
       available: ["Arcana", "Deception", "Insight", "Intimidation", "Persuasion", "Religion"],
       choose: 2
     },
-    phbDescription: "(a) a light crossbow and 20 bolts or (b) any simple weapon, (a) a component pouch or (b) an arcane focus, (a) a dungeoneer's pack or (b) an explorer's pack, Two daggers"
+    phbDescription: "(a) a light crossbow and 20 bolts or (b) any simple weapon, (a) a component pouch or (b) an arcane focus, (a) a dungeoneer's pack or (b) an explorer's pack, Two daggers",
+    startingGoldFormula: "3d4*10"
   },
   {
     name: "Warlock",
@@ -134,7 +144,8 @@ export const classesData = [
       available: ["Arcana", "Deception", "History", "Intimidation", "Investigation", "Nature", "Religion"],
       choose: 2
     },
-    phbDescription: "(a) a light crossbow and 20 bolts or (b) any simple weapon, (a) a component pouch or (b) an arcane focus, (a) a scholar's pack or (b) a dungeoneer's pack, Leather armor, any simple weapon, and two daggers"
+    phbDescription: "(a) a light crossbow and 20 bolts or (b) any simple weapon, (a) a component pouch or (b) an arcane focus, (a) a scholar's pack or (b) a dungeoneer's pack, Leather armor, any simple weapon, and two daggers",
+    startingGoldFormula: "4d4*10"
   },
   {
     name: "Wizard",
@@ -146,7 +157,8 @@ export const classesData = [
       available: ["Arcana", "History", "Insight", "Investigation", "Medicine", "Religion"],
       choose: 2
     },
-    phbDescription: "(a) a spellbook, (a) a quarterstaff or (b) a dagger, (a) a component pouch or (b) an arcane focus, (a) a scholar's pack or (b) an explorer's pack"
+    phbDescription: "(a) a spellbook, (a) a quarterstaff or (b) a dagger, (a) a component pouch or (b) an arcane focus, (a) a scholar's pack or (b) an explorer's pack",
+    startingGoldFormula: "4d4*10"
   }
 ];
 

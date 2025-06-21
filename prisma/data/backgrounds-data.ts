@@ -4,6 +4,7 @@ export interface BackgroundData {
   skillProficiencies: string[];
   languages: string[];
   equipment: string[];
+  startingGold: number; // Starting gold in gold pieces
   feature: string;
   featureDescription: string;
   suggestedCharacteristics?: {
@@ -21,6 +22,7 @@ export const backgroundsData: BackgroundData[] = [
     skillProficiencies: ["Insight", "Religion"],
     languages: ["Two of your choice"],
     equipment: ["Holy Symbol", "Prayer Book", "Incense (5)", "Vestments", "Common Clothes", "Belt Pouch"],
+    startingGold: 15,
     feature: "Shelter of the Faithful",
     featureDescription: "As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity.",
     suggestedCharacteristics: {
@@ -66,6 +68,7 @@ export const backgroundsData: BackgroundData[] = [
     skillProficiencies: ["Deception", "Stealth"],
     languages: [],
     equipment: ["Crowbar", "Dark Common Clothes with Hood", "Belt Pouch"],
+    startingGold: 15,
     feature: "Criminal Contact",
     featureDescription: "You have a reliable and trustworthy contact who acts as your liaison to a network of other criminals.",
     suggestedCharacteristics: {
@@ -111,6 +114,7 @@ export const backgroundsData: BackgroundData[] = [
     skillProficiencies: ["Animal Handling", "Survival"],
     languages: [],
     equipment: ["Artisan's Tools", "Shovel", "Set of Artisan Tools", "Common Clothes", "Belt Pouch"],
+    startingGold: 10,
     feature: "Rustic Hospitality",
     featureDescription: "Since you come from the ranks of the common folk, you fit in among them with ease.",
     suggestedCharacteristics: {
@@ -156,6 +160,7 @@ export const backgroundsData: BackgroundData[] = [
     skillProficiencies: ["History", "Persuasion"],
     languages: ["One of your choice"],
     equipment: ["Signet Ring", "Scroll of Pedigree", "Fine Clothes", "Purse"],
+    startingGold: 25,
     feature: "Position of Privilege",
     featureDescription: "Thanks to your noble birth, people are inclined to think the best of you.",
     suggestedCharacteristics: {
@@ -201,6 +206,7 @@ export const backgroundsData: BackgroundData[] = [
     skillProficiencies: ["Arcana", "History"],
     languages: ["Two of your choice"],
     equipment: ["Bottle of Black Ink", "Quill", "Small Knife", "Letter", "Common Clothes", "Belt Pouch"],
+    startingGold: 10,
     feature: "Researcher",
     featureDescription: "When you attempt to learn or recall a piece of lore, if you do not know that information, you often know where and from whom you can obtain it.",
     suggestedCharacteristics: {
@@ -246,6 +252,7 @@ export const backgroundsData: BackgroundData[] = [
     skillProficiencies: ["Athletics", "Intimidation"],
     languages: [],
     equipment: ["Insignia of Rank", "Trophy", "Deck of Cards", "Common Clothes", "Belt Pouch"],
+    startingGold: 10,
     feature: "Military Rank",
     featureDescription: "You have a military rank from your career as a soldier.",
     suggestedCharacteristics: {
@@ -291,6 +298,7 @@ export const backgroundsData: BackgroundData[] = [
     skillProficiencies: ["Deception", "Sleight of Hand"],
     languages: [],
     equipment: ["Forgery Kit", "Disguise Kit", "Signet Ring", "Fine Clothes", "Belt Pouch"],
+    startingGold: 15,
     feature: "False Identity",
     featureDescription: "You have created a second identity that includes documentation, established acquaintances, and disguises.",
     suggestedCharacteristics: {
@@ -336,6 +344,7 @@ export const backgroundsData: BackgroundData[] = [
     skillProficiencies: ["Acrobatics", "Performance"],
     languages: [],
     equipment: ["Musical Instrument", "Favor of an Admirer", "Costume", "Belt Pouch"],
+    startingGold: 15,
     feature: "By Popular Demand",
     featureDescription: "You can always find a place to perform, usually in an inn or tavern.",
     suggestedCharacteristics: {
@@ -381,6 +390,7 @@ export const backgroundsData: BackgroundData[] = [
     skillProficiencies: ["Insight", "Persuasion"],
     languages: ["One of your choice"],
     equipment: ["Artisan's Tools", "Letter of Introduction", "Traveler's Clothes", "Belt Pouch"],
+    startingGold: 15,
     feature: "Guild Membership",
     featureDescription: "As an established and respected member of a guild, you can rely on certain benefits that membership provides.",
     suggestedCharacteristics: {
@@ -426,6 +436,7 @@ export const backgroundsData: BackgroundData[] = [
     skillProficiencies: ["Medicine", "Religion"],
     languages: ["One of your choice"],
     equipment: ["Herbalism Kit", "Scroll", "Winter Blanket", "Traveler's Clothes", "Belt Pouch"],
+    startingGold: 5,
     feature: "Discovery",
     featureDescription: "The quiet seclusion of your extended hermitage gave you access to a unique and powerful discovery.",
     suggestedCharacteristics: {
@@ -471,6 +482,7 @@ export const backgroundsData: BackgroundData[] = [
     skillProficiencies: ["Athletics", "Survival"],
     languages: ["One of your choice"],
     equipment: ["Staff", "Hunting Trap", "Traveler's Clothes", "Belt Pouch"],
+    startingGold: 10,
     feature: "Wanderer",
     featureDescription: "You have an excellent memory for maps and geography, and you can always recall the general layout of terrain.",
     suggestedCharacteristics: {
@@ -516,44 +528,9 @@ export const backgroundsData: BackgroundData[] = [
     skillProficiencies: ["Athletics", "Perception"],
     languages: [],
     equipment: ["Belaying Pin", "Silk Rope (50 feet)", "Lucky Charm", "Common Clothes", "Belt Pouch"],
+    startingGold: 10,
     feature: "Ship's Passage",
-    featureDescription: "When you need to, you can secure free passage on a sailing ship for yourself and your adventuring companions.",
-    suggestedCharacteristics: {
-      personalityTraits: [
-        "My friends know they can rely on me, no matter what.",
-        "I work hard so that I can play hard when the work is done.",
-        "I enjoy sailing into new ports and making new friends over a flagon of ale.",
-        "I stretch the truth for the sake of a good story.",
-        "To me, a tavern brawl is a nice way to get to know a new city.",
-        "I never pass up a friendly wager.",
-        "My language is colorful and full of sailing terms.",
-        "I like a job well done, especially if I can convince someone else to do it."
-      ],
-      ideals: [
-        "Respect. The thing that keeps a ship together is mutual respect between captain and crew. (Good)",
-        "Fairness. We all do the work, so we all share in the rewards. (Lawful)",
-        "Freedom. The sea is freedom—the freedom to go anywhere and do anything. (Chaotic)",
-        "Mastery. I'm a predator, and the other ships on the sea are my prey. (Evil)",
-        "People. I'm committed to my crewmates, not to ideals. (Neutral)",
-        "Aspiration. Someday I'll own my own ship and chart my own destiny. (Any)"
-      ],
-      bonds: [
-        "I'm loyal to my captain first, everything else second.",
-        "The ship is most important—crewmates and captains come and go.",
-        "I'll always remember my first ship.",
-        "In a harbor town, I have a paramour whose eyes nearly stole me from the sea.",
-        "I was cheated out of my fair share of the profits, and I want to get my due.",
-        "Ruthless pirates destroyed my previous ship and harmed my former crewmates. Vengeance will be mine."
-      ],
-      flaws: [
-        "I follow orders, even if I think they're wrong.",
-        "I'll say anything to avoid having to do extra work.",
-        "Once someone questions my courage, I never back down no matter how dangerous the situation.",
-        "Once I start drinking, it's hard for me to stop.",
-        "I can't help but pocket loose coins and other trinkets I come across.",
-        "My pride will probably lead to my destruction."
-      ]
-    }
+    featureDescription: "When you need to, you can secure free passage on a sailing ship for yourself and your adventuring companions."
   }
   
 ];

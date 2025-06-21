@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { X, Dice6, RefreshCw } from "lucide-react";
+import { toast } from 'react-hot-toast';
 import { AbilityScore } from "@/lib/dnd/core";
 import { generateFantasyName } from "@/lib/dnd/character";
 import { Spell } from "@/lib/dnd/spells";
@@ -441,10 +442,11 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         spellsPrepared: selectedSpells, // For level 1, known = prepared
         spellSlots: creationOptions?.spellcasting?.spellSlots || {},
         spellcastingAbility: creationOptions?.spellcasting?.ability || null,
-        inventory: selectedPackItems, // Send actual equipment items, not pack reference
-        inventoryWeapons: selectedWeapons,
-        inventoryArmor: selectedArmor,
+        inventory: selectedPackItems, // Send equipment pack items
+        weapons: selectedWeapons,
+        armor: selectedArmor,
         ammunition: selectedAmmunition,
+        // Currency will be calculated by the service based on equipment pack cost
         avatar: generatedFullBodyAvatar || undefined
       };
 
@@ -466,6 +468,18 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       }
 
       const createdCharacter = await response.json();
+      
+      // Show toast with gold roll details if "No Pack" was selected
+      if (selectedEquipmentPack === -1 && createdCharacter.goldRollDetails) {
+        toast.success(`🎲 Starting Gold Roll: ${createdCharacter.goldRollDetails}`, {
+          duration: 6000,
+          style: {
+            background: '#1e293b',
+            color: '#e2e8f0',
+            border: '1px solid #475569'
+          }
+        });
+      }
       
       // Notify parent component with the created character
       onCharacterCreated?.(createdCharacter);
@@ -788,6 +802,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                         onChange={(e) => setSelectedEquipmentPack(Number(e.target.value))}
                         className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
                       >
+                        <option value={-1}>No Pack - Starting Gold</option>
                         {creationOptions?.equipmentPacks?.map((pack, index) => (
                           <option key={String(pack.id)} value={index}>
                             {pack.name} ({pack.cost})
@@ -796,7 +811,16 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                       </select>
                       
                       {/* Show selected pack details */}
-                      {creationOptions?.equipmentPacks?.[selectedEquipmentPack] && (
+                      {selectedEquipmentPack === -1 ? (
+                        <div className="mt-2 p-3 bg-slate-700 rounded-lg">
+                          <div className="text-sm text-slate-300 mb-2">
+                            You will receive starting gold based on your background instead of an equipment pack.
+                          </div>
+                          <div className="text-xs text-slate-400">
+                            <strong>Starting Gold:</strong> Varies by background (Noble: 25 gp, Hermit: 5 gp, etc.)
+                          </div>
+                        </div>
+                      ) : creationOptions?.equipmentPacks?.[selectedEquipmentPack] && (
                         <div className="mt-2 p-3 bg-slate-700 rounded-lg">
                           <div className="text-sm text-slate-300 mb-2">
                             {creationOptions.equipmentPacks[selectedEquipmentPack].description}

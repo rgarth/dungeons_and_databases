@@ -241,4 +241,26 @@ export function calculateArmorClass(
   }
   
   return ac;
+}
+
+// Utility function to parse D&D cost strings into gold pieces
+export function parseCostToGold(costString: string): number {
+  const match = costString.match(/^(\d+(?:\.\d+)?)\s*(cp|sp|ep|gp|pp)$/i);
+  if (!match) {
+    console.warn(`Invalid cost format: ${costString}`);
+    return 0;
+  }
+  
+  const amount = parseFloat(match[1]);
+  const unit = match[2].toLowerCase();
+  
+  // Convert to gold pieces
+  switch (unit) {
+    case 'cp': return amount / 100; // 100 cp = 1 gp
+    case 'sp': return amount / 10;  // 10 sp = 1 gp
+    case 'ep': return amount / 2;   // 2 ep = 1 gp
+    case 'gp': return amount;       // 1 gp = 1 gp
+    case 'pp': return amount * 10;  // 1 pp = 10 gp
+    default: return 0;
+  }
 } 
