@@ -4,7 +4,7 @@ import { CharacterCreationService } from '../character/creation';
 global.fetch = jest.fn();
 
 // Helper function to set up all required API mocks
-function setupApiMocks(characterClass: string, race: string, background: string) {
+function setupApiMocks(characterClass: string, race: string, background: string, hasEquipmentPack: boolean = false) {
   // 1. RacialFeaturesService.applyRacialAbilityScores - single race endpoint (object)
   (global.fetch as jest.Mock).mockResolvedValueOnce({
     ok: true,
@@ -94,29 +94,45 @@ function setupApiMocks(characterClass: string, race: string, background: string)
     ])
   });
 
-  // 8. CharacterCreationService - single class endpoint (object, for gold formula)
-  (global.fetch as jest.Mock).mockResolvedValueOnce({
-    ok: true,
-    json: async () => ({
-      name: characterClass,
-      startingGoldFormula: characterClass === 'Fighter' ? '5d4*10' : '4d4*10',
-      hitDie: characterClass === 'Fighter' ? 10 : 6
-    })
-  });
+  if (hasEquipmentPack) {
+    // 8. Equipment pack selected - backgrounds list endpoint (array, third call for starting gold)
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ([
+        {
+          name: background,
+          startingGold: background === 'Noble' ? 25 : 10,
+          startingGoldFormula: background === 'Custom Background' ? '2d4*10' : null,
+          equipment: [],
+          skillProficiencies: ['History', 'Persuasion']
+        }
+      ])
+    });
+  } else {
+    // 8. No equipment pack - single class endpoint (object, for gold formula)
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        name: characterClass,
+        startingGoldFormula: characterClass === 'Fighter' ? '5d4*10' : '4d4*10',
+        hitDie: characterClass === 'Fighter' ? 10 : 6
+      })
+    });
 
-  // 9. CharacterCreationService - backgrounds list endpoint (array, third call for gold formula)
-  (global.fetch as jest.Mock).mockResolvedValueOnce({
-    ok: true,
-    json: async () => ([
-      {
-        name: background,
-        startingGold: background === 'Noble' ? 25 : 10,
-        startingGoldFormula: background === 'Custom Background' ? '2d4*10' : null,
-        equipment: [],
-        skillProficiencies: ['History', 'Persuasion']
-      }
-    ])
-  });
+    // 9. No equipment pack - backgrounds list endpoint (array, third call for gold formula)
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ([
+        {
+          name: background,
+          startingGold: background === 'Noble' ? 25 : 10,
+          startingGoldFormula: background === 'Custom Background' ? '2d4*10' : null,
+          equipment: [],
+          skillProficiencies: ['History', 'Persuasion']
+        }
+      ])
+    });
+  }
 }
 
 describe('CharacterCreationService', () => {
@@ -129,7 +145,7 @@ describe('CharacterCreationService', () => {
 
   describe('Starting Gold Formulas', () => {
     it('should roll class starting gold when no equipment pack is selected', async () => {
-      setupApiMocks('Fighter', 'Human', 'Noble');
+      setupApiMocks('Fighter', 'Human', 'Noble', false);
 
       const characterData = {
         name: 'Test Fighter',
@@ -163,7 +179,7 @@ describe('CharacterCreationService', () => {
     });
 
     it('should roll both class and background gold when both have formulas', async () => {
-      setupApiMocks('Wizard', 'Elf', 'Custom Background');
+      setupApiMocks('Wizard', 'Elf', 'Custom Background', false);
 
       const characterData = {
         name: 'Test Wizard',
@@ -198,7 +214,7 @@ describe('CharacterCreationService', () => {
     });
 
     it('should use background starting gold when equipment pack is selected', async () => {
-      setupApiMocks('Fighter', 'Human', 'Noble');
+      setupApiMocks('Fighter', 'Human', 'Noble', true);
 
       const characterData = {
         name: 'Test Character',
@@ -232,7 +248,7 @@ describe('CharacterCreationService', () => {
 
   describe('Equipment Pack Handling', () => {
     it('should include equipment pack items when pack is selected', async () => {
-      setupApiMocks('Fighter', 'Human', 'Folk Hero');
+      setupApiMocks('Fighter', 'Human', 'Folk Hero', true);
 
       const equipmentPackItems = [
         { name: 'Backpack', quantity: 1 },
@@ -272,7 +288,7 @@ describe('CharacterCreationService', () => {
     });
 
     it('should not include equipment pack items when no pack is selected', async () => {
-      setupApiMocks('Fighter', 'Human', 'Folk Hero');
+      setupApiMocks('Fighter', 'Human', 'Folk Hero', false);
 
       const characterData = {
         name: 'Test Character',

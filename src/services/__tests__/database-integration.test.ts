@@ -5,7 +5,7 @@ import { Weapon, Armor } from '@/lib/dnd/equipment';
 global.fetch = jest.fn();
 
 // Helper function to set up all required API mocks for database integration tests
-function setupApiMocks(characterClass: string, race: string, background: string) {
+function setupApiMocks(characterClass: string, race: string, background: string, hasEquipmentPack: boolean = false) {
   // 1. RacialFeaturesService.applyRacialAbilityScores - single race endpoint (object)
   (global.fetch as jest.Mock).mockResolvedValueOnce({
     ok: true,
@@ -95,29 +95,45 @@ function setupApiMocks(characterClass: string, race: string, background: string)
     ])
   });
 
-  // 8. CharacterCreationService - single class endpoint (object, for gold formula)
-  (global.fetch as jest.Mock).mockResolvedValueOnce({
-    ok: true,
-    json: async () => ({
-      name: characterClass,
-      startingGoldFormula: characterClass === 'Fighter' ? '5d4*10' : '4d4*10',
-      hitDie: characterClass === 'Fighter' ? 10 : 6
-    })
-  });
+  if (hasEquipmentPack) {
+    // 8. Equipment pack selected - backgrounds list endpoint (array, third call for starting gold)
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ([
+        {
+          name: background,
+          startingGold: background === 'Noble' ? 25 : 10,
+          startingGoldFormula: null,
+          equipment: [],
+          skillProficiencies: ['History', 'Persuasion']
+        }
+      ])
+    });
+  } else {
+    // 8. No equipment pack - single class endpoint (object, for gold formula)
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        name: characterClass,
+        startingGoldFormula: characterClass === 'Fighter' ? '5d4*10' : '4d4*10',
+        hitDie: characterClass === 'Fighter' ? 10 : 6
+      })
+    });
 
-  // 9. CharacterCreationService - backgrounds list endpoint (array, third call for gold formula)
-  (global.fetch as jest.Mock).mockResolvedValueOnce({
-    ok: true,
-    json: async () => ([
-      {
-        name: background,
-        startingGold: background === 'Noble' ? 25 : 10,
-        startingGoldFormula: null,
-        equipment: [],
-        skillProficiencies: ['History', 'Persuasion']
-      }
-    ])
-  });
+    // 9. No equipment pack - backgrounds list endpoint (array, third call for gold formula)
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ([
+        {
+          name: background,
+          startingGold: background === 'Noble' ? 25 : 10,
+          startingGoldFormula: null,
+          equipment: [],
+          skillProficiencies: ['History', 'Persuasion']
+        }
+      ])
+    });
+  }
 }
 
 describe('Database Integration Tests', () => {
