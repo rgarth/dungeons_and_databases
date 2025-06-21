@@ -430,7 +430,13 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         background,
         alignment,
         gender,
-        abilityScores,
+        // Flatten ability scores to individual properties
+        strength: abilityScores.strength,
+        dexterity: abilityScores.dexterity,
+        constitution: abilityScores.constitution,
+        intelligence: abilityScores.intelligence,
+        wisdom: abilityScores.wisdom,
+        charisma: abilityScores.charisma,
         spellsKnown: selectedSpells,
         spellsPrepared: selectedSpells, // For level 1, known = prepared
         spellSlots: creationOptions?.spellcasting?.spellSlots || {},
