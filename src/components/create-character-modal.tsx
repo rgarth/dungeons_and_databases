@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X, Dice6, RefreshCw } from "lucide-react";
 import { toast } from 'react-hot-toast';
 import { AbilityScore } from "@/lib/dnd/core";
@@ -132,6 +132,187 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [classStartingGoldFormula, setClassStartingGoldFormula] = useState<string>('');
   const [calculatedGold, setCalculatedGold] = useState<number>(0);
   const [goldRollDetails, setGoldRollDetails] = useState<string>('');
+
+  // Cache for class starting gold formulas
+  const classFormulaCache = useRef<Map<string, { formula: string; timestamp: number }>>(new Map());
+  const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+  // Fetch class starting gold formula when class changes
+  useEffect(() => {
+    const fetchClassFormula = async () => {
+      if (!characterClass) return;
+      
+      // Check cache first
+      const cached = classFormulaCache.current.get(characterClass);
+      if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+        setClassStartingGoldFormula(cached.formula);
+        return;
+      }
+      
+      try {
+        const classResponse = await fetch(`/api/classes/${encodeURIComponent(characterClass)}`);
+        if (classResponse.ok) {
+          const classData = await classResponse.json();
+          if (classData.startingGoldFormula) {
+            // Update cache
+            classFormulaCache.current.set(characterClass, {
+              formula: classData.startingGoldFormula,
+              timestamp: Date.now()
+            });
+            setClassStartingGoldFormula(classData.startingGoldFormula);
+          }
+        }
+      } catch (error) {
+        console.warn('Error fetching class starting gold formula:', error);
+      }
+    };
+
+    fetchClassFormula();
+  }, [characterClass]);
+
+  // Calculate gold when first entering background step
+  useEffect(() => {
+    if (currentStep === 'background' && background && characterClass) {
+      // Trigger initial gold calculation
+      setTimeout(() => {
+        const calculateGold = async () => {
+          try {
+            // Get background data (starting gold and formula)
+            const backgroundResponse = await fetch('/api/backgrounds');
+            if (backgroundResponse.ok) {
+              const backgrounds = await backgroundResponse.json();
+              const backgroundData = backgrounds.find((bg: { name: string; startingGold?: number; startingGoldFormula?: string }) => bg.name === background);
+              if (backgroundData?.startingGold) {
+                setBackgroundStartingGold(backgroundData.startingGold);
+              }
+            }
+
+            // Use cached class formula if available, otherwise fetch it
+            let classFormula = classStartingGoldFormula;
+            if (!classFormula) {
+              const cached = classFormulaCache.current.get(characterClass);
+              if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+                classFormula = cached.formula;
+              } else {
+                // Fetch and cache if not available
+                const classResponse = await fetch(`/api/classes/${encodeURIComponent(characterClass)}`);
+                if (classResponse.ok) {
+                  const classData = await classResponse.json();
+                  if (classData.startingGoldFormula) {
+                    classFormula = classData.startingGoldFormula;
+                    classFormulaCache.current.set(characterClass, {
+                      formula: classData.startingGoldFormula,
+                      timestamp: Date.now()
+                    });
+                    setClassStartingGoldFormula(classData.startingGoldFormula);
+                  }
+                }
+              }
+            }
+                  
+            // Calculate gold based on equipment pack selection
+            if (selectedEquipmentPack === -1) {
+              // No equipment pack - roll class gold + background fixed gold + background rolled gold
+              let classGold = 0;
+              let backgroundFixedGold = 0;
+              let backgroundRolledGold = 0;
+              let classRollDetails = '';
+              let backgroundRollDetails = '';
+              
+              // Roll class gold
+              if (classFormula) {
+                const match = classFormula.match(/(\d+)d(\d+)(\*\d+)?/);
+                if (match) {
+                  const numDice = parseInt(match[1], 10);
+                  const dieSize = parseInt(match[2], 10);
+                  const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
+                  
+                  // Actually roll the dice
+                  const rolls: number[] = [];
+                  let totalRoll = 0;
+                  for (let i = 0; i < numDice; i++) {
+                    const roll = Math.floor(Math.random() * dieSize) + 1;
+                    rolls.push(roll);
+                    totalRoll += roll;
+                  }
+                  classGold = totalRoll * multiplier;
+                  classRollDetails = `${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} [${rolls.join(', ')}] = ${classGold} gp`;
+                }
+              }
+              
+              // Get background data (fixed gold and formula)
+              const backgroundResponse = await fetch('/api/backgrounds');
+              if (backgroundResponse.ok) {
+                const backgrounds = await backgroundResponse.json();
+                const backgroundData = backgrounds.find((bg: { name: string; startingGold?: number; startingGoldFormula?: string }) => bg.name === background);
+                
+                // Add fixed background gold (like Noble's 25 gp)
+                if (backgroundData?.startingGold) {
+                  backgroundFixedGold = backgroundData.startingGold;
+                }
+                
+                // Roll background gold (if background has a formula)
+                if (backgroundData?.startingGoldFormula) {
+                  const match = backgroundData.startingGoldFormula.match(/(\d+)d(\d+)(\*\d+)?/);
+                  if (match) {
+                    const numDice = parseInt(match[1], 10);
+                    const dieSize = parseInt(match[2], 10);
+                    const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
+                    
+                    // Actually roll the dice
+                    const rolls: number[] = [];
+                    let totalRoll = 0;
+                    for (let i = 0; i < numDice; i++) {
+                      const roll = Math.floor(Math.random() * dieSize) + 1;
+                      rolls.push(roll);
+                      totalRoll += roll;
+                    }
+                    backgroundRolledGold = totalRoll * multiplier;
+                    backgroundRollDetails = `${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} [${rolls.join(', ')}] = ${backgroundRolledGold} gp`;
+                  }
+                }
+              }
+              
+              const totalGold = classGold + backgroundFixedGold + backgroundRolledGold;
+              setCalculatedGold(totalGold);
+              
+              // Build the roll details string
+              let rollDetails = `Class: ${classRollDetails}`;
+              if (backgroundFixedGold > 0) {
+                rollDetails += `, Background: ${backgroundFixedGold} gp`;
+              }
+              if (backgroundRollDetails) {
+                rollDetails += `, Background Roll: ${backgroundRollDetails}`;
+              }
+              rollDetails += ` (Total: ${totalGold} gp)`;
+              
+              setGoldRollDetails(rollDetails);
+              
+              // Show toast
+              toast.success(`Starting Gold: ${totalGold} gp (Class + Background)`, {
+                duration: 3000,
+                icon: '💰'
+              });
+            } else {
+              // Equipment pack selected - use background starting gold
+              setCalculatedGold(backgroundStartingGold);
+              setGoldRollDetails('');
+              
+              // Show toast
+              toast.success(`Starting Gold: ${backgroundStartingGold} gp (${background} background)`, {
+                duration: 3000,
+                icon: '💰'
+              });
+            }
+          } catch (error) {
+            console.warn('Error calculating initial gold:', error);
+          }
+        };
+
+        calculateGold();
+      }, 100); // Small delay to ensure state is updated
+    }
+  }, [currentStep, background, characterClass, selectedEquipmentPack, classStartingGoldFormula, backgroundStartingGold]);
 
   // Set default values when data is loaded
   useEffect(() => {
@@ -448,6 +629,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         weapons: selectedWeapons,
         armor: selectedArmor,
         ammunition: selectedAmmunition,
+        // Send calculated gold
+        goldPieces: calculatedGold,
         // Currency will be calculated by the service based on equipment pack cost
         avatar: generatedFullBodyAvatar || undefined
       };
@@ -542,75 +725,285 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     return modifier >= 0 ? `+${modifier}` : `${modifier}`;
   };
 
-  // Calculate gold whenever background or equipment pack changes
-  useEffect(() => {
-    const calculateGold = async () => {
-      if (!background || !characterClass) return;
+  // Custom handler for background changes that triggers gold calculation
+  const handleBackgroundChange = (newBackground: string) => {
+    setBackground(newBackground);
+    // Trigger gold calculation immediately
+    setTimeout(() => {
+      const calculateGold = async () => {
+        if (!newBackground || !characterClass) return;
 
-      try {
-        // Get background starting gold
-        const backgroundResponse = await fetch('/api/backgrounds');
-        if (backgroundResponse.ok) {
-          const backgrounds = await backgroundResponse.json();
-          const backgroundData = backgrounds.find((bg: { name: string; startingGold?: number }) => bg.name === background);
-          if (backgroundData?.startingGold) {
-            setBackgroundStartingGold(backgroundData.startingGold);
-          }
-        }
-
-        // Get class starting gold formula
-        const classResponse = await fetch(`/api/classes/${encodeURIComponent(characterClass)}`);
-        if (classResponse.ok) {
-          const classData = await classResponse.json();
-          if (classData.startingGoldFormula) {
-            setClassStartingGoldFormula(classData.startingGoldFormula);
-          }
-        }
-
-        // Calculate gold based on equipment pack selection
-        if (selectedEquipmentPack === -1) {
-          // No equipment pack - roll dice for gold
-          if (classStartingGoldFormula) {
-            // Simulate a roll for display purposes (actual roll happens during character creation)
-            const match = classStartingGoldFormula.match(/(\d+)d(\d+)(\*\d+)?/);
-            if (match) {
-              const numDice = parseInt(match[1], 10);
-              const dieSize = parseInt(match[2], 10);
-              const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
-              const avgRoll = (numDice * (dieSize + 1) / 2) * multiplier;
-              setCalculatedGold(Math.round(avgRoll));
-              setGoldRollDetails(`${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} (avg: ${Math.round(avgRoll)} gp)`);
+        try {
+          // Get background data (starting gold and formula)
+          const backgroundResponse = await fetch('/api/backgrounds');
+          if (backgroundResponse.ok) {
+            const backgrounds = await backgroundResponse.json();
+            const backgroundData = backgrounds.find((bg: { name: string; startingGold?: number; startingGoldFormula?: string }) => bg.name === newBackground);
+            if (backgroundData?.startingGold) {
+              setBackgroundStartingGold(backgroundData.startingGold);
             }
           }
-        } else {
-          // Equipment pack selected - use background starting gold
-          setCalculatedGold(backgroundStartingGold);
-          setGoldRollDetails('');
+
+          // Use cached class formula if available, otherwise fetch it
+          let classFormula = classStartingGoldFormula;
+          if (!classFormula) {
+            const cached = classFormulaCache.current.get(characterClass);
+            if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+              classFormula = cached.formula;
+            } else {
+              // Fetch and cache if not available
+              const classResponse = await fetch(`/api/classes/${encodeURIComponent(characterClass)}`);
+              if (classResponse.ok) {
+                const classData = await classResponse.json();
+                if (classData.startingGoldFormula) {
+                  classFormula = classData.startingGoldFormula;
+                  classFormulaCache.current.set(characterClass, {
+                    formula: classData.startingGoldFormula,
+                    timestamp: Date.now()
+                  });
+                  setClassStartingGoldFormula(classData.startingGoldFormula);
+                }
+              }
+            }
+          }
+                
+          // Calculate gold based on equipment pack selection
+          if (selectedEquipmentPack === -1) {
+            // No equipment pack - roll class gold + background fixed gold + background rolled gold
+            let classGold = 0;
+            let backgroundFixedGold = 0;
+            let backgroundRolledGold = 0;
+            let classRollDetails = '';
+            let backgroundRollDetails = '';
+            
+            // Roll class gold
+            if (classFormula) {
+              const match = classFormula.match(/(\d+)d(\d+)(\*\d+)?/);
+              if (match) {
+                const numDice = parseInt(match[1], 10);
+                const dieSize = parseInt(match[2], 10);
+                const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
+                
+                // Actually roll the dice
+                const rolls: number[] = [];
+                let totalRoll = 0;
+                for (let i = 0; i < numDice; i++) {
+                  const roll = Math.floor(Math.random() * dieSize) + 1;
+                  rolls.push(roll);
+                  totalRoll += roll;
+                }
+                classGold = totalRoll * multiplier;
+                classRollDetails = `${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} [${rolls.join(', ')}] = ${classGold} gp`;
+              }
+            }
+            
+            // Get background data (fixed gold and formula)
+            const backgroundResponse = await fetch('/api/backgrounds');
+            if (backgroundResponse.ok) {
+              const backgrounds = await backgroundResponse.json();
+              const backgroundData = backgrounds.find((bg: { name: string; startingGold?: number; startingGoldFormula?: string }) => bg.name === newBackground);
+              
+              // Add fixed background gold (like Noble's 25 gp)
+              if (backgroundData?.startingGold) {
+                backgroundFixedGold = backgroundData.startingGold;
+              }
+              
+              // Roll background gold (if background has a formula)
+              if (backgroundData?.startingGoldFormula) {
+                const match = backgroundData.startingGoldFormula.match(/(\d+)d(\d+)(\*\d+)?/);
+                if (match) {
+                  const numDice = parseInt(match[1], 10);
+                  const dieSize = parseInt(match[2], 10);
+                  const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
+                  
+                  // Actually roll the dice
+                  const rolls: number[] = [];
+                  let totalRoll = 0;
+                  for (let i = 0; i < numDice; i++) {
+                    const roll = Math.floor(Math.random() * dieSize) + 1;
+                    rolls.push(roll);
+                    totalRoll += roll;
+                  }
+                  backgroundRolledGold = totalRoll * multiplier;
+                  backgroundRollDetails = `${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} [${rolls.join(', ')}] = ${backgroundRolledGold} gp`;
+                }
+              }
+            }
+            
+            const totalGold = classGold + backgroundFixedGold + backgroundRolledGold;
+            setCalculatedGold(totalGold);
+            
+            // Build the roll details string
+            let rollDetails = `Class: ${classRollDetails}`;
+            if (backgroundFixedGold > 0) {
+              rollDetails += `, Background: ${backgroundFixedGold} gp`;
+            }
+            if (backgroundRollDetails) {
+              rollDetails += `, Background Roll: ${backgroundRollDetails}`;
+            }
+            rollDetails += ` (Total: ${totalGold} gp)`;
+            
+            setGoldRollDetails(rollDetails);
+            
+            // Show toast
+            toast.success(`Starting Gold: ${totalGold} gp (Class + Background)`, {
+              duration: 3000,
+              icon: '💰'
+            });
+          } else {
+            // Equipment pack selected - use background starting gold
+            setCalculatedGold(backgroundStartingGold);
+            setGoldRollDetails('');
+            
+            // Show toast
+            toast.success(`Starting Gold: ${backgroundStartingGold} gp (${newBackground} background)`, {
+              duration: 3000,
+              icon: '💰'
+            });
+          }
+        } catch (error) {
+          console.warn('Error calculating gold:', error);
         }
-      } catch (error) {
-        console.warn('Error calculating gold:', error);
-      }
-    };
+      };
 
-    calculateGold();
-  }, [background, characterClass, selectedEquipmentPack, backgroundStartingGold, classStartingGoldFormula]);
+      calculateGold();
+    }, 100); // Small delay to ensure state is updated
+  };
 
-  // Show toast when gold calculation changes
-  useEffect(() => {
-    if (calculatedGold > 0) {
-      if (selectedEquipmentPack === -1) {
-        toast.success(`Starting Gold: ${calculatedGold} gp (${goldRollDetails})`, {
-          duration: 3000,
-          icon: '💰'
-        });
-      } else {
-        toast.success(`Starting Gold: ${calculatedGold} gp (Background)`, {
-          duration: 3000,
-          icon: '💰'
-        });
-      }
-    }
-  }, [calculatedGold, selectedEquipmentPack, goldRollDetails]);
+  // Custom handler for equipment pack changes
+  const handleEquipmentPackChange = (newPackIndex: number) => {
+    setSelectedEquipmentPack(newPackIndex);
+    
+    // Trigger gold calculation immediately
+    setTimeout(() => {
+      const calculateGold = async () => {
+        if (!background || !characterClass) return;
+
+        try {
+          if (newPackIndex === -1) {
+            // No equipment pack - roll class gold + background fixed gold + background rolled gold
+            let classGold = 0;
+            let backgroundFixedGold = 0;
+            let backgroundRolledGold = 0;
+            let classRollDetails = '';
+            let backgroundRollDetails = '';
+            
+            // Use cached class formula if available
+            let classFormula = classStartingGoldFormula;
+            if (!classFormula) {
+              const cached = classFormulaCache.current.get(characterClass);
+              if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+                classFormula = cached.formula;
+              } else {
+                // Fetch and cache if not available
+                const classResponse = await fetch(`/api/classes/${encodeURIComponent(characterClass)}`);
+                if (classResponse.ok) {
+                  const classData = await classResponse.json();
+                  if (classData.startingGoldFormula) {
+                    classFormula = classData.startingGoldFormula;
+                    classFormulaCache.current.set(characterClass, {
+                      formula: classData.startingGoldFormula,
+                      timestamp: Date.now()
+                    });
+                    setClassStartingGoldFormula(classData.startingGoldFormula);
+                  }
+                }
+              }
+            }
+            
+            // Roll class gold
+            if (classFormula) {
+              const match = classFormula.match(/(\d+)d(\d+)(\*\d+)?/);
+              if (match) {
+                const numDice = parseInt(match[1], 10);
+                const dieSize = parseInt(match[2], 10);
+                const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
+                
+                // Actually roll the dice
+                const rolls: number[] = [];
+                let totalRoll = 0;
+                for (let i = 0; i < numDice; i++) {
+                  const roll = Math.floor(Math.random() * dieSize) + 1;
+                  rolls.push(roll);
+                  totalRoll += roll;
+                }
+                classGold = totalRoll * multiplier;
+                classRollDetails = `${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} [${rolls.join(', ')}] = ${classGold} gp`;
+              }
+            }
+            
+            // Get background data (fixed gold and formula)
+            const backgroundResponse = await fetch('/api/backgrounds');
+            if (backgroundResponse.ok) {
+              const backgrounds = await backgroundResponse.json();
+              const backgroundData = backgrounds.find((bg: { name: string; startingGold?: number; startingGoldFormula?: string }) => bg.name === background);
+              
+              // Add fixed background gold (like Noble's 25 gp)
+              if (backgroundData?.startingGold) {
+                backgroundFixedGold = backgroundData.startingGold;
+              }
+              
+              // Roll background gold (if background has a formula)
+              if (backgroundData?.startingGoldFormula) {
+                const match = backgroundData.startingGoldFormula.match(/(\d+)d(\d+)(\*\d+)?/);
+                if (match) {
+                  const numDice = parseInt(match[1], 10);
+                  const dieSize = parseInt(match[2], 10);
+                  const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
+                  
+                  // Actually roll the dice
+                  const rolls: number[] = [];
+                  let totalRoll = 0;
+                  for (let i = 0; i < numDice; i++) {
+                    const roll = Math.floor(Math.random() * dieSize) + 1;
+                    rolls.push(roll);
+                    totalRoll += roll;
+                  }
+                  backgroundRolledGold = totalRoll * multiplier;
+                  backgroundRollDetails = `${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} [${rolls.join(', ')}] = ${backgroundRolledGold} gp`;
+                }
+              }
+            }
+            
+            const totalGold = classGold + backgroundFixedGold + backgroundRolledGold;
+            setCalculatedGold(totalGold);
+            
+            // Build the roll details string
+            let rollDetails = `Class: ${classRollDetails}`;
+            if (backgroundFixedGold > 0) {
+              rollDetails += `, Background: ${backgroundFixedGold} gp`;
+            }
+            if (backgroundRollDetails) {
+              rollDetails += `, Background Roll: ${backgroundRollDetails}`;
+            }
+            rollDetails += ` (Total: ${totalGold} gp)`;
+            
+            setGoldRollDetails(rollDetails);
+            
+            // Show toast
+            toast.success(`Starting Gold: ${totalGold} gp (Class + Background)`, {
+              duration: 3000,
+              icon: '💰'
+            });
+          } else {
+            // Equipment pack selected - use background starting gold
+            setCalculatedGold(backgroundStartingGold);
+            setGoldRollDetails('');
+            
+            // Show toast
+            toast.success(`Starting Gold: ${backgroundStartingGold} gp (${background} background)`, {
+              duration: 3000,
+              icon: '💰'
+            });
+          }
+        } catch (error) {
+          console.warn('Error calculating gold:', error);
+        }
+      };
+
+      calculateGold();
+    }, 100); // Small delay to ensure state is updated
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
@@ -947,19 +1340,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           {currentStep === 'background' && (
             <>
               <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-white mb-4">Select Your Background</h3>
-                  <BackgroundSelector
-                    selectedBackground={background}
-                    selectedCharacteristics={backgroundCharacteristics}
-                    onBackgroundChange={setBackground}
-                    onCharacteristicsChange={setBackgroundCharacteristics}
-                    showCharacteristics={true}
-                    showFullDetails={true}
-                  />
-                </div>
-
-                {/* Equipment Pack Selection */}
+                {/* Equipment Pack Selection - MOVED ABOVE BACKGROUND */}
                 <div>
                   <h3 className="text-lg font-semibold text-white mb-4">Starting Equipment Choice</h3>
                   
@@ -975,7 +1356,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                       <div>
                         <select
                           value={selectedEquipmentPack}
-                          onChange={(e) => setSelectedEquipmentPack(Number(e.target.value))}
+                          onChange={(e) => handleEquipmentPackChange(Number(e.target.value))}
                           className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
                         >
                           <option value={-1}>No Pack - Roll for Starting Gold</option>
@@ -992,12 +1373,13 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                             <div className="text-sm text-slate-300 mb-2">
                               You will roll for starting gold based on your class instead of taking an equipment pack.
                             </div>
-                            <div className="text-xs text-slate-400">
-                              <strong>Class Formula:</strong> {classStartingGoldFormula || 'Not available'}
-                            </div>
-                            {calculatedGold > 0 && (
+                            {goldRollDetails ? (
                               <div className="text-xs text-yellow-400 mt-1">
-                                <strong>Estimated Gold:</strong> {calculatedGold} gp ({goldRollDetails})
+                                <strong>Starting Gold:</strong> {calculatedGold} gp <span className="block">({goldRollDetails})</span>
+                              </div>
+                            ) : (
+                              <div className="text-xs text-slate-400 mt-1">
+                                <em>Roll to see your starting gold!</em>
                               </div>
                             )}
                           </div>
@@ -1014,7 +1396,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                             </div>
                             {calculatedGold > 0 && (
                               <div className="text-xs text-yellow-400 mt-1">
-                                <strong>Starting Gold:</strong> {calculatedGold} gp (from background)
+                                <strong>Starting Gold:</strong> {calculatedGold} gp (from {background} background)
                               </div>
                             )}
                           </div>
@@ -1022,6 +1404,18 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                       </div>
                     )}
                   </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-4">Select Your Background</h3>
+                  <BackgroundSelector
+                    selectedBackground={background}
+                    selectedCharacteristics={backgroundCharacteristics}
+                    onBackgroundChange={handleBackgroundChange}
+                    onCharacteristicsChange={setBackgroundCharacteristics}
+                    showCharacteristics={true}
+                    showFullDetails={true}
+                  />
                 </div>
 
                 {/* Avatar Generator */}
