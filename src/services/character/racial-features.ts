@@ -49,13 +49,18 @@ export class RacialFeaturesService {
       return abilityScores;
     }
 
-    const increases = raceData.abilityScoreIncrease.split(',');
+    if (!raceData.abilityScoreIncrease) {
+      console.warn(`No ability score increase data for race ${race}`);
+      return abilityScores;
+    }
+
+    // Use the existing parser to handle different formats
+    const increases = this.parseAbilityScoreIncrease(raceData.abilityScoreIncrease);
+    
+    // Apply the increases
     for (const increase of increases) {
-      const [ability, value] = increase.trim().split('+').map((s: string) => s.trim());
-      if (ability && value) {
-        const currentScore = abilityScores[ability.toLowerCase()] || 10;
-        abilityScores[ability.toLowerCase()] = currentScore + parseInt(value);
-      }
+      const currentScore = abilityScores[increase.ability] || 10;
+      abilityScores[increase.ability] = currentScore + increase.increase;
     }
 
     return abilityScores;
