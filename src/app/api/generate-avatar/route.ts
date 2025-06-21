@@ -229,6 +229,22 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
     
     // Special handling for elves - they never look over 40
     if (race === 'Elf') {
+      // For female elves, add 10 years to actual age and cap at 50
+      if (gender === 'Female') {
+        const adjustedAge = age ? age + 10 : undefined;
+        if (!adjustedAge) {
+          return 'varied age from young adult to mature, diverse age representation, some young faces, some mature, ageless elven beauty';
+        }
+        if (adjustedAge < 18) return 'teenager, youthful features, smooth skin, minimal wrinkles';
+        if (adjustedAge < 25) return 'young adult, early twenties, youthful features, smooth skin';
+        if (adjustedAge < 35) return 'young adult, twenties to early thirties, some fine lines, youthful but mature';
+        if (adjustedAge < 45) return 'young adult, thirties to early forties, mature features, some fine lines, youthful but mature';
+        if (adjustedAge < 55) return 'mature adult, forties to early fifties, mature features, some fine lines, graceful aging';
+        // For female elves 55+ adjusted age, cap at 50s appearance
+        return 'mature adult, forties to early fifties, mature features, some fine lines, graceful aging, ageless elven beauty';
+      }
+      
+      // For male and non-binary elves, cap at 40
       if (age < 18) return 'teenager, youthful features, smooth skin, minimal wrinkles';
       if (age < 25) return 'young adult, early twenties, youthful features, smooth skin';
       if (age < 35) return 'young adult, twenties to early thirties, some fine lines, youthful but mature';
