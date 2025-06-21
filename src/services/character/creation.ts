@@ -428,7 +428,9 @@ export class CharacterCreationService {
     // Add extra gold if no equipment pack was selected (D&D 5e rules)
     let startingGold = 0;
     let goldRollDetails: string | undefined = undefined;
+    
     if (data.selectedEquipmentPack === -1) {
+      // No equipment pack selected - roll dice for starting gold
       // Get class starting gold formula from database
       let classGold = 0;
       let classRoll = '';
@@ -442,7 +444,7 @@ export class CharacterCreationService {
             if (match) {
               const numDice = parseInt(match[1], 10);
               const dieSize = parseInt(match[2], 10);
-              const multiplier = match[3] ? parseInt(match[3].replace('*', ''), 10) : 1;
+              const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
               const rolls: number[] = [];
               for (let i = 0; i < numDice; i++) {
                 const roll = Math.floor(Math.random() * dieSize) + 1;
@@ -457,6 +459,7 @@ export class CharacterCreationService {
       } catch (error) {
         console.warn('Failed to fetch class starting gold formula:', error);
       }
+      
       // Get background starting gold formula from database
       let backgroundGold = 0;
       let backgroundRoll = '';
@@ -470,7 +473,7 @@ export class CharacterCreationService {
             if (match) {
               const numDice = parseInt(match[1], 10);
               const dieSize = parseInt(match[2], 10);
-              const multiplier = match[3] ? parseInt(match[3].replace('*', ''), 10) : 1;
+              const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
               const rolls: number[] = [];
               for (let i = 0; i < numDice; i++) {
                 const roll = Math.floor(Math.random() * dieSize) + 1;
@@ -485,9 +488,27 @@ export class CharacterCreationService {
       } catch (error) {
         console.warn('Failed to fetch background starting gold formula:', error);
       }
-      startingGold += classGold + backgroundGold;
+      
+      startingGold = classGold + backgroundGold;
       goldRollDetails = `Class: ${characterClass} ${classRoll}${backgroundRoll ? `, Background: ${data.background} ${backgroundRoll}` : ''}`;
       console.log(`No equipment pack selected - ${goldRollDetails} (total: ${startingGold} gp)`);
+    } else {
+      // Equipment pack selected - use background starting gold
+      try {
+        const backgroundResponse = await fetch('/api/backgrounds');
+        if (backgroundResponse.ok) {
+          const backgrounds = await backgroundResponse.json();
+          const backgroundData = backgrounds.find((bg: { name: string; startingGold?: number }) => bg.name === data.background);
+          if (backgroundData?.startingGold) {
+            startingGold = backgroundData.startingGold;
+            console.log(`Equipment pack selected - using background starting gold: ${startingGold} gp`);
+          } else {
+            console.warn(`No starting gold found for background: ${data.background}`);
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to fetch background starting gold:', error);
+      }
     }
     
     console.log('=== CLIENT-SIDE EQUIPMENT ===');

@@ -97,7 +97,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [selectedSpells, setSelectedSpells] = useState<Spell[]>([]);
   const [selectedWeapons, setSelectedWeapons] = useState<{weapon: Weapon, quantity: number}[]>([]);
   const [selectedAmmunition, setSelectedAmmunition] = useState<Ammunition[]>([]);
-  const [selectedEquipmentPack, setSelectedEquipmentPack] = useState<number>(0);
+  const [selectedEquipmentPack, setSelectedEquipmentPack] = useState<number>(-1); // Default to no pack
   
   // Loading states
   const [generatingName, setGeneratingName] = useState(false);
@@ -127,6 +127,12 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Avatar state
   const [generatedFullBodyAvatar, setGeneratedFullBodyAvatar] = useState<string>('');
 
+  // Gold calculation state
+  const [backgroundStartingGold, setBackgroundStartingGold] = useState<number>(0);
+  const [classStartingGoldFormula, setClassStartingGoldFormula] = useState<string>('');
+  const [calculatedGold, setCalculatedGold] = useState<number>(0);
+  const [goldRollDetails, setGoldRollDetails] = useState<string>('');
+
   // Set default values when data is loaded
   useEffect(() => {
     if (races?.length > 0 && !race) setRace(races[0].name);
@@ -136,11 +142,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       setBackground(folkHero ? folkHero.name : backgrounds[0].name);
     }
     if (alignments?.length > 0 && !alignment) setAlignment('True Neutral');
-    if (creationOptions && creationOptions.equipmentPacks && creationOptions.equipmentPacks.length > 0 && !selectedEquipmentPack) {
-      const explorerPackIndex = creationOptions.equipmentPacks.findIndex(p => p.name === "Explorer's Pack");
-      setSelectedEquipmentPack(explorerPackIndex >= 0 ? explorerPackIndex : 0);
-    }
-  }, [races, classes, backgrounds, alignments, creationOptions, race, characterClass, background, alignment, selectedEquipmentPack]);
+  }, [races, classes, backgrounds, alignments, race, characterClass, background, alignment]);
 
   // Clear cached data when class changes
   useEffect(() => {
@@ -540,6 +542,76 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     return modifier >= 0 ? `+${modifier}` : `${modifier}`;
   };
 
+  // Calculate gold whenever background or equipment pack changes
+  useEffect(() => {
+    const calculateGold = async () => {
+      if (!background || !characterClass) return;
+
+      try {
+        // Get background starting gold
+        const backgroundResponse = await fetch('/api/backgrounds');
+        if (backgroundResponse.ok) {
+          const backgrounds = await backgroundResponse.json();
+          const backgroundData = backgrounds.find((bg: { name: string; startingGold?: number }) => bg.name === background);
+          if (backgroundData?.startingGold) {
+            setBackgroundStartingGold(backgroundData.startingGold);
+          }
+        }
+
+        // Get class starting gold formula
+        const classResponse = await fetch(`/api/classes/${encodeURIComponent(characterClass)}`);
+        if (classResponse.ok) {
+          const classData = await classResponse.json();
+          if (classData.startingGoldFormula) {
+            setClassStartingGoldFormula(classData.startingGoldFormula);
+          }
+        }
+
+        // Calculate gold based on equipment pack selection
+        if (selectedEquipmentPack === -1) {
+          // No equipment pack - roll dice for gold
+          if (classStartingGoldFormula) {
+            // Simulate a roll for display purposes (actual roll happens during character creation)
+            const match = classStartingGoldFormula.match(/(\d+)d(\d+)(\*\d+)?/);
+            if (match) {
+              const numDice = parseInt(match[1], 10);
+              const dieSize = parseInt(match[2], 10);
+              const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
+              const avgRoll = (numDice * (dieSize + 1) / 2) * multiplier;
+              setCalculatedGold(Math.round(avgRoll));
+              setGoldRollDetails(`${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} (avg: ${Math.round(avgRoll)} gp)`);
+            }
+          }
+        } else {
+          // Equipment pack selected - use background starting gold
+          setCalculatedGold(backgroundStartingGold);
+          setGoldRollDetails('');
+        }
+      } catch (error) {
+        console.warn('Error calculating gold:', error);
+      }
+    };
+
+    calculateGold();
+  }, [background, characterClass, selectedEquipmentPack, backgroundStartingGold, classStartingGoldFormula]);
+
+  // Show toast when gold calculation changes
+  useEffect(() => {
+    if (calculatedGold > 0) {
+      if (selectedEquipmentPack === -1) {
+        toast.success(`Starting Gold: ${calculatedGold} gp (${goldRollDetails})`, {
+          duration: 3000,
+          icon: '💰'
+        });
+      } else {
+        toast.success(`Starting Gold: ${calculatedGold} gp (Background)`, {
+          duration: 3000,
+          icon: '💰'
+        });
+      }
+    }
+  }, [calculatedGold, selectedEquipmentPack, goldRollDetails]);
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
       <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[95vh] overflow-y-auto modal-content">
@@ -789,56 +861,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-slate-300 mb-2">
-                    Equipment Pack
-                  </label>
-                  {loadingOptions ? (
-                    <div className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-400">
-                      Loading equipment packs...
-                    </div>
-                  ) : (
-                    <div>
-                      <select
-                        value={selectedEquipmentPack}
-                        onChange={(e) => setSelectedEquipmentPack(Number(e.target.value))}
-                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-                      >
-                        <option value={-1}>No Pack - Starting Gold</option>
-                        {creationOptions?.equipmentPacks?.map((pack, index) => (
-                          <option key={String(pack.id)} value={index}>
-                            {pack.name} ({pack.cost})
-                          </option>
-                        )) || []}
-                      </select>
-                      
-                      {/* Show selected pack details */}
-                      {selectedEquipmentPack === -1 ? (
-                        <div className="mt-2 p-3 bg-slate-700 rounded-lg">
-                          <div className="text-sm text-slate-300 mb-2">
-                            You will receive starting gold based on your background instead of an equipment pack.
-                          </div>
-                          <div className="text-xs text-slate-400">
-                            <strong>Starting Gold:</strong> Varies by background (Noble: 25 gp, Hermit: 5 gp, etc.)
-                          </div>
-                        </div>
-                      ) : creationOptions?.equipmentPacks?.[selectedEquipmentPack] && (
-                        <div className="mt-2 p-3 bg-slate-700 rounded-lg">
-                          <div className="text-sm text-slate-300 mb-2">
-                            {creationOptions.equipmentPacks[selectedEquipmentPack].description}
-                          </div>
-                          <div className="text-xs text-slate-400">
-                            <strong>Contains:</strong>{' '}
-                            {creationOptions.equipmentPacks[selectedEquipmentPack].items
-                              .map(item => `${item.quantity}x ${item.name}`)
-                              .join(', ')}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
                     Starting Weapons
                   </label>
                   
@@ -935,6 +957,71 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     showCharacteristics={true}
                     showFullDetails={true}
                   />
+                </div>
+
+                {/* Equipment Pack Selection */}
+                <div className="border-t border-slate-700 pt-6">
+                  <h3 className="text-lg font-semibold text-white mb-4">Starting Equipment Choice</h3>
+                  
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Equipment Pack
+                    </label>
+                    {loadingOptions ? (
+                      <div className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-400">
+                        Loading equipment packs...
+                      </div>
+                    ) : (
+                      <div>
+                        <select
+                          value={selectedEquipmentPack}
+                          onChange={(e) => setSelectedEquipmentPack(Number(e.target.value))}
+                          className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                        >
+                          <option value={-1}>No Pack - Roll for Starting Gold</option>
+                          {creationOptions?.equipmentPacks?.map((pack, index) => (
+                            <option key={String(pack.id)} value={index}>
+                              {pack.name} ({pack.cost})
+                            </option>
+                          )) || []}
+                        </select>
+                        
+                        {/* Show selected pack details */}
+                        {selectedEquipmentPack === -1 ? (
+                          <div className="mt-2 p-3 bg-slate-700 rounded-lg">
+                            <div className="text-sm text-slate-300 mb-2">
+                              You will roll for starting gold based on your class instead of taking an equipment pack.
+                            </div>
+                            <div className="text-xs text-slate-400">
+                              <strong>Class Formula:</strong> {classStartingGoldFormula || 'Not available'}
+                            </div>
+                            {calculatedGold > 0 && (
+                              <div className="text-xs text-yellow-400 mt-1">
+                                <strong>Estimated Gold:</strong> {calculatedGold} gp ({goldRollDetails})
+                              </div>
+                            )}
+                          </div>
+                        ) : creationOptions?.equipmentPacks?.[selectedEquipmentPack] && (
+                          <div className="mt-2 p-3 bg-slate-700 rounded-lg">
+                            <div className="text-sm text-slate-300 mb-2">
+                              {creationOptions.equipmentPacks[selectedEquipmentPack].description}
+                            </div>
+                            <div className="text-xs text-slate-400">
+                              <strong>Contains:</strong>{' '}
+                              {creationOptions.equipmentPacks[selectedEquipmentPack].items
+                                .map(item => `${item.quantity}x ${item.name}`)
+                                .join(', ')}
+                            </div>
+                            {calculatedGold > 0 && (
+                              <div className="text-xs text-yellow-400 mt-1">
+                                <strong>Starting Gold:</strong> {calculatedGold} gp (from background)
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Avatar Generator */}
