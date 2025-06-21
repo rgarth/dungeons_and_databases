@@ -960,7 +960,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 </div>
 
                 {/* Equipment Pack Selection */}
-                <div className="border-t border-slate-700 pt-6">
+                <div>
                   <h3 className="text-lg font-semibold text-white mb-4">Starting Equipment Choice</h3>
                   
                   <div className="mb-4">
