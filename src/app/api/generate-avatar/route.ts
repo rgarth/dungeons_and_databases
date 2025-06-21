@@ -215,7 +215,7 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
   const expressions = alignment ? alignmentExpressions[alignment as keyof typeof alignmentExpressions] : alignmentExpressions['Neutral'];
 
   // Age-based descriptions
-  const getAgeDescription = (age?: number, gender?: string): string => {
+  const getAgeDescription = (age?: number, gender?: string, race?: string): string => {
     if (!age) {
       // No age specified - encourage diverse age representation
       if (gender === 'Male') {
@@ -227,7 +227,17 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
       }
     }
     
-    // Age specified - provide appropriate description
+    // Special handling for elves - they never look over 40
+    if (race === 'Elf') {
+      if (age < 18) return 'teenager, youthful features, smooth skin, minimal wrinkles';
+      if (age < 25) return 'young adult, early twenties, youthful features, smooth skin';
+      if (age < 35) return 'young adult, twenties to early thirties, some fine lines, youthful but mature';
+      if (age < 45) return 'young adult, thirties to early forties, mature features, some fine lines, youthful but mature';
+      // For elves 45 and older, cap at 40s appearance
+      return 'young adult, thirties to early forties, mature features, some fine lines, youthful but mature, ageless elven beauty';
+    }
+    
+    // Age specified - provide appropriate description for other races
     if (age < 18) return 'teenager, youthful features, smooth skin, minimal wrinkles';
     if (age < 25) return 'young adult, early twenties, youthful features, smooth skin';
     if (age < 35) return 'young adult, twenties to early thirties, some fine lines, youthful but mature';
@@ -244,7 +254,11 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
       'Human': gender === 'Male' 
         ? `human character${!age ? ', varied age from young adult to elderly' : ''}, average build, some thin, some overweight, NOT muscular, NOT buff, NOT built, normal physique, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, human features, realistic imperfections like scars or blemishes, varied hair styles, varied facial features, some average, some unattractive`
         : `human character${!age ? ', varied age from young adult to elderly' : ''}, some overweight, some average build, some thin, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, human features, realistic imperfections like scars or blemishes, varied hair styles, varied facial features, some average, some unattractive`,
-      'Elf': 'elf character with long pointed ears, ethereal features, angular face, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique elven features, realistic imperfections',
+      'Elf': gender === 'Male'
+        ? 'elf character with long pointed ears, ethereal features, angular face, high cheekbones, narrow jaw, elegant bone structure, delicate nose, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique elven features, realistic imperfections, no facial hair, clean shaven'
+        : gender === 'Female'
+        ? 'elf character with long pointed ears, ethereal features, angular face, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique elven features, realistic imperfections'
+        : 'elf character with long pointed ears, ethereal features, angular face, delicate features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique elven features, realistic imperfections, ambiguous gender, non-binary appearance, androgynous features',
       'Dwarf': 'dwarf character with thick beard, stocky build, broad shoulders, weathered face, wrinkles, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique dwarven features, realistic imperfections',
       'Halfling': 'halfling character, small adult stature, mature adult face with wrinkles, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique halfling features, realistic imperfections',
       'Dragonborn': 'dragonborn character with scaled skin covering face and body, weathered scales, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark scales, brown scales, black scales, olive scales, tan scales, varied scale colors, unique draconic features, realistic imperfections',
@@ -327,7 +341,7 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
 
   const raceDesc = getRaceDescription(race, gender, age);
   const classDesc = classDescriptions[characterClass] || 'adventurer';
-  const ageDesc = getAgeDescription(age, gender);
+  const ageDesc = getAgeDescription(age, gender, race);
 
   // Build prompt with strong anti-bias elements and realistic photo style
   const prompt = `SINGLE PORTRAIT SHOT, ONE PERSON ONLY, head and shoulders only, bust shot, upper body portrait, close-up character portrait, NOT full body, looking at camera, NO MULTIPLE HEADS, NO MULTIPLE FACES, SINGLE FACE, SINGLE HEAD, ${genderPrefix}${raceDesc}, ${ageDesc}, ${classDesc}, ${expressions}, ${antiBiasPrompts.join(', ')}, ${consistentStyle.artStyle}, ${consistentStyle.lighting}, ${consistentStyle.background}, ${consistentStyle.quality}, ${consistentStyle.format}`;
