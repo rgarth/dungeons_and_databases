@@ -3,10 +3,10 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { className: string } }
+  { params }: { params: Promise<{ className: string }> }
 ) {
   try {
-    const className = params.className;
+    const { className } = await params;
     
     const classData = await prisma.dndClass.findUnique({
       where: {

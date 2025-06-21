@@ -110,6 +110,25 @@ export async function POST(request: NextRequest) {
       racialTraits
     } = body;
 
+    // Debug ability scores
+    console.log('=== ABILITY SCORES DEBUG ===');
+    console.log('Received ability scores:', {
+      strength,
+      dexterity,
+      constitution,
+      intelligence,
+      wisdom,
+      charisma
+    });
+    console.log('Ability score types:', {
+      strength: typeof strength,
+      dexterity: typeof dexterity,
+      constitution: typeof constitution,
+      intelligence: typeof intelligence,
+      wisdom: typeof wisdom,
+      charisma: typeof charisma
+    });
+
     // Validate required fields
     if (!name || !race || !characterClass) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -125,10 +144,18 @@ export async function POST(request: NextRequest) {
 
     // Process inventory items (equipment pack items) - no need to scan for weapons/armor
     if (inventory && Array.isArray(inventory)) {
-      for (const item of inventory as Array<{name: string; quantity: number}>) {
-        const itemName = item.name;
-        console.log(`📦 Adding to general inventory: ${itemName}`);
-        processedInventory.push(item);
+      for (const item of inventory as Array<{equipment?: {name: string}; name?: string; quantity: number}>) {
+        // Handle both direct name and nested equipment structure
+        const itemName = item.name || item.equipment?.name;
+        if (itemName) {
+          console.log(`📦 Adding to general inventory: ${itemName}`);
+          processedInventory.push({
+            name: itemName,
+            quantity: item.quantity || 1
+          });
+        } else {
+          console.log(`⚠️ Skipping inventory item with no name:`, item);
+        }
       }
     }
 
@@ -141,11 +168,40 @@ export async function POST(request: NextRequest) {
     console.log('=== CLIENT-PROVIDED WEAPONS ===');
     console.log('Client weapons:', clientWeapons);
     
-    // Add equipped property to weapons and armor for character sheet compatibility
-    const weaponsWithEquipped = clientWeapons.map((weapon: { weapon?: { name: string }; name?: string; [key: string]: unknown }) => ({
-      ...weapon,
-      equipped: false // All weapons start unequipped
-    }));
+    // Process weapons properly - flatten nested structure and handle quantities
+    const weaponsWithEquipped: Array<{ name: string; type: string; category: string; damage: string; damageType: string; properties: string[]; weight: number; cost: string; equipped: boolean; quantity?: number; [key: string]: unknown }> = [];
+    clientWeapons.forEach((weaponData: { weapon?: { name: string; type: string; category: string; damage: string; damageType: string; properties: string[]; weight: number; cost: string; [key: string]: unknown }; name?: string; quantity?: number; [key: string]: unknown }) => {
+      if (weaponData.weapon) {
+        // Handle nested weapon structure from weapon selector
+        const weapon = weaponData.weapon;
+        const quantity = weaponData.quantity || 1;
+        
+        // Check if this is ammunition (has "Ammunition" property and no damage)
+        const hasAmmunitionProperty = weapon.properties?.some((prop: string) => prop.startsWith('Ammunition'));
+        if (hasAmmunitionProperty && weapon.damage === '—') {
+          // For ammunition, add once with the quantity property set
+          weaponsWithEquipped.push({
+            ...weapon,
+            quantity,
+            equipped: false
+          });
+        } else {
+          // For regular weapons, add individual copies (normal weapon behavior)
+          for (let i = 0; i < quantity; i++) {
+            weaponsWithEquipped.push({
+              ...weapon,
+              equipped: false
+            });
+          }
+        }
+      } else if (weaponData.name && weaponData.type && weaponData.category && weaponData.damage && weaponData.damageType && weaponData.properties && weaponData.weight && weaponData.cost) {
+        // Handle direct weapon structure - only if all required properties are present
+        weaponsWithEquipped.push({
+          ...weaponData,
+          equipped: false
+        } as { name: string; type: string; category: string; damage: string; damageType: string; properties: string[]; weight: number; cost: string; equipped: boolean; quantity?: number; [key: string]: unknown });
+      }
+    });
     
     const armorWithEquipped = clientArmor.map((armor: { name: string; [key: string]: unknown }) => ({
       ...armor,
@@ -155,7 +211,7 @@ export async function POST(request: NextRequest) {
     console.log('=== FINAL SERVER PROCESSING ===');
     console.log('General inventory:', processedInventory.map(item => typeof item === 'string' ? item : item.name));
     console.log('Client weapon inventory:', clientWeapons.map((weapon: { weapon?: { name: string }; name?: string }) => weapon.weapon?.name || weapon.name || 'Unknown weapon'));
-    console.log('Combined weapon inventory:', weaponsWithEquipped.map((weapon: { weapon?: { name: string }; name?: string; equipped?: boolean }) => `${weapon.weapon?.name || weapon.name || 'Unknown weapon'} (equipped: ${weapon.equipped})`));
+    console.log('Combined weapon inventory:', weaponsWithEquipped.map((weapon: { name: string; equipped?: boolean }) => `${weapon.name} (equipped: ${weapon.equipped})`));
     console.log('Client armor inventory:', clientArmor.map((armor: { name: string }) => armor.name));
     console.log('Combined armor inventory:', armorWithEquipped.map((armor: { name: string; equipped?: boolean }) => `${armor.name} (equipped: ${armor.equipped})`));
 
@@ -211,15 +267,15 @@ export async function POST(request: NextRequest) {
         // Personal information
         gender: gender || null,
         age: age || null,
-        strength: strength || 10,
-        dexterity: dexterity || 10,
-        constitution: constitution || 10,
-        intelligence: intelligence || 10,
-        wisdom: wisdom || 10,
-        charisma: charisma || 10,
-        hitPoints: hitPoints || 10,
-        maxHitPoints: maxHitPoints || 10,
-        armorClass: armorClass || 10,
+        strength: strength ?? 10,
+        dexterity: dexterity ?? 10,
+        constitution: constitution ?? 10,
+        intelligence: intelligence ?? 10,
+        wisdom: wisdom ?? 10,
+        charisma: charisma ?? 10,
+        hitPoints: hitPoints ?? 10,
+        maxHitPoints: maxHitPoints ?? 10,
+        armorClass: armorClass ?? 10,
         inventory: processedInventory, // Use processed inventory without weapons or armor
         skills: skills || [],
         weapons: weaponsWithEquipped,
