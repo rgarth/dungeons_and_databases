@@ -11,6 +11,7 @@ import { WeaponSuggestion } from "@/lib/dnd/weapon-suggestions";
 import { ArmorSuggestion } from "@/lib/dnd/armor-suggestions";
 import { WeaponSelector } from "@/components/shared/WeaponSelector";
 import { ArmorSelector } from "@/components/shared/ArmorSelector";
+import { SubraceSelector } from "@/components/shared/SubraceSelector";
 import { armorData } from '../../prisma/data/armor-data';
 import { weaponsData } from '../../prisma/data/weapons-data';
 import { Character } from "@/types/character";
@@ -82,6 +83,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Basic character info
   const [name, setName] = useState("");
   const [race, setRace] = useState<string>("");
+  const [subrace, setSubrace] = useState<string | null>("");
   const [characterClass, setCharacterClass] = useState<string>("");
   const [subclass, setSubclass] = useState<string>("");
   const [background, setBackground] = useState<string>("");
@@ -626,6 +628,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       const characterData = {
         name,
         race,
+        subrace,
         class: characterClass,
         subclass,
         background,
@@ -1135,6 +1138,16 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 </div>
               </div>
 
+              {/* Subrace selector - only show if race has subraces */}
+              <div className="mb-4">
+                <SubraceSelector
+                  race={race}
+                  selectedSubrace={subrace}
+                  onSubraceChange={setSubrace}
+                  disabled={!race}
+                />
+              </div>
+
               {/* Subclass selector - only show if needed at creation */}
               {(() => {
                 console.log('🎯 RENDER DEBUG - Subclass selector values:', {
@@ -1552,6 +1565,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                         <AvatarGenerator
                           characterData={{
                             race,
+                            subrace,
                             class: characterClass,
                             gender: gender || 'Male', // Use selected gender or default
                             alignment,

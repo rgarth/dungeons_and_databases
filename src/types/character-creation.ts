@@ -12,6 +12,7 @@ export interface SelectedCharacteristics {
 export interface CharacterCreationData {
   name: string;
   race: string;
+  subrace?: string | null;
   class: string;
   subclass?: string | null;
   level: number;
