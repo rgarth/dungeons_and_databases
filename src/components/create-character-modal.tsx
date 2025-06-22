@@ -141,6 +141,18 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const classFormulaCache = useRef<Map<string, { formula: string; timestamp: number }>>(new Map());
   const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
+  // Handler to clear subrace when race changes
+  const handleRaceChange = (newRace: string) => {
+    setRace(newRace);
+    setSubrace(null); // Clear subrace when race changes
+  };
+
+  // Handler to clear subclass when class changes
+  const handleClassChange = (newClass: string) => {
+    setCharacterClass(newClass);
+    setSubclass(""); // Clear subclass when class changes
+  };
+
   // Fetch class starting gold formula when class changes
   useEffect(() => {
     const fetchClassFormula = async () => {
@@ -320,7 +332,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
   // Set default values when data is loaded
   useEffect(() => {
-    if (races?.length > 0 && !race) setRace(races[0].name);
+    if (races?.length > 0 && !race) handleRaceChange(races[0].name);
     if (backgrounds?.length > 0 && !background) {
       const folkHero = backgrounds.find(b => b.name === 'Folk Hero');
       setBackground(folkHero ? folkHero.name : backgrounds[0].name);
@@ -1112,7 +1124,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   <select
                     id="race-select"
                     value={race}
-                    onChange={(e) => setRace(e.target.value)}
+                    onChange={(e) => handleRaceChange(e.target.value)}
                     className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
                     style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                   >
@@ -1140,7 +1152,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   <select
                     id="class-select"
                     value={characterClass || ''}
-                    onChange={(e) => setCharacterClass(e.target.value)}
+                    onChange={(e) => handleClassChange(e.target.value)}
                     className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
                     style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                   >
