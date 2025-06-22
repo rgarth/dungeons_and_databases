@@ -1105,8 +1105,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 </div>
               </div>
 
-              {/* Second row: Race | Class */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              {/* Race selector */}
+              <div className="mb-4">
                 <div>
                   <label htmlFor="race-select" className="block text-sm font-medium text-slate-300 mb-2">Race</label>
                   <select
@@ -1121,6 +1121,20 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     ))}
                   </select>
                 </div>
+              </div>
+
+              {/* Subrace selector - only show if race has subraces */}
+              <div className="mb-4">
+                <SubraceSelector
+                  race={race}
+                  selectedSubrace={subrace}
+                  onSubraceChange={setSubrace}
+                  disabled={!race}
+                />
+              </div>
+
+              {/* Class selector */}
+              <div className="mb-4">
                 <div>
                   <label htmlFor="class-select" className="block text-sm font-medium text-slate-300 mb-2">Class</label>
                   <select
@@ -1136,16 +1150,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     ))}
                   </select>
                 </div>
-              </div>
-
-              {/* Subrace selector - only show if race has subraces */}
-              <div className="mb-4">
-                <SubraceSelector
-                  race={race}
-                  selectedSubrace={subrace}
-                  onSubraceChange={setSubrace}
-                  disabled={!race}
-                />
               </div>
 
               {/* Subclass selector - only show if needed at creation */}
