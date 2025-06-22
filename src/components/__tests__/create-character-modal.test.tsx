@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { CreateCharacterModal } from '../create-character-modal';
 import { CharacterCreationService } from '@/services/character/creation';
 import { useDndData } from '@/components/providers/dnd-data-provider';
@@ -11,8 +11,12 @@ jest.mock('@/lib/dnd/subclasses', () => ({
   choosesSubclassAtCreation: jest.fn()
 }));
 
+// Mock global fetch
+global.fetch = jest.fn();
+
 const mockUseDndData = useDndData as jest.MockedFunction<typeof useDndData>;
 const mockCharacterCreationService = CharacterCreationService.getInstance as jest.MockedFunction<typeof CharacterCreationService.getInstance>;
+const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>;
 
 describe('CreateCharacterModal', () => {
   const mockOnClose = jest.fn();
@@ -26,7 +30,9 @@ describe('CreateCharacterModal', () => {
     classes: [
       { id: '1', name: 'Barbarian' },
       { id: '2', name: 'Sorcerer' },
-      { id: '3', name: 'Warlock' }
+      { id: '3', name: 'Warlock' },
+      { id: '4', name: 'Wizard' },
+      { id: '5', name: 'Fighter' }
     ],
     backgrounds: [
       { 
@@ -66,6 +72,46 @@ describe('CreateCharacterModal', () => {
     
     mockUseDndData.mockReturnValue(mockDndData);
     mockCharacterCreationService.mockReturnValue(mockCreationService as unknown as CharacterCreationService);
+    
+    // Mock fetch calls
+    mockFetch.mockImplementation((input: string | Request | URL) => {
+      const url = typeof input === 'string' ? input : input.toString();
+      if (url.includes('/api/weapon-suggestions')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve([])
+        } as Response);
+      }
+      if (url.includes('/api/armor-suggestions')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve([])
+        } as Response);
+      }
+      if (url.includes('/api/class-proficiencies')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ simple: false, martial: false, specific: [], armor: [] })
+        } as Response);
+      }
+      if (url.includes('/api/classes/')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ startingGoldFormula: '4d4*10' })
+        } as Response);
+      }
+      if (url.includes('/api/backgrounds')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve([])
+        } as Response);
+      }
+      // Default mock for any other fetch calls
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve([])
+      } as Response);
+    });
     
     // Default mock implementations
     mockCreationService.getCreationOptions.mockResolvedValue({
@@ -144,12 +190,73 @@ describe('CreateCharacterModal', () => {
       fireEvent.change(raceSelect, { target: { value: 'Human' } });
       expect(raceSelect).toHaveValue('Human');
     });
+
+    it('should have no class selected by default', () => {
+      renderModal();
+      const classSelect = screen.getByLabelText('Class') as HTMLSelectElement;
+      expect(classSelect.value).toBe('');
+    });
+
+    it('should handle class selection changes properly', async () => {
+      // Mock a simple response for any class
+      mockCreationService.getCreationOptions.mockResolvedValue({
+        equipmentPacks: [],
+        weaponSuggestions: [],
+        armorSuggestions: [],
+        subclasses: [],
+        needsSubclassAtCreation: false,
+        spellcasting: {
+          ability: null,
+          canCastAtLevel1: false,
+          availableSpells: [],
+          spellSlots: {}
+        }
+      });
+
+      renderModal();
+
+      // Change class selection
+      const classSelect = screen.getByLabelText('Class');
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Sorcerer' } });
+      });
+
+      // Verify the class value changed
+      expect(classSelect).toHaveValue('Sorcerer');
+
+      // Wait for the service to be called with the new class
+      await waitFor(() => {
+        expect(mockCreationService.getCreationOptions).toHaveBeenCalledWith('Sorcerer');
+      });
+    });
+
+    it('should verify class selection state updates', async () => {
+      renderModal();
+      
+      // Check initial state
+      const classSelect = screen.getByLabelText('Class') as HTMLSelectElement;
+      expect(classSelect.value).toBe('');
+      
+      // Change class selection
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Wizard' } });
+      });
+      
+      // Verify the select value changed
+      expect(classSelect.value).toBe('Wizard');
+      
+      // Wait a bit to see if any effects trigger
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Check if any service calls were made
+      console.log('🔍 DEBUG - Service calls after class change:', mockCreationService.getCreationOptions.mock.calls);
+    });
   });
 
   describe('Subclass Selector', () => {
     it('should show subclass selector when needsSubclassAtCreation is true', async () => {
       // Mock the service to return data that indicates subclass is needed
-      const mockGetCreationOptions = jest.fn().mockResolvedValue({
+      mockCreationService.getCreationOptions.mockResolvedValue({
         equipmentPacks: [],
         weaponSuggestions: [],
         armorSuggestions: [],
@@ -168,31 +275,22 @@ describe('CreateCharacterModal', () => {
         }
       });
 
-      mockCreationService.getCreationOptions = mockGetCreationOptions;
-
       renderModal();
-
-      // Debug: Check initial state
-      console.log('🔍 INITIAL STATE - Class select value:', (screen.getByLabelText('Class') as HTMLSelectElement).value);
 
       // Select a class that needs subclass
       const classSelect = screen.getByLabelText('Class');
-      fireEvent.change(classSelect, { target: { value: 'Sorcerer' } });
-
-      // Debug: Check state after change
-      console.log('🔍 AFTER CHANGE - Class select value:', (classSelect as HTMLSelectElement).value);
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Sorcerer' } });
+      });
 
       // Wait for the service to be called
       await waitFor(() => {
-        expect(mockGetCreationOptions).toHaveBeenCalledWith('Sorcerer');
+        expect(mockCreationService.getCreationOptions).toHaveBeenCalledWith('Sorcerer');
       });
-
-      // Debug: Check what's rendered after service call
-      console.log('🔍 AFTER SERVICE CALL - DOM contains subclass label:', screen.queryByLabelText(/Subclass/) !== null);
 
       // Wait for the subclass selector to appear
       await waitFor(() => {
-        expect(screen.getByLabelText(/Subclass/)).toBeInTheDocument();
+        expect(screen.getByLabelText(/Subclass \*/)).toBeInTheDocument();
       });
     });
 
@@ -218,7 +316,9 @@ describe('CreateCharacterModal', () => {
 
       // Select a class that doesn't need subclass
       const classSelect = screen.getByLabelText('Class');
-      fireEvent.change(classSelect, { target: { value: 'Barbarian' } });
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Barbarian' } });
+      });
 
       // Wait for the service to be called
       await waitFor(() => {
@@ -227,7 +327,7 @@ describe('CreateCharacterModal', () => {
 
       // Verify subclass selector is not present
       await waitFor(() => {
-        expect(screen.queryByLabelText(/Subclass/)).not.toBeInTheDocument();
+        expect(screen.queryByLabelText(/Subclass \*/)).not.toBeInTheDocument();
       });
     });
   });
@@ -235,7 +335,7 @@ describe('CreateCharacterModal', () => {
   describe('Weapon Suggestions', () => {
     it('should apply weapon suggestions when class changes', async () => {
       // Mock weapon suggestions for Barbarian
-      const mockGetCreationOptions = jest.fn().mockResolvedValue({
+      mockCreationService.getCreationOptions.mockResolvedValue({
         equipmentPacks: [],
         weaponSuggestions: [
           { weaponName: 'Greataxe', quantity: 1, reason: 'Primary two-handed weapon' },
@@ -252,30 +352,30 @@ describe('CreateCharacterModal', () => {
         }
       });
 
-      mockCreationService.getCreationOptions = mockGetCreationOptions;
-
       renderModal();
 
       // Select Barbarian
       const classSelect = screen.getByLabelText('Class');
-      fireEvent.change(classSelect, { target: { value: 'Barbarian' } });
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Barbarian' } });
+      });
 
       // Wait for the service to be called
       await waitFor(() => {
-        expect(mockGetCreationOptions).toHaveBeenCalledWith('Barbarian');
+        expect(mockCreationService.getCreationOptions).toHaveBeenCalledWith('Barbarian');
       });
 
       // Wait for weapon suggestions to be applied
       await waitFor(() => {
         // The component should have processed the weapon suggestions
         // We can't directly test the internal state, but we can verify the service was called
-        expect(mockGetCreationOptions).toHaveBeenCalledTimes(1);
+        expect(mockCreationService.getCreationOptions).toHaveBeenCalledTimes(1);
       });
     });
 
     it('should clear weapons when class has no suggestions', async () => {
       // Mock no weapon suggestions for Wizard
-      const mockGetCreationOptions = jest.fn().mockResolvedValue({
+      mockCreationService.getCreationOptions.mockResolvedValue({
         equipmentPacks: [],
         weaponSuggestions: [], // No weapon suggestions
         armorSuggestions: [],
@@ -289,28 +389,32 @@ describe('CreateCharacterModal', () => {
         }
       });
 
-      mockCreationService.getCreationOptions = mockGetCreationOptions;
-
       renderModal();
 
       // Select Wizard
       const classSelect = screen.getByLabelText('Class');
-      fireEvent.change(classSelect, { target: { value: 'Wizard' } });
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Wizard' } });
+      });
+
+      // Debug: Check if the select value actually changed
+      console.log('🔍 DEBUG - Class select value after change:', (classSelect as HTMLSelectElement).value);
+      console.log('🔍 DEBUG - Mock calls:', mockCreationService.getCreationOptions.mock.calls);
 
       // Wait for the service to be called
       await waitFor(() => {
-        expect(mockGetCreationOptions).toHaveBeenCalledWith('Wizard');
+        expect(mockCreationService.getCreationOptions).toHaveBeenCalledWith('Wizard');
       });
 
       // Wait for processing to complete
       await waitFor(() => {
-        expect(mockGetCreationOptions).toHaveBeenCalledTimes(1);
+        expect(mockCreationService.getCreationOptions).toHaveBeenCalledTimes(1);
       });
     });
 
     it('should handle class changes without redundant clearing', async () => {
       // Mock different weapon suggestions for different classes
-      const mockGetCreationOptions = jest.fn()
+      mockCreationService.getCreationOptions
         .mockResolvedValueOnce({
           equipmentPacks: [],
           weaponSuggestions: [
@@ -332,29 +436,31 @@ describe('CreateCharacterModal', () => {
           spellcasting: { ability: null, canCastAtLevel1: false, availableSpells: [], spellSlots: {} }
         });
 
-      mockCreationService.getCreationOptions = mockGetCreationOptions;
-
       renderModal();
 
       // Select Barbarian first
       const classSelect = screen.getByLabelText('Class');
-      fireEvent.change(classSelect, { target: { value: 'Barbarian' } });
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Barbarian' } });
+      });
 
       // Wait for first service call
       await waitFor(() => {
-        expect(mockGetCreationOptions).toHaveBeenCalledWith('Barbarian');
+        expect(mockCreationService.getCreationOptions).toHaveBeenCalledWith('Barbarian');
       });
 
       // Select Fighter second
-      fireEvent.change(classSelect, { target: { value: 'Fighter' } });
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Fighter' } });
+      });
 
       // Wait for second service call
       await waitFor(() => {
-        expect(mockGetCreationOptions).toHaveBeenCalledWith('Fighter');
+        expect(mockCreationService.getCreationOptions).toHaveBeenCalledWith('Fighter');
       });
 
       // Verify both calls were made
-      expect(mockGetCreationOptions).toHaveBeenCalledTimes(2);
+      expect(mockCreationService.getCreationOptions).toHaveBeenCalledTimes(2);
     });
   });
 }); 
