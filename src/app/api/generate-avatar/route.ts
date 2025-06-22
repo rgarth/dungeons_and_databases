@@ -259,7 +259,21 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
         // For aasimar and subraces, use the age system directly
         if (race === 'Aasimar' || race === 'Protector Aasimar' || race === 'Scourge Aasimar' || race === 'Fallen Aasimar') {
           const ageDesc = getAppearanceDescription(race, age, gender);
-          return `${race.toLowerCase()} character with ${ageDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, varied skin tones, varied hair textures, realistic imperfections`;
+          let aasimarDesc = `${race.toLowerCase()} character with ${ageDesc}`;
+          
+          // Add distinctive Aasimar features
+          aasimarDesc += ', celestial heritage, glowing eyes, radiant features, divine markings, otherworldly beauty, ethereal appearance, angelic features, divine aura';
+          
+          // Add subrace-specific features
+          if (subrace === 'Protector Aasimar') {
+            aasimarDesc += ', protective aura, benevolent appearance, guardian features, healing presence, golden glow';
+          } else if (subrace === 'Scourge Aasimar') {
+            aasimarDesc += ', justice-seeking features, determined expression, righteous appearance, punishing aura, fiery glow';
+          } else if (subrace === 'Fallen Aasimar') {
+            aasimarDesc += ', corrupted celestial heritage, dark aura, fallen features, corrupted appearance, necrotic presence, shadowy glow';
+          }
+          
+          return `${aasimarDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, varied skin tones, varied hair textures, realistic imperfections`;
         }
         // For goliaths, always include stone-like skin markings and massive build
         if (race === 'Goliath') {
@@ -295,7 +309,7 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
       'Half-Orc': 'half-orc character with greenish skin, prominent tusks, weathered features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, unique orcish features, diverse facial structures, realistic imperfections',
       'Half-Elf': 'half-elf character with slightly pointed ears, human-elf hybrid features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique mixed heritage features, realistic imperfections',
       'Goliath': 'goliath character with stone-like skin markings, weathered features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, unique stone patterns, diverse facial features, realistic imperfections',
-      'Aasimar': 'aasimar character with celestial heritage, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique celestial features, realistic imperfections',
+      'Aasimar': 'aasimar character with celestial heritage, glowing eyes, radiant features, divine markings, otherworldly beauty, ethereal appearance, angelic features, divine aura, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique celestial features, realistic imperfections',
       'Tabaxi': 'tabaxi character with cat-like features, weathered fur, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark fur, brown fur, black fur, olive fur, tan fur, varied fur patterns, unique feline features, diverse cat-like characteristics, realistic imperfections'
     };
 

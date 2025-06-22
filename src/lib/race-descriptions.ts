@@ -16,7 +16,7 @@ export const raceDescriptions: Record<string, string> = {
   'Half-Orc': 'half-orc character with greenish skin, prominent tusks, muscular build',
   'Half-Elf': 'half-elf character with slightly pointed ears, human-elf hybrid features',
   'Goliath': 'goliath character with stone-like skin markings, massive build, giant heritage',
-  'Aasimar': 'aasimar character with celestial heritage, glowing eyes, radiant features',
+  'Aasimar': 'aasimar character with celestial heritage, glowing eyes, radiant features, divine markings, otherworldly beauty, ethereal appearance, angelic features, divine aura',
   'Tabaxi': 'tabaxi character with cat-like features, feline face, fur covering body'
 };
 

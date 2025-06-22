@@ -667,7 +667,7 @@
       }
     ],
     "special": {},
-    "diverseDescription": "young adult to middle-aged aasimar, mature features, some fine lines, confident expression, celestial heritage, ethereal beauty, otherworldly appearance, divine markings"
+    "diverseDescription": "young adult to middle-aged aasimar, mature features, some fine lines, confident expression, celestial heritage, glowing eyes, radiant features, divine markings, otherworldly beauty, ethereal appearance, angelic features, divine aura"
   },
   "Protector Aasimar": {
     "adulthood": 18,
@@ -688,7 +688,7 @@
       {
         "name": "young_adult",
         "range": [30, 49],
-        "appearance": "young adult protector aasimar, mature features, some fine lines, confident expression, celestial heritage, protective aura, benevolent appearance, guardian features",
+        "appearance": "young adult protector aasimar, mature features, some fine lines, confident expression, celestial heritage, glowing eyes, radiant features, divine markings, otherworldly beauty, ethereal appearance, angelic features, divine aura, protective aura, benevolent appearance, guardian features, healing presence, golden glow",
         "maturity": "young adulthood - establishing themselves"
       },
       {
@@ -717,7 +717,7 @@
       }
     ],
     "special": {},
-    "diverseDescription": "young adult to middle-aged protector aasimar, mature features, some fine lines, confident expression, celestial heritage, protective aura, benevolent appearance, guardian features, healing presence"
+    "diverseDescription": "young adult to middle-aged protector aasimar, mature features, some fine lines, confident expression, celestial heritage, glowing eyes, radiant features, divine markings, otherworldly beauty, ethereal appearance, angelic features, divine aura, protective aura, benevolent appearance, guardian features, healing presence, golden glow"
   },
   "Scourge Aasimar": {
     "adulthood": 18,
@@ -738,7 +738,7 @@
       {
         "name": "young_adult",
         "range": [30, 49],
-        "appearance": "young adult scourge aasimar, mature features, some fine lines, confident expression, celestial heritage, justice-seeking features, determined expression, righteous appearance",
+        "appearance": "young adult scourge aasimar, mature features, some fine lines, confident expression, celestial heritage, glowing eyes, radiant features, divine markings, otherworldly beauty, ethereal appearance, angelic features, divine aura, justice-seeking features, determined expression, righteous appearance, punishing aura, fiery glow",
         "maturity": "young adulthood - establishing themselves"
       },
       {
@@ -767,7 +767,7 @@
       }
     ],
     "special": {},
-    "diverseDescription": "young adult to middle-aged scourge aasimar, mature features, some fine lines, confident expression, celestial heritage, justice-seeking features, determined expression, righteous appearance, punishing aura"
+    "diverseDescription": "young adult to middle-aged scourge aasimar, mature features, some fine lines, confident expression, celestial heritage, glowing eyes, radiant features, divine markings, otherworldly beauty, ethereal appearance, angelic features, divine aura, justice-seeking features, determined expression, righteous appearance, punishing aura, fiery glow"
   },
   "Fallen Aasimar": {
     "adulthood": 18,
@@ -788,7 +788,7 @@
       {
         "name": "young_adult",
         "range": [30, 49],
-        "appearance": "young adult fallen aasimar, mature features, some fine lines, confident expression, corrupted celestial heritage, dark aura, fallen features, corrupted appearance",
+        "appearance": "young adult fallen aasimar, mature features, some fine lines, confident expression, corrupted celestial heritage, glowing eyes, radiant features, divine markings, otherworldly beauty, ethereal appearance, angelic features, divine aura, dark aura, fallen features, corrupted appearance, necrotic presence, shadowy glow",
         "maturity": "young adulthood - establishing themselves"
       },
       {
@@ -817,7 +817,7 @@
       }
     ],
     "special": {},
-    "diverseDescription": "young adult to middle-aged fallen aasimar, mature features, some fine lines, confident expression, corrupted celestial heritage, dark aura, fallen features, corrupted appearance, necrotic presence"
+    "diverseDescription": "young adult to middle-aged fallen aasimar, mature features, some fine lines, confident expression, corrupted celestial heritage, glowing eyes, radiant features, divine markings, otherworldly beauty, ethereal appearance, angelic features, divine aura, dark aura, fallen features, corrupted appearance, necrotic presence, shadowy glow"
   },
   "Goliath": {
     "adulthood": 18,
