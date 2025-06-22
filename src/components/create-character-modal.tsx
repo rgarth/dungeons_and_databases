@@ -327,14 +327,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     if (alignments?.length > 0 && !alignment) setAlignment('True Neutral');
   }, [races, classes, backgrounds, alignments, race, characterClass, background, alignment]);
 
-  // Clear cached data when class changes
-  useEffect(() => {
-    setCachedWeaponSuggestions([]);
-    setCachedWeaponProficiencies(null);
-    setCachedArmorProficiencies([]);
-    setCachedPhbDescription(null);
-  }, [characterClass]);
-
   // Load creation options when class changes
   useEffect(() => {
     console.log('🎯 useEffect triggered for characterClass:', characterClass);
@@ -430,16 +422,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
   // Get creation options from state (with fallback)
   const { needsSubclassAtCreation = false, spellcasting = { ability: null, canCastAtLevel1: false, availableSpells: [], spellSlots: {} } } = creationOptions || {};
-
-  // Debug: Log when creationOptions change
-  useEffect(() => {
-    console.log('🔄 creationOptions changed:', {
-      hasCreationOptions: !!creationOptions,
-      needsSubclassAtCreation,
-      subclassesCount: creationOptions?.subclasses?.length || 0,
-      characterClass
-    });
-  }, [creationOptions, needsSubclassAtCreation, characterClass]);
 
   // Initialize ability scores on mount
   useEffect(() => {
@@ -584,15 +566,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       console.log('No ranged weapons need ammunition');
     }
   }, [selectedWeapons]);
-
-  // Reset weapon and armor selections when class changes
-  useEffect(() => {
-    // Reset selections when class changes (suggestions will be applied by the above effects)
-    setSelectedWeapons([]);
-    // Don't clear armor here - let armor suggestions effect handle it
-    setSubclass("");
-    console.log('RESET: Cleared weapons and subclass for class change to:', characterClass);
-  }, [characterClass]);
 
   const handleStatMethodChange = (method: StatMethod) => {
     setStatMethod(method);
