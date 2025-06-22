@@ -83,6 +83,7 @@ interface CharacterSheetProps {
     ideals?: string[];
     bonds?: string[];
     flaws?: string[];
+    subrace?: string;
   };
   onClose: () => void;
   onCharacterDeleted?: () => void;
@@ -907,7 +908,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
                 <div className="min-w-0 flex-1">
                   <h1 className="text-xl sm:text-2xl font-bold text-white truncate">{displayCharacter.name}</h1>
                   <p className="text-slate-300 text-sm sm:text-base truncate">
-                    Level {displayCharacter.level} {displayCharacter.race} {displayCharacter.class}
+                    Level {displayCharacter.level} {displayCharacter.subrace || displayCharacter.race} {displayCharacter.class}
                     {displayCharacter.background && (
                       <span className="hidden sm:inline"> • {displayCharacter.background}</span>
                     )}

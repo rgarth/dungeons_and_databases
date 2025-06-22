@@ -34,7 +34,7 @@ export function CharacterList({ characters }: CharacterListProps) {
             </div>
             <div className="space-y-2">
               <p className="text-gray-600 dark:text-gray-300">
-                {character.race} {character.class}
+                {character.subrace || character.race} {character.class}
               </p>
               <p className="text-gray-600 dark:text-gray-300">
                 {character.background}

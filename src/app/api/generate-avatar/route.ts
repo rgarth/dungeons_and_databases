@@ -34,21 +34,17 @@ export async function POST(request: NextRequest) {
 
     const characterData: CharacterAvatarData = await request.json();
     console.log('🎨 Generating avatar for character:', characterData);
+    console.log('🎨 Subrace:', characterData.subrace);
 
     const prompt = createDynamicAvatarPrompt(characterData);
     const seed = Math.floor(Math.random() * 1000000);
 
-    console.log(`🎨 Generating avatar with prompt: ${prompt.substring(0, 100)}...`);
+    console.log(`🎨 FULL PROMPT: ${prompt}`);
+    console.log(`🎨 Prompt length: ${prompt.length} characters`);
 
     // Try FLUX.1 Schnell via Replicate first (faster, better for D&D content)
-    let avatarResult = await generateWithFluxSchnell(prompt, seed);
+    const avatarResult = await generateWithFluxSchnell(prompt, seed);
     
-    // Fallback to Pollinations if FLUX.1 Schnell fails
-    if (!avatarResult.success) {
-      console.log('⚠️ FLUX.1 Schnell failed, falling back to Pollinations:', avatarResult.error);
-      avatarResult = await generateWithPollinations(prompt, seed);
-    }
-
     if (!avatarResult.success) {
       return NextResponse.json({ 
         error: avatarResult.error || "Failed to generate avatar" 
@@ -74,6 +70,11 @@ export async function POST(request: NextRequest) {
 async function generateWithFluxSchnell(prompt: string, seed: number) {
   try {
     const replicateToken = process.env.REPLICATE_API_TOKEN;
+    
+    console.log('🔑 REPLICATE TOKEN CHECK:');
+    console.log('🔑 Token exists:', !!replicateToken);
+    console.log('🔑 Token length:', replicateToken?.length);
+    console.log('🔑 Token starts with:', replicateToken?.substring(0, 10) + '...');
     
     if (!replicateToken) {
       throw new Error('Replicate API token not configured');
@@ -158,39 +159,6 @@ async function generateWithFluxSchnell(prompt: string, seed: number) {
   }
 }
 
-async function generateWithPollinations(prompt: string, seed: number) {
-  try {
-    console.log('🌐 Using Pollinations fallback...');
-    
-    const pollinationsUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${seed}&width=192&height=256&model=flux`;
-    console.log('🌐 Pollinations URL:', pollinationsUrl);
-
-    const response = await fetch(pollinationsUrl);
-    
-    if (!response.ok) {
-      throw new Error(`Pollinations API error: ${response.status}`);
-    }
-
-    const imageBuffer = await response.arrayBuffer();
-    const base64Image = `data:image/jpeg;base64,${Buffer.from(imageBuffer).toString('base64')}`;
-    
-    console.log('✅ Pollinations generation successful');
-    return {
-      success: true,
-      fullBodyImage: base64Image,
-      avatarImage: base64Image,
-      service: '🌐 Pollinations (Free)'
-    };
-
-  } catch (error) {
-    console.error('Pollinations error:', error);
-    return {
-      success: false,
-      error: `Pollinations generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-    };
-  }
-}
-
 function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
   const { race, subrace, class: characterClass, gender, alignment, age } = data;
   
@@ -225,7 +193,7 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
     if (!age) {
       // No age specified - encourage diverse age representation
       if (race && getSupportedRaces().includes(race)) {
-        return getDiverseAgeDescription(race, gender);
+        return getDiverseAgeDescription(race, gender, subrace);
       }
       
       if (gender === 'Male') {
@@ -288,62 +256,34 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
           }
           return `${gnomeDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, realistic imperfections`;
         }
-        // For aasimar, always include celestial features and glowing eyes
-        if (race === 'Aasimar') {
+        // For aasimar and subraces, use the age system directly
+        if (race === 'Aasimar' || race === 'Protector Aasimar' || race === 'Scourge Aasimar' || race === 'Fallen Aasimar') {
           const ageDesc = getAppearanceDescription(race, age, gender);
-          let aasimarDesc = `aasimar character with celestial heritage, glowing eyes, radiant features, divine markings, ${ageDesc}`;
-          if (subrace === 'Protector Aasimar') {
-            aasimarDesc += ', protective aura, guardian features, benevolent appearance';
-          } else if (subrace === 'Scourge Aasimar') {
-            aasimarDesc += ', justice-seeking features, determined expression, righteous appearance';
-          } else if (subrace === 'Fallen Aasimar') {
-            aasimarDesc += ', fallen features, dark aura, corrupted celestial heritage';
-          }
-          return `${aasimarDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique celestial features, ethereal beauty, otherworldly appearance, realistic imperfections`;
+          return `${race.toLowerCase()} character with ${ageDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, varied skin tones, varied hair textures, realistic imperfections`;
         }
         // For goliaths, always include stone-like skin markings and massive build
         if (race === 'Goliath') {
           const ageDesc = getAppearanceDescription(race, age, gender);
           return `goliath character with stone-like skin markings, massive build, giant heritage, towering height, ${ageDesc}, weathered features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, unique stone patterns, diverse facial features, realistic imperfections`;
         }
-        // For elves, include subrace-specific features
-        if (race === 'Elf') {
+        // For elves and subraces, use the age system directly
+        if (race === 'Elf' || race === 'High Elf' || race === 'Wood Elf' || race === 'Drow') {
           const ageDesc = getAppearanceDescription(race, age, gender);
-          let elfDesc = `elf character with pointed ears, graceful features, ethereal beauty, tall and slender, ${ageDesc}`;
-          if (subrace === 'High Elf') {
-            elfDesc += ', scholarly features, refined appearance, aristocratic bearing';
-          } else if (subrace === 'Wood Elf') {
-            elfDesc += ', natural features, wild appearance, forest-dwelling characteristics';
-          } else if (subrace === 'Drow') {
-            elfDesc += ', dark skin, white hair, red eyes, underdark features, drow heritage';
-          }
-          return `${elfDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, varied skin tones, varied hair textures, realistic imperfections`;
+          return `${race.toLowerCase()} character with ${ageDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, varied skin tones, varied hair textures, realistic imperfections`;
         }
-        // For dwarves, include subrace-specific features
-        if (race === 'Dwarf') {
+        // For dwarves and subraces, use the age system directly
+        if (race === 'Dwarf' || race === 'Hill Dwarf' || race === 'Mountain Dwarf') {
           const ageDesc = getAppearanceDescription(race, age, gender);
-          let dwarfDesc = `dwarf character with short stature, broad build, thick beard, sturdy frame, ${ageDesc}`;
-          if (subrace === 'Hill Dwarf') {
-            dwarfDesc += ', hardy features, resilient appearance, tough constitution';
-          } else if (subrace === 'Mountain Dwarf') {
-            dwarfDesc += ', martial features, warrior appearance, battle-hardened look';
-          }
-          return `${dwarfDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, varied skin tones, varied hair textures, realistic imperfections`;
+          return `${race.toLowerCase()} character with ${ageDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, varied skin tones, varied hair textures, realistic imperfections`;
         }
-        // For halflings, include subrace-specific features
-        if (race === 'Halfling') {
+        // For halflings and subraces, use the age system directly
+        if (race === 'Halfling' || race === 'Lightfoot Halfling' || race === 'Stout Halfling') {
           const ageDesc = getAppearanceDescription(race, age, gender);
-          let halflingDesc = `halfling character, small adult stature, mature adult face, adult proportions, hobbit-like build, NOT child, NOT young, adult halfling person, ${ageDesc}`;
-          if (subrace === 'Lightfoot Halfling') {
-            halflingDesc += ', stealthy features, nimble appearance, quick movements';
-          } else if (subrace === 'Stout Halfling') {
-            halflingDesc += ', hardy features, stout build, resilient appearance';
-          }
-          return `${halflingDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, varied skin tones, varied hair textures, realistic imperfections`;
+          return `${race.toLowerCase()} character with ${ageDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, varied skin tones, varied hair textures, realistic imperfections`;
         }
         return getAppearanceDescription(race, age, gender);
       }
-      return getDiverseAgeDescription(race, gender);
+      return getDiverseAgeDescription(race, gender, subrace);
     }
 
     // Fallback descriptions for unsupported races
@@ -427,12 +367,28 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
     genderPrefix = 'gender-neutral ';
   }
 
-  const raceDesc = getRaceDescription(race, subrace, gender, age);
+  const raceDesc = getRaceDescription(subrace || race, undefined, gender, age);
   const classDesc = classDescriptions[characterClass] || 'adventurer';
-  const ageDesc = getAgeDescription(age, gender, race);
+  const ageDesc = getAgeDescription(age, gender, subrace || race);
+
+  console.log('🎨 RACE DESCRIPTION:', raceDesc);
+  console.log('🎨 SUBRACE:', subrace);
+  console.log('🎨 RACE:', race);
+  console.log('🎨 EFFECTIVE RACE FOR AVATAR:', subrace || race);
+
+  // For Drow, exclude diversity prompts that conflict with their consistent dark appearance
+  const isDrow = subrace === 'Drow';
+  const promptsToUse = isDrow 
+    ? antiBiasPrompts.filter(prompt => 
+        !prompt.includes('DIVERSE') && 
+        !prompt.includes('varied') && 
+        !prompt.includes('VARIED') &&
+        !prompt.includes('diverse')
+      )
+    : antiBiasPrompts;
 
   // Build prompt with strong anti-bias elements and realistic photo style
-  const prompt = `${consistentStyle.composition}, ${genderPrefix}${raceDesc}, ${ageDesc}, ${classDesc}, ${expressions}, ${antiBiasPrompts.join(', ')}, ${consistentStyle.artStyle}, ${consistentStyle.lighting}, ${consistentStyle.background}, ${consistentStyle.quality}, ${consistentStyle.format}`;
+  const prompt = `${consistentStyle.composition}, ${genderPrefix}${raceDesc}, ${ageDesc}, ${classDesc}, ${expressions}, ${promptsToUse.join(', ')}, ${consistentStyle.artStyle}, ${consistentStyle.lighting}, ${consistentStyle.background}, ${consistentStyle.quality}, ${consistentStyle.format}`;
 
   return prompt;
 } 

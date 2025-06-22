@@ -41,6 +41,8 @@ export function AvatarGenerator({
 
     try {
       console.log('🎨 Generating avatar for character:', characterData);
+      console.log('🎨 SUBRACE being sent:', characterData.subrace);
+      console.log('🎨 RACE being sent:', characterData.race);
 
       const response = await fetch('/api/generate-avatar', {
         method: 'POST',

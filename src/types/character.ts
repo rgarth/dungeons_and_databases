@@ -7,6 +7,7 @@ export interface Character {
   id: string;
   name: string;
   race: string;
+  subrace?: string;
   class: string;
   subclass?: string;
   level: number;

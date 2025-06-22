@@ -5,6 +5,7 @@ import { SUBCLASSES, type Subclass } from '@/lib/dnd/subclasses';
 export interface CharacterCreationData {
   name: string;
   race: string;
+  subrace?: string;
   class: string;
   subclass?: string;
   level?: number;

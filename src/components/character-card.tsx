@@ -75,7 +75,7 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
             <div>
               <h3 className="text-xl font-bold text-white">{character.name}</h3>
               <p className="text-slate-400 text-sm mt-1">
-                {character.race} {character.class}
+                {character.subrace || character.race} {character.class}
               </p>
               <div className="bg-purple-600 text-white text-sm font-semibold px-2 py-0.5 rounded mt-2 inline-block">
                 Level {character.level}

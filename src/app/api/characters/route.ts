@@ -64,6 +64,7 @@ export async function POST(request: NextRequest) {
     const {
       name,
       race,
+      subrace,
       class: characterClass,
       subclass,
       level,
@@ -115,6 +116,7 @@ export async function POST(request: NextRequest) {
       wisdom,
       charisma
     });
+    console.log('Received subrace:', subrace);
     console.log('Ability score types:', {
       strength: typeof strength,
       dexterity: typeof dexterity,
@@ -215,6 +217,7 @@ export async function POST(request: NextRequest) {
     const validation = validationService.validateCharacterCreation({
       name,
       race,
+      subrace,
       class: characterClass,
       subclass,
       level,
@@ -242,6 +245,7 @@ export async function POST(request: NextRequest) {
       data: {
         name,
         race,
+        subrace,
         class: characterClass,
         ...(subclass && { subclass }),
         level: level || 1,
