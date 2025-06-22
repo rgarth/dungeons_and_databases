@@ -1,0 +1,40 @@
+{
+  "summary": {
+    "totalTests": 9,
+    "successfulTests": 9,
+    "failedTests": 0,
+    "successRate": "100.00%",
+    "uniquePrompts": 9,
+    "duplicatePrompts": 0,
+    "promptEfficiency": "100.00%"
+  },
+  "breakdown": {
+    "byRace": {
+      "Dragonborn": 9
+    },
+    "byGender": {
+      "Male": 3,
+      "Female": 3,
+      "Non-binary": 3
+    },
+    "byAge": {
+      "15": 3,
+      "30": 3,
+      "50": 3
+    },
+    "byClass": {
+      "Rogue": 1,
+      "Druid": 1,
+      "Cleric": 2,
+      "Ranger": 2,
+      "Paladin": 1,
+      "Sorcerer": 1,
+      "Bard": 1
+    },
+    "byAlignment": {
+      "undefined": 9
+    }
+  },
+  "errors": [],
+  "promptAnalysis": []
+}

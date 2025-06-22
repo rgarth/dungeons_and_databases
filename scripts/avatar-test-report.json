@@ -1,0 +1,78 @@
+{
+  "summary": {
+    "totalTests": 108,
+    "successfulTests": 108,
+    "failedTests": 0,
+    "successRate": "100.00%",
+    "uniquePrompts": 107,
+    "duplicatePrompts": 1,
+    "promptEfficiency": "99.07%"
+  },
+  "breakdown": {
+    "byRace": {
+      "Human": 9,
+      "Elf": 9,
+      "Dwarf": 9,
+      "Halfling": 9,
+      "Dragonborn": 9,
+      "Gnome": 9,
+      "Half-Elf": 9,
+      "Half-Orc": 9,
+      "Tiefling": 9,
+      "Aasimar": 9,
+      "Goliath": 9,
+      "Tabaxi": 9
+    },
+    "byGender": {
+      "Male": 36,
+      "Female": 36,
+      "Non-binary": 36
+    },
+    "byAge": {
+      "14": 3,
+      "15": 6,
+      "18": 3,
+      "20": 12,
+      "25": 3,
+      "30": 9,
+      "35": 3,
+      "40": 9,
+      "45": 3,
+      "50": 15,
+      "60": 6,
+      "65": 3,
+      "70": 3,
+      "100": 12,
+      "120": 3,
+      "150": 3,
+      "200": 3,
+      "250": 3,
+      "300": 3,
+      "600": 3
+    },
+    "byClass": {
+      "Paladin": 8,
+      "Barbarian": 10,
+      "Sorcerer": 10,
+      "Bard": 5,
+      "Rogue": 10,
+      "Fighter": 14,
+      "Monk": 10,
+      "Cleric": 11,
+      "Ranger": 10,
+      "Druid": 7,
+      "Warlock": 6,
+      "Wizard": 7
+    },
+    "byAlignment": {
+      "undefined": 108
+    }
+  },
+  "errors": [],
+  "promptAnalysis": [
+    {
+      "prompt": "SINGLE PORTRAIT SHOT, ONE PERSON ONLY, head and shoulders only, bust shot, upper body portrait, clos...",
+      "count": 2
+    }
+  ]
+}

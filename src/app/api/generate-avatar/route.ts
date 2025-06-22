@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { 
+  getAppearanceDescription, 
+  getDiverseAgeDescription,
+  getSupportedRaces
+} from "@/lib/dnd/age-system";
 
 export interface CharacterAvatarData {
   race: string;
@@ -218,6 +223,10 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
   const getAgeDescription = (age?: number, gender?: string, race?: string): string => {
     if (!age) {
       // No age specified - encourage diverse age representation
+      if (race && getSupportedRaces().includes(race)) {
+        return getDiverseAgeDescription(race, gender);
+      }
+      
       if (gender === 'Male') {
         return 'varied age from young adult to elderly, diverse age representation, some young faces, some middle-aged, some elderly';
       } else if (gender === 'Female') {
@@ -227,33 +236,12 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
       }
     }
     
-    // Special handling for elves - they never look over 40
-    if (race === 'Elf') {
-      // For female elves, add 10 years to actual age and cap at 50
-      if (gender === 'Female') {
-        const adjustedAge = age ? age + 10 : undefined;
-        if (!adjustedAge) {
-          return 'varied age from young adult to mature, diverse age representation, some young faces, some mature, ageless elven beauty';
-        }
-        if (adjustedAge < 18) return 'teenager, youthful features, smooth skin, minimal wrinkles';
-        if (adjustedAge < 25) return 'young adult, early twenties, youthful features, smooth skin';
-        if (adjustedAge < 35) return 'young adult, twenties to early thirties, some fine lines, youthful but mature';
-        if (adjustedAge < 45) return 'young adult, thirties to early forties, mature features, some fine lines, youthful but mature';
-        if (adjustedAge < 55) return 'mature adult, forties to early fifties, mature features, some fine lines, graceful aging';
-        // For female elves 55+ adjusted age, cap at 50s appearance
-        return 'mature adult, forties to early fifties, mature features, some fine lines, graceful aging, ageless elven beauty';
-      }
-      
-      // For male and non-binary elves, cap at 40
-      if (age < 18) return 'teenager, youthful features, smooth skin, minimal wrinkles';
-      if (age < 25) return 'young adult, early twenties, youthful features, smooth skin';
-      if (age < 35) return 'young adult, twenties to early thirties, some fine lines, youthful but mature';
-      if (age < 45) return 'young adult, thirties to early forties, mature features, some fine lines, youthful but mature';
-      // For elves 45 and older, cap at 40s appearance
-      return 'young adult, thirties to early forties, mature features, some fine lines, youthful but mature, ageless elven beauty';
+    // Use the new age system for supported races
+    if (race && getSupportedRaces().includes(race)) {
+      return getAppearanceDescription(race, age, gender);
     }
     
-    // Age specified - provide appropriate description for other races
+    // Fallback for unsupported races - provide appropriate description
     if (age < 18) return 'teenager, youthful features, smooth skin, minimal wrinkles';
     if (age < 25) return 'young adult, early twenties, youthful features, smooth skin';
     if (age < 35) return 'young adult, twenties to early thirties, some fine lines, youthful but mature';
@@ -266,19 +254,49 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
 
   // Diverse race descriptions with distinctive features - different for males vs females
   const getRaceDescription = (race: string, gender?: string, age?: number): string => {
+    // Use the new age system for supported races
+    if (getSupportedRaces().includes(race)) {
+      if (age) {
+        // For dragonborn, always include the scaled appearance regardless of age
+        if (race === 'Dragonborn') {
+          const ageDesc = getAppearanceDescription(race, age, gender);
+          return `DRAGONBORN RACE with scaled skin covering face and body, draconic heritage, reptilian eyes, pronounced snout, ${ageDesc}, weathered scales, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark scales, brown scales, black scales, olive scales, tan scales, varied scale colors, unique draconic features, realistic imperfections`;
+        }
+        // For tieflings, always include horns, tail, and infernal features
+        if (race === 'Tiefling') {
+          const ageDesc = getAppearanceDescription(race, age, gender);
+          return `tiefling character with horns, tail, infernal heritage, ${ageDesc}, weathered features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin colors, unique infernal features, diverse horn styles, demonic features, realistic imperfections`;
+        }
+        // For half-orcs, always include greenish skin, tusks, and orcish features
+        if (race === 'Half-Orc') {
+          const ageDesc = getAppearanceDescription(race, age, gender);
+          return `half-orc character with greenish skin, prominent tusks, ${ageDesc}, weathered features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, unique orcish features, diverse facial structures, muscular build, realistic imperfections`;
+        }
+        // For gnomes, always include the descriptive features without using the word "gnome"
+        if (race === 'Gnome') {
+          const ageDesc = getAppearanceDescription(race, age, gender);
+          return `small ADULT humanoid adventurer, mature adult person 3-4 feet tall, ADULT FACE with wrinkles and age lines, pointy ears like elf, intelligent sparkling eyes, high cheekbones, prominent nose, earth-toned skin, clean-shaven ADULT face, NO BEARD, ADULT proportions not child, weathered mature features, fantasy adventurer clothing, small ADULT person with elf-like features, humanoid ADULT not lawn ornament, NOT CHILD, NOT YOUNG FACE, mature adult character, ${ageDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, realistic imperfections`;
+        }
+        // For aasimar, always include celestial features and glowing eyes
+        if (race === 'Aasimar') {
+          const ageDesc = getAppearanceDescription(race, age, gender);
+          return `aasimar character with celestial heritage, glowing eyes, radiant features, divine markings, ${ageDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique celestial features, ethereal beauty, otherworldly appearance, realistic imperfections`;
+        }
+        // For goliaths, always include stone-like skin markings and massive build
+        if (race === 'Goliath') {
+          const ageDesc = getAppearanceDescription(race, age, gender);
+          return `goliath character with stone-like skin markings, massive build, giant heritage, towering height, ${ageDesc}, weathered features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, unique stone patterns, diverse facial features, realistic imperfections`;
+        }
+        return getAppearanceDescription(race, age, gender);
+      }
+      return getDiverseAgeDescription(race, gender);
+    }
+
+    // Fallback descriptions for unsupported races
     const baseDescriptions: Record<string, string> = {
-      'Human': gender === 'Male' 
-        ? `human character${!age ? ', varied age from young adult to elderly' : ''}, average build, some thin, some overweight, NOT muscular, NOT buff, NOT built, normal physique, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, human features, realistic imperfections like scars or blemishes, varied hair styles, varied facial features, some average, some unattractive`
-        : `human character${!age ? ', varied age from young adult to elderly' : ''}, some overweight, some average build, some thin, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, human features, realistic imperfections like scars or blemishes, varied hair styles, varied facial features, some average, some unattractive`,
-      'Elf': gender === 'Male'
-        ? 'elf character with long pointed ears, ethereal features, angular face, high cheekbones, narrow jaw, elegant bone structure, delicate nose, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique elven features, realistic imperfections, no facial hair, clean shaven'
-        : gender === 'Female'
-        ? 'elf character with long pointed ears, ethereal features, angular face, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique elven features, realistic imperfections'
-        : 'elf character with long pointed ears, ethereal features, angular face, delicate features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique elven features, realistic imperfections, ambiguous gender, non-binary appearance, androgynous features',
-      'Dwarf': 'dwarf character with thick beard, stocky build, broad shoulders, weathered face, wrinkles, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique dwarven features, realistic imperfections',
       'Halfling': 'halfling character, small adult stature, mature adult face with wrinkles, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique halfling features, realistic imperfections',
       'Dragonborn': 'dragonborn character with scaled skin covering face and body, weathered scales, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark scales, brown scales, black scales, olive scales, tan scales, varied scale colors, unique draconic features, realistic imperfections',
-      'Gnome': 'small adult humanoid adventurer, mature adult person 3-4 feet tall, adult face with wrinkles, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique gnomish features, realistic imperfections',
+      'Gnome': 'small ADULT humanoid adventurer, mature adult person 3-4 feet tall, ADULT FACE with wrinkles and age lines, pointy ears like elf, intelligent sparkling eyes, high cheekbones, prominent nose, earth-toned skin, clean-shaven ADULT face, NO BEARD, ADULT proportions not child, weathered mature features, fantasy adventurer clothing, small ADULT person with elf-like features, humanoid ADULT not lawn ornament, NOT CHILD, NOT YOUNG FACE, mature adult character, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, realistic imperfections',
       'Tiefling': 'tiefling character with horns, tail, infernal heritage, weathered features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin colors, unique infernal features, diverse horn styles, realistic imperfections',
       'Half-Orc': 'half-orc character with greenish skin, prominent tusks, weathered features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, unique orcish features, diverse facial structures, realistic imperfections',
       'Half-Elf': 'half-elf character with slightly pointed ears, human-elf hybrid features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique mixed heritage features, realistic imperfections',
@@ -360,7 +378,7 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
   const ageDesc = getAgeDescription(age, gender, race);
 
   // Build prompt with strong anti-bias elements and realistic photo style
-  const prompt = `SINGLE PORTRAIT SHOT, ONE PERSON ONLY, head and shoulders only, bust shot, upper body portrait, close-up character portrait, NOT full body, looking at camera, NO MULTIPLE HEADS, NO MULTIPLE FACES, SINGLE FACE, SINGLE HEAD, ${genderPrefix}${raceDesc}, ${ageDesc}, ${classDesc}, ${expressions}, ${antiBiasPrompts.join(', ')}, ${consistentStyle.artStyle}, ${consistentStyle.lighting}, ${consistentStyle.background}, ${consistentStyle.quality}, ${consistentStyle.format}`;
+  const prompt = `${consistentStyle.composition}, ${genderPrefix}${raceDesc}, ${ageDesc}, ${classDesc}, ${expressions}, ${antiBiasPrompts.join(', ')}, ${consistentStyle.artStyle}, ${consistentStyle.lighting}, ${consistentStyle.background}, ${consistentStyle.quality}, ${consistentStyle.format}`;
 
   return prompt;
 } 
