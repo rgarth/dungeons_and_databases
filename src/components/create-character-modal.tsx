@@ -113,8 +113,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Cached suggestions for instant loading in modals
   const [cachedWeaponSuggestions, setCachedWeaponSuggestions] = useState<WeaponSuggestion[]>([]);
   const [cachedWeaponProficiencies, setCachedWeaponProficiencies] = useState<{ simple: boolean; martial: boolean; specific: string[] } | null>(null);
-  const [cachedArmorProficiencies, setCachedArmorProficiencies] = useState<string[] | null>(null);
+  const [cachedArmorProficiencies, setCachedArmorProficiencies] = useState<string[]>([]);
   const [cachedPhbDescription, setCachedPhbDescription] = useState<string | null>(null);
+  const [cachedSpells, setCachedSpells] = useState<Record<string, Spell[]>>({});
 
   // Creation step state
   const [currentStep, setCurrentStep] = useState<'basic' | 'background'>('basic');
@@ -330,17 +331,24 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   useEffect(() => {
     setCachedWeaponSuggestions([]);
     setCachedWeaponProficiencies(null);
-    setCachedArmorProficiencies(null);
+    setCachedArmorProficiencies([]);
     setCachedPhbDescription(null);
   }, [characterClass]);
 
-  // Load creation options and proficiencies when class changes
+  // Load creation options when class changes
   useEffect(() => {
+    console.log('🎯 useEffect triggered for characterClass:', characterClass);
+    
     const loadCreationOptions = async () => {
       if (!characterClass) return; // Don't load if no class selected
       
+      // Check if we have cached spells for this class
+      const cachedSpellsForClass = cachedSpells[characterClass];
+      
+      console.log('📡 Making API calls for creation options...');
       setLoadingOptions(true);
       try {
+        console.log('📡 Making API calls for creation options...');
         const [options, weaponSuggestions, armorSuggestions, weaponProficiencies, armorProficiencies, classData] = await Promise.all([
           characterCreationService.getCreationOptions(characterClass),
           fetch(`/api/weapon-suggestions?className=${encodeURIComponent(characterClass)}`)
@@ -360,16 +368,34 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             .catch(() => null)
         ]);
         
+        console.log('📦 Raw options from characterCreationService:', options);
+        
+        // Use cached spells if available, otherwise use from API
+        const spellcastingData = (options as Partial<CreationOptions>).spellcasting;
+        const availableSpells = cachedSpellsForClass || spellcastingData?.availableSpells || [];
+        
+        if (cachedSpellsForClass) {
+          console.log('⚡ Using cached spells for', characterClass, ':', cachedSpellsForClass.length, 'spells');
+        } else {
+          console.log('📡 Loading spells from API for', characterClass, ':', spellcastingData?.availableSpells?.length || 0, 'spells');
+        }
+        
         setCreationOptions({
           ...options,
           subclasses: (options as Partial<CreationOptions>).subclasses || [],
           needsSubclassAtCreation: (options as Partial<CreationOptions>).needsSubclassAtCreation || false,
-          spellcasting: (options as Partial<CreationOptions>).spellcasting || { 
-            ability: null, 
-            canCastAtLevel1: false, 
-            availableSpells: [], 
-            spellSlots: {} 
+          spellcasting: {
+            ability: spellcastingData?.ability || null,
+            canCastAtLevel1: spellcastingData?.canCastAtLevel1 || false,
+            availableSpells,
+            spellSlots: spellcastingData?.spellSlots || {}
           }
+        });
+        
+        console.log('🔍 DEBUG - Creation options for', characterClass, ':', {
+          subclasses: (options as Partial<CreationOptions>).subclasses || [],
+          needsSubclassAtCreation: (options as Partial<CreationOptions>).needsSubclassAtCreation || false,
+          spellcasting: (options as Partial<CreationOptions>).spellcasting
         });
         
         setWeaponSuggestions(weaponSuggestions);
@@ -380,6 +406,14 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         setCachedWeaponProficiencies(weaponProficiencies);
         setCachedArmorProficiencies(armorProficiencies.armor || []);
         setCachedPhbDescription(classData?.phbDescription || null);
+        
+        // Cache spells for this class
+        if ((options as Partial<CreationOptions>).spellcasting?.availableSpells) {
+          setCachedSpells(prev => ({
+            ...prev,
+            [characterClass]: (options as Partial<CreationOptions>).spellcasting!.availableSpells
+          }));
+        }
         
         console.log('✅ SET STATE - Weapon suggestions for', characterClass, ':', weaponSuggestions);
         console.log('✅ SET STATE - Armor suggestions for', characterClass, ':', armorSuggestions);
@@ -396,6 +430,16 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
   // Get creation options from state (with fallback)
   const { needsSubclassAtCreation = false, spellcasting = { ability: null, canCastAtLevel1: false, availableSpells: [], spellSlots: {} } } = creationOptions || {};
+
+  // Debug: Log when creationOptions change
+  useEffect(() => {
+    console.log('🔄 creationOptions changed:', {
+      hasCreationOptions: !!creationOptions,
+      needsSubclassAtCreation,
+      subclassesCount: creationOptions?.subclasses?.length || 0,
+      characterClass
+    });
+  }, [creationOptions, needsSubclassAtCreation, characterClass]);
 
   // Initialize ability scores on mount
   useEffect(() => {
@@ -1051,36 +1095,37 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               {/* First row: Name and Age */}
               <div className="flex items-end gap-4 mb-4">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Name</label>
+                  <label htmlFor="character-name" className="block text-sm font-medium text-slate-300 mb-2">Name</label>
                   <div className="relative">
                     <input
+                      id="character-name"
+                      className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                      placeholder="Character Name"
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-                      placeholder="Character Name"
                     />
                     <button
-                      type="button"
-                      onClick={handleGenerateName}
-                      disabled={generatingName}
                       className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-slate-400 hover:text-purple-400 transition-colors disabled:opacity-50"
                       title="Generate fantasy name"
+                      type="button"
+                      onClick={handleGenerateName}
                     >
                       <RefreshCw className={`h-4 w-4 ${generatingName ? 'animate-spin' : ''}`} />
                     </button>
                   </div>
                 </div>
                 <div className="w-32">
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Age (Optional)</label>
+                  <label htmlFor="character-age" className="block text-sm font-medium text-slate-300 mb-2">Age (Optional)</label>
                   <input
+                    id="character-age"
+                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    max={1000}
+                    min={1}
+                    placeholder="Age"
                     type="number"
                     value={age || ''}
-                    onChange={(e) => setAge(e.target.value ? parseInt(e.target.value) : undefined)}
-                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-                    placeholder="Age"
-                    min="1"
-                    max="1000"
+                    onChange={(e) => setAge(e.target.value ? parseInt(e.target.value, 10) : undefined)}
                   />
                 </div>
               </div>
@@ -1088,8 +1133,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               {/* Second row: Race | Class */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Race</label>
+                  <label htmlFor="race-select" className="block text-sm font-medium text-slate-300 mb-2">Race</label>
                   <select
+                    id="race-select"
                     value={race}
                     onChange={(e) => setRace(e.target.value)}
                     className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
@@ -1101,8 +1147,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Class</label>
+                  <label htmlFor="class-select" className="block text-sm font-medium text-slate-300 mb-2">Class</label>
                   <select
+                    id="class-select"
                     value={characterClass}
                     onChange={(e) => setCharacterClass(e.target.value)}
                     className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
@@ -1115,15 +1162,49 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 </div>
               </div>
 
+              {/* Subclass selector - only show if needed at creation */}
+              {(() => {
+                console.log('🎯 RENDER DEBUG - Subclass selector values:', {
+                  needsSubclassAtCreation,
+                  characterClass,
+                  hasCreationOptions: !!creationOptions,
+                  subclassesLength: creationOptions?.subclasses?.length || 0,
+                  subclasses: creationOptions?.subclasses || []
+                });
+                return needsSubclassAtCreation && (
+                  <div className="mb-4">
+                    <label htmlFor="subclass-select" className="block text-sm font-medium text-slate-300 mb-2">
+                      Subclass *
+                    </label>
+                    <select
+                      id="subclass-select"
+                      value={subclass}
+                      onChange={(e) => setSubclass(e.target.value)}
+                      className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
+                    >
+                      <option value="">Choose subclass...</option>
+                      {creationOptions?.subclasses?.map((s) => (
+                        <option key={s.name} value={s.name}>{s.name}</option>
+                      ))}
+                    </select>
+                    {subclass && creationOptions?.subclasses?.find((s) => s.name === subclass)?.description && (
+                      <p className="text-slate-400 mt-2">
+                        {creationOptions.subclasses.find((s) => s.name === subclass)?.description}
+                      </p>
+                    )}
+                  </div>
+                );
+              })()}
+
               {/* Third row: Alignment | Gender */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Alignment</label>
+                  <label htmlFor="alignment-select" className="block text-sm font-medium text-slate-300 mb-2">Alignment</label>
                   <select
+                    id="alignment-select"
                     value={alignment}
                     onChange={(e) => setAlignment(e.target.value)}
                     className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
-                    style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                   >
                     {alignments?.map((a) => (
                       <option key={a.id} value={a.name}>{a.name}</option>
