@@ -230,6 +230,22 @@ model DndRace {
   languages            Json
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+  subraces             Subrace[]
+}
+
+model Subrace {
+  id                   String   @id @default(cuid())
+  name                 String   @unique
+  raceId               String
+  description          String
+  abilityScoreIncrease String
+  traits               Json
+  languages            Json?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  race                 DndRace  @relation(fields: [raceId], references: [id], onDelete: Cascade)
+
+  @@index([raceId])
 }
 
 model Background {
@@ -299,6 +315,7 @@ model Character {
   id                    String   @id @default(cuid())
   name                  String
   race                  String
+  subrace               String?
   class                 String
   subclass              String?
   level                 Int      @default(1)

@@ -9,6 +9,7 @@ import {
 
 export interface CharacterAvatarData {
   race: string;
+  subrace?: string;
   class: string;
   gender?: string;
   alignment?: string;
@@ -191,7 +192,7 @@ async function generateWithPollinations(prompt: string, seed: number) {
 }
 
 function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
-  const { race, class: characterClass, gender, alignment, age } = data;
+  const { race, subrace, class: characterClass, gender, alignment, age } = data;
   
   // Base style elements - realistic photo style
   const consistentStyle = {
@@ -253,7 +254,7 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
   };
 
   // Diverse race descriptions with distinctive features - different for males vs females
-  const getRaceDescription = (race: string, gender?: string, age?: number): string => {
+  const getRaceDescription = (race: string, subrace?: string, gender?: string, age?: number): string => {
     // Use the new age system for supported races
     if (getSupportedRaces().includes(race)) {
       if (age) {
@@ -265,7 +266,11 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
         // For tieflings, always include horns, tail, and infernal features
         if (race === 'Tiefling') {
           const ageDesc = getAppearanceDescription(race, age, gender);
-          return `tiefling character with horns, tail, infernal heritage, ${ageDesc}, weathered features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin colors, unique infernal features, diverse horn styles, demonic features, realistic imperfections`;
+          let tieflingDesc = `tiefling character with horns, tail, infernal heritage, ${ageDesc}`;
+          if (subrace) {
+            tieflingDesc += `, ${subrace.toLowerCase()} heritage`;
+          }
+          return `${tieflingDesc}, weathered features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin colors, unique infernal features, diverse horn styles, demonic features, realistic imperfections`;
         }
         // For half-orcs, always include greenish skin, tusks, and orcish features
         if (race === 'Half-Orc') {
@@ -275,17 +280,66 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
         // For gnomes, always include the descriptive features without using the word "gnome"
         if (race === 'Gnome') {
           const ageDesc = getAppearanceDescription(race, age, gender);
-          return `small ADULT humanoid adventurer, mature adult person 3-4 feet tall, ADULT FACE with wrinkles and age lines, pointy ears like elf, intelligent sparkling eyes, high cheekbones, prominent nose, earth-toned skin, clean-shaven ADULT face, NO BEARD, ADULT proportions not child, weathered mature features, fantasy adventurer clothing, small ADULT person with elf-like features, humanoid ADULT not lawn ornament, NOT CHILD, NOT YOUNG FACE, mature adult character, ${ageDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, realistic imperfections`;
+          let gnomeDesc = `small ADULT humanoid adventurer, mature adult person 3-4 feet tall, ADULT FACE with wrinkles and age lines, pointy ears like elf, intelligent sparkling eyes, high cheekbones, prominent nose, earth-toned skin, clean-shaven ADULT face, NO BEARD, ADULT proportions not child, weathered mature features, fantasy adventurer clothing, small ADULT person with elf-like features, humanoid ADULT not lawn ornament, NOT CHILD, NOT YOUNG FACE, mature adult character, ${ageDesc}`;
+          if (subrace === 'Forest Gnome') {
+            gnomeDesc += ', forest-dwelling features, natural camouflage, earthy tones';
+          } else if (subrace === 'Rock Gnome') {
+            gnomeDesc += ', inventive features, tinkering tools, mechanical accessories';
+          }
+          return `${gnomeDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, realistic imperfections`;
         }
         // For aasimar, always include celestial features and glowing eyes
         if (race === 'Aasimar') {
           const ageDesc = getAppearanceDescription(race, age, gender);
-          return `aasimar character with celestial heritage, glowing eyes, radiant features, divine markings, ${ageDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique celestial features, ethereal beauty, otherworldly appearance, realistic imperfections`;
+          let aasimarDesc = `aasimar character with celestial heritage, glowing eyes, radiant features, divine markings, ${ageDesc}`;
+          if (subrace === 'Protector Aasimar') {
+            aasimarDesc += ', protective aura, guardian features, benevolent appearance';
+          } else if (subrace === 'Scourge Aasimar') {
+            aasimarDesc += ', justice-seeking features, determined expression, righteous appearance';
+          } else if (subrace === 'Fallen Aasimar') {
+            aasimarDesc += ', fallen features, dark aura, corrupted celestial heritage';
+          }
+          return `${aasimarDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, varied hair textures, unique celestial features, ethereal beauty, otherworldly appearance, realistic imperfections`;
         }
         // For goliaths, always include stone-like skin markings and massive build
         if (race === 'Goliath') {
           const ageDesc = getAppearanceDescription(race, age, gender);
           return `goliath character with stone-like skin markings, massive build, giant heritage, towering height, ${ageDesc}, weathered features, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, dark skin, brown skin, black skin, olive skin, tan skin, varied skin tones, unique stone patterns, diverse facial features, realistic imperfections`;
+        }
+        // For elves, include subrace-specific features
+        if (race === 'Elf') {
+          const ageDesc = getAppearanceDescription(race, age, gender);
+          let elfDesc = `elf character with pointed ears, graceful features, ethereal beauty, tall and slender, ${ageDesc}`;
+          if (subrace === 'High Elf') {
+            elfDesc += ', scholarly features, refined appearance, aristocratic bearing';
+          } else if (subrace === 'Wood Elf') {
+            elfDesc += ', natural features, wild appearance, forest-dwelling characteristics';
+          } else if (subrace === 'Drow') {
+            elfDesc += ', dark skin, white hair, red eyes, underdark features, drow heritage';
+          }
+          return `${elfDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, varied skin tones, varied hair textures, realistic imperfections`;
+        }
+        // For dwarves, include subrace-specific features
+        if (race === 'Dwarf') {
+          const ageDesc = getAppearanceDescription(race, age, gender);
+          let dwarfDesc = `dwarf character with short stature, broad build, thick beard, sturdy frame, ${ageDesc}`;
+          if (subrace === 'Hill Dwarf') {
+            dwarfDesc += ', hardy features, resilient appearance, tough constitution';
+          } else if (subrace === 'Mountain Dwarf') {
+            dwarfDesc += ', martial features, warrior appearance, battle-hardened look';
+          }
+          return `${dwarfDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, varied skin tones, varied hair textures, realistic imperfections`;
+        }
+        // For halflings, include subrace-specific features
+        if (race === 'Halfling') {
+          const ageDesc = getAppearanceDescription(race, age, gender);
+          let halflingDesc = `halfling character, small adult stature, mature adult face, adult proportions, hobbit-like build, NOT child, NOT young, adult halfling person, ${ageDesc}`;
+          if (subrace === 'Lightfoot Halfling') {
+            halflingDesc += ', stealthy features, nimble appearance, quick movements';
+          } else if (subrace === 'Stout Halfling') {
+            halflingDesc += ', hardy features, stout build, resilient appearance';
+          }
+          return `${halflingDesc}, scars, acne, crooked teeth, missing teeth, bad teeth, double chin, fat face, obese, morbidly obese, ugly, unattractive, asymmetrical face, varied skin tones, varied hair textures, realistic imperfections`;
         }
         return getAppearanceDescription(race, age, gender);
       }
@@ -373,7 +427,7 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
     genderPrefix = 'gender-neutral ';
   }
 
-  const raceDesc = getRaceDescription(race, gender, age);
+  const raceDesc = getRaceDescription(race, subrace, gender, age);
   const classDesc = classDescriptions[characterClass] || 'adventurer';
   const ageDesc = getAgeDescription(age, gender, race);
 
