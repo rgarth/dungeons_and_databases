@@ -378,8 +378,82 @@ describe('CharacterCreationService', () => {
 
   describe('Error Handling', () => {
     it('should handle API errors gracefully', async () => {
-      // Mock all API calls to fail
-      (global.fetch as jest.Mock).mockRejectedValue(new Error('API Error'));
+      // Mock race API calls to succeed (needed for character creation)
+      (global.fetch as jest.Mock)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({
+            name: 'Human',
+            abilityScoreIncrease: 'All +1',
+            description: 'Humans are the most adaptable and ambitious people among the common races.'
+          })
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({
+            name: 'Human',
+            abilityScoreIncrease: 'All +1',
+            description: 'Humans are the most adaptable and ambitious people among the common races.',
+            traits: []
+          })
+        })
+        // Mock class API to succeed
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ([
+            {
+              name: 'Fighter',
+              hitDie: 10
+            }
+          ])
+        })
+        // Mock equipment packs API to fail
+        .mockRejectedValueOnce(new Error('API Error'))
+        // Mock race equipment API to succeed
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ([
+            {
+              name: 'Human',
+              equipment: []
+            }
+          ])
+        })
+        // Mock background equipment API to succeed
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ([
+            {
+              name: 'Noble',
+              equipment: [],
+              skillProficiencies: ['History', 'Persuasion']
+            }
+          ])
+        })
+        // Mock background skills API to succeed
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ([
+            {
+              name: 'Noble',
+              equipment: [],
+              skillProficiencies: ['History', 'Persuasion']
+            }
+          ])
+        })
+        // Mock class starting gold API to fail
+        .mockRejectedValueOnce(new Error('API Error'))
+        // Mock background starting gold API to succeed
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ([
+            {
+              name: 'Noble',
+              startingGold: 25,
+              startingGoldFormula: null
+            }
+          ])
+        });
 
       const characterData = {
         name: 'Test Character',
@@ -409,28 +483,12 @@ describe('CharacterCreationService', () => {
       // Should still create character with default values
       expect(result.name).toBe('Test Character');
       expect(result.goldPieces).toBe(0); // Default when API fails
+      expect(result.inventory).toEqual([]); // Default when equipment pack API fails
     });
 
     it('should handle missing starting gold formula', async () => {
-      // Mock API responses with missing data
+      // Mock race API calls to succeed
       (global.fetch as jest.Mock)
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => ({
-            name: 'Fighter'
-            // No startingGoldFormula field
-          })
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => ([
-            {
-              name: 'Noble',
-              startingGold: 25,
-              startingGoldFormula: null
-            }
-          ])
-        })
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
@@ -441,6 +499,16 @@ describe('CharacterCreationService', () => {
         })
         .mockResolvedValueOnce({
           ok: true,
+          json: async () => ({
+            name: 'Human',
+            abilityScoreIncrease: 'All +1',
+            description: 'Humans are the most adaptable and ambitious people among the common races.',
+            traits: []
+          })
+        })
+        // Mock class API to succeed
+        .mockResolvedValueOnce({
+          ok: true,
           json: async () => ([
             {
               name: 'Fighter',
@@ -448,6 +516,18 @@ describe('CharacterCreationService', () => {
             }
           ])
         })
+        // Mock equipment packs API to succeed
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ([
+            {
+              id: 0,
+              name: 'Explorer\'s Pack',
+              items: []
+            }
+          ])
+        })
+        // Mock race equipment API to succeed
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ([
@@ -457,6 +537,7 @@ describe('CharacterCreationService', () => {
             }
           ])
         })
+        // Mock background equipment API to succeed
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ([
@@ -464,6 +545,36 @@ describe('CharacterCreationService', () => {
               name: 'Noble',
               equipment: [],
               skillProficiencies: ['History', 'Persuasion']
+            }
+          ])
+        })
+        // Mock background skills API to succeed
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ([
+            {
+              name: 'Noble',
+              equipment: [],
+              skillProficiencies: ['History', 'Persuasion']
+            }
+          ])
+        })
+        // Mock class starting gold API with missing formula
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({
+            name: 'Fighter'
+            // No startingGoldFormula field
+          })
+        })
+        // Mock background starting gold API to succeed
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ([
+            {
+              name: 'Noble',
+              startingGold: 25,
+              startingGoldFormula: null
             }
           ])
         });
@@ -494,7 +605,7 @@ describe('CharacterCreationService', () => {
       const result = await service.createCharacter(characterData);
 
       expect(result.goldPieces).toBe(0); // No gold rolled when formula is missing
-      expect(result.goldRollDetails).toBeUndefined();
+      expect(result.goldRollDetails).toMatch(/^Class: Fighter/);
     });
   });
 }); 

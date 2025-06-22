@@ -155,10 +155,6 @@ export function BackgroundSelector({
     );
   }
   
-  if (!currentBackground) {
-    return null;
-  }
-  
   const content = (
     <div className={`${compact ? 'space-y-4' : 'space-y-6'}`}>
       {/* Background Selection */}

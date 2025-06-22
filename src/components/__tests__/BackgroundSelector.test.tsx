@@ -62,6 +62,7 @@ describe('BackgroundSelector', () => {
   it('renders background selection dropdown', () => {
     render(<BackgroundSelector {...defaultProps} />);
 
+    // The component should render the label with the title
     expect(screen.getByText('Select Background')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Select a background...')).toBeInTheDocument();
   });
