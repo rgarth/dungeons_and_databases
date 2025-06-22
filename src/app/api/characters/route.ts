@@ -12,11 +12,6 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Debug logging
-    console.log('=== DEBUG INFO ===');
-    console.log('Database URL:', process.env.DATABASE_URL);
-    console.log('User Email:', session.user.email);
-
     // Find user by email since session.user.id might not be available
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },

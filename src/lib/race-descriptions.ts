@@ -1,8 +1,14 @@
 // Single source of truth for race descriptions used in avatar generation
+import { 
+  getDiverseDwarfAgeDescription,
+  getDiverseHumanAgeDescription,
+  getDiverseElfAgeDescription
+} from './dnd/character';
+
 export const raceDescriptions: Record<string, string> = {
-  'Human': 'single human character, one person only, individual human warrior, solo character with human facial features',
-  'Elf': 'elf character with long pointed ears, ethereal features, angular face',
-  'Dwarf': 'dwarf character with thick beard, stocky build, broad shoulders',
+  'Human': getDiverseHumanAgeDescription(),
+  'Elf': getDiverseElfAgeDescription(),
+  'Dwarf': getDiverseDwarfAgeDescription(),
   'Halfling': 'halfling character, small adult stature, mature adult face, adult proportions, NOT child, NOT young, adult halfling person',
   'Dragonborn': 'DRAGONBORN RACE with scaled skin covering face and body, draconic heritage, reptilian eyes, pronounced snout',
   'Gnome': 'small ADULT humanoid adventurer, mature adult person 3-4 feet tall, ADULT FACE with wrinkles and age lines, pointy ears like elf, intelligent sparkling eyes, high cheekbones, prominent nose, earth-toned skin, clean-shaven ADULT face, NO BEARD, ADULT proportions not child, weathered mature features, fantasy adventurer clothing, small ADULT person with elf-like features, humanoid ADULT not lawn ornament, NOT CHILD, NOT YOUNG FACE, mature adult character',
