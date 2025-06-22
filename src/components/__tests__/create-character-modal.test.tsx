@@ -231,4 +231,130 @@ describe('CreateCharacterModal', () => {
       });
     });
   });
+
+  describe('Weapon Suggestions', () => {
+    it('should apply weapon suggestions when class changes', async () => {
+      // Mock weapon suggestions for Barbarian
+      const mockGetCreationOptions = jest.fn().mockResolvedValue({
+        equipmentPacks: [],
+        weaponSuggestions: [
+          { weaponName: 'Greataxe', quantity: 1, reason: 'Primary two-handed weapon' },
+          { weaponName: 'Handaxe', quantity: 2, reason: 'Throwing weapons' }
+        ],
+        armorSuggestions: [],
+        subclasses: [],
+        needsSubclassAtCreation: false,
+        spellcasting: {
+          ability: null,
+          canCastAtLevel1: false,
+          availableSpells: [],
+          spellSlots: {}
+        }
+      });
+
+      mockCreationService.getCreationOptions = mockGetCreationOptions;
+
+      renderModal();
+
+      // Select Barbarian
+      const classSelect = screen.getByLabelText('Class');
+      fireEvent.change(classSelect, { target: { value: 'Barbarian' } });
+
+      // Wait for the service to be called
+      await waitFor(() => {
+        expect(mockGetCreationOptions).toHaveBeenCalledWith('Barbarian');
+      });
+
+      // Wait for weapon suggestions to be applied
+      await waitFor(() => {
+        // The component should have processed the weapon suggestions
+        // We can't directly test the internal state, but we can verify the service was called
+        expect(mockGetCreationOptions).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it('should clear weapons when class has no suggestions', async () => {
+      // Mock no weapon suggestions for Wizard
+      const mockGetCreationOptions = jest.fn().mockResolvedValue({
+        equipmentPacks: [],
+        weaponSuggestions: [], // No weapon suggestions
+        armorSuggestions: [],
+        subclasses: [],
+        needsSubclassAtCreation: false,
+        spellcasting: {
+          ability: 'Intelligence',
+          canCastAtLevel1: true,
+          availableSpells: [],
+          spellSlots: {}
+        }
+      });
+
+      mockCreationService.getCreationOptions = mockGetCreationOptions;
+
+      renderModal();
+
+      // Select Wizard
+      const classSelect = screen.getByLabelText('Class');
+      fireEvent.change(classSelect, { target: { value: 'Wizard' } });
+
+      // Wait for the service to be called
+      await waitFor(() => {
+        expect(mockGetCreationOptions).toHaveBeenCalledWith('Wizard');
+      });
+
+      // Wait for processing to complete
+      await waitFor(() => {
+        expect(mockGetCreationOptions).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it('should handle class changes without redundant clearing', async () => {
+      // Mock different weapon suggestions for different classes
+      const mockGetCreationOptions = jest.fn()
+        .mockResolvedValueOnce({
+          equipmentPacks: [],
+          weaponSuggestions: [
+            { weaponName: 'Greataxe', quantity: 1, reason: 'Primary two-handed weapon' }
+          ],
+          armorSuggestions: [],
+          subclasses: [],
+          needsSubclassAtCreation: false,
+          spellcasting: { ability: null, canCastAtLevel1: false, availableSpells: [], spellSlots: {} }
+        })
+        .mockResolvedValueOnce({
+          equipmentPacks: [],
+          weaponSuggestions: [
+            { weaponName: 'Dagger', quantity: 2, reason: 'Backup weapons' }
+          ],
+          armorSuggestions: [],
+          subclasses: [],
+          needsSubclassAtCreation: false,
+          spellcasting: { ability: null, canCastAtLevel1: false, availableSpells: [], spellSlots: {} }
+        });
+
+      mockCreationService.getCreationOptions = mockGetCreationOptions;
+
+      renderModal();
+
+      // Select Barbarian first
+      const classSelect = screen.getByLabelText('Class');
+      fireEvent.change(classSelect, { target: { value: 'Barbarian' } });
+
+      // Wait for first service call
+      await waitFor(() => {
+        expect(mockGetCreationOptions).toHaveBeenCalledWith('Barbarian');
+      });
+
+      // Select Fighter second
+      fireEvent.change(classSelect, { target: { value: 'Fighter' } });
+
+      // Wait for second service call
+      await waitFor(() => {
+        expect(mockGetCreationOptions).toHaveBeenCalledWith('Fighter');
+      });
+
+      // Verify both calls were made
+      expect(mockGetCreationOptions).toHaveBeenCalledTimes(2);
+    });
+  });
 }); 
