@@ -181,6 +181,162 @@
     },
     "diverseDescription": "young adult to middle-aged elf, mature features, some fine lines, confident expression, ageless elven beauty, long pointed ears, ethereal features, angular face"
   },
+  "Drow": {
+    "adulthood": 100,
+    "maxAge": 750,
+    "stages": [
+      {
+        "name": "child",
+        "range": [0, 99],
+        "appearance": "youthful drow features, smooth skin, minimal wrinkles, child-like proportions, bright red eyes, DARK SKIN, BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR",
+        "maturity": "childhood - still learning and growing"
+      },
+      {
+        "name": "adolescent",
+        "range": [100, 199],
+        "appearance": "young drow features, developing adult proportions, earnest expression, DARK SKIN, BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, RED EYES, BLOOD RED EYES",
+        "maturity": "adolescence - finding their place in society"
+      },
+      {
+        "name": "young_adult",
+        "range": [200, 299],
+        "appearance": "young adult drow, mature features, some fine lines, confident expression, DARK SKIN, BLACK SKIN, DEEP BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, PURE WHITE HAIR, RED EYES, BLOOD RED EYES, CRIMSON RED EYES",
+        "maturity": "young adulthood - establishing themselves"
+      },
+      {
+        "name": "adult",
+        "range": [300, 449],
+        "appearance": "mature adult drow, weathered features, prominent wrinkles, experienced expression, DARK SKIN, BLACK SKIN, DEEP BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, PURE WHITE HAIR, RED EYES, BLOOD RED EYES, CRIMSON RED EYES",
+        "maturity": "full adulthood - respected member of community"
+      },
+      {
+        "name": "middle_aged",
+        "range": [450, 599],
+        "appearance": "middle-aged drow, deeply weathered features, prominent wrinkles, wise expression, DARK SKIN, BLACK SKIN, DEEP BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, PURE WHITE HAIR, RED EYES, BLOOD RED EYES, CRIMSON RED EYES",
+        "maturity": "middle age - wise and experienced"
+      },
+      {
+        "name": "elderly",
+        "range": [600, 749],
+        "appearance": "elderly drow, deeply wrinkled face, wise eyes, weathered but strong features, DARK SKIN, BLACK SKIN, DEEP BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, PURE WHITE HAIR, RED EYES, BLOOD RED EYES, CRIMSON RED EYES",
+        "maturity": "elderly - highly respected and wise"
+      },
+      {
+        "name": "venerable",
+        "range": [750, 1000],
+        "appearance": "venerable drow, ancient features, deeply wrinkled, wise and knowing expression, DARK SKIN, BLACK SKIN, DEEP BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, PURE WHITE HAIR, RED EYES, BLOOD RED EYES, CRIMSON RED EYES",
+        "maturity": "venerable - living legend, ancient wisdom"
+      }
+    ],
+    "special": {
+      "visualAgeCap": 40
+    },
+    "diverseDescription": "young adult to middle-aged drow, mature features, some fine lines, confident expression, DARK SKIN, BLACK SKIN, DEEP BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, PURE WHITE HAIR, RED EYES, BLOOD RED EYES, CRIMSON RED EYES, pointed ears, underdark features, drow heritage, dark elf, underdark elf"
+  },
+  "High Elf": {
+    "adulthood": 100,
+    "maxAge": 750,
+    "stages": [
+      {
+        "name": "child",
+        "range": [0, 99],
+        "appearance": "youthful high elf features, smooth skin, minimal wrinkles, child-like proportions, bright eyes, ageless elven beauty, scholarly features",
+        "maturity": "childhood - still learning and growing"
+      },
+      {
+        "name": "adolescent",
+        "range": [100, 199],
+        "appearance": "young high elf features, developing adult proportions, earnest expression, ageless elven beauty, scholarly features",
+        "maturity": "adolescence - finding their place in society"
+      },
+      {
+        "name": "young_adult",
+        "range": [200, 299],
+        "appearance": "young adult high elf, mature features, some fine lines, confident expression, ageless elven beauty, scholarly features, refined appearance",
+        "maturity": "young adulthood - establishing themselves"
+      },
+      {
+        "name": "adult",
+        "range": [300, 449],
+        "appearance": "mature adult high elf, weathered features, prominent wrinkles, experienced expression, ageless elven beauty, scholarly features, refined appearance",
+        "maturity": "full adulthood - respected member of community"
+      },
+      {
+        "name": "middle_aged",
+        "range": [450, 599],
+        "appearance": "middle-aged high elf, deeply weathered features, prominent wrinkles, wise expression, ageless elven beauty, scholarly features, refined appearance",
+        "maturity": "middle age - wise and experienced"
+      },
+      {
+        "name": "elderly",
+        "range": [600, 749],
+        "appearance": "elderly high elf, deeply wrinkled face, wise eyes, weathered but strong features, ageless elven beauty, scholarly features, refined appearance",
+        "maturity": "elderly - highly respected and wise"
+      },
+      {
+        "name": "venerable",
+        "range": [750, 1000],
+        "appearance": "venerable high elf, ancient features, deeply wrinkled, wise and knowing expression, ageless elven beauty, scholarly features, refined appearance",
+        "maturity": "venerable - living legend, ancient wisdom"
+      }
+    ],
+    "special": {
+      "visualAgeCap": 40
+    },
+    "diverseDescription": "young adult to middle-aged high elf, mature features, some fine lines, confident expression, ageless elven beauty, long pointed ears, ethereal features, angular face, scholarly features, refined appearance, aristocratic bearing"
+  },
+  "Wood Elf": {
+    "adulthood": 100,
+    "maxAge": 750,
+    "stages": [
+      {
+        "name": "child",
+        "range": [0, 99],
+        "appearance": "youthful wood elf features, smooth skin, minimal wrinkles, child-like proportions, bright eyes, ageless elven beauty, natural features",
+        "maturity": "childhood - still learning and growing"
+      },
+      {
+        "name": "adolescent",
+        "range": [100, 199],
+        "appearance": "young wood elf features, developing adult proportions, earnest expression, ageless elven beauty, natural features",
+        "maturity": "adolescence - finding their place in society"
+      },
+      {
+        "name": "young_adult",
+        "range": [200, 299],
+        "appearance": "young adult wood elf, mature features, some fine lines, confident expression, ageless elven beauty, natural features, wild appearance",
+        "maturity": "young adulthood - establishing themselves"
+      },
+      {
+        "name": "adult",
+        "range": [300, 449],
+        "appearance": "mature adult wood elf, weathered features, prominent wrinkles, experienced expression, ageless elven beauty, natural features, wild appearance",
+        "maturity": "full adulthood - respected member of community"
+      },
+      {
+        "name": "middle_aged",
+        "range": [450, 599],
+        "appearance": "middle-aged wood elf, deeply weathered features, prominent wrinkles, wise expression, ageless elven beauty, natural features, wild appearance",
+        "maturity": "middle age - wise and experienced"
+      },
+      {
+        "name": "elderly",
+        "range": [600, 749],
+        "appearance": "elderly wood elf, deeply wrinkled face, wise eyes, weathered but strong features, ageless elven beauty, natural features, wild appearance",
+        "maturity": "elderly - highly respected and wise"
+      },
+      {
+        "name": "venerable",
+        "range": [750, 1000],
+        "appearance": "venerable wood elf, ancient features, deeply wrinkled, wise and knowing expression, ageless elven beauty, natural features, wild appearance",
+        "maturity": "venerable - living legend, ancient wisdom"
+      }
+    ],
+    "special": {
+      "visualAgeCap": 40
+    },
+    "diverseDescription": "young adult to middle-aged wood elf, mature features, some fine lines, confident expression, ageless elven beauty, long pointed ears, ethereal features, angular face, natural features, wild appearance, forest-dwelling characteristics"
+  },
   "Halfling": {
     "adulthood": 20,
     "maxAge": 150,
@@ -470,48 +626,198 @@
       {
         "name": "child",
         "range": [0, 17],
-        "appearance": "youthful aasimar features, smooth skin, minimal wrinkles, child-like proportions, bright celestial eyes",
+        "appearance": "youthful aasimar features, smooth skin, minimal wrinkles, child-like proportions, bright eyes, celestial heritage, ethereal beauty",
         "maturity": "childhood - still learning and growing"
       },
       {
         "name": "adolescent",
-        "range": [18, 24],
-        "appearance": "young aasimar features, developing adult proportions, earnest expression, developing celestial features",
+        "range": [18, 29],
+        "appearance": "young aasimar features, developing adult proportions, earnest expression, celestial heritage, ethereal beauty",
         "maturity": "adolescence - finding their place in society"
       },
       {
         "name": "young_adult",
-        "range": [25, 39],
-        "appearance": "young adult aasimar, mature features, some fine lines, confident expression, strong celestial features",
+        "range": [30, 49],
+        "appearance": "young adult aasimar, mature features, some fine lines, confident expression, celestial heritage, ethereal beauty",
         "maturity": "young adulthood - establishing themselves"
       },
       {
         "name": "adult",
-        "range": [40, 69],
-        "appearance": "mature adult aasimar, weathered features, prominent wrinkles, experienced expression, strong character",
+        "range": [50, 79],
+        "appearance": "mature adult aasimar, weathered features, prominent wrinkles, experienced expression, celestial heritage, ethereal beauty",
         "maturity": "full adulthood - respected member of community"
       },
       {
         "name": "middle_aged",
-        "range": [70, 99],
-        "appearance": "middle-aged aasimar, deeply weathered features, prominent wrinkles, wise expression, experienced",
+        "range": [80, 119],
+        "appearance": "middle-aged aasimar, deeply weathered features, prominent wrinkles, wise expression, celestial heritage, ethereal beauty",
         "maturity": "middle age - wise and experienced"
       },
       {
         "name": "elderly",
-        "range": [100, 129],
-        "appearance": "elderly aasimar, deeply wrinkled face, wise eyes, weathered but strong features, venerable appearance",
+        "range": [120, 159],
+        "appearance": "elderly aasimar, deeply wrinkled face, wise eyes, weathered but strong features, celestial heritage, ethereal beauty",
         "maturity": "elderly - highly respected and wise"
       },
       {
         "name": "venerable",
-        "range": [130, 160],
-        "appearance": "venerable aasimar, ancient features, deeply wrinkled, wise and knowing expression, legendary appearance",
+        "range": [160, 200],
+        "appearance": "venerable aasimar, ancient features, deeply wrinkled, wise and knowing expression, celestial heritage, ethereal beauty",
         "maturity": "venerable - living legend, ancient wisdom"
       }
     ],
     "special": {},
-    "diverseDescription": "young adult to middle-aged aasimar, mature features, some fine lines, confident expression, celestial heritage, glowing eyes, radiant features, divine markings"
+    "diverseDescription": "young adult to middle-aged aasimar, mature features, some fine lines, confident expression, celestial heritage, ethereal beauty, otherworldly appearance, divine markings"
+  },
+  "Protector Aasimar": {
+    "adulthood": 18,
+    "maxAge": 160,
+    "stages": [
+      {
+        "name": "child",
+        "range": [0, 17],
+        "appearance": "youthful protector aasimar features, smooth skin, minimal wrinkles, child-like proportions, bright eyes, celestial heritage, protective aura, benevolent appearance",
+        "maturity": "childhood - still learning and growing"
+      },
+      {
+        "name": "adolescent",
+        "range": [18, 29],
+        "appearance": "young protector aasimar features, developing adult proportions, earnest expression, celestial heritage, protective aura, benevolent appearance",
+        "maturity": "adolescence - finding their place in society"
+      },
+      {
+        "name": "young_adult",
+        "range": [30, 49],
+        "appearance": "young adult protector aasimar, mature features, some fine lines, confident expression, celestial heritage, protective aura, benevolent appearance, guardian features",
+        "maturity": "young adulthood - establishing themselves"
+      },
+      {
+        "name": "adult",
+        "range": [50, 79],
+        "appearance": "mature adult protector aasimar, weathered features, prominent wrinkles, experienced expression, celestial heritage, protective aura, benevolent appearance, guardian features",
+        "maturity": "full adulthood - respected member of community"
+      },
+      {
+        "name": "middle_aged",
+        "range": [80, 119],
+        "appearance": "middle-aged protector aasimar, deeply weathered features, prominent wrinkles, wise expression, celestial heritage, protective aura, benevolent appearance, guardian features",
+        "maturity": "middle age - wise and experienced"
+      },
+      {
+        "name": "elderly",
+        "range": [120, 159],
+        "appearance": "elderly protector aasimar, deeply wrinkled face, wise eyes, weathered but strong features, celestial heritage, protective aura, benevolent appearance, guardian features",
+        "maturity": "elderly - highly respected and wise"
+      },
+      {
+        "name": "venerable",
+        "range": [160, 200],
+        "appearance": "venerable protector aasimar, ancient features, deeply wrinkled, wise and knowing expression, celestial heritage, protective aura, benevolent appearance, guardian features",
+        "maturity": "venerable - living legend, ancient wisdom"
+      }
+    ],
+    "special": {},
+    "diverseDescription": "young adult to middle-aged protector aasimar, mature features, some fine lines, confident expression, celestial heritage, protective aura, benevolent appearance, guardian features, healing presence"
+  },
+  "Scourge Aasimar": {
+    "adulthood": 18,
+    "maxAge": 160,
+    "stages": [
+      {
+        "name": "child",
+        "range": [0, 17],
+        "appearance": "youthful scourge aasimar features, smooth skin, minimal wrinkles, child-like proportions, bright eyes, celestial heritage, justice-seeking features",
+        "maturity": "childhood - still learning and growing"
+      },
+      {
+        "name": "adolescent",
+        "range": [18, 29],
+        "appearance": "young scourge aasimar features, developing adult proportions, earnest expression, celestial heritage, justice-seeking features",
+        "maturity": "adolescence - finding their place in society"
+      },
+      {
+        "name": "young_adult",
+        "range": [30, 49],
+        "appearance": "young adult scourge aasimar, mature features, some fine lines, confident expression, celestial heritage, justice-seeking features, determined expression, righteous appearance",
+        "maturity": "young adulthood - establishing themselves"
+      },
+      {
+        "name": "adult",
+        "range": [50, 79],
+        "appearance": "mature adult scourge aasimar, weathered features, prominent wrinkles, experienced expression, celestial heritage, justice-seeking features, determined expression, righteous appearance",
+        "maturity": "full adulthood - respected member of community"
+      },
+      {
+        "name": "middle_aged",
+        "range": [80, 119],
+        "appearance": "middle-aged scourge aasimar, deeply weathered features, prominent wrinkles, wise expression, celestial heritage, justice-seeking features, determined expression, righteous appearance",
+        "maturity": "middle age - wise and experienced"
+      },
+      {
+        "name": "elderly",
+        "range": [120, 159],
+        "appearance": "elderly scourge aasimar, deeply wrinkled face, wise eyes, weathered but strong features, celestial heritage, justice-seeking features, determined expression, righteous appearance",
+        "maturity": "elderly - highly respected and wise"
+      },
+      {
+        "name": "venerable",
+        "range": [160, 200],
+        "appearance": "venerable scourge aasimar, ancient features, deeply wrinkled, wise and knowing expression, celestial heritage, justice-seeking features, determined expression, righteous appearance",
+        "maturity": "venerable - living legend, ancient wisdom"
+      }
+    ],
+    "special": {},
+    "diverseDescription": "young adult to middle-aged scourge aasimar, mature features, some fine lines, confident expression, celestial heritage, justice-seeking features, determined expression, righteous appearance, punishing aura"
+  },
+  "Fallen Aasimar": {
+    "adulthood": 18,
+    "maxAge": 160,
+    "stages": [
+      {
+        "name": "child",
+        "range": [0, 17],
+        "appearance": "youthful fallen aasimar features, smooth skin, minimal wrinkles, child-like proportions, bright eyes, corrupted celestial heritage, dark aura",
+        "maturity": "childhood - still learning and growing"
+      },
+      {
+        "name": "adolescent",
+        "range": [18, 29],
+        "appearance": "young fallen aasimar features, developing adult proportions, earnest expression, corrupted celestial heritage, dark aura",
+        "maturity": "adolescence - finding their place in society"
+      },
+      {
+        "name": "young_adult",
+        "range": [30, 49],
+        "appearance": "young adult fallen aasimar, mature features, some fine lines, confident expression, corrupted celestial heritage, dark aura, fallen features, corrupted appearance",
+        "maturity": "young adulthood - establishing themselves"
+      },
+      {
+        "name": "adult",
+        "range": [50, 79],
+        "appearance": "mature adult fallen aasimar, weathered features, prominent wrinkles, experienced expression, corrupted celestial heritage, dark aura, fallen features, corrupted appearance",
+        "maturity": "full adulthood - respected member of community"
+      },
+      {
+        "name": "middle_aged",
+        "range": [80, 119],
+        "appearance": "middle-aged fallen aasimar, deeply weathered features, prominent wrinkles, wise expression, corrupted celestial heritage, dark aura, fallen features, corrupted appearance",
+        "maturity": "middle age - wise and experienced"
+      },
+      {
+        "name": "elderly",
+        "range": [120, 159],
+        "appearance": "elderly fallen aasimar, deeply wrinkled face, wise eyes, weathered but strong features, corrupted celestial heritage, dark aura, fallen features, corrupted appearance",
+        "maturity": "elderly - highly respected and wise"
+      },
+      {
+        "name": "venerable",
+        "range": [160, 200],
+        "appearance": "venerable fallen aasimar, ancient features, deeply wrinkled, wise and knowing expression, corrupted celestial heritage, dark aura, fallen features, corrupted appearance",
+        "maturity": "venerable - living legend, ancient wisdom"
+      }
+    ],
+    "special": {},
+    "diverseDescription": "young adult to middle-aged fallen aasimar, mature features, some fine lines, confident expression, corrupted celestial heritage, dark aura, fallen features, corrupted appearance, necrotic presence"
   },
   "Goliath": {
     "adulthood": 18,

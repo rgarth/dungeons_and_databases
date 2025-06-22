@@ -78,9 +78,14 @@ export function getAgeDescription(race: string, age: number): string {
   return `${stage.maturity}, ${stage.appearance}`;
 }
 
-export function getDiverseAgeDescription(race: string, gender?: string): string {
+export function getDiverseAgeDescription(race: string, gender?: string, subrace?: string): string {
   const profile = profiles[race];
   if (!profile) return 'fantasy character';
+
+  // Special handling for Drow subrace
+  if (race === 'Elf' && subrace === 'Drow') {
+    return 'young adult to middle-aged drow, mature features, some fine lines, confident expression, DARK SKIN, BLACK SKIN, DEEP BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, PURE WHITE HAIR, RED EYES, BLOOD RED EYES, CRIMSON RED EYES, pointed ears, underdark features, drow heritage, dark elf, underdark elf';
+  }
 
   // For races with gender-specific beards, modify the description
   if (profile.special.beardByGender && gender) {
