@@ -198,35 +198,140 @@ describe('CreateCharacterModal', () => {
     });
 
     it('should handle class selection changes properly', async () => {
-      // Mock a simple response for any class
-      mockCreationService.getCreationOptions.mockResolvedValue({
-        equipmentPacks: [],
-        weaponSuggestions: [],
-        armorSuggestions: [],
-        subclasses: [],
-        needsSubclassAtCreation: false,
-        spellcasting: {
-          ability: null,
-          canCastAtLevel1: false,
-          availableSpells: [],
-          spellSlots: {}
+      renderModal();
+      
+      const classSelect = screen.getByLabelText('Class');
+      fireEvent.change(classSelect, { target: { value: 'Sorcerer' } });
+      
+      await waitFor(() => {
+        expect(mockCreationService.getCreationOptions).toHaveBeenCalledWith('Sorcerer');
+      });
+    });
+
+    it('should clear subrace when race changes', async () => {
+      // Mock subrace API response for Elf
+      mockFetch.mockImplementation((input: string | Request | URL) => {
+        const url = typeof input === 'string' ? input : input.toString();
+        if (url.includes('/api/subraces?race=Elf')) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve([
+              { id: '1', name: 'High Elf', description: 'High elves', abilityScoreIncrease: '+2 Dex, +1 Int', traits: ['Elf Weapon Training'] },
+              { id: '2', name: 'Wood Elf', description: 'Wood elves', abilityScoreIncrease: '+2 Dex, +1 Wis', traits: ['Elf Weapon Training'] }
+            ])
+          } as Response);
         }
+        if (url.includes('/api/subraces?race=Human')) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve([])
+          } as Response);
+        }
+        // Default mock for other API calls
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve([])
+        } as Response);
       });
 
       renderModal();
+      
+      // First, select a race that has subraces (Elf)
+      const raceSelect = screen.getByLabelText('Race');
+      fireEvent.change(raceSelect, { target: { value: 'Elf' } });
+      
+      // Wait for subrace selector to appear
+      await waitFor(() => {
+        const subraceLabel = screen.getByText('Subrace');
+        expect(subraceLabel).toBeInTheDocument();
+      });
+      
+      // Now change to a different race (Human) that has no subraces
+      fireEvent.change(raceSelect, { target: { value: 'Human' } });
+      
+      // The subrace should be cleared and not visible for Human
+      await waitFor(() => {
+        const subraceLabel = screen.queryByText('Subrace');
+        expect(subraceLabel).not.toBeInTheDocument();
+      });
+    });
 
-      // Change class selection
-      const classSelect = screen.getByLabelText('Class');
-      await act(async () => {
-        fireEvent.change(classSelect, { target: { value: 'Sorcerer' } });
+    it('should clear subclass when class changes', async () => {
+      // Mock creation options for different classes
+      mockCreationService.getCreationOptions.mockImplementation((className: string) => {
+        if (className === 'Warlock') {
+          return Promise.resolve({
+            equipmentPacks: [],
+            weaponSuggestions: [],
+            armorSuggestions: [],
+            subclasses: [
+              { name: 'The Fiend', description: 'Fiendish patron' },
+              { name: 'The Great Old One', description: 'Eldritch patron' }
+            ],
+            needsSubclassAtCreation: true,
+            spellcasting: {
+              ability: 'Charisma',
+              canCastAtLevel1: true,
+              availableSpells: [],
+              spellSlots: {}
+            }
+          });
+        }
+        if (className === 'Fighter') {
+          return Promise.resolve({
+            equipmentPacks: [],
+            weaponSuggestions: [],
+            armorSuggestions: [],
+            subclasses: [],
+            needsSubclassAtCreation: false,
+            spellcasting: {
+              ability: null,
+              canCastAtLevel1: false,
+              availableSpells: [],
+              spellSlots: {}
+            }
+          });
+        }
+        // Default response
+        return Promise.resolve({
+          equipmentPacks: [],
+          weaponSuggestions: [],
+          armorSuggestions: [],
+          subclasses: [],
+          needsSubclassAtCreation: false,
+          spellcasting: {
+            ability: null,
+            canCastAtLevel1: false,
+            availableSpells: [],
+            spellSlots: {}
+          }
+        });
       });
 
-      // Verify the class value changed
-      expect(classSelect).toHaveValue('Sorcerer');
-
-      // Wait for the service to be called with the new class
+      renderModal();
+      
+      // First, select a class that has subclasses (Warlock)
+      const classSelect = screen.getByLabelText('Class');
+      fireEvent.change(classSelect, { target: { value: 'Warlock' } });
+      
+      // Wait for subclass selector to appear
       await waitFor(() => {
-        expect(mockCreationService.getCreationOptions).toHaveBeenCalledWith('Sorcerer');
+        const subclassLabel = screen.getByText('Subclass *');
+        expect(subclassLabel).toBeInTheDocument();
+      });
+      
+      // Select a subclass
+      const subclassSelect = screen.getByLabelText('Subclass *');
+      fireEvent.change(subclassSelect, { target: { value: 'The Fiend' } });
+      expect(subclassSelect).toHaveValue('The Fiend');
+      
+      // Now change to a different class (Fighter) that has no subclasses
+      fireEvent.change(classSelect, { target: { value: 'Fighter' } });
+      
+      // The subclass should be cleared and not visible for Fighter
+      await waitFor(() => {
+        const subclassLabel = screen.queryByText('Subclass *');
+        expect(subclassLabel).not.toBeInTheDocument();
       });
     });
 
