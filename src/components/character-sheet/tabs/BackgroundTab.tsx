@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unescaped-entities */
 
 import { useState } from "react";
-import { BookOpen, Edit3, Save, X, FileText, HelpCircle, Languages } from "lucide-react";
+import { BookOpen, Edit3, Save, X, FileText, HelpCircle, Languages, Info } from "lucide-react";
 import { createCharacterStoryService } from "@/services/character/character-story";
 import type { CharacterLimits } from "@/services/character/character-story";
 import { BackgroundSelector, type SelectedCharacteristics } from "../../shared/BackgroundSelector";
@@ -52,6 +52,48 @@ interface BackgroundTabProps {
 
 // Initialize character story service
 const storyService = createCharacterStoryService();
+
+// Helper function to get language styling based on category and source
+const getLanguageStyling = (languageName: string, isRacial: boolean = false) => {
+  const language = LANGUAGES.find(lang => lang.name === languageName);
+  
+  if (!language) {
+    return {
+      bg: isRacial ? "bg-blue-900/30" : "bg-green-900/30",
+      text: isRacial ? "text-blue-300" : "text-green-300",
+      border: isRacial ? "border-blue-600/30" : "border-green-600/30",
+      hover: isRacial ? "hover:text-blue-200" : "hover:text-green-200"
+    };
+  }
+
+  // Special styling for secret languages (like Thieves' Cant)
+  if (language.category === 'Secret') {
+    return {
+      bg: "bg-red-900/30",
+      text: "text-red-300",
+      border: "border-red-600/30",
+      hover: "hover:text-red-200"
+    };
+  }
+
+  // Special styling for exotic languages (additional choices)
+  if (language.category === 'Exotic') {
+    return {
+      bg: isRacial ? "bg-blue-900/30" : "bg-yellow-900/30",
+      text: isRacial ? "text-blue-300" : "text-yellow-300",
+      border: isRacial ? "border-blue-600/30" : "border-yellow-600/30",
+      hover: isRacial ? "hover:text-blue-200" : "hover:text-yellow-200"
+    };
+  }
+
+  // Default styling for standard languages
+  return {
+    bg: isRacial ? "bg-blue-900/30" : "bg-green-900/30",
+    text: isRacial ? "text-blue-300" : "text-green-300",
+    border: isRacial ? "border-blue-600/30" : "border-green-600/30",
+    hover: isRacial ? "hover:text-blue-200" : "hover:text-green-200"
+  };
+};
 
 export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
   const [isEditing, setIsEditing] = useState<string | null>(null);
@@ -753,29 +795,51 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 <div className="text-sm text-slate-400 mb-2">Known languages:</div>
                 <div className="flex flex-wrap gap-2">
                   {/* Racial Languages */}
-                  {getRacialLanguages(character.race).map(lang => (
-                    <span key={`racial-${lang}`} className="bg-blue-900/30 text-blue-300 px-3 py-1 rounded-full text-sm border border-blue-600/30 flex items-center gap-2">
-                      {lang}
-                      <span className="text-xs opacity-75">(Racial)</span>
-                    </span>
-                  ))}
+                  {getRacialLanguages(character.race).map(lang => {
+                    const styling = getLanguageStyling(lang, true);
+                    const language = LANGUAGES.find(l => l.name === lang);
+                    return (
+                      <span 
+                        key={`racial-${lang}`} 
+                        className={`${styling.bg} ${styling.text} px-3 py-1 rounded-full text-sm border ${styling.border} flex items-center gap-2 group relative`}
+                        title={language?.description ? `${lang}: ${language.description}` : lang}
+                      >
+                        {lang}
+                        <span className="text-xs opacity-75">(Racial)</span>
+                        {language?.description && (
+                          <Info className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                        )}
+                      </span>
+                    );
+                  })}
                   
                   {/* Learned Languages */}
-                  {(character.languages || []).map(lang => (
-                    <span key={`learned-${lang}`} className="bg-green-900/30 text-green-300 px-3 py-1 rounded-full text-sm border border-green-600/30 flex items-center gap-2">
-                      {lang}
-                      <button
-                        onClick={() => {
-                          const newLanguages = (character.languages || []).filter(l => l !== lang);
-                          onUpdate({ languages: newLanguages });
-                        }}
-                        className="text-green-400 hover:text-green-200 ml-1 text-xs font-bold"
-                        title="Remove language"
+                  {(character.languages || []).map(lang => {
+                    const styling = getLanguageStyling(lang, false);
+                    const language = LANGUAGES.find(l => l.name === lang);
+                    return (
+                      <span 
+                        key={`learned-${lang}`} 
+                        className={`${styling.bg} ${styling.text} px-3 py-1 rounded-full text-sm border ${styling.border} flex items-center gap-2 group relative`}
+                        title={language?.description ? `${lang}: ${language.description}` : lang}
                       >
-                        ×
-                      </button>
-                    </span>
-                  ))}
+                        {lang}
+                        {language?.description && (
+                          <Info className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                        )}
+                        <button
+                          onClick={() => {
+                            const newLanguages = (character.languages || []).filter(l => l !== lang);
+                            onUpdate({ languages: newLanguages });
+                          }}
+                          className={`${styling.hover} ml-1 text-xs font-bold transition-colors`}
+                          title="Remove language"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    );
+                  })}
                 </div>
                 
                 {/* Empty state */}
