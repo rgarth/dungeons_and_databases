@@ -334,6 +334,12 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
 
   // Comprehensive anti-bias and anti-trope prompts
   const antiBiasPrompts = [
+    'DARK SKIN, BROWN SKIN, BLACK SKIN, OLIVE SKIN, TAN SKIN',
+    'NOT WHITE, NOT PALE, NOT FAIR-SKINNED, NOT CAUCASIAN',
+    'NO WHITE SKIN BIAS, diverse skin tones',
+    'VARIED SKIN TONES, diverse complexions',
+    'NO EUROPEAN BIAS, diverse ethnic features',
+    'NO WESTERN BIAS, diverse cultural features',
     'DIVERSE REPRESENTATION, varied features, unique characteristics',
     'PRACTICAL ARMOR, realistic protection, full coverage',
     'NO CHAINMAIL BIKINI, NO REVEALING ARMOR',
@@ -348,7 +354,6 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
     'NO GENDER STEREOTYPES, practical character design',
     'NO RACIAL STEREOTYPES, unique racial features',
     'NO CULTURAL APPROPRIATION, respectful design',
-    'DIVERSE SKIN TONES, varied complexions',
     'DIVERSE HAIR TEXTURES, varied styles',
     'DIVERSE FACIAL FEATURES, unique characteristics',
     'DIVERSE BODY TYPES, realistic proportions',
@@ -363,12 +368,7 @@ function createDynamicAvatarPrompt(data: CharacterAvatarData): string {
     'OBESITY, realistic body types',
     'MORBID OBESITY, extreme body types',
     'FACIAL IMPERFECTIONS, realistic flaws',
-    'DENTAL ISSUES, realistic teeth',
-    'NO WHITE SKIN BIAS, diverse skin tones',
-    'DARK SKIN, BROWN SKIN, BLACK SKIN, OLIVE SKIN, TAN SKIN',
-    'VARIED SKIN TONES, diverse complexions',
-    'NO EUROPEAN BIAS, diverse ethnic features',
-    'NO WESTERN BIAS, diverse cultural features'
+    'DENTAL ISSUES, realistic teeth'
   ];
 
   // Gender-neutral handling
