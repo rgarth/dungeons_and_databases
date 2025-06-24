@@ -21,7 +21,7 @@ import {
   CharacterCreationService
 } from "@/services/character/creation";
 
-import type { CharacterAvatarData } from '@/app/api/generate-avatar/route';
+import type { CharacterAvatarData } from '@/lib/avatar-generation';
 import Image from 'next/image';
 import { useDndData } from '@/components/providers/dnd-data-provider';
 import { BackgroundSelector, SelectedCharacteristics as BackgroundCharacteristics } from '@/components/shared/BackgroundSelector';
@@ -1678,8 +1678,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                             bonds: backgroundCharacteristics?.bonds || [],
                             flaws: backgroundCharacteristics?.flaws || [],
                             appearance: appearance || '',
-                            equippedWeapons: selectedWeapons.map(sw => sw.weapon.name),
-                            equippedArmor: selectedArmor.map(armor => armor.name)
+                            selectedWeapons: selectedWeapons.map(sw => sw.weapon.name),
+                            selectedArmor: selectedArmor.map(armor => armor.name)
                           } as CharacterAvatarData}
                           onAvatarGenerated={(avatarDataUrl, fullBodyDataUrl) => {
                             // Store the generated avatar for character creation

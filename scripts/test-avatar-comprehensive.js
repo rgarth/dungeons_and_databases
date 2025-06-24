@@ -48,7 +48,7 @@ if (!sessionToken) {
 
 // Test configuration - much more reasonable
 const ALL_RACES = [
-  'Human', 'Elf', 'Dwarf', 'Halfling', 'Dragonborn', 'Gnome',
+  'Human', 'Elf', 'Dwarf', 'Halfling', 'Dragonborn', 'Small Fey Humanoid',
   'Half-Elf', 'Half-Orc', 'Tiefling', 'Aasimar', 'Goliath', 'Tabaxi'
 ];
 
@@ -71,7 +71,7 @@ const AGE_RANGES = {
   'Dwarf': [50, 150, 250], // young adult, adult, elderly
   'Halfling': [20, 50, 100], // young adult, adult, elderly
   'Dragonborn': [15, 30, 50], // young adult, adult, elderly
-  'Gnome': [40, 100, 200], // young adult, adult, elderly
+  'Small Fey Humanoid': [40, 100, 200], // young adult, adult, elderly
   'Half-Elf': [20, 50, 100], // young adult, adult, elderly
   'Half-Orc': [14, 30, 45], // young adult, adult, elderly
   'Tiefling': [20, 40, 70], // young adult, adult, elderly
@@ -159,16 +159,16 @@ async function testAvatarGeneration(race, age, gender) {
 
       // Save full body image
       if (data.fullBodyImage) {
-        const fullBodyPath = path.join(testImagesDir, `${testId}-fullbody.jpg`);
-        const fullBodyData = data.fullBodyImage.replace(/^data:image\/jpeg;base64,/, '');
+        const fullBodyPath = path.join(testImagesDir, `${testId}-fullbody.png`);
+        const fullBodyData = data.fullBodyImage.replace(/^data:image\/png;base64,/, '');
         fs.writeFileSync(fullBodyPath, Buffer.from(fullBodyData, 'base64'));
         log(`Saved full body image: ${fullBodyPath}`, 'success');
       }
 
       // Save avatar image
       if (data.avatarImage) {
-        const avatarPath = path.join(testImagesDir, `${testId}-avatar.jpg`);
-        const avatarData = data.avatarImage.replace(/^data:image\/jpeg;base64,/, '');
+        const avatarPath = path.join(testImagesDir, `${testId}-avatar.png`);
+        const avatarData = data.avatarImage.replace(/^data:image\/png;base64,/, '');
         fs.writeFileSync(avatarPath, Buffer.from(avatarData, 'base64'));
         log(`Saved avatar image: ${avatarPath}`, 'success');
       }
@@ -196,8 +196,8 @@ async function testAvatarGeneration(race, age, gender) {
       age,
       gender,
       class: characterClass,
-      fullBodyImage: data.fullBodyImage ? `${testId}-fullbody.jpg` : null,
-      avatarImage: data.avatarImage ? `${testId}-avatar.jpg` : null
+      fullBodyImage: data.fullBodyImage ? `${testId}-fullbody.png` : null,
+      avatarImage: data.avatarImage ? `${testId}-avatar.png` : null
     });
 
     log(`✅ Success: ${testId} (${characterClass})`, 'success');

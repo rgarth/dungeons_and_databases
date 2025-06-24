@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Palette, RefreshCw } from "lucide-react";
-import type { CharacterAvatarData } from "@/app/api/generate-avatar/route";
+import type { CharacterAvatarData } from "@/lib/avatar-generation";
 
 interface AvatarGeneratorProps {
   characterData: CharacterAvatarData;
@@ -104,7 +104,7 @@ export function AvatarGenerator({
             🎨 Creating your personalized avatar using AI...
           </p>
           <p className="text-blue-400 text-xs mt-1">
-            Using FLUX.1 Schnell for fast, high-quality fantasy art, with Pollinations fallback.
+            Using Replicate Realistic Vision v5.1 for high-quality D&D character generation.
           </p>
           <p className="text-green-400 text-xs mt-1">
             ✅ Anti-trope protection: Realistic armor, practical clothing, respectful character design
@@ -146,7 +146,7 @@ export function AvatarGenerator({
       {/* Usage Note */}
       <div className="text-xs text-slate-500">
         <p>💡 Each generation is unique and based on your character&apos;s traits</p>
-        <p>🚀 Uses FLUX.1 Schnell via Replicate, falls back to Pollinations</p>
+        <p>🎮 Uses Replicate Realistic Vision v5.1 for high-quality D&D character generation</p>
       </div>
     </div>
   );

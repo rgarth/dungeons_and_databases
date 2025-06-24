@@ -174,9 +174,8 @@ All D&D content is from the **System Reference Document 5.1 (SRD 5.1)** by Wizar
 Generate unique character portraits using advanced AI models:
 
 ### Features
-- **Leonardo AI Integration** - Premium quality fantasy art via Leonardo AI API
+- **Replicate flux.schnell** - High-quality Stable Diffusion model with excellent diversity
 - **Anti-Trope Protection** - Built-in safeguards against problematic fantasy stereotypes
-- **Smart Fallback** - Automatic fallback to free Pollinations service
 - **Character-Based Prompts** - Avatars generated from race, class, gender, and equipment
 - **Respectful Design** - Realistic armor, practical clothing, normal proportions
 
@@ -187,21 +186,19 @@ Generate unique character portraits using advanced AI models:
 - ✅ **Respectful Poses** - Confident stances, not sexualized
 - ✅ **Grounded Fantasy** - Believable character designs
 
-### Setup (Optional)
+### Setup (Required)
 ```bash
-# Add to .env.local for premium Leonardo AI generation
-LEONARDO_API_KEY=your_leonardo_api_key_here
+# Add to .env.local for Replicate generation
+REPLICATE_API_KEY=your_replicate_api_key_here
 ```
 
-**Without API key**: Uses free Pollinations service (still excellent quality!)
-**With API key**: Premium Leonardo AI with specialized fantasy models
+**Get your API key at**: https://replicate.com/account/api-tokens
 
-### Leonardo AI Pricing
-- **Free Tier**: 150 tokens daily (~4,500 avatars/month)
-- **Apprentice**: $10/month - 8,500 tokens (~25,000 avatars)
-- **Cost per avatar**: ~$0.0004 (much cheaper than other services!)
-
-Get your API key at: https://leonardo.ai
+### Replicate Pricing
+- **Pay-per-use**: Only pay for what you generate
+- **flux.schnell model**: High-quality Stable Diffusion variant
+- **Diversity**: Excellent handling of diverse skin tones and features
+- **No monthly minimum**: No subscription required
 
 ---
 
