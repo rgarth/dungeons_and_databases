@@ -188,14 +188,12 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
   const displayCharacter = {
     ...currentCharacter,
     // Transform separate background characteristic fields into combined object for BackgroundTab
-    backgroundCharacteristics: currentCharacter.personalityTraits || currentCharacter.ideals || currentCharacter.bonds || currentCharacter.flaws
-      ? {
-          personalityTraits: (currentCharacter.personalityTraits as string[]) || [],
-          ideals: (currentCharacter.ideals as string[]) || [],
-          bonds: (currentCharacter.bonds as string[]) || [],
-          flaws: (currentCharacter.flaws as string[]) || []
-        }
-      : undefined
+    backgroundCharacteristics: {
+      personalityTraits: (currentCharacter.personalityTraits as string[]) || [],
+      ideals: (currentCharacter.ideals as string[]) || [],
+      bonds: (currentCharacter.bonds as string[]) || [],
+      flaws: (currentCharacter.flaws as string[]) || []
+    }
   };
   
   const [activeTab, setActiveTab] = useState<"stats" | "actions" | "gear" | "inventory" | "background" | "dice">("stats");
@@ -308,6 +306,12 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     deathSaveSuccesses?: number;
     deathSaveFailures?: number;
     ammunition?: Ammunition[];
+    backgroundCharacteristics?: {
+      personalityTraits: string[];
+      ideals: string[];
+      bonds: string[];
+      flaws: string[];
+    };
   } | Record<string, unknown>) => {
     // Update local state immediately for responsive UI
     setCurrentCharacter(prev => ({ ...prev, ...updates }));

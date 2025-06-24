@@ -968,8 +968,12 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                     );
                   })}
                   
-                  {/* Learned Languages */}
-                  {(character.languages || []).map(lang => {
+                  {/* Learned Languages - Only show languages not already granted by race or class */}
+                  {(character.languages || []).filter(lang => {
+                    const racialLanguages = getRacialLanguages(character.race);
+                    const classLanguages = getClassLanguages(character.class);
+                    return !racialLanguages.includes(lang) && !classLanguages.includes(lang);
+                  }).map(lang => {
                     const styling = getLanguageStyling(lang, false, false, languages);
                     const language = languages.find(l => l.name === lang);
                     return (
