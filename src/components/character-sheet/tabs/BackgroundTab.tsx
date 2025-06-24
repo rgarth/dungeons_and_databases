@@ -18,7 +18,7 @@ import type { CharacterLimits } from "@/services/character/character-story";
 import { BackgroundSelector, type SelectedCharacteristics, type BackgroundData } from "../../shared/BackgroundSelector";
 // AvatarSelector removed - now using inline avatar display
 import { AvatarGenerator } from '../../shared/AvatarGenerator';
-import type { CharacterAvatarData } from '@/app/api/generate-avatar/route';
+import type { CharacterAvatarData } from '@/types/character';
 import { getRacialLanguages, getLanguages, getLanguageStyling, type Language, getClassLanguages, getAutomaticLanguages } from "@/lib/dnd/languages";
 import Image from 'next/image';
 
@@ -742,8 +742,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                         src={character.fullBodyAvatar || character.avatar || '/default-avatar.png'} 
                         alt={`${character.name}'s avatar`}
                         width={192}
-                        height={192}
-                        className="w-48 h-48 rounded-lg object-cover"
+                        height={character.fullBodyAvatar ? 336 : 192}
+                        className={`w-48 ${character.fullBodyAvatar ? 'h-84' : 'h-48'} rounded-lg object-cover`}
                       />
                       <div className="text-center">
                         <button
