@@ -1,16 +1,25 @@
 "use client";
 /* eslint-disable react/no-unescaped-entities */
 
-import { useState } from "react";
-import { BookOpen, Edit3, Save, X, FileText, HelpCircle, Languages, Info } from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import { 
+  Edit3, 
+  Save, 
+  X, 
+  FileText, 
+  HelpCircle, 
+  Languages, 
+  AlertCircle, 
+  Info,
+  BookOpen
+} from 'lucide-react';
 import { createCharacterStoryService } from "@/services/character/character-story";
 import type { CharacterLimits } from "@/services/character/character-story";
-import { BackgroundSelector, type SelectedCharacteristics } from "../../shared/BackgroundSelector";
+import { BackgroundSelector, type SelectedCharacteristics, type BackgroundData } from "../../shared/BackgroundSelector";
 // AvatarSelector removed - now using inline avatar display
 import { AvatarGenerator } from '../../shared/AvatarGenerator';
 import type { CharacterAvatarData } from '@/app/api/generate-avatar/route';
-import { getRacialLanguages } from "@/lib/dnd/languages";
-import { LANGUAGES } from "@/lib/dnd/languages";
+import { getRacialLanguages, getLanguages, getLanguageStyling, type Language, getClassLanguages, getAutomaticLanguages } from "@/lib/dnd/languages";
 import Image from 'next/image';
 
 interface BackgroundTabProps {
@@ -53,48 +62,6 @@ interface BackgroundTabProps {
 // Initialize character story service
 const storyService = createCharacterStoryService();
 
-// Helper function to get language styling based on category and source
-const getLanguageStyling = (languageName: string, isRacial: boolean = false) => {
-  const language = LANGUAGES.find(lang => lang.name === languageName);
-  
-  if (!language) {
-    return {
-      bg: isRacial ? "bg-blue-900/30" : "bg-green-900/30",
-      text: isRacial ? "text-blue-300" : "text-green-300",
-      border: isRacial ? "border-blue-600/30" : "border-green-600/30",
-      hover: isRacial ? "hover:text-blue-200" : "hover:text-green-200"
-    };
-  }
-
-  // Special styling for secret languages (like Thieves' Cant)
-  if (language.category === 'Secret') {
-    return {
-      bg: "bg-red-900/30",
-      text: "text-red-300",
-      border: "border-red-600/30",
-      hover: "hover:text-red-200"
-    };
-  }
-
-  // Special styling for exotic languages (additional choices)
-  if (language.category === 'Exotic') {
-    return {
-      bg: isRacial ? "bg-blue-900/30" : "bg-yellow-900/30",
-      text: isRacial ? "text-blue-300" : "text-yellow-300",
-      border: isRacial ? "border-blue-600/30" : "border-yellow-600/30",
-      hover: isRacial ? "hover:text-blue-200" : "hover:text-yellow-200"
-    };
-  }
-
-  // Default styling for standard languages
-  return {
-    bg: isRacial ? "bg-blue-900/30" : "bg-green-900/30",
-    text: isRacial ? "text-blue-300" : "text-green-300",
-    border: isRacial ? "border-blue-600/30" : "border-green-600/30",
-    hover: isRacial ? "hover:text-blue-200" : "hover:text-green-200"
-  };
-};
-
 export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [editMode, setEditMode] = useState<'freeform' | 'guided'>('freeform');
@@ -106,6 +73,9 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
   });
   const [guidedAnswers, setGuidedAnswers] = useState<Record<number, string>>({});
   const [showBackgroundModal, setShowBackgroundModal] = useState(false);
+  const [languages, setLanguages] = useState<Language[]>([]);
+  const [isLoadingLanguages, setIsLoadingLanguages] = useState(true);
+  const [backgroundData, setBackgroundData] = useState<BackgroundData | null>(null);
   
   // Character summary edit state
   const [isEditingSummary, setIsEditingSummary] = useState(false);
@@ -115,6 +85,112 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     age: character.age?.toString() || '',
     alignment: character.alignment || ''
   });
+
+  // Load languages from database
+  useEffect(() => {
+    const loadLanguages = async () => {
+      try {
+        const languagesData = await getLanguages();
+        setLanguages(languagesData);
+      } catch (error) {
+        console.error('Failed to load languages:', error);
+      } finally {
+        setIsLoadingLanguages(false);
+      }
+    };
+
+    loadLanguages();
+  }, []);
+
+  // Load background data to check language requirements
+  useEffect(() => {
+    const loadBackgroundData = async () => {
+      if (!character.background) return;
+      
+      try {
+        const response = await fetch('/api/backgrounds');
+        if (response.ok) {
+          const backgrounds = await response.json();
+          const background = backgrounds.find((bg: BackgroundData) => bg.name === character.background);
+          setBackgroundData(background);
+        }
+      } catch (error) {
+        console.error('Failed to load background data:', error);
+      }
+    };
+
+    loadBackgroundData();
+  }, [character.background]);
+
+  // Calculate language requirements
+  const getLanguageRequirements = () => {
+    const requirements = [];
+    
+    // Check background language requirements
+    if (backgroundData && backgroundData.languages) {
+      const backgroundLanguages = backgroundData.languages;
+      const learnedLanguages = character.languages || [];
+      
+      // Check for "X of your choice" patterns
+      for (const lang of backgroundLanguages) {
+        if (lang.includes('of your choice')) {
+          const match = lang.match(/(\d+)\s+of\s+your\s+choice/i);
+          if (match) {
+            const required = parseInt(match[1]);
+            const current = learnedLanguages.length;
+            const remaining = required - current;
+            
+            requirements.push({
+              type: 'background',
+              required,
+              current,
+              remaining,
+              description: lang,
+              source: character.background
+            });
+          }
+        }
+      }
+    }
+    
+    // Check racial language bonuses
+    const racialLanguageBonus = getRacialLanguageBonus(character.race);
+    if (racialLanguageBonus) {
+      const learnedLanguages = character.languages || [];
+      const racialLanguages = getRacialLanguages(character.race);
+      const nonRacialLanguages = learnedLanguages.filter(lang => !racialLanguages.includes(lang));
+      
+      requirements.push({
+        type: 'racial',
+        required: racialLanguageBonus.count,
+        current: nonRacialLanguages.length,
+        remaining: racialLanguageBonus.count - nonRacialLanguages.length,
+        description: racialLanguageBonus.description,
+        source: character.race
+      });
+    }
+    
+    return requirements;
+  };
+
+  // Helper function to get racial language bonuses
+  const getRacialLanguageBonus = (race: string) => {
+    const racialBonuses: Record<string, { count: number; description: string }> = {
+      'Human': { 
+        count: 1, 
+        description: 'One language of your choice' 
+      },
+      'Half-Elf': { 
+        count: 1, 
+        description: 'One language of your choice' 
+      },
+      // Add other races with language bonuses as needed
+    };
+    
+    return racialBonuses[race] || null;
+  };
+
+  const languageRequirements = getLanguageRequirements();
 
   const handleStartEdit = (field: string) => {
     setIsEditing(field);
@@ -554,6 +630,18 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             <div>
               <div className="text-slate-400 text-sm mb-1">Background</div>
               <div className="text-white font-medium">{character.background || 'No background selected'}</div>
+              {languageRequirements && languageRequirements.length > 0 && languageRequirements.some(req => req.remaining > 0) && (
+                <div className="mt-2 text-xs space-y-1">
+                  {languageRequirements.filter(req => req.remaining > 0).map((req, index) => (
+                    <div key={index}>
+                      <span className="text-amber-400 flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {req.type === 'background' ? 'Background' : 'Racial'} language: {req.remaining} needed
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             
             {character.backgroundCharacteristics && (
@@ -747,6 +835,51 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 Languages Known
               </h3>
               
+              {/* Language Requirements Tooltip */}
+              {languageRequirements && languageRequirements.length > 0 && languageRequirements.some(req => req.remaining > 0) && (
+                <div className="mb-4 p-3 bg-amber-900/30 border border-amber-600/30 rounded-lg">
+                  <div className="flex items-center gap-2 text-amber-300">
+                    <AlertCircle className="h-4 w-4" />
+                    <span className="text-sm font-medium">
+                      Language Requirements
+                    </span>
+                  </div>
+                  <div className="text-amber-200 text-sm mt-1 space-y-1">
+                    {languageRequirements.filter(req => req.remaining > 0).map((req, index) => (
+                      <p key={index}>
+                        <strong>{req.source}</strong>: {req.description}. 
+                        You have selected {req.current} of {req.required}.
+                      </p>
+                    ))}
+                  </div>
+                  <p className="text-amber-300 text-xs mt-2">
+                    You need to select {languageRequirements.reduce((total, req) => total + req.remaining, 0)} more language{languageRequirements.reduce((total, req) => total + req.remaining, 0) !== 1 ? 's' : ''} below.
+                  </p>
+                </div>
+              )}
+              
+              {/* Language Requirements Met */}
+              {languageRequirements && languageRequirements.length > 0 && languageRequirements.every(req => req.remaining === 0) && (
+                <div className="mb-4 p-3 bg-green-900/30 border border-green-600/30 rounded-lg">
+                  <div className="flex items-center gap-2 text-green-300">
+                    <Info className="h-4 w-4" />
+                    <span className="text-sm font-medium">
+                      All Language Requirements Met
+                    </span>
+                  </div>
+                  <p className="text-green-200 text-sm mt-1">
+                    All language requirements have been satisfied:
+                  </p>
+                  <div className="text-green-200 text-sm mt-1 space-y-1">
+                    {languageRequirements.map((req, index) => (
+                      <p key={index}>
+                        <strong>{req.source}</strong>: {req.description} ✓
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
               {/* Add Language Controls */}
               <div className="flex gap-2 mb-4">
                 <select
@@ -755,7 +888,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                     if (e.target.value) {
                       const currentLanguages = character.languages || [];
                       const racialLanguages = getRacialLanguages(character.race);
-                      const allKnown = [...racialLanguages, ...currentLanguages];
+                      const classLanguages = getClassLanguages(character.class);
+                      const allKnown = [...racialLanguages, ...classLanguages, ...currentLanguages];
                       
                       if (!allKnown.includes(e.target.value)) {
                         const newLanguages = [...currentLanguages, e.target.value];
@@ -765,13 +899,15 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                     }
                   }}
                   className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                  disabled={isLoadingLanguages}
                 >
-                  <option value="">Add a language...</option>
-                  {LANGUAGES
+                  <option value="">{isLoadingLanguages ? "Loading languages..." : "Add a language..."}</option>
+                  {languages
                     .filter(lang => {
                       const racialLanguages = getRacialLanguages(character.race);
+                      const classLanguages = getClassLanguages(character.class);
                       const learnedLanguages = character.languages || [];
-                      const allKnown = [...racialLanguages, ...learnedLanguages];
+                      const allKnown = [...racialLanguages, ...classLanguages, ...learnedLanguages];
                       return !allKnown.includes(lang.name);
                     })
                     .sort((a, b) => {
@@ -796,8 +932,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 <div className="flex flex-wrap gap-2">
                   {/* Racial Languages */}
                   {getRacialLanguages(character.race).map(lang => {
-                    const styling = getLanguageStyling(lang, true);
-                    const language = LANGUAGES.find(l => l.name === lang);
+                    const styling = getLanguageStyling(lang, true, false, languages);
+                    const language = languages.find(l => l.name === lang);
                     return (
                       <span 
                         key={`racial-${lang}`} 
@@ -813,10 +949,29 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                     );
                   })}
                   
+                  {/* Class-Granted Languages */}
+                  {getClassLanguages(character.class).map(lang => {
+                    const styling = getLanguageStyling(lang, false, true, languages);
+                    const language = languages.find(l => l.name === lang);
+                    return (
+                      <span 
+                        key={`class-${lang}`} 
+                        className={`${styling.bg} ${styling.text} px-3 py-1 rounded-full text-sm border ${styling.border} flex items-center gap-2 group relative`}
+                        title={language?.description ? `${lang}: ${language.description}` : lang}
+                      >
+                        {lang}
+                        <span className="text-xs opacity-75">(Class)</span>
+                        {language?.description && (
+                          <Info className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                        )}
+                      </span>
+                    );
+                  })}
+                  
                   {/* Learned Languages */}
                   {(character.languages || []).map(lang => {
-                    const styling = getLanguageStyling(lang, false);
-                    const language = LANGUAGES.find(l => l.name === lang);
+                    const styling = getLanguageStyling(lang, false, false, languages);
+                    const language = languages.find(l => l.name === lang);
                     return (
                       <span 
                         key={`learned-${lang}`} 
@@ -843,7 +998,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 </div>
                 
                 {/* Empty state */}
-                {getRacialLanguages(character.race).length === 0 && (!character.languages || character.languages.length === 0) && (
+                {getAutomaticLanguages(character.race, character.class).length === 0 && (!character.languages || character.languages.length === 0) && (
                   <div className="text-slate-500 text-sm italic">No languages known</div>
                 )}
               </div>

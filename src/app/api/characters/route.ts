@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createCharacterValidationService } from "@/services/api/character-validation";
+import { getRacialLanguages } from "@/lib/dnd/languages";
+import { getClassLanguages } from "@/lib/dnd/languages";
 
 export async function GET() {
   try {
@@ -241,6 +243,21 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
+    // Initialize languages based on race and background
+    const initialLanguages: string[] = [];
+    
+    // Add racial languages
+    const racialLanguages = getRacialLanguages(race);
+    initialLanguages.push(...racialLanguages);
+    
+    // Add class-granted languages
+    const classLanguages = getClassLanguages(characterClass);
+    initialLanguages.push(...classLanguages);
+    
+    // Note: Background languages are not automatically added
+    // They need to be selected by the user in the character sheet
+    // The background language requirements will be shown in the UI
+
     const character = await prisma.character.create({
       data: {
         name,
@@ -299,6 +316,7 @@ export async function POST(request: NextRequest) {
         deathSaveFailures: 0,
         avatar: avatar || null,
         fullBodyAvatar: fullBodyAvatar || null,
+        languages: initialLanguages, // Initialize with racial and class languages
         userId: user.id
       },
     });
