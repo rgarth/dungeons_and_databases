@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateName } from "@/lib/dnd/names";
+import { Gender } from "@/lib/dnd/names/types";
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const race = searchParams.get('race');
-    const gender = searchParams.get('gender');
+    const gender = searchParams.get('gender') as Gender | null;
 
     if (!race) {
       return NextResponse.json({ error: 'Race is required' }, { status: 400 });

@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { MagicalItem } from '@prisma/client';
 import { cachedMagicalItems } from '@/lib/server/init';
-
-// Cache the magical items data in memory
-let cachedMagicalItems: MagicalItem[] | null = null;
 
 export async function GET(request: NextRequest) {
   try {
     // Return cached data if available
-    if (cachedMagicalItems) {
-      return NextResponse.json(cachedMagicalItems);
+    if (!cachedMagicalItems) {
+      return NextResponse.json(
+        { error: 'Server cache not initialized' },
+        { status: 503 }
+      );
     }
 
     const { searchParams } = new URL(request.url);
@@ -19,52 +17,36 @@ export async function GET(request: NextRequest) {
     const requiresAttunement = searchParams.get('requiresAttunement');
     const search = searchParams.get('search');
 
-    const where: {
-      type?: string;
-      rarity?: string;
-      requiresAttunement?: boolean;
-      OR?: Array<{
-        name?: { contains: string; mode: 'insensitive' };
-        description?: { contains: string; mode: 'insensitive' };
-      }>;
-    } = {};
+    // Filter from cached data instead of querying database
+    let filteredItems = cachedMagicalItems;
 
     // Filter by type
     if (type) {
-      where.type = type;
+      filteredItems = filteredItems.filter(item => item.type === type);
     }
 
     // Filter by rarity
     if (rarity) {
-      where.rarity = rarity;
+      filteredItems = filteredItems.filter(item => item.rarity === rarity);
     }
 
     // Filter by attunement requirement
     if (requiresAttunement !== null) {
-      where.requiresAttunement = requiresAttunement === 'true';
+      const requiresAttunementBool = requiresAttunement === 'true';
+      filteredItems = filteredItems.filter(item => item.requiresAttunement === requiresAttunementBool);
     }
 
     // Search by name or description
     if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } }
-      ];
+      const searchLower = search.toLowerCase();
+      filteredItems = filteredItems.filter(item => 
+        item.name.toLowerCase().includes(searchLower) ||
+        item.description.toLowerCase().includes(searchLower)
+      );
     }
 
-    const magicalItems = await prisma.magicalItem.findMany({
-      where,
-      orderBy: [
-        { rarity: 'asc' },
-        { name: 'asc' }
-      ]
-    });
-
-    // Cache the results
-    cachedMagicalItems = magicalItems;
-
     // Parse the effects JSON for each item
-    const itemsWithParsedEffects = magicalItems.map(item => ({
+    const itemsWithParsedEffects = filteredItems.map(item => ({
       ...item,
       effects: item.effects ? JSON.parse(item.effects as string) : []
     }));

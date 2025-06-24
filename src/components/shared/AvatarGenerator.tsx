@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Palette, RefreshCw } from "lucide-react";
-import type { CharacterAvatarData } from "@/lib/avatar-generation";
+import type { CharacterAvatarData } from "@/types/character";
 
 interface AvatarGeneratorProps {
   characterData: CharacterAvatarData;

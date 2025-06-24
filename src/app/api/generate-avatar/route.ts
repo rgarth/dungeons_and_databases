@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { generateAvatar, CharacterAvatarData } from '@/lib/avatar-generation';
+import { generateAvatar } from '@/lib/avatar-generation';
+import { CharacterAvatarData } from '@/types/character';
 
 export async function POST(request: NextRequest) {
   try {
