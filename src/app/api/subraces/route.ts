@@ -26,7 +26,14 @@ export async function GET(request: NextRequest) {
         }
       });
 
-      return NextResponse.json(subraces);
+      // Parse JSON fields
+      const parsedSubraces = subraces.map(subrace => ({
+        ...subrace,
+        traits: JSON.parse(subrace.traits as string),
+        languages: subrace.languages ? JSON.parse(subrace.languages as string) : null
+      }));
+
+      return NextResponse.json(parsedSubraces);
     } else {
       // Get all subraces
       const subraces = await prisma.subrace.findMany({
@@ -49,7 +56,14 @@ export async function GET(request: NextRequest) {
         ]
       });
 
-      return NextResponse.json(subraces);
+      // Parse JSON fields
+      const parsedSubraces = subraces.map(subrace => ({
+        ...subrace,
+        traits: JSON.parse(subrace.traits as string),
+        languages: subrace.languages ? JSON.parse(subrace.languages as string) : null
+      }));
+
+      return NextResponse.json(parsedSubraces);
     }
   } catch (error) {
     console.error('Error fetching subraces:', error);

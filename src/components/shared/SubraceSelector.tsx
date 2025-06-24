@@ -9,7 +9,7 @@ interface Subrace {
   description: string;
   abilityScoreIncrease: string;
   traits: string[];
-  languages?: string[];
+  languages?: string[] | null;
 }
 
 interface SubraceSelectorProps {
