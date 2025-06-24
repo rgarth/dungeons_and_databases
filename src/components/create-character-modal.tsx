@@ -118,6 +118,13 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [cachedArmorProficiencies, setCachedArmorProficiencies] = useState<string[]>([]);
   const [cachedPhbDescription, setCachedPhbDescription] = useState<string | null>(null);
   const [cachedSpells, setCachedSpells] = useState<Record<string, Spell[]>>({});
+  const [cachedSpellLimits, setCachedSpellLimits] = useState<Record<string, {
+    cantripsKnown: number;
+    spellsKnown: number;
+    spellcastingType: string;
+    maxSpellLevel: number;
+    spellLevelLimits: Record<string, number>;
+  }>>({});
 
   // Creation step state
   const [currentStep, setCurrentStep] = useState<'basic' | 'background'>('basic');
@@ -151,6 +158,16 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const handleClassChange = (newClass: string) => {
     setCharacterClass(newClass);
     setSubclass(""); // Clear subclass when class changes
+    setSelectedSpells([]); // Clear selected spells when class changes
+    
+    // Auto-select all 1st-level spells for prepared spellcasters
+    setTimeout(() => {
+      const limits = getCachedSpellLimits(newClass, 1);
+      if (limits?.spellcastingType === 'prepared' && limits.spellsKnown === 0 && spellcasting?.availableSpells) {
+        const firstLevelSpells = spellcasting.availableSpells.filter(spell => spell.level === 1);
+        setSelectedSpells(firstLevelSpells);
+      }
+    }, 100); // Small delay to ensure spellcasting data is loaded
   };
 
   // Fetch class starting gold formula when class changes
@@ -185,6 +202,58 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
     fetchClassFormula();
   }, [characterClass]);
+
+  // Fetch and cache spell limits when class changes
+  useEffect(() => {
+    const fetchSpellLimits = async () => {
+      if (!characterClass) return;
+      
+      // Cache key for level 1 spell limits
+      const cacheKey = `${characterClass}-1`;
+      
+      // Check if already cached
+      if (cachedSpellLimits[cacheKey]) {
+        console.log('⚡ Using cached spell limits for', characterClass);
+        return;
+      }
+      
+      try {
+        console.log('📡 Fetching spell limits for', characterClass);
+        const response = await fetch(`/api/classes/${encodeURIComponent(characterClass)}/spell-limits?level=1`);
+        if (response.ok) {
+          const limits = await response.json();
+          setCachedSpellLimits(prev => ({
+            ...prev,
+            [cacheKey]: limits
+          }));
+          console.log('✅ Cached spell limits for', characterClass, ':', limits);
+        }
+      } catch (error) {
+        console.warn('Error fetching spell limits:', error);
+      }
+    };
+
+    fetchSpellLimits();
+  }, [characterClass, cachedSpellLimits]);
+
+  // Helper function to get cached spell limits
+  // Available for use in spell selection validation and UI display
+  // Example usage: const limits = getCachedSpellLimits('Wizard', 1);
+  const getCachedSpellLimits = (className: string, level: number = 1) => {
+    const cacheKey = `${className}-${level}`;
+    const limits = cachedSpellLimits[cacheKey];
+    if (limits) {
+      console.log('⚡ Retrieved cached spell limits for', className, 'level', level, ':', limits);
+    }
+    return limits;
+  };
+
+  // Log when spell limits cache is updated
+  useEffect(() => {
+    if (Object.keys(cachedSpellLimits).length > 0) {
+      console.log('📊 Spell limits cache updated:', Object.keys(cachedSpellLimits));
+    }
+  }, [cachedSpellLimits]);
 
   // Calculate gold when first entering background step
   useEffect(() => {
@@ -613,16 +682,33 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   };
 
   const handleSpellToggle = (spell: Spell) => {
+    // Get cached spell limits for validation
+    const spellLimits = getCachedSpellLimits(characterClass, 1);
+    
     setSelectedSpells(prev => {
       const isSelected = prev.some(s => s.name === spell.name);
       if (isSelected) {
         return prev.filter(s => s.name !== spell.name);
       } else {
-        const { maxSpells } = characterCreationService.validateSpellSelection(characterClass, prev);
-        if (prev.length < maxSpells) {
-          return [...prev, spell];
+        // Validate based on spell type (cantrip vs spell)
+        const isCantrip = spell.level === 0;
+        const currentCantrips = prev.filter(s => s.level === 0).length;
+        const currentSpells = prev.filter(s => s.level > 0).length;
+        
+        if (isCantrip) {
+          // Check cantrip limit
+          const maxCantrips = spellLimits?.cantripsKnown || 0;
+          if (currentCantrips < maxCantrips) {
+            return [...prev, spell];
+          }
+        } else {
+          // Check spell limit
+          const maxSpells = spellLimits?.spellsKnown || 0;
+          if (currentSpells < maxSpells) {
+            return [...prev, spell];
+          }
         }
-        return prev;
+        return prev; // Return previous state if validation fails
       }
     });
   };
@@ -1038,6 +1124,28 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }, 100); // Small delay to ensure state is updated
   };
 
+  // Helper function to count available 1st-level spells for a class
+  const getAvailableFirstLevelSpells = (className: string): number => {
+    if (!spellcasting?.availableSpells) return 0;
+    return spellcasting.availableSpells.filter(spell => spell.level === 1).length;
+  };
+
+  // Auto-select all 1st-level spells for prepared spellcasters when class changes
+  useEffect(() => {
+    if (characterClass && spellcasting?.availableSpells) {
+      const limits = getCachedSpellLimits(characterClass, 1);
+      if (limits?.spellcastingType === 'prepared' && limits.spellsKnown === 0) {
+        // For prepared spellcasters, auto-select all 1st-level spells
+        const firstLevelSpells = spellcasting.availableSpells.filter(spell => spell.level === 1);
+        setSelectedSpells(prev => {
+          // Keep existing cantrips, add all 1st-level spells
+          const existingCantrips = prev.filter(spell => spell.level === 0);
+          return [...existingCantrips, ...firstLevelSpells];
+        });
+      }
+    }
+  }, [characterClass, spellcasting?.availableSpells]);
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
       <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[95vh] overflow-y-auto modal-content">
@@ -1317,6 +1425,54 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                       <div>Spell Attack Bonus: <span className="text-white">+{spellcastingStats?.spellAttackBonus || '--'}</span></div>
                       <div>Selected Spells: <span className="text-white">{selectedSpells.length}</span></div>
                     </div>
+                    
+                    {/* Spell Limits Information */}
+                    {(() => {
+                      const limits = getCachedSpellLimits(characterClass, 1);
+                      if (limits) {
+                        const cantripsSelected = selectedSpells.filter(s => s.level === 0).length;
+                        const spellsSelected = selectedSpells.filter(s => s.level > 0).length;
+                        
+                        // For prepared spellcasters, show the total number of available 1st-level spells
+                        const isPreparedCaster = limits.spellcastingType === 'prepared' && limits.spellsKnown === 0;
+                        const availableFirstLevelSpells = isPreparedCaster 
+                          ? spellcasting.availableSpells.filter(s => s.level === 1).length 
+                          : limits.spellsKnown;
+                        
+                        return (
+                          <div className="mt-3 pt-3 border-t border-slate-600">
+                            <div className="text-xs text-slate-400 mb-2">Spell Selection Limits:</div>
+                            <div className="grid grid-cols-2 gap-4 text-xs">
+                              <div>
+                                Cantrips: <span className={`${cantripsSelected >= limits.cantripsKnown ? 'text-green-400' : 'text-yellow-400'}`}>
+                                  {cantripsSelected}/{limits.cantripsKnown}
+                                </span>
+                              </div>
+                              <div>
+                                {isPreparedCaster ? (
+                                  <span className="text-green-400">
+                                    Spells: {spellsSelected}/{availableFirstLevelSpells} (All Known)
+                                  </span>
+                                ) : (
+                                  <span className={`${spellsSelected >= availableFirstLevelSpells ? 'text-green-400' : 'text-yellow-400'}`}>
+                                    Spells: {spellsSelected}/{availableFirstLevelSpells}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            {limits.spellcastingType && (
+                              <div className="text-xs text-slate-400 mt-1">
+                                Type: <span className="text-white capitalize">{limits.spellcastingType}</span>
+                                {isPreparedCaster && (
+                                  <span className="text-green-400 ml-1">(Auto-selected)</span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-48 overflow-y-auto">

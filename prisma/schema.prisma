@@ -156,6 +156,7 @@ model DndClass {
   weaponProficiencies ClassWeaponProficiency[]
   weaponSuggestions   ClassWeaponSuggestion[]
   spellSuggestions    ClassSpellSuggestion[]
+  spellLimits         ClassSpellLimits[]
 }
 
 model ClassArmorProficiency {
@@ -275,6 +276,18 @@ model Alignment {
   updatedAt   DateTime @updatedAt
 }
 
+model Language {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  script      String
+  category    String   // 'Standard', 'Exotic', 'Secret'
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("languages")
+}
+
 model Treasure {
   id          String   @id @default(cuid())
   name        String   @unique
@@ -386,4 +399,22 @@ model Character {
   user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model ClassSpellLimits {
+  id               String   @id @default(cuid())
+  classId          String
+  level            Int
+  cantripsKnown    Int      @default(0)
+  spellsKnown      Int      @default(0)
+  spellcastingType String   // 'known', 'prepared', 'spellbook', 'none'
+  maxSpellLevel    Int?     // Maximum spell level that can be learned at this character level
+  spellLevelLimits Json?    // JSON object mapping spell level to max spells of that level, e.g. {"1": 4, "2": 3, "3": 2}
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  class            DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@unique([classId, level])
+  @@index([classId])
+  @@index([level])
 }

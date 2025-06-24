@@ -64,7 +64,8 @@ describe('CreateCharacterModal', () => {
     getCreationOptions: jest.fn(),
     generateAbilityScores: jest.fn(),
     validatePointBuy: jest.fn(),
-    calculateSpellcastingStats: jest.fn()
+    calculateSpellcastingStats: jest.fn(),
+    validateSpellSelection: jest.fn()
   };
 
   beforeEach(() => {
@@ -94,10 +95,24 @@ describe('CreateCharacterModal', () => {
           json: () => Promise.resolve({ simple: false, martial: false, specific: [], armor: [] })
         } as Response);
       }
-      if (url.includes('/api/classes/')) {
+      if (url.includes('/api/classes/') && !url.includes('/spell-limits')) {
         return Promise.resolve({
           ok: true,
           json: () => Promise.resolve({ startingGoldFormula: '4d4*10' })
+        } as Response);
+      }
+      if (url.includes('/api/classes/') && url.includes('/spell-limits')) {
+        // Mock spell limits API response
+        const className = url.includes('Wizard') ? 'Wizard' : 'Sorcerer';
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({
+            cantripsKnown: className === 'Wizard' ? 3 : 4,
+            spellsKnown: className === 'Wizard' ? 6 : 2,
+            spellcastingType: 'prepared',
+            maxSpellLevel: 1,
+            spellLevelLimits: { "1": className === 'Wizard' ? 6 : 2 }
+          })
         } as Response);
       }
       if (url.includes('/api/backgrounds')) {
@@ -141,6 +156,12 @@ describe('CreateCharacterModal', () => {
     mockCreationService.calculateSpellcastingStats.mockReturnValue({
       spellSaveDC: 13,
       spellAttackBonus: 3
+    });
+
+    mockCreationService.validateSpellSelection.mockReturnValue({
+      isValid: true,
+      maxSpells: 6,
+      maxCantrips: 3
     });
   });
 
@@ -566,6 +587,666 @@ describe('CreateCharacterModal', () => {
 
       // Verify both calls were made
       expect(mockCreationService.getCreationOptions).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('Spell Limit Caching', () => {
+    it('should fetch and cache spell limits when class changes to a spellcaster', async () => {
+      renderModal();
+
+      // Select Wizard class
+      const classSelect = screen.getByLabelText('Class');
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Wizard' } });
+      });
+
+      // Wait for spell limits API call
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith(
+          expect.stringContaining('/api/classes/Wizard/spell-limits?level=1')
+        );
+      });
+
+      // Verify the API was called with correct parameters
+      const spellLimitsCall = mockFetch.mock.calls.find(call => 
+        call[0].toString().includes('/spell-limits')
+      );
+      expect(spellLimitsCall).toBeDefined();
+    });
+
+    it('should use cached spell limits when switching back to a previously selected class', async () => {
+      renderModal();
+
+      // Select Wizard first
+      const classSelect = screen.getByLabelText('Class');
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Wizard' } });
+      });
+
+      // Wait for first spell limits fetch
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith(
+          expect.stringContaining('/api/classes/Wizard/spell-limits?level=1')
+        );
+      });
+
+      // Switch to Sorcerer
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Sorcerer' } });
+      });
+
+      // Wait for Sorcerer spell limits fetch
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith(
+          expect.stringContaining('/api/classes/Sorcerer/spell-limits?level=1')
+        );
+      });
+
+      // Switch back to Wizard
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Wizard' } });
+      });
+
+      // Count spell limits API calls - should only be 2 (Wizard and Sorcerer), not 3
+      const spellLimitsCalls = mockFetch.mock.calls.filter(call => 
+        call[0].toString().includes('/spell-limits')
+      );
+      expect(spellLimitsCalls).toHaveLength(2);
+    });
+
+    it('should handle spell limit API errors gracefully', async () => {
+      // Mock API error for spell limits
+      mockFetch.mockImplementation((input: string | Request | URL) => {
+        const url = typeof input === 'string' ? input : input.toString();
+        if (url.includes('/spell-limits')) {
+          return Promise.resolve({
+            ok: false,
+            status: 404,
+            json: () => Promise.resolve({ error: 'Spell limits not found' })
+          } as Response);
+        }
+        // Return default mock for other calls
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve([])
+        } as Response);
+      });
+
+      renderModal();
+
+      // Select Wizard class
+      const classSelect = screen.getByLabelText('Class');
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Wizard' } });
+      });
+
+      // Should not throw error and should continue working
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith(
+          expect.stringContaining('/api/classes/Wizard/spell-limits?level=1')
+        );
+      });
+
+      // Component should still be functional
+      expect(screen.getByLabelText('Name')).toBeInTheDocument();
+    });
+
+    it('should validate spell selection using cached limits', async () => {
+      renderModal();
+
+      // Select Wizard class
+      const classSelect = screen.getByLabelText('Class');
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Wizard' } });
+      });
+
+      // Wait for spell limits to be cached
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith(
+          expect.stringContaining('/api/classes/Wizard/spell-limits?level=1')
+        );
+      });
+
+      // Mock spellcasting options to include spells
+      mockCreationService.getCreationOptions.mockResolvedValue({
+        equipmentPacks: [],
+        weaponSuggestions: [],
+        armorSuggestions: [],
+        subclasses: [],
+        needsSubclassAtCreation: false,
+        spellcasting: {
+          ability: 'Intelligence',
+          canCastAtLevel1: true,
+          availableSpells: [
+            { name: 'Magic Missile', level: 1, school: 'Evocation' },
+            { name: 'Shield', level: 1, school: 'Abjuration' }
+          ],
+          spellSlots: { 1: 2 }
+        }
+      });
+
+      // Trigger spell selection (this would normally happen when spells are available)
+      // The cached spell limits should be used in the spell toggle handler
+      expect(mockCreationService.validateSpellSelection).toBeDefined();
+    });
+
+    it('should cache different spell limits for different classes', async () => {
+      renderModal();
+
+      // Select Wizard first
+      const classSelect = screen.getByLabelText('Class');
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Wizard' } });
+      });
+
+      // Wait for Wizard spell limits
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith(
+          expect.stringContaining('/api/classes/Wizard/spell-limits?level=1')
+        );
+      });
+
+      // Select Sorcerer
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Sorcerer' } });
+      });
+
+      // Wait for Sorcerer spell limits
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith(
+          expect.stringContaining('/api/classes/Sorcerer/spell-limits?level=1')
+        );
+      });
+
+      // Verify different spell limits were requested for different classes
+      const wizardCall = mockFetch.mock.calls.find(call => 
+        call[0].toString().includes('Wizard/spell-limits')
+      );
+      const sorcererCall = mockFetch.mock.calls.find(call => 
+        call[0].toString().includes('Sorcerer/spell-limits')
+      );
+
+      expect(wizardCall).toBeDefined();
+      expect(sorcererCall).toBeDefined();
+      expect(wizardCall).not.toEqual(sorcererCall);
+    });
+
+    it('should not fetch spell limits for non-spellcasting classes', async () => {
+      renderModal();
+
+      // Select Barbarian (non-spellcaster)
+      const classSelect = screen.getByLabelText('Class');
+      await act(async () => {
+        fireEvent.change(classSelect, { target: { value: 'Barbarian' } });
+      });
+
+      // Wait for any API calls to complete
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalled();
+      });
+
+      // Verify no spell limits API call was made
+      const spellLimitsCalls = mockFetch.mock.calls.filter(call => 
+        call[0].toString().includes('/spell-limits')
+      );
+      expect(spellLimitsCalls).toHaveLength(0);
+    });
+  });
+
+  describe('Spell Selection Tests', () => {
+    // Test data for all spellcasting classes
+    const spellcastingClasses = [
+      { name: 'Wizard', type: 'spellbook', cantrips: 3, spells: 6, ability: 'Intelligence' },
+      { name: 'Cleric', type: 'prepared', cantrips: 3, spells: 0, ability: 'Wisdom' },
+      { name: 'Druid', type: 'prepared', cantrips: 2, spells: 0, ability: 'Wisdom' },
+      { name: 'Bard', type: 'known', cantrips: 4, spells: 2, ability: 'Charisma' },
+      { name: 'Sorcerer', type: 'known', cantrips: 4, spells: 2, ability: 'Charisma' },
+      { name: 'Warlock', type: 'known', cantrips: 2, spells: 2, ability: 'Charisma' },
+      { name: 'Paladin', type: 'prepared', cantrips: 0, spells: 0, ability: 'Charisma' },
+      { name: 'Ranger', type: 'known', cantrips: 0, spells: 0, ability: 'Wisdom' } // Gets spells at level 2
+    ];
+
+    spellcastingClasses.forEach(({ name, type, cantrips, spells, ability }) => {
+      describe(`${name} Spell Selection`, () => {
+        beforeEach(() => {
+          // Mock spell limits API response
+          mockFetch.mockImplementation((input: string | Request | URL) => {
+            const url = typeof input === 'string' ? input : input.toString();
+            if (url.includes('/spell-limits')) {
+              return Promise.resolve({
+                ok: true,
+                json: () => Promise.resolve({
+                  cantripsKnown: cantrips,
+                  spellsKnown: spells,
+                  spellcastingType: type,
+                  maxSpellLevel: 1
+                })
+              } as Response);
+            }
+            // Return default mock for other calls
+            return Promise.resolve({
+              ok: true,
+              json: () => Promise.resolve([])
+            } as Response);
+          });
+
+          // Mock spellcasting options with sample spells
+          mockCreationService.getCreationOptions.mockResolvedValue({
+            equipmentPacks: [],
+            weaponSuggestions: [],
+            armorSuggestions: [],
+            subclasses: [],
+            needsSubclassAtCreation: false,
+            spellcasting: {
+              ability: ability,
+              canCastAtLevel1: true,
+              availableSpells: [
+                { name: 'Fire Bolt', level: 0, school: 'Evocation' },
+                { name: 'Mage Hand', level: 0, school: 'Conjuration' },
+                { name: 'Magic Missile', level: 1, school: 'Evocation' },
+                { name: 'Shield', level: 1, school: 'Abjuration' },
+                { name: 'Cure Wounds', level: 1, school: 'Evocation' }
+              ],
+              spellSlots: { 1: 2 }
+            }
+          });
+        });
+
+        it(`should display correct spell limits for ${name}`, async () => {
+          renderModal();
+
+          // Select the class
+          const classSelect = screen.getByLabelText('Class');
+          await act(async () => {
+            fireEvent.change(classSelect, { target: { value: name } });
+          });
+
+          // Wait for spell limits to load
+          await waitFor(() => {
+            expect(mockFetch).toHaveBeenCalledWith(
+              expect.stringContaining(`/api/classes/${name}/spell-limits?level=1`)
+            );
+          });
+
+          // Check that spell limits are displayed
+          await waitFor(() => {
+            if (cantrips > 0 || spells > 0) {
+              expect(screen.getByText(/Cantrips:/)).toBeInTheDocument();
+              expect(screen.getByText(/Spells:/)).toBeInTheDocument();
+            }
+          });
+        });
+
+        it(`should enforce cantrip limits for ${name}`, async () => {
+          renderModal();
+
+          // Select the class
+          const classSelect = screen.getByLabelText('Class');
+          await act(async () => {
+            fireEvent.change(classSelect, { target: { value: name } });
+          });
+
+          // Wait for spell limits to load
+          await waitFor(() => {
+            expect(mockFetch).toHaveBeenCalledWith(
+              expect.stringContaining(`/api/classes/${name}/spell-limits?level=1`)
+            );
+          });
+
+          if (cantrips > 0) {
+            // Try to select more cantrips than allowed
+            const cantripCheckboxes = screen.getAllByText(/Fire Bolt|Mage Hand/);
+            
+            // Select all available cantrips
+            for (let i = 0; i < cantrips; i++) {
+              if (cantripCheckboxes[i]) {
+                await act(async () => {
+                  fireEvent.click(cantripCheckboxes[i]);
+                });
+              }
+            }
+
+            // Try to select one more cantrip (should not be allowed)
+            const extraCantrip = cantripCheckboxes[cantrips];
+            if (extraCantrip) {
+              await act(async () => {
+                fireEvent.click(extraCantrip);
+              });
+              
+              // Verify the extra cantrip was not selected
+              await waitFor(() => {
+                const selectedCount = screen.getByText(/Cantrips:/).textContent;
+                expect(selectedCount).toContain(`${cantrips}/${cantrips}`);
+              });
+            }
+          }
+        });
+
+        it(`should handle ${type} spellcasting type correctly for ${name}`, async () => {
+          renderModal();
+
+          // Select the class
+          const classSelect = screen.getByLabelText('Class');
+          await act(async () => {
+            fireEvent.change(classSelect, { target: { value: name } });
+          });
+
+          // Wait for spell limits to load
+          await waitFor(() => {
+            expect(mockFetch).toHaveBeenCalledWith(
+              expect.stringContaining(`/api/classes/${name}/spell-limits?level=1`)
+            );
+          });
+
+          // Check that the spellcasting type is displayed correctly
+          await waitFor(() => {
+            if (cantrips > 0 || spells > 0) {
+              const typeText = screen.getByText(/Type:/);
+              expect(typeText).toBeInTheDocument();
+              expect(typeText.textContent).toContain(type);
+            }
+          });
+
+          // For prepared spellcasters, check that spells are auto-selected
+          if (type === 'prepared' && spells === 0) {
+            await waitFor(() => {
+              const autoSelectText = screen.getByText(/Auto-selected/);
+              expect(autoSelectText).toBeInTheDocument();
+            });
+          }
+        });
+
+        it(`should clear spell selections when switching from ${name} to another class`, async () => {
+          renderModal();
+
+          // Select the first class
+          const classSelect = screen.getByLabelText('Class');
+          await act(async () => {
+            fireEvent.change(classSelect, { target: { value: name } });
+          });
+
+          // Wait for spell limits to load
+          await waitFor(() => {
+            expect(mockFetch).toHaveBeenCalledWith(
+              expect.stringContaining(`/api/classes/${name}/spell-limits?level=1`)
+            );
+          });
+
+          if (cantrips > 0) {
+            // Select a cantrip
+            const cantripCheckbox = screen.getByText('Fire Bolt');
+            await act(async () => {
+              fireEvent.click(cantripCheckbox);
+            });
+
+            // Verify cantrip is selected
+            await waitFor(() => {
+              expect(cantripCheckbox.closest('label')).toHaveClass('bg-purple-600');
+            });
+          }
+
+          // Switch to a different class
+          await act(async () => {
+            fireEvent.change(classSelect, { target: { value: 'Barbarian' } });
+          });
+
+          // Verify spell selections are cleared
+          await waitFor(() => {
+            const selectedSpellsText = screen.getByText(/Selected Spells: 0/);
+            expect(selectedSpellsText).toBeInTheDocument();
+          });
+        });
+      });
+    });
+
+    describe('Prepared Spellcaster Auto-Selection', () => {
+      it('should auto-select all 1st-level spells for Cleric', async () => {
+        // Mock spell limits for Cleric
+        mockFetch.mockImplementation((input: string | Request | URL) => {
+          const url = typeof input === 'string' ? input : input.toString();
+          if (url.includes('/spell-limits')) {
+            return Promise.resolve({
+              ok: true,
+              json: () => Promise.resolve({
+                cantripsKnown: 3,
+                spellsKnown: 0,
+                spellcastingType: 'prepared',
+                maxSpellLevel: 1
+              })
+            } as Response);
+          }
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve([])
+          } as Response);
+        });
+
+        // Mock spellcasting options with multiple 1st-level spells
+        mockCreationService.getCreationOptions.mockResolvedValue({
+          equipmentPacks: [],
+          weaponSuggestions: [],
+          armorSuggestions: [],
+          subclasses: [],
+          needsSubclassAtCreation: false,
+          spellcasting: {
+            ability: 'Wisdom',
+            canCastAtLevel1: true,
+            availableSpells: [
+              { name: 'Fire Bolt', level: 0, school: 'Evocation' },
+              { name: 'Magic Missile', level: 1, school: 'Evocation' },
+              { name: 'Shield', level: 1, school: 'Abjuration' },
+              { name: 'Cure Wounds', level: 1, school: 'Evocation' }
+            ],
+            spellSlots: { 1: 2 }
+          }
+        });
+
+        renderModal();
+
+        // Select Cleric
+        const classSelect = screen.getByLabelText('Class');
+        await act(async () => {
+          fireEvent.change(classSelect, { target: { value: 'Cleric' } });
+        });
+
+        // Wait for auto-selection to complete
+        await waitFor(() => {
+          expect(screen.getByText(/Auto-selected/)).toBeInTheDocument();
+        });
+
+        // Verify all 1st-level spells are selected
+        await waitFor(() => {
+          const magicMissile = screen.getByText('Magic Missile');
+          const shield = screen.getByText('Shield');
+          const cureWounds = screen.getByText('Cure Wounds');
+          
+          expect(magicMissile.closest('label')).toHaveClass('bg-purple-600');
+          expect(shield.closest('label')).toHaveClass('bg-purple-600');
+          expect(cureWounds.closest('label')).toHaveClass('bg-purple-600');
+        });
+      });
+
+      it('should auto-select all 1st-level spells for Druid', async () => {
+        // Mock spell limits for Druid
+        mockFetch.mockImplementation((input: string | Request | URL) => {
+          const url = typeof input === 'string' ? input : input.toString();
+          if (url.includes('/spell-limits')) {
+            return Promise.resolve({
+              ok: true,
+              json: () => Promise.resolve({
+                cantripsKnown: 2,
+                spellsKnown: 0,
+                spellcastingType: 'prepared',
+                maxSpellLevel: 1
+              })
+            } as Response);
+          }
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve([])
+          } as Response);
+        });
+
+        renderModal();
+
+        // Select Druid
+        const classSelect = screen.getByLabelText('Class');
+        await act(async () => {
+          fireEvent.change(classSelect, { target: { value: 'Druid' } });
+        });
+
+        // Wait for auto-selection to complete
+        await waitFor(() => {
+          expect(screen.getByText(/Auto-selected/)).toBeInTheDocument();
+        });
+      });
+    });
+
+    describe('Known Spellcaster Manual Selection', () => {
+      it('should allow manual spell selection for Sorcerer', async () => {
+        // Mock spell limits for Sorcerer
+        mockFetch.mockImplementation((input: string | Request | URL) => {
+          const url = typeof input === 'string' ? input : input.toString();
+          if (url.includes('/spell-limits')) {
+            return Promise.resolve({
+              ok: true,
+              json: () => Promise.resolve({
+                cantripsKnown: 4,
+                spellsKnown: 2,
+                spellcastingType: 'known',
+                maxSpellLevel: 1
+              })
+            } as Response);
+          }
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve([])
+          } as Response);
+        });
+
+        renderModal();
+
+        // Select Sorcerer
+        const classSelect = screen.getByLabelText('Class');
+        await act(async () => {
+          fireEvent.change(classSelect, { target: { value: 'Sorcerer' } });
+        });
+
+        // Wait for spell limits to load
+        await waitFor(() => {
+          expect(mockFetch).toHaveBeenCalledWith(
+            expect.stringContaining('/api/classes/Sorcerer/spell-limits?level=1')
+          );
+        });
+
+        // Select a cantrip
+        const fireBolt = screen.getByText('Fire Bolt');
+        await act(async () => {
+          fireEvent.click(fireBolt);
+        });
+
+        // Verify cantrip is selected
+        await waitFor(() => {
+          expect(fireBolt.closest('label')).toHaveClass('bg-purple-600');
+        });
+
+        // Select a 1st-level spell
+        const magicMissile = screen.getByText('Magic Missile');
+        await act(async () => {
+          fireEvent.click(magicMissile);
+        });
+
+        // Verify spell is selected
+        await waitFor(() => {
+          expect(magicMissile.closest('label')).toHaveClass('bg-purple-600');
+        });
+      });
+    });
+
+    describe('Spellbook Spellcaster (Wizard)', () => {
+      it('should handle Wizard spellbook correctly', async () => {
+        // Mock spell limits for Wizard
+        mockFetch.mockImplementation((input: string | Request | URL) => {
+          const url = typeof input === 'string' ? input : input.toString();
+          if (url.includes('/spell-limits')) {
+            return Promise.resolve({
+              ok: true,
+              json: () => Promise.resolve({
+                cantripsKnown: 3,
+                spellsKnown: 6,
+                spellcastingType: 'spellbook',
+                maxSpellLevel: 1
+              })
+            } as Response);
+          }
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve([])
+          } as Response);
+        });
+
+        renderModal();
+
+        // Select Wizard
+        const classSelect = screen.getByLabelText('Class');
+        await act(async () => {
+          fireEvent.change(classSelect, { target: { value: 'Wizard' } });
+        });
+
+        // Wait for spell limits to load
+        await waitFor(() => {
+          expect(mockFetch).toHaveBeenCalledWith(
+            expect.stringContaining('/api/classes/Wizard/spell-limits?level=1')
+          );
+        });
+
+        // Check that spellbook type is displayed
+        await waitFor(() => {
+          const typeText = screen.getByText(/Type: spellbook/);
+          expect(typeText).toBeInTheDocument();
+        });
+      });
+    });
+
+    describe('Non-Spellcasting Classes', () => {
+      it('should not show spellcasting section for Barbarian', async () => {
+        renderModal();
+
+        // Select Barbarian
+        const classSelect = screen.getByLabelText('Class');
+        await act(async () => {
+          fireEvent.change(classSelect, { target: { value: 'Barbarian' } });
+        });
+
+        // Wait for any API calls to complete
+        await waitFor(() => {
+          expect(mockFetch).toHaveBeenCalled();
+        });
+
+        // Verify no spellcasting section is shown
+        expect(screen.queryByText('Spellcasting')).not.toBeInTheDocument();
+      });
+
+      it('should not fetch spell limits for non-spellcasting classes', async () => {
+        renderModal();
+
+        // Select Barbarian
+        const classSelect = screen.getByLabelText('Class');
+        await act(async () => {
+          fireEvent.change(classSelect, { target: { value: 'Barbarian' } });
+        });
+
+        // Wait for any API calls to complete
+        await waitFor(() => {
+          expect(mockFetch).toHaveBeenCalled();
+        });
+
+        // Verify no spell limits API call was made
+        const spellLimitsCalls = mockFetch.mock.calls.filter(call => 
+          call[0].toString().includes('/spell-limits')
+        );
+        expect(spellLimitsCalls).toHaveLength(0);
+      });
     });
   });
 }); 

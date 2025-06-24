@@ -3,11 +3,12 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { name: string } }
+  { params }: { params: Promise<{ name: string }> }
 ) {
   try {
+    const { name } = await params;
     const race = await prisma.dndRace.findUnique({
-      where: { name: params.name }
+      where: { name }
     });
 
     if (!race) {
