@@ -41,12 +41,18 @@ async function generateWithReplicateSDXL(characterData: CharacterAvatarData): Pr
   try {
     const { race, gender, class: characterClass } = characterData;
     
-    // Create photo-style prompts for SDXL
-    const fullBodyPrompt = `A professional full-body photograph of a ${gender} ${race} ${characterClass} in fantasy armor, standing in a dramatic pose, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography`;
+    // Use the same seed for both images to ensure consistency
+    const sharedSeed = Math.floor(Math.random() * 1000000);
     
-    const avatarPrompt = `A professional headshot portrait photograph of a ${gender} ${race} ${characterClass}, close-up, studio lighting, high quality, detailed facial features, realistic, 8k resolution, professional photography`;
+    // Create consistent character description
+    const characterDescription = `${gender} ${race} ${characterClass}`;
+    
+    // Create photo-style prompts for SDXL with better consistency
+    const fullBodyPrompt = `A professional full-body photograph of a ${characterDescription} in fantasy armor, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, same person as avatar`;
+    
+    const avatarPrompt = `A professional headshot portrait photograph of the same ${characterDescription} in fantasy armor, close-up head and shoulders, studio lighting, high quality, detailed facial features, realistic, 8k resolution, professional photography, centered composition, same person as full body`;
 
-    // Generate full body image
+    // Generate full body image with taller aspect ratio
     const fullBodyResponse = await fetch(`${REPLICATE_BASE_URL}/predictions`, {
       method: 'POST',
       headers: {
@@ -57,12 +63,12 @@ async function generateWithReplicateSDXL(characterData: CharacterAvatarData): Pr
         version: 'stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b',
         input: {
           prompt: fullBodyPrompt,
-          negative_prompt: 'cartoon, anime, low quality, blurry, distorted, deformed, ugly, bad anatomy, nsfw, inappropriate, adult content, revealing clothing, skimpy armor, close-up, portrait',
+          negative_prompt: 'cartoon, anime, low quality, blurry, distorted, deformed, ugly, bad anatomy, nsfw, inappropriate, adult content, revealing clothing, skimpy armor, close-up, portrait, cropped head, head cut off, different person',
           width: 512,
-          height: 768,
+          height: 896, // Much taller for full body
           num_inference_steps: 20,
           guidance_scale: 7.5,
-          seed: Math.floor(Math.random() * 1000000)
+          seed: sharedSeed
         }
       })
     });
@@ -79,7 +85,7 @@ async function generateWithReplicateSDXL(characterData: CharacterAvatarData): Pr
     const fullBodyPrediction = await fullBodyResponse.json();
     const fullBodyImage = await pollForCompletion(fullBodyPrediction.id);
 
-    // Generate avatar image
+    // Generate avatar image as square headshot with same seed
     const avatarResponse = await fetch(`${REPLICATE_BASE_URL}/predictions`, {
       method: 'POST',
       headers: {
@@ -90,12 +96,12 @@ async function generateWithReplicateSDXL(characterData: CharacterAvatarData): Pr
         version: 'stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b',
         input: {
           prompt: avatarPrompt,
-          negative_prompt: 'cartoon, anime, low quality, blurry, distorted, deformed, ugly, bad anatomy, nsfw, inappropriate, adult content, revealing clothing, skimpy armor, full body, wide shot',
+          negative_prompt: 'cartoon, anime, low quality, blurry, distorted, deformed, ugly, bad anatomy, nsfw, inappropriate, adult content, revealing clothing, skimpy armor, full body, wide shot, body cut off, different person',
           width: 512,
           height: 512,
           num_inference_steps: 20,
           guidance_scale: 7.5,
-          seed: Math.floor(Math.random() * 1000000)
+          seed: sharedSeed
         }
       })
     });

@@ -247,6 +247,7 @@ model Subrace {
   race                 DndRace  @relation(fields: [raceId], references: [id], onDelete: Cascade)
 
   @@index([raceId])
+  @@map("subrace")
 }
 
 model Background {
@@ -417,4 +418,5 @@ model ClassSpellLimits {
   @@unique([classId, level])
   @@index([classId])
   @@index([level])
+  @@map("class_spell_limits")
 }
