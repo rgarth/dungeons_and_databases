@@ -136,9 +136,27 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
       // Check for "X of your choice" patterns
       for (const lang of backgroundLanguages) {
         if (lang.includes('of your choice')) {
-          const match = lang.match(/(\d+)\s+of\s+your\s+choice/i);
+          // Handle both numeric and word representations
+          let match = lang.match(/(\d+)\s+of\s+your\s+choice/i);
+          if (!match) {
+            // Try word representations
+            match = lang.match(/(one|two|three|four|five)\s+of\s+your\s+choice/i);
+          }
           if (match) {
-            const required = parseInt(match[1]);
+            let required: number;
+            if (match[1].match(/\d+/)) {
+              required = parseInt(match[1]);
+            } else {
+              // Convert word to number
+              const wordToNumber: Record<string, number> = {
+                'one': 1,
+                'two': 2,
+                'three': 3,
+                'four': 4,
+                'five': 5
+              };
+              required = wordToNumber[match[1].toLowerCase()] || 0;
+            }
             // Only count languages that are not automatic (racial or class)
             const backgroundLanguages = learnedLanguages.filter(lang => 
               !racialLanguages.includes(lang) && !classLanguages.includes(lang)
