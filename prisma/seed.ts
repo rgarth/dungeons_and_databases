@@ -16,6 +16,7 @@ import {
   classWeaponSuggestionsData,
   classArmorSuggestionsData
 } from './data'
+import { seedSubraces } from './seed-subraces'
 
 const prisma = new PrismaClient()
 
@@ -209,6 +210,9 @@ async function main() {
     })
   }
   console.log(`✅ Created ${racesData.length} races`)
+
+  // Seed subraces
+  await seedSubraces()
 
   // Seed alignments
   console.log('⚖️ Seeding alignments...')
