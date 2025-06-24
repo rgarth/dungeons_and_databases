@@ -994,142 +994,83 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Custom handler for equipment pack changes
   const handleEquipmentPackChange = (newPackIndex: number) => {
     setSelectedEquipmentPack(newPackIndex);
-    
     // Trigger gold calculation immediately
     setTimeout(() => {
       const calculateGold = async () => {
         if (!background || !characterClass) return;
 
         try {
-          if (newPackIndex === -1) {
-            // No equipment pack - roll class gold + background fixed gold + background rolled gold
-            let classGold = 0;
-            let backgroundFixedGold = 0;
-            let backgroundRolledGold = 0;
-            let classRollDetails = '';
-            let backgroundRollDetails = '';
-            
-            // Use cached class formula if available
-            let classFormula = classStartingGoldFormula;
-            if (!classFormula) {
-              const cached = classFormulaCache.current.get(characterClass);
-              if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-                classFormula = cached.formula;
-              } else {
-                // Fetch and cache if not available
-                const classResponse = await fetch(`/api/classes/${encodeURIComponent(characterClass)}`);
-                if (classResponse.ok) {
-                  const classData = await classResponse.json();
-                  if (classData.startingGoldFormula) {
-                    classFormula = classData.startingGoldFormula;
-                    classFormulaCache.current.set(characterClass, {
-                      formula: classData.startingGoldFormula,
-                      timestamp: Date.now()
-                    });
-                    setClassStartingGoldFormula(classData.startingGoldFormula);
-                  }
-                }
-              }
+          // Get background data (starting gold and formula)
+          const backgroundResponse = await fetch('/api/backgrounds');
+          if (backgroundResponse.ok) {
+            const backgrounds = await backgroundResponse.json();
+            const backgroundData = backgrounds.find((bg: { name: string; startingGold?: number; startingGoldFormula?: string }) => bg.name === background);
+            if (backgroundData?.startingGold) {
+              setBackgroundStartingGold(backgroundData.startingGold);
             }
-            
-            // Roll class gold
-            if (classFormula) {
-              const match = classFormula.match(/(\d+)d(\d+)(\*\d+)?/);
-              if (match) {
-                const numDice = parseInt(match[1], 10);
-                const dieSize = parseInt(match[2], 10);
-                const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
-                
-                // Actually roll the dice
-                const rolls: number[] = [];
-                let totalRoll = 0;
-                for (let i = 0; i < numDice; i++) {
-                  const roll = Math.floor(Math.random() * dieSize) + 1;
-                  rolls.push(roll);
-                  totalRoll += roll;
-                }
-                classGold = totalRoll * multiplier;
-                classRollDetails = `${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} [${rolls.join(', ')}] = ${classGold} gp`;
-              }
-            }
-            
-            // Get background data (fixed gold and formula)
-            const backgroundResponse = await fetch('/api/backgrounds');
-            if (backgroundResponse.ok) {
-              const backgrounds = await backgroundResponse.json();
-              const backgroundData = backgrounds.find((bg: { name: string; startingGold?: number; startingGoldFormula?: string }) => bg.name === background);
-              
-              // Add fixed background gold (like Noble's 25 gp)
-              if (backgroundData?.startingGold) {
-                backgroundFixedGold = backgroundData.startingGold;
-              }
-              
-              // Roll background gold (if background has a formula)
-              if (backgroundData?.startingGoldFormula) {
-                const match = backgroundData.startingGoldFormula.match(/(\d+)d(\d+)(\*\d+)?/);
-                if (match) {
-                  const numDice = parseInt(match[1], 10);
-                  const dieSize = parseInt(match[2], 10);
-                  const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
-                  
-                  // Actually roll the dice
-                  const rolls: number[] = [];
-                  let totalRoll = 0;
-                  for (let i = 0; i < numDice; i++) {
-                    const roll = Math.floor(Math.random() * dieSize) + 1;
-                    rolls.push(roll);
-                    totalRoll += roll;
-                  }
-                  backgroundRolledGold = totalRoll * multiplier;
-                  backgroundRollDetails = `${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} [${rolls.join(', ')}] = ${backgroundRolledGold} gp`;
-                }
-              }
-            }
-            
-            const totalGold = classGold + backgroundFixedGold + backgroundRolledGold;
-            setCalculatedGold(totalGold);
-            
-            // Build the roll details string
-            let rollDetails = `Class: ${classRollDetails}`;
-            if (backgroundFixedGold > 0) {
-              rollDetails += `, Background: ${backgroundFixedGold} gp`;
-            }
-            if (backgroundRollDetails) {
-              rollDetails += `, Background Roll: ${backgroundRollDetails}`;
-            }
-            rollDetails += ` (Total: ${totalGold} gp)`;
-            
-            setGoldRollDetails(rollDetails);
-            
-            // Show toast
-            toast.success(`Starting Gold: ${totalGold} gp (Class + Background)`, {
-              duration: 3000,
-              icon: '💰'
-            });
-          } else {
-            // Equipment pack selected - use background starting gold
-            setCalculatedGold(backgroundStartingGold);
-            setGoldRollDetails('');
-            
-            // Show toast
-            toast.success(`Starting Gold: ${backgroundStartingGold} gp (${background} background)`, {
-              duration: 3000,
-              icon: '💰'
-            });
           }
+
+          // Use cached class formula if available, otherwise fetch it
+          let classFormula = classStartingGoldFormula;
+          if (!classFormula) {
+            const cached = classFormulaCache.current.get(characterClass);
+            if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+              classFormula = cached.formula;
+            } else {
+              // Fetch and cache if not available
+              const classResponse = await fetch(`/api/classes/${encodeURIComponent(characterClass)}`);
+              if (classResponse.ok) {
+                const classData = await classResponse.json();
+                if (classData.startingGoldFormula) {
+                  classFormula = classData.startingGoldFormula;
+                  classFormulaCache.current.set(characterClass, {
+                    formula: classFormula,
+                    timestamp: Date.now()
+                  });
+                }
+              }
+            }
+          }
+
+          // Calculate total starting gold
+          let totalGold = 0;
+          
+          // Add background starting gold
+          if (backgroundStartingGold) {
+            totalGold += backgroundStartingGold;
+          }
+          
+          // Add class starting gold
+          if (classFormula) {
+            try {
+              // Parse and evaluate the formula
+              const formula = classFormula.replace(/d(\d+)/g, (match, sides) => {
+                const roll = Math.floor(Math.random() * parseInt(sides)) + 1;
+                return roll.toString();
+              });
+              const classGold = eval(formula);
+              totalGold += classGold;
+            } catch (error) {
+              console.error('Error evaluating class gold formula:', error);
+            }
+          }
+          
+          // Subtract equipment pack cost if one is selected
+          if (newPackIndex >= 0 && creationOptions?.equipmentPacks?.[newPackIndex]) {
+            const packCost = creationOptions.equipmentPacks[newPackIndex].cost;
+            const costValue = parseInt(packCost.replace(/\D/g, ''), 10);
+            if (!isNaN(costValue)) {
+              totalGold -= costValue;
+            }
+          }
+          
+          setCalculatedGold(Math.max(0, totalGold));
         } catch (error) {
-          console.warn('Error calculating gold:', error);
+          console.error('Error calculating gold:', error);
         }
       };
-
       calculateGold();
     }, 100); // Small delay to ensure state is updated
-  };
-
-  // Helper function to count available 1st-level spells for a class
-  const getAvailableFirstLevelSpells = (className: string): number => {
-    if (!spellcasting?.availableSpells) return 0;
-    return spellcasting.availableSpells.filter(spell => spell.level === 1).length;
   };
 
   // Auto-select all 1st-level spells for prepared spellcasters when class changes
@@ -1428,52 +1369,39 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                       <div>Selected Spells: <span className="text-white">{selectedSpells.length}</span></div>
                     </div>
                     
-                    {/* Spell Limits Information */}
+                    {/* Spell selection guidance */}
                     {(() => {
-                      const limits = getCachedSpellLimits(characterClass, 1);
-                      if (limits) {
-                        const cantripsSelected = selectedSpells.filter(s => s.level === 0).length;
-                        const spellsSelected = selectedSpells.filter(s => s.level > 0).length;
-                        
-                        // For prepared spellcasters, show the total number of available 1st-level spells
-                        const isPreparedCaster = limits.spellcastingType === 'prepared' && limits.spellsKnown === 0;
-                        const availableFirstLevelSpells = isPreparedCaster 
-                          ? spellcasting.availableSpells.filter(s => s.level === 1).length 
-                          : limits.spellsKnown;
-                        
-                        return (
-                          <div className="mt-3 pt-3 border-t border-slate-600">
-                            <div className="text-xs text-slate-400 mb-2">Spell Selection Limits:</div>
-                            <div className="grid grid-cols-2 gap-4 text-xs">
-                              <div>
-                                Cantrips: <span className={`${cantripsSelected >= limits.cantripsKnown ? 'text-green-400' : 'text-yellow-400'}`}>
-                                  {cantripsSelected}/{limits.cantripsKnown}
-                                </span>
-                              </div>
-                              <div>
-                                {isPreparedCaster ? (
-                                  <span className="text-green-400">
-                                    Spells: {spellsSelected}/{availableFirstLevelSpells} (All Known)
-                                  </span>
-                                ) : (
-                                  <span className={`${spellsSelected >= availableFirstLevelSpells ? 'text-green-400' : 'text-yellow-400'}`}>
-                                    Spells: {spellsSelected}/{availableFirstLevelSpells}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                            {limits.spellcastingType && (
-                              <div className="text-xs text-slate-400 mt-1">
-                                Type: <span className="text-white capitalize">{limits.spellcastingType}</span>
-                                {isPreparedCaster && (
-                                  <span className="text-green-400 ml-1">(Auto-selected)</span>
-                                )}
-                              </div>
-                            )}
+                      const spellLimits = getCachedSpellLimits(characterClass, 1);
+                      const selectedCantrips = selectedSpells.filter(s => s.level === 0).length;
+                      const selectedSpellsCount = selectedSpells.filter(s => s.level > 0).length;
+                      const maxCantrips = spellLimits?.cantripsKnown || 0;
+                      const maxSpells = spellLimits?.spellsKnown || 0;
+                      
+                      const cantripsNeeded = Math.max(0, maxCantrips - selectedCantrips);
+                      const spellsNeeded = Math.max(0, maxSpells - selectedSpellsCount);
+                      
+                      return (
+                        <div className="mt-3 pt-3 border-t border-slate-600">
+                          <div className="text-sm text-slate-300 mb-2">
+                            <span className="font-medium">Spell Selection Requirements:</span>
                           </div>
-                        );
-                      }
-                      return null;
+                          <div className="grid grid-cols-2 gap-4 text-xs">
+                            <div className={`flex items-center gap-2 ${selectedCantrips >= maxCantrips ? 'text-green-400' : 'text-yellow-400'}`}>
+                              <span>{selectedCantrips}/{maxCantrips} Cantrips</span>
+                              {selectedCantrips >= maxCantrips && <span>✓</span>}
+                            </div>
+                            <div className={`flex items-center gap-2 ${selectedSpellsCount >= maxSpells ? 'text-green-400' : 'text-yellow-400'}`}>
+                              <span>{selectedSpellsCount}/{maxSpells} Spells</span>
+                              {selectedSpellsCount >= maxSpells && <span>✓</span>}
+                            </div>
+                          </div>
+                          {(cantripsNeeded > 0 || spellsNeeded > 0) && (
+                            <div className="mt-2 text-xs text-yellow-400">
+                              ⚠️ Please select {cantripsNeeded} more cantrip{cantripsNeeded !== 1 ? 's' : ''} and {spellsNeeded} more spell{spellsNeeded !== 1 ? 's' : ''}
+                            </div>
+                          )}
+                        </div>
+                      );
                     })()}
                   </div>
 
