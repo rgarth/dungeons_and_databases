@@ -699,8 +699,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           // Check cantrip limit
           const maxCantrips = spellLimits?.cantripsKnown || 0;
           if (currentCantrips < maxCantrips) {
-            return [...prev, spell];
-          }
+          return [...prev, spell];
+        }
         } else {
           // Check spell limit
           const maxSpells = spellLimits?.spellsKnown || 0;
