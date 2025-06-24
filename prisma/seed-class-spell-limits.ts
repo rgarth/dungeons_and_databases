@@ -24,7 +24,7 @@ function calculateSpellProgression(level: number) {
   return { maxSpellLevel, spellLevelLimits };
 }
 
-async function seedClassSpellLimits() {
+export async function seedClassSpellLimits() {
   console.log('🌱 Seeding class spell limits...');
 
   try {
@@ -82,13 +82,15 @@ async function seedClassSpellLimits() {
   }
 }
 
-// Run the seed function
-seedClassSpellLimits()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  }); 
+// Only run if this file is executed directly
+if (require.main === module) {
+  seedClassSpellLimits()
+    .then(async () => {
+      await prisma.$disconnect();
+    })
+    .catch(async (e) => {
+      console.error(e);
+      await prisma.$disconnect();
+      process.exit(1);
+    });
+} 
