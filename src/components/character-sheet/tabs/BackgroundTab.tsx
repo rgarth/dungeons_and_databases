@@ -940,12 +940,12 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                         className={`${styling.bg} ${styling.text} px-3 py-1 rounded-full text-sm border ${styling.border} flex items-center gap-2 group relative`}
                         title={language?.description ? `${lang}: ${language.description}` : lang}
                       >
-                        {lang}
-                        <span className="text-xs opacity-75">(Racial)</span>
+                      {lang}
+                      <span className="text-xs opacity-75">(Racial)</span>
                         {language?.description && (
                           <Info className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
                         )}
-                      </span>
+                    </span>
                     );
                   })}
                   
@@ -978,21 +978,21 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                         className={`${styling.bg} ${styling.text} px-3 py-1 rounded-full text-sm border ${styling.border} flex items-center gap-2 group relative`}
                         title={language?.description ? `${lang}: ${language.description}` : lang}
                       >
-                        {lang}
+                      {lang}
                         {language?.description && (
                           <Info className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
                         )}
-                        <button
-                          onClick={() => {
-                            const newLanguages = (character.languages || []).filter(l => l !== lang);
-                            onUpdate({ languages: newLanguages });
-                          }}
+                      <button
+                        onClick={() => {
+                          const newLanguages = (character.languages || []).filter(l => l !== lang);
+                          onUpdate({ languages: newLanguages });
+                        }}
                           className={`${styling.hover} ml-1 text-xs font-bold transition-colors`}
-                          title="Remove language"
-                        >
-                          ×
-                        </button>
-                      </span>
+                        title="Remove language"
+                      >
+                        ×
+                      </button>
+                    </span>
                     );
                   })}
                 </div>
