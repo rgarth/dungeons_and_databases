@@ -17,6 +17,7 @@ import {
   classArmorSuggestionsData
 } from './data'
 import { seedSubraces } from './seed-subraces'
+import { seedClassSpellLimits } from './seed-class-spell-limits'
 
 const prisma = new PrismaClient()
 
@@ -291,6 +292,9 @@ async function main() {
     }
   }
   console.log(`✅ Created ${equipmentPacksData.length} equipment packs`)
+  
+  // Seed class spell limits
+  await seedClassSpellLimits()
   
   console.log('🎉 Database seeding completed!')
 }
