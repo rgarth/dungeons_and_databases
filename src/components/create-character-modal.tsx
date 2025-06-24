@@ -21,7 +21,7 @@ import {
   CharacterCreationService
 } from "@/services/character/creation";
 
-import type { CharacterAvatarData } from '@/lib/avatar-generation';
+import type { CharacterAvatarData } from '@/types/character';
 import Image from 'next/image';
 import { useDndData } from '@/components/providers/dnd-data-provider';
 import { BackgroundSelector, SelectedCharacteristics as BackgroundCharacteristics } from '@/components/shared/BackgroundSelector';
