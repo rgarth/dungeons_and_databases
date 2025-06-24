@@ -130,6 +130,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     if (backgroundData && backgroundData.languages) {
       const backgroundLanguages = backgroundData.languages;
       const learnedLanguages = character.languages || [];
+      const racialLanguages = getRacialLanguages(character.race);
+      const classLanguages = getClassLanguages(character.class);
       
       // Check for "X of your choice" patterns
       for (const lang of backgroundLanguages) {
@@ -137,7 +139,11 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           const match = lang.match(/(\d+)\s+of\s+your\s+choice/i);
           if (match) {
             const required = parseInt(match[1]);
-            const current = learnedLanguages.length;
+            // Only count languages that are not automatic (racial or class)
+            const backgroundLanguages = learnedLanguages.filter(lang => 
+              !racialLanguages.includes(lang) && !classLanguages.includes(lang)
+            );
+            const current = backgroundLanguages.length;
             const remaining = required - current;
             
             requirements.push({
