@@ -47,6 +47,14 @@ export interface CharacterCreationData {
   selectedArmor: Armor[];
   selectedAmmunition: Ammunition[];
   selectedSpells: Spell[];
+
+  // Background characteristics
+  backgroundCharacteristics?: {
+    personalityTraits: string[];
+    ideals: string[];
+    bonds: string[];
+    flaws: string[];
+  };
 }
 
 export interface CharacterCreationResult {
@@ -97,6 +105,14 @@ export interface CharacterCreationResult {
   silverPieces: number;
   goldPieces: number;
   goldRollDetails?: string;
+
+  // Background characteristics
+  backgroundCharacteristics: {
+    personalityTraits: string[];
+    ideals: string[];
+    bonds: string[];
+    flaws: string[];
+  };
 
   // Racial traits
   racialTraits: RacialTrait[];
@@ -610,6 +626,14 @@ export class CharacterCreationService {
       silverPieces: 0,
       goldPieces: startingGold,
       goldRollDetails,
+
+      // Background characteristics
+      backgroundCharacteristics: data.backgroundCharacteristics || {
+        personalityTraits: [],
+        ideals: [],
+        bonds: [],
+        flaws: []
+      },
 
       // Racial traits
       racialTraits

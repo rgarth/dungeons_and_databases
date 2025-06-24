@@ -740,6 +740,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         intelligence: abilityScores.intelligence,
         wisdom: abilityScores.wisdom,
         charisma: abilityScores.charisma,
+        // Background characteristics
+        backgroundCharacteristics,
         spellsKnown: selectedSpells,
         spellsPrepared: selectedSpells, // For level 1, known = prepared
         spellSlots: creationOptions?.spellcasting?.spellSlots || {},

@@ -608,4 +608,136 @@ describe('CharacterCreationService', () => {
       expect(result.goldRollDetails).toMatch(/^Class: Fighter/);
     });
   });
+
+  describe('Background Characteristics', () => {
+    it('should save background characteristics during character creation', async () => {
+      setupApiMocks('Fighter', 'Human', 'Criminal');
+
+      const characterData = {
+        name: 'Test Character',
+        race: 'Human',
+        class: 'Fighter',
+        background: 'Criminal',
+        alignment: 'Neutral',
+        gender: 'Male',
+        statMethod: 'standard' as const,
+        abilityScores: {
+          strength: 15,
+          dexterity: 14,
+          constitution: 13,
+          intelligence: 12,
+          wisdom: 10,
+          charisma: 8
+        },
+        selectedEquipmentPack: 0,
+        selectedWeapons: [],
+        selectedArmor: [],
+        selectedAmmunition: [],
+        selectedSpells: [],
+        backgroundCharacteristics: {
+          personalityTraits: [
+            'I always have a plan for what to do when things go wrong.',
+            'I am always calm, no matter what the situation.'
+          ],
+          ideals: ['Honor. I don\'t betray others in my former profession. (Lawful)'],
+          bonds: ['I will do anything to protect my criminal contact.'],
+          flaws: ['I am incredibly slow to trust.']
+        }
+      };
+
+      const result = await service.createCharacter(characterData);
+
+      // Verify background characteristics are included in the result
+      expect(result).toHaveProperty('backgroundCharacteristics');
+      expect(result.backgroundCharacteristics).toEqual({
+        personalityTraits: [
+          'I always have a plan for what to do when things go wrong.',
+          'I am always calm, no matter what the situation.'
+        ],
+        ideals: ['Honor. I don\'t betray others in my former profession. (Lawful)'],
+        bonds: ['I will do anything to protect my criminal contact.'],
+        flaws: ['I am incredibly slow to trust.']
+      });
+    });
+
+    it('should handle empty background characteristics', async () => {
+      setupApiMocks('Fighter', 'Human', 'Folk Hero', true); // Use equipment pack to avoid gold rolling
+
+      const characterData = {
+        name: 'Test Character',
+        race: 'Human',
+        class: 'Fighter',
+        background: 'Folk Hero',
+        alignment: 'Good',
+        gender: 'Male',
+        statMethod: 'standard' as const,
+        abilityScores: {
+          strength: 15,
+          dexterity: 14,
+          constitution: 13,
+          intelligence: 12,
+          wisdom: 10,
+          charisma: 8
+        },
+        selectedEquipmentPack: 0,
+        selectedWeapons: [],
+        selectedArmor: [],
+        selectedAmmunition: [],
+        selectedSpells: [],
+        backgroundCharacteristics: {
+          personalityTraits: [],
+          ideals: [],
+          bonds: [],
+          flaws: []
+        }
+      };
+
+      const result = await service.createCharacter(characterData);
+
+      expect(result.backgroundCharacteristics).toEqual({
+        personalityTraits: [],
+        ideals: [],
+        bonds: [],
+        flaws: []
+      });
+    });
+
+    it('should handle missing background characteristics', async () => {
+      setupApiMocks('Fighter', 'Human', 'Soldier', true); // Use equipment pack to avoid gold rolling
+
+      const characterData = {
+        name: 'Test Character',
+        race: 'Human',
+        class: 'Fighter',
+        background: 'Soldier',
+        alignment: 'Lawful Good',
+        gender: 'Male',
+        statMethod: 'standard' as const,
+        abilityScores: {
+          strength: 15,
+          dexterity: 14,
+          constitution: 13,
+          intelligence: 12,
+          wisdom: 10,
+          charisma: 8
+        },
+        selectedEquipmentPack: 0,
+        selectedWeapons: [],
+        selectedArmor: [],
+        selectedAmmunition: [],
+        selectedSpells: []
+        // No backgroundCharacteristics field
+      };
+
+      const result = await service.createCharacter(characterData);
+
+      // Should default to empty arrays
+      expect(result.backgroundCharacteristics).toEqual({
+        personalityTraits: [],
+        ideals: [],
+        bonds: [],
+        flaws: []
+      });
+    });
+  });
 }); 
