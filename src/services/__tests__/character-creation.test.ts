@@ -28,7 +28,7 @@ function setupApiMocks(characterClass: string, race: string, background: string,
     })
   });
 
-  // 3. CharacterCreationService - classes list endpoint (array)
+  // 3. CharacterCreationService - classes list endpoint (array) - for hit die lookup
   (global.fetch as jest.Mock).mockResolvedValueOnce({
     ok: true,
     json: async () => ([
@@ -55,7 +55,7 @@ function setupApiMocks(characterClass: string, race: string, background: string,
     ])
   });
 
-  // 5. CharacterCreationService - races list endpoint (array)
+  // 5. CharacterCreationService - races list endpoint (array) - for equipment
   (global.fetch as jest.Mock).mockResolvedValueOnce({
     ok: true,
     json: async () => ([
@@ -66,7 +66,7 @@ function setupApiMocks(characterClass: string, race: string, background: string,
     ])
   });
 
-  // 6. CharacterCreationService - backgrounds list endpoint (array, first call)
+  // 6. CharacterCreationService - backgrounds list endpoint (array, first call for equipment)
   (global.fetch as jest.Mock).mockResolvedValueOnce({
     ok: true,
     json: async () => ([
@@ -141,6 +141,278 @@ describe('CharacterCreationService', () => {
   beforeEach(() => {
     service = CharacterCreationService.getInstance();
     jest.clearAllMocks();
+  });
+
+  describe('Starting Gold Validation', () => {
+    it('should ensure all classes have valid starting gold formulas', async () => {
+      const classes = ['Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard'];
+      
+      for (const className of classes) {
+        setupApiMocks(className, 'Human', 'Noble', false);
+        
+        const characterData = {
+          name: `Test ${className}`,
+          race: 'Human',
+          class: className,
+          background: 'Noble',
+          alignment: 'Lawful Good',
+          gender: 'Male',
+          statMethod: 'standard' as const,
+          abilityScores: {
+            strength: 15,
+            dexterity: 14,
+            constitution: 13,
+            intelligence: 12,
+            wisdom: 10,
+            charisma: 8
+          },
+          selectedEquipmentPack: -1,
+          selectedWeapons: [],
+          selectedArmor: [],
+          selectedAmmunition: [],
+          selectedSpells: []
+        };
+
+        const result = await service.createCharacter(characterData);
+        
+        // Every class should have a starting gold formula and produce non-zero gold
+        expect(result.goldPieces).toBeGreaterThan(0);
+        expect(result.goldRollDetails).toContain(className);
+        expect(result.goldRollDetails).toContain('gp');
+      }
+    });
+
+    it('should ensure all backgrounds have valid starting gold', async () => {
+      const backgrounds = ['Acolyte', 'Criminal', 'Folk Hero', 'Noble', 'Sage', 'Soldier', 'Charlatan', 'Entertainer', 'Guild Artisan', 'Hermit', 'Outlander', 'Sailor'];
+      
+      for (const backgroundName of backgrounds) {
+        setupApiMocks('Fighter', 'Human', backgroundName, true);
+        
+        const characterData = {
+          name: `Test ${backgroundName}`,
+          race: 'Human',
+          class: 'Fighter',
+          background: backgroundName,
+          alignment: 'Lawful Good',
+          gender: 'Male',
+          statMethod: 'standard' as const,
+          abilityScores: {
+            strength: 15,
+            dexterity: 14,
+            constitution: 13,
+            intelligence: 12,
+            wisdom: 10,
+            charisma: 8
+          },
+          selectedEquipmentPack: 0, // Use equipment pack to test background gold
+          selectedWeapons: [],
+          selectedArmor: [],
+          selectedAmmunition: [],
+          selectedSpells: []
+        };
+
+        const result = await service.createCharacter(characterData);
+        
+        // Every background should have starting gold and produce non-zero gold
+        expect(result.goldPieces).toBeGreaterThan(0);
+        expect(result.goldRollDetails).toBeUndefined(); // No roll details when pack is selected
+      }
+    });
+
+    it('should never return 0 gold for any class/background combination', async () => {
+      const classes = ['Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard'];
+      const backgrounds = ['Acolyte', 'Criminal', 'Folk Hero', 'Noble', 'Sage', 'Soldier', 'Charlatan', 'Entertainer', 'Guild Artisan', 'Hermit', 'Outlander', 'Sailor'];
+      
+      for (const className of classes) {
+        for (const backgroundName of backgrounds) {
+          setupApiMocks(className, 'Human', backgroundName, false);
+          
+          const characterData = {
+            name: `Test ${className} ${backgroundName}`,
+            race: 'Human',
+            class: className,
+            background: backgroundName,
+            alignment: 'Lawful Good',
+            gender: 'Male',
+            statMethod: 'standard' as const,
+            abilityScores: {
+              strength: 15,
+              dexterity: 14,
+              constitution: 13,
+              intelligence: 12,
+              wisdom: 10,
+              charisma: 8
+            },
+            selectedEquipmentPack: -1, // No pack to test gold rolling
+            selectedWeapons: [],
+            selectedArmor: [],
+            selectedAmmunition: [],
+            selectedSpells: []
+          };
+
+          const result = await service.createCharacter(characterData);
+          
+          // No combination should ever result in 0 gold
+          expect(result.goldPieces).toBeGreaterThan(0);
+          expect(result.goldRollDetails).toBeDefined();
+          expect(result.goldRollDetails).toContain('gp');
+        }
+      }
+    });
+
+    it('should handle missing starting gold formula gracefully', async () => {
+      // Mock class API to return missing formula
+      global.fetch = jest.fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ([
+            {
+              name: 'Human',
+              abilityScoreIncrease: { strength: 1, dexterity: 1, constitution: 1, intelligence: 1, wisdom: 1, charisma: 1 },
+              size: 'Medium',
+              speed: 30,
+              traits: [],
+              languages: ['Common']
+            }
+          ])
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ([
+            {
+              name: 'Noble',
+              equipment: [],
+              skillProficiencies: ['History', 'Persuasion']
+            }
+          ])
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({
+            name: 'Fighter'
+            // Missing startingGoldFormula
+          })
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ([
+            {
+              name: 'Noble',
+              startingGold: 25,
+              startingGoldFormula: null
+            }
+          ])
+        });
+
+      const characterData = {
+        name: 'Test Character',
+        race: 'Human',
+        class: 'Fighter',
+        background: 'Noble',
+        alignment: 'Good',
+        gender: 'Male',
+        statMethod: 'standard' as const,
+        abilityScores: {
+          strength: 15,
+          dexterity: 14,
+          constitution: 13,
+          intelligence: 12,
+          wisdom: 10,
+          charisma: 8
+        },
+        selectedEquipmentPack: -1,
+        selectedWeapons: [],
+        selectedArmor: [],
+        selectedAmmunition: [],
+        selectedSpells: []
+      };
+
+      const result = await service.createCharacter(characterData);
+
+      // Should handle missing data gracefully but still produce some gold
+      expect(result.name).toBe('Test Character');
+      expect(result.goldPieces).toBeGreaterThanOrEqual(0); // Could be 0 if both class and background have no formula
+      expect(result.goldRollDetails).toMatch(/^Class: Fighter/);
+    });
+  });
+
+  describe('Spell Limits Validation', () => {
+    it('should handle spell limits for spellcasting classes', async () => {
+      const spellcastingClasses = ['Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger', 'Sorcerer', 'Warlock', 'Wizard'];
+      
+      for (const className of spellcastingClasses) {
+        setupApiMocks(className, 'Human', 'Noble', false);
+        
+        const characterData = {
+          name: `Test ${className}`,
+          race: 'Human',
+          class: className,
+          background: 'Noble',
+          alignment: 'Lawful Good',
+          gender: 'Male',
+          statMethod: 'standard' as const,
+          abilityScores: {
+            strength: 15,
+            dexterity: 14,
+            constitution: 13,
+            intelligence: 12,
+            wisdom: 10,
+            charisma: 8
+          },
+          selectedEquipmentPack: -1,
+          selectedWeapons: [],
+          selectedArmor: [],
+          selectedAmmunition: [],
+          selectedSpells: []
+        };
+
+        const result = await service.createCharacter(characterData);
+        
+        // Spellcasting classes should have spell-related fields
+        expect(result.spellcastingAbility).toBeDefined();
+        expect(result.spellSaveDC).toBeDefined();
+        expect(result.spellAttackBonus).toBeDefined();
+      }
+    });
+
+    it('should handle non-spellcasting classes correctly', async () => {
+      const nonSpellcastingClasses = ['Barbarian', 'Fighter', 'Monk', 'Rogue'];
+      
+      for (const className of nonSpellcastingClasses) {
+        setupApiMocks(className, 'Human', 'Noble', false);
+        
+        const characterData = {
+          name: `Test ${className}`,
+          race: 'Human',
+          class: className,
+          background: 'Noble',
+          alignment: 'Lawful Good',
+          gender: 'Male',
+          statMethod: 'standard' as const,
+          abilityScores: {
+            strength: 15,
+            dexterity: 14,
+            constitution: 13,
+            intelligence: 12,
+            wisdom: 10,
+            charisma: 8
+          },
+          selectedEquipmentPack: -1,
+          selectedWeapons: [],
+          selectedArmor: [],
+          selectedAmmunition: [],
+          selectedSpells: []
+        };
+
+        const result = await service.createCharacter(characterData);
+        
+        // Non-spellcasting classes should not have spell-related fields
+        expect(result.spellcastingAbility).toBeUndefined();
+        expect(result.spellSaveDC).toBeUndefined();
+        expect(result.spellAttackBonus).toBeUndefined();
+        expect(result.spellSlots).toBeUndefined();
+      }
+    });
   });
 
   describe('Starting Gold Formulas', () => {

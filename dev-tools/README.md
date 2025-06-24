@@ -1,46 +1,41 @@
-# Development Tools
+# Dev Tools
 
-This directory contains development-only tools that are **not deployed to production**.
+## Avatar Testing Tool
 
-## 🎭 Race Avatar Test (`test-races.html`)
+A tool to test Ready Player Me avatar generation across all available D&D races.
 
-A tool to test FLUX.1 Schnell avatar generation across all available D&D races.
+### Features
 
-### Usage (Development Only)
+- **Comprehensive Race Testing**: Tests avatar generation for all 12 D&D 5e races
+- **Performance Monitoring**: Tracks generation success rates and response times
+- **Error Analysis**: Identifies problematic race/class combinations
+- **Batch Processing**: Generates multiple avatars efficiently
 
-1. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
+### Usage
 
-2. **Open the test page:**
-   - Copy the `test-races.html` file to your browser
-   - Or serve it locally with a simple HTTP server
+1. **Start the development server**: `npm run dev`
+2. **Navigate to the tool**: Go to `/dev-tools/avatar-test`
+3. **Configure settings**:
+   - Select target races (or test all)
+   - Choose character classes to test
+   - Set generation parameters
+4. **Run tests**:
+   - Click "🎮 Test All Races with Ready Player Me"
+   - Monitor progress in real-time
+   - Review results and error reports
 
-3. **Run the test:**
-   - Click "🚀 Test All Races with FLUX.1 Schnell"
-   - Wait for all races to complete (takes ~30 seconds)
-   - View results with generated images
+### Output
 
-### What it tests:
+- **Success rates** for each race/class combination
+- **Ready Player Me performance** for each race
+- **Error logs** with detailed failure reasons
+- **Performance metrics** (response times, success rates)
 
-- **All 12 D&D races:** Human, Elf, Dwarf, Halfling, Dragonborn, Gnome, Half-Elf, Half-Orc, Tiefling, Aasimar, Goliath, Tabaxi
-- **FLUX.1 Schnell performance** for each race
-- **Race-specific prompts** to ensure distinct features
-- **Generation times** and success rates
+### Troubleshooting
 
-### API Endpoint
-
-The test uses `/api/test-races-avatar` which:
-- ✅ **Available in development** (`NODE_ENV !== 'production'`)
-- ❌ **Blocked in production** (returns 404)
-- 🔒 **Requires authentication** (must be logged in)
-
-### Production Safety
-
-- **HTML file:** Located in `dev-tools/` (not `public/`) so it won't be served
-- **API endpoint:** Explicitly blocked in production environment
-- **No deployment impact:** These tools are completely isolated from production code
+- **API Errors**: Check Ready Player Me API status and credentials
+- **Rate Limiting**: Implement delays between requests if needed
+- **Network Issues**: Verify internet connectivity and API endpoints
 
 ---
 

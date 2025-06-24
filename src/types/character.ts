@@ -67,4 +67,23 @@ export interface SpellSlot {
   level: number;
   total: number;
   used: number;
+}
+
+export interface CharacterAvatarData {
+  race: string;
+  subrace?: string;
+  class: string;
+  gender?: string;
+  alignment?: string;
+  background?: string;
+  personalityTraits?: string[];
+  ideals?: string[];
+  bonds?: string[];
+  flaws?: string[];
+  appearance?: string;
+  equippedWeapons?: string[];
+  equippedArmor?: string[];
+  selectedWeapons?: string[];
+  selectedArmor?: string[];
+  age?: number;
 } 
