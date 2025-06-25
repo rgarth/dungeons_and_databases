@@ -1,0 +1,93 @@
+{
+  "summary": {
+    "totalTests": 9,
+    "successfulTests": 0,
+    "failedTests": 9,
+    "successRate": "0.00%",
+    "uniquePrompts": 0,
+    "duplicatePrompts": 0,
+    "promptEfficiency": "0.00%"
+  },
+  "breakdown": {
+    "byRace": {},
+    "byGender": {},
+    "byAge": {},
+    "byClass": {},
+    "byAlignment": {}
+  },
+  "errors": [
+    {
+      "testId": "Human-18-Male",
+      "error": "HTTP 401: {\"error\":\"Unauthorized\"}",
+      "race": "Human",
+      "age": 18,
+      "gender": "Male",
+      "class": "Cleric"
+    },
+    {
+      "testId": "Human-18-Female",
+      "error": "HTTP 401: {\"error\":\"Unauthorized\"}",
+      "race": "Human",
+      "age": 18,
+      "gender": "Female",
+      "class": "Wizard"
+    },
+    {
+      "testId": "Human-18-Non-binary",
+      "error": "HTTP 401: {\"error\":\"Unauthorized\"}",
+      "race": "Human",
+      "age": 18,
+      "gender": "Non-binary",
+      "class": "Cleric"
+    },
+    {
+      "testId": "Human-35-Male",
+      "error": "HTTP 401: {\"error\":\"Unauthorized\"}",
+      "race": "Human",
+      "age": 35,
+      "gender": "Male",
+      "class": "Druid"
+    },
+    {
+      "testId": "Human-35-Female",
+      "error": "HTTP 401: {\"error\":\"Unauthorized\"}",
+      "race": "Human",
+      "age": 35,
+      "gender": "Female",
+      "class": "Cleric"
+    },
+    {
+      "testId": "Human-35-Non-binary",
+      "error": "HTTP 401: {\"error\":\"Unauthorized\"}",
+      "race": "Human",
+      "age": 35,
+      "gender": "Non-binary",
+      "class": "Ranger"
+    },
+    {
+      "testId": "Human-65-Male",
+      "error": "HTTP 401: {\"error\":\"Unauthorized\"}",
+      "race": "Human",
+      "age": 65,
+      "gender": "Male",
+      "class": "Cleric"
+    },
+    {
+      "testId": "Human-65-Female",
+      "error": "HTTP 401: {\"error\":\"Unauthorized\"}",
+      "race": "Human",
+      "age": 65,
+      "gender": "Female",
+      "class": "Warlock"
+    },
+    {
+      "testId": "Human-65-Non-binary",
+      "error": "HTTP 401: {\"error\":\"Unauthorized\"}",
+      "race": "Human",
+      "age": 65,
+      "gender": "Non-binary",
+      "class": "Warlock"
+    }
+  ],
+  "promptAnalysis": []
+}
