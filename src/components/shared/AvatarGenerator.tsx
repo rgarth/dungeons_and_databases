@@ -20,6 +20,45 @@ interface GenerationResult {
   service?: string;
 }
 
+// Anti-bias skin tone descriptions (avoiding problematic terms)
+const SKIN_TONES = [
+  'warm golden', 'rich amber', 'deep mahogany', 'soft caramel', 
+  'warm bronze', 'deep copper', 'rich honey', 'warm chestnut',
+  'soft olive', 'warm tan', 'deep walnut', 'rich mocha'
+];
+
+// Anti-bias body type descriptions (avoiding problematic terms)
+const BODY_TYPES = [
+  'average build', 'slender frame', 'sturdy build', 'compact frame',
+  'average stature', 'lean build', 'solid build', 'average physique'
+];
+
+// Races that need skin tone diversity
+const SKIN_TONE_RACES = ['Human', 'Elf', 'Half-Elf', 'Gnome', 'Halfling', 'Goliath'];
+
+// Utility function to get random item from array
+function getRandomItem<T>(array: T[]): T {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+// Utility function to generate anti-bias appearance
+function generateAntiBiasAppearance(characterData: CharacterAvatarData): string {
+  const { race, age } = characterData;
+  let appearance = `A ${age || 'adult'}-year-old ${race.toLowerCase()} with age-appropriate features`;
+  
+  // Add skin tone diversity for races that need it
+  if (SKIN_TONE_RACES.includes(race)) {
+    const skinTone = getRandomItem(SKIN_TONES);
+    appearance += `, ${skinTone} skin`;
+  }
+  
+  // Add body type diversity for all races
+  const bodyType = getRandomItem(BODY_TYPES);
+  appearance += `, ${bodyType}`;
+  
+  return appearance;
+}
+
 // Utility function to crop full body image to create avatar
 async function cropToAvatar(fullBodyImageUrl: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -42,7 +81,7 @@ async function cropToAvatar(fullBodyImageUrl: string): Promise<string> {
       
       // Calculate crop area - focus on upper portion for head/shoulders
       const cropX = (img.width - avatarSize) / 2;
-      const cropY = Math.max(0, img.height * 0.1); // Start from 10% down to avoid too much headroom
+      const cropY = Math.max(0, img.height * 0.05); // Start from 5% down (was 10%) for 15% more zoom
       
       // Draw the cropped portion
       ctx.drawImage(
@@ -88,12 +127,20 @@ export function AvatarGenerator({
       console.log('🎨 SUBRACE being sent:', characterData.subrace);
       console.log('🎨 RACE being sent:', characterData.race);
 
+      // Apply anti-bias measures if no appearance is provided
+      const enhancedCharacterData = {
+        ...characterData,
+        appearance: characterData.appearance || generateAntiBiasAppearance(characterData)
+      };
+
+      console.log('🎨 Enhanced character data with anti-bias:', enhancedCharacterData);
+
       const response = await fetch('/api/generate-avatar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(characterData),
+        body: JSON.stringify(enhancedCharacterData),
       });
 
       if (response.ok) {
