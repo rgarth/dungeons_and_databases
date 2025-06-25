@@ -133,6 +133,88 @@ const subracesData = [
     abilityScoreIncrease: 'Strength +1',
     traits: ['Necrotic Shroud', 'Healing Hands'],
     languages: null
+  },
+
+  // Dragonborn subraces
+  {
+    name: 'Black Dragonborn',
+    raceName: 'Dragonborn',
+    description: 'Black dragonborn are descended from black dragons. They are known for their acid breath and resistance to acid damage.',
+    abilityScoreIncrease: 'Strength +2, Charisma +1',
+    traits: ['Draconic Ancestry', 'Breath Weapon (Acid)', 'Damage Resistance (Acid)'],
+    languages: null
+  },
+  {
+    name: 'Blue Dragonborn',
+    raceName: 'Dragonborn',
+    description: 'Blue dragonborn are descended from blue dragons. They are known for their lightning breath and resistance to lightning damage.',
+    abilityScoreIncrease: 'Strength +2, Charisma +1',
+    traits: ['Draconic Ancestry', 'Breath Weapon (Lightning)', 'Damage Resistance (Lightning)'],
+    languages: null
+  },
+  {
+    name: 'Brass Dragonborn',
+    raceName: 'Dragonborn',
+    description: 'Brass dragonborn are descended from brass dragons. They are known for their fire breath and resistance to fire damage.',
+    abilityScoreIncrease: 'Strength +2, Charisma +1',
+    traits: ['Draconic Ancestry', 'Breath Weapon (Fire)', 'Damage Resistance (Fire)'],
+    languages: null
+  },
+  {
+    name: 'Bronze Dragonborn',
+    raceName: 'Dragonborn',
+    description: 'Bronze dragonborn are descended from bronze dragons. They are known for their lightning breath and resistance to lightning damage.',
+    abilityScoreIncrease: 'Strength +2, Charisma +1',
+    traits: ['Draconic Ancestry', 'Breath Weapon (Lightning)', 'Damage Resistance (Lightning)'],
+    languages: null
+  },
+  {
+    name: 'Copper Dragonborn',
+    raceName: 'Dragonborn',
+    description: 'Copper dragonborn are descended from copper dragons. They are known for their acid breath and resistance to acid damage.',
+    abilityScoreIncrease: 'Strength +2, Charisma +1',
+    traits: ['Draconic Ancestry', 'Breath Weapon (Acid)', 'Damage Resistance (Acid)'],
+    languages: null
+  },
+  {
+    name: 'Gold Dragonborn',
+    raceName: 'Dragonborn',
+    description: 'Gold dragonborn are descended from gold dragons. They are known for their fire breath and resistance to fire damage.',
+    abilityScoreIncrease: 'Strength +2, Charisma +1',
+    traits: ['Draconic Ancestry', 'Breath Weapon (Fire)', 'Damage Resistance (Fire)'],
+    languages: null
+  },
+  {
+    name: 'Green Dragonborn',
+    raceName: 'Dragonborn',
+    description: 'Green dragonborn are descended from green dragons. They are known for their poison breath and resistance to poison damage.',
+    abilityScoreIncrease: 'Strength +2, Charisma +1',
+    traits: ['Draconic Ancestry', 'Breath Weapon (Poison)', 'Damage Resistance (Poison)'],
+    languages: null
+  },
+  {
+    name: 'Red Dragonborn',
+    raceName: 'Dragonborn',
+    description: 'Red dragonborn are descended from red dragons. They are known for their fire breath and resistance to fire damage.',
+    abilityScoreIncrease: 'Strength +2, Charisma +1',
+    traits: ['Draconic Ancestry', 'Breath Weapon (Fire)', 'Damage Resistance (Fire)'],
+    languages: null
+  },
+  {
+    name: 'Silver Dragonborn',
+    raceName: 'Dragonborn',
+    description: 'Silver dragonborn are descended from silver dragons. They are known for their cold breath and resistance to cold damage.',
+    abilityScoreIncrease: 'Strength +2, Charisma +1',
+    traits: ['Draconic Ancestry', 'Breath Weapon (Cold)', 'Damage Resistance (Cold)'],
+    languages: null
+  },
+  {
+    name: 'White Dragonborn',
+    raceName: 'Dragonborn',
+    description: 'White dragonborn are descended from white dragons. They are known for their cold breath and resistance to cold damage.',
+    abilityScoreIncrease: 'Strength +2, Charisma +1',
+    traits: ['Draconic Ancestry', 'Breath Weapon (Cold)', 'Damage Resistance (Cold)'],
+    languages: null
   }
 ];
 

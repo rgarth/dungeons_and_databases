@@ -47,6 +47,27 @@ const CLASS_CLOTHING = {
 // Races that need skin tone diversity
 const SKIN_TONE_RACES = ['Human', 'Elf', 'Half-Elf', 'Gnome', 'Halfling'];
 
+// Single source of truth: Dragonborn subrace to scale color mapping
+const DRAGONBORN_SCALE_COLORS: Record<string, string> = {
+  'Black Dragonborn': 'black scales',
+  'Blue Dragonborn': 'blue scales',
+  'Brass Dragonborn': 'brass scales',
+  'Bronze Dragonborn': 'bronze scales',
+  'Copper Dragonborn': 'copper scales',
+  'Gold Dragonborn': 'gold scales',
+  'Green Dragonborn': 'green scales',
+  'Red Dragonborn': 'red scales',
+  'Silver Dragonborn': 'silver scales',
+  'White Dragonborn': 'white scales',
+};
+
+// Single source of truth: Aasimar subrace to celestial features mapping
+const AASIMAR_CELESTIAL_FEATURES: Record<string, string> = {
+  'Protector Aasimar': 'golden halo, protective aura, benevolent glow, healing light, guardian features, divine radiance, celestial wings, golden eyes',
+  'Scourge Aasimar': 'fiery halo, punishing aura, righteous glow, justice-seeking features, determined expression, divine wrath, celestial wings, burning eyes',
+  'Fallen Aasimar': 'shadowy halo, corrupted aura, dark glow, fallen features, corrupted appearance, necrotic presence, tainted wings, shadowy eyes',
+};
+
 // Utility function to get random item from array
 function getRandomItem<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
@@ -54,7 +75,7 @@ function getRandomItem<T>(array: T[]): T {
 
 // Server-side prompt generation with anti-bias measures
 function generateServerPrompt(characterData: CharacterAvatarData): string {
-  const { race, gender, class: characterClass, appearance, age } = characterData;
+  const { race, gender, class: characterClass, appearance, age, subrace } = characterData;
   
   // Start with basic character description - use descriptive terms for Dragonborn females
   const characterDescription = race === 'Dragonborn' && gender === 'Female'
@@ -95,14 +116,28 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
       case 'Tiefling':
         raceDescription = 'demon-blooded humanoid with prominent horns, red skin, glowing eyes, and a long tail';
         break;
-      case 'Dragonborn':
-        raceDescription = 'reptilian beings, anthropomorphic dragon with scaled skin, dragon snout, no ears, reptilian features, slender build, reptilian features, NOT human, clearly reptilian appearance';
+      case 'Dragonborn': {
+        // Inject scale color for Dragonborn subraces
+        let scaleColor = '';
+        if (subrace && DRAGONBORN_SCALE_COLORS[subrace]) {
+          scaleColor = DRAGONBORN_SCALE_COLORS[subrace];
+        }
+        raceDescription = `reptilian beings, anthropomorphic dragon with scaled skin${scaleColor ? ', ' + scaleColor : ''}, dragon snout, no ears, reptilian features, slender build, NOT human, clearly reptilian appearance`;
         break;
-      case 'Aasimar':
-        raceDescription = 'celestial humanoid with glowing features, angelic appearance, and divine radiance';
+      }
+      case 'Aasimar': {
+        // Inject celestial features for Aasimar subraces
+        let celestialFeatures = '';
+        if (subrace && AASIMAR_CELESTIAL_FEATURES[subrace]) {
+          celestialFeatures = AASIMAR_CELESTIAL_FEATURES[subrace];
+        } else {
+          celestialFeatures = 'celestial humanoid with glowing features, angelic appearance, divine radiance, golden halo, celestial wings, otherworldly beauty';
+        }
+        raceDescription = celestialFeatures;
         break;
+      }
       case 'Goliath':
-        raceDescription = 'giant humanoid with massive frame, stone-like skin markings, bald head, gray or brown skin with darker stone patterns, imposing stature, 7-8 feet tall';
+        raceDescription = 'giant humanoid with massive frame, stone gray skin with purple markings, bald head, imposing stature, 7-8 feet tall';
         cameraAngle = ', camera positioned low looking up at the character, dramatic low angle shot to emphasize towering height and imposing presence';
         break;
       default:
