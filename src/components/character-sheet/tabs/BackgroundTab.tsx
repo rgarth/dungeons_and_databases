@@ -743,7 +743,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                         alt={`${character.name}'s avatar`}
                         width={192}
                         height={character.fullBodyAvatar ? 336 : 192}
-                        className={`w-48 ${character.fullBodyAvatar ? 'h-84' : 'h-48'} rounded-lg object-cover`}
+                        className={`w-48 ${character.fullBodyAvatar ? 'h-80' : 'h-48'} rounded-lg object-cover`}
                       />
                       <div className="text-center">
                         <button
