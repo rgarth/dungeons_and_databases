@@ -20,50 +20,6 @@ interface GenerationResult {
   service?: string;
 }
 
-// Utility function to crop full body image to create avatar
-async function cropToAvatar(fullBodyImageUrl: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      
-      if (!ctx) {
-        reject(new Error('Could not get canvas context'));
-        return;
-      }
-      
-      // Set canvas size for square avatar
-      const avatarSize = Math.min(img.width, img.height);
-      canvas.width = avatarSize;
-      canvas.height = avatarSize;
-      
-      // Calculate crop area - focus on upper portion for head/shoulders
-      const cropX = (img.width - avatarSize) / 2;
-      const cropY = Math.max(0, img.height * 0.05); // Start from 5% down (was 10%) for 15% more zoom
-      
-      // Draw the cropped portion
-      ctx.drawImage(
-        img,
-        cropX, cropY, avatarSize, avatarSize, // Source rectangle
-        0, 0, avatarSize, avatarSize // Destination rectangle
-      );
-      
-      // Convert to data URL
-      const avatarDataUrl = canvas.toDataURL('image/webp', 0.8);
-      resolve(avatarDataUrl);
-    };
-    
-    img.onerror = () => {
-      reject(new Error('Failed to load image for cropping'));
-    };
-    
-    img.src = fullBodyImageUrl;
-  });
-}
-
 export function AvatarGenerator({ 
   characterData, 
   onAvatarGenerated, 
@@ -101,18 +57,11 @@ export function AvatarGenerator({
         setResult(data);
         
         if (data.success && data.fullBodyImage && onAvatarGenerated) {
-          console.log('🖼️ Server provided full body image, cropping for avatar...');
+          console.log('🖼️ Server provided full body image, using for avatar...');
           
-          try {
-            // Crop the full body image to create a consistent avatar
-            const avatarDataUrl = await cropToAvatar(data.fullBodyImage);
-            onAvatarGenerated(avatarDataUrl, data.fullBodyImage);
-            console.log('✅ Avatar cropped successfully from full body image');
-          } catch (cropError) {
-            console.error('❌ Cropping failed, using full body image as avatar:', cropError);
-            // Fallback to using full body image as avatar
-            onAvatarGenerated(data.fullBodyImage, data.fullBodyImage);
-          }
+          // Use the full body image directly - CSS will handle the framing
+          onAvatarGenerated(data.fullBodyImage, data.fullBodyImage);
+          console.log('✅ Full body image set for avatar display');
         }
       } else {
         const errorData = await response.json();

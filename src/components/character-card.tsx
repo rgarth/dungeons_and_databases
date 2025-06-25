@@ -64,7 +64,7 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
                 alt={`${character.name}'s avatar`}
                 width={96}
                 height={96}
-                className="w-24 h-24 rounded-full object-cover"
+                className="w-24 h-24 rounded-full object-cover object-top"
               />
             ) : (
               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-2xl font-bold">
@@ -149,4 +149,4 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
       />
     </>
   );
-} 
+}

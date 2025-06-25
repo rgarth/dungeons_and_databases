@@ -1682,7 +1682,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                             selectedArmor: selectedArmor.map(armor => armor.name)
                           } as CharacterAvatarData}
                           onAvatarGenerated={(avatarDataUrl, fullBodyDataUrl) => {
-                            // Store the generated avatar for character creation
+                            // Store both the cropped avatar and full body image
                             setGeneratedFullBodyAvatar(fullBodyDataUrl || avatarDataUrl);
                             console.log('🎨 Avatar generated and stored for character creation');
                           }}

@@ -122,7 +122,6 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     loadBackgroundData();
   }, [character.background]);
 
-  // Calculate language requirements
   const getLanguageRequirements = () => {
     const requirements = [];
     
@@ -736,18 +735,18 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   <h4 className="text-white font-medium">Character Portrait</h4>
                   
                   {/* Current Avatar Display */}
-                  {(character.fullBodyAvatar || character.avatar) ? (
+                  {(character.avatar) ? (
                     <div className="space-y-3">
                       <Image 
-                        src={character.fullBodyAvatar || character.avatar || '/default-avatar.png'} 
-                        alt={`${character.name}'s avatar`}
+                        src={character.avatar || '/default-avatar.png'} 
+                        alt={`${character.name}'s full body portrait`}
                         width={192}
-                        height={character.fullBodyAvatar ? 336 : 192}
-                        className={`w-48 rounded-lg object-cover ${character.fullBodyAvatar ? '' : 'h-48'}`}
+                        height={336}
+                        className="w-48 h-84 rounded-lg object-contain bg-slate-900 border border-slate-700"
                       />
                       <div className="text-center">
                         <button
-                          onClick={() => onUpdate({ avatar: undefined, fullBodyAvatar: undefined })}
+                          onClick={() => onUpdate({ avatar: undefined })}
                           className="text-red-400 hover:text-red-300 text-sm transition-colors"
                         >
                           Remove Avatar
@@ -840,8 +839,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                       } as CharacterAvatarData}
                       onAvatarGenerated={(avatarDataUrl, fullBodyDataUrl) => {
                         onUpdate({ 
-                          avatar: avatarDataUrl,
-                          fullBodyAvatar: fullBodyDataUrl
+                          avatar: fullBodyDataUrl || avatarDataUrl
                         });
                       }}
                       disabled={false}
