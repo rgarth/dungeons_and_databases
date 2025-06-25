@@ -898,13 +898,15 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 {/* Avatar or default icon */}
                 {displayCharacter.avatar ? (
-                  <Image 
-                    src={displayCharacter.avatar} 
-                    alt={`${displayCharacter.name}'s avatar`}
-                    width={96}
-                    height={96}
-                    className="w-24 h-24 rounded-full object-cover object-top"
-                  />
+                  <div className="w-24 h-24 rounded-full overflow-hidden">
+                    <Image 
+                      src={displayCharacter.avatar} 
+                      alt={`${displayCharacter.name}'s avatar`}
+                      width={96}
+                      height={96}
+                      className="w-full h-full object-cover object-top scale-150 translate-y-1/4"
+                    />
+                  </div>
                 ) : null}
                 <User className={`h-6 w-6 sm:h-7 sm:w-7 text-purple-400 flex-shrink-0 ${displayCharacter.avatar ? 'hidden' : ''}`} />
                 
