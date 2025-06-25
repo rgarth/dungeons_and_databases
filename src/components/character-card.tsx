@@ -59,13 +59,15 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
           <div className="flex items-start gap-3">
             {/* Avatar */}
             {character.avatar ? (
-              <Image 
-                src={character.avatar} 
-                alt={`${character.name}'s avatar`}
-                width={96}
-                height={96}
-                className="w-24 h-24 rounded-full object-cover object-top"
-              />
+              <div className="w-24 h-24 rounded-full overflow-hidden">
+                <Image 
+                  src={character.avatar} 
+                  alt={`${character.name}'s avatar`}
+                  width={96}
+                  height={96}
+                  className="w-full h-full object-cover object-top scale-150 translate-y-1/4"
+                />
+              </div>
             ) : (
               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-2xl font-bold">
                 {character.name.charAt(0).toUpperCase()}
