@@ -39,16 +39,19 @@ export async function generateAvatar(characterData: CharacterAvatarData): Promis
 
 async function generateWithReplicateFluxSchnell(characterData: CharacterAvatarData): Promise<AvatarResult> {
   try {
-    const { race, gender, class: characterClass } = characterData;
+    const { race, gender, class: characterClass, appearance } = characterData;
     
     // Use a single seed for consistency
     const sharedSeed = Math.floor(Math.random() * 1000000);
     
-    // Create consistent character description
+    // Create consistent character description with appearance details
     const characterDescription = `${gender} ${race} ${characterClass}`;
     
+    // Include appearance details in the prompt for anti-bias measures
+    const appearanceDetails = appearance ? `, ${appearance}` : '';
+    
     // Generate only the full body image - we'll crop it for the avatar
-    const fullBodyPrompt = `A professional full-body photograph of a ${characterDescription} in fantasy armor, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping`;
+    const fullBodyPrompt = `A professional full-body photograph of a ${characterDescription}${appearanceDetails} in fantasy armor, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping`;
 
     console.log('🎨 Full Body Prompt:', fullBodyPrompt);
 
