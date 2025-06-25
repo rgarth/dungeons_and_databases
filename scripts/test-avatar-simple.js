@@ -53,22 +53,6 @@ const AGE_RANGES = {
   'Tabaxi': [18, 80]
 };
 
-// Anti-bias skin tone descriptions (avoiding problematic terms)
-const SKIN_TONES = [
-  'warm golden', 'rich amber', 'deep mahogany', 'soft caramel', 
-  'warm bronze', 'deep copper', 'rich honey', 'warm chestnut',
-  'soft olive', 'warm tan', 'deep walnut', 'rich mocha'
-];
-
-// Anti-bias body type descriptions (avoiding problematic terms)
-const BODY_TYPES = [
-  'average build', 'slender frame', 'sturdy build', 'compact frame',
-  'average stature', 'lean build', 'solid build', 'average physique'
-];
-
-// Races that need skin tone diversity
-const SKIN_TONE_RACES = ['Human', 'Elf', 'Half-Elf', 'Gnome', 'Halfling', 'Goliath'];
-
 // Starting equipment suggestions by class
 const CLASS_EQUIPMENT = {
   'Fighter': ['longsword', 'shield', 'chain mail'],
@@ -191,19 +175,6 @@ async function generateAvatar(race, characterClass, gender, age) {
   try {
     log(`🎨 Generating avatar: ${testId}`, 'info');
     
-    // Add anti-bias measures
-    let appearance = `A ${age}-year-old ${race.toLowerCase()} ${characterClass.toLowerCase()} with age-appropriate features`;
-    
-    // Add skin tone diversity for races that need it
-    if (SKIN_TONE_RACES.includes(race)) {
-      const skinTone = getRandomItem(SKIN_TONES);
-      appearance += `, ${skinTone} skin`;
-    }
-    
-    // Add body type diversity for all races
-    const bodyType = getRandomItem(BODY_TYPES);
-    appearance += `, ${bodyType}`;
-    
     // Build character data
     const characterData = {
       race,
@@ -215,13 +186,13 @@ async function generateAvatar(race, characterClass, gender, age) {
       ideals: ['Duty'],
       bonds: ['My honor is my life'],
       flaws: ['I am easily distracted'],
-      appearance,
+      appearance: `A ${age}-year-old ${race.toLowerCase()} ${characterClass.toLowerCase()} with age-appropriate features`,
       equippedWeapons: CLASS_EQUIPMENT[characterClass] || [],
       equippedArmor: []
     };
 
     log(`📤 Sending request to API...`, 'info');
-    log(`   Appearance: ${appearance}`, 'info');
+    log(`   Appearance: ${characterData.appearance}`, 'info');
     
     const response = await fetch('http://localhost:3000/api/generate-avatar', {
       method: 'POST',

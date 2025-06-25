@@ -8,6 +8,62 @@ interface AvatarResult {
   service?: string;
 }
 
+// Anti-bias skin tone descriptions (avoiding problematic terms)
+const SKIN_TONES = [
+  'warm golden', 'rich amber', 'deep mahogany', 'soft caramel', 
+  'warm bronze', 'deep copper', 'rich honey', 'warm chestnut',
+  'soft olive', 'warm tan', 'deep walnut', 'rich mocha'
+];
+
+// Anti-bias body type descriptions (avoiding problematic terms)
+const BODY_TYPES = [
+  'average build', 'slender frame', 'sturdy build', 'compact frame',
+  'average stature', 'lean build', 'solid build', 'average physique'
+];
+
+// Races that need skin tone diversity
+const SKIN_TONE_RACES = ['Human', 'Elf', 'Half-Elf', 'Gnome', 'Halfling', 'Goliath'];
+
+// Utility function to get random item from array
+function getRandomItem<T>(array: T[]): T {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+// Server-side prompt generation with anti-bias measures
+function generateServerPrompt(characterData: CharacterAvatarData): string {
+  const { race, gender, class: characterClass, appearance, age } = characterData;
+  
+  // Start with basic character description
+  const characterDescription = `${gender || 'Person'} ${race} ${characterClass}`;
+  
+  // Build appearance description
+  let appearanceDescription = '';
+  
+  if (appearance && appearance.trim()) {
+    // Use user-provided appearance
+    appearanceDescription = `, ${appearance.trim()}`;
+  } else {
+    // Generate anti-bias appearance automatically
+    const ageDesc = age ? `${age}-year-old` : 'adult';
+    appearanceDescription = `, A ${ageDesc} ${race.toLowerCase()} with age-appropriate features`;
+    
+    // Add skin tone diversity for races that need it
+    if (SKIN_TONE_RACES.includes(race)) {
+      const skinTone = getRandomItem(SKIN_TONES);
+      appearanceDescription += `, ${skinTone} skin`;
+    }
+    
+    // Add body type diversity for all races
+    const bodyType = getRandomItem(BODY_TYPES);
+    appearanceDescription += `, ${bodyType}`;
+  }
+  
+  // Create the full prompt
+  const fullBodyPrompt = `A professional full-body photograph of a ${characterDescription}${appearanceDescription} in fantasy armor, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping`;
+  
+  return fullBodyPrompt;
+}
+
 // Replicate configuration
 const REPLICATE_API_KEY = process.env.REPLICATE_API_KEY;
 const REPLICATE_BASE_URL = 'https://api.replicate.com/v1';
@@ -39,19 +95,11 @@ export async function generateAvatar(characterData: CharacterAvatarData): Promis
 
 async function generateWithReplicateFluxSchnell(characterData: CharacterAvatarData): Promise<AvatarResult> {
   try {
-    const { race, gender, class: characterClass, appearance } = characterData;
-    
     // Use a single seed for consistency
     const sharedSeed = Math.floor(Math.random() * 1000000);
     
-    // Create consistent character description with appearance details
-    const characterDescription = `${gender} ${race} ${characterClass}`;
-    
-    // Include appearance details in the prompt for anti-bias measures
-    const appearanceDetails = appearance ? `, ${appearance}` : '';
-    
-    // Generate only the full body image - we'll crop it for the avatar
-    const fullBodyPrompt = `A professional full-body photograph of a ${characterDescription}${appearanceDetails} in fantasy armor, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping`;
+    // Generate server-side prompt with anti-bias measures
+    const fullBodyPrompt = generateServerPrompt(characterData);
 
     console.log('🎨 Full Body Prompt:', fullBodyPrompt);
 
