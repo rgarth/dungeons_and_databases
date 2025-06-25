@@ -45,7 +45,30 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
   } else {
     // Generate anti-bias appearance automatically
     const ageDesc = age ? `${age}-year-old` : 'adult';
-    appearanceDescription = `, A ${ageDesc} ${race.toLowerCase()} with age-appropriate features`;
+    
+    // Use descriptive terms instead of race names to avoid AI biases
+    let raceDescription = '';
+    switch (race) {
+      case 'Gnome':
+        raceDescription = 'small fey humanoid with pointed ears and expressive features';
+        break;
+      case 'Halfling':
+        raceDescription = 'small humanoid with curly hair and cheerful features';
+        break;
+      case 'Dwarf':
+        raceDescription = 'stout humanoid with broad features and thick hair';
+        break;
+      case 'Elf':
+        raceDescription = 'tall humanoid with pointed ears and graceful features';
+        break;
+      case 'Human':
+        raceDescription = 'human';
+        break;
+      default:
+        raceDescription = race.toLowerCase();
+    }
+    
+    appearanceDescription = `, A ${ageDesc} ${raceDescription} with age-appropriate features`;
     
     // Add skin tone diversity for races that need it
     if (SKIN_TONE_RACES.includes(race)) {
