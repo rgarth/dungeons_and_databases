@@ -342,44 +342,32 @@
     "maxAge": 150,
     "stages": [
       {
-        "name": "child",
-        "range": [0, 19],
-        "appearance": "youthful halfling features, smooth skin, minimal wrinkles, child-like proportions, round face, bright eyes",
-        "maturity": "childhood - still learning and growing"
-      },
-      {
-        "name": "adolescent",
-        "range": [20, 29],
-        "appearance": "young halfling features, developing adult proportions, earnest expression",
-        "maturity": "adolescence - finding their place in society"
-      },
-      {
-        "name": "young_adult",
-        "range": [30, 49],
-        "appearance": "young adult halfling, mature features, some fine lines, confident expression, strong features",
-        "maturity": "young adulthood - establishing themselves"
-      },
-      {
         "name": "adult",
-        "range": [50, 89],
-        "appearance": "mature adult halfling, weathered features, prominent wrinkles, experienced expression, strong character",
+        "range": [0, 49],
+        "appearance": "mature adult halfling hobbit, weathered features, prominent wrinkles, experienced expression, strong character",
         "maturity": "full adulthood - respected member of community"
       },
       {
         "name": "middle_aged",
-        "range": [90, 119],
-        "appearance": "middle-aged halfling, deeply weathered features, prominent wrinkles, wise expression, experienced",
+        "range": [50, 89],
+        "appearance": "middle-aged halfling hobbit, deeply weathered features, prominent wrinkles, wise expression, experienced",
         "maturity": "middle age - wise and experienced"
       },
       {
         "name": "elderly",
-        "range": [120, 149],
-        "appearance": "elderly halfling, deeply wrinkled face, wise eyes, weathered but strong features, venerable appearance",
+        "range": [90, 119],
+        "appearance": "elderly halfling hobbit, deeply wrinkled face, wise eyes, weathered but strong features, venerable appearance",
         "maturity": "elderly - highly respected and wise"
+      },
+      {
+        "name": "venerable",
+        "range": [120, 149],
+        "appearance": "venerable halfling hobbit, ancient features, deeply wrinkled, wise and knowing expression, legendary appearance",
+        "maturity": "venerable - living legend, ancient wisdom"
       }
     ],
     "special": {},
-    "diverseDescription": "young adult to middle-aged halfling, mature features, some fine lines, confident expression, small adult stature, mature adult face, adult proportions, hobbit-like features"
+    "diverseDescription": "young adult to middle-aged halfling hobbit, mature features, some fine lines, confident expression, small adult stature, mature adult face, adult proportions, hobbit-like features"
   },
   "Gnome": {
     "adulthood": 40,
@@ -567,7 +555,7 @@
       }
     ],
     "special": {},
-    "diverseDescription": "young adult to middle-aged dragonborn, mature features, some scale wear, confident expression, scaled skin covering face and body, draconic heritage, reptilian eyes, pronounced snout"
+    "diverseDescription": "reptilian beings, young adult to middle-aged dragonborn, mature features, some scale wear, confident expression, scaled skin covering face and body, draconic heritage, reptilian eyes, pronounced snout, slender build, reptilian features, NOT human, clearly reptilian appearance"
   },
   "Tiefling": {
     "adulthood": 18,
@@ -826,42 +814,42 @@
       {
         "name": "child",
         "range": [0, 17],
-        "appearance": "youthful goliath features, smooth skin, minimal wrinkles, child-like proportions, developing stone markings",
+        "appearance": "youthful goliath features, smooth skin, minimal wrinkles, child-like proportions, developing stone markings, gray or brown skin",
         "maturity": "childhood - still learning and growing"
       },
       {
         "name": "adolescent",
         "range": [18, 24],
-        "appearance": "young goliath features, developing adult proportions, earnest expression, prominent stone markings",
+        "appearance": "young goliath features, developing adult proportions, earnest expression, prominent stone markings, gray or brown skin with darker patterns",
         "maturity": "adolescence - finding their place in society"
       },
       {
         "name": "young_adult",
         "range": [25, 39],
-        "appearance": "young adult goliath, mature features, some fine lines, confident expression, strong stone features",
+        "appearance": "young adult goliath, mature features, some fine lines, confident expression, strong stone features, bald head, gray or brown skin with stone markings",
         "maturity": "young adulthood - establishing themselves"
       },
       {
         "name": "adult",
         "range": [40, 59],
-        "appearance": "mature adult goliath, weathered features, prominent wrinkles, experienced expression, strong character",
+        "appearance": "mature adult goliath, weathered features, prominent wrinkles, experienced expression, strong character, bald head, gray or brown skin with prominent stone patterns",
         "maturity": "full adulthood - respected member of community"
       },
       {
         "name": "middle_aged",
         "range": [60, 69],
-        "appearance": "middle-aged goliath, deeply weathered features, prominent wrinkles, wise expression, experienced",
+        "appearance": "middle-aged goliath, deeply weathered features, prominent wrinkles, wise expression, experienced, bald head, gray or brown skin with weathered stone markings",
         "maturity": "middle age - wise and experienced"
       },
       {
         "name": "elderly",
         "range": [70, 79],
-        "appearance": "elderly goliath, deeply wrinkled face, wise eyes, weathered but strong features, venerable appearance",
+        "appearance": "elderly goliath, deeply wrinkled face, wise eyes, weathered but strong features, venerable appearance, bald head, gray or brown skin with aged stone patterns",
         "maturity": "elderly - highly respected and wise"
       }
     ],
     "special": {},
-    "diverseDescription": "young adult to middle-aged goliath, mature features, some fine lines, confident expression, stone-like skin markings, massive build, giant heritage, towering height"
+    "diverseDescription": "young adult to middle-aged goliath, mature features, some fine lines, confident expression, stone-like skin markings, massive build, giant heritage, towering height of 7-8 feet, bald head, gray or brown skin with darker stone patterns"
   },
   "Tabaxi": {
     "adulthood": 18,

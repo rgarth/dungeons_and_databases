@@ -29,23 +29,23 @@ const BODY_TYPES = [
 
 // Class-appropriate clothing descriptions
 const CLASS_CLOTHING = {
-  'Rogue': 'medieval practical leather clothing',
-  'Fighter': 'medieval practical armor',
-  'Wizard': 'medieval scholarly robes',
-  'Cleric': 'medieval religious vestments',
-  'Ranger': 'medieval outdoor clothing',
-  'Paladin': 'medieval practical armor',
-  'Bard': 'medieval colorful clothing',
-  'Druid': 'medieval natural clothing',
-  'Monk': 'medieval simple robes',
-  'Sorcerer': 'medieval fine clothing',
-  'Warlock': 'medieval dark clothing',
-  'Barbarian': 'medieval simple clothing',
-  'Artificer': 'medieval practical clothing'
+  'Rogue': 'medieval leather armor and dark hooded cloak',
+  'Fighter': 'medieval chain mail armor with tabard',
+  'Wizard': 'medieval flowing scholarly robes with arcane symbols',
+  'Cleric': 'medieval religious vestments with holy symbols',
+  'Ranger': 'medieval leather armor with green cloak and hood',
+  'Paladin': 'medieval plate armor with holy tabard',
+  'Bard': 'medieval colorful silk clothing with musical instruments',
+  'Druid': 'medieval natural robes made of leaves and bark',
+  'Monk': 'medieval simple robes with rope belt',
+  'Sorcerer': 'medieval ancient flowing robes with magical aura',
+  'Warlock': 'medieval dark robes with occult symbols',
+  'Barbarian': 'medieval fur and leather clothing with tribal markings',
+  'Artificer': 'medieval blacksmith apron with tool belt and goggles'
 };
 
 // Races that need skin tone diversity
-const SKIN_TONE_RACES = ['Human', 'Elf', 'Half-Elf', 'Gnome', 'Halfling', 'Goliath'];
+const SKIN_TONE_RACES = ['Human', 'Elf', 'Half-Elf', 'Gnome', 'Halfling'];
 
 // Utility function to get random item from array
 function getRandomItem<T>(array: T[]): T {
@@ -56,11 +56,16 @@ function getRandomItem<T>(array: T[]): T {
 function generateServerPrompt(characterData: CharacterAvatarData): string {
   const { race, gender, class: characterClass, appearance, age } = characterData;
   
-  // Start with basic character description
-  const characterDescription = `${gender || 'Person'} ${race} ${characterClass}`;
+  // Start with basic character description - use descriptive terms for Dragonborn females
+  const characterDescription = race === 'Dragonborn' && gender === 'Female'
+    ? `thin and delicate ${race} ${characterClass}`
+    : race === 'Dragonborn' && gender === 'Male'
+    ? `robust ${race} ${characterClass}`
+    : `${gender || 'Person'} ${race} ${characterClass}`;
   
   // Build appearance description
   let appearanceDescription = '';
+  let cameraAngle = '';
   
   if (appearance && appearance.trim()) {
     // Use user-provided appearance
@@ -76,7 +81,7 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
         raceDescription = 'small fey humanoid with pointed ears and expressive features';
         break;
       case 'Halfling':
-        raceDescription = 'small humanoid with curly hair and cheerful features';
+        raceDescription = 'small humanoid with curly hair and hobbit features';
         break;
       case 'Dwarf':
         raceDescription = 'stout humanoid with broad features and thick hair';
@@ -86,6 +91,19 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
         break;
       case 'Human':
         raceDescription = 'human';
+        break;
+      case 'Tiefling':
+        raceDescription = 'demon-blooded humanoid with prominent horns, red skin, glowing eyes, and a long tail';
+        break;
+      case 'Dragonborn':
+        raceDescription = 'reptilian beings, anthropomorphic dragon with scaled skin, dragon snout, no ears, reptilian features, slender build, reptilian features, NOT human, clearly reptilian appearance';
+        break;
+      case 'Aasimar':
+        raceDescription = 'celestial humanoid with glowing features, angelic appearance, and divine radiance';
+        break;
+      case 'Goliath':
+        raceDescription = 'giant humanoid with massive frame, stone-like skin markings, bald head, gray or brown skin with darker stone patterns, imposing stature, 7-8 feet tall';
+        cameraAngle = ', camera positioned low looking up at the character, dramatic low angle shot to emphasize towering height and imposing presence';
         break;
       default:
         raceDescription = race.toLowerCase();
@@ -107,7 +125,7 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
   
   // Create the full prompt
   const clothing = CLASS_CLOTHING[characterClass as keyof typeof CLASS_CLOTHING] || 'appropriate clothing';
-  const fullBodyPrompt = `A professional full-body photograph of a ${characterDescription}${appearanceDescription} in ${clothing}, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping`;
+  const fullBodyPrompt = `A professional full-body photograph of a ${characterDescription}${appearanceDescription} in ${clothing}, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping${cameraAngle || ''}`;
   
   return fullBodyPrompt;
 }
