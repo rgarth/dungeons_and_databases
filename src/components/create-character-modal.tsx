@@ -1636,9 +1636,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                             <Image
                               src={generatedFullBodyAvatar}
                               alt="Generated character avatar"
-                              width={200}
-                              height={200}
-                              className="w-48 h-60 mx-auto rounded-lg border-2 border-purple-500 object-cover"
+                              width={192}
+                              height={336}
+                              className="w-48 mx-auto rounded-lg border-2 border-purple-500 object-cover"
                               priority
                             />
                             <div className="text-center">
@@ -1654,7 +1654,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                             </div>
                           </div>
                         ) : (
-                          <div className="w-48 h-60 mx-auto rounded-lg border-2 border-dashed border-slate-500 flex flex-col items-center justify-center text-slate-400">
+                          <div className="w-48 h-80 mx-auto rounded-lg border-2 border-dashed border-slate-500 flex flex-col items-center justify-center text-slate-400">
                             <div className="text-4xl mb-2">🎨</div>
                             <span className="text-sm text-center">No avatar generated<br />Click generate below</span>
                           </div>
