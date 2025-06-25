@@ -8,18 +8,41 @@ interface AvatarResult {
   service?: string;
 }
 
-// Anti-bias skin tone descriptions (avoiding problematic terms)
+// Clear skin tone descriptions with ethnic diversity
 const SKIN_TONES = [
-  'warm golden', 'rich amber', 'deep mahogany', 'soft caramel', 
-  'warm bronze', 'deep copper', 'rich honey', 'warm chestnut',
-  'soft olive', 'warm tan', 'deep walnut', 'rich mocha'
+  'black skin', 'dark brown skin', 'brown skin', 'light brown skin', 
+  'olive skin', 'tan skin'
+];
+
+// Ethnic diversity descriptions
+const ETHNICITIES = [
+  'African', 'African American', 'Asian', 'Chinese', 'Japanese', 'Korean', 
+  'Indian', 'Middle Eastern', 'Indigenous', 'Native American', 'Pacific Islander',
+  'Hispanic', 'Latino', 'Caribbean', 'Mediterranean'
 ];
 
 // Anti-bias body type descriptions (avoiding problematic terms)
 const BODY_TYPES = [
-  'average build', 'slender frame', 'sturdy build', 'compact frame',
-  'average stature', 'lean build', 'solid build', 'average physique'
+  'average build', 'slender frame', 'compact frame',
+  'average stature', 'lean build', 'average physique'
 ];
+
+// Class-appropriate clothing descriptions
+const CLASS_CLOTHING = {
+  'Rogue': 'medieval practical leather clothing',
+  'Fighter': 'medieval practical armor',
+  'Wizard': 'medieval scholarly robes',
+  'Cleric': 'medieval religious vestments',
+  'Ranger': 'medieval outdoor clothing',
+  'Paladin': 'medieval practical armor',
+  'Bard': 'medieval colorful clothing',
+  'Druid': 'medieval natural clothing',
+  'Monk': 'medieval simple robes',
+  'Sorcerer': 'medieval fine clothing',
+  'Warlock': 'medieval dark clothing',
+  'Barbarian': 'medieval simple clothing',
+  'Artificer': 'medieval practical clothing'
+};
 
 // Races that need skin tone diversity
 const SKIN_TONE_RACES = ['Human', 'Elf', 'Half-Elf', 'Gnome', 'Halfling', 'Goliath'];
@@ -73,7 +96,8 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
     // Add skin tone diversity for races that need it
     if (SKIN_TONE_RACES.includes(race)) {
       const skinTone = getRandomItem(SKIN_TONES);
-      appearanceDescription += `, ${skinTone} skin`;
+      const ethnicity = getRandomItem(ETHNICITIES);
+      appearanceDescription += `, ${ethnicity} with ${skinTone}`;
     }
     
     // Add body type diversity for all races
@@ -82,7 +106,8 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
   }
   
   // Create the full prompt
-  const fullBodyPrompt = `A professional full-body photograph of a ${characterDescription}${appearanceDescription} in fantasy armor, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping`;
+  const clothing = CLASS_CLOTHING[characterClass as keyof typeof CLASS_CLOTHING] || 'appropriate clothing';
+  const fullBodyPrompt = `A professional full-body photograph of a ${characterDescription}${appearanceDescription} in ${clothing}, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping`;
   
   return fullBodyPrompt;
 }

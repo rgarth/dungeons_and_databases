@@ -762,7 +762,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
                   {/* AI Provider Credit */}
                   <div className="text-xs text-slate-500 text-center">
-                    <p>🤖 AI avatars by <span className="text-slate-400">Pollinations.ai</span></p>
+                    <p>🤖 AI avatars by <span className="text-slate-400">Replicate Flux.schnell</span></p>
                   </div>
                 </div>
 
