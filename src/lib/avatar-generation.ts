@@ -122,7 +122,7 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
         if (subrace && DRAGONBORN_SCALE_COLORS[subrace]) {
           scaleColor = DRAGONBORN_SCALE_COLORS[subrace];
         }
-        raceDescription = `reptilian beings, anthropomorphic dragon with scaled skin${scaleColor ? ', ' + scaleColor : ''}, dragon snout, no ears, reptilian features, slender build, NOT human, clearly reptilian appearance`;
+        raceDescription = `reptilian beings, anthropomorphic dragon with scaled skin${scaleColor ? ', ' + scaleColor : ''}, dragon snout, no ears, reptilian features, NOT human, clearly reptilian appearance`;
         break;
       }
       case 'Aasimar': {
