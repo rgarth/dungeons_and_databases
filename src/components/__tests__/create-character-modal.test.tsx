@@ -25,7 +25,8 @@ describe('CreateCharacterModal', () => {
   const mockDndData = {
     races: [
       { id: '1', name: 'Human' },
-      { id: '2', name: 'Elf' }
+      { id: '2', name: 'Elf' },
+      { id: '3', name: 'Dragonborn' }
     ],
     classes: [
       { id: '1', name: 'Barbarian' },
@@ -226,6 +227,80 @@ describe('CreateCharacterModal', () => {
       
       await waitFor(() => {
         expect(mockCreationService.getCreationOptions).toHaveBeenCalledWith('Sorcerer');
+      });
+    });
+
+    it('should show Dragonborn subraces when Dragonborn is selected', async () => {
+      // Mock subrace API response for Dragonborn
+      mockFetch.mockImplementation((input: string | Request | URL) => {
+        const url = typeof input === 'string' ? input : input.toString();
+        if (url.includes('/api/subraces?race=Dragonborn')) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve([
+              { 
+                id: '1', 
+                name: 'Red Dragonborn', 
+                description: 'Red dragonborn are descended from red dragons. They are known for their fire breath and resistance to fire damage.', 
+                abilityScoreIncrease: 'Strength +2, Charisma +1', 
+                traits: ['Draconic Ancestry', 'Breath Weapon (Fire)', 'Damage Resistance (Fire)'] 
+              },
+              { 
+                id: '2', 
+                name: 'Blue Dragonborn', 
+                description: 'Blue dragonborn are descended from blue dragons. They are known for their lightning breath and resistance to lightning damage.', 
+                abilityScoreIncrease: 'Strength +2, Charisma +1', 
+                traits: ['Draconic Ancestry', 'Breath Weapon (Lightning)', 'Damage Resistance (Lightning)'] 
+              },
+              { 
+                id: '3', 
+                name: 'Green Dragonborn', 
+                description: 'Green dragonborn are descended from green dragons. They are known for their poison breath and resistance to poison damage.', 
+                abilityScoreIncrease: 'Strength +2, Charisma +1', 
+                traits: ['Draconic Ancestry', 'Breath Weapon (Poison)', 'Damage Resistance (Poison)'] 
+              }
+            ])
+          } as Response);
+        }
+        // Default mock for other API calls
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve([])
+        } as Response);
+      });
+
+      renderModal();
+      
+      // Select Dragonborn race
+      const raceSelect = screen.getByLabelText('Race');
+      fireEvent.change(raceSelect, { target: { value: 'Dragonborn' } });
+      
+      // Wait for subrace selector to appear
+      await waitFor(() => {
+        const subraceLabel = screen.getByText('Subrace');
+        expect(subraceLabel).toBeInTheDocument();
+      });
+      
+      // Open the subrace dropdown
+      const subraceButton = screen.getByRole('button', { name: /select a subrace/i });
+      fireEvent.click(subraceButton);
+      
+      // Verify Dragonborn subraces are displayed
+      await waitFor(() => {
+        expect(screen.getByText('Red Dragonborn')).toBeInTheDocument();
+        expect(screen.getByText('Blue Dragonborn')).toBeInTheDocument();
+        expect(screen.getByText('Green Dragonborn')).toBeInTheDocument();
+      });
+      
+      // Select a subrace
+      fireEvent.click(screen.getByText('Red Dragonborn'));
+      
+      // Verify the selection is displayed
+      await waitFor(() => {
+        const redDragonbornElements = screen.getAllByText('Red Dragonborn');
+        expect(redDragonbornElements.length).toBeGreaterThan(0);
+        expect(screen.getByText(/Red dragonborn are descended from red dragons/)).toBeInTheDocument();
+        expect(screen.getByText(/Breath Weapon \(Fire\)/)).toBeInTheDocument();
       });
     });
 
