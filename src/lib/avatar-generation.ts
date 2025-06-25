@@ -15,18 +15,18 @@ const REPLICATE_BASE_URL = 'https://api.replicate.com/v1';
 export async function generateAvatar(characterData: CharacterAvatarData): Promise<AvatarResult> {
   console.log('🎨 Starting avatar generation for:', characterData);
   
-  // Use Replicate with SDXL
+  // Use Replicate with Flux.schnell for faster generation
   if (REPLICATE_API_KEY) {
     try {
-      console.log('🔄 Generating with Replicate SDXL...');
-      const replicateResult = await generateWithReplicateSDXL(characterData);
+      console.log('🔄 Generating with Replicate Flux.schnell...');
+      const replicateResult = await generateWithReplicateFluxSchnell(characterData);
       if (replicateResult.success) {
-        console.log('✅ Replicate SDXL successful');
-        return { ...replicateResult, service: 'Replicate SDXL' };
+        console.log('✅ Replicate Flux.schnell successful');
+        return { ...replicateResult, service: 'Replicate Flux.schnell' };
       }
-      console.log('❌ Replicate SDXL failed:', replicateResult.error);
+      console.log('❌ Replicate Flux.schnell failed:', replicateResult.error);
     } catch (error) {
-      console.log('❌ Replicate SDXL error:', error);
+      console.log('❌ Replicate Flux.schnell error:', error);
     }
   }
 
@@ -37,22 +37,22 @@ export async function generateAvatar(characterData: CharacterAvatarData): Promis
   };
 }
 
-async function generateWithReplicateSDXL(characterData: CharacterAvatarData): Promise<AvatarResult> {
+async function generateWithReplicateFluxSchnell(characterData: CharacterAvatarData): Promise<AvatarResult> {
   try {
     const { race, gender, class: characterClass } = characterData;
     
-    // Use the same seed for both images to ensure consistency
+    // Use a single seed for consistency
     const sharedSeed = Math.floor(Math.random() * 1000000);
     
     // Create consistent character description
     const characterDescription = `${gender} ${race} ${characterClass}`;
     
-    // Create photo-style prompts for SDXL with better consistency
-    const fullBodyPrompt = `A professional full-body photograph of a ${characterDescription} in fantasy armor, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, same person as avatar`;
-    
-    const avatarPrompt = `A professional headshot portrait photograph of the same ${characterDescription} in fantasy armor, close-up head and shoulders, studio lighting, high quality, detailed facial features, realistic, 8k resolution, professional photography, centered composition, same person as full body`;
+    // Generate only the full body image - we'll crop it for the avatar
+    const fullBodyPrompt = `A professional full-body photograph of a ${characterDescription} in fantasy armor, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping`;
 
-    // Generate full body image with taller aspect ratio
+    console.log('🎨 Full Body Prompt:', fullBodyPrompt);
+
+    // Generate full body image with correct Flux.schnell parameters
     const fullBodyResponse = await fetch(`${REPLICATE_BASE_URL}/predictions`, {
       method: 'POST',
       headers: {
@@ -60,14 +60,16 @@ async function generateWithReplicateSDXL(characterData: CharacterAvatarData): Pr
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        version: 'stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b',
+        version: 'black-forest-labs/flux-schnell',
         input: {
           prompt: fullBodyPrompt,
-          negative_prompt: 'cartoon, anime, low quality, blurry, distorted, deformed, ugly, bad anatomy, nsfw, inappropriate, adult content, revealing clothing, skimpy armor, close-up, portrait, cropped head, head cut off, different person',
-          width: 512,
-          height: 896, // Much taller for full body
-          num_inference_steps: 20,
-          guidance_scale: 7.5,
+          go_fast: true,
+          megapixels: "1",
+          num_outputs: 1,
+          aspect_ratio: "9:16", // Taller for full body
+          output_format: "webp",
+          output_quality: 80,
+          num_inference_steps: 4,
           seed: sharedSeed
         }
       })
@@ -75,75 +77,43 @@ async function generateWithReplicateSDXL(characterData: CharacterAvatarData): Pr
 
     if (!fullBodyResponse.ok) {
       const errorText = await fullBodyResponse.text();
-      console.error('Replicate SDXL full body error:', fullBodyResponse.status, errorText);
+      console.error('Replicate Flux.schnell full body error:', fullBodyResponse.status, errorText);
       return {
         success: false,
-        error: `Replicate SDXL full body error: ${fullBodyResponse.status} - ${errorText}`
+        error: `Replicate Flux.schnell full body error: ${fullBodyResponse.status} - ${errorText}`
       };
     }
 
     const fullBodyPrediction = await fullBodyResponse.json();
     const fullBodyImage = await pollForCompletion(fullBodyPrediction.id);
 
-    // Generate avatar image as square headshot with same seed
-    const avatarResponse = await fetch(`${REPLICATE_BASE_URL}/predictions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Token ${REPLICATE_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        version: 'stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b',
-        input: {
-          prompt: avatarPrompt,
-          negative_prompt: 'cartoon, anime, low quality, blurry, distorted, deformed, ugly, bad anatomy, nsfw, inappropriate, adult content, revealing clothing, skimpy armor, full body, wide shot, body cut off, different person',
-          width: 512,
-          height: 512,
-          num_inference_steps: 20,
-          guidance_scale: 7.5,
-          seed: sharedSeed
-        }
-      })
-    });
-
-    if (!avatarResponse.ok) {
-      const errorText = await avatarResponse.text();
-      console.error('Replicate SDXL avatar error:', avatarResponse.status, errorText);
-      return {
-        success: false,
-        error: `Replicate SDXL avatar error: ${avatarResponse.status} - ${errorText}`
-      };
-    }
-
-    const avatarPrediction = await avatarResponse.json();
-    const avatarImage = await pollForCompletion(avatarPrediction.id);
-
-    if (fullBodyImage && avatarImage) {
+    if (fullBodyImage) {
+      // Return only the full body image - client will crop it for avatar
       return {
         success: true,
         fullBodyImage,
-        avatarImage,
-        service: 'Replicate SDXL'
+        avatarImage: fullBodyImage, // Same image - client will crop
+        service: 'Replicate Flux.schnell (cropped)'
       };
     }
 
     return {
       success: false,
-      error: 'Failed to generate both full body and avatar images'
+      error: 'Failed to generate full body image'
     };
 
   } catch (error) {
-    console.error('Replicate SDXL generation error:', error);
+    console.error('Replicate Flux.schnell generation error:', error);
     return {
       success: false,
-      error: `Replicate SDXL error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      error: `Replicate Flux.schnell error: ${error instanceof Error ? error.message : 'Unknown error'}`
     };
   }
 }
 
 async function pollForCompletion(predictionId: string): Promise<string | null> {
   let attempts = 0;
-  const maxAttempts = 60; // 5 minutes max
+  const maxAttempts = 30; // 2.5 minutes max (faster for Flux.schnell)
   
   while (attempts < maxAttempts) {
     await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds
@@ -159,9 +129,15 @@ async function pollForCompletion(predictionId: string): Promise<string | null> {
     }
 
     const status = await statusResponse.json();
+    console.log('Flux.schnell status:', status.status, 'output:', status.output);
     
     if (status.status === 'succeeded') {
-      return status.output[0]; // Return the first image URL
+      // Flux.schnell returns an array of file objects, get the URL from the first one
+      if (status.output && Array.isArray(status.output) && status.output.length > 0) {
+        return status.output[0]; // This should be the image URL
+      } else {
+        throw new Error('No output received from Flux.schnell');
+      }
     } else if (status.status === 'failed') {
       throw new Error(`Replicate generation failed: ${status.error}`);
     }
