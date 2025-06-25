@@ -903,7 +903,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
                     alt={`${displayCharacter.name}'s avatar`}
                     width={96}
                     height={96}
-                    className="w-24 h-24 rounded-full object-cover"
+                    className="w-24 h-24 rounded-full object-cover object-top"
                   />
                 ) : null}
                 <User className={`h-6 w-6 sm:h-7 sm:w-7 text-purple-400 flex-shrink-0 ${displayCharacter.avatar ? 'hidden' : ''}`} />
