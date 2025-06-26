@@ -148,6 +148,23 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const classFormulaCache = useRef<Map<string, { formula: string; timestamp: number }>>(new Map());
   const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
+  // Cache all class data at modal load for instant class switching
+  const [allClassDataCache, setAllClassDataCache] = useState<Record<string, {
+    weaponSuggestions: WeaponSuggestion[];
+    armorSuggestions: ArmorSuggestion[];
+    weaponProficiencies: { simple: boolean; martial: boolean; specific: string[] };
+    armorProficiencies: string[];
+    phbDescription: string | null;
+    spellLimits: {
+      cantripsKnown: number;
+      spellsKnown: number;
+      spellcastingType: string;
+      maxSpellLevel: number;
+      spellLevelLimits: Record<string, number>;
+    } | null;
+  }>>({});
+  const [isLoadingAllClassData, setIsLoadingAllClassData] = useState(false);
+
   // Handler to clear subrace when race changes
   const handleRaceChange = (newRace: string) => {
     setRace(newRace);
@@ -416,91 +433,130 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     const loadCreationOptions = async () => {
       if (!characterClass) return; // Don't load if no class selected
       
-      // Check if we have cached spells for this class
-      const cachedSpellsForClass = cachedSpells[characterClass];
+      // Check if we have all class data cached
+      const cachedClassData = allClassDataCache[characterClass];
       
-      console.log('📡 Making API calls for creation options...');
-      setLoadingOptions(true);
-      try {
-        console.log('📡 Making API calls for creation options...');
-        const [options, weaponSuggestions, armorSuggestions, weaponProficiencies, armorProficiencies, classData] = await Promise.all([
-          characterCreationService.getCreationOptions(characterClass),
-          fetch(`/api/weapon-suggestions?className=${encodeURIComponent(characterClass)}`)
-            .then(res => res.ok ? res.json() : [])
-            .catch(() => []),
-          fetch(`/api/armor-suggestions?className=${encodeURIComponent(characterClass)}`)
-            .then(res => res.ok ? res.json() : [])
-            .catch(() => []),
-          fetch(`/api/class-proficiencies?className=${encodeURIComponent(characterClass)}`)
-            .then(res => res.ok ? res.json() : { simple: false, martial: false, specific: [] })
-            .catch(() => ({ simple: false, martial: false, specific: [] })),
-          fetch(`/api/class-proficiencies?className=${encodeURIComponent(characterClass)}&includeArmor=true`)
-            .then(res => res.ok ? res.json() : { armor: [] })
-            .catch(() => ({ armor: [] })),
-          fetch(`/api/classes/${encodeURIComponent(characterClass)}`)
-            .then(res => res.ok ? res.json() : null)
-            .catch(() => null)
-        ]);
+      if (cachedClassData) {
+        console.log('⚡ Using cached class data for', characterClass);
         
-        console.log('📦 Raw options from characterCreationService:', options);
+        // Use cached data for instant loading
+        setWeaponSuggestions(cachedClassData.weaponSuggestions);
+        setArmorSuggestions(cachedClassData.armorSuggestions);
+        setCachedWeaponSuggestions(cachedClassData.weaponSuggestions);
+        setCachedWeaponProficiencies(cachedClassData.weaponProficiencies);
+        setCachedArmorProficiencies(cachedClassData.armorProficiencies);
+        setCachedPhbDescription(cachedClassData.phbDescription);
         
-        // Use cached spells if available, otherwise use from API
-        const spellcastingData = (options as Partial<CreationOptions>).spellcasting;
-        const availableSpells = cachedSpellsForClass || spellcastingData?.availableSpells || [];
-        
-        if (cachedSpellsForClass) {
-          console.log('⚡ Using cached spells for', characterClass, ':', cachedSpellsForClass.length, 'spells');
-        } else {
-          console.log('📡 Loading spells from API for', characterClass, ':', spellcastingData?.availableSpells?.length || 0, 'spells');
-        }
-        
-        setCreationOptions({
-          ...options,
-          subclasses: (options as Partial<CreationOptions>).subclasses || [],
-          needsSubclassAtCreation: (options as Partial<CreationOptions>).needsSubclassAtCreation || false,
-          spellcasting: {
-            ability: spellcastingData?.ability || null,
-            canCastAtLevel1: spellcastingData?.canCastAtLevel1 || false,
-            availableSpells,
-            spellSlots: spellcastingData?.spellSlots || {}
-          }
-        });
-        
-        console.log('🔍 DEBUG - Creation options for', characterClass, ':', {
-          subclasses: (options as Partial<CreationOptions>).subclasses || [],
-          needsSubclassAtCreation: (options as Partial<CreationOptions>).needsSubclassAtCreation || false,
-          spellcasting: (options as Partial<CreationOptions>).spellcasting
-        });
-        
-        setWeaponSuggestions(weaponSuggestions);
-        setArmorSuggestions(armorSuggestions);
-        
-        // Cache all the data for instant loading in modals
-        setCachedWeaponSuggestions(weaponSuggestions);
-        setCachedWeaponProficiencies(weaponProficiencies);
-        setCachedArmorProficiencies(armorProficiencies.armor || []);
-        setCachedPhbDescription(classData?.phbDescription || null);
-        
-        // Cache spells for this class
-        if ((options as Partial<CreationOptions>).spellcasting?.availableSpells) {
-          setCachedSpells(prev => ({
+        // Update spell limits cache
+        if (cachedClassData.spellLimits) {
+          setCachedSpellLimits(prev => ({
             ...prev,
-            [characterClass]: (options as Partial<CreationOptions>).spellcasting!.availableSpells
+            [`${characterClass}-1`]: cachedClassData.spellLimits!
           }));
         }
         
-        console.log('✅ SET STATE - Weapon suggestions for', characterClass, ':', weaponSuggestions);
-        console.log('✅ SET STATE - Armor suggestions for', characterClass, ':', armorSuggestions);
-        console.log('✅ CACHED - All suggestions and proficiencies for', characterClass);
-      } catch (error) {
-        console.error('Error loading creation options:', error);
-      } finally {
-        setLoadingOptions(false);
+        // Still need to get creation options (equipment packs, subclasses, etc.)
+        setLoadingOptions(true);
+        try {
+          const options = await characterCreationService.getCreationOptions(characterClass);
+          const cachedSpellsForClass = cachedSpells[characterClass];
+          const spellcastingData = (options as Partial<CreationOptions>).spellcasting;
+          const availableSpells = cachedSpellsForClass || spellcastingData?.availableSpells || [];
+          
+          setCreationOptions({
+            ...options,
+            subclasses: (options as Partial<CreationOptions>).subclasses || [],
+            needsSubclassAtCreation: (options as Partial<CreationOptions>).needsSubclassAtCreation || false,
+            spellcasting: {
+              ability: spellcastingData?.ability || null,
+              canCastAtLevel1: spellcastingData?.canCastAtLevel1 || false,
+              availableSpells,
+              spellSlots: spellcastingData?.spellSlots || {}
+            }
+          });
+          
+          // Cache spells for this class if not already cached
+          if ((options as Partial<CreationOptions>).spellcasting?.availableSpells && !cachedSpellsForClass) {
+            setCachedSpells(prev => ({
+              ...prev,
+              [characterClass]: (options as Partial<CreationOptions>).spellcasting!.availableSpells
+            }));
+          }
+          
+          console.log('✅ SET STATE - Weapon suggestions for', characterClass, ':', cachedClassData.weaponSuggestions);
+          console.log('✅ SET STATE - Armor suggestions for', characterClass, ':', cachedClassData.armorSuggestions);
+          console.log('⚡ INSTANT - Class switching using cached data');
+        } catch (error) {
+          console.error('Error loading creation options:', error);
+        } finally {
+          setLoadingOptions(false);
+        }
+      } else {
+        // Fallback to API calls if cache not ready
+        console.log('📡 Making API calls for creation options (cache not ready)...');
+        setLoadingOptions(true);
+        try {
+          const [options, weaponSuggestions, armorSuggestions, weaponProficiencies, armorProficiencies, classData] = await Promise.all([
+            characterCreationService.getCreationOptions(characterClass),
+            fetch(`/api/weapon-suggestions?className=${encodeURIComponent(characterClass)}`)
+              .then(res => res.ok ? res.json() : [])
+              .catch(() => []),
+            fetch(`/api/armor-suggestions?className=${encodeURIComponent(characterClass)}`)
+              .then(res => res.ok ? res.json() : [])
+              .catch(() => []),
+            fetch(`/api/class-proficiencies?className=${encodeURIComponent(characterClass)}`)
+              .then(res => res.ok ? res.json() : { simple: false, martial: false, specific: [] })
+              .catch(() => ({ simple: false, martial: false, specific: [] })),
+            fetch(`/api/class-proficiencies?className=${encodeURIComponent(characterClass)}&includeArmor=true`)
+              .then(res => res.ok ? res.json() : { armor: [] })
+              .catch(() => ({ armor: [] })),
+            fetch(`/api/classes/${encodeURIComponent(characterClass)}`)
+              .then(res => res.ok ? res.json() : null)
+              .catch(() => null)
+          ]);
+          
+          const cachedSpellsForClass = cachedSpells[characterClass];
+          const spellcastingData = (options as Partial<CreationOptions>).spellcasting;
+          const availableSpells = cachedSpellsForClass || spellcastingData?.availableSpells || [];
+          
+          setCreationOptions({
+            ...options,
+            subclasses: (options as Partial<CreationOptions>).subclasses || [],
+            needsSubclassAtCreation: (options as Partial<CreationOptions>).needsSubclassAtCreation || false,
+            spellcasting: {
+              ability: spellcastingData?.ability || null,
+              canCastAtLevel1: spellcastingData?.canCastAtLevel1 || false,
+              availableSpells,
+              spellSlots: spellcastingData?.spellSlots || {}
+            }
+          });
+          
+          setWeaponSuggestions(weaponSuggestions);
+          setArmorSuggestions(armorSuggestions);
+          setCachedWeaponSuggestions(weaponSuggestions);
+          setCachedWeaponProficiencies(weaponProficiencies);
+          setCachedArmorProficiencies(armorProficiencies.armor || []);
+          setCachedPhbDescription(classData?.phbDescription || null);
+          
+          if ((options as Partial<CreationOptions>).spellcasting?.availableSpells) {
+            setCachedSpells(prev => ({
+              ...prev,
+              [characterClass]: (options as Partial<CreationOptions>).spellcasting!.availableSpells
+            }));
+          }
+          
+          console.log('✅ SET STATE - Weapon suggestions for', characterClass, ':', weaponSuggestions);
+          console.log('✅ SET STATE - Armor suggestions for', characterClass, ':', armorSuggestions);
+        } catch (error) {
+          console.error('Error loading creation options:', error);
+        } finally {
+          setLoadingOptions(false);
+        }
       }
     };
 
     loadCreationOptions();
-  }, [characterClass, characterCreationService]);
+  }, [characterClass, characterCreationService, allClassDataCache]);
 
   // Get creation options from state (with fallback)
   const { needsSubclassAtCreation = false, spellcasting = { ability: null, canCastAtLevel1: false, availableSpells: [], spellSlots: {} } } = creationOptions || {};
@@ -1088,6 +1144,110 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       }
     }
   }, [characterClass, spellcasting?.availableSpells]);
+
+  // Load all class data at modal load for instant class switching
+  useEffect(() => {
+    const loadAllClassData = async () => {
+      if (isLoadingAllClassData || Object.keys(allClassDataCache).length > 0) return;
+      
+      console.log('🚀 Loading all class data for instant switching...');
+      setIsLoadingAllClassData(true);
+      
+      try {
+        const allClasses = ['Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard'];
+        const classDataPromises = allClasses.map(async (className) => {
+          try {
+            const [weaponSuggestions, armorSuggestions, weaponProficiencies, armorProficiencies, classData, spellLimits] = await Promise.all([
+              fetch(`/api/weapon-suggestions?className=${encodeURIComponent(className)}`)
+                .then(res => res.ok ? res.json() : [])
+                .catch(() => []),
+              fetch(`/api/armor-suggestions?className=${encodeURIComponent(className)}`)
+                .then(res => res.ok ? res.json() : [])
+                .catch(() => []),
+              fetch(`/api/class-proficiencies?className=${encodeURIComponent(className)}`)
+                .then(res => res.ok ? res.json() : { simple: false, martial: false, specific: [] })
+                .catch(() => ({ simple: false, martial: false, specific: [] })),
+              fetch(`/api/class-proficiencies?className=${encodeURIComponent(className)}&includeArmor=true`)
+                .then(res => res.ok ? res.json() : { armor: [] })
+                .catch(() => ({ armor: [] })),
+              fetch(`/api/classes/${encodeURIComponent(className)}`)
+                .then(res => res.ok ? res.json() : null)
+                .catch(() => null),
+              fetch(`/api/classes/${encodeURIComponent(className)}/spell-limits?level=1`)
+                .then(res => res.ok ? res.json() : null)
+                .catch(() => null)
+            ]);
+            
+            return {
+              className,
+              data: {
+                weaponSuggestions,
+                armorSuggestions,
+                weaponProficiencies,
+                armorProficiencies: armorProficiencies.armor || [],
+                phbDescription: classData?.phbDescription || null,
+                spellLimits
+              }
+            };
+          } catch (error) {
+            console.warn(`Failed to load data for ${className}:`, error);
+            return {
+              className,
+              data: {
+                weaponSuggestions: [],
+                armorSuggestions: [],
+                weaponProficiencies: { simple: false, martial: false, specific: [] },
+                armorProficiencies: [],
+                phbDescription: null,
+                spellLimits: null
+              }
+            };
+          }
+        });
+        
+        const results = await Promise.all(classDataPromises);
+        const cache: Record<string, {
+          weaponSuggestions: WeaponSuggestion[];
+          armorSuggestions: ArmorSuggestion[];
+          weaponProficiencies: { simple: boolean; martial: boolean; specific: string[] };
+          armorProficiencies: string[];
+          phbDescription: string | null;
+          spellLimits: {
+            cantripsKnown: number;
+            spellsKnown: number;
+            spellcastingType: string;
+            maxSpellLevel: number;
+            spellLevelLimits: Record<string, number>;
+          } | null;
+        }> = {};
+        
+        results.forEach(({ className, data }) => {
+          cache[className] = data;
+        });
+        
+        setAllClassDataCache(cache);
+        console.log('✅ All class data loaded and cached:', Object.keys(cache));
+        
+        // Also update the individual caches for backward compatibility
+        setCachedSpellLimits(prev => {
+          const newCache = { ...prev };
+          results.forEach(({ className, data }) => {
+            if (data.spellLimits) {
+              newCache[`${className}-1`] = data.spellLimits;
+            }
+          });
+          return newCache;
+        });
+        
+      } catch (error) {
+        console.error('Failed to load all class data:', error);
+      } finally {
+        setIsLoadingAllClassData(false);
+      }
+    };
+    
+    loadAllClassData();
+  }, []); // Only run once when modal opens
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
