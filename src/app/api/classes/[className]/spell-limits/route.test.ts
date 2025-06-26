@@ -17,7 +17,7 @@ describe('/api/classes/[className]/spell-limits', () => {
     jest.clearAllMocks();
   });
 
-  it('should return spell limits for a valid class and level', async () => {
+  it('should return spell limits for a valid spellcasting class and level', async () => {
     const mockSpellLimits = {
       cantripsKnown: 3,
       spellsKnown: 6,
@@ -39,7 +39,44 @@ describe('/api/classes/[className]/spell-limits', () => {
     );
   });
 
-  it('should return 404 for non-existent class', async () => {
+  it('should return default values for non-spellcasting classes without hitting database', async () => {
+    const request = new NextRequest('http://localhost:3000/api/classes/Fighter/spell-limits?level=1');
+    const response = await GET(request, { params: { className: 'Fighter' } });
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data).toEqual({
+      cantripsKnown: 0,
+      spellsKnown: 0,
+      spellcastingType: 'none',
+      maxSpellLevel: 0,
+      spellLevelLimits: {}
+    });
+    expect(mockPrisma.$queryRaw).not.toHaveBeenCalled();
+  });
+
+  it('should return default values for all non-spellcasting classes', async () => {
+    const nonSpellcastingClasses = ['Barbarian', 'Fighter', 'Monk', 'Rogue'];
+    
+    for (const className of nonSpellcastingClasses) {
+      const request = new NextRequest(`http://localhost:3000/api/classes/${className}/spell-limits?level=1`);
+      const response = await GET(request, { params: { className } });
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data).toEqual({
+        cantripsKnown: 0,
+        spellsKnown: 0,
+        spellcastingType: 'none',
+        maxSpellLevel: 0,
+        spellLevelLimits: {}
+      });
+    }
+    
+    expect(mockPrisma.$queryRaw).not.toHaveBeenCalled();
+  });
+
+  it('should return 404 for non-existent spellcasting class', async () => {
     mockPrisma.$queryRaw.mockResolvedValue([]);
 
     const request = new NextRequest('http://localhost:3000/api/classes/NonExistentClass/spell-limits?level=1');
@@ -69,7 +106,7 @@ describe('/api/classes/[className]/spell-limits', () => {
     expect(data).toEqual(mockSpellLimits);
   });
 
-  it('should handle database errors gracefully', async () => {
+  it('should handle database errors gracefully for spellcasting classes', async () => {
     mockPrisma.$queryRaw.mockRejectedValue(new Error('Database connection failed'));
 
     const request = new NextRequest('http://localhost:3000/api/classes/Wizard/spell-limits?level=1');

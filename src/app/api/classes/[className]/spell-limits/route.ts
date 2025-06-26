@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+// Spellcasting classes in D&D 5e
+const SPELLCASTING_CLASSES = [
+  'Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger', 'Sorcerer', 'Warlock', 'Wizard'
+];
+
+/**
+ * Check if a class can cast spells
+ */
+function canClassCastSpells(className: string): boolean {
+  return SPELLCASTING_CLASSES.includes(className);
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ className: string }> }
@@ -10,6 +22,18 @@ export async function GET(
     const level = parseInt(searchParams.get('level') || '1');
     const { className } = await params;
     const decodedClassName = decodeURIComponent(className);
+
+    // Check if this class can cast spells using application logic
+    if (!canClassCastSpells(decodedClassName)) {
+      // Return default values for non-spellcasting classes
+      return NextResponse.json({
+        cantripsKnown: 0,
+        spellsKnown: 0,
+        spellcastingType: 'none',
+        maxSpellLevel: 0,
+        spellLevelLimits: {}
+      });
+    }
 
     // Get spell limits using raw SQL query since Prisma client doesn't have the new model yet
     const result = await prisma.$queryRaw`

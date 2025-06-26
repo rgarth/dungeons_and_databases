@@ -62,6 +62,18 @@ export interface Character {
 
 export class LevelUpService {
   
+  // Spellcasting classes in D&D 5e
+  private readonly SPELLCASTING_CLASSES = [
+    'Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger', 'Sorcerer', 'Warlock', 'Wizard'
+  ];
+  
+  /**
+   * Check if a class can cast spells
+   */
+  private canClassCastSpells(className: string): boolean {
+    return this.SPELLCASTING_CLASSES.includes(className);
+  }
+  
   /**
    * Get available level-up options for a character
    */
@@ -290,7 +302,8 @@ export class LevelUpService {
     newLevel: number, 
     progression: ClassProgression
   ): LevelUpOptions['spellOptions'] {
-    if (!progression.spellsKnown && !progression.spellSlots) {
+    // Check if this class can cast spells using application logic
+    if (!this.canClassCastSpells(className)) {
       return undefined; // Not a spellcasting class
     }
     

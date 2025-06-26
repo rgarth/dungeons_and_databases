@@ -1155,9 +1155,13 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       
       try {
         const allClasses = ['Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard'];
+        const spellcastingClasses = ['Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger', 'Sorcerer', 'Warlock', 'Wizard'];
+        
         const classDataPromises = allClasses.map(async (className) => {
           try {
-            const [weaponSuggestions, armorSuggestions, weaponProficiencies, armorProficiencies, classData, spellLimits] = await Promise.all([
+            const isSpellcastingClass = spellcastingClasses.includes(className);
+            
+            const [weaponSuggestions, armorSuggestions, weaponProficiencies, armorProficiencies, classData] = await Promise.all([
               fetch(`/api/weapon-suggestions?className=${encodeURIComponent(className)}`)
                 .then(res => res.ok ? res.json() : [])
                 .catch(() => []),
@@ -1172,11 +1176,21 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 .catch(() => ({ armor: [] })),
               fetch(`/api/classes/${encodeURIComponent(className)}`)
                 .then(res => res.ok ? res.json() : null)
-                .catch(() => null),
-              fetch(`/api/classes/${encodeURIComponent(className)}/spell-limits?level=1`)
-                .then(res => res.ok ? res.json() : null)
                 .catch(() => null)
             ]);
+            
+            // Only fetch spell limits for spellcasting classes
+            let spellLimits = null;
+            if (isSpellcastingClass) {
+              try {
+                const spellLimitsResponse = await fetch(`/api/classes/${encodeURIComponent(className)}/spell-limits?level=1`);
+                if (spellLimitsResponse.ok) {
+                  spellLimits = await spellLimitsResponse.json();
+                }
+              } catch (error) {
+                console.warn(`Failed to load spell limits for ${className}:`, error);
+              }
+            }
             
             return {
               className,
