@@ -247,7 +247,7 @@ model Subrace {
   race                 DndRace  @relation(fields: [raceId], references: [id], onDelete: Cascade)
 
   @@index([raceId])
-  @@map("subrace")
+  @@map("Subrace")
 }
 
 model Background {
