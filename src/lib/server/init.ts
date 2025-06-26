@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/db';
-import { DndRace, DndClass, Alignment, EquipmentPack, Armor, MagicalItem, Treasure, Subrace } from '@prisma/client';
+import { DndRace, DndClass, Alignment, EquipmentPack, Armor, MagicalItem, Treasure, Subrace, Weapon } from '@prisma/client';
 import { BackgroundData } from '@/components/shared/BackgroundSelector';
 import { withRetry } from '@/lib/db-helpers';
 
@@ -10,6 +10,7 @@ export let cachedBackgrounds: BackgroundData[] | null = null;
 export let cachedAlignments: Alignment[] | null = null;
 export let cachedEquipmentPacks: EquipmentPack[] | null = null;
 export let cachedArmor: Armor[] | null = null;
+export let cachedWeapons: Weapon[] | null = null;
 export let cachedMagicalItems: MagicalItem[] | null = null;
 export let cachedTreasures: Treasure[] | null = null;
 export let cachedSubraces: (Subrace & { race: { name: string } })[] | null = null;
@@ -59,6 +60,7 @@ export async function initializeServerCache() {
       alignments,
       equipmentPacks,
       armor,
+      weapons,
       magicalItems,
       treasures,
       subraces
@@ -101,6 +103,9 @@ export async function initializeServerCache() {
         orderBy: { name: 'asc' }
       })),
       withRetry(() => prisma.armor.findMany({
+        orderBy: { name: 'asc' }
+      })),
+      withRetry(() => prisma.weapon.findMany({
         orderBy: { name: 'asc' }
       })),
       withRetry(() => prisma.magicalItem.findMany({
@@ -166,6 +171,7 @@ export async function initializeServerCache() {
     cachedAlignments = alignments;
     cachedEquipmentPacks = equipmentPacks;
     cachedArmor = armor;
+    cachedWeapons = weapons;
     cachedMagicalItems = magicalItems;
     cachedTreasures = treasures;
     cachedSubraces = subraces;
@@ -178,6 +184,7 @@ export async function initializeServerCache() {
     console.log('- Alignments:', alignments.length);
     console.log('- Equipment Packs:', equipmentPacks.length);
     console.log('- Armor:', armor.length);
+    console.log('- Weapons:', weapons.length);
     console.log('- Magical Items:', magicalItems.length);
     console.log('- Treasures:', treasures.length);
     console.log('- Subraces:', subraces.length);

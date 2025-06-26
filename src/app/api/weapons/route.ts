@@ -1,8 +1,15 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { cachedWeapons } from '@/lib/server/init';
 
 export async function GET() {
   try {
+    // Return cached data if available
+    if (cachedWeapons) {
+      return NextResponse.json(cachedWeapons);
+    }
+
+    // Fallback to database if cache is not initialized
     const weapons = await prisma.weapon.findMany({
       orderBy: {
         name: 'asc'
