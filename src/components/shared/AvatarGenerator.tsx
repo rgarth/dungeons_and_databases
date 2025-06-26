@@ -65,9 +65,18 @@ export function AvatarGenerator({
         }
       } else {
         const errorData = await response.json();
+        let errorMessage = errorData.error || 'Failed to generate avatar';
+        
+        // Provide more helpful error messages
+        if (response.status === 401) {
+          errorMessage = 'Please sign in to generate avatars. Your session may have expired.';
+        } else if (response.status === 500) {
+          errorMessage = 'Avatar generation service is temporarily unavailable. Please try again.';
+        }
+        
         setResult({
           success: false,
-          error: errorData.error || 'Failed to generate avatar'
+          error: errorMessage
         });
       }
     } catch (error) {
