@@ -34,12 +34,12 @@ export function LoadingModal({ onComplete }: LoadingModalProps) {
     { id: 'treasures', name: 'Treasures', status: 'pending' },
   ]);
 
-  // Timeout fallback - complete after 10 seconds regardless
+  // Timeout fallback - complete after 30 seconds regardless
   useEffect(() => {
     const timeout = setTimeout(() => {
       console.log('Loading modal timeout - forcing completion');
       onComplete();
-    }, 10000);
+    }, 30000);
 
     return () => clearTimeout(timeout);
   }, [onComplete]);
@@ -286,8 +286,9 @@ export function LoadingModal({ onComplete }: LoadingModalProps) {
       items: loadingItems.map(item => ({ id: item.id, status: item.status }))
     });
     
-    // Complete if all items are loaded OR if all items have been attempted (even with some errors)
-    if (allLoaded || (allAttempted && !hasErrors)) {
+    // Only complete if ALL items are successfully loaded
+    // Don't complete if there are any errors or pending items
+    if (allLoaded) {
       console.log('Loading modal completing...');
       // Small delay to show completion
       setTimeout(() => {

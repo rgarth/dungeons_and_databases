@@ -14,6 +14,10 @@ export let cachedMagicalItems: MagicalItem[] | null = null;
 export let cachedTreasures: Treasure[] | null = null;
 export let cachedSubraces: (Subrace & { race: { name: string } })[] | null = null;
 
+// Guard to prevent multiple initializations
+let isInitializing = false;
+let isInitialized = false;
+
 // Helper function to safely parse JSON
 function safeParse<T>(value: unknown): T {
   if (typeof value === 'string') {
@@ -28,6 +32,22 @@ function safeParse<T>(value: unknown): T {
 }
 
 export async function initializeServerCache() {
+  // Prevent multiple simultaneous initializations
+  if (isInitializing) {
+    console.log('🔄 Cache initialization already in progress, waiting...');
+    while (isInitializing) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    return;
+  }
+
+  // Prevent multiple initializations
+  if (isInitialized) {
+    console.log('✅ Cache already initialized, skipping...');
+    return;
+  }
+
+  isInitializing = true;
   console.log('🔄 Initializing server cache...');
   
   try {
@@ -150,6 +170,7 @@ export async function initializeServerCache() {
     cachedTreasures = treasures;
     cachedSubraces = subraces;
 
+    isInitialized = true;
     console.log('✅ Server cache initialized:');
     console.log('- Races:', races.length);
     console.log('- Classes:', classes.length);
@@ -164,5 +185,7 @@ export async function initializeServerCache() {
   } catch (error) {
     console.error('❌ Failed to initialize server cache:', error);
     throw error;
+  } finally {
+    isInitializing = false;
   }
 } 
