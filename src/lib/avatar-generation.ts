@@ -172,26 +172,34 @@ const REPLICATE_BASE_URL = 'https://api.replicate.com/v1';
 export async function generateAvatar(characterData: CharacterAvatarData): Promise<AvatarResult> {
   console.log('🎨 Starting avatar generation for:', characterData);
   
-  // Use Replicate with Flux.schnell for faster generation
-  if (REPLICATE_API_KEY) {
-    try {
-      console.log('🔄 Generating with Replicate Flux.schnell...');
-      const replicateResult = await generateWithReplicateFluxSchnell(characterData);
-      if (replicateResult.success) {
-        console.log('✅ Replicate Flux.schnell successful');
-        return { ...replicateResult, service: 'Replicate Flux.schnell' };
-      }
-      console.log('❌ Replicate Flux.schnell failed:', replicateResult.error);
-    } catch (error) {
-      console.log('❌ Replicate Flux.schnell error:', error);
-    }
+  // Check if API key is available
+  if (!REPLICATE_API_KEY) {
+    console.error('❌ REPLICATE_API_KEY not found in environment variables');
+    return {
+      success: false,
+      error: 'Avatar generation service not configured (missing API key)'
+    };
   }
-
-  console.log('❌ Avatar generation service unavailable');
-  return {
-    success: false,
-    error: 'Avatar generation service is currently unavailable'
-  };
+  
+  console.log('✅ REPLICATE_API_KEY found, attempting generation...');
+  
+  // Use Replicate with Flux.schnell for faster generation
+  try {
+    console.log('🔄 Generating with Replicate Flux.schnell...');
+    const replicateResult = await generateWithReplicateFluxSchnell(characterData);
+    if (replicateResult.success) {
+      console.log('✅ Replicate Flux.schnell successful');
+      return { ...replicateResult, service: 'Replicate Flux.schnell' };
+    }
+    console.log('❌ Replicate Flux.schnell failed:', replicateResult.error);
+    return replicateResult;
+  } catch (error) {
+    console.error('❌ Replicate Flux.schnell error:', error);
+    return {
+      success: false,
+      error: `Avatar generation error: ${error instanceof Error ? error.message : 'Unknown error'}`
+    };
+  }
 }
 
 async function generateWithReplicateFluxSchnell(characterData: CharacterAvatarData): Promise<AvatarResult> {
@@ -203,29 +211,36 @@ async function generateWithReplicateFluxSchnell(characterData: CharacterAvatarDa
     const fullBodyPrompt = generateServerPrompt(characterData);
 
     console.log('🎨 Full Body Prompt:', fullBodyPrompt);
+    console.log('🔑 Using API key:', REPLICATE_API_KEY ? 'Present' : 'Missing');
 
     // Generate full body image with correct Flux.schnell parameters
+    const requestBody = {
+      version: 'black-forest-labs/flux-schnell',
+      input: {
+        prompt: fullBodyPrompt,
+        go_fast: true,
+        megapixels: "1",
+        num_outputs: 1,
+        aspect_ratio: "9:16", // Taller for full body
+        output_format: "webp",
+        output_quality: 80,
+        num_inference_steps: 4,
+        seed: sharedSeed
+      }
+    };
+
+    console.log('📤 Sending request to Replicate:', JSON.stringify(requestBody, null, 2));
+
     const fullBodyResponse = await fetch(`${REPLICATE_BASE_URL}/predictions`, {
       method: 'POST',
       headers: {
         'Authorization': `Token ${REPLICATE_API_KEY}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        version: 'black-forest-labs/flux-schnell',
-        input: {
-          prompt: fullBodyPrompt,
-          go_fast: true,
-          megapixels: "1",
-          num_outputs: 1,
-          aspect_ratio: "9:16", // Taller for full body
-          output_format: "webp",
-          output_quality: 80,
-          num_inference_steps: 4,
-          seed: sharedSeed
-        }
-      })
+      body: JSON.stringify(requestBody)
     });
+
+    console.log('📥 Replicate response status:', fullBodyResponse.status);
 
     if (!fullBodyResponse.ok) {
       const errorText = await fullBodyResponse.text();
@@ -237,9 +252,12 @@ async function generateWithReplicateFluxSchnell(characterData: CharacterAvatarDa
     }
 
     const fullBodyPrediction = await fullBodyResponse.json();
+    console.log('📋 Replicate prediction created:', fullBodyPrediction.id);
+    
     const fullBodyImage = await pollForCompletion(fullBodyPrediction.id);
 
     if (fullBodyImage) {
+      console.log('✅ Full body image generated successfully');
       // Return only the full body image - client will crop it for avatar
       return {
         success: true,
