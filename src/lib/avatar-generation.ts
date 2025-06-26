@@ -68,6 +68,13 @@ const AASIMAR_CELESTIAL_FEATURES: Record<string, string> = {
   'Fallen Aasimar': 'shadowy halo, corrupted aura, dark glow, fallen features, corrupted appearance, necrotic presence, tainted wings, shadowy eyes',
 };
 
+// Single source of truth: Tiefling subrace to infernal features mapping
+const TIEFLING_INFERNAL_FEATURES: Record<string, string> = {
+  'Asmodeus Tiefling': 'red skin, prominent horns, long tail, infernal heritage, demonic features, asmodeus bloodline',
+  'Baalzebul Tiefling': 'green skin, prominent horns, long tail, infernal heritage, insect-like features, baalzebul bloodline',
+  'Mephistopheles Tiefling': 'red skin, prominent horns, long tail, infernal heritage, demonic features, mephistopheles bloodline',
+};
+
 // Utility function to get random item from array
 function getRandomItem<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
@@ -108,13 +115,35 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
         raceDescription = 'stout humanoid with broad features and thick hair';
         break;
       case 'Elf':
-        raceDescription = 'tall humanoid with pointed ears and graceful features';
+        // Check if this is a Drow subrace
+        if (subrace === 'Drow') {
+          raceDescription = 'dark elf with black skin, white hair, red eyes, pointed ears, graceful features, underdark heritage, drow appearance';
+          // Skip skin tone and ethnicity diversity for drow - they have specific appearance
+          appearanceDescription = `, A ${ageDesc} ${raceDescription} with age-appropriate features`;
+          
+          // Add body type diversity for drow
+          const bodyType = getRandomItem(BODY_TYPES);
+          appearanceDescription += `, ${bodyType}`;
+          
+          // Create the full prompt for drow
+          const clothing = CLASS_CLOTHING[characterClass as keyof typeof CLASS_CLOTHING] || 'appropriate clothing';
+          const fullBodyPrompt = `A professional full-body photograph of a ${characterDescription}${appearanceDescription} in ${clothing}, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping${cameraAngle || ''}`;
+          
+          return fullBodyPrompt;
+        } else {
+          raceDescription = 'tall humanoid with pointed ears and graceful features';
+        }
         break;
       case 'Human':
         raceDescription = 'human';
         break;
       case 'Tiefling':
-        raceDescription = 'demon-blooded humanoid with prominent horns, red skin, glowing eyes, and a long tail';
+        // Check if this is a specific Tiefling subrace
+        if (subrace && TIEFLING_INFERNAL_FEATURES[subrace]) {
+          raceDescription = TIEFLING_INFERNAL_FEATURES[subrace];
+        } else {
+          raceDescription = 'demon-blooded humanoid with prominent horns, red skin, glowing eyes, and a long tail';
+        }
         break;
       case 'Dragonborn': {
         // Inject scale color for Dragonborn subraces
@@ -146,8 +175,8 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
     
     appearanceDescription = `, A ${ageDesc} ${raceDescription} with age-appropriate features`;
     
-    // Add skin tone diversity for races that need it
-    if (SKIN_TONE_RACES.includes(race)) {
+    // Add skin tone diversity for races that need it (but NOT for drow)
+    if (SKIN_TONE_RACES.includes(race) && subrace !== 'Drow') {
       const skinTone = getRandomItem(SKIN_TONES);
       const ethnicity = getRandomItem(ETHNICITIES);
       appearanceDescription += `, ${ethnicity} with ${skinTone}`;
