@@ -5,16 +5,18 @@ import { useState } from "react";
 import { Plus, LogOut } from "lucide-react";
 import { CharacterCard } from "../components/character-card";
 import { CreateCharacterModal } from "../components/create-character-modal";
+import { LoadingModal } from "../components/loading-modal";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Character } from "@/types/character";
 
 export default function Home() {
   const { data: session, status } = useSession();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [assetsLoaded, setAssetsLoaded] = useState(false);
   const queryClient = useQueryClient();
 
   // Fetch characters using React Query
-  const { data: characters = [], isLoading } = useQuery<Character[]>({
+  const { data: characters = [] } = useQuery<Character[]>({
     queryKey: ['characters'],
     queryFn: async () => {
       const response = await fetch("/api/characters");
@@ -48,12 +50,10 @@ export default function Home() {
     }, 2000);
   };
 
-  // Show spinner while auth is loading OR while we have a session but haven't loaded characters yet
-  if (status === "loading" || (session && isLoading)) {
+  // Show loading modal while auth is loading OR while we have a session but haven't loaded all assets yet
+  if (status === "loading" || (session && !assetsLoaded)) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
-      </div>
+      <LoadingModal onComplete={() => setAssetsLoaded(true)} />
     );
   }
 
