@@ -10,6 +10,8 @@ import { seedEquipmentPacks } from './seed-equipment-packs'
 import { seedWeaponSuggestions } from './seed-weapon-suggestions'
 import { seedArmorSuggestions } from './seed-armor-suggestions'
 import { seedSpellSuggestions } from './seed-spell-suggestions'
+import { seedClassSpellLimits } from './seed-class-spell-limits'
+import { seedSpellLevelLimits } from './seed-spell-level-limits'
 
 const prisma = new PrismaClient()
 
@@ -20,7 +22,7 @@ interface SeedOptions {
 }
 
 async function checkExistingData() {
-  const [spellCount, weaponCount, armorCount, equipmentCount, magicalItemCount, treasureCount, raceCount, classCount, backgroundCount, alignmentCount, equipmentPackCount, weaponSuggestionCount, armorSuggestionCount, spellSuggestionCount] = await Promise.all([
+  const [spellCount, weaponCount, armorCount, equipmentCount, magicalItemCount, treasureCount, raceCount, classCount, backgroundCount, alignmentCount, equipmentPackCount, weaponSuggestionCount, armorSuggestionCount, spellSuggestionCount, spellLimitsCount] = await Promise.all([
     prisma.spell.count(),
     prisma.weapon.count(),
     prisma.armor.count(),
@@ -34,7 +36,8 @@ async function checkExistingData() {
     prisma.equipmentPack.count(),
     prisma.classWeaponSuggestion.count(),
     prisma.classArmorSuggestion.count(),
-    prisma.classSpellSuggestion.count()
+    prisma.classSpellSuggestion.count(),
+    prisma.classSpellLimits.count()
   ])
   
   return {
@@ -52,7 +55,8 @@ async function checkExistingData() {
     weaponSuggestions: weaponSuggestionCount,
     armorSuggestions: armorSuggestionCount,
     spellSuggestions: spellSuggestionCount,
-    total: spellCount + weaponCount + armorCount + equipmentCount + magicalItemCount + treasureCount + raceCount + classCount + backgroundCount + alignmentCount + equipmentPackCount + weaponSuggestionCount + armorSuggestionCount + spellSuggestionCount
+    spellLimits: spellLimitsCount,
+    total: spellCount + weaponCount + armorCount + equipmentCount + magicalItemCount + treasureCount + raceCount + classCount + backgroundCount + alignmentCount + equipmentPackCount + weaponSuggestionCount + armorSuggestionCount + spellSuggestionCount + spellLimitsCount
   }
 }
 
@@ -65,6 +69,7 @@ async function clearExistingData() {
   await prisma.classWeaponSuggestion.deleteMany()
   await prisma.classArmorSuggestion.deleteMany()
   await prisma.classSpellSuggestion.deleteMany()
+  await prisma.classSpellLimits.deleteMany()
   await prisma.classWeaponProficiency.deleteMany()
   await prisma.classArmorProficiency.deleteMany()
   await prisma.dndClass.deleteMany()
@@ -154,6 +159,7 @@ async function validateSeeding() {
   console.log(`  Weapon Suggestions: ${counts.weaponSuggestions}`)
   console.log(`  Armor Suggestions: ${counts.armorSuggestions}`)
   console.log(`  Spell Suggestions: ${counts.spellSuggestions}`)
+  console.log(`  Spell Limits: ${counts.spellLimits}`)
   console.log(`  Total: ${counts.total} items`)
   
   return counts
@@ -209,6 +215,8 @@ export async function seedDatabase(options: SeedOptions = {}) {
     await seedWeaponSuggestions() // Depends on classes and weapons
     await seedArmorSuggestions() // Depends on classes and armor
     await seedSpellSuggestions() // Depends on spells
+    await seedClassSpellLimits() // Depends on classes and spells
+    await seedSpellLevelLimits() // Depends on spells
     
     // Validate results
     const finalCounts = await validateSeeding()

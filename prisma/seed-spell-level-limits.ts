@@ -3,7 +3,7 @@ import { spellLevelLimitsData } from './data/spell-level-limits-data';
 
 const prisma = new PrismaClient();
 
-async function seedSpellLevelLimits() {
+export async function seedSpellLevelLimits() {
   console.log('🌱 Seeding spell level limits...');
 
   try {

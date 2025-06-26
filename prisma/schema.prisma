@@ -418,5 +418,5 @@ model ClassSpellLimits {
   @@unique([classId, level])
   @@index([classId])
   @@index([level])
-  @@map("class_spell_limits")
+  @@map("ClassSpellLimits")
 }
