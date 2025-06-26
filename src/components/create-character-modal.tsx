@@ -556,7 +556,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     };
 
     loadCreationOptions();
-  }, [characterClass, characterCreationService, allClassDataCache]);
+  }, [characterClass, characterCreationService]); // Removed allClassDataCache from dependencies
 
   // Get creation options from state (with fallback)
   const { needsSubclassAtCreation = false, spellcasting = { ability: null, canCastAtLevel1: false, availableSpells: [], spellSlots: {} } } = creationOptions || {};
