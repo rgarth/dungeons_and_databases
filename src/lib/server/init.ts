@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/db';
-import { DndRace, DndClass, Alignment, EquipmentPack, Armor, MagicalItem, Treasure } from '@prisma/client';
+import { DndRace, DndClass, Alignment, EquipmentPack, Armor, MagicalItem, Treasure, Subrace } from '@prisma/client';
 import { BackgroundData } from '@/components/shared/BackgroundSelector';
 import { withRetry } from '@/lib/db-helpers';
 
@@ -12,6 +12,7 @@ export let cachedEquipmentPacks: EquipmentPack[] | null = null;
 export let cachedArmor: Armor[] | null = null;
 export let cachedMagicalItems: MagicalItem[] | null = null;
 export let cachedTreasures: Treasure[] | null = null;
+export let cachedSubraces: (Subrace & { race: { name: string } })[] | null = null;
 
 // Helper function to safely parse JSON
 function safeParse<T>(value: unknown): T {
@@ -39,7 +40,8 @@ export async function initializeServerCache() {
       equipmentPacks,
       armor,
       magicalItems,
-      treasures
+      treasures,
+      subraces
     ] = await Promise.all([
       withRetry(() => prisma.dndRace.findMany({
         orderBy: { name: 'asc' }
@@ -98,6 +100,25 @@ export async function initializeServerCache() {
           updatedAt: true
         },
         orderBy: { name: 'asc' }
+      })),
+      withRetry(() => prisma.subrace.findMany({
+        include: {
+          race: {
+            select: {
+              name: true
+            }
+          }
+        },
+        orderBy: [
+          {
+            race: {
+              name: 'asc'
+            }
+          },
+          {
+            name: 'asc'
+          }
+        ]
       }))
     ]);
 
@@ -127,6 +148,7 @@ export async function initializeServerCache() {
     cachedArmor = armor;
     cachedMagicalItems = magicalItems;
     cachedTreasures = treasures;
+    cachedSubraces = subraces;
 
     console.log('✅ Server cache initialized:');
     console.log('- Races:', races.length);
@@ -137,6 +159,7 @@ export async function initializeServerCache() {
     console.log('- Armor:', armor.length);
     console.log('- Magical Items:', magicalItems.length);
     console.log('- Treasures:', treasures.length);
+    console.log('- Subraces:', subraces.length);
 
   } catch (error) {
     console.error('❌ Failed to initialize server cache:', error);
