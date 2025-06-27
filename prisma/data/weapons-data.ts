@@ -126,7 +126,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 5,
     properties: "Ammunition (range 80/320), Loading, Two-Handed",
-    description: "A small crossbow that fires bolts."
+    description: "A small crossbow that fires bolts.",
+    ammunitionTypeId: 2,
+    suggestedQuantity: 20
   },
   {
     name: "Dart",
@@ -137,7 +139,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 0.25,
     properties: "Finesse, Thrown (range 20/60)",
-    description: "A small, pointed missile designed for throwing."
+    description: "A small, pointed missile designed for throwing.",
+    ammunitionTypeId: null,
+    suggestedQuantity: null
   },
   {
     name: "Shortbow",
@@ -148,7 +152,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 2,
     properties: "Ammunition (range 80/320), Two-Handed",
-    description: "A small bow designed for quick shots."
+    description: "A small bow designed for quick shots.",
+    ammunitionTypeId: 1,
+    suggestedQuantity: 20
   },
   {
     name: "Sling",
@@ -159,7 +165,9 @@ export const weaponsData = [
     damageType: "Bludgeoning",
     weight: 0,
     properties: "Ammunition (range 30/120)",
-    description: "A leather strap used to hurl small stones or bullets."
+    description: "A leather strap used to hurl small stones or bullets.",
+    ammunitionTypeId: 3,
+    suggestedQuantity: 20
   },
 
   // Martial Melee Weapons
@@ -372,7 +380,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 1,
     properties: "Ammunition (range 25/100), Loading",
-    description: "A long tube used to blow small darts."
+    description: "A long tube used to blow small darts.",
+    ammunitionTypeId: 4,
+    suggestedQuantity: 50
   },
   {
     name: "Crossbow, Hand",
@@ -383,7 +393,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 3,
     properties: "Ammunition (range 30/120), Light, Loading",
-    description: "A small crossbow that can be used with one hand."
+    description: "A small crossbow that can be used with one hand.",
+    ammunitionTypeId: 2,
+    suggestedQuantity: 20
   },
   {
     name: "Crossbow, Heavy",
@@ -394,7 +406,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 18,
     properties: "Ammunition (range 100/400), Heavy, Loading, Two-Handed",
-    description: "A large crossbow that fires heavy bolts."
+    description: "A large crossbow that fires heavy bolts.",
+    ammunitionTypeId: 2,
+    suggestedQuantity: 20
   },
   {
     name: "Longbow",
@@ -405,7 +419,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 2,
     properties: "Ammunition (range 150/600), Heavy, Two-Handed",
-    description: "A large bow designed for long-range shots."
+    description: "A large bow designed for long-range shots.",
+    ammunitionTypeId: 1,
+    suggestedQuantity: 20
   },
   {
     name: "Net",
@@ -416,6 +432,8 @@ export const weaponsData = [
     damageType: "",
     weight: 3,
     properties: "Special, Thrown (range 5/15)",
-    description: "A net designed to entangle targets."
+    description: "A net designed to entangle targets.",
+    ammunitionTypeId: null,
+    suggestedQuantity: null
   }
 ] 

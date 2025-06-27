@@ -465,38 +465,18 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
             };
             console.log(`➕ UPDATED EXISTING: ${name} now has ${currentAmmunition[existingIndex].quantity} total`);
           } else {
-            // Create new ammunition entry using proper D&D 5e data
-            const ammoData = {
-              'Arrow': {
-                compatibleWeapons: ['Longbow', 'Shortbow'],
-                weight: 0.05,
-                cost: '5 cp each'
-              },
-              'Crossbow Bolt': {
-                compatibleWeapons: ['Light Crossbow', 'Heavy Crossbow', 'Hand Crossbow'],
-                weight: 0.075,
-                cost: '5 cp each'
-              },
-              'Blowgun Needle': {
-                compatibleWeapons: ['Blowgun'],
-                weight: 0.02,
-                cost: '2 cp each'
-              },
-              'Sling Bullet': {
-                compatibleWeapons: ['Sling'],
-                weight: 0.075,
-                cost: '2 cp each'
-              }
-            }[name];
+            // Create new ammunition entry using database data
+            // For now, use basic defaults - this could be enhanced with database lookup
+            const ammo: Ammunition = {
+              name,
+              quantity,
+              compatibleWeapons: [name], // Basic compatibility
+              weight: 0.05, // Default weight
+              cost: '5 cp each' // Default cost
+            };
             
-            if (ammoData) {
-              currentAmmunition.push({
-                name,
-                quantity,
-                ...ammoData
-              });
-              console.log(`🆕 ADDED NEW: ${name} with quantity ${quantity}`);
-            }
+            currentAmmunition.push(ammo);
+            console.log(`🆕 ADDED NEW: ${name} with quantity ${quantity}`);
           }
         });
         

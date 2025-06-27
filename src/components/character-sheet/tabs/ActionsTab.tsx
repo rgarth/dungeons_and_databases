@@ -375,17 +375,30 @@ export function ActionsTab({
                       
                       {/* Ammunition Tracking for Ranged Weapons */}
                       {weapon.properties.some(prop => prop.startsWith('Ammunition')) && (() => {
-                        // Determine ammo type based on weapon
+                        // Use the weapon's ammunitionTypeId to determine ammo type
                         let ammoType: string;
-                        if (weapon.name.toLowerCase().includes('crossbow')) {
-                          ammoType = 'Crossbow Bolt';
-                        } else if (weapon.name.toLowerCase().includes('blowgun')) {
-                          ammoType = 'Blowgun Needle';
-                        } else if (weapon.name.toLowerCase().includes('sling')) {
-                          ammoType = 'Sling Bullet';
+                        
+                        if (weapon.ammunitionTypeId) {
+                          // Map ammunitionTypeId to ammunition names
+                          const ammoTypeMap: { [key: number]: string } = {
+                            1: 'Arrows',
+                            2: 'Crossbow Bolts', 
+                            3: 'Sling Bullets',
+                            4: 'Blowgun Needles'
+                          };
+                          ammoType = ammoTypeMap[weapon.ammunitionTypeId] || 'Ammunition';
                         } else {
-                          // Default to arrows for bows
-                          ammoType = 'Arrow';
+                          // Fallback to weapon name detection for backward compatibility
+                          if (weapon.name.toLowerCase().includes('crossbow')) {
+                            ammoType = 'Crossbow Bolts';
+                          } else if (weapon.name.toLowerCase().includes('blowgun')) {
+                            ammoType = 'Blowgun Needles';
+                          } else if (weapon.name.toLowerCase().includes('sling')) {
+                            ammoType = 'Sling Bullets';
+                          } else {
+                            // Default to arrows for bows
+                            ammoType = 'Arrows';
+                          }
                         }
                         
                         // Find ammo in character's ammunition (including 0 quantity)
