@@ -65,6 +65,18 @@ interface Subclass {
   description?: string;
 }
 
+interface Subrace {
+  id: string;
+  name: string;
+  description: string;
+  abilityScoreIncrease: string;
+  traits: string[];
+  languages?: string[] | null;
+  race: {
+    name: string;
+  };
+}
+
 export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateCharacterModalProps) {
   // Add missing state variables
   const [showWeaponSelector, setShowWeaponSelector] = useState(false);
@@ -168,6 +180,10 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     };
   }>>({});
   const [isLoadingAllClassData, setIsLoadingAllClassData] = useState(false);
+
+  // Cache all subrace data at modal load for instant race switching
+  const [allSubraceData, setAllSubraceData] = useState<Record<string, Subrace[]>>({});
+  const [isLoadingAllSubraceData, setIsLoadingAllSubraceData] = useState(false);
 
   // Use the cached gold calculation
   // const { data: goldData } = useGoldCalculation(characterClass, background, selectedEquipmentPack);
@@ -1032,6 +1048,45 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     loadAllClassData();
   }, []); // Only run once when modal opens
 
+  // Load all subrace data at modal startup for instant race switching
+  useEffect(() => {
+    const loadAllSubraceData = async () => {
+      if (Object.keys(allSubraceData).length > 0) {
+        console.log('⚡ Using cached subrace data');
+        return;
+      }
+
+      setIsLoadingAllSubraceData(true);
+      console.log('📡 Loading all subrace data for caching...');
+
+      try {
+        const response = await fetch('/api/subraces');
+        if (response.ok) {
+          const allSubraces: Subrace[] = await response.json();
+          
+          // Group subraces by race name
+          const grouped: Record<string, Subrace[]> = {};
+          allSubraces.forEach(subrace => {
+            const raceName = subrace.race.name;
+            if (!grouped[raceName]) {
+              grouped[raceName] = [];
+            }
+            grouped[raceName].push(subrace);
+          });
+
+          setAllSubraceData(grouped);
+          console.log('✅ Cached subrace data for races:', Object.keys(grouped));
+        }
+      } catch (error) {
+        console.error('Failed to load subrace data:', error);
+      } finally {
+        setIsLoadingAllSubraceData(false);
+      }
+    };
+
+    loadAllSubraceData();
+  }, [allSubraceData]);
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
       <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[95vh] overflow-y-auto modal-content">
@@ -1136,6 +1191,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   selectedSubrace={subrace}
                   onSubraceChange={setSubrace}
                   disabled={!race}
+                  cachedSubraces={allSubraceData[race] || []}
                 />
               </div>
 

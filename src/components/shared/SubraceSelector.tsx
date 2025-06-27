@@ -17,13 +17,15 @@ interface SubraceSelectorProps {
   selectedSubrace?: string | null;
   onSubraceChange: (subrace: string | null) => void;
   disabled?: boolean;
+  cachedSubraces?: Subrace[];
 }
 
 export function SubraceSelector({ 
   race, 
   selectedSubrace, 
   onSubraceChange, 
-  disabled = false 
+  disabled = false,
+  cachedSubraces
 }: SubraceSelectorProps) {
   const [subraces, setSubraces] = useState<Subrace[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -35,6 +37,17 @@ export function SubraceSelector({
       return;
     }
 
+    // If we have cached subraces, use them immediately
+    if (cachedSubraces && cachedSubraces.length > 0) {
+      console.log('⚡ Using cached subraces for', race);
+      setSubraces(cachedSubraces);
+      if (cachedSubraces.length === 0) {
+        onSubraceChange(null);
+      }
+      return;
+    }
+
+    // Fallback to API call if no cached data
     setLoading(true);
     fetch(`/api/subraces?race=${encodeURIComponent(race)}`)
       .then(res => res.json())
@@ -51,7 +64,7 @@ export function SubraceSelector({
       .finally(() => {
         setLoading(false);
       });
-  }, [race, onSubraceChange]);
+  }, [race, onSubraceChange, cachedSubraces]);
 
   const handleSubraceSelect = (subrace: Subrace) => {
     onSubraceChange(subrace.name);
