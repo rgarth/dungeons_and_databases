@@ -76,6 +76,9 @@ model Weapon {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   description   String?
+  ammunitionTypeId Int?        @map("ammunition_type_id")
+  suggestedQuantity Int?       @map("suggested_quantity")
+  ammunitionType AmmunitionSuggestion? @relation(fields: [ammunitionTypeId], references: [id])
   customWeapons CustomWeapon[]
 }
 
@@ -419,4 +422,15 @@ model ClassSpellLimits {
   @@index([classId])
   @@index([level])
   @@map("ClassSpellLimits")
+}
+
+model AmmunitionSuggestion {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  weapons     Weapon[]
+
+  @@map("ammunition_suggestions")
 }

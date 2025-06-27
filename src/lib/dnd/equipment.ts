@@ -18,6 +18,8 @@ export interface Weapon {
   description?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  ammunitionTypeId?: number | null; // Foreign key to ammunition_suggestions table
+  suggestedQuantity?: number | null; // Suggested starting quantity of ammunition
 }
 
 export interface MagicalWeapon extends Weapon {
@@ -65,45 +67,6 @@ export interface Equipment {
 export interface InventoryItem {
   name: string;
   quantity: number;
-}
-
-// Standard D&D 5e ammunition definitions
-export const AMMUNITION_TYPES: Record<string, Omit<Ammunition, 'quantity'>> = {
-  'Arrow': {
-    name: 'Arrow',
-    compatibleWeapons: ['Longbow', 'Shortbow'],
-    weight: 0.05,
-    cost: '5 cp each'
-  },
-  'Crossbow Bolt': {
-    name: 'Crossbow Bolt',
-    compatibleWeapons: ['Light Crossbow', 'Heavy Crossbow', 'Hand Crossbow'],
-    weight: 0.075,
-    cost: '5 cp each'
-  },
-  'Blowgun Needle': {
-    name: 'Blowgun Needle',
-    compatibleWeapons: ['Blowgun'],
-    weight: 0.02,
-    cost: '2 cp each'
-  },
-  'Sling Bullet': {
-    name: 'Sling Bullet',
-    compatibleWeapons: ['Sling'],
-    weight: 0.075,
-    cost: '2 cp each'
-  }
-};
-
-export function createAmmunition(name: string, quantity: number): Ammunition {
-  const template = AMMUNITION_TYPES[name];
-  if (!template) {
-    throw new Error(`Unknown ammunition type: ${name}`);
-  }
-  return {
-    ...template,
-    quantity
-  };
 }
 
 // Magical weapon enhancement templates (these are templates, not actual items)

@@ -191,63 +191,11 @@ export function WeaponSelector({
   // Categorize by proficiency if we have proficiency data
   let weaponCategories: Record<string, Weapon[]>;
   
-  // Define ammunition items that should always be available
-  const ammunitionItems: Weapon[] = [
-    {
-      name: 'Arrow',
-      type: 'Simple',
-      category: 'Ranged',
-      damage: '—',
-      damageType: '—',
-      properties: ['Ammunition'],
-      weight: 0.05,
-      cost: '5 cp each',
-      stackable: true,
-      quantity: 20
-    },
-    {
-      name: 'Crossbow Bolt',
-      type: 'Simple', 
-      category: 'Ranged',
-      damage: '—',
-      damageType: '—',
-      properties: ['Ammunition'],
-      weight: 0.075,
-      cost: '5 cp each',
-      stackable: true,
-      quantity: 20
-    },
-    {
-      name: 'Blowgun Needle',
-      type: 'Simple',
-      category: 'Ranged', 
-      damage: '—',
-      damageType: '—',
-      properties: ['Ammunition'],
-      weight: 0.02,
-      cost: '2 cp each',
-      stackable: true,
-      quantity: 50
-    },
-    {
-      name: 'Sling Bullet',
-      type: 'Simple',
-      category: 'Ranged',
-      damage: '—', 
-      damageType: '—',
-      properties: ['Ammunition'],
-      weight: 0.075,
-      cost: '2 cp each',
-      stackable: true,
-      quantity: 20
-    }
-  ];
-  
   if (weaponProficiencies) {
     const { proficient, nonProficient } = categorizeWeaponsByProficiency(baseWeapons, weaponProficiencies);
     
     weaponCategories = {
-      'Ammunition': ammunitionItems, // Always include ammunition
+      'Ammunition': proficient.filter(w => w.type === 'Simple' && w.category === 'Ranged'),
       'Proficient - Simple Melee': proficient.filter(w => w.type === 'Simple' && w.category === 'Melee'),
       'Proficient - Simple Ranged': proficient.filter(w => w.type === 'Simple' && w.category === 'Ranged'),
       'Proficient - Martial Melee': proficient.filter(w => w.type === 'Martial' && w.category === 'Melee'),
@@ -267,7 +215,7 @@ export function WeaponSelector({
   } else {
     // Fallback to basic categorization
     weaponCategories = {
-      'Ammunition': ammunitionItems,
+      'Ammunition': baseWeapons.filter(w => w.type === 'Simple' && w.category === 'Ranged'),
       'Simple Melee': baseWeapons.filter(w => w.type === 'Simple' && w.category === 'Melee'),
       'Simple Ranged': baseWeapons.filter(w => w.type === 'Simple' && w.category === 'Ranged'),
       'Martial Melee': baseWeapons.filter(w => w.type === 'Martial' && w.category === 'Melee'),

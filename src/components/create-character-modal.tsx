@@ -625,69 +625,68 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
   // Automatically add ammunition for ranged weapons
   useEffect(() => {
-    console.log('🏹 AUTO-AMMUNITION EFFECT: Processing', selectedWeapons.length, 'selected weapons');
-    
-    const autoAmmunition: Ammunition[] = [];
-    const processedAmmoTypes = new Set<string>();
-    
-    // Process each selected weapon to find ammunition needs
-    for (const weaponSelection of selectedWeapons) {
-      const weapon = weaponSelection.weapon;
+    const processAmmunition = async () => {
+      console.log('🏹 AUTO-AMMUNITION EFFECT: Processing', selectedWeapons.length, 'selected weapons');
       
-      // Check if weapon needs ammunition
-      // Check if weapon needs ammunition (look for properties that start with "Ammunition")
-      const hasAmmunitionProperty = weapon.properties.some(prop => prop.startsWith('Ammunition'));
+      const autoAmmunition: Ammunition[] = [];
+      const processedAmmoTypes = new Set<number>();
       
-      console.log(`🔍 AMMO CHECK: ${weapon.name} - properties: ${JSON.stringify(weapon.properties)}, hasAmmunition: ${hasAmmunitionProperty}`);
-      
-      if (hasAmmunitionProperty) {
-        let ammoType: string;
-        let quantity = 20; // Default D&D 5e starting quantity
+      // Process each selected weapon to find ammunition needs
+      for (const weaponSelection of selectedWeapons) {
+        const weapon = weaponSelection.weapon;
         
-        // Determine ammunition type based on weapon name
-        if (weapon.name.toLowerCase().includes('crossbow')) {
-          ammoType = 'Crossbow Bolt';
-        } else if (weapon.name.toLowerCase().includes('blowgun')) {
-          ammoType = 'Blowgun Needle';
-          quantity = 50; // Blowgun needles come in packs of 50
-        } else if (weapon.name.toLowerCase().includes('sling')) {
-          ammoType = 'Sling Bullet';
-        } else {
-          // Default to arrows for bows
-          ammoType = 'Arrow';
-        }
+        // Check if weapon needs ammunition
+        // Check if weapon needs ammunition (look for properties that start with "Ammunition")
+        const hasAmmunitionProperty = weapon.properties.some(prop => prop.startsWith('Ammunition'));
         
-        // Only add each ammo type once
-        if (!processedAmmoTypes.has(ammoType)) {
-          processedAmmoTypes.add(ammoType);
-          
-          const ammo: Ammunition = {
-            name: ammoType,
-            quantity: quantity,
-            compatibleWeapons: ammoType === 'Arrow' ? ['Longbow', 'Shortbow'] :
-                             ammoType === 'Crossbow Bolt' ? ['Light Crossbow', 'Heavy Crossbow', 'Hand Crossbow'] :
-                             ammoType === 'Blowgun Needle' ? ['Blowgun'] :
-                             ammoType === 'Sling Bullet' ? ['Sling'] : [],
-            weight: ammoType === 'Arrow' ? 0.05 : 
-                   ammoType === 'Crossbow Bolt' ? 0.075 :
-                   ammoType === 'Blowgun Needle' ? 0.02 : 0.075,
-            cost: ammoType === 'Blowgun Needle' || ammoType === 'Sling Bullet' ? '2 cp each' : '5 cp each'
-          };
-          
-          autoAmmunition.push(ammo);
-          console.log(`✅ Auto-added ${quantity} ${ammoType}s for ${weapon.name}`);
+        console.log(`🔍 AMMO CHECK: ${weapon.name} - properties: ${JSON.stringify(weapon.properties)}, hasAmmunition: ${hasAmmunitionProperty}`);
+        
+        if (hasAmmunitionProperty) {
+          // Use the weapon's ammunition data if available
+          if (weapon.ammunitionTypeId && weapon.suggestedQuantity && !processedAmmoTypes.has(weapon.ammunitionTypeId)) {
+            processedAmmoTypes.add(weapon.ammunitionTypeId);
+            
+            // Fetch ammunition data from the database
+            try {
+              const response = await fetch('/api/ammunition-suggestions');
+              if (response.ok) {
+                const ammunitionSuggestions = await response.json();
+                const ammoData = ammunitionSuggestions.find((a: { id: number; name: string }) => a.id === weapon.ammunitionTypeId);
+                
+                if (ammoData) {
+                  const ammo: Ammunition = {
+                    name: ammoData.name,
+                    quantity: weapon.suggestedQuantity,
+                    compatibleWeapons: [weapon.name],
+                    weight: 0.05, // Default weight - could be enhanced with more data
+                    cost: '5 cp each' // Default cost - could be enhanced with more data
+                  };
+                  
+                  autoAmmunition.push(ammo);
+                  console.log(`✅ Auto-added ${ammo.quantity} ${ammo.name}s for ${weapon.name}`);
+                }
+              }
+            } catch (error) {
+              console.error('Failed to fetch ammunition data:', error);
+            }
+          } else if (!weapon.ammunitionTypeId) {
+            // Fallback for weapons without ammunition data
+            console.warn(`⚠️ Weapon ${weapon.name} has Ammunition property but no ammunitionTypeId defined`);
+          }
         }
       }
-    }
+      
+      console.log('Final auto-ammunition:', autoAmmunition);
+      setSelectedAmmunition(autoAmmunition);
+      
+      if (autoAmmunition.length > 0) {
+        console.log('✅ Set selectedAmmunition with auto-generated ammunition');
+      } else {
+        console.log('No ranged weapons need ammunition');
+      }
+    };
     
-    console.log('Final auto-ammunition:', autoAmmunition);
-    setSelectedAmmunition(autoAmmunition);
-    
-    if (autoAmmunition.length > 0) {
-      console.log('✅ Set selectedAmmunition with auto-generated ammunition');
-    } else {
-      console.log('No ranged weapons need ammunition');
-    }
+    processAmmunition();
   }, [selectedWeapons]);
 
   const handleStatMethodChange = (method: StatMethod) => {
