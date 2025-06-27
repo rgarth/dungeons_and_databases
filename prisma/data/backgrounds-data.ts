@@ -2,9 +2,11 @@ export interface BackgroundData {
   name: string;
   description: string;
   skillProficiencies: string[];
+  toolProficiencies?: string[];
   languages: string[];
   equipment: string[];
   startingGold: number; // Starting gold in gold pieces
+  startingGoldFormula?: string;
   feature: string;
   featureDescription: string;
   suggestedCharacteristics?: {

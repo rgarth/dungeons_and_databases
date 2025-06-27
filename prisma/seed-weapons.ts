@@ -17,19 +17,10 @@ export async function seedWeapons() {
 
     // Create new weapons
     for (const weapon of weaponsData) {
+      const { ammunitionTypeId, suggestedQuantity, ...weaponData } = weapon;
       await prisma.weapon.create({
-        data: {
-          name: weapon.name,
-          type: weapon.type,
-          category: weapon.category,
-          damage: weapon.damage,
-          damageType: weapon.damageType,
-          properties: weapon.properties,
-          weight: weapon.weight,
-          cost: weapon.cost,
-          description: weapon.description
-        }
-      })
+        data: weaponData
+      });
     }
 
     console.log(`✅ Seeded ${weaponsData.length} weapons`)

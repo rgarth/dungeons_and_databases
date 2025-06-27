@@ -232,6 +232,7 @@ model DndRace {
   speed                Int
   traits               Json
   languages            Json
+  age                  String
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
   subraces             Subrace[]
@@ -310,6 +311,7 @@ model EquipmentPack {
   name        String              @unique
   description String
   cost        String
+  weight      Float               @default(0)
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
   items       EquipmentPackItem[]
