@@ -4,6 +4,7 @@ import "./globals.css";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { DndDataProvider } from "@/components/providers/dnd-data-provider";
+import { ClientCacheProvider } from "@/components/providers/client-cache-provider";
 import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -33,9 +34,11 @@ export default function RootLayout({
         <SessionProvider>
           <QueryProvider>
             <DndDataProvider>
-              <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-                {children}
-              </main>
+              <ClientCacheProvider>
+                <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+                  {children}
+                </main>
+              </ClientCacheProvider>
             </DndDataProvider>
           </QueryProvider>
         </SessionProvider>

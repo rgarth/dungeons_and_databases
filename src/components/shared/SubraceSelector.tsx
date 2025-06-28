@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { clientCache } from "@/lib/client-cache";
 
 interface Subrace {
   id: string;
@@ -17,19 +18,23 @@ interface SubraceSelectorProps {
   selectedSubrace?: string | null;
   onSubraceChange: (subrace: string | null) => void;
   disabled?: boolean;
-  cachedSubraces?: Subrace[];
 }
 
 export function SubraceSelector({ 
   race, 
   selectedSubrace, 
   onSubraceChange, 
-  disabled = false,
-  cachedSubraces
+  disabled = false
 }: SubraceSelectorProps) {
   const [subraces, setSubraces] = useState<Subrace[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const onSubraceChangeRef = useRef(onSubraceChange);
+
+  // Update ref when onSubraceChange changes
+  useEffect(() => {
+    onSubraceChangeRef.current = onSubraceChange;
+  }, [onSubraceChange]);
 
   useEffect(() => {
     if (!race) {
@@ -37,42 +42,47 @@ export function SubraceSelector({
       return;
     }
 
-    // If we have cached subraces, use them immediately
-    if (cachedSubraces && cachedSubraces.length > 0) {
-      console.log('⚡ Using cached subraces for', race);
-      setSubraces(cachedSubraces);
-      if (cachedSubraces.length === 0) {
-        onSubraceChange(null);
-      }
-      return;
-    }
+    const loadSubraces = async () => {
+      setLoading(true);
+      
+      try {
+        // Try client cache first
+        if (clientCache.isInitialized()) {
+          const cachedSubraces = clientCache.getSubraces(race);
+          console.log('⚡ Using client cache for subraces:', race, cachedSubraces.length);
+          setSubraces(cachedSubraces);
+          if (cachedSubraces.length === 0) {
+            onSubraceChangeRef.current(null);
+          }
+          return;
+        }
 
-    // Fallback to API call if no cached data
-    setLoading(true);
-    fetch(`/api/subraces?race=${encodeURIComponent(race)}`)
-      .then(res => res.json())
-      .then(data => {
+        // Fallback to API call if client cache not ready
+        console.log('🔄 Loading subraces from API for:', race);
+        const response = await fetch(`/api/subraces?race=${encodeURIComponent(race)}`);
+        const data = await response.json();
         setSubraces(data);
         if (data.length === 0) {
-          onSubraceChange(null);
+          onSubraceChangeRef.current(null);
         }
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error loading subraces:', error);
         setSubraces([]);
-      })
-      .finally(() => {
+      } finally {
         setLoading(false);
-      });
-  }, [race, onSubraceChange, cachedSubraces]);
+      }
+    };
+
+    loadSubraces();
+  }, [race]); // Removed cachedSubraces from dependency array
 
   const handleSubraceSelect = (subrace: Subrace) => {
-    onSubraceChange(subrace.name);
+    onSubraceChangeRef.current(subrace.name);
     setIsOpen(false);
   };
 
   const handleClear = () => {
-    onSubraceChange(null);
+    onSubraceChangeRef.current(null);
     setIsOpen(false);
   };
 

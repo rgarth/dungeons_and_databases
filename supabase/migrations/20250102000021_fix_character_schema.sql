@@ -1,0 +1,61 @@
+-- Fix Character table schema to match Prisma schema
+-- Rename dndClass to class
+ALTER TABLE "Character" RENAME COLUMN "dndClass" TO "class";
+
+-- Add missing columns that exist in Prisma schema but not in database
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "subclass" TEXT;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "classes" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "totalLevel" INTEGER;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "selectedFeatures" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "gender" TEXT;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "age" INTEGER;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "maxHitPoints" INTEGER DEFAULT 10;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "temporaryHitPoints" INTEGER DEFAULT 0;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "deathSaveSuccesses" INTEGER DEFAULT 0;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "deathSaveFailures" INTEGER DEFAULT 0;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "proficiencyBonus" INTEGER DEFAULT 2;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "skills" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "inventory" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "weapons" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "equippedWeapons" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "inventoryWeapons" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "ammunition" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "armor" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "equippedArmor" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "inventoryArmor" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "magicalItems" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "inventoryMagicalItems" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "attunedItems" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "copperPieces" INTEGER DEFAULT 0;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "silverPieces" INTEGER DEFAULT 0;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "goldPieces" INTEGER DEFAULT 0;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "treasures" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "spellsKnown" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "spellsPrepared" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "spellSlots" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "spellcastingAbility" TEXT;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "spellSaveDC" INTEGER;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "spellAttackBonus" INTEGER;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "actions" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "bonusActions" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "reactions" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "appearance" TEXT;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "personality" TEXT;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "personalityTraits" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "ideals" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "bonds" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "flaws" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "backstory" TEXT;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "notes" TEXT;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "avatar" TEXT;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "fullBodyAvatar" TEXT;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "inspiration" BOOLEAN DEFAULT false;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "languages" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "conditions" JSONB;
+ALTER TABLE "Character" ADD COLUMN IF NOT EXISTS "racialTraits" JSONB;
+
+-- Remove columns that don't exist in Prisma schema
+ALTER TABLE "Character" DROP COLUMN IF EXISTS "initiative";
+ALTER TABLE "Character" DROP COLUMN IF EXISTS "proficiencies";
+ALTER TABLE "Character" DROP COLUMN IF EXISTS "spells";
+ALTER TABLE "Character" DROP COLUMN IF EXISTS "features"; 

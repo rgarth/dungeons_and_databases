@@ -18,7 +18,6 @@ export async function GET() {
         type: true,
         value: true,
         description: true,
-        category: true,
         weight: true,
         appearance: true,
         createdAt: true,

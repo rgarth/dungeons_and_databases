@@ -32,35 +32,26 @@ export async function GET() {
       }
     });
 
-    // Parse JSON fields and ensure they match the BackgroundData interface
+    // Transform data to match BackgroundData interface (Prisma handles JSON parsing automatically)
     const parsedBackgrounds: BackgroundData[] = backgrounds.map(background => {
-      // Helper function to safely parse JSON
-      const safeParse = (value: unknown): string[] => {
+      // Helper function to ensure arrays
+      const ensureArray = (value: unknown): string[] => {
         if (Array.isArray(value)) return value as string[];
-        try {
-          const parsed = JSON.parse(value as string);
-          return Array.isArray(parsed) ? parsed : [];
-        } catch (e) {
-          console.error('Failed to parse JSON:', e);
-          return [];
-        }
+        return [];
       };
 
-      // Parse suggested characteristics
+      // Parse suggested characteristics with safety checks
       const parseSuggestedCharacteristics = (value: unknown) => {
-        if (!value) return undefined;
-        try {
-          const parsed = typeof value === 'string' ? JSON.parse(value) : value;
-          if (typeof parsed === 'object' && parsed !== null) {
-            return {
-              personalityTraits: Array.isArray(parsed.personalityTraits) ? parsed.personalityTraits : [],
-              ideals: Array.isArray(parsed.ideals) ? parsed.ideals : [],
-              bonds: Array.isArray(parsed.bonds) ? parsed.bonds : [],
-              flaws: Array.isArray(parsed.flaws) ? parsed.flaws : []
-            };
-          }
-        } catch (e) {
-          console.error('Failed to parse suggested characteristics:', e);
+        if (!value || typeof value !== 'object') return undefined;
+        
+        const parsed = value as Record<string, unknown>;
+        if (parsed && typeof parsed === 'object') {
+          return {
+            personalityTraits: ensureArray(parsed.personalityTraits),
+            ideals: ensureArray(parsed.ideals),
+            bonds: ensureArray(parsed.bonds),
+            flaws: ensureArray(parsed.flaws)
+          };
         }
         return undefined;
       };
@@ -68,9 +59,9 @@ export async function GET() {
       return {
         name: background.name,
         description: background.description,
-        skillProficiencies: safeParse(background.skillProficiencies),
-        languages: safeParse(background.languages),
-        equipment: safeParse(background.equipment),
+        skillProficiencies: ensureArray(background.skillProficiencies),
+        languages: ensureArray(background.languages),
+        equipment: ensureArray(background.equipment),
         startingGold: background.startingGold,
         startingGoldFormula: background.startingGoldFormula,
         feature: background.feature,

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { X, Dice6, RefreshCw } from "lucide-react";
 import { toast } from 'react-hot-toast';
 import { AbilityScore } from "@/lib/dnd/core";
@@ -63,18 +63,6 @@ interface CreationOptions {
 interface Subclass {
   name: string;
   description?: string;
-}
-
-interface Subrace {
-  id: string;
-  name: string;
-  description: string;
-  abilityScoreIncrease: string;
-  traits: string[];
-  languages?: string[] | null;
-  race: {
-    name: string;
-  };
 }
 
 export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateCharacterModalProps) {
@@ -182,8 +170,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [isLoadingAllClassData, setIsLoadingAllClassData] = useState(false);
 
   // Cache all subrace data at modal load for instant race switching
-  const [allSubraceData, setAllSubraceData] = useState<Record<string, Subrace[]>>({});
-  const [isLoadingAllSubraceData, setIsLoadingAllSubraceData] = useState(false);
+  // const [allSubraceData, setAllSubraceData] = useState<Record<string, Subrace[]>>({});
+  // const [isLoadingAllSubraceData, setIsLoadingAllSubraceData] = useState(false);
 
   // Use the cached gold calculation
   // const { data: goldData } = useGoldCalculation(characterClass, background, selectedEquipmentPack);
@@ -210,66 +198,88 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }, 100); // Small delay to ensure spellcasting data is loaded
   };
 
+  // Add debug logging for re-renders
+  console.log('🔄 CreateCharacterModal RENDER - characterClass:', characterClass, 'currentStep:', currentStep);
+
   // Fetch class starting gold formula when class changes
   useEffect(() => {
-    const fetchClassFormula = async () => {
-      if (!characterClass) return;
-      
-      try {
-        const classResponse = await fetch(`/api/classes/${encodeURIComponent(characterClass)}`);
-        if (classResponse.ok) {
-          const classData = await classResponse.json();
-          if (classData.startingGoldFormula) {
-            // Store in allClassData cache for instant access
-            setAllClassData(prev => ({
-              ...prev,
-              [characterClass]: {
-                ...prev[characterClass],
-                startingGoldFormula: classData.startingGoldFormula
-              }
-            }));
+    console.log('🟢 useEffect: Checking cached class data for', characterClass);
+    
+    // Check if we already have the class data in cache
+    if (allClassData[characterClass]?.startingGoldFormula) {
+      console.log('⚡ Using cached class data for', characterClass);
+      return;
+    }
+    
+    // Only fetch if we don't have it cached and we're not already loading all class data
+    if (characterClass && !isLoadingAllClassData) {
+      console.log('📡 Fetching individual class data for', characterClass);
+      const fetchClassFormula = async () => {
+        try {
+          const classResponse = await fetch(`/api/classes/${encodeURIComponent(characterClass)}`);
+          if (classResponse.ok) {
+            const classData = await classResponse.json();
+            if (classData.startingGoldFormula) {
+              // Store in allClassData cache for instant access
+              setAllClassData(prev => ({
+                ...prev,
+                [characterClass]: {
+                  ...prev[characterClass],
+                  startingGoldFormula: classData.startingGoldFormula
+                }
+              }));
+            }
           }
+        } catch (error) {
+          console.warn('Error fetching class starting gold formula:', error);
         }
-      } catch (error) {
-        console.warn('Error fetching class starting gold formula:', error);
-      }
-    };
+      };
 
-    fetchClassFormula();
-  }, [characterClass]);
+      fetchClassFormula();
+    }
+  }, [characterClass, allClassData, isLoadingAllClassData]);
 
   // Fetch and cache spell limits when class changes
   useEffect(() => {
-    const fetchSpellLimits = async () => {
-      if (!characterClass) return;
-      
-      // Cache key for level 1 spell limits
-      const cacheKey = `${characterClass}-1`;
-      
-      // Check if already cached
-      if (cachedSpellLimits[cacheKey]) {
-        console.log('⚡ Using cached spell limits for', characterClass);
-        return;
-      }
-      
-      try {
-        console.log('📡 Fetching spell limits for', characterClass);
-        const response = await fetch(`/api/classes/${encodeURIComponent(characterClass)}/spell-limits?level=1`);
-        if (response.ok) {
-          const limits = await response.json();
-          setCachedSpellLimits(prev => ({
-            ...prev,
-            [cacheKey]: limits
-          }));
-          console.log('✅ Cached spell limits for', characterClass, ':', limits);
+    console.log('🟢 useEffect: Checking cached spell limits for', characterClass);
+    
+    // Check if we already have the spell limits in cache
+    if (allClassData[characterClass]?.spellLimits) {
+      console.log('⚡ Using cached spell limits for', characterClass);
+      return;
+    }
+    
+    // Cache key for level 1 spell limits
+    const cacheKey = `${characterClass}-1`;
+    
+    // Check if already cached in spell limits cache
+    if (cachedSpellLimits[cacheKey]) {
+      console.log('⚡ Using cached spell limits for', characterClass);
+      return;
+    }
+    
+    // Only fetch if we don't have it cached and we're not already loading all class data
+    if (characterClass && !isLoadingAllClassData) {
+      console.log('📡 Fetching individual spell limits for', characterClass);
+      const fetchSpellLimits = async () => {
+        try {
+          const response = await fetch(`/api/classes/${encodeURIComponent(characterClass)}/spell-limits?level=1`);
+          if (response.ok) {
+            const limits = await response.json();
+            setCachedSpellLimits(prev => ({
+              ...prev,
+              [cacheKey]: limits
+            }));
+            console.log('✅ Cached spell limits for', characterClass, ':', limits);
+          }
+        } catch (error) {
+          console.warn('Error fetching spell limits:', error);
         }
-      } catch (error) {
-        console.warn('Error fetching spell limits:', error);
-      }
-    };
+      };
 
-    fetchSpellLimits();
-  }, [characterClass, cachedSpellLimits]);
+      fetchSpellLimits();
+    }
+  }, [characterClass, allClassData, cachedSpellLimits, isLoadingAllClassData]); // Added dependencies to prevent unnecessary fetches
 
   // Helper function to get cached spell limits
   // Available for use in spell selection validation and UI display
@@ -302,27 +312,25 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         let classRollDetails = '';
         let backgroundRollDetails = '';
 
-        // Get class data from cache or fetch
-        let classData = allClassData[characterClass];
+        // Get class data from cache
+        const classData = allClassData[characterClass];
+        
+        // If we don't have class data and we're still loading all class data, wait
+        if (!classData?.startingGoldFormula && isLoadingAllClassData) {
+          console.log('⏳ Waiting for all class data to load before calculating gold...');
+          return;
+        }
+        
+        // If we still don't have class data after loading is complete, skip gold calculation
         if (!classData?.startingGoldFormula) {
-          // Fetch and cache class data
-          const classResponse = await fetch(`/api/classes/${encodeURIComponent(characterClass)}`);
-          if (classResponse.ok) {
-            const fetchedClassData = await classResponse.json();
-            setAllClassData(prev => ({
-              ...prev,
-              [characterClass]: {
-                ...prev[characterClass],
-                startingGoldFormula: fetchedClassData.startingGoldFormula
-              }
-            }));
-            classData = { ...allClassData[characterClass], startingGoldFormula: fetchedClassData.startingGoldFormula };
-          }
+          console.log('⚠️ No class data available for gold calculation');
+          return;
         }
 
-        // Get background data from cache or fetch
+        // Get background data from cache or fetch (backgrounds are loaded separately)
         let backgroundData = allClassData[characterClass]?.backgroundData;
         if (!backgroundData) {
+          // Only fetch background data if we don't have it cached
           const backgroundResponse = await fetch('/api/backgrounds');
           if (backgroundResponse.ok) {
             const backgrounds = await backgroundResponse.json();
@@ -415,7 +423,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     };
 
     calculateGold();
-  }, [characterClass, background, selectedEquipmentPack, allClassData]);
+  }, [characterClass, background, selectedEquipmentPack, allClassData, isLoadingAllClassData]);
 
   // Set default values when data is loaded
   useEffect(() => {
@@ -495,6 +503,13 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       } else {
         // Fallback to API calls if cache not ready
         console.log('📡 Making API calls for creation options (cache not ready)...');
+        
+        // Don't make API calls if we're still loading all class data
+        if (isLoadingAllClassData) {
+          console.log('⏳ Waiting for all class data to load before making fallback API calls...');
+          return;
+        }
+        
         setLoadingOptions(true);
         try {
           const [options, weaponSuggestions, armorSuggestions, weaponProficiencies, armorProficiencies, classData] = await Promise.all([
@@ -557,7 +572,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     };
 
     loadCreationOptions();
-  }, [characterClass, characterCreationService]); // Removed allClassDataCache from dependencies
+  }, [characterClass, allClassData, isLoadingAllClassData]); // Wait for all class data to be loaded
 
   // Get creation options from state (with fallback)
   const { needsSubclassAtCreation = false, spellcasting = { ability: null, canCastAtLevel1: false, availableSpells: [], spellSlots: {} } } = creationOptions || {};
@@ -569,10 +584,22 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     if (randomArray) {
       setRandomScoreArray(randomArray);
     }
-  }, [characterCreationService, statMethod]);
+  }, [statMethod]); // Removed characterCreationService from dependencies since it's a singleton
+
+  // Add a ref to track if weapon suggestions have been processed
+  const processedWeaponSuggestionsRef = useRef<string>('');
 
   // Apply weapon suggestions when they're loaded
   useEffect(() => {
+    // Create a hash of the current weapon suggestions to check if we've already processed them
+    const suggestionsHash = weaponSuggestions.map(s => `${s.weaponName}-${s.quantity}`).join('|');
+    
+    // Skip if we've already processed these exact suggestions
+    if (processedWeaponSuggestionsRef.current === suggestionsHash) {
+      console.log('🔫 WEAPON SUGGESTIONS EFFECT: Skipping - already processed these suggestions');
+      return;
+    }
+    
     console.log('🔫 WEAPON SUGGESTIONS EFFECT:', weaponSuggestions.length, 'suggestions');
     
     if (weaponSuggestions && weaponSuggestions.length > 0) {
@@ -602,6 +629,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       console.log('No weapon suggestions to process - clearing weapons');
       setSelectedWeapons([]);
     }
+    
+    // Mark these suggestions as processed
+    processedWeaponSuggestionsRef.current = suggestionsHash;
   }, [weaponSuggestions]);
 
   // Apply armor suggestions when they're loaded
@@ -639,9 +669,21 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     setSelectedArmor(suggestedArmor);
   }, [armorSuggestions]);
 
+  // Add a ref to track if ammunition has been processed for current weapons
+  const processedAmmunitionRef = useRef<string>('');
+
   // Automatically add ammunition for ranged weapons
   useEffect(() => {
     const processAmmunition = async () => {
+      // Create a hash of the current weapons to check if we've already processed them
+      const weaponsHash = selectedWeapons.map(w => `${w.weapon.name}-${w.quantity}`).join('|');
+      
+      // Skip if we've already processed these exact weapons
+      if (processedAmmunitionRef.current === weaponsHash) {
+        console.log('🏹 AUTO-AMMUNITION EFFECT: Skipping - already processed these weapons');
+        return;
+      }
+      
       console.log('🏹 AUTO-AMMUNITION EFFECT: Processing', selectedWeapons.length, 'selected weapons');
       
       const autoAmmunition: Ammunition[] = [];
@@ -694,6 +736,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       
       console.log('Final auto-ammunition:', autoAmmunition);
       setSelectedAmmunition(autoAmmunition);
+      
+      // Mark these weapons as processed
+      processedAmmunitionRef.current = weaponsHash;
       
       if (autoAmmunition.length > 0) {
         console.log('✅ Set selectedAmmunition with auto-generated ammunition');
@@ -930,101 +975,106 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }
   }, [characterClass, spellcasting?.availableSpells]);
 
-  // Load all class data at modal load for instant class switching
-  useEffect(() => {
-    const loadAllClassData = async () => {
-      if (isLoadingAllClassData || Object.keys(allClassData).length > 0) return;
+  // Add a ref to track if all class data has been loaded
+  const hasLoadedAllClassData = useRef(false);
+
+  // Move loadAllClassData outside useEffect and use useCallback with no dependencies
+  const loadAllClassData = useCallback(async () => {
+    if (isLoadingAllClassData || hasLoadedAllClassData.current) return;
+    
+    console.log('🚀 Loading all class data for instant switching...');
+    setIsLoadingAllClassData(true);
+    
+    try {
+      const allClasses = ['Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard'];
+      const spellcastingClasses = ['Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger', 'Sorcerer', 'Warlock', 'Wizard'];
       
-      console.log('🚀 Loading all class data for instant switching...');
-      setIsLoadingAllClassData(true);
-      
-      try {
-        const allClasses = ['Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard'];
-        const spellcastingClasses = ['Bard', 'Cleric', 'Druid', 'Paladin', 'Ranger', 'Sorcerer', 'Warlock', 'Wizard'];
-        
-        const classDataPromises = allClasses.map(async (className) => {
-          try {
-            const isSpellcastingClass = spellcastingClasses.includes(className);
-            
-            const [weaponSuggestions, armorSuggestions, weaponProficiencies, armorProficiencies, classData] = await Promise.all([
-              fetch(`/api/weapon-suggestions?className=${encodeURIComponent(className)}`)
-                .then(res => res.ok ? res.json() : [])
-                .catch(() => []),
-              fetch(`/api/armor-suggestions?className=${encodeURIComponent(className)}`)
-                .then(res => res.ok ? res.json() : [])
-                .catch(() => []),
-              fetch(`/api/class-proficiencies?className=${encodeURIComponent(className)}`)
-                .then(res => res.ok ? res.json() : { simple: false, martial: false, specific: [] })
-                .catch(() => ({ simple: false, martial: false, specific: [] })),
-              fetch(`/api/class-proficiencies?className=${encodeURIComponent(className)}&includeArmor=true`)
-                .then(res => res.ok ? res.json() : { armor: [] })
-                .catch(() => ({ armor: [] })),
-              fetch(`/api/classes/${encodeURIComponent(className)}`)
-                .then(res => res.ok ? res.json() : null)
-                .catch(() => null)
-            ]);
-            
-            // Only fetch spell limits for spellcasting classes
-            let spellLimits = null;
-            if (isSpellcastingClass) {
-              try {
-                const spellLimitsResponse = await fetch(`/api/classes/${encodeURIComponent(className)}/spell-limits?level=1`);
-                if (spellLimitsResponse.ok) {
-                  spellLimits = await spellLimitsResponse.json();
-                }
-              } catch (error) {
-                console.warn(`Failed to load spell limits for ${className}:`, error);
+      const classDataPromises = allClasses.map(async (className) => {
+        try {
+          const isSpellcastingClass = spellcastingClasses.includes(className);
+          
+          const [weaponSuggestions, armorSuggestions, weaponProficiencies, armorProficiencies, classData] = await Promise.all([
+            fetch(`/api/weapon-suggestions?className=${encodeURIComponent(className)}`)
+              .then(res => res.ok ? res.json() : [])
+              .catch(() => []),
+            fetch(`/api/armor-suggestions?className=${encodeURIComponent(className)}`)
+              .then(res => res.ok ? res.json() : [])
+              .catch(() => []),
+            fetch(`/api/class-proficiencies?className=${encodeURIComponent(className)}`)
+              .then(res => res.ok ? res.json() : { simple: false, martial: false, specific: [] })
+              .catch(() => ({ simple: false, martial: false, specific: [] })),
+            fetch(`/api/class-proficiencies?className=${encodeURIComponent(className)}&includeArmor=true`)
+              .then(res => res.ok ? res.json() : { armor: [] })
+              .catch(() => ({ armor: [] })),
+            fetch(`/api/classes/${encodeURIComponent(className)}`)
+              .then(res => res.ok ? res.json() : null)
+              .catch(() => null)
+          ]);
+          
+          // Only fetch spell limits for spellcasting classes
+          let spellLimits = null;
+          if (isSpellcastingClass) {
+            try {
+              const spellLimitsResponse = await fetch(`/api/classes/${encodeURIComponent(className)}/spell-limits?level=1`);
+              if (spellLimitsResponse.ok) {
+                spellLimits = await spellLimitsResponse.json();
               }
+            } catch (error) {
+              console.warn(`Failed to load spell limits for ${className}:`, error);
             }
-            
-            return {
-              className,
-              data: {
-                weaponSuggestions,
-                armorSuggestions,
-                weaponProficiencies,
-                armorProficiencies: armorProficiencies.armor || [],
-                phbDescription: classData?.phbDescription || null,
-                spellLimits
-              }
-            };
-          } catch (error) {
-            console.warn(`Failed to load data for ${className}:`, error);
-            return {
-              className,
-              data: {
-                weaponSuggestions: [],
-                armorSuggestions: [],
-                weaponProficiencies: { simple: false, martial: false, specific: [] },
-                armorProficiencies: [],
-                phbDescription: null,
-                spellLimits: null
-              }
-            };
           }
-        });
-        
-        const results = await Promise.all(classDataPromises);
-        const cache: Record<string, {
-          weaponSuggestions: WeaponSuggestion[];
-          armorSuggestions: ArmorSuggestion[];
-          weaponProficiencies: { simple: boolean; martial: boolean; specific: string[] };
-          armorProficiencies: string[];
-          phbDescription: string | null;
-          spellLimits: {
-            cantripsKnown: number;
-            spellsKnown: number;
-            spellcastingType: string;
-            maxSpellLevel: number;
-            spellLevelLimits: Record<string, number>;
-          } | null;
-        }> = {};
-        
-        results.forEach(({ className, data }) => {
-          cache[className] = data;
-        });
-        
+          
+          return {
+            className,
+            data: {
+              weaponSuggestions,
+              armorSuggestions,
+              weaponProficiencies,
+              armorProficiencies: armorProficiencies.armor || [],
+              phbDescription: classData?.phbDescription || null,
+              spellLimits
+            }
+          };
+        } catch (error) {
+          console.warn(`Failed to load data for ${className}:`, error);
+          return {
+            className,
+            data: {
+              weaponSuggestions: [],
+              armorSuggestions: [],
+              weaponProficiencies: { simple: false, martial: false, specific: [] },
+              armorProficiencies: [],
+              phbDescription: null,
+              spellLimits: null
+            }
+          };
+        }
+      });
+      
+      const results = await Promise.all(classDataPromises);
+      const cache: Record<string, {
+        weaponSuggestions: WeaponSuggestion[];
+        armorSuggestions: ArmorSuggestion[];
+        weaponProficiencies: { simple: boolean; martial: boolean; specific: string[] };
+        armorProficiencies: string[];
+        phbDescription: string | null;
+        spellLimits: {
+          cantripsKnown: number;
+          spellsKnown: number;
+          spellcastingType: string;
+          maxSpellLevel: number;
+          spellLevelLimits: Record<string, number>;
+        } | null;
+      }> = {};
+      
+      results.forEach(({ className, data }) => {
+        cache[className] = data;
+      });
+      
+      // Only update state if we haven't already loaded the data
+      if (!hasLoadedAllClassData.current) {
         setAllClassData(cache);
+        hasLoadedAllClassData.current = true;
         console.log('✅ All class data loaded and cached:', Object.keys(cache));
         
         // Also update the individual caches for backward compatibility
@@ -1037,55 +1087,22 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           });
           return newCache;
         });
-        
-      } catch (error) {
-        console.error('Failed to load all class data:', error);
-      } finally {
-        setIsLoadingAllClassData(false);
       }
-    };
-    
-    loadAllClassData();
-  }, []); // Only run once when modal opens
+      
+    } catch (error) {
+      console.error('Failed to load all class data:', error);
+    } finally {
+      setIsLoadingAllClassData(false);
+    }
+  }, []); // No dependencies - function will never be recreated
 
-  // Load all subrace data at modal startup for instant race switching
+  // Load all class data at modal startup for instant class switching
   useEffect(() => {
-    const loadAllSubraceData = async () => {
-      if (Object.keys(allSubraceData).length > 0) {
-        console.log('⚡ Using cached subrace data');
-        return;
-      }
-
-      setIsLoadingAllSubraceData(true);
-      console.log('📡 Loading all subrace data for caching...');
-
-      try {
-        const response = await fetch('/api/subraces');
-        if (response.ok) {
-          const allSubraces: Subrace[] = await response.json();
-          
-          // Group subraces by race name
-          const grouped: Record<string, Subrace[]> = {};
-          allSubraces.forEach(subrace => {
-            const raceName = subrace.race.name;
-            if (!grouped[raceName]) {
-              grouped[raceName] = [];
-            }
-            grouped[raceName].push(subrace);
-          });
-
-          setAllSubraceData(grouped);
-          console.log('✅ Cached subrace data for races:', Object.keys(grouped));
-        }
-      } catch (error) {
-        console.error('Failed to load subrace data:', error);
-      } finally {
-        setIsLoadingAllSubraceData(false);
-      }
-    };
-
-    loadAllSubraceData();
-  }, [allSubraceData]);
+    // Only load if not already loaded and not currently loading
+    if (!hasLoadedAllClassData.current && !isLoadingAllClassData) {
+      loadAllClassData();
+    }
+  }, []); // Remove loadAllClassData dependency - it's stable with useCallback
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
@@ -1191,7 +1208,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   selectedSubrace={subrace}
                   onSubraceChange={setSubrace}
                   disabled={!race}
-                  cachedSubraces={allSubraceData[race] || []}
                 />
               </div>
 

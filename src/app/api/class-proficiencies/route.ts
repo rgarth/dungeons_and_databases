@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
                 .map(p => p.weaponName!)
             },
             armor: armorProficiencies.map(p => p.armorType),
-            savingThrows: JSON.parse(classData.savingThrows as string)
+            savingThrows: classData.savingThrows
           };
 
           return NextResponse.json(proficiencies);
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
             .map(p => p.weaponName!)
         },
         armor: armorProficiencies.map(p => p.armorType),
-        savingThrows: classData ? JSON.parse(classData.savingThrows as string) : []
+        savingThrows: classData ? classData.savingThrows : []
       };
 
       return NextResponse.json(proficiencies);

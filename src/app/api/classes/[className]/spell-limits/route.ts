@@ -49,10 +49,15 @@ export async function GET(
     `;
 
     if (!result || !Array.isArray(result) || result.length === 0) {
-      return NextResponse.json(
-        { error: 'Spell limits not found for this class and level' }, 
-        { status: 404 }
-      );
+      // Return default values for spellcasting classes that don't have data for this level
+      // This handles cases like Paladin/Ranger level 1 which don't have spellcasting yet
+      return NextResponse.json({
+        cantripsKnown: 0,
+        spellsKnown: 0,
+        spellcastingType: 'none',
+        maxSpellLevel: 0,
+        spellLevelLimits: {}
+      });
     }
 
     const spellLimits = result[0] as {

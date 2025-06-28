@@ -74,16 +74,9 @@ export class RacialFeaturesService {
       return [];
     }
 
-    // Handle traits whether they're already parsed or need parsing
+    // Handle traits - they should now be properly parsed by Prisma
     let traitNames: string[];
-    if (typeof raceData.traits === 'string') {
-      try {
-        traitNames = JSON.parse(raceData.traits);
-      } catch (e) {
-        console.warn(`Failed to parse traits for race ${race}:`, e);
-        return [];
-      }
-    } else if (Array.isArray(raceData.traits)) {
+    if (Array.isArray(raceData.traits)) {
       traitNames = raceData.traits;
     } else {
       console.warn(`Invalid traits format for race ${race}`);

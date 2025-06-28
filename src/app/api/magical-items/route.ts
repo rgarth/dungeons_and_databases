@@ -40,13 +40,8 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      // Parse the effects JSON for each item
-      const itemsWithParsedEffects = filteredItems.map(item => ({
-        ...item,
-        effects: item.effects ? JSON.parse(item.effects as string) : []
-      }));
-
-      return NextResponse.json(itemsWithParsedEffects);
+      // No need to parse effects - Prisma handles this automatically
+      return NextResponse.json(filteredItems);
     }
 
     // Fallback to database if cache is not initialized
@@ -82,13 +77,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Parse the effects JSON for each item
-    const itemsWithParsedEffects = filteredItems.map(item => ({
-      ...item,
-      effects: item.effects ? JSON.parse(item.effects as string) : []
-    }));
-
-    return NextResponse.json(itemsWithParsedEffects);
+    // No need to parse effects - Prisma handles this automatically
+    return NextResponse.json(filteredItems);
   } catch (error) {
     console.error('Error fetching magical items:', error);
     return NextResponse.json(

@@ -9,7 +9,7 @@ import {
   FEATS
 } from '@/lib/dnd/progression';
 import { getMaxSpellLevel } from '@/lib/dnd/spells';
-import { spellsData } from '../../../prisma/data/spells-data';
+import { getSpellsByClass } from '@/lib/dnd/spell-data-helper';
 
 export interface LevelUpOptions {
   availableChoices: LevelUpChoice[];
@@ -311,32 +311,13 @@ export class LevelUpService {
     const currentSpells = character.spellsKnown || [];
     const maxSpellLevel = getMaxSpellLevel(className, newLevel);
     
-    const availableSpells = spellsData
-      .filter(spell => {
-        // Parse classes array (it's stored as JSON string in database format)
-        let spellClasses: string[] = [];
-        try {
-          spellClasses = typeof spell.classes === 'string' ? JSON.parse(spell.classes) : spell.classes;
-        } catch {
-          spellClasses = [];
-        }
-        return spellClasses.includes(className);
-      })
-      .filter(spell => spell.level <= maxSpellLevel)
+    // Use the helper function that properly handles class parsing
+    const availableSpells = getSpellsByClass(className, maxSpellLevel)
       .filter(spell => spell.level > 0) // Exclude cantrips from main spell learning
       .filter(spell => !currentSpells.includes(spell.name)) // Exclude already known spells
       .map(spell => spell.name);
     
-    const cantripsAvailable = spellsData
-      .filter(spell => {
-        let spellClasses: string[] = [];
-        try {
-          spellClasses = typeof spell.classes === 'string' ? JSON.parse(spell.classes) : spell.classes;
-        } catch {
-          spellClasses = [];
-        }
-        return spellClasses.includes(className) && spell.level === 0;
-      })
+    const cantripsAvailable = getSpellsByClass(className, 0) // Get cantrips (level 0)
       .filter(spell => !currentSpells.includes(spell.name)) // Exclude already known cantrips
       .map(spell => spell.name);
     

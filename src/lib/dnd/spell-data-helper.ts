@@ -2,6 +2,21 @@
 import { spellsData } from '../../../prisma/data/spells-data';
 import type { Spell } from './spells';
 
+// Helper function to safely parse classes from JSON string
+function parseClasses(classesData: string | string[]): string[] {
+  if (Array.isArray(classesData)) {
+    return classesData;
+  }
+  if (typeof classesData === 'string') {
+    try {
+      return JSON.parse(classesData);
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
 export function getAllSpellsFromDatabase(): Spell[] {
   return spellsData.map(spell => ({
     name: spell.name,
@@ -12,20 +27,14 @@ export function getAllSpellsFromDatabase(): Spell[] {
     components: spell.components,
     duration: spell.duration,
     description: spell.description,
-    classes: typeof spell.classes === 'string' ? JSON.parse(spell.classes) : spell.classes
+    classes: parseClasses(spell.classes)
   }));
 }
 
 export function getSpellsByClass(characterClass: string, maxLevel: number = 9): Spell[] {
   return spellsData
     .filter(spell => {
-      // Parse classes array (stored as JSON string in database)
-      let spellClasses: string[] = [];
-      try {
-        spellClasses = typeof spell.classes === 'string' ? JSON.parse(spell.classes) : spell.classes;
-      } catch {
-        spellClasses = [];
-      }
+      const spellClasses = parseClasses(spell.classes);
       
       // Check if spell is available to this class and level
       return spellClasses.includes(characterClass) && spell.level <= maxLevel;
@@ -39,7 +48,7 @@ export function getSpellsByClass(characterClass: string, maxLevel: number = 9): 
       components: spell.components,
       duration: spell.duration,
       description: spell.description,
-      classes: typeof spell.classes === 'string' ? JSON.parse(spell.classes) : spell.classes
+      classes: parseClasses(spell.classes)
     }));
 }
 
@@ -56,6 +65,6 @@ export function findSpellByName(spellName: string): Spell | null {
     components: spell.components,
     duration: spell.duration,
     description: spell.description,
-    classes: typeof spell.classes === 'string' ? JSON.parse(spell.classes) : spell.classes
+    classes: parseClasses(spell.classes)
   };
 } 

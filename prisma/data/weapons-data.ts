@@ -127,7 +127,7 @@ export const weaponsData = [
     weight: 5,
     properties: "Ammunition (range 80/320), Loading, Two-Handed",
     description: "A small crossbow that fires bolts.",
-    ammunitionTypeId: 2,
+    ammunitionTypeName: "Crossbow Bolts",
     suggestedQuantity: 20
   },
   {
@@ -140,7 +140,7 @@ export const weaponsData = [
     weight: 0.25,
     properties: "Finesse, Thrown (range 20/60)",
     description: "A small, pointed missile designed for throwing.",
-    ammunitionTypeId: null,
+    ammunitionTypeName: null,
     suggestedQuantity: null
   },
   {
@@ -153,7 +153,7 @@ export const weaponsData = [
     weight: 2,
     properties: "Ammunition (range 80/320), Two-Handed",
     description: "A small bow designed for quick shots.",
-    ammunitionTypeId: 1,
+    ammunitionTypeName: "Arrows",
     suggestedQuantity: 20
   },
   {
@@ -166,7 +166,7 @@ export const weaponsData = [
     weight: 0,
     properties: "Ammunition (range 30/120)",
     description: "A leather strap used to hurl small stones or bullets.",
-    ammunitionTypeId: 3,
+    ammunitionTypeName: "Sling Bullets",
     suggestedQuantity: 20
   },
 
@@ -381,7 +381,7 @@ export const weaponsData = [
     weight: 1,
     properties: "Ammunition (range 25/100), Loading",
     description: "A long tube used to blow small darts.",
-    ammunitionTypeId: 4,
+    ammunitionTypeName: null,
     suggestedQuantity: 50
   },
   {
@@ -394,7 +394,7 @@ export const weaponsData = [
     weight: 3,
     properties: "Ammunition (range 30/120), Light, Loading",
     description: "A small crossbow that can be used with one hand.",
-    ammunitionTypeId: 2,
+    ammunitionTypeName: null,
     suggestedQuantity: 20
   },
   {
@@ -407,7 +407,7 @@ export const weaponsData = [
     weight: 18,
     properties: "Ammunition (range 100/400), Heavy, Loading, Two-Handed",
     description: "A large crossbow that fires heavy bolts.",
-    ammunitionTypeId: 2,
+    ammunitionTypeName: null,
     suggestedQuantity: 20
   },
   {
@@ -420,7 +420,7 @@ export const weaponsData = [
     weight: 2,
     properties: "Ammunition (range 150/600), Heavy, Two-Handed",
     description: "A large bow designed for long-range shots.",
-    ammunitionTypeId: 1,
+    ammunitionTypeName: null,
     suggestedQuantity: 20
   },
   {
@@ -433,7 +433,7 @@ export const weaponsData = [
     weight: 3,
     properties: "Special, Thrown (range 5/15)",
     description: "A net designed to entangle targets.",
-    ammunitionTypeId: null,
+    ammunitionTypeName: null,
     suggestedQuantity: null
   }
 ] 

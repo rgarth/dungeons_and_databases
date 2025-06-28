@@ -79,7 +79,7 @@ export async function seedEquipment() {
       await prisma.equipmentPackItem.create({
         data: {
           packId: pack.id,
-          equipmentId: equipment.id,
+          itemName: item.equipmentName,
           quantity: item.quantity
         }
       });
@@ -90,46 +90,9 @@ export async function seedEquipment() {
   console.log('\n✅ Equipment and equipment packs seeding completed!');
 }
 
-async function validateEquipment() {
-  console.log('\n🔍 Validating equipment data...');
-  
-  const equipment = await prisma.equipment.findMany();
-  const packs = await prisma.equipmentPack.findMany({
-    include: {
-      items: {
-        include: {
-          equipment: true
-        }
-      }
-    }
-  });
-  
-  console.log(`📦 Found ${equipment.length} equipment items and ${packs.length} equipment packs in database:`);
-  
-  console.log('\n🧰 Equipment items:');
-  for (const item of equipment) {
-    console.log(`• ${item.name} (${item.cost})`);
-  }
-  
-  console.log('\n🎒 Equipment packs:');
-  for (const pack of packs) {
-    console.log(`\n${pack.name} (${pack.cost})`);
-    console.log(`📝 ${pack.description}`);
-    console.log(`📋 ${pack.items.length} items:`);
-    
-    for (const item of pack.items) {
-      console.log(`  • ${item.quantity}x ${item.equipment.name}`);
-    }
-  }
-  
-  return { equipment, packs };
-}
-
 async function main() {
   try {
     await seedEquipment();
-    await validateEquipment();
-    
     console.log('\n🎉 Equipment and equipment packs seeding completed successfully!');
   } catch (error) {
     console.error('❌ Error seeding equipment data:', error);
@@ -142,4 +105,4 @@ async function main() {
 // Only run if this file is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   main();
-} 
+}

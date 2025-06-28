@@ -18,14 +18,8 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      // Parse JSON fields for cached data
-      const parsedSubraces = filteredSubraces.map(subrace => ({
-        ...subrace,
-        traits: JSON.parse(subrace.traits as string),
-        languages: subrace.languages ? JSON.parse(subrace.languages as string) : null
-      }));
-
-      return NextResponse.json(parsedSubraces);
+      // Prisma automatically handles Json fields - no manual parsing needed
+      return NextResponse.json(filteredSubraces);
     }
 
     // Fallback to database if cache is not initialized
@@ -49,14 +43,8 @@ export async function GET(request: NextRequest) {
         }
       });
 
-      // Parse JSON fields
-      const parsedSubraces = subraces.map(subrace => ({
-        ...subrace,
-        traits: JSON.parse(subrace.traits as string),
-        languages: subrace.languages ? JSON.parse(subrace.languages as string) : null
-      }));
-
-      return NextResponse.json(parsedSubraces);
+      // Prisma automatically handles Json fields - no manual parsing needed
+      return NextResponse.json(subraces);
     } else {
       // Get all subraces
       const subraces = await prisma.subrace.findMany({
@@ -79,14 +67,8 @@ export async function GET(request: NextRequest) {
         ]
       });
 
-      // Parse JSON fields
-      const parsedSubraces = subraces.map(subrace => ({
-        ...subrace,
-        traits: JSON.parse(subrace.traits as string),
-        languages: subrace.languages ? JSON.parse(subrace.languages as string) : null
-      }));
-
-      return NextResponse.json(parsedSubraces);
+      // Prisma automatically handles Json fields - no manual parsing needed
+      return NextResponse.json(subraces);
     }
   } catch (error) {
     console.error('Error fetching subraces:', error);

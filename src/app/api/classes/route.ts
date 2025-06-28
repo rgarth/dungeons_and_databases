@@ -38,11 +38,9 @@ export async function GET() {
       }
     });
 
-    // Parse JSON fields and transform relations
+    // Transform relations (no need to parse JSON fields - Prisma handles this automatically)
     const parsedClasses = classes.map(dndClass => ({
       ...dndClass,
-      savingThrows: JSON.parse(dndClass.savingThrows as string),
-      skillChoices: JSON.parse(dndClass.skillChoices as string),
       armorProficiencies: dndClass.armorProficiencies.map(prof => prof.armorType),
       weaponProficiencies: dndClass.weaponProficiencies.map(prof => ({
         type: prof.proficiencyType,
