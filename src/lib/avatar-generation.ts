@@ -84,13 +84,6 @@ function getRandomItem<T>(array: T[]): T {
 function generateServerPrompt(characterData: CharacterAvatarData): string {
   const { race, gender, class: characterClass, appearance, age, subrace } = characterData;
   
-  // Start with basic character description - use descriptive terms for Dragonborn females
-  const characterDescription = race === 'Dragonborn' && gender === 'Female'
-    ? `thin and delicate ${race} ${characterClass}`
-    : race === 'Dragonborn' && gender === 'Male'
-    ? `robust ${race} ${characterClass}`
-    : `${gender || 'Person'} ${race} ${characterClass}`;
-  
   // Build appearance description
   let appearanceDescription = '';
   let cameraAngle = '';
@@ -127,7 +120,7 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
           
           // Create the full prompt for drow
           const clothing = CLASS_CLOTHING[characterClass as keyof typeof CLASS_CLOTHING] || 'appropriate clothing';
-          const fullBodyPrompt = `A professional full-body photograph of a ${characterDescription}${appearanceDescription} in ${clothing}, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping${cameraAngle || ''}`;
+          const fullBodyPrompt = `A professional full-body photograph of a ${gender || 'Person'} ${characterClass}${appearanceDescription} in ${clothing}, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping${cameraAngle || ''}`;
           
           return fullBodyPrompt;
         } else {
@@ -187,9 +180,9 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
     appearanceDescription += `, ${bodyType}`;
   }
   
-  // Create the full prompt
+  // Create the full prompt - use descriptive terms instead of race names
   const clothing = CLASS_CLOTHING[characterClass as keyof typeof CLASS_CLOTHING] || 'appropriate clothing';
-  const fullBodyPrompt = `A professional full-body photograph of a ${characterDescription}${appearanceDescription} in ${clothing}, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping${cameraAngle || ''}`;
+  const fullBodyPrompt = `A professional full-body photograph of a ${gender || 'Person'} ${characterClass}${appearanceDescription} in ${clothing}, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping${cameraAngle || ''}`;
   
   return fullBodyPrompt;
 }
