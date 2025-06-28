@@ -35,7 +35,7 @@ export async function getClassProficiencies(className: string): Promise<ClassPro
       .filter(prof => prof.proficiencyType === 'Specific' && prof.weaponName)
       .map(prof => prof.weaponName!);
 
-    const savingThrows = JSON.parse(dndClass.savingThrows as string) as string[];
+    const savingThrows = dndClass.savingThrows as string[];
 
     return {
       armor: armorTypes,

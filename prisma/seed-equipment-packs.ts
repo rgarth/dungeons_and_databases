@@ -23,11 +23,7 @@ export async function seedEquipmentPacks() {
           items: {
             create: pack.items.map(item => ({
               quantity: item.quantity,
-              equipment: {
-                connect: {
-                  name: item.equipmentName
-                }
-              }
+              itemName: item.equipmentName
             }))
           }
         }
@@ -39,4 +35,26 @@ export async function seedEquipmentPacks() {
   }
 
   console.log('Equipment packs seeding completed')
+}
+
+async function main() {
+  const force = process.argv.includes('--force');
+  
+  if (!force) {
+    console.log('⚠️  This will clear all existing equipment packs. Use --force to proceed.');
+    return;
+  }
+  
+  await seedEquipmentPacks();
+}
+
+if (require.main === module) {
+  main()
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+    });
 } 

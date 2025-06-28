@@ -17,6 +17,7 @@ import { magicalItemsData } from './magical-items-data'
 import { equipmentPacksData } from './equipment-packs-data'
 import { classWeaponSuggestionsData } from './weapon-suggestions-data'
 import { classArmorSuggestionsData } from './armor-suggestions-data'
+import { ammunitionSuggestionsData } from './ammunition-suggestions-data'
 
 // Export all data
 export {
@@ -34,7 +35,8 @@ export {
   magicalItemsData,
   equipmentPacksData,
   classWeaponSuggestionsData,
-  classArmorSuggestionsData
+  classArmorSuggestionsData,
+  ammunitionSuggestionsData
 }
 
 // Export counts for validation

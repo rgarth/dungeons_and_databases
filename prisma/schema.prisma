@@ -123,7 +123,6 @@ model Equipment {
   stackable   Boolean             @default(false)
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
-  packItems   EquipmentPackItem[]
 }
 
 model MagicalItem {
@@ -232,7 +231,7 @@ model DndRace {
   speed                Int
   traits               Json
   languages            Json
-  age                  String
+  age                  String?
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
   subraces             Subrace[]
@@ -243,7 +242,7 @@ model Subrace {
   name                 String   @unique
   raceId               String
   description          String
-  abilityScoreIncrease String
+  abilityScoreIncrease Json
   traits               Json
   languages            Json?
   createdAt            DateTime @default(now())
@@ -297,9 +296,8 @@ model Treasure {
   id          String   @id @default(cuid())
   name        String   @unique
   type        String
-  category    String?
-  value       Int
   description String
+  value       Int
   weight      Float?
   appearance  String?
   createdAt   DateTime @default(now())
@@ -320,14 +318,13 @@ model EquipmentPack {
 model EquipmentPackItem {
   id            String        @id @default(cuid())
   packId        String
-  equipmentId   String
+  itemName      String
   quantity      Int           @default(1)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
-  equipment     Equipment     @relation(fields: [equipmentId], references: [id])
   equipmentPack EquipmentPack @relation(fields: [packId], references: [id], onDelete: Cascade)
 
-  @@unique([packId, equipmentId])
+  @@unique([packId, itemName])
 }
 
 model Character {
@@ -411,11 +408,11 @@ model ClassSpellLimits {
   id               String   @id @default(cuid())
   classId          String
   level            Int
-  cantripsKnown    Int      @default(0)
-  spellsKnown      Int      @default(0)
-  spellcastingType String   // 'known', 'prepared', 'spellbook', 'none'
-  maxSpellLevel    Int?     // Maximum spell level that can be learned at this character level
-  spellLevelLimits Json?    // JSON object mapping spell level to max spells of that level, e.g. {"1": 4, "2": 3, "3": 2}
+  cantripsKnown    Int
+  spellsKnown      Int
+  spellcastingType String
+  maxSpellLevel    Int
+  spellLevelLimits Json
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   class            DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Plus, Minus, X } from "lucide-react";
 import { Weapon } from "@/lib/dnd/equipment";
 import { weaponsData } from '../../../prisma/data/weapons-data';
@@ -59,10 +59,17 @@ export function WeaponSelector({
   cachedWeaponProficiencies,
   cachedPhbDescription
 }: WeaponSelectorProps) {
-  const [weaponProficiencies, setWeaponProficiencies] = useState<{ simple: boolean; martial: boolean; specific: string[] } | null>(cachedWeaponProficiencies || null);
-  const [weaponSuggestions, setWeaponSuggestions] = useState<WeaponSuggestion[]>(cachedWeaponSuggestions || []);
-  const [phbDescription, setPhbDescription] = useState<string | null>(cachedPhbDescription || null);
-  
+  const [weaponSuggestions, setWeaponSuggestions] = useState<WeaponSuggestion[]>([]);
+  const [weaponProficiencies, setWeaponProficiencies] = useState<{ simple: boolean; martial: boolean; specific: string[] } | null>(null);
+  const [phbDescription, setPhbDescription] = useState<string | null>(null);
+
+  // Memoize the cached data to prevent unnecessary re-renders
+  const memoizedCachedData = useMemo(() => ({
+    weaponSuggestions: cachedWeaponSuggestions,
+    weaponProficiencies: cachedWeaponProficiencies,
+    phbDescription: cachedPhbDescription
+  }), [cachedWeaponSuggestions, cachedWeaponProficiencies, cachedPhbDescription]);
+
   // For new interface, manage internal state. For legacy interface, use props
   const [internalSelectedWeapons, setInternalSelectedWeapons] = useState<{weapon: Weapon, quantity: number}[]>(initialSelectedWeapons || []);
   const currentSelectedWeapons = onWeaponQuantityChange ? initialSelectedWeapons : internalSelectedWeapons;
@@ -136,10 +143,10 @@ export function WeaponSelector({
     if (!characterClass) return;
     
     // If we have cached data, use it immediately
-    if (cachedWeaponSuggestions && cachedWeaponProficiencies && cachedPhbDescription !== undefined) {
-      setWeaponSuggestions(cachedWeaponSuggestions);
-      setWeaponProficiencies(cachedWeaponProficiencies);
-      setPhbDescription(cachedPhbDescription);
+    if (memoizedCachedData.weaponSuggestions && memoizedCachedData.weaponProficiencies && memoizedCachedData.phbDescription !== undefined) {
+      setWeaponSuggestions(memoizedCachedData.weaponSuggestions);
+      setWeaponProficiencies(memoizedCachedData.weaponProficiencies);
+      setPhbDescription(memoizedCachedData.phbDescription);
       console.log('🚀 Using cached weapon data for', characterClass);
       return;
     }
@@ -155,9 +162,12 @@ export function WeaponSelector({
                 .then(res => res.ok ? res.json() : [])
                 .catch(() => [])
             : Promise.resolve([]),
-          fetch(`/api/classes/${encodeURIComponent(characterClass)}`)
-            .then(res => res.ok ? res.json() : null)
-            .catch(() => null)
+          // Only fetch class data if we don't have it cached
+          memoizedCachedData.phbDescription !== undefined 
+            ? Promise.resolve({ phbDescription: memoizedCachedData.phbDescription })
+            : fetch(`/api/classes/${encodeURIComponent(characterClass)}`)
+                .then(res => res.ok ? res.json() : null)
+                .catch(() => null)
         ]);
         
         setWeaponProficiencies(proficiencies);
@@ -173,7 +183,7 @@ export function WeaponSelector({
     };
     
     loadData();
-  }, [characterClass, showSuggestions, cachedWeaponSuggestions, cachedWeaponProficiencies, cachedPhbDescription]);
+  }, [characterClass, showSuggestions, memoizedCachedData]);
 
   // For legacy modal interface, check isOpen. For new interface, always render
   if (isOpen === false) return null;

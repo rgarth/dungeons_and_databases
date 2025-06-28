@@ -19,15 +19,7 @@ export async function GET() {
         items: {
           select: {
             quantity: true,
-            equipment: {
-              select: {
-                name: true,
-                type: true,
-                cost: true,
-                weight: true,
-                description: true
-              }
-            }
+            itemName: true
           }
         }
       },
@@ -43,12 +35,8 @@ export async function GET() {
       description: pack.description,
       cost: pack.cost,
       items: pack.items.map(item => ({
-        name: item.equipment.name,
-        quantity: item.quantity,
-        type: item.equipment.type,
-        cost: item.equipment.cost,
-        weight: item.equipment.weight,
-        description: item.equipment.description
+        name: item.itemName,
+        quantity: item.quantity
       }))
     }));
 

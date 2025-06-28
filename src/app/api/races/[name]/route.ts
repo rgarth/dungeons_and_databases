@@ -15,14 +15,8 @@ export async function GET(
       return new NextResponse('Race not found', { status: 404 });
     }
 
-    // Parse JSON fields
-    const parsedRace = {
-      ...race,
-      traits: JSON.parse(race.traits as string),
-      languages: JSON.parse(race.languages as string)
-    };
-
-    return NextResponse.json(parsedRace);
+    // No need to parse JSON fields - Prisma handles this automatically
+    return NextResponse.json(race);
   } catch (error) {
     console.error('Error fetching race:', error);
     return new NextResponse('Internal Server Error', { status: 500 });

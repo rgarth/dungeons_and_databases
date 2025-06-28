@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -242,9 +242,9 @@ export async function seedSubraces() {
         name: subrace.name,
         raceId: race.id,
         description: subrace.description,
-        abilityScoreIncrease: subrace.abilityScoreIncrease,
-        traits: JSON.stringify(subrace.traits),
-        languages: subrace.languages ? JSON.stringify(subrace.languages) : undefined
+        abilityScoreIncrease: subrace.abilityScoreIncrease as any,
+        traits: subrace.traits,
+        languages: subrace.languages || Prisma.JsonNull
       }
     });
   }

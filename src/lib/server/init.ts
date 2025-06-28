@@ -86,15 +86,7 @@ export async function initializeServerCache() {
           items: {
             select: {
               quantity: true,
-              equipment: {
-                select: {
-                  name: true,
-                  type: true,
-                  cost: true,
-                  weight: true,
-                  description: true
-                }
-              }
+              itemName: true
             }
           },
           createdAt: true,
@@ -118,7 +110,6 @@ export async function initializeServerCache() {
           type: true,
           value: true,
           description: true,
-          category: true,
           weight: true,
           appearance: true,
           createdAt: true,

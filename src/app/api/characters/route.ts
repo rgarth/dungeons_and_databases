@@ -293,6 +293,7 @@ export async function POST(request: NextRequest) {
         maxHitPoints: maxHitPoints ?? 10,
         armorClass: armorClass ?? 10,
         inventory: processedInventory, // Use processed inventory without weapons or armor
+        equipment: processedInventory, // Also set equipment field to match inventory
         skills: skills || [],
         weapons: weaponsWithEquipped,
         inventoryWeapons: weaponsWithEquipped,

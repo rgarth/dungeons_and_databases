@@ -14,7 +14,8 @@ import {
   magicalItemsData,
   equipmentPacksData,
   classWeaponSuggestionsData,
-  classArmorSuggestionsData
+  classArmorSuggestionsData,
+  ammunitionSuggestionsData
 } from './data'
 import { seedSubraces } from './seed-subraces'
 import { seedClassSpellLimits } from './seed-class-spell-limits'
@@ -50,6 +51,7 @@ async function main() {
   await prisma.equipment.deleteMany()
   await prisma.armor.deleteMany()
   await prisma.weapon.deleteMany()
+  await prisma.ammunitionSuggestion.deleteMany()
   await prisma.spell.deleteMany()
   
   console.log('🗑️  Cleared existing data')
@@ -61,10 +63,43 @@ async function main() {
   }
   console.log(`✅ Created ${spellsData.length} spells`)
   
+  // Seed ammunition suggestions
+  console.log('🔫 Seeding ammunition suggestions...')
+  for (const suggestion of ammunitionSuggestionsData) {
+    await prisma.ammunitionSuggestion.create({
+      data: {
+        name: suggestion.name,
+        description: suggestion.description
+      }
+    })
+  }
+  console.log(`✅ Created ${ammunitionSuggestionsData.length} ammunition suggestions`)
+  
   // Seed weapons
   console.log('⚔️  Seeding weapons...')
   for (const weapon of weaponsData) {
-    await prisma.weapon.create({ data: weapon })
+    let ammunitionTypeId = null
+    if (weapon.ammunitionTypeName) {
+      const ammo = await prisma.ammunitionSuggestion.findUnique({ where: { name: weapon.ammunitionTypeName } })
+      if (ammo) ammunitionTypeId = ammo.id
+    }
+    let weaponData: any = {
+      name: weapon.name,
+      type: weapon.type,
+      category: weapon.category,
+      damage: weapon.damage,
+      damageType: weapon.damageType,
+      properties: weapon.properties,
+      weight: weapon.weight,
+      cost: weapon.cost,
+      description: weapon.description,
+      ammunitionTypeId,
+      suggestedQuantity: weapon.suggestedQuantity ?? null
+    }
+    if (typeof weapon.stackable !== 'undefined') {
+      weaponData.stackable = weapon.stackable
+    }
+    await prisma.weapon.create({ data: weaponData })
   }
   console.log(`✅ Created ${weaponsData.length} weapons`)
   
@@ -277,18 +312,13 @@ async function main() {
 
     // Create pack items
     for (const item of pack.items) {
-      const equipment = await prisma.equipment.findUnique({
-        where: { name: item.equipmentName }
+      await prisma.equipmentPackItem.create({
+        data: {
+          packId: createdPack.id,
+          itemName: item.equipmentName,
+          quantity: item.quantity
+        }
       })
-      if (equipment) {
-        await prisma.equipmentPackItem.create({
-          data: {
-            packId: createdPack.id,
-            equipmentId: equipment.id,
-            quantity: item.quantity
-          }
-        })
-      }
     }
   }
   console.log(`✅ Created ${equipmentPacksData.length} equipment packs`)
