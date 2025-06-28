@@ -50,3 +50,5 @@ next-env.d.ts
 # avatar generation
 /public/avatars/
 /scripts/avatar-progress*.json
+.env.backup
+.env*
