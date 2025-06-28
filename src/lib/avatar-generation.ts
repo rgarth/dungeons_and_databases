@@ -99,7 +99,7 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
     let raceDescription = '';
     switch (race) {
       case 'Gnome':
-        raceDescription = 'small fey humanoid with pointed ears and expressive features';
+        raceDescription = 'small fey humanoid, 3-4 feet tall, pointed ears, intelligent eyes, prominent nose, earth-toned skin, mature features';
         break;
       case 'Halfling':
         raceDescription = 'small humanoid with curly hair and hobbit features';
