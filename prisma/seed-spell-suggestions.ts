@@ -14,19 +14,11 @@ export async function seedSpellSuggestions() {
   console.log('🧙‍♂️ Seeding spell suggestions...');
 
   try {
-    // First, update DndClass with PHB descriptions
-    for (const classData of classSpellSuggestionsData) {
-      await prisma.dndClass.update({
-        where: { name: classData.className },
-        data: { phbDescription: classData.phbDescription }
-      });
-    }
-
     // Clear existing suggestions
     await prisma.classSpellSuggestion.deleteMany();
     console.log('✅ Cleared existing spell suggestions');
 
-    // Then create spell suggestions
+    // Create spell suggestions
     for (const classData of classSpellSuggestionsData) {
       const dndClass = await prisma.dndClass.findUnique({
         where: { name: classData.className }

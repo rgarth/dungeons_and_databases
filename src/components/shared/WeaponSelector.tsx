@@ -37,7 +37,6 @@ interface WeaponSelectorProps {
   // Cached data props for instant loading
   cachedWeaponSuggestions?: WeaponSuggestion[];
   cachedWeaponProficiencies?: { simple: boolean; martial: boolean; specific: string[] } | null;
-  cachedPhbDescription?: string | null;
   
   // Legacy interface (modal with isOpen)
   isOpen?: boolean;
@@ -57,18 +56,15 @@ export function WeaponSelector({
   showSuggestions = true,
   cachedWeaponSuggestions,
   cachedWeaponProficiencies,
-  cachedPhbDescription
 }: WeaponSelectorProps) {
   const [weaponSuggestions, setWeaponSuggestions] = useState<WeaponSuggestion[]>([]);
   const [weaponProficiencies, setWeaponProficiencies] = useState<{ simple: boolean; martial: boolean; specific: string[] } | null>(null);
-  const [phbDescription, setPhbDescription] = useState<string | null>(null);
 
   // Memoize the cached data to prevent unnecessary re-renders
   const memoizedCachedData = useMemo(() => ({
     weaponSuggestions: cachedWeaponSuggestions,
     weaponProficiencies: cachedWeaponProficiencies,
-    phbDescription: cachedPhbDescription
-  }), [cachedWeaponSuggestions, cachedWeaponProficiencies, cachedPhbDescription]);
+  }), [cachedWeaponSuggestions, cachedWeaponProficiencies]);
 
   // For new interface, manage internal state. For legacy interface, use props
   const [internalSelectedWeapons, setInternalSelectedWeapons] = useState<{weapon: Weapon, quantity: number}[]>(initialSelectedWeapons || []);
@@ -143,17 +139,16 @@ export function WeaponSelector({
     if (!characterClass) return;
     
     // If we have cached data, use it immediately
-    if (memoizedCachedData.weaponSuggestions && memoizedCachedData.weaponProficiencies && memoizedCachedData.phbDescription !== undefined) {
+    if (memoizedCachedData.weaponSuggestions && memoizedCachedData.weaponProficiencies) {
       setWeaponSuggestions(memoizedCachedData.weaponSuggestions);
       setWeaponProficiencies(memoizedCachedData.weaponProficiencies);
-      setPhbDescription(memoizedCachedData.phbDescription);
       console.log('🚀 Using cached weapon data for', characterClass);
       return;
     }
     
     const loadData = async () => {
       try {
-        const [proficiencies, suggestions, classData] = await Promise.all([
+        const [proficiencies, suggestions] = await Promise.all([
           fetch(`/api/class-proficiencies?className=${encodeURIComponent(characterClass)}`)
             .then(res => res.ok ? res.json() : { simple: false, martial: false, specific: [] })
             .catch(() => ({ simple: false, martial: false, specific: [] })),
@@ -161,24 +156,16 @@ export function WeaponSelector({
             ? fetch(`/api/weapon-suggestions?className=${encodeURIComponent(characterClass)}`)
                 .then(res => res.ok ? res.json() : [])
                 .catch(() => [])
-            : Promise.resolve([]),
-          // Only fetch class data if we don't have it cached
-          memoizedCachedData.phbDescription !== undefined 
-            ? Promise.resolve({ phbDescription: memoizedCachedData.phbDescription })
-            : fetch(`/api/classes/${encodeURIComponent(characterClass)}`)
-                .then(res => res.ok ? res.json() : null)
-                .catch(() => null)
+            : Promise.resolve([])
         ]);
         
         setWeaponProficiencies(proficiencies);
         setWeaponSuggestions(suggestions);
-        setPhbDescription(classData?.phbDescription || null);
         console.log('📡 Fetched weapon data for', characterClass);
       } catch (error) {
         console.error('Failed to load weapon data:', error);
         setWeaponProficiencies({ simple: false, martial: false, specific: [] });
         setWeaponSuggestions([]);
-        setPhbDescription(null);
       }
     };
     
@@ -242,12 +229,6 @@ export function WeaponSelector({
             <p className="text-sm text-slate-400 mt-1">
               Select weapons to add to your inventory.
             </p>
-            {characterClass && (
-              <div className="mt-2 p-3 bg-yellow-900/50 rounded-lg">
-                <div className="text-xs text-yellow-200 mb-2">D&D 5e Starting Equipment:</div>
-                <div className="text-xs text-yellow-100">{phbDescription}</div>
-              </div>
-            )}
             {showSuggestions && weaponSuggestions.length > 0 && (
               <div className="mt-2">
                 <div className="flex items-center justify-between">
