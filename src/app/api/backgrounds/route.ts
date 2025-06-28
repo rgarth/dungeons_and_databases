@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cachedBackgrounds } from '@/lib/server/init';
-import { BackgroundData } from '@/components/shared/BackgroundSelector';
 
 export async function GET() {
   try {
@@ -16,6 +15,7 @@ export async function GET() {
         id: true,
         name: true,
         description: true,
+        phbDescription: true,
         skillProficiencies: true,
         languages: true,
         equipment: true,
@@ -32,43 +32,15 @@ export async function GET() {
       }
     });
 
-    // Transform data to match BackgroundData interface (Prisma handles JSON parsing automatically)
-    const parsedBackgrounds: BackgroundData[] = backgrounds.map(background => {
-      // Helper function to ensure arrays
-      const ensureArray = (value: unknown): string[] => {
-        if (Array.isArray(value)) return value as string[];
-        return [];
-      };
-
-      // Parse suggested characteristics with safety checks
-      const parseSuggestedCharacteristics = (value: unknown) => {
-        if (!value || typeof value !== 'object') return undefined;
-        
-        const parsed = value as Record<string, unknown>;
-        if (parsed && typeof parsed === 'object') {
-          return {
-            personalityTraits: ensureArray(parsed.personalityTraits),
-            ideals: ensureArray(parsed.ideals),
-            bonds: ensureArray(parsed.bonds),
-            flaws: ensureArray(parsed.flaws)
-          };
-        }
-        return undefined;
-      };
-
-      return {
-        name: background.name,
-        description: background.description,
-        skillProficiencies: ensureArray(background.skillProficiencies),
-        languages: ensureArray(background.languages),
-        equipment: ensureArray(background.equipment),
-        startingGold: background.startingGold,
-        startingGoldFormula: background.startingGoldFormula,
-        feature: background.feature,
-        featureDescription: background.featureDescription,
-        suggestedCharacteristics: parseSuggestedCharacteristics(background.suggestedCharacteristics)
-      };
-    });
+    const parsedBackgrounds = backgrounds.map(background => ({
+      ...background,
+      skillProficiencies: JSON.parse(background.skillProficiencies as string),
+      languages: JSON.parse(background.languages as string),
+      equipment: JSON.parse(background.equipment as string),
+      suggestedCharacteristics: background.suggestedCharacteristics 
+        ? JSON.parse(background.suggestedCharacteristics as string) 
+        : null
+    }));
 
     return NextResponse.json(parsedBackgrounds);
   } catch (error) {

@@ -149,8 +149,6 @@ model DndClass {
   primaryAbility      String
   savingThrows        Json
   skillChoices        Json
-  phbDescription      String?
-  startingGoldFormula String?
   createdAt           DateTime                 @default(now())
   updatedAt           DateTime                 @updatedAt
   armorProficiencies  ClassArmorProficiency[]
@@ -257,6 +255,7 @@ model Background {
   id                    String   @id @default(cuid())
   name                  String   @unique
   description           String
+  phbDescription        String?  // Full PHB flavor text
   skillProficiencies    Json
   languages             Json
   equipment             Json

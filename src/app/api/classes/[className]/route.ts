@@ -19,9 +19,7 @@ export async function GET(
         hitDie: true,
         primaryAbility: true,
         savingThrows: true,
-        skillChoices: true,
-        phbDescription: true,
-        startingGoldFormula: true
+        skillChoices: true
       }
     });
 

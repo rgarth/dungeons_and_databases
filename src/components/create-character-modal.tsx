@@ -115,7 +115,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [cachedWeaponSuggestions, setCachedWeaponSuggestions] = useState<WeaponSuggestion[]>([]);
   const [cachedWeaponProficiencies, setCachedWeaponProficiencies] = useState<{ simple: boolean; martial: boolean; specific: string[] } | null>(null);
   const [cachedArmorProficiencies, setCachedArmorProficiencies] = useState<string[]>([]);
-  const [cachedPhbDescription, setCachedPhbDescription] = useState<string | null>(null);
   const [cachedSpells, setCachedSpells] = useState<Record<string, Spell[]>>({});
   const [cachedSpellLimits, setCachedSpellLimits] = useState<Record<string, {
     cantripsKnown: number;
@@ -151,7 +150,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     armorSuggestions: ArmorSuggestion[];
     weaponProficiencies: { simple: boolean; martial: boolean; specific: string[] };
     armorProficiencies: string[];
-    phbDescription: string | null;
     spellLimits: {
       cantripsKnown: number;
       spellsKnown: number;
@@ -159,7 +157,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       maxSpellLevel: number;
       spellLevelLimits: Record<string, number>;
     } | null;
-    startingGoldFormula?: string;
     // Add background data caching
     backgroundData?: {
       startingGold: number;
@@ -205,7 +202,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     console.log('🟢 useEffect: Checking cached class data for', characterClass);
     
     // Check if we already have the class data in cache
-    if (allClassData[characterClass]?.startingGoldFormula) {
+    if (allClassData[characterClass]) {
       console.log('⚡ Using cached class data for', characterClass);
       return;
     }
@@ -305,26 +302,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
     const calculateGold = async () => {
       try {
-        let classGold = 0;
         let backgroundFixedGold = 0;
         let backgroundRolledGold = 0;
-        let classRollDetails = '';
         let backgroundRollDetails = '';
-
-        // Get class data from cache
-        const classData = allClassData[characterClass];
-        
-        // If we don't have class data and we're still loading all class data, wait
-        if (!classData?.startingGoldFormula && isLoadingAllClassData) {
-          console.log('⏳ Waiting for all class data to load before calculating gold...');
-          return;
-        }
-        
-        // If we still don't have class data after loading is complete, skip gold calculation
-        if (!classData?.startingGoldFormula) {
-          console.log('⚠️ No class data available for gold calculation');
-          return;
-        }
 
         // Get background data from cache or fetch (backgrounds are loaded separately)
         let backgroundData = allClassData[characterClass]?.backgroundData;
@@ -354,10 +334,15 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         }
 
         // Calculate gold based on equipment pack selection
+        let classGold = 0;
+        let classRollDetails = '';
+        
         if (selectedEquipmentPack === -1) {
-          // No equipment pack - roll class gold
-          if (classData?.startingGoldFormula) {
-            const match = classData.startingGoldFormula.match(/(\d+)d(\d+)(\*\d+)?/);
+          // No equipment pack - roll class gold (this is the class's starting equipment gold, not a formula)
+          // In 5e, classes don't have starting gold formulas - they have starting equipment
+          // The gold calculation should be based on the background's starting gold formula
+          if (backgroundData?.startingGoldFormula) {
+            const match = backgroundData.startingGoldFormula.match(/(\d+)d(\d+)(\*\d+)?/);
             if (match) {
               const numDice = parseInt(match[1], 10);
               const dieSize = parseInt(match[2], 10);
@@ -405,10 +390,10 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         // Build roll details string
         let rollDetails = '';
         if (classRollDetails) {
-          rollDetails = `Class: ${classRollDetails}`;
+          rollDetails = `Background Gold: ${classRollDetails}`;
         }
         if (backgroundFixedGold > 0) {
-          rollDetails += rollDetails ? `, Background: ${backgroundFixedGold} gp` : `Background: ${backgroundFixedGold} gp`;
+          rollDetails += rollDetails ? `, Background Fixed: ${backgroundFixedGold} gp` : `Background Fixed: ${backgroundFixedGold} gp`;
         }
         if (backgroundRollDetails) {
           rollDetails += rollDetails ? `, Background Roll: ${backgroundRollDetails}` : `Background Roll: ${backgroundRollDetails}`;
@@ -453,7 +438,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         setCachedWeaponSuggestions(cachedClassData.weaponSuggestions);
         setCachedWeaponProficiencies(cachedClassData.weaponProficiencies);
         setCachedArmorProficiencies(cachedClassData.armorProficiencies);
-        setCachedPhbDescription(cachedClassData.phbDescription);
         
         // Update spell limits cache
         if (cachedClassData.spellLimits) {
@@ -511,7 +495,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         
         setLoadingOptions(true);
         try {
-          const [options, weaponSuggestions, armorSuggestions, weaponProficiencies, armorProficiencies, classData] = await Promise.all([
+          const [options, weaponSuggestions, armorSuggestions, weaponProficiencies, armorProficiencies] = await Promise.all([
             characterCreationService.getCreationOptions(characterClass),
             fetch(`/api/weapon-suggestions?className=${encodeURIComponent(characterClass)}`)
               .then(res => res.ok ? res.json() : [])
@@ -524,10 +508,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               .catch(() => ({ simple: false, martial: false, specific: [] })),
             fetch(`/api/class-proficiencies?className=${encodeURIComponent(characterClass)}&includeArmor=true`)
               .then(res => res.ok ? res.json() : { armor: [] })
-              .catch(() => ({ armor: [] })),
-            fetch(`/api/classes/${encodeURIComponent(characterClass)}`)
-              .then(res => res.ok ? res.json() : null)
-              .catch(() => null)
+              .catch(() => ({ armor: [] }))
           ]);
           
           const cachedSpellsForClass = cachedSpells[characterClass];
@@ -551,7 +532,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           setCachedWeaponSuggestions(weaponSuggestions);
           setCachedWeaponProficiencies(weaponProficiencies);
           setCachedArmorProficiencies(armorProficiencies.armor || []);
-          setCachedPhbDescription(classData?.phbDescription || null);
           
           if ((options as Partial<CreationOptions>).spellcasting?.availableSpells) {
             setCachedSpells(prev => ({
@@ -1037,7 +1017,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               armorSuggestions,
               weaponProficiencies,
               armorProficiencies: armorProficiencies.armor || [],
-              phbDescription: classData?.phbDescription || null,
               spellLimits
             }
           };
@@ -1050,7 +1029,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               armorSuggestions: [],
               weaponProficiencies: { simple: false, martial: false, specific: [] },
               armorProficiencies: [],
-              phbDescription: null,
               spellLimits: null
             }
           };
@@ -1063,7 +1041,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         armorSuggestions: ArmorSuggestion[];
         weaponProficiencies: { simple: boolean; martial: boolean; specific: string[] };
         armorProficiencies: string[];
-        phbDescription: string | null;
         spellLimits: {
           cantripsKnown: number;
           spellsKnown: number;
@@ -1813,7 +1790,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           showSuggestions={true}
           cachedWeaponSuggestions={cachedWeaponSuggestions}
           cachedWeaponProficiencies={cachedWeaponProficiencies}
-          cachedPhbDescription={cachedPhbDescription}
         />
       )}
 

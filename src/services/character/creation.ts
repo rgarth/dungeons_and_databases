@@ -301,8 +301,7 @@ export class CharacterCreationService {
   // Create final character data
   async createCharacter(
     data: CharacterCreationData, 
-    equipmentPackItems: { name: string; quantity: number }[] = [],
-    cachedClassData?: { [className: string]: { startingGoldFormula?: string; phbDescription?: string } }
+    equipmentPackItems: { name: string; quantity: number }[] = []
   ): Promise<CharacterCreationResult> {
     const { abilityScores, class: characterClass, race, subrace } = data;
     
@@ -498,47 +497,7 @@ export class CharacterCreationService {
     
     if (data.selectedEquipmentPack === -1) {
       // No equipment pack selected - roll dice for starting gold
-      // Get class starting gold formula from database
-      let classGold = 0;
-      let classRoll = '';
-      try {
-        // Check if we have cached class data first
-        const cachedClass = cachedClassData?.[characterClass];
-        let classData = null;
-        
-        if (cachedClass?.startingGoldFormula) {
-          classData = cachedClass;
-          console.log('⚡ Using cached class data for', characterClass);
-        } else {
-          // Fallback to API call if not cached
-          const classResponse = await fetch(`/api/classes/${encodeURIComponent(characterClass)}`);
-          if (classResponse.ok) {
-            classData = await classResponse.json();
-          }
-        }
-        
-        if (classData?.startingGoldFormula) {
-          // Parse and roll the dice formula (e.g., '5d4*10')
-          const match = classData.startingGoldFormula.match(/(\d+)d(\d+)(\*\d+)?/);
-          if (match) {
-            const numDice = parseInt(match[1], 10);
-            const dieSize = parseInt(match[2], 10);
-            const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
-            const rolls: number[] = [];
-            for (let i = 0; i < numDice; i++) {
-              const roll = Math.floor(Math.random() * dieSize) + 1;
-              rolls.push(roll);
-              classGold += roll;
-            }
-            classGold *= multiplier;
-            classRoll = `${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} [${rolls.join(', ')}] = ${classGold} gp`;
-          }
-        }
-      } catch (error) {
-        console.warn('Failed to fetch class starting gold formula:', error);
-      }
-      
-      // Get background starting gold formula from database
+      // Get background starting gold formula from database (classes don't have starting gold in 5e)
       let backgroundGold = 0;
       let backgroundRoll = '';
       try {
@@ -567,8 +526,8 @@ export class CharacterCreationService {
         console.warn('Failed to fetch background starting gold formula:', error);
       }
       
-      startingGold = classGold + backgroundGold;
-      goldRollDetails = `Class: ${characterClass} ${classRoll}${backgroundRoll ? `, Background: ${data.background} ${backgroundRoll}` : ''}`;
+      startingGold = backgroundGold;
+      goldRollDetails = `Background: ${data.background} ${backgroundRoll}`;
       console.log(`No equipment pack selected - ${goldRollDetails} (total: ${startingGold} gp)`);
     } else {
       // Equipment pack selected - use background starting gold

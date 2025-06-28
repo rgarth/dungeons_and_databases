@@ -16,6 +16,7 @@ async function seedBackgrounds() {
         where: { name: background.name },
         update: {
           description: background.description,
+          phbDescription: background.phbDescription,
           skillProficiencies: JSON.stringify(background.skillProficiencies),
           languages: JSON.stringify(background.languages),
           equipment: JSON.stringify(background.equipment),
@@ -28,6 +29,7 @@ async function seedBackgrounds() {
         create: {
           name: background.name,
           description: background.description,
+          phbDescription: background.phbDescription,
           skillProficiencies: JSON.stringify(background.skillProficiencies),
           languages: JSON.stringify(background.languages),
           equipment: JSON.stringify(background.equipment),

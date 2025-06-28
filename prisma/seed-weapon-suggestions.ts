@@ -6,19 +6,11 @@ const prisma = new PrismaClient();
 export async function seedWeaponSuggestions() {
   console.log('Starting weapon suggestions seed...');
 
-  // First, update DndClass with PHB descriptions
-  for (const classData of classWeaponSuggestionsData) {
-    await prisma.dndClass.update({
-      where: { name: classData.className },
-      data: { phbDescription: classData.phbDescription }
-    });
-  }
-
   // Clear existing suggestions
   await prisma.classWeaponSuggestion.deleteMany();
   console.log('Cleared existing weapon suggestions');
 
-  // Then create weapon suggestions without PHB descriptions
+  // Create weapon suggestions
   for (const classData of classWeaponSuggestionsData) {
     const dndClass = await prisma.dndClass.findUnique({
       where: { name: classData.className }
