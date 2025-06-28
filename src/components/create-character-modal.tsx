@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { X, Dice6, RefreshCw } from "lucide-react";
 import { toast } from 'react-hot-toast';
-import { AbilityScore } from "@/lib/dnd/core";
+import { AbilityScore, ABILITY_SCORES, POINT_BUY_COSTS } from "@/lib/dnd/core";
 import { generateFantasyName } from "@/lib/dnd/character";
 import { Spell } from "@/lib/dnd/spells";
 import { Weapon, Armor, Ammunition } from "@/lib/dnd/equipment";
@@ -26,7 +26,6 @@ import Image from 'next/image';
 import { useDndData } from '@/components/providers/dnd-data-provider';
 import { BackgroundSelector, SelectedCharacteristics as BackgroundCharacteristics } from '@/components/shared/BackgroundSelector';
 import { AvatarGenerator } from '@/components/shared/AvatarGenerator';
-import { ABILITY_SCORES } from "@/lib/dnd/core";
 
 interface CreateCharacterModalProps {
   onClose: () => void;
@@ -782,6 +781,13 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }
   };
 
+  const handlePointBuyChange = (ability: AbilityScore, change: number) => {
+    const newScores = characterCreationService.applyPointBuyChange(abilityScores, ability, change);
+    if (newScores) {
+      setAbilityScores(newScores);
+    }
+  };
+
   const handleSpellToggle = (spell: Spell) => {
     // Get cached spell limits for validation
     const spellLimits = getCachedSpellLimits(characterClass, 1);
@@ -1336,11 +1342,16 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
                 {statMethod === 'pointbuy' && (
                   <div className="mb-4 p-3 bg-slate-700 rounded-lg">
-                    <p className="text-sm text-slate-300">
+                    <p className="text-sm text-slate-300 mb-2">
                       Points remaining: <span className={`font-bold ${pointBuyValidation.remaining === 0 ? 'text-green-400' : pointBuyValidation.remaining < 0 ? 'text-red-400' : 'text-yellow-400'}`}>
                         {pointBuyValidation.remaining}
                       </span>
+                      {pointBuyValidation.remaining === 0 && <span className="text-green-400 ml-2">✓ Valid</span>}
+                      {pointBuyValidation.remaining < 0 && <span className="text-red-400 ml-2">⚠️ Too many points used</span>}
                     </p>
+                    <div className="text-xs text-slate-400">
+                      <p>Point costs: 8=0, 9=1, 10=2, 11=3, 12=4, 13=5, 14=7, 15=9</p>
+                    </div>
                   </div>
                 )}
 
@@ -1357,6 +1368,37 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                       <div className="text-xs text-slate-400">
                         {getModifier(abilityScores[ability])}
                       </div>
+                      
+                      {/* Point Buy Cost Display */}
+                      {statMethod === 'pointbuy' && (
+                        <div className="text-xs text-slate-500 mt-1">
+                          Cost: {POINT_BUY_COSTS[abilityScores[ability] as keyof typeof POINT_BUY_COSTS] || 0}
+                        </div>
+                      )}
+                      
+                      {/* Point Buy Controls */}
+                      {statMethod === 'pointbuy' && (
+                        <div className="flex items-center gap-2 mt-2">
+                          <button
+                            type="button"
+                            onClick={() => handlePointBuyChange(ability, -1)}
+                            disabled={abilityScores[ability] <= 8}
+                            className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded flex items-center justify-center text-sm font-bold transition-colors"
+                          >
+                            -
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handlePointBuyChange(ability, 1)}
+                            disabled={abilityScores[ability] >= 15}
+                            className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded flex items-center justify-center text-sm font-bold transition-colors"
+                          >
+                            +
+                          </button>
+                        </div>
+                      )}
+                      
+                      {/* Rolling/Standard Array Controls */}
                       {(statMethod === 'rolling-assign' || statMethod === 'standard') && (
                         <div
                           onClick={() => handleTap(ability)}
