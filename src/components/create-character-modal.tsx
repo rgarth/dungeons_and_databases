@@ -569,6 +569,12 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
   // Apply weapon suggestions when they're loaded
   useEffect(() => {
+    // Early return if weaponSuggestions is undefined or null
+    if (!weaponSuggestions) {
+      console.log('🔫 WEAPON SUGGESTIONS EFFECT: No suggestions available');
+      return;
+    }
+
     // Create a hash of the current weapon suggestions to check if we've already processed them
     const suggestionsHash = weaponSuggestions.map(s => `${s.weaponName}-${s.quantity}`).join('|');
     
@@ -580,7 +586,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     
     console.log('🔫 WEAPON SUGGESTIONS EFFECT:', weaponSuggestions.length, 'suggestions');
     
-    if (weaponSuggestions && weaponSuggestions.length > 0) {
+    if (weaponSuggestions.length > 0) {
       console.log('Processing weapon suggestions...');
       
       const suggestedWeapons: {weapon: Weapon, quantity: number}[] = [];
@@ -620,11 +626,20 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   useEffect(() => {
     console.log('=== ARMOR SUGGESTIONS EFFECT ===');
     console.log('armorSuggestions:', armorSuggestions);
+    
+    // Early return if armorSuggestions is undefined or null
+    if (!armorSuggestions) {
+      console.log('armorSuggestions.length: 0 (undefined)');
+      console.log('No armor suggestions to process - clearing armor');
+      setSelectedArmor([]);
+      return;
+    }
+    
     console.log('armorSuggestions.length:', armorSuggestions.length);
     
     const suggestedArmor: Armor[] = [];
     
-    if (armorSuggestions && armorSuggestions.length > 0) {
+    if (armorSuggestions.length > 0) {
       console.log('Processing armor suggestions...');
       
       armorSuggestions.forEach((suggestion, index) => {
