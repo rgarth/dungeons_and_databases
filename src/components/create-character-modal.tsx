@@ -433,7 +433,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           const availableSpells = cachedSpellsForClass || spellcastingData?.availableSpells || [];
           
           setCreationOptions({
-            ...options,
+            equipmentPacks: (options as Partial<CreationOptions>).equipmentPacks || [],
+            weaponSuggestions: (options as Partial<CreationOptions>).weaponSuggestions || [],
+            armorSuggestions: (options as Partial<CreationOptions>).armorSuggestions || [],
             subclasses: (options as Partial<CreationOptions>).subclasses || [],
             needsSubclassAtCreation: (options as Partial<CreationOptions>).needsSubclassAtCreation || false,
             spellcasting: {
@@ -508,7 +510,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           const availableSpells = cachedSpellsForClass || spellcastingData?.availableSpells || [];
           
           setCreationOptions({
-            ...options,
+            equipmentPacks: (options as Partial<CreationOptions>).equipmentPacks || [],
+            weaponSuggestions: (options as Partial<CreationOptions>).weaponSuggestions || [],
+            armorSuggestions: (options as Partial<CreationOptions>).armorSuggestions || [],
             subclasses: (options as Partial<CreationOptions>).subclasses || [],
             needsSubclassAtCreation: (options as Partial<CreationOptions>).needsSubclassAtCreation || false,
             spellcasting: {
