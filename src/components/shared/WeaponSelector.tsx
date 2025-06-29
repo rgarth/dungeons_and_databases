@@ -307,7 +307,7 @@ export function WeaponSelector({
                 const quantity = selected?.quantity || 0;
                 
                 return (
-                  <div key={weapon.name} className="flex items-center justify-between p-3 bg-slate-700 rounded-lg">
+                  <div key={weapon.name + '-' + weapon.type + '-' + weapon.category} className="flex items-center justify-between p-3 bg-slate-700 rounded-lg">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2">
                         <h4 className="font-medium text-white">{weapon.name}</h4>
