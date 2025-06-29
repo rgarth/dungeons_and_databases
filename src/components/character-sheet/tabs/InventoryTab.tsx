@@ -21,12 +21,49 @@ interface InventoryTabProps {
 
 // Equipment categories for organization
 const EQUIPMENT_CATEGORIES_ORGANIZED: Record<string, string[]> = {
-  "Starting Equipment": ["Backpack", "Bedroll", "Mess Kit", "Tinderbox", "Torch", "Rations (1 day)", "Waterskin", "Rope, Hempen (50 feet)"],
-  "Adventuring Gear": ["Ball Bearings (bag of 1,000)", "String (10 feet)", "Bell", "Candle", "Crowbar", "Hammer", "Piton", "Lantern, Hooded", "Oil (flask)"],
-  "Tools & Equipment": ["Crowbar", "Hammer", "Piton", "Tinderbox", "Lantern, Hooded"],
-  "Lighting & Fire": ["Candle", "Torch", "Oil (flask)", "Tinderbox"],
-  "Survival Gear": ["Bedroll", "Rations (1 day)", "Waterskin", "Rope, Hempen (50 feet)"],
-  "Containers": ["Backpack", "Waterskin"],
+  "Starting Equipment": [
+    "Backpack", "Bedroll", "Mess Kit", "Tinderbox", "Torch", "Rations (1 day)", "Waterskin", "Rope, Hempen (50 feet)",
+    "Chest", "Case, Map or Scroll", "Clothes, Fine", "Ink (1 ounce bottle)", "Ink Pen", "Lamp", "Paper (one sheet)", 
+    "Perfume (vial)", "Sealing Wax", "Soap", "Clothes, Costume", "Disguise Kit", "Blanket", "Alms Box", 
+    "Incense (1 block)", "Censer", "Vestments", "Book", "Parchment (one sheet)", "Little Bag of Sand", "Small Knife"
+  ],
+  "Adventuring Gear": [
+    "Ball Bearings (bag of 1,000)", "String (10 feet)", "Bell", "Crowbar", "Hammer", "Piton", "Lantern, Hooded", "Oil (flask)",
+    "Abacus", "Acid (vial)", "Alchemist's Fire (flask)", "Ammunition, Arrows (20)", "Ammunition, Blowgun Needles (50)",
+    "Ammunition, Crossbow Bolts (20)", "Ammunition, Sling Bullets (20)", "Antitoxin (vial)", "Barrel", "Basket",
+    "Block and Tackle", "Bottle, Glass", "Bucket", "Caltrops (bag of 20)", "Case, Crossbow Bolt", "Chain (10 feet)",
+    "Chalk (1 piece)", "Climber's Kit", "Clothes, Common", "Clothes, Traveler's", "Component Pouch", "Fishing Tackle",
+    "Flask or Tankard", "Grappling Hook", "Hammer, Sledge", "Healer's Kit", "Holy Water (flask)", "Hourglass",
+    "Hunting Trap", "Jug or Pitcher", "Ladder (10-foot)", "Lock", "Magnifying Glass", "Manacles", "Mirror, Steel",
+    "Pole (10-foot)", "Pot, Iron", "Potion of Healing", "Pouch", "Quiver", "Ram, Portable", "Robes", "Sack",
+    "Scale, Merchant's", "Shovel", "Signal Whistle", "Signet Ring", "Spellbook", "Spikes, Iron (10)", "Spyglass",
+    "Tent, Two-person", "Vial", "Whetstone"
+  ],
+  "Tools & Equipment": [
+    "Crowbar", "Hammer", "Piton", "Tinderbox", "Lantern, Hooded", "Disguise Kit", "Small Knife", "Healer's Kit",
+    "Climber's Kit", "Fishing Tackle", "Lock", "Manacles", "Pick, Miner's", "Ram, Portable", "Shovel"
+  ],
+  "Lighting & Fire": [
+    "Candle", "Torch", "Oil (flask)", "Tinderbox", "Lamp", "Lantern, Bullseye", "Lantern, Hooded"
+  ],
+  "Survival Gear": [
+    "Bedroll", "Rations (1 day)", "Waterskin", "Rope, Hempen (50 feet)", "Rope, Silk (50 feet)", "Tent, Two-person",
+    "Blanket", "Clothes, Traveler's"
+  ],
+  "Containers": [
+    "Backpack", "Waterskin", "Barrel", "Basket", "Bottle, Glass", "Bucket", "Chest", "Case, Crossbow Bolt",
+    "Case, Map or Scroll", "Flask or Tankard", "Jug or Pitcher", "Pouch", "Quiver", "Sack", "Vial"
+  ],
+  "Clothing & Apparel": [
+    "Clothes, Common", "Clothes, Costume", "Clothes, Fine", "Clothes, Traveler's", "Robes", "Vestments"
+  ],
+  "Writing & Study": [
+    "Book", "Ink (1 ounce bottle)", "Ink Pen", "Paper (one sheet)", "Parchment (one sheet)", "Little Bag of Sand",
+    "Sealing Wax", "Spellbook"
+  ],
+  "Religious Items": [
+    "Alms Box", "Incense (1 block)", "Censer", "Vestments", "Holy Water (flask)"
+  ],
   "Miscellaneous": [] // For items that don't fit other categories
 };
 
@@ -37,6 +74,8 @@ const categorizeItem = (itemName: string): string => {
       return category;
     }
   }
+  // Debug logging for uncategorized items
+  console.log(`⚠️ Uncategorized item: "${itemName}" - adding to Miscellaneous`);
   return "Miscellaneous";
 };
 
@@ -48,6 +87,8 @@ const organizeInventory = (inventory: InventoryItem[]) => {
   Object.keys(EQUIPMENT_CATEGORIES_ORGANIZED).forEach(category => {
     organized[category] = [];
   });
+  
+  console.log('🔍 Organizing inventory:', inventory.map(item => `${item.name} (${item.quantity})`));
   
   // Categorize items
   inventory.forEach(item => {
@@ -64,6 +105,10 @@ const organizeInventory = (inventory: InventoryItem[]) => {
       delete organized[category];
     }
   });
+  
+  console.log('📦 Organized inventory:', Object.entries(organized).map(([category, items]) => 
+    `${category}: ${items.map(item => `${item.name} (${item.quantity})`).join(', ')}`
+  ));
   
   return organized;
 };

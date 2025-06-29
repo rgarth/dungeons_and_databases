@@ -302,10 +302,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
     const calculateGold = async () => {
       try {
-        let backgroundFixedGold = 0;
-        let backgroundRolledGold = 0;
-        let backgroundRollDetails = '';
-
         // Get background data from cache or fetch (backgrounds are loaded separately)
         let backgroundData = allClassData[characterClass]?.backgroundData;
         if (!backgroundData) {
@@ -334,13 +330,11 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         }
 
         // Calculate gold based on equipment pack selection
-        let classGold = 0;
-        let classRollDetails = '';
+        let totalGold = 0;
+        let rollDetails = '';
         
         if (selectedEquipmentPack === -1) {
-          // No equipment pack - roll class gold (this is the class's starting equipment gold, not a formula)
-          // In 5e, classes don't have starting gold formulas - they have starting equipment
-          // The gold calculation should be based on the background's starting gold formula
+          // No equipment pack selected - roll for gold using background's startingGoldFormula
           if (backgroundData?.startingGoldFormula) {
             const match = backgroundData.startingGoldFormula.match(/(\d+)d(\d+)(\*\d+)?/);
             if (match) {
@@ -355,48 +349,18 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 rolls.push(roll);
                 totalRoll += roll;
               }
-              classGold = totalRoll * multiplier;
-              classRollDetails = `${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} [${rolls.join(', ')}] = ${classGold} gp`;
+              totalGold = totalRoll * multiplier;
+              rollDetails = `${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} [${rolls.join(', ')}] = ${totalGold} gp`;
             }
+          } else {
+            // Fallback to fixed gold if no formula available
+            totalGold = backgroundData?.startingGold || 0;
+            rollDetails = `Fixed: ${totalGold} gp`;
           }
-        }
-
-        // Add background gold
-        if (backgroundData) {
-          backgroundFixedGold = backgroundData.startingGold || 0;
-          
-          if (backgroundData.startingGoldFormula) {
-            const match = backgroundData.startingGoldFormula.match(/(\d+)d(\d+)(\*\d+)?/);
-            if (match) {
-              const numDice = parseInt(match[1], 10);
-              const dieSize = parseInt(match[2], 10);
-              const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
-              
-              const rolls: number[] = [];
-              let totalRoll = 0;
-              for (let i = 0; i < numDice; i++) {
-                const roll = Math.floor(Math.random() * dieSize) + 1;
-                rolls.push(roll);
-                totalRoll += roll;
-              }
-              backgroundRolledGold = totalRoll * multiplier;
-              backgroundRollDetails = `${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} [${rolls.join(', ')}] = ${backgroundRolledGold} gp`;
-            }
-          }
-        }
-
-        const totalGold = classGold + backgroundFixedGold + backgroundRolledGold;
-        
-        // Build roll details string
-        let rollDetails = '';
-        if (classRollDetails) {
-          rollDetails = `Background Gold: ${classRollDetails}`;
-        }
-        if (backgroundFixedGold > 0) {
-          rollDetails += rollDetails ? `, Background Fixed: ${backgroundFixedGold} gp` : `Background Fixed: ${backgroundFixedGold} gp`;
-        }
-        if (backgroundRollDetails) {
-          rollDetails += rollDetails ? `, Background Roll: ${backgroundRollDetails}` : `Background Roll: ${backgroundRollDetails}`;
+        } else {
+          // Equipment pack selected - use background's fixed startingGold
+          totalGold = backgroundData?.startingGold || 0;
+          rollDetails = `Fixed: ${totalGold} gp`;
         }
 
         setCalculatedGold(totalGold);
@@ -979,7 +943,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         try {
           const isSpellcastingClass = spellcastingClasses.includes(className);
           
-          const [weaponSuggestions, armorSuggestions, weaponProficiencies, armorProficiencies, classData] = await Promise.all([
+          const [weaponSuggestions, armorSuggestions, weaponProficiencies, armorProficiencies, /* classData */] = await Promise.all([
             fetch(`/api/weapon-suggestions?className=${encodeURIComponent(className)}`)
               .then(res => res.ok ? res.json() : [])
               .catch(() => []),
