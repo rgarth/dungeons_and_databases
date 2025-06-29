@@ -1,6 +1,6 @@
 "use client";
 
-import { Package, Trash2, Plus, Minus, Coins, Zap } from "lucide-react";
+import { Package, Trash2, Plus, Minus, Coins, Zap, Backpack } from "lucide-react";
 import { EQUIPMENT_CATEGORIES } from "@/lib/dnd/equipment";
 import { equipmentData } from "../../../../prisma/data/equipment-data";
 import type { InventoryItem } from "@/lib/dnd/equipment";
@@ -18,6 +18,55 @@ interface InventoryTabProps {
   onMoneyUpdate: (updates: { copperPieces?: number; silverPieces?: number; goldPieces?: number }) => void;
   onTreasuresUpdate: (treasures: Treasure[]) => void;
 }
+
+// Equipment categories for organization
+const EQUIPMENT_CATEGORIES_ORGANIZED: Record<string, string[]> = {
+  "Starting Equipment": ["Backpack", "Bedroll", "Mess Kit", "Tinderbox", "Torch", "Rations (1 day)", "Waterskin", "Rope, Hempen (50 feet)"],
+  "Adventuring Gear": ["Ball Bearings (bag of 1,000)", "String (10 feet)", "Bell", "Candle", "Crowbar", "Hammer", "Piton", "Lantern, Hooded", "Oil (flask)"],
+  "Tools & Equipment": ["Crowbar", "Hammer", "Piton", "Tinderbox", "Lantern, Hooded"],
+  "Lighting & Fire": ["Candle", "Torch", "Oil (flask)", "Tinderbox"],
+  "Survival Gear": ["Bedroll", "Rations (1 day)", "Waterskin", "Rope, Hempen (50 feet)"],
+  "Containers": ["Backpack", "Waterskin"],
+  "Miscellaneous": [] // For items that don't fit other categories
+};
+
+// Function to categorize an item
+const categorizeItem = (itemName: string): string => {
+  for (const [category, items] of Object.entries(EQUIPMENT_CATEGORIES_ORGANIZED)) {
+    if (items.includes(itemName)) {
+      return category;
+    }
+  }
+  return "Miscellaneous";
+};
+
+// Function to organize inventory into categories
+const organizeInventory = (inventory: InventoryItem[]) => {
+  const organized: Record<string, InventoryItem[]> = {};
+  
+  // Initialize categories
+  Object.keys(EQUIPMENT_CATEGORIES_ORGANIZED).forEach(category => {
+    organized[category] = [];
+  });
+  
+  // Categorize items
+  inventory.forEach(item => {
+    const category = categorizeItem(item.name);
+    if (!organized[category]) {
+      organized[category] = [];
+    }
+    organized[category].push(item);
+  });
+  
+  // Remove empty categories
+  Object.keys(organized).forEach(category => {
+    if (organized[category].length === 0) {
+      delete organized[category];
+    }
+  });
+  
+  return organized;
+};
 
 export function InventoryTab({
   inventory,
@@ -38,6 +87,9 @@ export function InventoryTab({
   const [selectedTreasure, setSelectedTreasure] = useState("");
   const [treasureAddMode, setTreasureAddMode] = useState<"database" | "custom">("database");
   const [allTreasures, setAllTreasures] = useState<Treasure[]>([]);
+
+  // Organize inventory into categories
+  const organizedInventory = organizeInventory(inventory);
 
   // Load treasure database on component mount
   useEffect(() => {
@@ -155,20 +207,39 @@ export function InventoryTab({
     onTreasuresUpdate(updatedTreasures);
   };
 
+  // Helper function to get category icon
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case "Starting Equipment":
+        return <Backpack className="h-4 w-4" />;
+      case "Adventuring Gear":
+        return <Package className="h-4 w-4" />;
+      case "Tools & Equipment":
+        return <Package className="h-4 w-4" />;
+      case "Lighting & Fire":
+        return <Zap className="h-4 w-4" />;
+      case "Survival Gear":
+        return <Package className="h-4 w-4" />;
+      case "Containers":
+        return <Backpack className="h-4 w-4" />;
+      default:
+        return <Package className="h-4 w-4" />;
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Column - General Inventory */}
+        {/* Left Column - Organized Inventory */}
         <div className="space-y-6">
-          {/* General Inventory Section */}
+          {/* Add Item Controls */}
           <div className="bg-slate-700 rounded-lg p-4">
             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Package className="h-5 w-5" />
-              General Items & Tools
+              <Plus className="h-5 w-5" />
+              Add Items
             </h3>
             
-            {/* Add Item Controls */}
-            <div className="mb-4 space-y-3">
+            <div className="space-y-3">
               <div className="flex gap-2">
                 <button
                   onClick={() => setAddMode("equipment")}
@@ -245,48 +316,66 @@ export function InventoryTab({
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Inventory Items */}
-            <div className="space-y-2 max-h-80 overflow-y-auto">
-              {inventory.map((item, index) => (
-                <div key={index} className="bg-slate-600 p-3 rounded flex items-center justify-between">
-                  <div className="flex-1">
-                    <span className="text-white font-medium">{item.name}</span>
-                    {item.quantity > 1 && (
-                      <span className="text-slate-400 text-sm ml-2">x{item.quantity}</span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => handleQuantityChange(index, -1)}
-                      className="w-6 h-6 bg-slate-500 hover:bg-slate-400 rounded text-white text-xs"
-                    >
-                      <Minus className="h-3 w-3 mx-auto" />
-                    </button>
-                    <span className="text-white text-sm w-8 text-center">{item.quantity}</span>
-                    <button
-                      onClick={() => handleQuantityChange(index, 1)}
-                      className="w-6 h-6 bg-slate-500 hover:bg-slate-400 rounded text-white text-xs"
-                    >
-                      <Plus className="h-3 w-3 mx-auto" />
-                    </button>
-                    <button
-                      onClick={() => handleRemoveItem(index)}
-                      className="text-red-400 hover:text-red-300 transition-colors p-1"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </button>
-                  </div>
+          {/* Organized Inventory Categories */}
+          <div className="space-y-4">
+            {Object.entries(organizedInventory).map(([category, items]) => (
+              <div key={category} className="bg-slate-700 rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  {getCategoryIcon(category)}
+                  {category}
+                  <span className="text-slate-400 text-sm font-normal">({items.length} items)</span>
+                </h3>
+                
+                <div className="space-y-2">
+                  {items.map((item, index) => {
+                    const globalIndex = inventory.findIndex(invItem => invItem.name === item.name);
+                    return (
+                      <div key={`${category}-${index}`} className="bg-slate-600 p-3 rounded flex items-center justify-between">
+                        <div className="flex-1">
+                          <span className="text-white font-medium">{item.name}</span>
+                          {item.quantity > 1 && (
+                            <span className="text-slate-400 text-sm ml-2">x{item.quantity}</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleQuantityChange(globalIndex, -1)}
+                            className="w-6 h-6 bg-slate-500 hover:bg-slate-400 rounded text-white text-xs"
+                          >
+                            <Minus className="h-3 w-3 mx-auto" />
+                          </button>
+                          <span className="text-white text-sm w-8 text-center">{item.quantity}</span>
+                          <button
+                            onClick={() => handleQuantityChange(globalIndex, 1)}
+                            className="w-6 h-6 bg-slate-500 hover:bg-slate-400 rounded text-white text-xs"
+                          >
+                            <Plus className="h-3 w-3 mx-auto" />
+                          </button>
+                          <button
+                            onClick={() => handleRemoveItem(globalIndex)}
+                            className="text-red-400 hover:text-red-300 transition-colors p-1"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
-              {inventory.length === 0 && (
+              </div>
+            ))}
+            
+            {Object.keys(organizedInventory).length === 0 && (
+              <div className="bg-slate-700 rounded-lg p-4">
                 <div className="text-center py-6 border-2 border-dashed border-slate-600 rounded-lg">
                   <Package className="h-8 w-8 text-slate-500 mx-auto mb-2" />
                   <p className="text-slate-500 text-sm">No items in inventory</p>
                   <p className="text-slate-600 text-xs">Add equipment or custom items above</p>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -404,7 +493,7 @@ export function InventoryTab({
                   <option value="">Select treasure...</option>
                   {allTreasures.map(treasure => (
                     <option key={treasure.name} value={treasure.name}>
-                      {treasure.name} ({treasure.value} gp) - {treasure.type}
+                      {treasure.name} ({treasure.value} gp)
                     </option>
                   ))}
                 </select>
@@ -430,7 +519,7 @@ export function InventoryTab({
                     type="number"
                     value={newTreasureValue}
                     onChange={(e) => setNewTreasureValue(e.target.value)}
-                    placeholder="Value in gold..."
+                    placeholder="Value in gp..."
                     className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
                   />
                   <button
@@ -445,17 +534,12 @@ export function InventoryTab({
             )}
 
             {/* Treasure List */}
-            <div className="space-y-1 max-h-64 overflow-y-auto">
+            <div className="space-y-2 max-h-80 overflow-y-auto">
               {treasures.map((treasure, index) => (
                 <div key={index} className="bg-slate-600 p-3 rounded flex items-center justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-slate-300 text-sm">💎 {treasure.name}</span>
-                      <span className="text-yellow-400 text-sm font-medium">{treasure.value} gp</span>
-                    </div>
-                    {treasure.description && (
-                      <div className="text-xs text-slate-500 mt-1">{treasure.description}</div>
-                    )}
+                    <span className="text-white font-medium">{treasure.name}</span>
+                    <span className="text-purple-400 text-sm ml-2">{treasure.value} gp</span>
                   </div>
                   <button
                     onClick={() => handleRemoveTreasure(index)}
@@ -466,21 +550,13 @@ export function InventoryTab({
                 </div>
               ))}
               {treasures.length === 0 && (
-                <p className="text-slate-500 text-sm italic">No treasures collected</p>
+                <div className="text-center py-6 border-2 border-dashed border-slate-600 rounded-lg">
+                  <Zap className="h-8 w-8 text-slate-500 mx-auto mb-2" />
+                  <p className="text-slate-500 text-sm">No treasures collected</p>
+                  <p className="text-slate-600 text-xs">Add treasures from database or create custom ones</p>
+                </div>
               )}
             </div>
-
-            {/* Total Treasure Value */}
-            {treasures.length > 0 && (
-              <div className="mt-4 pt-3 border-t border-slate-600">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-300 font-medium">Total Treasure Value:</span>
-                  <span className="text-yellow-400 font-bold">
-                    {treasures.reduce((total, treasure) => total + treasure.value, 0)} gp
-                  </span>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

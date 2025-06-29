@@ -208,11 +208,18 @@ export async function POST(request: NextRequest) {
     }));
 
     console.log('=== FINAL SERVER PROCESSING ===');
-    console.log('General inventory:', processedInventory.map(item => typeof item === 'string' ? item : item.name));
-    console.log('Client weapon inventory:', clientWeapons.map((weapon: { weapon?: { name: string }; name?: string }) => weapon.weapon?.name || weapon.name || 'Unknown weapon'));
-    console.log('Combined weapon inventory:', weaponsWithEquipped.map((weapon: { name: string; equipped?: boolean }) => `${weapon.name} (equipped: ${weapon.equipped})`));
-    console.log('Client armor inventory:', clientArmor.map((armor: { name: string }) => armor.name));
-    console.log('Combined armor inventory:', armorWithEquipped.map((armor: { name: string; equipped?: boolean }) => `${armor.name} (equipped: ${armor.equipped})`));
+    console.log('General inventory:', processedInventory);
+    console.log('Client weapon inventory:', clientWeapons.map((w: { weapon?: { name: string }; name?: string }) => w.name || w.weapon?.name));
+    console.log('Combined weapon inventory:', weaponsWithEquipped.map((w: { name: string; equipped?: boolean }) => `${w.name} (equipped: ${w.equipped})`));
+    console.log('Client armor inventory:', clientArmor.map((a: { name: string }) => a.name));
+    console.log('Combined armor inventory:', armorWithEquipped.map((a: { name: string; equipped?: boolean }) => `${a.name} (equipped: ${a.equipped})`));
+    
+    // Debug the final processedInventory before saving
+    console.log('=== FINAL INVENTORY BEFORE SAVE ===');
+    console.log('processedInventory:', processedInventory);
+    console.log('processedInventory.length:', processedInventory.length);
+    console.log('processedInventory type:', typeof processedInventory);
+    console.log('Is processedInventory array?', Array.isArray(processedInventory));
 
     // Use validation service for comprehensive validation
     const validationService = createCharacterValidationService();
