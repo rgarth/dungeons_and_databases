@@ -145,6 +145,47 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
                     </div>
                     <div className="text-sm text-slate-400">{modifierText}</div>
                     
+                    {/* Ability Score Modifier Tooltip */}
+                    <div className="relative mt-1">
+                      <button 
+                        onClick={() => toggleTooltip(`ability-${ability.name.toLowerCase()}`)}
+                        className="cursor-pointer hover:bg-slate-500 rounded p-0.5 inline-flex items-center gap-1 text-xs text-yellow-300 hover:text-yellow-200"
+                      >
+                        <HelpCircle className="h-3 w-3" />
+                        <span>i</span>
+                      </button>
+                      {activeTooltip === `ability-${ability.name.toLowerCase()}` && (
+                        <div className="absolute z-20 mt-1 p-3 bg-slate-800 rounded text-xs text-slate-300 border border-slate-600 w-64 left-1/2 transform -translate-x-1/2 shadow-lg">
+                          <strong className="text-yellow-300">{ability.name} Modifier Breakdown:</strong><br/>
+                          <div className="mt-2 space-y-1">
+                            <div className="flex justify-between">
+                              <span>Base Score:</span>
+                              <span className="text-slate-400">{ability.baseValue}</span>
+                            </div>
+                            {effectiveStats[ability.name.toLowerCase() as keyof typeof effectiveStats] !== ability.baseValue && (
+                              <div className="flex justify-between">
+                                <span>Racial Bonus:</span>
+                                <span className="text-green-400">+{effectiveStats[ability.name.toLowerCase() as keyof typeof effectiveStats] - ability.baseValue}</span>
+                              </div>
+                            )}
+                            <div className="flex justify-between">
+                              <span>Modifier Formula:</span>
+                              <span className="text-slate-400">({effectiveStats[ability.name.toLowerCase() as keyof typeof effectiveStats]} - 10) ÷ 2</span>
+                            </div>
+                            <div className="border-t border-slate-600 pt-1 mt-1">
+                              <div className="flex justify-between font-semibold">
+                                <span>Total Modifier:</span>
+                                <span className="text-yellow-300">{modifierText}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="mt-2 text-xs text-slate-400">
+                            <strong>Used for:</strong> {ability.name} checks, saves, and related skills
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
                     {/* Skills for this ability */}
                     {proficientSkills.length > 0 && (
                       <div className="mt-2 space-y-1">
