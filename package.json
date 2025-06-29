@@ -29,6 +29,7 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.9.1",
     "@eslint/eslintrc": "^3",
+    "@jaames/iro": "^5.5.2",
     "@prisma/client": "^6.8.2",
     "@tailwindcss/postcss": "^4",
     "@tanstack/react-query": "^5.80.7",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
+import iro from '@jaames/iro';
 
 // Declare global objects for TypeScript
 declare global {
@@ -41,92 +42,75 @@ interface DiceBox {
   bind_swipe: (element: HTMLElement, beforeRoll?: ((notation: DiceResult) => number[] | null), afterRoll?: (notation: DiceResult) => void) => void;
 }
 
-// Real Color Wheel Component
+// Real Color Wheel Component using iro.js
 function ColorWheel({ currentColor, onColorChange }: { 
   currentColor: string; 
   onColorChange: (color: string) => void; 
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const colorPickerRef = useRef<HTMLDivElement>(null);
+  const colorPickerInstanceRef = useRef<ReturnType<typeof iro.ColorPicker> | null>(null);
 
-  // Draw the color wheel on canvas
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (isOpen && colorPickerRef.current && !colorPickerInstanceRef.current) {
+      // Initialize iro.js color picker
+      colorPickerInstanceRef.current = iro.ColorPicker(colorPickerRef.current, {
+        width: 150,
+        color: currentColor,
+        borderWidth: 1,
+        borderColor: "#333",
+        layout: [
+          { 
+            component: iro.ui.Wheel,
+            options: {}
+          },
+          { 
+            component: iro.ui.Slider,
+            options: {
+              sliderType: 'value'
+            }
+          }
+        ]
+      });
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+      // Listen for color changes
+      colorPickerInstanceRef.current.on('color:change', (color: { hexString: string }) => {
+        onColorChange(color.hexString);
+      });
+    }
 
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = Math.min(centerX, centerY) - 5;
-
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw color wheel
-    for (let angle = 0; angle < 360; angle++) {
-      for (let saturation = 0; saturation < radius; saturation++) {
-        const hue = angle;
-        const sat = (saturation / radius) * 100;
-        const val = 100;
-        
-        const color = `hsl(${hue}, ${sat}%, ${val}%)`;
-        
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, saturation, angle * Math.PI / 180, (angle + 1) * Math.PI / 180);
-        ctx.lineTo(centerX, centerY);
-        ctx.fill();
+    // Cleanup
+    return () => {
+      if (colorPickerInstanceRef.current) {
+        // Remove the color picker element from DOM
+        colorPickerInstanceRef.current.el.remove();
+        colorPickerInstanceRef.current = null;
       }
+    };
+  }, [isOpen, currentColor, onColorChange]);
+
+  // Handle click outside to close
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
     }
 
-    // Draw center circle with current color
-    ctx.fillStyle = currentColor;
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
-    ctx.fill();
-    
-    // Draw white border around center
-    ctx.strokeStyle = 'white';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-  }, [currentColor]);
-
-  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = Math.min(centerX, centerY) - 5;
-    
-    const dx = x - centerX;
-    const dy = y - centerY;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    
-    if (distance <= radius) {
-      const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-      const hue = angle < 0 ? angle + 360 : angle;
-      const saturation = Math.min((distance / radius) * 100, 100);
-      const value = 100;
-      
-      const newColor = `hsl(${hue}, ${saturation}%, ${value}%)`;
-      onColorChange(newColor);
-    }
-  };
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
     <div className="relative">
-      <div 
-        className="w-8 h-8 rounded-full border-2 border-slate-500 cursor-pointer shadow-lg"
-        style={{
-          background: `conic-gradient(from 0deg, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000)`
-        }}
+      <button 
+        className="w-8 h-8 rounded-full border-2 border-slate-500 cursor-pointer shadow-lg transition-all hover:scale-110"
+        style={{ backgroundColor: currentColor }}
         onClick={() => setIsOpen(!isOpen)}
         title="Select dice color"
       />
@@ -134,16 +118,9 @@ function ColorWheel({ currentColor, onColorChange }: {
       {isOpen && (
         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50">
           <div className="bg-slate-800 rounded-lg p-3 border border-slate-600 shadow-xl">
-            <canvas
-              ref={canvasRef}
-              width={120}
-              height={120}
-              className="cursor-crosshair"
-              onClick={handleCanvasClick}
-              title="Click to select color"
-            />
+            <div ref={colorPickerRef} />
             <div className="text-center text-xs text-slate-300 mt-2">
-              Click to select
+              Click outside to close
             </div>
           </div>
         </div>
