@@ -53,7 +53,7 @@ interface StatsTabProps {
 
 }
 
-export function StatsTab({ character, currentArmorClass: passedArmorClass, onUpdate }: StatsTabProps) {
+export function StatsTab({ character, equippedArmor, currentArmorClass: passedArmorClass, onUpdate }: StatsTabProps) {
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
   const [racialTraits, setRacialTraits] = useState<RacialTrait[]>([]);
   const [classFeatures] = useState<string[]>([]);
@@ -203,8 +203,51 @@ export function StatsTab({ character, currentArmorClass: passedArmorClass, onUpd
                 <div className="flex justify-center items-center mb-2">
                   <Shield className="h-4 w-4 text-blue-400 mr-2" />
                   <span className="text-slate-300 text-sm">AC</span>
+                  <button 
+                    onClick={() => toggleTooltip('ac-breakdown')}
+                    className="cursor-pointer hover:bg-slate-500 rounded p-0.5 ml-1"
+                  >
+                    <HelpCircle className="h-3 w-3 text-slate-400 hover:text-slate-300" />
+                  </button>
                 </div>
                 <span className="text-white font-bold text-2xl">{currentArmorClass}</span>
+                
+                {activeTooltip === 'ac-breakdown' && (
+                  <div className="absolute z-20 mt-1 p-3 bg-slate-800 rounded text-xs text-slate-300 border border-slate-600 w-80 left-1/2 transform -translate-x-1/2 shadow-lg">
+                    <strong className="text-blue-300">Armor Class Breakdown:</strong><br/>
+                    <div className="mt-2 space-y-1">
+                      <div className="flex justify-between">
+                        <span>Base AC:</span>
+                        <span className="text-slate-400">10</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Dexterity Modifier:</span>
+                        <span className="text-slate-400">{calc.getAbilityModifier('dexterity') >= 0 ? '+' : ''}{calc.getAbilityModifier('dexterity')}</span>
+                      </div>
+                      {equippedArmor.find(a => a.type !== 'Shield') && (
+                        <div className="flex justify-between">
+                          <span>Armor Bonus:</span>
+                          <span className="text-slate-400">+{equippedArmor.find(a => a.type !== 'Shield')!.baseAC - 10}</span>
+                        </div>
+                      )}
+                      {equippedArmor.find(a => a.type === 'Shield') && (
+                        <div className="flex justify-between">
+                          <span>Shield Bonus:</span>
+                          <span className="text-slate-400">+{equippedArmor.find(a => a.type === 'Shield')!.baseAC}</span>
+                        </div>
+                      )}
+                      <div className="border-t border-slate-600 pt-1 mt-1">
+                        <div className="flex justify-between font-semibold">
+                          <span>Total AC:</span>
+                          <span className="text-blue-300">{currentArmorClass}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-2 text-xs text-slate-400">
+                      <strong>How it works:</strong> Base 10 + Dex modifier + Armor + Shield
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Speed */}
