@@ -254,6 +254,20 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       console.log('⚡ Using cached spell limits for', characterClass);
       return;
     }
+
+    // Try to get spell limits from client cache first
+    const clientCache = (window as any).clientCache;
+    if (clientCache) {
+      const cachedSpellLimits = clientCache.getSpellLimits(characterClass);
+      if (cachedSpellLimits) {
+        console.log('⚡ Using client cache for spell limits:', characterClass);
+        setCachedSpellLimits(prev => ({
+          ...prev,
+          [cacheKey]: cachedSpellLimits
+        }));
+        return;
+      }
+    }
     
     // Only fetch if we don't have it cached and we're not already loading all class data
     if (characterClass && !isLoadingAllClassData) {
