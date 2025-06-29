@@ -4,13 +4,14 @@ import { Sword, Package, Shield, Plus, Trash2, Zap } from "lucide-react";
 import { createCharacterCalculations } from "@/services/character/calculations";
 import { createCharacterEquipment } from "@/services/character/equipment";
 // Note: Using hardcoded weapons/armor data - needs database integration
-import { weaponsData } from '../../../../prisma/data/weapons-data';
+// import { weaponsData } from '../../../../prisma/data/weapons-data';
 import { armorData } from '../../../../prisma/data/armor-data';
 import { MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon } from "@/lib/dnd/equipment";
 import { canPrepareSpells, getSpellsPreparedCount } from "@/lib/dnd/level-up";
 import type { Weapon, MagicalWeapon, Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
 import { useState } from "react";
+import { clientCache } from '@/lib/client-cache';
 
 interface EquipmentTabProps {
   character: {
@@ -85,7 +86,7 @@ export function EquipmentTab({
 
   const handleCreateMagicalWeapon = () => {
     if (selectedBaseWeapon && selectedMagicalTemplate) {
-      const weaponData = weaponsData.find(w => w.name === selectedBaseWeapon);
+      const weaponData = clientCache.getWeapons().find(w => w.name === selectedBaseWeapon);
       const baseWeapon = weaponData ? {
         ...weaponData,
         type: weaponData.type as 'Simple' | 'Martial',
@@ -238,7 +239,7 @@ export function EquipmentTab({
                 <select
                   value={selectedWeapon ? selectedWeapon.name : ""}
                   onChange={(e) => {
-                    const weaponData = weaponsData.find(w => w.name === e.target.value);
+                    const weaponData = clientCache.getWeapons().find(w => w.name === e.target.value);
                     const weapon = weaponData ? {
                       ...weaponData,
                       type: weaponData.type as 'Simple' | 'Martial',
@@ -250,7 +251,7 @@ export function EquipmentTab({
                   className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
                 >
                   <option value="">Select basic weapon to add...</option>
-                  {weaponsData.map(weapon => (
+                  {clientCache.getWeapons().map(weapon => (
                     <option key={weapon.name} value={weapon.name}>
                       {weapon.name} ({weapon.damage} {weapon.damageType})
                     </option>
@@ -606,7 +607,7 @@ export function EquipmentTab({
                   className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
                 >
                   <option value="">Select base weapon...</option>
-                  {weaponsData.map(weapon => (
+                  {clientCache.getWeapons().map(weapon => (
                     <option key={weapon.name} value={weapon.name}>
                       {weapon.name} ({weapon.damage} {weapon.damageType})
                     </option>

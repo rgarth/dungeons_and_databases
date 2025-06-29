@@ -12,8 +12,6 @@ import { ArmorSuggestion } from "@/lib/dnd/armor-suggestions";
 import { WeaponSelector } from "@/components/shared/WeaponSelector";
 import { ArmorSelector } from "@/components/shared/ArmorSelector";
 import { SubraceSelector } from "@/components/shared/SubraceSelector";
-import { armorData } from '../../prisma/data/armor-data';
-import { weaponsData } from '../../prisma/data/weapons-data';
 import { Character } from "@/types/character";
 
 import { 
@@ -76,7 +74,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     flaws: []
   });
 
-  const { races, classes, backgrounds, alignments } = useDndData();
+  const { races, classes, backgrounds, alignments, weapons: allWeapons, armor: allArmor } = useDndData() as ReturnType<typeof useDndData> & { weapons: Weapon[]; armor: Armor[] };
   const characterCreationService = CharacterCreationService.getInstance();
 
   // Basic character info
@@ -115,7 +113,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [cachedWeaponSuggestions, setCachedWeaponSuggestions] = useState<WeaponSuggestion[]>([]);
   const [cachedWeaponProficiencies, setCachedWeaponProficiencies] = useState<{ simple: boolean; martial: boolean; specific: string[] } | null>(null);
   const [cachedArmorProficiencies, setCachedArmorProficiencies] = useState<string[]>([]);
-  const [cachedArmorSuggestions, setCachedArmorSuggestions] = useState<ArmorSuggestion[]>([]);
   const [cachedSpells, setCachedSpells] = useState<Record<string, Spell[]>>({});
   const [cachedSpellLimits, setCachedSpellLimits] = useState<Record<string, {
     cantripsKnown: number;
@@ -475,7 +472,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             setWeaponSuggestions(cachedWeaponSuggestions);
             setArmorSuggestions(cachedArmorSuggestions);
             setCachedWeaponSuggestions(cachedWeaponSuggestions);
-            setCachedArmorSuggestions(cachedArmorSuggestions);
+            setCachedArmorProficiencies(cachedArmorProficiencies);
           }
         }
         
@@ -586,14 +583,18 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       
       weaponSuggestions.forEach((suggestion, index) => {
         console.log(`Processing weapon suggestion ${index}:`, suggestion);
-        // Find the weapon in the weapons data
-        const weaponData = weaponsData.find(w => w.name === suggestion.weaponName);
+        // Find the weapon in the weapons data from cache
+        const weaponData = allWeapons.find((w: Weapon) => w.name === suggestion.weaponName);
         if (weaponData) {
           const weapon: Weapon = {
             ...weaponData,
             type: weaponData.type as 'Simple' | 'Martial',
             category: weaponData.category as 'Melee' | 'Ranged',
-            properties: weaponData.properties ? weaponData.properties.split(', ').filter(Boolean) : []
+            properties: Array.isArray(weaponData.properties)
+              ? weaponData.properties
+              : typeof weaponData.properties === 'string'
+                ? weaponData.properties.split(', ').filter(Boolean)
+                : []
           };
           suggestedWeapons.push({ weapon, quantity: suggestion.quantity });
           console.log('Added weapon:', weapon.name, 'quantity:', suggestion.quantity);
@@ -609,7 +610,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     
     // Mark these suggestions as processed
     processedWeaponSuggestionsRef.current = suggestionsHash;
-  }, [weaponSuggestions]);
+  }, [weaponSuggestions, allWeapons]);
 
   // Apply armor suggestions when they're loaded
   useEffect(() => {
@@ -624,15 +625,14 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       
       armorSuggestions.forEach((suggestion, index) => {
         console.log(`Processing suggestion ${index}:`, suggestion);
-        const armor = armorData.find(a => a.name === suggestion.armorName);
-        console.log('Found armor:', armor);
-        
-        if (armor) {
+        const armorItem = allArmor.find((a: Armor) => a.name === suggestion.armorName);
+        console.log('Found armor:', armorItem);
+        if (armorItem) {
           const processedArmor = {
-            ...armor,
-            type: armor.type as 'Light' | 'Medium' | 'Heavy' | 'Shield',
-            maxDexBonus: armor.maxDexBonus ?? undefined,
-            minStrength: armor.minStrength ?? undefined
+            ...armorItem,
+            type: armorItem.type as 'Light' | 'Medium' | 'Heavy' | 'Shield',
+            maxDexBonus: armorItem.maxDexBonus ?? undefined,
+            minStrength: armorItem.minStrength ?? undefined
           };
           suggestedArmor.push(processedArmor);
           console.log('Added armor:', processedArmor.name);
@@ -644,7 +644,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     
     console.log('Setting selectedArmor to:', suggestedArmor);
     setSelectedArmor(suggestedArmor);
-  }, [armorSuggestions]);
+  }, [armorSuggestions, allArmor]);
 
   // Add a ref to track if ammunition has been processed for current weapons
   const processedAmmunitionRef = useRef<string>('');
@@ -685,8 +685,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             try {
               const response = await fetch('/api/ammunition-suggestions');
               if (response.ok) {
-                const ammunitionSuggestions = await response.json();
-                const ammoData = ammunitionSuggestions.find((a: { id: number; name: string }) => a.id === weapon.ammunitionTypeId);
+                const ammunitionSuggestions: { id: number; name: string }[] = await response.json();
+                const ammoData: { id: number; name: string } | undefined = ammunitionSuggestions.find((a) => a.id === weapon.ammunitionTypeId);
                 
                 if (ammoData) {
                   const ammo: Ammunition = {
@@ -725,7 +725,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     };
     
     processAmmunition();
-  }, [selectedWeapons]);
+  }, [selectedWeapons, allWeapons]);
 
   const handleStatMethodChange = (method: StatMethod) => {
     setStatMethod(method);

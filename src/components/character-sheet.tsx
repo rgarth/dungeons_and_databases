@@ -7,7 +7,6 @@ import { Spell, getClassSpells } from "@/lib/dnd/spells";
 import { Weapon, MagicalWeapon, InventoryItem, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, Armor, Ammunition, calculateArmorClass } from "@/lib/dnd/equipment";
 import { Action, canEquipArmor } from "@/lib/dnd/combat";
 import { Treasure } from "@/lib/dnd/data";
-import { weaponsData } from "../../prisma/data/weapons-data";
 import { MagicalItem, EquippedMagicalItem, applyMagicalItemEffects } from "@/lib/dnd/magical-items";
 import { ActiveCondition } from "@/lib/dnd/conditions";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
@@ -18,6 +17,7 @@ import DiceRoller from "./dice-roller";
 import { PDFExport } from "./character-sheet/PDFExport";
 import Image from 'next/image';
 import { toast } from 'react-hot-toast';
+import { clientCache } from '@/lib/client-cache';
 
 
 interface CharacterSheetProps {
@@ -354,7 +354,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
 
   const handleCreateMagicalWeapon = () => {
     if (selectedBaseWeapon && selectedMagicalTemplate) {
-      const weaponData = weaponsData.find(w => w.name === selectedBaseWeapon);
+      const weaponData = clientCache.getWeapons().find(w => w.name === selectedBaseWeapon);
       const template = MAGICAL_WEAPON_TEMPLATES.find(t => t.name === selectedMagicalTemplate);
       
       if (weaponData && template) {
@@ -1208,7 +1208,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
                   className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
                 >
                   <option value="">Select base weapon...</option>
-                  {weaponsData.map(weapon => (
+                  {clientCache.getWeapons().map(weapon => (
                     <option key={weapon.name} value={weapon.name}>
                       {weapon.name} ({weapon.damage} {weapon.damageType})
                     </option>
