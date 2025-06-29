@@ -604,6 +604,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       return;
     }
 
+    console.log('🔫 WEAPON SUGGESTIONS EFFECT: allWeapons length:', allWeapons.length);
+    console.log('🔫 WEAPON SUGGESTIONS EFFECT: allWeapons sample:', allWeapons.slice(0, 3).map(w => w.name));
+
     // Create a hash of the current weapon suggestions to check if we've already processed them
     const suggestionsHash = weaponSuggestions.map(s => `${s.weaponName}-${s.quantity}`).join('|');
     
@@ -624,6 +627,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         console.log(`Processing weapon suggestion ${index}:`, suggestion);
         // Find the weapon in the weapons data from cache
         const weaponData = allWeapons.find((w: Weapon) => w.name === suggestion.weaponName);
+        console.log(`Looking for weapon "${suggestion.weaponName}" in ${allWeapons.length} weapons`);
+        console.log(`Found weapon data:`, weaponData);
         if (weaponData) {
           const weapon: Weapon = {
             ...weaponData,
@@ -637,6 +642,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           };
           suggestedWeapons.push({ weapon, quantity: suggestion.quantity });
           console.log('Added weapon:', weapon.name, 'quantity:', suggestion.quantity);
+        } else {
+          console.log(`❌ Weapon "${suggestion.weaponName}" not found in allWeapons`);
         }
       });
       
