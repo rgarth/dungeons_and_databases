@@ -41,54 +41,105 @@ interface DiceBox {
   bind_swipe: (element: HTMLElement, beforeRoll?: ((notation: DiceResult) => number[] | null), afterRoll?: (notation: DiceResult) => void) => void;
 }
 
-// Proper Color Wheel Component
+// Real Color Wheel Component
 function ColorWheel({ currentColor, onColorChange }: { 
   currentColor: string; 
   onColorChange: (color: string) => void; 
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const colors = [
-    '#ff0000', '#ff4000', '#ff8000', '#ffbf00', '#ffff00', '#bfff00', '#80ff00', '#40ff00',
-    '#00ff00', '#00ff40', '#00ff80', '#00ffbf', '#00ffff', '#00bfff', '#0080ff', '#0040ff',
-    '#0000ff', '#4000ff', '#8000ff', '#bf00ff', '#ff00ff', '#ff00bf', '#ff0080', '#ff0040'
-  ];
+  // Draw the color wheel on canvas
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-  const handleColorClick = (color: string) => {
-    onColorChange(color);
-    setIsOpen(false);
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY) - 10;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw color wheel
+    for (let angle = 0; angle < 360; angle++) {
+      for (let saturation = 0; saturation < radius; saturation++) {
+        const hue = angle;
+        const sat = (saturation / radius) * 100;
+        const value = 100;
+        
+        const color = `hsl(${hue}, ${sat}%, ${value}%)`;
+        ctx.fillStyle = color;
+        
+        const x = centerX + saturation * Math.cos(angle * Math.PI / 180);
+        const y = centerY + saturation * Math.sin(angle * Math.PI / 180);
+        
+        ctx.fillRect(x, y, 1, 1);
+      }
+    }
+
+    // Draw center circle for current color
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 15, 0, 2 * Math.PI);
+    ctx.fillStyle = currentColor;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }, [currentColor]);
+
+  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY) - 10;
+    
+    const dx = x - centerX;
+    const dy = y - centerY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    
+    if (distance <= radius) {
+      const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+      const hue = angle < 0 ? angle + 360 : angle;
+      const saturation = Math.min((distance / radius) * 100, 100);
+      const value = 100;
+      
+      const newColor = `hsl(${hue}, ${saturation}%, ${value}%)`;
+      onColorChange(newColor);
+    }
   };
 
   return (
     <div className="relative">
       <div 
         className="w-8 h-8 rounded-full border-2 border-slate-500 cursor-pointer shadow-lg"
-        style={{
-          background: `conic-gradient(from 0deg, ${colors.join(', ')})`,
-          position: 'relative'
-        }}
+        style={{ backgroundColor: currentColor }}
         onClick={() => setIsOpen(!isOpen)}
         title="Choose dice color"
-      >
-        <div 
-          className="absolute inset-1 rounded-full border-2 border-white shadow-inner"
-          style={{ backgroundColor: currentColor }}
-        />
-      </div>
+      />
       
-      {/* Color Palette Dropdown */}
+      {/* Real Color Wheel Dropdown */}
       {isOpen && (
         <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-slate-800 rounded-lg p-3 border border-slate-600 shadow-xl z-10">
-          <div className="grid grid-cols-6 gap-1">
-            {colors.map((color) => (
-              <button
-                key={color}
-                className="w-6 h-6 rounded border border-slate-600 hover:scale-110 transition-transform"
-                style={{ backgroundColor: color }}
-                onClick={() => handleColorClick(color)}
-                title={color}
-              />
-            ))}
+          <canvas
+            ref={canvasRef}
+            width={120}
+            height={120}
+            className="cursor-crosshair"
+            onClick={handleCanvasClick}
+            title="Click to select color"
+          />
+          <div className="mt-2 text-center text-xs text-slate-300">
+            Click to select color
           </div>
         </div>
       )}
