@@ -41,13 +41,104 @@ interface DiceBox {
   bind_swipe: (element: HTMLElement, beforeRoll?: ((notation: DiceResult) => number[] | null), afterRoll?: (notation: DiceResult) => void) => void;
 }
 
-// Separate component for 3D dice preview
+// Proper Color Wheel Component
+function ColorWheel({ currentColor, onColorChange }: { 
+  currentColor: string; 
+  onColorChange: (color: string) => void; 
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const colors = [
+    '#ff0000', '#ff4000', '#ff8000', '#ffbf00', '#ffff00', '#bfff00', '#80ff00', '#40ff00',
+    '#00ff00', '#00ff40', '#00ff80', '#00ffbf', '#00ffff', '#00bfff', '#0080ff', '#0040ff',
+    '#0000ff', '#4000ff', '#8000ff', '#bf00ff', '#ff00ff', '#ff00bf', '#ff0080', '#ff0040'
+  ];
+
+  const handleColorClick = (color: string) => {
+    onColorChange(color);
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="relative">
+      <div 
+        className="w-8 h-8 rounded-full border-2 border-slate-500 cursor-pointer shadow-lg"
+        style={{
+          background: `conic-gradient(from 0deg, ${colors.join(', ')})`,
+          position: 'relative'
+        }}
+        onClick={() => setIsOpen(!isOpen)}
+        title="Choose dice color"
+      >
+        <div 
+          className="absolute inset-1 rounded-full border-2 border-white shadow-inner"
+          style={{ backgroundColor: currentColor }}
+        />
+      </div>
+      
+      {/* Color Palette Dropdown */}
+      {isOpen && (
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-slate-800 rounded-lg p-3 border border-slate-600 shadow-xl z-10">
+          <div className="grid grid-cols-6 gap-1">
+            {colors.map((color) => (
+              <button
+                key={color}
+                className="w-6 h-6 rounded border border-slate-600 hover:scale-110 transition-transform"
+                style={{ backgroundColor: color }}
+                onClick={() => handleColorClick(color)}
+                title={color}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// 3D Dice Preview Component
 function DicePreview({ diceType, diceColor }: { 
   diceType: string; 
   diceColor: string; 
 }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const diceBoxRef = useRef<DiceBox | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    if (window.DICE && typeof window.DICE.dice_box === 'function' && containerRef.current && !isInitialized) {
+      try {
+        // Set dice color
+        if (window.DICE.vars) {
+          window.DICE.vars.dice_color = diceColor;
+        }
+        
+        // Create a small dice box for preview
+        diceBoxRef.current = new window.DICE.dice_box(containerRef.current);
+        
+        // Set the dice notation (e.g., "1d4", "1d6", etc.)
+        diceBoxRef.current.setDice(`1${diceType}`);
+        
+        // Force a small render to show the dice
+        setTimeout(() => {
+          try {
+            if (diceBoxRef.current) {
+              diceBoxRef.current.start_throw();
+              setIsInitialized(true);
+            }
+          } catch (error) {
+            console.error(`Failed to render ${diceType} preview:`, error);
+          }
+        }, 100);
+      } catch (error) {
+        console.error(`Failed to create ${diceType} preview:`, error);
+      }
+    }
+  }, [diceType, diceColor, isInitialized]);
+
   return (
     <div 
+      ref={containerRef}
       className="w-12 h-12 bg-slate-700 rounded-lg border-2 border-slate-600 overflow-hidden"
       style={{ 
         minHeight: '48px',
@@ -59,15 +150,17 @@ function DicePreview({ diceType, diceColor }: {
         backgroundColor: '#1e293b'
       }}
     >
-      {/* Always show colored fallback preview for now */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div 
-          className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs"
-          style={{ backgroundColor: diceColor }}
-        >
-          {diceType.toUpperCase()}
+      {/* Fallback if 3D dice fail to load */}
+      {!isInitialized && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div 
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs"
+            style={{ backgroundColor: diceColor }}
+          >
+            {diceType.toUpperCase()}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -444,28 +537,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
         {/* Color Wheel */}
         <div className="flex flex-col items-center space-y-2">
           <span className="text-slate-300 text-xs font-medium">Color</span>
-          <div className="relative">
-            <div 
-              className="w-8 h-8 rounded-full border-2 border-slate-500 cursor-pointer shadow-lg"
-              style={{
-                background: `conic-gradient(from 0deg, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000)`,
-                position: 'relative'
-              }}
-              onClick={() => {
-                const input = document.createElement('input');
-                input.type = 'color';
-                input.value = diceColor;
-                input.onchange = (e) => updateDiceColor((e.target as HTMLInputElement).value);
-                input.click();
-              }}
-              title="Choose dice color"
-            >
-              <div 
-                className="absolute inset-1 rounded-full border-2 border-white shadow-inner"
-                style={{ backgroundColor: diceColor }}
-              />
-            </div>
-          </div>
+          <ColorWheel currentColor={diceColor} onColorChange={updateDiceColor} />
         </div>
 
         {/* Action Buttons */}
