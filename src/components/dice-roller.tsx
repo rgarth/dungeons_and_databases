@@ -42,49 +42,12 @@ interface DiceBox {
 }
 
 // Separate component for 3D dice preview
-function DicePreview({ diceType, diceColor, scriptsLoaded, mainDiceBoxReady }: { 
+function DicePreview({ diceType, diceColor }: { 
   diceType: string; 
   diceColor: string; 
-  scriptsLoaded: boolean; 
-  mainDiceBoxReady: boolean;
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  useEffect(() => {
-    if (scriptsLoaded && mainDiceBoxReady && containerRef.current && !isInitialized) {
-      const container = containerRef.current;
-      
-      if (window.DICE && typeof window.DICE.dice_box === 'function') {
-        try {
-          // Set dice color
-          if (window.DICE.vars) {
-            window.DICE.vars.dice_color = diceColor;
-          }
-          
-          // Create a simple dice preview
-          const diceBox = new window.DICE.dice_box(container);
-          diceBox.setDice(`1${diceType}`);
-          setIsInitialized(true);
-          
-          // Force a small render to show the dice
-          setTimeout(() => {
-            try {
-              diceBox.start_throw();
-            } catch (error) {
-              console.error(`Failed to start throw for ${diceType}:`, error);
-            }
-          }, 100);
-        } catch (error) {
-          console.error(`Failed to create dice preview for ${diceType}:`, error);
-        }
-      }
-    }
-  }, [scriptsLoaded, mainDiceBoxReady, diceType, diceColor, isInitialized]);
-
   return (
     <div 
-      ref={containerRef}
       className="w-12 h-12 bg-slate-700 rounded-lg border-2 border-slate-600 overflow-hidden"
       style={{ 
         minHeight: '48px',
@@ -96,16 +59,15 @@ function DicePreview({ diceType, diceColor, scriptsLoaded, mainDiceBoxReady }: {
         backgroundColor: '#1e293b'
       }}
     >
-      {!isInitialized && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div 
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs"
-            style={{ backgroundColor: diceColor }}
-          >
-            {diceType.toUpperCase()}
-          </div>
+      {/* Always show colored fallback preview for now */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div 
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs"
+          style={{ backgroundColor: diceColor }}
+        >
+          {diceType.toUpperCase()}
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -116,7 +78,6 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
   const [lastResult, setLastResult] = useState<DiceResult | null>(null);
   const [isRolling, setIsRolling] = useState(false);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
-  const [mainDiceBoxReady, setMainDiceBoxReady] = useState(false);
   const [initializationError, setInitializationError] = useState<string | null>(null);
   
   // Individual dice counts (max 6 each)
@@ -274,7 +235,6 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
               console.log('Creating dice box instance...');
               diceBoxRef.current = new window.DICE.dice_box(container);
               console.log('Dice box initialized successfully:', !!diceBoxRef.current);
-              setMainDiceBoxReady(true);
               setInitializationError(null);
             } else {
               console.error('window.DICE.dice_box is not a constructor:', typeof window.DICE.dice_box);
@@ -461,8 +421,6 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
                 <DicePreview 
                   diceType={dice.key} 
                   diceColor={diceColor} 
-                  scriptsLoaded={scriptsLoaded} 
-                  mainDiceBoxReady={mainDiceBoxReady}
                 />
                 
                 {/* Clickable Badge showing count - click to remove */}
