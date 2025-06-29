@@ -100,6 +100,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         console.error('❌ Failed to load weapons and armor from client cache:', error);
       }
     };
+
     loadWeaponsAndArmor();
   }, []);
 
@@ -281,26 +282,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }
 
     // Try to get spell limits from client cache first
-    const loadWeaponsAndArmor = async () => {
-      try {
-        await clientCache.initialize();
-        const weapons = clientCache.getWeapons();
-        const armor = clientCache.getArmor();
-        console.log('🔧 Loading weapons and armor from client cache:', {
-          weaponsLength: weapons.length,
-          armorLength: armor.length
-        });
-        setAllWeapons(weapons);
-        setAllArmor(armor);
-      } catch (error) {
-        console.error('❌ Failed to load weapons and armor from client cache:', error);
-      }
-    };
-    loadWeaponsAndArmor();
-        return;
-      }
-    }
-    
+    // (remove loadWeaponsAndArmor definition from here)
     // Only fetch if we don't have it cached and we're not already loading all class data
     if (characterClass && !isLoadingAllClassData) {
       console.log('📡 Fetching individual spell limits for', characterClass);
@@ -636,7 +618,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             properties: Array.isArray(weaponData.properties)
               ? weaponData.properties
               : typeof weaponData.properties === 'string'
-                ? weaponData.properties.split(', ').filter(Boolean)
+                ? (weaponData.properties as string).split(', ').filter(Boolean)
                 : []
           };
           suggestedWeapons.push({ weapon, quantity: suggestion.quantity });
