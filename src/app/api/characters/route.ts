@@ -38,6 +38,15 @@ export async function GET() {
     // Log character count
     console.log('Found characters:', characters.length);
 
+    // Debug logging for gold pieces
+    characters.forEach(char => {
+      console.log(`Character ${char.name} gold pieces:`, {
+        copperPieces: char.copperPieces,
+        silverPieces: char.silverPieces,
+        goldPieces: char.goldPieces
+      });
+    });
+
     return NextResponse.json(characters);
   } catch (error) {
     console.error("Error fetching characters:", error);
