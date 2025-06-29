@@ -107,20 +107,10 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
   // Sync currentCharacter with character prop when it changes (important for reopening characters)
   useEffect(() => {
     console.log('CharacterSheet: Loading character');
-    console.log('CharacterSheet: Gold pieces from character:', {
-      copperPieces: character.copperPieces,
-      silverPieces: character.silverPieces,
-      goldPieces: character.goldPieces
-    });
     setCurrentCharacter(character);
     setCopperPieces(character.copperPieces || 0);
     setSilverPieces(character.silverPieces || 0);
     setGoldPieces(character.goldPieces || 0);
-    console.log('CharacterSheet: Set gold pieces to:', {
-      copperPieces: character.copperPieces || 0,
-      silverPieces: character.silverPieces || 0,
-      goldPieces: character.goldPieces || 0
-    });
     setTreasures(character.treasures || []);
     
     // Weapons and armor are now derived from character data
@@ -233,18 +223,6 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
   // Derived state from character armor using equipped boolean  
   const equippedArmor = currentCharacter.armor?.filter(armor => armor.equipped) || [];
   const inventoryArmor = currentCharacter.armor?.filter(armor => !armor.equipped) || [];
-  
-  // Additional debug logging for derived state
-  console.log('CharacterSheet derived state:', {
-    currentCharacterWeapons: currentCharacter.weapons,
-    currentCharacterArmor: currentCharacter.armor,
-    equippedWeapons,
-    inventoryWeapons,
-    equippedArmor,
-    inventoryArmor,
-    inventory: currentCharacter.inventory
-  });
-  
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [equippedMagicalItems, setEquippedMagicalItems] = useState<EquippedMagicalItem[]>([]);
   const [inventoryMagicalItems, setInventoryMagicalItems] = useState<MagicalItem[]>([]);

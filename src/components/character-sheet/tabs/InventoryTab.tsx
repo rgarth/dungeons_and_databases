@@ -29,14 +29,6 @@ export function InventoryTab({
   onMoneyUpdate,
   onTreasuresUpdate
 }: InventoryTabProps) {
-  // Debug logging for gold pieces
-  console.log('InventoryTab: Received gold pieces:', {
-    copperPieces,
-    silverPieces,
-    goldPieces,
-    inventoryLength: inventory.length
-  });
-
   const [newItem, setNewItem] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("Adventuring Gear");
   const [selectedEquipment, setSelectedEquipment] = useState<string>("");
