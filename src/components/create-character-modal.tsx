@@ -515,8 +515,11 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       }
     };
 
-    loadCreationOptions();
-  }, [characterClass, allClassData, isLoadingAllClassData]); // Wait for all class data to be loaded
+    // Only load if we have a character class and either cached data is available or we're not loading all class data
+    if (characterClass && (allClassData[characterClass] || !isLoadingAllClassData)) {
+      loadCreationOptions();
+    }
+  }, [characterClass, allClassData, isLoadingAllClassData, cachedSpells]); // Wait for all class data to be loaded
 
   // Get creation options from state (with fallback)
   const { needsSubclassAtCreation = false, spellcasting = { ability: null, canCastAtLevel1: false, availableSpells: [], spellSlots: {} } } = creationOptions || {};

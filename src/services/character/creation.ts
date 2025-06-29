@@ -121,6 +121,32 @@ export interface CharacterCreationResult {
 
 export class CharacterCreationService {
   private static instance: CharacterCreationService;
+  private creationOptionsCache: Map<string, {
+    equipmentPacks: Array<{
+      id: string;
+      name: string;
+      description: string;
+      cost: string;
+      items: Array<{
+        name: string;
+        quantity: number;
+        type: string;
+        cost: string;
+        weight: number;
+        description: string | null;
+      }>;
+    }>;
+    weaponSuggestions: Weapon[];
+    armorSuggestions: Armor[];
+    subclasses: { name: string; description?: string }[];
+    needsSubclassAtCreation: boolean;
+    spellcasting: {
+      ability: string | null;
+      canCastAtLevel1: boolean;
+      availableSpells: Spell[];
+      spellSlots: Record<number, number>;
+    };
+  }> = new Map();
 
   private constructor() {}
 
@@ -183,8 +209,16 @@ export class CharacterCreationService {
     };
   }
 
-  // Get character creation options
+  // Get character creation options with caching
   async getCreationOptions(characterClass: string) {
+    // Check cache first
+    if (this.creationOptionsCache.has(characterClass)) {
+      console.log('⚡ Using cached creation options for', characterClass);
+      return this.creationOptionsCache.get(characterClass);
+    }
+
+    console.log('📡 Fetching creation options for', characterClass);
+    
     // Get spells for spellcasting classes
     const spellcastingAbility = getSpellcastingAbility(characterClass);
     let availableSpells: Spell[] = [];
@@ -212,7 +246,7 @@ export class CharacterCreationService {
     const weaponSuggestions: Weapon[] = []; // Will be populated from database
     const armorSuggestions: Armor[] = []; // Will be populated from database
 
-    return {
+    const options = {
       equipmentPacks,
       weaponSuggestions,
       armorSuggestions,
@@ -225,6 +259,12 @@ export class CharacterCreationService {
         spellSlots: spellcastingAbility ? getSpellSlots(characterClass, 1) : {}
       }
     };
+
+    // Cache the result
+    this.creationOptionsCache.set(characterClass, options);
+    console.log('✅ Cached creation options for', characterClass);
+
+    return options;
   }
 
   // Calculate spellcasting stats
