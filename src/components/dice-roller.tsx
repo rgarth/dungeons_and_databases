@@ -180,7 +180,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
   });
   
   // Dice color state
-  const [diceColor, setDiceColor] = useState('#ff0000');
+  const [diceColor, setDiceColor] = useState('#9333ea');
 
   // Load the required scripts
   useEffect(() => {
