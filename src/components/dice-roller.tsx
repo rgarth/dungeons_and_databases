@@ -59,7 +59,7 @@ function ColorWheel({ currentColor, onColorChange }: {
 
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const radius = Math.min(centerX, centerY) - 10;
+    const radius = Math.min(centerX, centerY) - 5;
 
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -69,24 +69,26 @@ function ColorWheel({ currentColor, onColorChange }: {
       for (let saturation = 0; saturation < radius; saturation++) {
         const hue = angle;
         const sat = (saturation / radius) * 100;
-        const value = 100;
+        const val = 100;
         
-        const color = `hsl(${hue}, ${sat}%, ${value}%)`;
+        const color = `hsl(${hue}, ${sat}%, ${val}%)`;
+        
         ctx.fillStyle = color;
-        
-        const x = centerX + saturation * Math.cos(angle * Math.PI / 180);
-        const y = centerY + saturation * Math.sin(angle * Math.PI / 180);
-        
-        ctx.fillRect(x, y, 1, 1);
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, saturation, angle * Math.PI / 180, (angle + 1) * Math.PI / 180);
+        ctx.lineTo(centerX, centerY);
+        ctx.fill();
       }
     }
 
-    // Draw center circle for current color
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, 15, 0, 2 * Math.PI);
+    // Draw center circle with current color
     ctx.fillStyle = currentColor;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
     ctx.fill();
-    ctx.strokeStyle = '#fff';
+    
+    // Draw white border around center
+    ctx.strokeStyle = 'white';
     ctx.lineWidth = 2;
     ctx.stroke();
   }, [currentColor]);
@@ -101,7 +103,7 @@ function ColorWheel({ currentColor, onColorChange }: {
     
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const radius = Math.min(centerX, centerY) - 10;
+    const radius = Math.min(centerX, centerY) - 5;
     
     const dx = x - centerX;
     const dy = y - centerY;
@@ -122,24 +124,27 @@ function ColorWheel({ currentColor, onColorChange }: {
     <div className="relative">
       <div 
         className="w-8 h-8 rounded-full border-2 border-slate-500 cursor-pointer shadow-lg"
-        style={{ backgroundColor: currentColor }}
+        style={{
+          background: `conic-gradient(from 0deg, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080, #ff0000)`
+        }}
         onClick={() => setIsOpen(!isOpen)}
-        title="Choose dice color"
+        title="Select dice color"
       />
       
-      {/* Real Color Wheel Dropdown */}
       {isOpen && (
-        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-slate-800 rounded-lg p-3 border border-slate-600 shadow-xl z-10">
-          <canvas
-            ref={canvasRef}
-            width={120}
-            height={120}
-            className="cursor-crosshair"
-            onClick={handleCanvasClick}
-            title="Click to select color"
-          />
-          <div className="mt-2 text-center text-xs text-slate-300">
-            Click to select color
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50">
+          <div className="bg-slate-800 rounded-lg p-3 border border-slate-600 shadow-xl">
+            <canvas
+              ref={canvasRef}
+              width={120}
+              height={120}
+              className="cursor-crosshair"
+              onClick={handleCanvasClick}
+              title="Click to select color"
+            />
+            <div className="text-center text-xs text-slate-300 mt-2">
+              Click to select
+            </div>
           </div>
         </div>
       )}
@@ -325,73 +330,33 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
   // Initialize dice box when scripts are loaded
   useEffect(() => {
     if (scriptsLoaded && diceContainerRef.current && !diceBoxRef.current) {
-      console.log('Attempting to initialize dice box...');
+      const container = diceContainerRef.current;
       
-      // Check for required dependencies
-      if (!window.THREE) {
-        setInitializationError('THREE.js not loaded');
-        return;
-      }
-      
-      if (!window.CANNON) {
-        setInitializationError('Cannon.js not loaded');
-        return;
-      }
-      
-      if (!window.DICE) {
-        setInitializationError('DICE library not loaded');
-        return;
-      }
-      
-      console.log('All dependencies available, initializing dice box...');
-      
-      // Add a delay to ensure DOM is ready and container has proper dimensions
-      setTimeout(() => {
-        if (diceContainerRef.current && window.DICE) {
-          try {
-            const container = diceContainerRef.current;
-            
-            // Ensure container has explicit dimensions
-            container.style.width = '100%';
-            container.style.height = '100%';
-            container.style.minHeight = '480px';
-            container.style.position = 'relative';
-            container.style.display = 'block';
-            
-            // Force a layout recalculation
-            void container.offsetHeight;
-            
-            console.log('Container dimensions:', {
-              width: container.offsetWidth,
-              height: container.offsetHeight,
-              clientWidth: container.clientWidth,
-              clientHeight: container.clientHeight
-            });
-            
-            // Check if container has proper dimensions
-            if (container.clientWidth === 0 || container.clientHeight === 0) {
-              console.error('Container has zero dimensions');
-              setInitializationError('Container has zero dimensions');
-              return;
-            }
-            
-            if (typeof window.DICE.dice_box === 'function') {
-              console.log('Creating dice box instance...');
-              diceBoxRef.current = new window.DICE.dice_box(container);
-              console.log('Dice box initialized successfully:', !!diceBoxRef.current);
-              setInitializationError(null);
-            } else {
-              console.error('window.DICE.dice_box is not a constructor:', typeof window.DICE.dice_box);
-              setInitializationError('DICE.dice_box is not a constructor');
-            }
-          } catch (error) {
-            console.error('Failed to initialize dice box:', error);
-            setInitializationError(`Initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      if (window.DICE && typeof window.DICE.dice_box === 'function') {
+        try {
+          // Set initial dice color
+          if (window.DICE.vars) {
+            window.DICE.vars.dice_color = diceColor;
+            window.DICE.vars.label_color = '#ffffff';
           }
+          
+          // Create dice box
+          diceBoxRef.current = new window.DICE.dice_box(container);
+          
+          // Set initial dice to show something
+          diceBoxRef.current.setDice('1d6');
+          
+          console.log('Dice box initialized successfully:', !!diceBoxRef.current);
+        } catch (error) {
+          console.error('Failed to initialize dice box:', error);
+          setInitializationError(`Initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
-      }, 100);
+      } else {
+        console.error('DICE library not available');
+        setInitializationError('DICE library not available');
+      }
     }
-  }, [scriptsLoaded]);
+  }, [scriptsLoaded, diceColor]);
 
   const addDice = (diceType: keyof typeof diceCounts) => {
     setDiceCounts(prev => {
@@ -435,35 +400,34 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
   };
 
   const rollDice = () => {
-    if (!diceBoxRef.current || isRolling || getTotalDice() === 0) {
-      console.log('Cannot roll dice:', {
-        diceBoxExists: !!diceBoxRef.current,
-        isRolling,
-        totalDice: getTotalDice()
-      });
-      return;
-    }
-
+    if (!diceBoxRef.current || isRolling || getTotalDice() === 0) return;
+    
     const notation = buildDiceNotation();
-    console.log('Rolling dice with notation:', notation);
-
+    if (!notation) return;
+    
     setIsRolling(true);
-    setLastResult(null);
-
+    
     try {
+      // Set the dice notation
       diceBoxRef.current.setDice(notation);
+      
+      // Start the roll
       diceBoxRef.current.start_throw(
-        undefined, // beforeRoll callback
-        (result: DiceResult) => {
-          console.log('Roll completed:', result);
-          setLastResult(result);
+        // Before roll callback
+        (notation: DiceResult) => {
+          console.log('Rolling dice:', notation);
+          return null; // Return null to use default values
+        },
+        // After roll callback
+        (notation: DiceResult) => {
+          console.log('Roll completed:', notation);
+          setLastResult(notation);
           setIsRolling(false);
         }
       );
     } catch (error) {
-      console.error('Failed to roll dice:', error);
+      console.error('Error rolling dice:', error);
       setIsRolling(false);
-      setInitializationError(`Roll failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -556,16 +520,18 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
           {diceTypes.map(dice => (
             <div key={dice.key} className="flex flex-col items-center">
               {/* 3D Dice Preview with Clickable Badge */}
-              <button
-                onClick={() => addDice(dice.key)}
-                disabled={totalDice >= 10}
-                className="relative w-12 h-12 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-110"
-                title={`Add ${dice.key.toUpperCase()}`}
-              >
-                <DicePreview 
-                  diceType={dice.key} 
-                  diceColor={diceColor} 
-                />
+              <div className="relative">
+                <button
+                  onClick={() => addDice(dice.key)}
+                  disabled={totalDice >= 10}
+                  className="w-12 h-12 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-110"
+                  title={`Add ${dice.key.toUpperCase()}`}
+                >
+                  <DicePreview 
+                    diceType={dice.key} 
+                    diceColor={diceColor} 
+                  />
+                </button>
                 
                 {/* Clickable Badge showing count - click to remove */}
                 {diceCounts[dice.key] > 0 && (
@@ -580,7 +546,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
                     {diceCounts[dice.key]}
                   </button>
                 )}
-              </button>
+              </div>
             </div>
           ))}
         </div>
