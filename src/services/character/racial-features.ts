@@ -87,17 +87,49 @@ export class RacialFeaturesService {
         return [];
       }
     } else {
-      console.warn(`Invalid traits format for race ${race}`);
+      console.warn(`Unexpected traits format for race ${race}:`, raceData.traits);
       return [];
     }
 
-    // Convert trait names to RacialTrait objects using the helper methods
-    return traitNames.map(traitName => ({
-      name: traitName,
-      description: this.getTraitDescription(traitName),
-      type: this.getTraitType(traitName),
-      effect: this.getTraitEffect(traitName)
-    }));
+    if (!Array.isArray(traitNames)) {
+      console.warn(`Traits for race ${race} is not an array:`, traitNames);
+      return [];
+    }
+
+    const traits: RacialTrait[] = [];
+    
+    for (const traitName of traitNames) {
+      try {
+        const traitData = await fetch(`/api/racial-traits/${encodeURIComponent(traitName)}`).then(res => res.json());
+        if (traitData) {
+          traits.push({
+            name: traitData.name,
+            description: traitData.description,
+            type: this.getTraitType(traitName),
+            effect: this.getTraitEffect(traitName)
+          });
+        } else {
+          // Fallback to hardcoded data if API doesn't return data
+          traits.push({
+            name: traitName,
+            description: this.getTraitDescription(traitName),
+            type: this.getTraitType(traitName),
+            effect: this.getTraitEffect(traitName)
+          });
+        }
+      } catch (error) {
+        console.warn(`Failed to fetch trait ${traitName} for race ${race}:`, error);
+        // Fallback to hardcoded data
+        traits.push({
+          name: traitName,
+          description: this.getTraitDescription(traitName),
+          type: this.getTraitType(traitName),
+          effect: this.getTraitEffect(traitName)
+        });
+      }
+    }
+
+    return traits;
   }
 
   // Helper to get trait descriptions
