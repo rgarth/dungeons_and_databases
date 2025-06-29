@@ -115,6 +115,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [cachedWeaponSuggestions, setCachedWeaponSuggestions] = useState<WeaponSuggestion[]>([]);
   const [cachedWeaponProficiencies, setCachedWeaponProficiencies] = useState<{ simple: boolean; martial: boolean; specific: string[] } | null>(null);
   const [cachedArmorProficiencies, setCachedArmorProficiencies] = useState<string[]>([]);
+  const [cachedArmorSuggestions, setCachedArmorSuggestions] = useState<ArmorSuggestion[]>([]);
   const [cachedSpells, setCachedSpells] = useState<Record<string, Spell[]>>({});
   const [cachedSpellLimits, setCachedSpellLimits] = useState<Record<string, {
     cantripsKnown: number;
@@ -449,6 +450,21 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           setLoadingOptions(false);
         }
       } else {
+        // Try to get suggestions from client cache first
+        const clientCache = (window as any).clientCache;
+        if (clientCache) {
+          const cachedWeaponSuggestions = clientCache.getWeaponSuggestions(characterClass);
+          const cachedArmorSuggestions = clientCache.getArmorSuggestions(characterClass);
+          
+          if (cachedWeaponSuggestions.length > 0 || cachedArmorSuggestions.length > 0) {
+            console.log('⚡ Using client cache for suggestions:', characterClass);
+            setWeaponSuggestions(cachedWeaponSuggestions);
+            setArmorSuggestions(cachedArmorSuggestions);
+            setCachedWeaponSuggestions(cachedWeaponSuggestions);
+            setCachedArmorSuggestions(cachedArmorSuggestions);
+          }
+        }
+        
         // Fallback to API calls if cache not ready
         console.log('📡 Making API calls for creation options (cache not ready)...');
         

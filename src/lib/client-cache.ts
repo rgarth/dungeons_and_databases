@@ -13,6 +13,8 @@ interface CacheData {
   treasures: any[];
   subraces: any[];
   languages: any[];
+  weaponSuggestions: Record<string, any[]>; // Class name -> weapon suggestions
+  armorSuggestions: Record<string, any[]>; // Class name -> armor suggestions
 }
 
 class ClientCache {
@@ -64,6 +66,49 @@ class ClientCache {
         fetch('/api/languages').then(res => res.json())
       ]);
 
+      // Pre-load weapon and armor suggestions for all classes
+      const weaponSuggestions: Record<string, any[]> = {};
+      const armorSuggestions: Record<string, any[]> = {};
+      
+      const classNames = classes.map((c: any) => c.name);
+      
+      // Fetch all weapon and armor suggestions in parallel
+      const [weaponSuggestionPromises, armorSuggestionPromises] = await Promise.all([
+        Promise.all(
+          classNames.map(async (className: string) => {
+            try {
+              const response = await fetch(`/api/weapon-suggestions?className=${encodeURIComponent(className)}`);
+              const data = await response.json();
+              return { className, data };
+            } catch (error) {
+              console.warn(`Failed to fetch weapon suggestions for ${className}:`, error);
+              return { className, data: [] };
+            }
+          })
+        ),
+        Promise.all(
+          classNames.map(async (className: string) => {
+            try {
+              const response = await fetch(`/api/armor-suggestions?className=${encodeURIComponent(className)}`);
+              const data = await response.json();
+              return { className, data };
+            } catch (error) {
+              console.warn(`Failed to fetch armor suggestions for ${className}:`, error);
+              return { className, data: [] };
+            }
+          })
+        )
+      ]);
+
+      // Build the suggestions objects
+      weaponSuggestionPromises.forEach(({ className, data }) => {
+        weaponSuggestions[className] = data;
+      });
+      
+      armorSuggestionPromises.forEach(({ className, data }) => {
+        armorSuggestions[className] = data;
+      });
+
       this.cache = {
         races,
         classes,
@@ -75,7 +120,9 @@ class ClientCache {
         magicalItems,
         treasures,
         subraces,
-        languages
+        languages,
+        weaponSuggestions,
+        armorSuggestions
       };
 
       console.log('✅ Client cache initialized:', {
@@ -89,7 +136,9 @@ class ClientCache {
         magicalItems: magicalItems.length,
         treasures: treasures.length,
         subraces: subraces.length,
-        languages: languages.length
+        languages: languages.length,
+        weaponSuggestions: Object.keys(weaponSuggestions).length,
+        armorSuggestions: Object.keys(armorSuggestions).length
       });
     } catch (error) {
       console.error('❌ Failed to initialize client cache:', error);
@@ -123,6 +172,14 @@ class ClientCache {
 
   getWeapons() {
     return this.cache.weapons || [];
+  }
+
+  getWeaponSuggestions(className: string) {
+    return this.cache.weaponSuggestions?.[className] || [];
+  }
+
+  getArmorSuggestions(className: string) {
+    return this.cache.armorSuggestions?.[className] || [];
   }
 
   getMagicalItems() {
