@@ -76,7 +76,7 @@ model Weapon {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   description   String?
-  ammunitionTypeId Int?        @map("ammunition_type_id")
+  ammunitionTypeId String?     @map("ammunition_type_id")
   suggestedQuantity Int?       @map("suggested_quantity")
   ammunitionType AmmunitionSuggestion? @relation(fields: [ammunitionTypeId], references: [id])
   customWeapons CustomWeapon[]
@@ -221,8 +221,8 @@ model ClassSpellSuggestion {
 }
 
 model DndRace {
-  id                   String   @id @default(cuid())
-  name                 String   @unique
+  id                   String       @id @default(cuid())
+  name                 String       @unique
   description          String
   abilityScoreIncrease Json
   size                 String
@@ -230,22 +230,24 @@ model DndRace {
   traits               Json
   languages            Json
   age                  String?
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
   subraces             Subrace[]
+  raceTraits           RaceTrait[]
 }
 
 model Subrace {
-  id                   String   @id @default(cuid())
-  name                 String   @unique
+  id                   String         @id @default(cuid())
+  name                 String         @unique
   raceId               String
   description          String
   abilityScoreIncrease Json
   traits               Json
   languages            Json?
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-  race                 DndRace  @relation(fields: [raceId], references: [id], onDelete: Cascade)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  race                 DndRace        @relation(fields: [raceId], references: [id], onDelete: Cascade)
+  subraceTraits        SubraceTrait[]
 
   @@index([raceId])
   @@map("Subrace")
@@ -423,12 +425,49 @@ model ClassSpellLimits {
 }
 
 model AmmunitionSuggestion {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(cuid())
   name        String   @unique
   description String?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   weapons     Weapon[]
+}
 
-  @@map("ammunition_suggestions")
+model Trait {
+  id          String         @id @default(cuid())
+  name        String         @unique
+  description String
+  type        String         @default("passive")
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  raceTraits  RaceTrait[]
+  subraceTraits SubraceTrait[]
+}
+
+model RaceTrait {
+  id        String   @id @default(cuid())
+  raceId    String
+  traitId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  race      DndRace  @relation(fields: [raceId], references: [id], onDelete: Cascade)
+  trait     Trait    @relation(fields: [traitId], references: [id], onDelete: Cascade)
+
+  @@unique([raceId, traitId])
+  @@index([raceId])
+  @@index([traitId])
+}
+
+model SubraceTrait {
+  id        String   @id @default(cuid())
+  subraceId String
+  traitId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  subrace   Subrace  @relation(fields: [subraceId], references: [id], onDelete: Cascade)
+  trait     Trait    @relation(fields: [traitId], references: [id], onDelete: Cascade)
+
+  @@unique([subraceId, traitId])
+  @@index([subraceId])
+  @@index([traitId])
 }
