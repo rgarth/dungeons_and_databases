@@ -24,6 +24,7 @@ import Image from 'next/image';
 import { useDndData } from '@/components/providers/dnd-data-provider';
 import { BackgroundSelector, SelectedCharacteristics as BackgroundCharacteristics } from '@/components/shared/BackgroundSelector';
 import { AvatarGenerator } from '@/components/shared/AvatarGenerator';
+import { clientCache } from "@/lib/client-cache";
 
 interface CreateCharacterModalProps {
   onClose: () => void;
@@ -81,21 +82,25 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [allArmor, setAllArmor] = useState<Armor[]>([]);
   
   // Type for client cache
-  type ClientCache = {
-    getWeapons: () => Weapon[];
-    getArmor: () => Armor[];
-    getSpellLimits: (className: string) => any;
-  } | undefined;
 
   // Load weapons and armor from client cache on component mount
   useEffect(() => {
-    const clientCache = (window as any).clientCache as ClientCache;
-    if (clientCache) {
-      const weapons = clientCache.getWeapons();
-      const armor = clientCache.getArmor();
-      if (weapons) setAllWeapons(weapons);
-      if (armor) setAllArmor(armor);
-    }
+    const loadWeaponsAndArmor = async () => {
+      try {
+        await clientCache.initialize();
+        const weapons = clientCache.getWeapons();
+        const armor = clientCache.getArmor();
+        console.log('🔧 Loading weapons and armor from client cache:', {
+          weaponsLength: weapons.length,
+          armorLength: armor.length
+        });
+        setAllWeapons(weapons);
+        setAllArmor(armor);
+      } catch (error) {
+        console.error('❌ Failed to load weapons and armor from client cache:', error);
+      }
+    };
+    loadWeaponsAndArmor();
   }, []);
 
   const characterCreationService = CharacterCreationService.getInstance();
@@ -276,15 +281,22 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }
 
     // Try to get spell limits from client cache first
-    const clientCache = (window as any).clientCache as ClientCache;
-    if (clientCache) {
-      const cachedSpellLimits = clientCache.getSpellLimits(characterClass);
-      if (cachedSpellLimits) {
-        console.log('⚡ Using client cache for spell limits:', characterClass);
-        setCachedSpellLimits(prev => ({
-          ...prev,
-          [cacheKey]: cachedSpellLimits
-        }));
+    const loadWeaponsAndArmor = async () => {
+      try {
+        await clientCache.initialize();
+        const weapons = clientCache.getWeapons();
+        const armor = clientCache.getArmor();
+        console.log('🔧 Loading weapons and armor from client cache:', {
+          weaponsLength: weapons.length,
+          armorLength: armor.length
+        });
+        setAllWeapons(weapons);
+        setAllArmor(armor);
+      } catch (error) {
+        console.error('❌ Failed to load weapons and armor from client cache:', error);
+      }
+    };
+    loadWeaponsAndArmor();
         return;
       }
     }
@@ -487,19 +499,6 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         }
       } else {
         // Try to get suggestions from client cache first
-        const clientCache = (window as any).clientCache;
-        if (clientCache) {
-          const cachedWeaponSuggestions = clientCache.getWeaponSuggestions(characterClass);
-          const cachedArmorSuggestions = clientCache.getArmorSuggestions(characterClass);
-          
-          if (cachedWeaponSuggestions.length > 0 || cachedArmorSuggestions.length > 0) {
-            console.log('⚡ Using client cache for suggestions:', characterClass);
-            setWeaponSuggestions(cachedWeaponSuggestions);
-            setArmorSuggestions(cachedArmorSuggestions);
-            setCachedWeaponSuggestions(cachedWeaponSuggestions);
-            setCachedArmorProficiencies(cachedArmorProficiencies);
-          }
-        }
         
         // Fallback to API calls if cache not ready
         console.log('📡 Making API calls for creation options (cache not ready)...');
