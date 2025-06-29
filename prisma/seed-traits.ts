@@ -1,135 +1,126 @@
 import { PrismaClient } from '@prisma/client';
+import { traitsData } from '../prisma/data/traits-data';
 
 const prisma = new PrismaClient();
 
-const traitsData = [
-  {
-    name: 'Darkvision',
-    description: 'You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light.',
-    type: 'passive',
-    effect: { type: 'darkvision', value: 60 }
-  },
-  {
-    name: 'Dwarven Resilience',
-    description: 'You have advantage on saving throws against poison, and you have resistance against poison damage.',
-    type: 'passive',
-    effect: { type: 'resistance', value: 'poison' }
-  },
-  {
-    name: 'Fey Ancestry',
-    description: 'You have advantage on saving throws against being charmed, and magic can\'t put you to sleep.',
-    type: 'passive'
-  },
-  {
-    name: 'Gnome Cunning',
-    description: 'You have advantage on all Intelligence, Wisdom, and Charisma saving throws against magic.',
-    type: 'passive'
-  },
-  {
-    name: 'Hellish Resistance',
-    description: 'You have resistance to fire damage.',
-    type: 'passive',
-    effect: { type: 'resistance', value: 'fire' }
-  },
-  {
-    name: 'Lucky',
-    description: 'When you roll a 1 on an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll.',
-    type: 'passive'
-  },
-  {
-    name: 'Stone\'s Endurance',
-    description: 'When you take damage, you can use your reaction to roll a d12. Add your Constitution modifier to the number rolled, and reduce the damage by that total.',
-    type: 'active'
-  },
-  {
-    name: 'Trance',
-    description: 'You don\'t need to sleep. Instead, you meditate deeply, remaining semiconscious, for 4 hours a day.',
-    type: 'passive'
-  },
-  {
-    name: 'Two Skills',
-    description: 'You gain proficiency in two skills of your choice.',
-    type: 'passive'
-  },
-  {
-    name: 'Extra Language',
-    description: 'You can speak, read, and write one extra language of your choice.',
-    type: 'passive'
-  },
-  {
-    name: 'Extra Skill',
-    description: 'You gain proficiency in one skill of your choice.',
-    type: 'passive'
-  },
-  {
-    name: 'Draconic Ancestry',
-    description: 'You have draconic ancestry. Choose one type of dragon from the Draconic Ancestry table. Your breath weapon and damage resistance are determined by the dragon type.',
-    type: 'passive'
-  },
-  {
-    name: 'Breath Weapon',
-    description: 'You can use your action to exhale destructive energy. Your draconic ancestry determines the size, shape, and damage type of the exhalation.',
-    type: 'active'
-  },
-  {
-    name: 'Damage Resistance',
-    description: 'You have resistance to the damage type associated with your draconic ancestry.',
-    type: 'passive'
-  },
-  {
-    name: 'Celestial Resistance',
-    description: 'You have resistance to necrotic and radiant damage.',
-    type: 'passive',
-    effect: { type: 'resistance', value: 'necrotic,radiant' }
-  },
-  {
-    name: 'Healing Hands',
-    description: 'As an action, you can touch a creature and cause it to regain a number of hit points equal to your level.',
-    type: 'active'
-  },
-  {
-    name: 'Natural Athlete',
-    description: 'You have proficiency in the Athletics skill.',
-    type: 'passive',
-    effect: { type: 'skill', value: 'Athletics' }
-  },
-  {
-    name: 'Powerful Build',
-    description: 'You count as one size larger when determining your carrying capacity and the weight you can push, drag, or lift.',
-    type: 'passive'
-  },
-  {
-    name: 'Feline Agility',
-    description: 'Your reflexes and agility allow you to move with a burst of speed. When you move on your turn in combat, you can double your speed until the end of the turn.',
-    type: 'active'
-  },
-  {
-    name: 'Cat\'s Claws',
-    description: 'You have a climbing speed of 20 feet. In addition, your claws are natural weapons, which you can use to make unarmed strikes.',
-    type: 'passive'
-  },
-  {
-    name: 'Cat\'s Talents',
-    description: 'You have proficiency in the Perception and Stealth skills.',
-    type: 'passive',
-    effect: { type: 'skill', value: 'Perception,Stealth' }
+export async function seedTraits() {
+  console.log('🌱 Seeding traits...');
+  
+  try {
+    // Check if traits already exist
+    const existingTraits = await prisma.trait.count();
+    if (existingTraits > 0) {
+      console.log(`✅ Traits already seeded (${existingTraits} found). Skipping...`);
+      return;
+    }
+
+    // Create all traits
+    const createdTraits = await prisma.trait.createMany({
+      data: traitsData,
+      skipDuplicates: true
+    });
+
+    console.log(`✅ Seeded ${createdTraits.count} traits successfully`);
+  } catch (error) {
+    console.error('❌ Error seeding traits:', error);
+    throw error;
   }
+}
+
+// Race-trait associations based on 5e SRD
+export const raceTraitAssociations = [
+  // Dwarf (Hill)
+  { raceName: 'Dwarf', traitNames: ['Darkvision', 'Dwarven Resilience', 'Dwarven Combat Training', 'Tool Proficiency', 'Stonecunning', 'Dwarven Toughness'] },
+  
+  // Dwarf (Mountain)
+  { raceName: 'Dwarf', traitNames: ['Darkvision', 'Dwarven Resilience', 'Dwarven Combat Training', 'Tool Proficiency', 'Stonecunning', 'Dwarven Armor Training'] },
+  
+  // Elf (High)
+  { raceName: 'Elf', traitNames: ['Darkvision', 'Keen Senses', 'Fey Ancestry', 'Trance', 'Elf Weapon Training', 'High Elf Cantrip', 'Extra Language'] },
+  
+  // Elf (Wood)
+  { raceName: 'Elf', traitNames: ['Darkvision', 'Keen Senses', 'Fey Ancestry', 'Trance', 'Elf Weapon Training', 'Wood Elf Fleet of Foot', 'Wood Elf Mask of the Wild'] },
+  
+  // Elf (Drow)
+  { raceName: 'Elf', traitNames: ['Superior Darkvision', 'Keen Senses', 'Fey Ancestry', 'Trance', 'Drow Magic', 'Drow Weapon Training', 'Sunlight Sensitivity'] },
+  
+  // Halfling (Lightfoot)
+  { raceName: 'Halfling', traitNames: ['Lucky', 'Brave', 'Halfling Nimbleness', 'Naturally Stealthy'] },
+  
+  // Halfling (Stout)
+  { raceName: 'Halfling', traitNames: ['Lucky', 'Brave', 'Halfling Nimbleness', 'Stout Resilience'] },
+  
+  // Human
+  { raceName: 'Human', traitNames: ['Extra Language'] },
+  
+  // Dragonborn
+  { raceName: 'Dragonborn', traitNames: ['Draconic Ancestry', 'Breath Weapon', 'Damage Resistance'] },
+  
+  // Gnome (Forest)
+  { raceName: 'Gnome', traitNames: ['Darkvision', 'Gnome Cunning', 'Forest Gnome Natural Illusionist', 'Speak with Small Beasts'] },
+  
+  // Gnome (Rock)
+  { raceName: 'Gnome', traitNames: ['Darkvision', 'Gnome Cunning', 'Rock Gnome Artificer\'s Lore', 'Rock Gnome Tinker'] },
+  
+  // Half-Elf
+  { raceName: 'Half-Elf', traitNames: ['Darkvision', 'Fey Ancestry', 'Skill Versatility'] },
+  
+  // Half-Orc
+  { raceName: 'Half-Orc', traitNames: ['Darkvision', 'Menacing', 'Relentless Endurance', 'Savage Attacks'] },
+  
+  // Tiefling
+  { raceName: 'Tiefling', traitNames: ['Darkvision', 'Hellish Resistance', 'Infernal Legacy'] }
 ];
 
-export async function seedTraits() {
-  console.log('Starting racial trait seeding...');
+export async function seedRaceTraitAssociations() {
+  console.log('🔗 Seeding race-trait associations...');
   
-  // Clear existing traits
-  await prisma.racialTrait.deleteMany({});
-  console.log('Cleared existing traits');
-  
-  // Add traits
-  for (const trait of traitsData) {
-    await prisma.racialTrait.create({
-      data: trait
+  try {
+    // Check if associations already exist
+    const existingAssociations = await prisma.raceTrait.count();
+    if (existingAssociations > 0) {
+      console.log(`✅ Race-trait associations already seeded (${existingAssociations} found). Skipping...`);
+      return;
+    }
+
+    const associationsToCreate = [];
+
+    for (const association of raceTraitAssociations) {
+      const race = await prisma.dndRace.findUnique({
+        where: { name: association.raceName }
+      });
+
+      if (!race) {
+        console.warn(`⚠️ Race "${association.raceName}" not found, skipping associations`);
+        continue;
+      }
+
+      for (const traitName of association.traitNames) {
+        const trait = await prisma.trait.findUnique({
+          where: { name: traitName }
+        });
+
+        if (!trait) {
+          console.warn(`⚠️ Trait "${traitName}" not found, skipping association`);
+          continue;
+        }
+
+        associationsToCreate.push({
+          raceId: race.id,
+          traitId: trait.id
+        });
+      }
+    }
+
+    // Use createMany with skipDuplicates to avoid unique constraint errors
+    const result = await prisma.raceTrait.createMany({
+      data: associationsToCreate,
+      skipDuplicates: true
     });
+
+    console.log(`✅ Seeded ${result.count} race-trait associations successfully`);
+  } catch (error) {
+    console.error('❌ Error seeding race-trait associations:', error);
+    throw error;
   }
-  console.log(`Added ${traitsData.length} racial traits`);
-  
-  console.log('Racial trait seeding completed successfully');
 } 

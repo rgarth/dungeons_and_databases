@@ -11,6 +11,7 @@ import { seedEquipmentPacks } from './seed-equipment-packs'
 import { seedArmorSuggestions } from './seed-armor-suggestions'
 import { seedWeaponSuggestions } from './seed-weapon-suggestions'
 import { seedSpellSuggestions } from './seed-spell-suggestions'
+import { seedTraits, seedRaceTraitAssociations } from './seed-traits'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
@@ -24,6 +25,10 @@ async function main() {
     await seedClasses()
     await seedBackgrounds()
     await seedAlignments()
+
+    // Traits (must come after races)
+    await seedTraits()
+    await seedRaceTraitAssociations()
 
     // Equipment
     await seedArmor()
@@ -46,6 +51,8 @@ async function main() {
     console.log(`Equipment: ${await prisma.equipment.count()}`)
     console.log(`Equipment Packs: ${await prisma.equipmentPack.count()}`)
     console.log(`Races: ${await prisma.dndRace.count()}`)
+    console.log(`Traits: ${await prisma.trait.count()}`)
+    console.log(`Race-Trait Associations: ${await prisma.raceTrait.count()}`)
     console.log(`Magical Items: ${await prisma.magicalItem.count()}`)
     console.log(`Spells: ${await prisma.spell.count()}`)
     console.log(`Weapons: ${await prisma.weapon.count()}`)
