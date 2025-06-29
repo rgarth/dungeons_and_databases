@@ -14,7 +14,7 @@ import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import { LevelUpWizard } from "./character-sheet/LevelUpWizard";
 import { getSpellcastingType, getSpellsPreparedCount } from "@/lib/dnd/level-up";
 import { StatsTab, ActionsTab, GearTab, InventoryTab, BackgroundTab } from "./character-sheet/";
-import { DiceRoller } from "./dice-roller";
+import DiceRoller from "./dice-roller";
 import { PDFExport } from "./character-sheet/PDFExport";
 import Image from 'next/image';
 
