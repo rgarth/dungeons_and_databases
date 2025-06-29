@@ -3,27 +3,13 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Plus, Minus, X } from "lucide-react";
 import { Weapon } from "@/lib/dnd/equipment";
-import { weaponsData } from '../../../prisma/data/weapons-data';
 import { categorizeWeaponsByProficiency } from "@/lib/dnd/proficiencies";
+import { clientCache } from "@/lib/client-cache";
 
 export interface WeaponSuggestion {
   weaponName: string;
   quantity: number;
   reason?: string | null;
-}
-
-// Interface matching the structure of weaponsData
-interface WeaponData {
-  name: string;
-  type: string;
-  category: string;
-  damage: string;
-  damageType: string;
-  properties: string;
-  weight: number;
-  cost: string;
-  description: string;
-  stackable?: boolean;
 }
 
 interface WeaponSelectorProps {
@@ -57,18 +43,20 @@ export function WeaponSelector({
   cachedWeaponSuggestions,
   cachedWeaponProficiencies,
 }: WeaponSelectorProps) {
+  const [selectedWeapons, setSelectedWeapons] = useState<{weapon: Weapon, quantity: number}[]>(initialSelectedWeapons);
   const [weaponSuggestions, setWeaponSuggestions] = useState<WeaponSuggestion[]>([]);
   const [weaponProficiencies, setWeaponProficiencies] = useState<{ simple: boolean; martial: boolean; specific: string[] } | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-  // Memoize the cached data to prevent unnecessary re-renders
+  // Memoize cached data to avoid unnecessary re-renders
   const memoizedCachedData = useMemo(() => ({
     weaponSuggestions: cachedWeaponSuggestions,
-    weaponProficiencies: cachedWeaponProficiencies,
+    weaponProficiencies: cachedWeaponProficiencies
   }), [cachedWeaponSuggestions, cachedWeaponProficiencies]);
 
   // For new interface, manage internal state. For legacy interface, use props
-  const [internalSelectedWeapons, setInternalSelectedWeapons] = useState<{weapon: Weapon, quantity: number}[]>(initialSelectedWeapons || []);
-  const currentSelectedWeapons = onWeaponQuantityChange ? initialSelectedWeapons : internalSelectedWeapons;
+  const currentSelectedWeapons = onWeaponQuantityChange ? initialSelectedWeapons : selectedWeapons;
   
   // Unified weapon quantity change handler
   const handleWeaponQuantityChange = (weapon: Weapon, quantity: number) => {
@@ -77,7 +65,7 @@ export function WeaponSelector({
       onWeaponQuantityChange(weapon, quantity);
     } else {
       // New interface - manage internal state
-      setInternalSelectedWeapons(prev => {
+      setSelectedWeapons(prev => {
         const existing = prev.find(sw => sw.weapon.name === weapon.name);
         if (quantity <= 0) {
           return prev.filter(sw => sw.weapon.name !== weapon.name);
@@ -111,15 +99,9 @@ export function WeaponSelector({
     const suggestedWeapons: {weapon: Weapon, quantity: number}[] = [];
     
     for (const suggestion of weaponSuggestions) {
-      const weaponData = weaponsData.find(w => w.name === suggestion.weaponName);
+      const weaponData = baseWeapons.find(w => w.name === suggestion.weaponName);
       if (weaponData) {
-        const weapon: Weapon = {
-          ...weaponData,
-          type: weaponData.type as 'Simple' | 'Martial',
-          category: weaponData.category as 'Melee' | 'Ranged',
-          properties: weaponData.properties ? weaponData.properties.split(', ').filter(Boolean) : []
-        };
-        suggestedWeapons.push({ weapon, quantity: suggestion.quantity });
+        suggestedWeapons.push({ weapon: weaponData, quantity: suggestion.quantity });
       }
     }
 
@@ -130,9 +112,27 @@ export function WeaponSelector({
       suggestedWeapons.forEach(sw => onWeaponQuantityChange(sw.weapon, sw.quantity));
     } else {
       // New interface - update internal state
-      setInternalSelectedWeapons(suggestedWeapons);
+      setSelectedWeapons(suggestedWeapons);
     }
   };
+
+  // Get weapons from client cache instead of static data
+  const baseWeapons: Weapon[] = useMemo(() => {
+    const cachedWeapons = clientCache.getWeapons();
+    if (cachedWeapons.length > 0) {
+      // Use cached weapons from database (includes ammunitionTypeId)
+      return cachedWeapons.map((weaponData: { name: string; type: string; category: string; damage: string; damageType: string; properties: string; weight: number; cost: string; description?: string; stackable?: boolean; ammunitionTypeId?: number | null; suggestedQuantity?: number | null }) => ({
+        ...weaponData,
+        type: weaponData.type as 'Simple' | 'Martial',
+        category: weaponData.category as 'Melee' | 'Ranged',
+        properties: weaponData.properties ? weaponData.properties.split(', ').filter(Boolean) : []
+      }));
+    } else {
+      // Fallback to static data if cache not ready
+      console.warn('Weapon cache not ready, using static data');
+      return [];
+    }
+  }, []);
 
   // Load proficiencies, suggestions, and phbDescription when class changes
   useEffect(() => {
@@ -175,20 +175,12 @@ export function WeaponSelector({
   // For legacy modal interface, check isOpen. For new interface, always render
   if (isOpen === false) return null;
 
-  // Convert weapons data to Weapon objects and add ammunition
-  const baseWeapons: Weapon[] = weaponsData.map((weaponData: WeaponData) => ({
-    ...weaponData,
-    type: weaponData.type as 'Simple' | 'Martial',
-    category: weaponData.category as 'Melee' | 'Ranged',
-    properties: weaponData.properties ? weaponData.properties.split(', ').filter(Boolean) : []
-  }));
-
   // Remove ammunition from weapon selector - ammunition should be handled separately
 
   // Categorize by proficiency if we have proficiency data
   let weaponCategories: Record<string, Weapon[]>;
   
-  if (weaponProficiencies) {
+  if (weaponProficiencies && baseWeapons.length > 0) {
     const { proficient, nonProficient } = categorizeWeaponsByProficiency(baseWeapons, weaponProficiencies);
     
     weaponCategories = {
@@ -220,39 +212,22 @@ export function WeaponSelector({
     };
   }
 
+  // Filter weapons based on search term and category
+  const filteredWeapons = Object.entries(weaponCategories).flatMap(([category, weapons]) => {
+    if (selectedCategory !== 'All' && category !== selectedCategory) return [];
+    
+    return weapons.filter(weapon => 
+      weapon.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      weapon.damage.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      weapon.damageType.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col">
         <div className="flex justify-between items-center p-6 border-b border-slate-700">
-          <div>
-            <h2 className="text-2xl font-bold text-white">{title}</h2>
-            <p className="text-sm text-slate-400 mt-1">
-              Select weapons to add to your inventory.
-            </p>
-            {showSuggestions && weaponSuggestions.length > 0 && (
-              <div className="mt-2">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-slate-400">
-                    Suggested starting weapons for {characterClass}:
-                  </p>
-                  <button
-                    onClick={handleApplySuggestion}
-                    className="px-3 py-1 text-sm bg-amber-600 hover:bg-amber-700 text-white rounded-md transition-colors"
-                  >
-                    Apply Suggestions
-                  </button>
-                </div>
-                <div className="mt-1 space-y-1">
-                  {weaponSuggestions.map((suggestion, index) => (
-                    <div key={index} className="text-sm text-slate-300">
-                      {suggestion.quantity}x {suggestion.weaponName}
-                      {suggestion.reason && <span className="text-slate-400"> - {suggestion.reason}</span>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          <h2 className="text-xl font-semibold text-white">{title}</h2>
           <button
             onClick={handleClose}
             className="text-slate-400 hover:text-white transition-colors"
@@ -261,45 +236,114 @@ export function WeaponSelector({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {Object.entries(weaponCategories).map(([category, weapons]) => (
-              <div key={category} className="space-y-2">
-                <h3 className="text-lg font-semibold text-white">{category}</h3>
-                <div className="space-y-2">
-                  {weapons.map((weapon) => {
-                    const selected = currentSelectedWeapons.find(sw => sw.weapon.name === weapon.name);
-                    const quantity = selected?.quantity || 0;
-                    
-                    return (
-                      <div key={weapon.name} className="flex items-center justify-between p-2 bg-slate-700/50 rounded">
-                        <div className="flex-1">
-                          <div className="text-white">{weapon.name}</div>
-                          <div className="text-xs text-slate-400">
-                            {weapon.damage} {weapon.damageType} • {weapon.properties.join(', ')}
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <button
-                            onClick={() => handleWeaponQuantityChange(weapon, Math.max(0, quantity - 1))}
-                            className="p-1 text-slate-400 hover:text-white transition-colors"
-                          >
-                            <Minus size={16} />
-                          </button>
-                          <span className="text-white w-8 text-center">{quantity}</span>
-                          <button
-                            onClick={() => handleWeaponQuantityChange(weapon, quantity + 1)}
-                            className="p-1 text-slate-400 hover:text-white transition-colors"
-                          >
-                            <Plus size={16} />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+        <div className="flex-1 overflow-hidden flex">
+          {/* Left panel - Categories and Search */}
+          <div className="w-1/3 border-r border-slate-700 p-4">
+            {/* Search */}
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Search weapons..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+
+            {/* Categories */}
+            <div className="mb-4">
+              <h3 className="text-sm font-medium text-slate-300 mb-2">Categories</h3>
+              <div className="space-y-1">
+                <button
+                  onClick={() => setSelectedCategory('All')}
+                  className={`w-full text-left px-2 py-1 rounded text-sm transition-colors ${
+                    selectedCategory === 'All' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-700'
+                  }`}
+                >
+                  All Weapons
+                </button>
+                {Object.keys(weaponCategories).map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={`w-full text-left px-2 py-1 rounded text-sm transition-colors ${
+                      selectedCategory === category ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-700'
+                    }`}
+                  >
+                    {category} ({weaponCategories[category].length})
+                  </button>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* Suggestions */}
+            {showSuggestions && weaponSuggestions.length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-sm font-medium text-slate-300 mb-2">Suggestions for {characterClass}</h3>
+                <div className="space-y-2">
+                  {weaponSuggestions.map((suggestion, index) => (
+                    <div key={index} className="text-sm text-slate-400">
+                      <span className="font-medium">{suggestion.weaponName}</span>
+                      {suggestion.quantity > 1 && <span className="text-slate-500"> (x{suggestion.quantity})</span>}
+                      {suggestion.reason && <span className="text-slate-500"> - {suggestion.reason}</span>}
+                    </div>
+                  ))}
+                </div>
+                <button
+                  onClick={handleApplySuggestion}
+                  className="px-3 py-1 text-sm bg-amber-600 hover:bg-amber-700 text-white rounded-md transition-colors mt-2"
+                >
+                  Apply Suggestions
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Right panel - Weapon List */}
+          <div className="flex-1 p-4 overflow-y-auto">
+            <div className="space-y-2">
+              {filteredWeapons.map((weapon) => {
+                const selected = currentSelectedWeapons.find(sw => sw.weapon.name === weapon.name);
+                const quantity = selected?.quantity || 0;
+                
+                return (
+                  <div key={weapon.name} className="flex items-center justify-between p-3 bg-slate-700 rounded-lg">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2">
+                        <h4 className="font-medium text-white">{weapon.name}</h4>
+                        <span className="text-xs bg-slate-600 text-slate-300 px-2 py-1 rounded">
+                          {weapon.type} {weapon.category}
+                        </span>
+                      </div>
+                      <div className="text-sm text-slate-400 mt-1">
+                        {weapon.damage} {weapon.damageType} • {weapon.cost} • {weapon.weight} lb
+                      </div>
+                      {weapon.properties.length > 0 && (
+                        <div className="text-xs text-slate-500 mt-1">
+                          {weapon.properties.join(', ')}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handleWeaponQuantityChange(weapon, Math.max(0, quantity - 1))}
+                        className="p-1 text-slate-400 hover:text-white transition-colors"
+                      >
+                        <Minus size={16} />
+                      </button>
+                      <span className="text-white w-8 text-center">{quantity}</span>
+                      <button
+                        onClick={() => handleWeaponQuantityChange(weapon, quantity + 1)}
+                        className="p-1 text-slate-400 hover:text-white transition-colors"
+                      >
+                        <Plus size={16} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
