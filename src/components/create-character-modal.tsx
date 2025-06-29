@@ -575,6 +575,12 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       return;
     }
 
+    // Early return if allWeapons is undefined or null
+    if (!allWeapons) {
+      console.log('🔫 WEAPON SUGGESTIONS EFFECT: No weapons data available yet');
+      return;
+    }
+
     // Create a hash of the current weapon suggestions to check if we've already processed them
     const suggestionsHash = weaponSuggestions.map(s => `${s.weaponName}-${s.quantity}`).join('|');
     
@@ -632,6 +638,12 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       console.log('armorSuggestions.length: 0 (undefined)');
       console.log('No armor suggestions to process - clearing armor');
       setSelectedArmor([]);
+      return;
+    }
+    
+    // Early return if allArmor is undefined or null
+    if (!allArmor) {
+      console.log('=== ARMOR SUGGESTIONS EFFECT: No armor data available yet');
       return;
     }
     
