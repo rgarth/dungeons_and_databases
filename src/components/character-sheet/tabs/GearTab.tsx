@@ -497,7 +497,9 @@ export function GearTab({
                         <span className="text-white font-medium">{armor.name}</span>
                         <div className="text-sm text-slate-300">
                           AC {armor.baseAC} • {armor.type}
-                          {armor.maxDexBonus !== null && ` • Max Dex +${armor.maxDexBonus}`}
+                          {armor.type === 'Medium' && armor.maxDexBonus !== null && ` • Max Dex +${armor.maxDexBonus}`}
+                          {armor.type === 'Light' && ` • Full Dex`}
+                          {armor.type === 'Heavy' && ` • No Dex`}
                         </div>
                       </div>
                       <div className="flex gap-1">
@@ -753,6 +755,9 @@ export function GearTab({
                         <span className="text-white font-medium">{armor.name}</span>
                         <div className="text-sm text-slate-300">
                           AC {armor.baseAC} • {armor.type}
+                          {armor.type === 'Medium' && armor.maxDexBonus !== null && ` • Max Dex +${armor.maxDexBonus}`}
+                          {armor.type === 'Light' && ` • Full Dex`}
+                          {armor.type === 'Heavy' && ` • No Dex`}
                         </div>
                       </div>
                       <div className="flex gap-1">

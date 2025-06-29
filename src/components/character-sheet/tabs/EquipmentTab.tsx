@@ -450,7 +450,9 @@ export function EquipmentTab({
                       </div>
                       <div className="text-slate-300 text-sm">
                         AC {armor.type === 'Shield' ? `+${armor.baseAC}` : armor.baseAC}
-                        {armor.maxDexBonus !== undefined && ` (Max Dex +${armor.maxDexBonus})`}
+                        {armor.type === 'Medium' && armor.maxDexBonus !== null && ` (Max Dex +${armor.maxDexBonus})`}
+                        {armor.type === 'Light' && ` (Full Dex)`}
+                        {armor.type === 'Heavy' && ` (No Dex)`}
                         {armor.minStrength && ` • Str ${armor.minStrength}`}
                         {armor.stealthDisadvantage && ` • Stealth Disadvantage`}
                       </div>
@@ -578,7 +580,7 @@ export function EquipmentTab({
               </div>
               <div className="text-sm text-slate-400">
                 Base: {equippedArmor.find(a => a.type !== 'Shield')?.baseAC || 10}
-                {equippedArmor.find(a => a.type !== 'Shield')?.maxDexBonus !== undefined 
+                {equippedArmor.find(a => a.type !== 'Shield')?.type === 'Medium' && equippedArmor.find(a => a.type !== 'Shield')?.maxDexBonus !== null
                   ? ` + Dex (max +${equippedArmor.find(a => a.type !== 'Shield')?.maxDexBonus})`
                   : ` + Dex ${calc.abilityModifiers.dexterity >= 0 ? '+' : ''}${calc.abilityModifiers.dexterity}`
                 }
