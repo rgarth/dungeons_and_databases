@@ -17,6 +17,7 @@ import { StatsTab, ActionsTab, GearTab, InventoryTab, BackgroundTab } from "./ch
 import DiceRoller from "./dice-roller";
 import { PDFExport } from "./character-sheet/PDFExport";
 import Image from 'next/image';
+import { toast } from 'react-hot-toast';
 
 
 interface CharacterSheetProps {
@@ -574,6 +575,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
 
     console.log('CharacterSheet: Updated armor:', updatedArmor);
     updateCharacter({ armor: updatedArmor });
+
+    // Show toast notification for AC change
+    const acBonus = armor.type === 'Shield' ? `+${armor.baseAC}` : `+${armor.baseAC - 10}`;
+    toast.success(`🛡️ Equipped ${armor.name} (${acBonus} AC)`, {
+      duration: 3000,
+      style: {
+        background: '#1e293b',
+        color: '#e2e8f0',
+        border: '1px solid #475569'
+      }
+    });
   };
 
   const handleUnequipArmor = (armor: Armor, fromEquippedIndex: number) => {
@@ -592,6 +604,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
 
     console.log('CharacterSheet: Updated armor:', updatedArmor);
     updateCharacter({ armor: updatedArmor });
+
+    // Show toast notification for AC change
+    const acLoss = armor.type === 'Shield' ? `-${armor.baseAC}` : `-${armor.baseAC - 10}`;
+    toast.success(`🛡️ Unequipped ${armor.name} (${acLoss} AC)`, {
+      duration: 3000,
+      style: {
+        background: '#1e293b',
+        color: '#e2e8f0',
+        border: '1px solid #475569'
+      }
+    });
   };
 
   // Magical Item handlers
