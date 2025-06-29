@@ -809,38 +809,31 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       // Get equipment items from the selected pack
       const selectedPackItems = creationOptions?.equipmentPacks?.[selectedEquipmentPack]?.items || [];
       
-      // Create character
-      const characterData = {
+      // Use the character creation service to properly process all data
+      const characterCreationData = {
         name,
         race,
-        subrace,
+        subrace: subrace || undefined,
         class: characterClass,
         subclass,
         background,
         alignment,
         gender,
         age,
-        // Flatten ability scores to individual properties
-        strength: abilityScores.strength,
-        dexterity: abilityScores.dexterity,
-        constitution: abilityScores.constitution,
-        intelligence: abilityScores.intelligence,
-        wisdom: abilityScores.wisdom,
-        charisma: abilityScores.charisma,
-        // Background characteristics
-        backgroundCharacteristics,
-        spellsKnown: selectedSpells,
-        spellsPrepared: selectedSpells, // For level 1, known = prepared
-        spellSlots: creationOptions?.spellcasting?.spellSlots || {},
-        spellcastingAbility: creationOptions?.spellcasting?.ability || null,
-        inventory: selectedPackItems, // Send equipment pack items
-        weapons: selectedWeapons,
-        armor: selectedArmor,
-        ammunition: selectedAmmunition,
-        // Send calculated gold
-        goldPieces: calculatedGold,
-        // Currency will be calculated by the service based on equipment pack cost
-        avatar: generatedFullBodyAvatar || undefined
+        statMethod,
+        abilityScores,
+        randomScoreArray,
+        selectedEquipmentPack,
+        selectedWeapons,
+        selectedArmor,
+        selectedAmmunition,
+        selectedSpells,
+        backgroundCharacteristics: {
+          personalityTraits: backgroundCharacteristics?.personalityTraits || [],
+          ideals: backgroundCharacteristics?.ideals || [],
+          bonds: backgroundCharacteristics?.bonds || [],
+          flaws: backgroundCharacteristics?.flaws || []
+        }
       };
 
       console.log('🎯 CREATING CHARACTER WITH EQUIPMENT:');
@@ -850,10 +843,21 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       console.log('Equipment Pack Items:', selectedPackItems);
       console.log('✅ Character creation data prepared successfully');
 
+      // Use the character creation service to process the data
+      const processedCharacterData = await characterCreationService.createCharacter(
+        characterCreationData,
+        selectedPackItems
+      );
+
+      console.log('🎯 PROCESSED CHARACTER DATA:');
+      console.log('Gold Pieces:', processedCharacterData.goldPieces);
+      console.log('Inventory:', processedCharacterData.inventory);
+      console.log('Gold Roll Details:', processedCharacterData.goldRollDetails);
+
       const response = await fetch('/api/characters', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(characterData)
+        body: JSON.stringify(processedCharacterData)
       });
 
       if (!response.ok) {
