@@ -73,6 +73,9 @@ function ColorWheel({ currentColor, onColorChange }: {
         ]
       });
 
+      // Set the value slider to white (100) by default so colors are visible
+      colorPickerInstanceRef.current.color.value = 100;
+
       // Listen for color changes
       colorPickerInstanceRef.current.on('color:change', (color: { hexString: string }) => {
         onColorChange(color.hexString);
@@ -177,7 +180,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
   });
   
   // Dice color state
-  const [diceColor, setDiceColor] = useState('#202020');
+  const [diceColor, setDiceColor] = useState('#ff0000');
 
   // Load the required scripts
   useEffect(() => {
