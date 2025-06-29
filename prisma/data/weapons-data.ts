@@ -394,7 +394,7 @@ export const weaponsData = [
     weight: 3,
     properties: "Ammunition (range 30/120), Light, Loading",
     description: "A small crossbow that can be used with one hand.",
-    ammunitionTypeName: null,
+    ammunitionTypeName: "Crossbow Bolts",
     suggestedQuantity: 20
   },
   {
@@ -407,7 +407,7 @@ export const weaponsData = [
     weight: 18,
     properties: "Ammunition (range 100/400), Heavy, Loading, Two-Handed",
     description: "A large crossbow that fires heavy bolts.",
-    ammunitionTypeName: null,
+    ammunitionTypeName: "Crossbow Bolts",
     suggestedQuantity: 20
   },
   {
@@ -420,7 +420,7 @@ export const weaponsData = [
     weight: 2,
     properties: "Ammunition (range 150/600), Heavy, Two-Handed",
     description: "A large bow designed for long-range shots.",
-    ammunitionTypeName: null,
+    ammunitionTypeName: "Arrows",
     suggestedQuantity: 20
   },
   {
