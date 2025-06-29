@@ -358,9 +358,10 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             rollDetails = `Fixed: ${totalGold} gp`;
           }
         } else {
-          // Equipment pack selected - use background's fixed startingGold
+          // Equipment pack selected - use background's startingGold (not the pack's cost)
+          // The equipment pack items are provided for free, but you still get the background's gold
           totalGold = backgroundData?.startingGold || 0;
-          rollDetails = `Fixed: ${totalGold} gp`;
+          rollDetails = `Background gold: ${totalGold} gp (equipment pack items included)`;
         }
 
         setCalculatedGold(totalGold);
