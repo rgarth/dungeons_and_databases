@@ -152,50 +152,14 @@ function ColorWheel({ currentColor, onColorChange }: {
   );
 }
 
-// 3D Dice Preview Component
+// 3D Dice Preview Component - Simplified to avoid tiny dice issues
 function DicePreview({ diceType, diceColor }: { 
   diceType: string; 
   diceColor: string; 
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const diceBoxRef = useRef<DiceBox | null>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  useEffect(() => {
-    if (window.DICE && typeof window.DICE.dice_box === 'function' && containerRef.current && !isInitialized) {
-      try {
-        // Set dice color
-        if (window.DICE.vars) {
-          window.DICE.vars.dice_color = diceColor;
-        }
-        
-        // Create a small dice box for preview
-        diceBoxRef.current = new window.DICE.dice_box(containerRef.current);
-        
-        // Set the dice notation (e.g., "1d4", "1d6", etc.)
-        diceBoxRef.current.setDice(`1${diceType}`);
-        
-        // Force a small render to show the dice
-        setTimeout(() => {
-          try {
-            if (diceBoxRef.current) {
-              diceBoxRef.current.start_throw();
-              setIsInitialized(true);
-            }
-          } catch (error) {
-            console.error(`Failed to render ${diceType} preview:`, error);
-          }
-        }, 100);
-      } catch (error) {
-        console.error(`Failed to create ${diceType} preview:`, error);
-      }
-    }
-  }, [diceType, diceColor, isInitialized]);
-
   return (
     <div 
-      ref={containerRef}
-      className="w-12 h-12 bg-slate-700 rounded-lg border-2 border-slate-600 overflow-hidden"
+      className="w-12 h-12 bg-slate-700 rounded-lg border-2 border-slate-600 overflow-hidden flex items-center justify-center"
       style={{ 
         minHeight: '48px',
         width: '48px',
@@ -206,17 +170,13 @@ function DicePreview({ diceType, diceColor }: {
         backgroundColor: '#1e293b'
       }}
     >
-      {/* Fallback if 3D dice fail to load */}
-      {!isInitialized && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div 
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs"
-            style={{ backgroundColor: diceColor }}
-          >
-            {diceType.toUpperCase()}
-          </div>
-        </div>
-      )}
+      {/* Simple colored square with dice type label */}
+      <div 
+        className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-lg"
+        style={{ backgroundColor: diceColor }}
+      >
+        {diceType.toUpperCase()}
+      </div>
     </div>
   );
 }
@@ -334,6 +294,19 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
       
       if (window.DICE && typeof window.DICE.dice_box === 'function') {
         try {
+          // Give the container explicit dimensions like the original working version
+          container.style.width = '100%';
+          container.style.height = '100%';
+          container.style.minHeight = '400px';
+          container.style.position = 'relative';
+          
+          console.log('Container dimensions:', {
+            width: container.offsetWidth,
+            height: container.offsetHeight,
+            clientWidth: container.clientWidth,
+            clientHeight: container.clientHeight
+          });
+          
           // Set initial dice color
           if (window.DICE.vars) {
             window.DICE.vars.dice_color = diceColor;
