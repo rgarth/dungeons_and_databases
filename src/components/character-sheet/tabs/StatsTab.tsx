@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { Shield, HelpCircle, Star } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Shield, HelpCircle, Star, Sparkles, Sword } from "lucide-react";
 import { createCharacterCalculations } from "@/services/character/calculations";
 import { HitPointsDisplay } from "../sections/HitPointsDisplay";
+import { RacialFeaturesService, type RacialTrait } from "@/services/character/racial-features";
 // Service layer now handles these calculations
 import type { Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
@@ -54,6 +55,25 @@ interface StatsTabProps {
 
 export function StatsTab({ character, currentArmorClass: passedArmorClass, onUpdate }: StatsTabProps) {
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+  const [racialTraits, setRacialTraits] = useState<RacialTrait[]>([]);
+  const [classFeatures] = useState<string[]>([]);
+
+  // Load racial traits when character changes
+  useEffect(() => {
+    const loadTraits = async () => {
+      try {
+        const traits = await RacialFeaturesService.getRacialTraits(character.race);
+        setRacialTraits(traits);
+      } catch (error) {
+        console.warn('Failed to load racial traits:', error);
+        setRacialTraits([]);
+      }
+    };
+
+    if (character.race) {
+      loadTraits();
+    }
+  }, [character.race]);
 
   // Create service instances for clean calculations
   const characterData = {
@@ -292,6 +312,81 @@ export function StatsTab({ character, currentArmorClass: passedArmorClass, onUpd
             })}
           </div>
         </div>
+
+        {/* Racial and Class Traits Section */}
+        {(racialTraits.length > 0 || classFeatures.length > 0) && (
+          <div className="bg-slate-700 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-purple-400" />
+              Racial & Class Features
+            </h3>
+            
+            {/* Racial Traits */}
+            {racialTraits.length > 0 && (
+              <div className="mb-6">
+                <h4 className="text-md font-medium text-purple-300 mb-3 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4" />
+                  Racial Traits
+                </h4>
+                <div className="space-y-2">
+                  {racialTraits.map((trait, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <span className="bg-purple-900/40 text-purple-300 px-3 py-1 rounded-full text-sm font-medium">
+                        {trait.name}
+                      </span>
+                      <button
+                        onClick={() => toggleTooltip(`racial-${index}`)}
+                        className="text-purple-400 hover:text-purple-300 transition-colors"
+                      >
+                        <HelpCircle className="h-4 w-4" />
+                      </button>
+                      {activeTooltip === `racial-${index}` && (
+                        <div className="absolute z-10 mt-1 p-3 bg-slate-800 rounded text-sm text-slate-300 border border-slate-600 w-80 left-1/2 transform -translate-x-1/2 shadow-lg">
+                          <strong className="text-purple-300">{trait.name}</strong><br/>
+                          {trait.description}<br/>
+                          <span className="text-xs text-slate-400 mt-1 block">
+                            Type: {trait.type === 'active' ? 'Action Required' : 'Always Active'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Class Features */}
+            {classFeatures.length > 0 && (
+              <div>
+                <h4 className="text-md font-medium text-blue-300 mb-3 flex items-center gap-2">
+                  <Sword className="h-4 w-4" />
+                  Class Features
+                </h4>
+                <div className="space-y-2">
+                  {classFeatures.map((feature, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <span className="bg-blue-900/40 text-blue-300 px-3 py-1 rounded-full text-sm font-medium">
+                        {feature}
+                      </span>
+                      <button
+                        onClick={() => toggleTooltip(`class-${index}`)}
+                        className="text-blue-400 hover:text-blue-300 transition-colors"
+                      >
+                        <HelpCircle className="h-4 w-4" />
+                      </button>
+                      {activeTooltip === `class-${index}` && (
+                        <div className="absolute z-10 mt-1 p-3 bg-slate-800 rounded text-sm text-slate-300 border border-slate-600 w-80 left-1/2 transform -translate-x-1/2 shadow-lg">
+                          <strong className="text-blue-300">{feature}</strong><br/>
+                          Class feature description will be added here.
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Character Descriptions */}
         {(character.appearance || character.personality || character.backstory || character.notes) && (
