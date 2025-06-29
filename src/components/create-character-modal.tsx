@@ -74,7 +74,30 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     flaws: []
   });
 
-  const { races, classes, backgrounds, alignments, weapons: allWeapons, armor: allArmor } = useDndData() as ReturnType<typeof useDndData> & { weapons: Weapon[]; armor: Armor[] };
+  const { races, classes, backgrounds, alignments } = useDndData();
+  
+  // Get weapons and armor from client cache
+  const [allWeapons, setAllWeapons] = useState<Weapon[]>([]);
+  const [allArmor, setAllArmor] = useState<Armor[]>([]);
+  
+  // Type for client cache
+  type ClientCache = {
+    getWeapons: () => Weapon[];
+    getArmor: () => Armor[];
+    getSpellLimits: (className: string) => any;
+  } | undefined;
+
+  // Load weapons and armor from client cache on component mount
+  useEffect(() => {
+    const clientCache = (window as any).clientCache as ClientCache;
+    if (clientCache) {
+      const weapons = clientCache.getWeapons();
+      const armor = clientCache.getArmor();
+      if (weapons) setAllWeapons(weapons);
+      if (armor) setAllArmor(armor);
+    }
+  }, []);
+
   const characterCreationService = CharacterCreationService.getInstance();
 
   // Basic character info
@@ -253,7 +276,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     }
 
     // Try to get spell limits from client cache first
-    const clientCache = (window as any).clientCache;
+    const clientCache = (window as any).clientCache as ClientCache;
     if (clientCache) {
       const cachedSpellLimits = clientCache.getSpellLimits(characterClass);
       if (cachedSpellLimits) {
