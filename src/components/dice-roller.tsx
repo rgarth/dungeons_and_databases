@@ -108,21 +108,27 @@ function ColorWheel({ currentColor, onColorChange }: {
 
   return (
     <div className="relative">
-      <button 
-        className="w-8 h-8 rounded-full border-2 border-slate-500 cursor-pointer shadow-lg transition-all hover:scale-110"
-        style={{ backgroundColor: currentColor }}
+      <button
         onClick={() => setIsOpen(!isOpen)}
-        title="Select dice color"
-      />
+        className="w-8 h-8 rounded-full border-2 border-slate-600 flex items-center justify-center"
+        style={{ backgroundColor: currentColor }}
+        title="Choose dice color"
+      >
+        <div className="w-4 h-4 rounded-full" style={{ backgroundColor: currentColor }}></div>
+      </button>
       
       {isOpen && (
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50">
-          <div className="bg-slate-800 rounded-lg p-3 border border-slate-600 shadow-xl">
-            <div ref={colorPickerRef} />
-            <div className="text-center text-xs text-slate-300 mt-2">
-              Click outside to close
-            </div>
-          </div>
+        <div 
+          className="absolute z-50 bg-slate-800 border border-slate-600 rounded-lg p-3 shadow-lg"
+          style={{ 
+            top: '100%', 
+            left: '50%', 
+            transform: 'translateX(-50%)',
+            marginTop: '8px',
+            minWidth: '170px'
+          }}
+        >
+          <div ref={colorPickerRef} className="flex justify-center"></div>
         </div>
       )}
     </div>
@@ -150,7 +156,13 @@ function DicePreview({ diceType, diceColor }: {
       {/* Simple colored square with dice type label */}
       <div 
         className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-lg"
-        style={{ backgroundColor: diceColor }}
+        style={{ 
+          backgroundColor: diceColor,
+          width: '32px',
+          height: '32px',
+          fontSize: '10px',
+          lineHeight: '1'
+        }}
       >
         {diceType.toUpperCase()}
       </div>
