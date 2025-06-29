@@ -1425,11 +1425,16 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                               {selectedCantrips >= maxCantrips && <span>✓</span>}
                             </div>
                             <div className={`flex items-center gap-2 ${selectedSpellsCount >= maxSpells ? 'text-green-400' : 'text-yellow-400'}`}>
-                              <span>{selectedSpellsCount}/{maxSpells} Spells</span>
+                              <span>
+                                {spellLimits?.spellcastingType === 'prepared' && maxSpells === 0 
+                                  ? `All Spells (${selectedSpellsCount} selected)`
+                                  : `${selectedSpellsCount}/${maxSpells} Spells`
+                                }
+                              </span>
                               {selectedSpellsCount >= maxSpells && <span>✓</span>}
                             </div>
                           </div>
-                          {(cantripsNeeded > 0 || spellsNeeded > 0) && (
+                          {(cantripsNeeded > 0 || (spellsNeeded > 0 && spellLimits?.spellcastingType !== 'prepared')) && (
                             <div className="mt-2 text-xs text-yellow-400">
                               ⚠️ Please select {cantripsNeeded} more cantrip{cantripsNeeded !== 1 ? 's' : ''} and {spellsNeeded} more spell{spellsNeeded !== 1 ? 's' : ''}
                             </div>
