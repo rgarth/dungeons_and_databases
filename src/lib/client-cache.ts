@@ -15,6 +15,8 @@ interface CacheData {
   languages: any[];
   weaponSuggestions: Record<string, any[]>; // Class name -> weapon suggestions
   armorSuggestions: Record<string, any[]>; // Class name -> armor suggestions
+  spells: any[]; // All spells
+  spellLimits: Record<string, any>; // Class name -> spell limits for level 1
 }
 
 class ClientCache {
@@ -51,7 +53,8 @@ class ClientCache {
         magicalItems,
         treasures,
         subraces,
-        languages
+        languages,
+        spells
       ] = await Promise.all([
         fetch('/api/races').then(res => res.json()),
         fetch('/api/classes').then(res => res.json()),
@@ -63,17 +66,19 @@ class ClientCache {
         fetch('/api/magical-items').then(res => res.json()),
         fetch('/api/treasures').then(res => res.json()),
         fetch('/api/subraces').then(res => res.json()),
-        fetch('/api/languages').then(res => res.json())
+        fetch('/api/languages').then(res => res.json()),
+        fetch('/api/spells').then(res => res.json())
       ]);
 
       // Pre-load weapon and armor suggestions for all classes
       const weaponSuggestions: Record<string, any[]> = {};
       const armorSuggestions: Record<string, any[]> = {};
+      const spellLimits: Record<string, any> = {};
       
       const classNames = classes.map((c: any) => c.name);
       
-      // Fetch all weapon and armor suggestions in parallel
-      const [weaponSuggestionPromises, armorSuggestionPromises] = await Promise.all([
+      // Fetch all weapon, armor suggestions, and spell limits in parallel
+      const [weaponSuggestionPromises, armorSuggestionPromises, spellLimitPromises] = await Promise.all([
         Promise.all(
           classNames.map(async (className: string) => {
             try {
@@ -97,16 +102,32 @@ class ClientCache {
               return { className, data: [] };
             }
           })
+        ),
+        Promise.all(
+          classNames.map(async (className: string) => {
+            try {
+              const response = await fetch(`/api/classes/${encodeURIComponent(className)}/spell-limits?level=1`);
+              const data = await response.json();
+              return { className, data };
+            } catch (error) {
+              console.warn(`Failed to fetch spell limits for ${className}:`, error);
+              return { className, data: null };
+            }
+          })
         )
       ]);
 
-      // Build the suggestions objects
+      // Build the suggestions and limits objects
       weaponSuggestionPromises.forEach(({ className, data }) => {
         weaponSuggestions[className] = data;
       });
       
       armorSuggestionPromises.forEach(({ className, data }) => {
         armorSuggestions[className] = data;
+      });
+
+      spellLimitPromises.forEach(({ className, data }) => {
+        spellLimits[className] = data;
       });
 
       this.cache = {
@@ -122,7 +143,9 @@ class ClientCache {
         subraces,
         languages,
         weaponSuggestions,
-        armorSuggestions
+        armorSuggestions,
+        spells,
+        spellLimits
       };
 
       console.log('✅ Client cache initialized:', {
@@ -137,8 +160,10 @@ class ClientCache {
         treasures: treasures.length,
         subraces: subraces.length,
         languages: languages.length,
+        spells: spells.length,
         weaponSuggestions: Object.keys(weaponSuggestions).length,
-        armorSuggestions: Object.keys(armorSuggestions).length
+        armorSuggestions: Object.keys(armorSuggestions).length,
+        spellLimits: Object.keys(spellLimits).length
       });
     } catch (error) {
       console.error('❌ Failed to initialize client cache:', error);
@@ -202,6 +227,14 @@ class ClientCache {
 
   getLanguages() {
     return this.cache.languages || [];
+  }
+
+  getSpells() {
+    return this.cache.spells || [];
+  }
+
+  getSpellLimits(className: string) {
+    return this.cache.spellLimits?.[className] || null;
   }
 
   isInitialized() {
