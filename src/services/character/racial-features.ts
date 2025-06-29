@@ -78,6 +78,14 @@ export class RacialFeaturesService {
     let traitNames: string[];
     if (Array.isArray(raceData.traits)) {
       traitNames = raceData.traits;
+    } else if (typeof raceData.traits === 'string') {
+      // Handle case where traits are stored as JSON string
+      try {
+        traitNames = JSON.parse(raceData.traits);
+      } catch {
+        console.warn(`Invalid traits format for race ${race}:`, raceData.traits);
+        return [];
+      }
     } else {
       console.warn(`Invalid traits format for race ${race}`);
       return [];
