@@ -98,35 +98,14 @@ export class RacialFeaturesService {
 
     const traits: RacialTrait[] = [];
     
+    // Use hardcoded data directly instead of making API calls
     for (const traitName of traitNames) {
-      try {
-        const traitData = await fetch(`/api/racial-traits/${encodeURIComponent(traitName)}`).then(res => res.json());
-        if (traitData) {
-          traits.push({
-            name: traitData.name,
-            description: traitData.description,
-            type: this.getTraitType(traitName),
-            effect: this.getTraitEffect(traitName)
-          });
-        } else {
-          // Fallback to hardcoded data if API doesn't return data
-          traits.push({
-            name: traitName,
-            description: this.getTraitDescription(traitName),
-            type: this.getTraitType(traitName),
-            effect: this.getTraitEffect(traitName)
-          });
-        }
-      } catch (error) {
-        console.warn(`Failed to fetch trait ${traitName} for race ${race}:`, error);
-        // Fallback to hardcoded data
-        traits.push({
-          name: traitName,
-          description: this.getTraitDescription(traitName),
-          type: this.getTraitType(traitName),
-          effect: this.getTraitEffect(traitName)
-        });
-      }
+      traits.push({
+        name: traitName,
+        description: this.getTraitDescription(traitName),
+        type: this.getTraitType(traitName),
+        effect: this.getTraitEffect(traitName)
+      });
     }
 
     return traits;
