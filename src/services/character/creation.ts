@@ -21,6 +21,7 @@ import { BASIC_ACTIONS, getClassActions } from '@/lib/dnd/combat';
 import { Spell } from '@/lib/dnd/spells';
 import { Weapon, MagicalWeapon, Armor, Ammunition } from '@/lib/dnd/equipment';
 import { RacialFeaturesService, type RacialTrait } from './racial-features';
+import { getSubclassesForClass, choosesSubclassAtCreation } from '@/lib/dnd/subclasses';
 
 
 export type StatMethod = 'rolling-assign' | 'standard' | 'pointbuy';
@@ -195,7 +196,6 @@ export class CharacterCreationService {
     }
 
     // Get subclasses from hardcoded data (until we move to database)
-    const { getSubclassesForClass, choosesSubclassAtCreation } = await import('@/lib/dnd/subclasses');
     const subclasses = getSubclassesForClass(characterClass);
     const needsSubclassAtCreation = choosesSubclassAtCreation(characterClass);
 
