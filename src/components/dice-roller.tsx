@@ -287,28 +287,87 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
             clientHeight: container.clientHeight
           });
           
+          // Initialize dice box
+          diceBoxRef.current = new window.DICE.dice_box(container);
+          
           // Set initial dice color
           if (window.DICE.vars) {
             window.DICE.vars.dice_color = diceColor;
             window.DICE.vars.label_color = '#ffffff';
           }
           
-          // Create dice box
-          diceBoxRef.current = new window.DICE.dice_box(container);
-          
-          // Set initial dice to show something
-          diceBoxRef.current.setDice('1d6');
-          
-          console.log('Dice box initialized successfully:', !!diceBoxRef.current);
+          setInitializationError(null);
+          console.log('Dice box initialized successfully');
         } catch (error) {
           console.error('Failed to initialize dice box:', error);
           setInitializationError(`Initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
-      } else {
-        console.error('DICE library not available');
-        setInitializationError('DICE library not available');
       }
     }
+  }, [scriptsLoaded, diceColor]);
+
+  // Handle window resize to reinitialize dice box
+  useEffect(() => {
+    const handleResize = () => {
+      if (diceBoxRef.current && diceContainerRef.current) {
+        console.log('Screen size changed, reinitializing dice box...');
+        
+        // Clear the existing dice box
+        diceBoxRef.current = null;
+        
+        // Clear the container
+        if (diceContainerRef.current) {
+          diceContainerRef.current.innerHTML = '';
+        }
+        
+        // Force re-initialization on next render
+        setTimeout(() => {
+          if (scriptsLoaded && diceContainerRef.current) {
+            const container = diceContainerRef.current;
+            
+            if (window.DICE && typeof window.DICE.dice_box === 'function') {
+              try {
+                // Re-set container dimensions
+                container.style.width = '100%';
+                container.style.height = '100%';
+                container.style.minHeight = '400px';
+                container.style.position = 'relative';
+                
+                console.log('Reinitializing with new dimensions:', {
+                  width: container.offsetWidth,
+                  height: container.offsetHeight,
+                  clientWidth: container.clientWidth,
+                  clientHeight: container.clientHeight
+                });
+                
+                // Re-initialize dice box
+                diceBoxRef.current = new window.DICE.dice_box(container);
+                
+                // Re-set dice color
+                if (window.DICE.vars) {
+                  window.DICE.vars.dice_color = diceColor;
+                  window.DICE.vars.label_color = '#ffffff';
+                }
+                
+                setInitializationError(null);
+                console.log('Dice box reinitialized successfully after resize');
+              } catch (error) {
+                console.error('Failed to reinitialize dice box after resize:', error);
+                setInitializationError(`Reinitialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+              }
+            }
+          }
+        }, 100);
+      }
+    };
+
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, [scriptsLoaded, diceColor]);
 
   const addDice = (diceType: keyof typeof diceCounts) => {
