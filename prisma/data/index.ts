@@ -18,6 +18,7 @@ import { equipmentPacksData } from './equipment-packs-data'
 import { classWeaponSuggestionsData } from './weapon-suggestions-data'
 import { classArmorSuggestionsData } from './armor-suggestions-data'
 import { ammunitionSuggestionsData } from './ammunition-suggestions-data'
+import { traitsData } from './traits-data'
 
 // Export all data
 export {
@@ -36,7 +37,8 @@ export {
   equipmentPacksData,
   classWeaponSuggestionsData,
   classArmorSuggestionsData,
-  ammunitionSuggestionsData
+  ammunitionSuggestionsData,
+  traitsData
 }
 
 // Export counts for validation

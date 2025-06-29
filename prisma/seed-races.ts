@@ -128,6 +128,10 @@ const racesData = [
 export async function seedRaces() {
   console.log('Starting race seeding...');
   
+  // Clear existing race-trait associations first (due to foreign key constraints)
+  await prisma.raceTrait.deleteMany({});
+  console.log('Cleared existing race-trait associations');
+  
   // Clear existing races
   await prisma.dndRace.deleteMany({});
   console.log('Cleared existing races');

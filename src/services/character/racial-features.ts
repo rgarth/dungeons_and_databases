@@ -68,53 +68,33 @@ export class RacialFeaturesService {
 
   // Get racial traits for a race
   public static async getRacialTraits(race: string): Promise<RacialTrait[]> {
-    const raceData = await fetch(`/api/races/${encodeURIComponent(race)}`).then(res => res.json());
-    if (!raceData) {
-      console.warn(`Race ${race} not found`);
-      return [];
-    }
-
-    // Handle traits - they should now be properly parsed by Prisma
-    let traitNames: string[];
-    if (Array.isArray(raceData.traits)) {
-      traitNames = raceData.traits;
-    } else if (typeof raceData.traits === 'string') {
-      // Handle case where traits are stored as JSON string
-      try {
-        traitNames = JSON.parse(raceData.traits);
-      } catch {
-        console.warn(`Invalid traits format for race ${race}:`, raceData.traits);
+    try {
+      // Use the new traits API to get traits for the specific race
+      const response = await fetch(`/api/traits?race=${encodeURIComponent(race)}`);
+      if (!response.ok) {
+        console.warn(`Failed to fetch traits for race ${race}:`, response.status);
         return [];
       }
-    } else {
-      console.warn(`Unexpected traits format for race ${race}:`, raceData.traits);
+
+      const traits = await response.json();
+      
+      // Transform the API response to match our RacialTrait interface
+      return traits.map((trait: { name: string; description: string; type: string }) => ({
+        name: trait.name,
+        description: trait.description,
+        type: trait.type as 'passive' | 'active',
+        effect: this.getTraitEffect(trait.name)
+      }));
+    } catch (error) {
+      console.error(`Error fetching traits for race ${race}:`, error);
       return [];
     }
-
-    if (!Array.isArray(traitNames)) {
-      console.warn(`Traits for race ${race} is not an array:`, traitNames);
-      return [];
-    }
-
-    const traits: RacialTrait[] = [];
-    
-    // Use hardcoded data directly instead of making API calls
-    for (const traitName of traitNames) {
-      traits.push({
-        name: traitName,
-        description: this.getTraitDescription(traitName),
-        type: this.getTraitType(traitName),
-        effect: this.getTraitEffect(traitName)
-      });
-    }
-
-    return traits;
   }
 
   // Helper to get trait descriptions
-  private static getTraitDescription(trait: string): string {
+  public static getTraitDescription(trait: string): string {
     const descriptions: Record<string, string> = {
-      'Darkvision': 'You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light.',
+      'Darkvision': 'You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can\'t discern color in darkness, only shades of gray.',
       'Dwarven Resilience': 'You have advantage on saving throws against poison, and you have resistance against poison damage.',
       'Fey Ancestry': 'You have advantage on saving throws against being charmed, and magic can\'t put you to sleep.',
       'Gnome Cunning': 'You have advantage on all Intelligence, Wisdom, and Charisma saving throws against magic.',
@@ -137,11 +117,11 @@ export class RacialFeaturesService {
       'Cat\'s Talents': 'You have proficiency in the Perception and Stealth skills.'
     };
 
-    return descriptions[trait] || `${trait} - A racial trait specific to your race.`;
+    return descriptions[trait] || 'A racial trait that provides special abilities or bonuses.';
   }
 
   // Helper to determine if a trait is active or passive
-  private static getTraitType(trait: string): 'passive' | 'active' {
+  public static getTraitType(trait: string): 'passive' | 'active' {
     const activeTraits = [
       'Breath Weapon',
       'Healing Hands',
