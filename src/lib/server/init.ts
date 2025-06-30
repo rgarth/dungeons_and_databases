@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/db';
-import { DndRace, DndClass, Alignment, EquipmentPack, Armor, MagicalItem, Treasure, Subrace, Weapon } from '@prisma/client';
+import { DndRace, DndClass, Alignment, EquipmentPack, Armor, MagicalItem, Treasure, Subrace, Weapon, Spell } from '@prisma/client';
 import { BackgroundData } from '@/components/shared/BackgroundSelector';
 import { withRetry } from '@/lib/db-helpers';
 
@@ -14,6 +14,7 @@ export let cachedWeapons: Weapon[] | null = null;
 export let cachedMagicalItems: MagicalItem[] | null = null;
 export let cachedTreasures: Treasure[] | null = null;
 export let cachedSubraces: (Subrace & { race: { name: string } })[] | null = null;
+export let cachedSpells: Spell[] | null = null;
 
 // Guard to prevent multiple initializations
 let isInitializing = false;
@@ -63,7 +64,8 @@ export async function initializeServerCache() {
       weapons,
       magicalItems,
       treasures,
-      subraces
+      subraces,
+      spells
     ] = await Promise.all([
       withRetry(() => prisma.dndRace.findMany({
         orderBy: { name: 'asc' }
@@ -83,6 +85,7 @@ export async function initializeServerCache() {
           name: true,
           description: true,
           cost: true,
+          weight: true,
           items: {
             select: {
               quantity: true,
@@ -135,6 +138,12 @@ export async function initializeServerCache() {
             name: 'asc'
           }
         ]
+      })),
+      withRetry(() => prisma.spell.findMany({
+        orderBy: [
+          { level: 'asc' },
+          { name: 'asc' }
+        ]
       }))
     ]);
 
@@ -166,6 +175,7 @@ export async function initializeServerCache() {
     cachedMagicalItems = magicalItems;
     cachedTreasures = treasures;
     cachedSubraces = subraces;
+    cachedSpells = spells;
 
     isInitialized = true;
     console.log('✅ Server cache initialized:');
@@ -179,6 +189,7 @@ export async function initializeServerCache() {
     console.log('- Magical Items:', magicalItems.length);
     console.log('- Treasures:', treasures.length);
     console.log('- Subraces:', subraces.length);
+    console.log('- Spells:', spells.length);
 
   } catch (error) {
     console.error('❌ Failed to initialize server cache:', error);

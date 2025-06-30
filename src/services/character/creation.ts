@@ -225,7 +225,7 @@ export class CharacterCreationService {
     let canCastAtLevel1 = false;
     
     if (spellcastingAbility) {
-      availableSpells = getClassSpells(characterClass, 1);
+      availableSpells = await getClassSpells(characterClass, 1);
       canCastAtLevel1 = availableSpells.length > 0;
     }
 

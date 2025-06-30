@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { cachedSpells } from '@/lib/server/init';
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,6 +8,27 @@ export async function GET(request: NextRequest) {
     const className = searchParams.get('className');
     const level = searchParams.get('level');
 
+    // Use cached data if available
+    if (cachedSpells) {
+      let filteredSpells = cachedSpells;
+      
+      if (className) {
+        filteredSpells = filteredSpells.filter(spell => 
+          spell.classes.includes(className)
+        );
+      }
+
+      if (level) {
+        const levelNum = parseInt(level);
+        filteredSpells = filteredSpells.filter(spell => 
+          spell.level === levelNum
+        );
+      }
+
+      return NextResponse.json(filteredSpells);
+    }
+
+    // Fallback to database if cache is not initialized
     let whereClause = {};
     
     if (className) {

@@ -134,7 +134,7 @@ export function getMaxSpellLevel(characterClass: string, level: number): number 
  * Get all spells available to a character class at a given level
  * Now uses database data instead of hardcoded arrays
  */
-export function getClassSpells(characterClass: string, level: number): Spell[] {
+export async function getClassSpells(characterClass: string, level: number): Promise<Spell[]> {
   const maxSpellLevel = getMaxSpellLevel(characterClass, level);
   return getSpellsByClass(characterClass, maxSpellLevel);
 } 

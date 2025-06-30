@@ -17,6 +17,7 @@ import { seedWeaponSuggestions } from './seed-weapon-suggestions'
 import { seedSpellSuggestions } from './seed-spell-suggestions'
 import { seedSpells } from './seed-spells'
 import { seedAmmunitionSuggestions } from './seed-ammunition-suggestions'
+import { seedClassSpellLimits } from './seed-class-spell-limits'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
@@ -50,6 +51,7 @@ async function main() {
     await seedArmorSuggestions()
     await seedWeaponSuggestions()
     await seedSpellSuggestions()
+    await seedClassSpellLimits()
 
     // Print final counts
     console.log('\n✅ Final database contents:')
@@ -67,6 +69,7 @@ async function main() {
     console.log(`Treasures: ${await prisma.treasure.count()}`)
     console.log(`Spell Suggestions: ${await prisma.classSpellSuggestion.count()}`)
     console.log(`Ammunition Suggestions: ${await prisma.ammunitionSuggestion.count()}`)
+    console.log(`Class Spell Limits: ${await prisma.classSpellLimits.count()}`)
 
     console.log('✅ Complete database seed finished successfully!')
   } catch (error) {
