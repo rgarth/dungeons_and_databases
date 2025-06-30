@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/db';
+import { prisma } from '@/lib/prisma';
 import { DndRace, DndClass, Alignment, EquipmentPack, Armor, MagicalItem, Treasure, Subrace, Weapon, Spell } from '@prisma/client';
 import { BackgroundData } from '@/components/shared/BackgroundSelector';
 import { withRetry } from '@/lib/db-helpers';

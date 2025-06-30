@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const languages = await prisma.language.findMany({
+    const languages = await prisma.languages.findMany({
       orderBy: [
         { category: 'asc' },
         { name: 'asc' }

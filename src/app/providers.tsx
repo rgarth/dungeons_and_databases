@@ -1,6 +1,4 @@
-import { initializeServerCache } from '@/lib/server/init';
-
-export async function Providers() {
-  await initializeServerCache();
+// Server cache initialization is now handled by API routes when needed
+export function Providers() {
   return null;
 } 
