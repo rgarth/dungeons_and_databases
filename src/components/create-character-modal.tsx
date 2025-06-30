@@ -331,31 +331,12 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
     const calculateGold = async () => {
       try {
-        // Get background data from cache or fetch (backgrounds are loaded separately)
-        let backgroundData = allClassData[characterClass]?.backgroundData;
-        if (!backgroundData) {
-          // Only fetch background data if we don't have it cached
-          const backgroundResponse = await fetch('/api/backgrounds');
-          if (backgroundResponse.ok) {
-            const backgrounds = await backgroundResponse.json();
-            const fetchedBackgroundData = backgrounds.find((bg: { name: string; startingGold?: number; startingGoldFormula?: string }) => bg.name === background);
-            if (fetchedBackgroundData) {
-              setAllClassData(prev => ({
-                ...prev,
-                [characterClass]: {
-                  ...prev[characterClass],
-                  backgroundData: {
-                    startingGold: fetchedBackgroundData.startingGold || 0,
-                    startingGoldFormula: fetchedBackgroundData.startingGoldFormula
-                  }
-                }
-              }));
-              backgroundData = {
-                startingGold: fetchedBackgroundData.startingGold || 0,
-                startingGoldFormula: fetchedBackgroundData.startingGoldFormula
-              };
-            }
-          }
+        // Get background data from backgrounds API
+        let backgroundData = null;
+        const backgroundResponse = await fetch('/api/backgrounds');
+        if (backgroundResponse.ok) {
+          const backgrounds = await backgroundResponse.json();
+          backgroundData = backgrounds.find((bg: { name: string; startingGold?: number; startingGoldFormula?: string }) => bg.name === background);
         }
 
         // Calculate gold based on equipment pack selection
@@ -401,7 +382,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     };
 
     calculateGold();
-  }, [characterClass, background, selectedEquipmentPack, allClassData, isLoadingAllClassData]);
+  }, [characterClass, background, selectedEquipmentPack]);
 
   // Set default values when data is loaded
   useEffect(() => {
