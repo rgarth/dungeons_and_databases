@@ -1,7 +1,53 @@
-# 🎯 Single Source of Truth Implementation
+# Single Source of Truth Architecture
 
-## Overview
-Successfully eliminated all conflicting sources of truth by moving all D&D data from hardcoded constants to the database as the single authoritative source.
+## Data Architecture
+
+### D&D 5e Rules (Static Game Data)
+- **Location**: TypeScript files in `src/data/`
+- **Purpose**: All official D&D 5e SRD content
+- **Examples**: Classes, races, spells, weapons, armor, backgrounds
+- **Benefits**: 
+  - Zero network latency
+  - Type safety at compile time
+  - Version controlled in Git
+  - No database migrations for game data
+  - Instant access
+
+### User Data (Dynamic Application Data)
+- **Location**: Supabase database
+- **Purpose**: User-generated content and application state
+- **Examples**: Characters, user preferences, saved states
+- **Benefits**:
+  - Persistent across sessions
+  - User-specific data
+  - Can be shared/collaborated on
+
+## Implementation Rules
+
+1. **Never store D&D 5e rules in the database**
+2. **Import game data directly from TypeScript files**
+3. **Use database only for user data**
+4. **Keep data files normalized and type-safe**
+5. **Single source of truth per data type**
+
+## Migration Strategy
+
+When refactoring from database-stored game data to TypeScript files:
+
+1. Create TypeScript data files with proper types
+2. Update components to import from data files
+3. Remove database tables for game data
+4. Update API endpoints to serve from data files
+5. Remove seeding scripts for game data
+6. Keep only user data in database
+
+## Benefits of This Architecture
+
+- **Performance**: Instant data access, no network calls
+- **Simplicity**: No complex caching or data transformation
+- **Reliability**: No database migration issues for game data
+- **Developer Experience**: Type safety, autocomplete, refactoring
+- **Deployment**: No seeding required, faster deployments
 
 ## ✅ What Was Fixed
 
