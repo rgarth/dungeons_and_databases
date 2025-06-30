@@ -8,7 +8,9 @@ export let cachedRaces: DndRace[] | null = null;
 export let cachedClasses: DndClass[] | null = null;
 export let cachedBackgrounds: BackgroundData[] | null = null;
 export let cachedAlignments: Alignment[] | null = null;
-export let cachedEquipmentPacks: EquipmentPack[] | null = null;
+export let cachedEquipmentPacks: (Omit<EquipmentPack, 'items'> & {
+  items: { name: string; quantity: number }[];
+})[] | null = null;
 export let cachedArmor: Armor[] | null = null;
 export let cachedWeapons: Weapon[] | null = null;
 export let cachedMagicalItems: MagicalItem[] | null = null;
@@ -154,6 +156,7 @@ export async function initializeServerCache() {
       skillProficiencies: safeParse<string[]>(background.skillProficiencies),
       languages: safeParse<string[]>(background.languages),
       equipment: safeParse<string[]>(background.equipment),
+      startingGold: background.startingGold,
       feature: background.feature,
       featureDescription: background.featureDescription,
       suggestedCharacteristics: background.suggestedCharacteristics ? safeParse<{
@@ -164,12 +167,21 @@ export async function initializeServerCache() {
       }>(background.suggestedCharacteristics) : undefined
     }));
 
+    // Transform equipment packs to match API response format
+    const transformedEquipmentPacks = equipmentPacks.map(pack => ({
+      ...pack,
+      items: pack.items.map(item => ({
+        name: item.itemName,
+        quantity: item.quantity
+      }))
+    }));
+
     // Cache the results
     cachedRaces = races;
     cachedClasses = classes;
     cachedBackgrounds = parsedBackgrounds;
     cachedAlignments = alignments;
-    cachedEquipmentPacks = equipmentPacks;
+    cachedEquipmentPacks = transformedEquipmentPacks;
     cachedArmor = armor;
     cachedWeapons = weapons;
     cachedMagicalItems = magicalItems;
@@ -183,7 +195,7 @@ export async function initializeServerCache() {
     console.log('- Classes:', classes.length);
     console.log('- Backgrounds:', backgrounds.length);
     console.log('- Alignments:', alignments.length);
-    console.log('- Equipment Packs:', equipmentPacks.length);
+    console.log('- Equipment Packs:', transformedEquipmentPacks.length);
     console.log('- Armor:', armor.length);
     console.log('- Weapons:', weapons.length);
     console.log('- Magical Items:', magicalItems.length);

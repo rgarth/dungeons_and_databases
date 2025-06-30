@@ -344,28 +344,38 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         let rollDetails = '';
         
         if (selectedEquipmentPack === -1) {
-          // No equipment pack selected - roll for gold using background's startingGoldFormula
-          if (backgroundData?.startingGoldFormula) {
-            const match = backgroundData.startingGoldFormula.match(/(\d+)d(\d+)(\*\d+)?/);
-            if (match) {
-              const numDice = parseInt(match[1], 10);
-              const dieSize = parseInt(match[2], 10);
-              const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
-              
-              const rolls: number[] = [];
-              let totalRoll = 0;
-              for (let i = 0; i < numDice; i++) {
-                const roll = Math.floor(Math.random() * dieSize) + 1;
-                rolls.push(roll);
-                totalRoll += roll;
+          // No equipment pack selected - roll for gold using CLASS startingGoldFormula
+          try {
+            const classResponse = await fetch(`/api/classes/${encodeURIComponent(characterClass)}`);
+            if (classResponse.ok) {
+              const classData = await classResponse.json();
+              if (classData?.startingGoldFormula) {
+                const match = classData.startingGoldFormula.match(/(\d+)d(\d+)(\*\d+)?/);
+                if (match) {
+                  const numDice = parseInt(match[1], 10);
+                  const dieSize = parseInt(match[2], 10);
+                  const multiplier = match[3] ? parseInt(match[3].substring(1), 10) : 1;
+                  
+                  const rolls: number[] = [];
+                  let totalRoll = 0;
+                  for (let i = 0; i < numDice; i++) {
+                    const roll = Math.floor(Math.random() * dieSize) + 1;
+                    rolls.push(roll);
+                    totalRoll += roll;
+                  }
+                  totalGold = totalRoll * multiplier;
+                  rollDetails = `${characterClass} ${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} [${rolls.join(', ')}] = ${totalGold} gp`;
+                }
               }
-              totalGold = totalRoll * multiplier;
-              rollDetails = `${numDice}d${dieSize}${multiplier > 1 ? `×${multiplier}` : ''} [${rolls.join(', ')}] = ${totalGold} gp`;
             }
-          } else {
-            // Fallback to fixed gold if no formula available
+          } catch (error) {
+            console.warn('Failed to fetch class starting gold formula:', error);
+          }
+          
+          // Fallback to background gold if class formula not available
+          if (totalGold === 0) {
             totalGold = backgroundData?.startingGold || 0;
-            rollDetails = `Fixed: ${totalGold} gp`;
+            rollDetails = `Fallback to background: ${totalGold} gp`;
           }
         } else {
           // Equipment pack selected - use background's startingGold (not the pack's cost)
@@ -374,6 +384,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           rollDetails = `Background gold: ${totalGold} gp (equipment pack items included)`;
         }
 
+        console.log(`💰 Gold calculation: ${rollDetails} (total: ${totalGold} gp)`);
         setCalculatedGold(totalGold);
         setGoldRollDetails(rollDetails);
       } catch (error) {

@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ className: string }> }
+  { params }: { params: { className: string } }
 ) {
   try {
     const { className } = await params;
@@ -19,7 +19,8 @@ export async function GET(
         hitDie: true,
         primaryAbility: true,
         savingThrows: true,
-        skillChoices: true
+        skillChoices: true,
+        startingGoldFormula: true
       }
     });
 
