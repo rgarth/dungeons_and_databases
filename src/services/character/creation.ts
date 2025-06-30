@@ -355,14 +355,23 @@ export class CharacterCreationService {
         const subraceResponse = await fetch(`/api/subraces?race=${encodeURIComponent(race)}`);
         if (subraceResponse.ok) {
           const subraces = await subraceResponse.json();
-          const subraceData = subraces.find((s: { name: string; abilityScoreIncrease: string }) => s.name === subrace);
+          const subraceData = subraces.find((s: { name: string }) => s.name === subrace);
           if (subraceData) {
-            // Parse subrace ability score increase (e.g., "Intelligence +1")
-            const abilityMatch = subraceData.abilityScoreIncrease.match(/(\w+)\s+\+(\d+)/);
-            if (abilityMatch) {
-              const ability = abilityMatch[1].toLowerCase() as AbilityScore;
-              const bonus = parseInt(abilityMatch[2], 10);
-              finalAbilityScores[ability] += bonus;
+            // Get subrace traits from the new traits API
+            try {
+              const traitsResponse = await fetch(`/api/traits?subrace=${encodeURIComponent(subrace)}`);
+              if (traitsResponse.ok) {
+                const traits = await traitsResponse.json();
+                traits.forEach((trait: { name: string; description: string; type: string }) => {
+                  racialTraits.push({
+                    name: trait.name,
+                    description: trait.description,
+                    type: trait.type as 'passive' | 'active'
+                  });
+                });
+              }
+            } catch (error) {
+              console.warn('Failed to fetch subrace traits from traits API:', error);
             }
           }
         }
@@ -373,29 +382,6 @@ export class CharacterCreationService {
     
     // Get racial traits (including subrace traits)
     const racialTraits = await RacialFeaturesService.getRacialTraits(race);
-    
-    // Add subrace traits if subrace is selected
-    if (subrace) {
-      try {
-        const subraceResponse = await fetch(`/api/subraces?race=${encodeURIComponent(race)}`);
-        if (subraceResponse.ok) {
-          const subraces = await subraceResponse.json();
-          const subraceData = subraces.find((s: { name: string; traits: string[] }) => s.name === subrace);
-          if (subraceData) {
-            // Add subrace traits to racial traits
-            subraceData.traits.forEach((traitName: string) => {
-              racialTraits.push({
-                name: traitName,
-                description: `${subrace} racial trait`,
-                type: 'passive'
-              });
-            });
-          }
-        }
-      } catch (error) {
-        console.warn('Failed to fetch subrace traits:', error);
-      }
-    }
     
     // Get hit die from database - no fallback, this must succeed
     const classResponse = await fetch('/api/classes');

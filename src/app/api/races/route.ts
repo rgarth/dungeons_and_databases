@@ -11,7 +11,6 @@ export async function GET() {
             name: true,
             description: true,
             abilityScoreIncrease: true,
-            traits: true,
             languages: true
           }
         }

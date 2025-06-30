@@ -11,22 +11,26 @@ import {
   Languages, 
   AlertCircle, 
   Info,
-  BookOpen
+  BookOpen,
+  Sparkles
 } from 'lucide-react';
 import { createCharacterStoryService } from "@/services/character/character-story";
 import type { CharacterLimits } from "@/services/character/character-story";
 import { BackgroundSelector, type SelectedCharacteristics, type BackgroundData } from "../../shared/BackgroundSelector";
 // AvatarSelector removed - now using inline avatar display
 import { AvatarGenerator } from '../../shared/AvatarGenerator';
+import { SubraceSelector } from '../../shared/SubraceSelector';
 import type { CharacterAvatarData } from '@/types/character';
 import { getRacialLanguages, getLanguages, getLanguageStyling, type Language, getClassLanguages, getAutomaticLanguages } from "@/lib/dnd/languages";
 import Image from 'next/image';
+import { RacialFeaturesService, type RacialTrait } from '@/services/character/racial-features';
 
 interface BackgroundTabProps {
   character: {
     id: string;
     name: string;
     race: string;
+    subrace?: string;
     class: string;
     level: number;
     background?: string;
@@ -47,6 +51,7 @@ interface BackgroundTabProps {
     gender?: string;
     age?: number;
     alignment?: string;
+    subrace?: string;
     appearance?: string; 
     personality?: string; 
     backstory?: string; 
@@ -83,8 +88,13 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     name: character.name,
     gender: character.gender || '',
     age: character.age?.toString() || '',
-    alignment: character.alignment || ''
+    alignment: character.alignment || '',
+    subrace: character.subrace || ''
   });
+
+  const [racialTraits, setRacialTraits] = useState<RacialTrait[]>([]);
+  const [traitsError, setTraitsError] = useState<string | null>(null);
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
   // Load languages from database
   useEffect(() => {
@@ -121,6 +131,38 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
     loadBackgroundData();
   }, [character.background]);
+
+  useEffect(() => {
+    const loadTraits = async () => {
+      try {
+        const traits = await RacialFeaturesService.getRacialTraits(character.race, character.subrace);
+        setRacialTraits(traits);
+        setTraitsError(null);
+      } catch {
+        setTraitsError('Error loading racial traits.');
+        setRacialTraits([]);
+      }
+    };
+    if (character.race) {
+      loadTraits();
+    }
+  }, [character.race, character.subrace]);
+
+  // Handle clicking outside tooltips to close them
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (activeTooltip && !(event.target as Element).closest('[data-tooltip]')) {
+        setActiveTooltip(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [activeTooltip]);
+
+  const toggleTooltip = (tooltipId: string) => {
+    setActiveTooltip(activeTooltip === tooltipId ? null : tooltipId);
+  };
 
   const getLanguageRequirements = () => {
     const requirements = [];
@@ -259,7 +301,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
       name: character.name,
       gender: character.gender || '',
       age: character.age?.toString() || '',
-      alignment: character.alignment || ''
+      alignment: character.alignment || '',
+      subrace: character.subrace || ''
     });
   };
 
@@ -269,10 +312,12 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
       gender?: string;
       age?: number;
       alignment?: string;
+      subrace?: string;
     } = {
       name: summaryEditValues.name.trim(),
       gender: summaryEditValues.gender.trim() || undefined,
-      alignment: summaryEditValues.alignment.trim() || undefined
+      alignment: summaryEditValues.alignment.trim() || undefined,
+      subrace: summaryEditValues.subrace.trim() || undefined
     };
     
     // Convert age to number if provided
@@ -295,7 +340,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
       name: character.name,
       gender: character.gender || '',
       age: character.age?.toString() || '',
-      alignment: character.alignment || ''
+      alignment: character.alignment || '',
+      subrace: character.subrace || ''
     });
   };
 
@@ -583,6 +629,15 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                     className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none"
                   />
                 </div>
+                <div>
+                  <label className="block text-slate-400 text-sm mb-1">Subrace</label>
+                  <SubraceSelector
+                    race={character.race}
+                    selectedSubrace={summaryEditValues.subrace}
+                    onSubraceChange={(subrace) => setSummaryEditValues(prev => ({ ...prev, subrace: subrace || '' }))}
+                    disabled={false}
+                  />
+                </div>
               </div>
               
               <div className="flex gap-2 justify-end">
@@ -610,8 +665,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 <div className="text-white font-medium">{character.name}</div>
               </div>
               <div>
-                <div className="text-slate-400 text-sm">Race</div>
-                <div className="text-white font-medium">{character.race}</div>
+                <div className="text-slate-400 text-sm">{character.subrace ? 'Subrace' : 'Race'}</div>
+                <div className="text-white font-medium">{character.subrace ? character.subrace : character.race}</div>
               </div>
               <div>
                 <div className="text-slate-400 text-sm">Class</div>
@@ -629,6 +684,45 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 <div className="text-slate-400 text-sm">Alignment</div>
                 <div className="text-white font-medium">{character.alignment || 'Unaligned'}</div>
               </div>
+            </div>
+          )}
+        </div>
+
+        {/* Racial Traits Section */}
+        <div className="bg-slate-700 rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-purple-400" />
+            Racial Traits
+          </h3>
+          {traitsError ? (
+            <div className="text-red-400">{traitsError}</div>
+          ) : racialTraits.length === 0 ? (
+            <div className="text-slate-400">No racial traits found.</div>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {racialTraits.map((trait, index) => (
+                <div key={index} className="relative flex items-center gap-2">
+                  <span className="bg-purple-900/40 text-purple-300 px-3 py-1 rounded-full text-sm font-medium">
+                    {trait.name}
+                  </span>
+                  <button
+                    onClick={() => toggleTooltip(`racial-${index}`)}
+                    className="text-purple-400 hover:text-purple-300 transition-colors"
+                    data-tooltip
+                  >
+                    <HelpCircle className="h-4 w-4" />
+                  </button>
+                  {activeTooltip === `racial-${index}` && (
+                    <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-slate-800 rounded text-sm text-slate-300 border border-slate-600 w-80 shadow-lg" data-tooltip>
+                      <strong className="text-purple-300">{trait.name}</strong><br/>
+                      {trait.description}<br/>
+                      <span className="text-xs text-slate-400 mt-1 block">
+                        Type: {trait.type === 'active' ? 'Action Required' : 'Always Active'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </div>
