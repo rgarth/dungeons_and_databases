@@ -17,7 +17,28 @@ export async function seedWeapons() {
 
     // Create new weapons
     for (const weapon of weaponsData) {
-      const { ammunitionTypeId, suggestedQuantity, ...weaponData } = weapon;
+      let ammunitionTypeId = null
+      if (weapon.ammunitionTypeName) {
+        const ammo = await prisma.ammunitionSuggestion.findUnique({ 
+          where: { name: weapon.ammunitionTypeName } 
+        })
+        if (ammo) ammunitionTypeId = ammo.id
+      }
+      
+      const weaponData = {
+        name: weapon.name,
+        type: weapon.type,
+        category: weapon.category,
+        damage: weapon.damage,
+        damageType: weapon.damageType,
+        properties: weapon.properties,
+        weight: weapon.weight,
+        cost: weapon.cost,
+        description: weapon.description,
+        ammunitionTypeId,
+        suggestedQuantity: weapon.suggestedQuantity ?? null
+      }
+      
       await prisma.weapon.create({
         data: weaponData
       });
