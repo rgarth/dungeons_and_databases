@@ -263,7 +263,6 @@ model Background {
   languages                Json
   equipment                Json
   startingGold             Int      @default(0)
-  startingGoldFormula      String?
   feature                  String
   featureDescription       String
   suggestedCharacteristics Json?

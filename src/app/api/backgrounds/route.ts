@@ -20,7 +20,6 @@ export async function GET() {
         languages: true,
         equipment: true,
         startingGold: true,
-        startingGoldFormula: true,
         feature: true,
         featureDescription: true,
         suggestedCharacteristics: true,

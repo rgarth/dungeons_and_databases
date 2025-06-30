@@ -7,7 +7,6 @@ export interface BackgroundData {
   languages: string[];
   equipment: string[];
   startingGold: number; // Starting gold in gold pieces
-  startingGoldFormula?: string;
   feature: string;
   featureDescription: string;
   suggestedCharacteristics?: {
