@@ -460,6 +460,9 @@ export async function PATCH(request: NextRequest) {
     if (body.subclass !== undefined) {
       updateData.subclass = body.subclass;
     }
+    if (body.subrace !== undefined) {
+      updateData.subrace = body.subrace;
+    }
     if (body.hitPoints !== undefined) {
       updateData.hitPoints = body.hitPoints;
     }

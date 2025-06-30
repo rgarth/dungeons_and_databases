@@ -218,12 +218,79 @@ const subracesData = [
   }
 ];
 
+// 1. Add subraces for races with no subraces (e.g., Human, Half-Orc, Tiefling, etc.)
+const baseRacesData = [
+  {
+    name: 'Human',
+    raceName: 'Human',
+    description: 'Humans are the most adaptable and ambitious people among the common races.',
+    abilityScoreIncrease: 'All ability scores increase by 1',
+    traits: ['Extra Language', 'Extra Skill'],
+    languages: ['Common']
+  },
+  {
+    name: 'Half-Orc',
+    raceName: 'Half-Orc',
+    description: 'Half-orcs are strong and resilient, with a fierce orcish heritage.',
+    abilityScoreIncrease: 'Strength +2, Constitution +1',
+    traits: ['Darkvision', 'Relentless Endurance', 'Savage Attacks'],
+    languages: ['Common', 'Orc']
+  },
+  {
+    name: 'Tiefling',
+    raceName: 'Tiefling',
+    description: 'Tieflings are touched by infernal power, with fiendish traits.',
+    abilityScoreIncrease: 'Charisma +2, Intelligence +1',
+    traits: ['Darkvision', 'Hellish Resistance', 'Infernal Legacy'],
+    languages: ['Common', 'Infernal']
+  },
+  // ... add other races with no subraces ...
+];
+
+// 2. For races with subraces, ensure each subrace gets base race traits + subrace traits
+// (e.g., all Elf subraces get Elf base traits + their own)
+// ... logic to merge base race traits with subrace traits ...
+
 export async function seedSubraces() {
   console.log('🧝‍♀️ Seeding subraces...');
   
+  // Clear existing subrace-trait join records first
+  await prisma.subraceTrait.deleteMany({});
   // Clear existing subraces
   await prisma.subrace.deleteMany({});
-  console.log('Cleared existing subraces');
+  console.log('Cleared existing subraces and subrace-trait joins');
+  
+  // Seed base races as subraces for races with no subraces
+  for (const base of baseRacesData) {
+    const race = await prisma.dndRace.findUnique({ where: { name: base.raceName } });
+    if (!race) continue;
+    const createdSubrace = await prisma.subrace.upsert({
+      where: { name: base.name },
+      update: {},
+      create: {
+        name: base.name,
+        raceId: race.id,
+        description: base.description,
+        abilityScoreIncrease: base.abilityScoreIncrease,
+        languages: base.languages || Prisma.JsonNull
+      }
+    });
+    if (createdSubrace && Array.isArray(base.traits)) {
+      for (const traitName of base.traits) {
+        const trait = await prisma.trait.findUnique({ where: { name: traitName } });
+        if (trait) {
+          await prisma.subraceTrait.create({
+            data: {
+              subraceId: createdSubrace.id,
+              traitId: trait.id
+            }
+          });
+        } else {
+          console.warn(`⚠️ Trait "${traitName}" not found for base race "${base.name}"`);
+        }
+      }
+    }
+  }
   
   // Add subraces
   for (const subrace of subracesData) {
@@ -242,11 +309,28 @@ export async function seedSubraces() {
         name: subrace.name,
         raceId: race.id,
         description: subrace.description,
-        abilityScoreIncrease: subrace.abilityScoreIncrease as any,
-        traits: subrace.traits,
+        abilityScoreIncrease: subrace.abilityScoreIncrease as string,
         languages: subrace.languages || Prisma.JsonNull
       }
     });
+
+    // After creating the subrace, create SubraceTrait join records
+    const createdSubrace = await prisma.subrace.findUnique({ where: { name: subrace.name } });
+    if (createdSubrace && Array.isArray(subrace.traits)) {
+      for (const traitName of subrace.traits) {
+        const trait = await prisma.trait.findUnique({ where: { name: traitName } });
+        if (trait) {
+          await prisma.subraceTrait.create({
+            data: {
+              subraceId: createdSubrace.id,
+              traitId: trait.id
+            }
+          });
+        } else {
+          console.warn(`⚠️ Trait "${traitName}" not found for subrace "${subrace.name}"`);
+        }
+      }
+    }
   }
   
   console.log(`✅ Seeded ${subracesData.length} subraces`);

@@ -18,21 +18,7 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      // Parse JSON fields manually to ensure they're properly formatted
-      const parsedSubraces = filteredSubraces.map(subrace => ({
-        ...subrace,
-        abilityScoreIncrease: typeof subrace.abilityScoreIncrease === 'string' 
-          ? JSON.parse(subrace.abilityScoreIncrease) 
-          : subrace.abilityScoreIncrease,
-        traits: typeof subrace.traits === 'string' 
-          ? JSON.parse(subrace.traits) 
-          : subrace.traits,
-        languages: subrace.languages && typeof subrace.languages === 'string' 
-          ? JSON.parse(subrace.languages) 
-          : subrace.languages
-      }));
-
-      return NextResponse.json(parsedSubraces);
+      return NextResponse.json(filteredSubraces);
     }
 
     // Fallback to database if cache is not initialized
@@ -56,21 +42,7 @@ export async function GET(request: NextRequest) {
         }
       });
 
-      // Parse JSON fields manually to ensure they're properly formatted
-      const parsedSubraces = subraces.map(subrace => ({
-        ...subrace,
-        abilityScoreIncrease: typeof subrace.abilityScoreIncrease === 'string' 
-          ? JSON.parse(subrace.abilityScoreIncrease) 
-          : subrace.abilityScoreIncrease,
-        traits: typeof subrace.traits === 'string' 
-          ? JSON.parse(subrace.traits) 
-          : subrace.traits,
-        languages: subrace.languages && typeof subrace.languages === 'string' 
-          ? JSON.parse(subrace.languages) 
-          : subrace.languages
-      }));
-
-      return NextResponse.json(parsedSubraces);
+      return NextResponse.json(subraces);
     } else {
       // Get all subraces
       const subraces = await prisma.subrace.findMany({
@@ -93,21 +65,7 @@ export async function GET(request: NextRequest) {
         ]
       });
 
-      // Parse JSON fields manually to ensure they're properly formatted
-      const parsedSubraces = subraces.map(subrace => ({
-        ...subrace,
-        abilityScoreIncrease: typeof subrace.abilityScoreIncrease === 'string' 
-          ? JSON.parse(subrace.abilityScoreIncrease) 
-          : subrace.abilityScoreIncrease,
-        traits: typeof subrace.traits === 'string' 
-          ? JSON.parse(subrace.traits) 
-          : subrace.traits,
-        languages: subrace.languages && typeof subrace.languages === 'string' 
-          ? JSON.parse(subrace.languages) 
-          : subrace.languages
-      }));
-
-      return NextResponse.json(parsedSubraces);
+      return NextResponse.json(subraces);
     }
   } catch (error) {
     console.error('Error fetching subraces:', error);

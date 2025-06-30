@@ -227,13 +227,11 @@ model DndRace {
   abilityScoreIncrease Json
   size                 String
   speed                Int
-  traits               Json
   languages            Json
   age                  String?
   createdAt            DateTime     @default(now())
   updatedAt            DateTime     @updatedAt
   subraces             Subrace[]
-  raceTraits           RaceTrait[]
 }
 
 model Subrace {
@@ -242,7 +240,6 @@ model Subrace {
   raceId               String
   description          String
   abilityScoreIncrease Json
-  traits               Json
   languages            Json?
   createdAt            DateTime       @default(now())
   updatedAt            DateTime       @updatedAt
@@ -440,22 +437,7 @@ model Trait {
   type        String         @default("passive")
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
-  raceTraits  RaceTrait[]
   subraceTraits SubraceTrait[]
-}
-
-model RaceTrait {
-  id        String   @id @default(cuid())
-  raceId    String
-  traitId   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  race      DndRace  @relation(fields: [raceId], references: [id], onDelete: Cascade)
-  trait     Trait    @relation(fields: [traitId], references: [id], onDelete: Cascade)
-
-  @@unique([raceId, traitId])
-  @@index([raceId])
-  @@index([traitId])
 }
 
 model SubraceTrait {

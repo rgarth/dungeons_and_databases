@@ -1,4 +1,5 @@
 import { seedRaces } from './seed-races'
+import { seedSubraces } from './seed-subraces'
 import { seedClasses } from './seed-classes'
 import { seedBackgrounds } from './seed-backgrounds'
 import { seedAlignments } from './seed-alignments'
@@ -22,6 +23,7 @@ async function main() {
   try {
     // Basic data
     await seedRaces()
+    await seedSubraces()
     await seedClasses()
     await seedBackgrounds()
     await seedAlignments()
@@ -51,6 +53,7 @@ async function main() {
     console.log(`Equipment: ${await prisma.equipment.count()}`)
     console.log(`Equipment Packs: ${await prisma.equipmentPack.count()}`)
     console.log(`Races: ${await prisma.dndRace.count()}`)
+    console.log(`Subraces: ${await prisma.subrace.count()}`)
     console.log(`Traits: ${await prisma.trait.count()}`)
     console.log(`Race-Trait Associations: ${await prisma.raceTrait.count()}`)
     console.log(`Magical Items: ${await prisma.magicalItem.count()}`)

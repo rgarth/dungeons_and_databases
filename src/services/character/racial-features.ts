@@ -66,29 +66,47 @@ export class RacialFeaturesService {
     return abilityScores;
   }
 
-  // Get racial traits for a race
-  public static async getRacialTraits(race: string): Promise<RacialTrait[]> {
+  // Get racial and subrace traits for a character
+  public static async getRacialAndSubraceTraits(race: string, subrace?: string): Promise<RacialTrait[]> {
     try {
-      // Use the new traits API to get traits for the specific race
-      const response = await fetch(`/api/traits?race=${encodeURIComponent(race)}`);
-      if (!response.ok) {
-        console.warn(`Failed to fetch traits for race ${race}:`, response.status);
-        return [];
-      }
-
-      const traits = await response.json();
+      const traits: RacialTrait[] = [];
       
-      // Transform the API response to match our RacialTrait interface
-      return traits.map((trait: { name: string; description: string; type: string }) => ({
-        name: trait.name,
-        description: trait.description,
-        type: trait.type as 'passive' | 'active',
-        effect: this.getTraitEffect(trait.name)
-      }));
+      // Get race traits from the new traits API
+      const raceTraitsResponse = await fetch(`/api/traits?race=${encodeURIComponent(race)}`);
+      if (raceTraitsResponse.ok) {
+        const raceTraits = await raceTraitsResponse.json();
+        traits.push(...raceTraits.map((trait: { name: string; description: string; type: string }) => ({
+          name: trait.name,
+          description: trait.description,
+          type: trait.type,
+          effect: this.getTraitEffect(trait.name)
+        })));
+      }
+      
+      // Get subrace traits if subrace is provided
+      if (subrace) {
+        const subraceTraitsResponse = await fetch(`/api/traits?subrace=${encodeURIComponent(subrace)}`);
+        if (subraceTraitsResponse.ok) {
+          const subraceTraits = await subraceTraitsResponse.json();
+          traits.push(...subraceTraits.map((trait: { name: string; description: string; type: string }) => ({
+            name: trait.name,
+            description: trait.description,
+            type: trait.type,
+            effect: this.getTraitEffect(trait.name)
+          })));
+        }
+      }
+      
+      return traits;
     } catch (error) {
-      console.error(`Error fetching traits for race ${race}:`, error);
+      console.error('Error fetching racial traits:', error);
       return [];
     }
+  }
+
+  // Get racial traits for a race (backward compatible, but now supports subrace)
+  public static async getRacialTraits(race: string, subrace?: string): Promise<RacialTrait[]> {
+    return this.getRacialAndSubraceTraits(race, subrace);
   }
 
   // Helper to get trait descriptions

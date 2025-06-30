@@ -1,37 +1,72 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { Prisma } from '@prisma/client';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const type = searchParams.get('type');
+    const traitName = searchParams.get('name');
     const race = searchParams.get('race');
+    const subrace = searchParams.get('subrace');
 
-    const where: Prisma.TraitWhereInput = {};
+    if (traitName) {
+      // Get specific trait by name
+      const trait = await prisma.trait.findUnique({
+        where: { name: traitName }
+      });
 
-    // Filter by trait type if provided
-    if (type) {
-      where.type = type;
+      if (!trait) {
+        return NextResponse.json(
+          { error: 'Trait not found' },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json(trait);
     }
 
-    // Filter by race if provided
-    if (race) {
-      where.raceTraits = {
-        some: {
-          race: {
-            name: race,
+    if (race || subrace) {
+      // Get traits for a specific race or subrace using join table
+      let traits: Array<{ id: string; name: string; description: string; type: string; createdAt: Date; updatedAt: Date }> = [];
+
+      if (subrace) {
+        // Get subrace traits via join table
+        const subraceTraits = await prisma.subraceTrait.findMany({
+          where: {
+            subrace: {
+              name: subrace
+            }
           },
-        },
-      };
+          include: {
+            trait: true
+          }
+        });
+        
+        traits = subraceTraits.map(st => st.trait);
+      } else if (race) {
+        // Get race traits via join table (for races with no subraces, look for subrace with same name)
+        const raceTraits = await prisma.subraceTrait.findMany({
+          where: {
+            subrace: {
+              name: race
+            }
+          },
+          include: {
+            trait: true
+          }
+        });
+        
+        traits = raceTraits.map(st => st.trait);
+      }
+
+      return NextResponse.json(traits);
     }
 
-    const traits = await prisma.trait.findMany({
-      where,
-      orderBy: { name: 'asc' },
+    // Return all traits if no specific query
+    const allTraits = await prisma.trait.findMany({
+      orderBy: { name: 'asc' }
     });
 
-    return NextResponse.json(traits);
+    return NextResponse.json(allTraits);
   } catch (error) {
     console.error('Error fetching traits:', error);
     return NextResponse.json(

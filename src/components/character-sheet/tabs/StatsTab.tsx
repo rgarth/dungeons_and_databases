@@ -37,7 +37,7 @@ interface StatsTabProps {
     inspiration?: boolean;
     deathSaveSuccesses?: number;
     deathSaveFailures?: number;
-
+    subrace?: string;
   };
   equippedArmor: Armor[];
   modifiedStats?: Record<string, number>;
@@ -62,7 +62,7 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
   useEffect(() => {
     const loadTraits = async () => {
       try {
-        const traits = await RacialFeaturesService.getRacialTraits(character.race);
+        const traits = await RacialFeaturesService.getRacialTraits(character.race, character.subrace);
         setRacialTraits(traits);
       } catch (error) {
         console.warn('Failed to load racial traits:', error);
@@ -73,7 +73,19 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
     if (character.race) {
       loadTraits();
     }
-  }, [character.race]);
+  }, [character.race, character.subrace]);
+
+  // Handle clicking outside tooltips to close them
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (activeTooltip && !(event.target as Element).closest('[data-tooltip]')) {
+        setActiveTooltip(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [activeTooltip]);
 
   // Create service instances for clean calculations
   const characterData = {
@@ -412,20 +424,21 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
                   <Sparkles className="h-4 w-4" />
                   Racial Traits
                 </h4>
-                <div className="space-y-2">
+                <div className="flex flex-wrap gap-2">
                   {racialTraits.map((trait, index) => (
-                    <div key={index} className="flex items-center gap-2">
+                    <div key={index} className="relative flex items-center gap-2">
                       <span className="bg-purple-900/40 text-purple-300 px-3 py-1 rounded-full text-sm font-medium">
                         {trait.name}
                       </span>
                       <button
                         onClick={() => toggleTooltip(`racial-${index}`)}
                         className="text-purple-400 hover:text-purple-300 transition-colors"
+                        data-tooltip
                       >
                         <HelpCircle className="h-4 w-4" />
                       </button>
                       {activeTooltip === `racial-${index}` && (
-                        <div className="absolute z-10 mt-1 p-3 bg-slate-800 rounded text-sm text-slate-300 border border-slate-600 w-80 left-1/2 transform -translate-x-1/2 shadow-lg">
+                        <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-slate-800 rounded text-sm text-slate-300 border border-slate-600 w-80 shadow-lg" data-tooltip>
                           <strong className="text-purple-300">{trait.name}</strong><br/>
                           {trait.description}<br/>
                           <span className="text-xs text-slate-400 mt-1 block">
