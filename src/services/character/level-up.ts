@@ -77,7 +77,7 @@ export class LevelUpService {
   /**
    * Get available level-up options for a character
    */
-  getLevelUpOptions(character: Character, targetClass?: string): LevelUpOptions {
+  async getLevelUpOptions(character: Character, targetClass?: string): Promise<LevelUpOptions> {
     const classes = this.getCharacterClasses(character);
     
     // Determine which class is leveling up
@@ -102,7 +102,7 @@ export class LevelUpService {
     };
     
     // Get spell options if this is a spellcasting class
-    const spellOptions = this.getSpellOptions(character, levelingClass, newClassLevel, progression);
+    const spellOptions = await this.getSpellOptions(character, levelingClass, newClassLevel, progression);
     
     return {
       availableChoices: progression.choices,
@@ -115,32 +115,27 @@ export class LevelUpService {
   /**
    * Process a level-up with selected choices
    */
-  processLevelUp(
+  async processLevelUp(
     character: Character, 
     choices: Record<string, string | string[]>,
     hitPointsGained: number,
     targetClass?: string
-  ): LevelUpResult {
-    const classes = this.getCharacterClasses(character);
-    const currentTotalLevel = this.getTotalLevel(character);
+  ): Promise<LevelUpResult> {
+    // Get level-up options to validate choices
+    const options = await this.getLevelUpOptions(character, targetClass);
     
     // Determine which class is leveling up
+    const classes = this.getCharacterClasses(character);
     const levelingClass = targetClass || classes[0]?.class || character.class;
     const currentClassLevel = classes.find(c => c.class === levelingClass)?.level || 0;
     const newClassLevel = currentClassLevel + 1;
-    const newTotalLevel = currentTotalLevel + 1;
+    const newTotalLevel = this.getTotalLevel(character) + 1;
     
-    // Get progression data to check for auto-learned spells
-    const progression = this.getClassProgression(levelingClass, newClassLevel);
-    const spellOptions = progression ? this.getSpellOptions(character, levelingClass, newClassLevel, progression) : undefined;
-    
-    // Create the new class level
+    // Create new class level data
     const newClassLevelData: ClassLevel = {
       class: levelingClass,
       level: newClassLevel,
-      hitPointsGained,
-      // Keep existing subclass if any
-      subclass: classes.find(c => c.class === levelingClass)?.subclass || character.subclass
+      subclass: character.subclass
     };
     
     // Process selected features
@@ -148,8 +143,8 @@ export class LevelUpService {
     let featureId = 1;
     
     // Auto-learn spells if there were no choices to make
-    if (spellOptions?.autoLearnSpells && spellOptions.autoLearnSpells.length > 0) {
-      spellOptions.autoLearnSpells.forEach(spellName => {
+    if (options.spellOptions?.autoLearnSpells && options.spellOptions.autoLearnSpells.length > 0) {
+      options.spellOptions.autoLearnSpells.forEach((spellName: string) => {
         selectedFeatures.push({
           id: `${character.id}-${newTotalLevel}-${featureId++}`,
           classSource: levelingClass,
@@ -296,12 +291,12 @@ export class LevelUpService {
   /**
    * Get spell learning options for spellcasting classes
    */
-  private getSpellOptions(
+  private async getSpellOptions(
     character: Character, 
     className: string, 
     newLevel: number, 
     progression: ClassProgression
-  ): LevelUpOptions['spellOptions'] {
+  ): Promise<LevelUpOptions['spellOptions']> {
     // Check if this class can cast spells using application logic
     if (!this.canClassCastSpells(className)) {
       return undefined; // Not a spellcasting class
@@ -312,12 +307,12 @@ export class LevelUpService {
     const maxSpellLevel = getMaxSpellLevel(className, newLevel);
     
     // Use the helper function that properly handles class parsing
-    const availableSpells = getSpellsByClass(className, maxSpellLevel)
+    const availableSpells = (await getSpellsByClass(className, maxSpellLevel))
       .filter(spell => spell.level > 0) // Exclude cantrips from main spell learning
       .filter(spell => !currentSpells.includes(spell.name)) // Exclude already known spells
       .map(spell => spell.name);
     
-    const cantripsAvailable = getSpellsByClass(className, 0) // Get cantrips (level 0)
+    const cantripsAvailable = (await getSpellsByClass(className, 0)) // Get cantrips (level 0)
       .filter(spell => !currentSpells.includes(spell.name)) // Exclude already known cantrips
       .map(spell => spell.name);
     

@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from './client';
 import { classSpellLimitsData } from './data/class-spell-limits-data';
-
-const prisma = new PrismaClient();
 
 export async function seedClassSpellLimits() {
   console.log('🌱 Seeding class spell limits...');

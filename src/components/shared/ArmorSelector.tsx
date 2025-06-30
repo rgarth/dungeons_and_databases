@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Armor } from '../../lib/dnd/equipment';
-import { armorData } from '../../../prisma/data/armor-data';
 
 interface ArmorSelectorProps {
   selectedArmor?: Armor[];
@@ -30,10 +29,36 @@ export function ArmorSelector({
   const [internalSelectedArmor, setInternalSelectedArmor] = useState<Armor[]>(selectedArmor);
   const [armorProficiencies, setArmorProficiencies] = useState<string[] | null>(null);
   const [loadingProficiencies, setLoadingProficiencies] = useState(false);
+  const [armorData, setArmorData] = useState<Armor[]>([]);
+  const [loadingArmor, setLoadingArmor] = useState(true);
 
   useEffect(() => {
     setInternalSelectedArmor(selectedArmor);
   }, [selectedArmor]);
+
+  // Load armor data from database
+  useEffect(() => {
+    const loadArmor = async () => {
+      setLoadingArmor(true);
+      try {
+        const response = await fetch('/api/armor');
+        if (response.ok) {
+          const data = await response.json();
+          setArmorData(data);
+        } else {
+          console.error('Failed to load armor data');
+          setArmorData([]);
+        }
+      } catch (error) {
+        console.error('Failed to load armor data:', error);
+        setArmorData([]);
+      } finally {
+        setLoadingArmor(false);
+      }
+    };
+    
+    loadArmor();
+  }, []);
 
   // Load armor proficiencies when class changes
   useEffect(() => {
@@ -145,13 +170,19 @@ export function ArmorSelector({
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
+          {loadingArmor && (
+            <div className="text-center text-slate-400 mb-4">
+              Loading armor data...
+            </div>
+          )}
+          
           {loadingProficiencies && (
             <div className="text-center text-slate-400 mb-4">
               Loading armor proficiencies...
             </div>
           )}
           
-          {Object.entries(armorCategories).map(([categoryName, armors]) => (
+          {!loadingArmor && Object.entries(armorCategories).map(([categoryName, armors]) => (
             <div key={categoryName} className="mb-6">
               <h3 className={`text-lg font-semibold mb-3 capitalize ${
                 categoryName.includes('Proficient -') ? 'text-green-400' :

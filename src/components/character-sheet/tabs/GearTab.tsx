@@ -7,8 +7,6 @@ import { createMagicalItemService, type DiceRoll } from "@/services/character/ma
 import { createEquipmentRulesEngine, type EquipmentValidationResult } from "@/lib/dnd/equipment-rules";
 // Note: Using database data instead of hardcoded arrays
 
-
-import { spellsData } from '../../../../prisma/data/spells-data';
 import { magicalItemsData } from '../../../../prisma/data/magical-items-data';
 import type { Weapon, MagicalWeapon, Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
@@ -16,6 +14,7 @@ import { MagicalItem, EquippedMagicalItem, MagicalItemType, MagicalItemRarity, c
 import { ArmorSelector } from "../../shared/ArmorSelector";
 import { WeaponSelector } from "../../shared/WeaponSelector";
 import { CustomWeaponCreator } from "../components/CustomWeaponCreator";
+import { findSpellByName, getSpellsByClass } from "@/lib/dnd/spell-data-helper";
 
 interface GearTabProps {
   character: {
@@ -257,32 +256,28 @@ export function GearTab({
     }
   };
 
-  const handleCreateSpellScroll = () => {
-    const spellData = spellsData.find(s => s.name === selectedSpell);
-    const spell = spellData ? {
-      ...spellData,
-      classes: spellData.classes ? JSON.parse(spellData.classes) : []
-    } as Spell : null;
-    if (spell) {
-      const scrollLevel = spell.level === 0 ? "Cantrip" : `${spell.level}${magicalItems.getOrdinalSuffix(spell.level)} Level`;
+  const handleCreateSpellScroll = async () => {
+    const spellData = await findSpellByName(selectedSpell);
+    if (spellData) {
+      const scrollLevel = spellData.level === 0 ? "Cantrip" : `${spellData.level}${magicalItems.getOrdinalSuffix(spellData.level)} Level`;
       const rarity: "Common" | "Uncommon" | "Rare" | "Very Rare" | "Legendary" = 
-        spell.level === 0 ? "Common" : 
-        spell.level <= 1 ? "Common" :
-        spell.level <= 3 ? "Uncommon" :
-        spell.level <= 5 ? "Rare" :
-        spell.level <= 8 ? "Very Rare" : "Legendary";
+        spellData.level === 0 ? "Common" : 
+        spellData.level <= 1 ? "Common" :
+        spellData.level <= 3 ? "Uncommon" :
+        spellData.level <= 5 ? "Rare" :
+        spellData.level <= 8 ? "Very Rare" : "Legendary";
       
       const customScroll: MagicalItem = {
-        id: `spell-scroll-${spell.name.toLowerCase().replace(/\s+/g, '-')}`,
-        name: `Spell Scroll (${spell.name})`,
+        id: `spell-scroll-${spellData.name.toLowerCase().replace(/\s+/g, '-')}`,
+        name: `Spell Scroll (${spellData.name})`,
         type: 'Scroll',
         rarity: rarity,
         requiresAttunement: false,
-        description: `A spell scroll containing ${spell.name}. ${spell.description}`,
+        description: `A spell scroll containing ${spellData.name}. ${spellData.description}`,
         weight: 0,
-        cost: spell.level === 0 ? '25 gp' : `${50 * spell.level} gp`,
+        cost: spellData.level === 0 ? '25 gp' : `${50 * spellData.level} gp`,
         effects: [
-          { type: 'spell_effect', target: spell.name.toLowerCase().replace(/\s+/g, '_'), description: `Contains ${spell.name} (${scrollLevel}, can be cast once)` }
+          { type: 'spell_effect', target: spellData.name.toLowerCase().replace(/\s+/g, '_'), description: `Contains ${spellData.name} (${scrollLevel}, can be cast once)` }
         ],
         stackable: true,
         consumable: true
@@ -296,9 +291,21 @@ export function GearTab({
   };
 
   // Filter spells by level for spell scroll creator
-  const spellsForLevel = selectedSpellLevel >= 0 
-    ? spellsData.filter(spell => spell.level === selectedSpellLevel)
-    : spellsData;
+  const [spellsForLevel, setSpellsForLevel] = useState<Spell[]>([]);
+  
+  useEffect(() => {
+    const loadSpells = async () => {
+      if (selectedSpellLevel >= 0) {
+        const spells = await getSpellsByClass(character.class, 9);
+        const filteredSpells = spells.filter(spell => spell.level === selectedSpellLevel);
+        setSpellsForLevel(filteredSpells);
+      } else {
+        const spells = await getSpellsByClass(character.class, 9);
+        setSpellsForLevel(spells);
+      }
+    };
+    loadSpells();
+  }, [selectedSpellLevel, character.class]);
 
   // Filter magical items based on search and filters
   const filteredMagicalItems = magicalItemsData.filter(item => {

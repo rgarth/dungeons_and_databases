@@ -551,11 +551,11 @@ export function canPrepareSpells(characterClass: string): boolean {
 }
 
 // Get all spells available for preparation (spellbook or class list)
-export function getAvailableSpellsForPreparation(
+export async function getAvailableSpellsForPreparation(
   characterClass: string, 
   level: number, 
   spellsKnown?: Spell[]
-): Spell[] {
+): Promise<Spell[]> {
   const spellcastingType = getSpellcastingType(characterClass);
   
   switch (spellcastingType) {
@@ -564,7 +564,7 @@ export function getAvailableSpellsForPreparation(
       return spellsKnown || [];
     case 'prepared':
       // Clerics, Druids, Paladins prepare from their entire class spell list
-      return getClassSpells(characterClass, level);
+      return await getClassSpells(characterClass, level);
     default:
       return [];
   }
