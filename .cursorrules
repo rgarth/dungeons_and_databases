@@ -1,3 +1,10 @@
+# Architecture Rules
+- **D&D 5e Rules**: Store in TypeScript files (`src/data/`) - static, version-controlled game data
+- **User Data**: Store in database (Supabase) - characters, user preferences, state
+- **No database for game rules**: D&D 5e SRD content is static and should be in code
+- Import game data directly from TypeScript files for instant access and type safety
+
+# Development Rules
 - Ask before dropping the databases
 - Supabase cannot use prisma migrations. Please write them in the supbase directory in SQL and run a db push
 - The wizards of the coast 5e rules found online are the LAW. We must adhere to them
