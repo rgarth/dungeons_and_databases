@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DIRECT_URL")
 }
 
 model Account {
@@ -63,23 +63,23 @@ model Spell {
 }
 
 model Weapon {
-  id            String         @id @default(cuid())
-  name          String         @unique
-  type          String
-  category      String
-  damage        String
-  damageType    String
-  properties    String
-  weight        Float
-  cost          String
-  stackable     Boolean        @default(false)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  description   String?
-  ammunitionTypeId String?     @map("ammunition_type_id")
-  suggestedQuantity Int?       @map("suggested_quantity")
-  ammunitionType AmmunitionSuggestion? @relation(fields: [ammunitionTypeId], references: [id])
-  customWeapons CustomWeapon[]
+  id                String                @id @default(cuid())
+  name              String                @unique
+  type              String
+  category          String
+  damage            String
+  damageType        String
+  properties        String
+  weight            Float
+  cost              String
+  stackable         Boolean               @default(false)
+  description       String?
+  ammunitionTypeId  String?               @map("ammunition_type_id")
+  suggestedQuantity Int?                  @map("suggested_quantity")
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  customWeapons     CustomWeapon[]
+  ammunitionType    AmmunitionSuggestion? @relation(fields: [ammunitionTypeId], references: [id])
 }
 
 model CustomWeapon {
@@ -114,15 +114,15 @@ model Armor {
 }
 
 model Equipment {
-  id          String              @id @default(cuid())
-  name        String              @unique
+  id          String   @id @default(cuid())
+  name        String   @unique
   type        String
   cost        String
   weight      Float?
   description String?
-  stackable   Boolean             @default(false)
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
+  stackable   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model MagicalItem {
@@ -153,10 +153,12 @@ model DndClass {
   updatedAt           DateTime                 @updatedAt
   armorProficiencies  ClassArmorProficiency[]
   armorSuggestions    ClassArmorSuggestion[]
+  spellLimits         ClassSpellLimits[]
+  spellSuggestions    ClassSpellSuggestion[]
   weaponProficiencies ClassWeaponProficiency[]
   weaponSuggestions   ClassWeaponSuggestion[]
-  spellSuggestions    ClassSpellSuggestion[]
-  spellLimits         ClassSpellLimits[]
+
+  @@map("DndClass")
 }
 
 model ClassArmorProficiency {
@@ -183,14 +185,14 @@ model ClassWeaponProficiency {
 }
 
 model ClassWeaponSuggestion {
-  id            String   @id @default(cuid())
-  classId       String
-  weaponName    String
-  quantity      Int      @default(1)
-  reason        String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  class         DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  classId    String
+  weaponName String
+  quantity   Int      @default(1)
+  reason     String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  class      DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   @@index([classId])
 }
@@ -208,29 +210,30 @@ model ClassArmorSuggestion {
 }
 
 model ClassSpellSuggestion {
-  id            String   @id @default(cuid())
-  classId       String
-  spellName     String
-  level         Int      // 0 for cantrips
-  reason        String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  class         DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  classId   String
+  spellName String
+  level     Int
+  reason    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  class     DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   @@index([classId])
+  @@map("ClassSpellSuggestion")
 }
 
 model DndRace {
-  id                   String       @id @default(cuid())
-  name                 String       @unique
+  id                   String    @id @default(cuid())
+  name                 String    @unique
   description          String
   abilityScoreIncrease Json
   size                 String
   speed                Int
   languages            Json
   age                  String?
-  createdAt            DateTime     @default(now())
-  updatedAt            DateTime     @updatedAt
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
   subraces             Subrace[]
 }
 
@@ -251,20 +254,20 @@ model Subrace {
 }
 
 model Background {
-  id                    String   @id @default(cuid())
-  name                  String   @unique
-  description           String
-  phbDescription        String?  // Full PHB flavor text
-  skillProficiencies    Json
-  languages             Json
-  equipment             Json
-  startingGold          Int      @default(0)
-  startingGoldFormula   String?
-  feature               String
-  featureDescription    String
+  id                       String   @id @default(cuid())
+  name                     String   @unique
+  description              String
+  phbDescription           String?
+  skillProficiencies       Json
+  languages                Json
+  equipment                Json
+  startingGold             Int      @default(0)
+  startingGoldFormula      String?
+  feature                  String
+  featureDescription       String
   suggestedCharacteristics Json?
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
 }
 
 model Alignment {
@@ -282,12 +285,12 @@ model Language {
   id          String   @id @default(cuid())
   name        String   @unique
   script      String
-  category    String   // 'Standard', 'Exotic', 'Secret'
+  category    String
   description String?
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  @@map("languages")
+  @@map("Language")
 }
 
 model Treasure {
@@ -393,10 +396,10 @@ model Character {
   inspiration           Boolean  @default(false)
   languages             Json?
   conditions            Json?
+  racialTraits          Json?
   userId                String
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
-  racialTraits          Json?
   user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -431,12 +434,12 @@ model AmmunitionSuggestion {
 }
 
 model Trait {
-  id          String         @id @default(cuid())
-  name        String         @unique
-  description String
-  type        String         @default("passive")
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id            String         @id @default(cuid())
+  name          String         @unique
+  description   String
+  type          String         @default("passive")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   subraceTraits SubraceTrait[]
 }
 

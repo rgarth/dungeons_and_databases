@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client'
+import prisma from './client'
 import { spellsData } from './data/spells-data'
-
-const prisma = new PrismaClient()
 
 async function seedSpells() {
   console.log('🧙‍♂️ Seeding spells...')
@@ -32,8 +30,6 @@ async function seedSpells() {
   } catch (error) {
     console.error('❌ Error during spells seeding:', error)
     throw error
-  } finally {
-    await prisma.$disconnect()
   }
 }
 

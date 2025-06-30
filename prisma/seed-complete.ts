@@ -1,3 +1,6 @@
+import { config } from 'dotenv'
+config() // Load environment variables from .env file
+
 import { seedRaces } from './seed-races'
 import { seedSubraces } from './seed-subraces'
 import { seedClasses } from './seed-classes'
@@ -12,7 +15,8 @@ import { seedEquipmentPacks } from './seed-equipment-packs'
 import { seedArmorSuggestions } from './seed-armor-suggestions'
 import { seedWeaponSuggestions } from './seed-weapon-suggestions'
 import { seedSpellSuggestions } from './seed-spell-suggestions'
-import { seedTraits, seedRaceTraitAssociations } from './seed-traits'
+import { seedSpells } from './seed-spells'
+import { seedAmmunitionSuggestions } from './seed-ammunition-suggestions'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
@@ -28,10 +32,6 @@ async function main() {
     await seedBackgrounds()
     await seedAlignments()
 
-    // Traits (must come after races)
-    await seedTraits()
-    await seedRaceTraitAssociations()
-
     // Equipment
     await seedArmor()
     await seedWeapons()
@@ -39,6 +39,12 @@ async function main() {
     await seedMagicalItems()
     await seedTreasures()
     await seedEquipmentPacks()
+
+    // Spells (must come before spell suggestions)
+    await seedSpells()
+
+    // Suggestions
+    await seedAmmunitionSuggestions()
 
     // Class-specific data
     await seedArmorSuggestions()
@@ -54,14 +60,13 @@ async function main() {
     console.log(`Equipment Packs: ${await prisma.equipmentPack.count()}`)
     console.log(`Races: ${await prisma.dndRace.count()}`)
     console.log(`Subraces: ${await prisma.subrace.count()}`)
-    console.log(`Traits: ${await prisma.trait.count()}`)
-    console.log(`Race-Trait Associations: ${await prisma.raceTrait.count()}`)
     console.log(`Magical Items: ${await prisma.magicalItem.count()}`)
     console.log(`Spells: ${await prisma.spell.count()}`)
     console.log(`Weapons: ${await prisma.weapon.count()}`)
     console.log(`Armor: ${await prisma.armor.count()}`)
     console.log(`Treasures: ${await prisma.treasure.count()}`)
     console.log(`Spell Suggestions: ${await prisma.classSpellSuggestion.count()}`)
+    console.log(`Ammunition Suggestions: ${await prisma.ammunitionSuggestion.count()}`)
 
     console.log('✅ Complete database seed finished successfully!')
   } catch (error) {

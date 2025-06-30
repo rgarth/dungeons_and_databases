@@ -1,14 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from './client';
 import { classSpellSuggestionsData } from './data/spell-suggestions-data';
-
-const prisma = new PrismaClient({
-  log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL
-    }
-  }
-});
 
 export async function seedSpellSuggestions() {
   console.log('🧙‍♂️ Seeding spell suggestions...');

@@ -1,9 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from './client';
 import { ammunitionSuggestionsData } from './data/ammunition-suggestions-data';
 
-const prisma = new PrismaClient();
-
-async function seedAmmunitionSuggestions() {
+export async function seedAmmunitionSuggestions() {
   console.log('🌱 Seeding ammunition suggestions...');
 
   for (const ammunition of ammunitionSuggestionsData) {
@@ -23,8 +21,6 @@ async function main() {
   } catch (error) {
     console.error('❌ Error seeding ammunition suggestions:', error);
     throw error;
-  } finally {
-    await prisma.$disconnect();
   }
 }
 

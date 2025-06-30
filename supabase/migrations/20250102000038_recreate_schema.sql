@@ -1,5 +1,35 @@
--- Complete D&D 5e Database Schema matching Prisma schema
--- This creates all tables with proper relationships and constraints
+-- Drop all existing tables and recreate the complete schema
+-- This migration recreates the entire database to match the Prisma schema
+
+-- Drop all existing tables (in reverse dependency order)
+DROP TABLE IF EXISTS "SubraceTrait" CASCADE;
+DROP TABLE IF EXISTS "ClassSpellLimits" CASCADE;
+DROP TABLE IF EXISTS "ClassSpellSuggestion" CASCADE;
+DROP TABLE IF EXISTS "ClassArmorSuggestion" CASCADE;
+DROP TABLE IF EXISTS "ClassWeaponSuggestion" CASCADE;
+DROP TABLE IF EXISTS "ClassWeaponProficiency" CASCADE;
+DROP TABLE IF EXISTS "ClassArmorProficiency" CASCADE;
+DROP TABLE IF EXISTS "CustomWeapon" CASCADE;
+DROP TABLE IF EXISTS "Character" CASCADE;
+DROP TABLE IF EXISTS "EquipmentPackItem" CASCADE;
+DROP TABLE IF EXISTS "EquipmentPack" CASCADE;
+DROP TABLE IF EXISTS "Treasure" CASCADE;
+DROP TABLE IF EXISTS "MagicalItem" CASCADE;
+DROP TABLE IF EXISTS "Equipment" CASCADE;
+DROP TABLE IF EXISTS "Armor" CASCADE;
+DROP TABLE IF EXISTS "AmmunitionSuggestion" CASCADE;
+DROP TABLE IF EXISTS "Weapon" CASCADE;
+DROP TABLE IF EXISTS "Spell" CASCADE;
+DROP TABLE IF EXISTS "languages" CASCADE;
+DROP TABLE IF EXISTS "Background" CASCADE;
+DROP TABLE IF EXISTS "Alignment" CASCADE;
+DROP TABLE IF EXISTS "Trait" CASCADE;
+DROP TABLE IF EXISTS "Subrace" CASCADE;
+DROP TABLE IF EXISTS "DndRace" CASCADE;
+DROP TABLE IF EXISTS "DndClass" CASCADE;
+DROP TABLE IF EXISTS "Session" CASCADE;
+DROP TABLE IF EXISTS "Account" CASCADE;
+DROP TABLE IF EXISTS "User" CASCADE;
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -476,22 +506,4 @@ CREATE INDEX IF NOT EXISTS "ClassWeaponSuggestion_classId_idx" ON "ClassWeaponSu
 CREATE INDEX IF NOT EXISTS "ClassSpellSuggestion_classId_idx" ON "ClassSpellSuggestion"("classId");
 CREATE INDEX IF NOT EXISTS "ClassSpellLimits_classId_idx" ON "ClassSpellLimits"("classId");
 CREATE INDEX IF NOT EXISTS "ClassSpellLimits_level_idx" ON "ClassSpellLimits"("level");
-CREATE INDEX IF NOT EXISTS "ClassWeaponProficiency_classId_proficiencyType_weaponName_idx" ON "ClassWeaponProficiency"("classId", "proficiencyType", "weaponName");
-
--- Comments for documentation
-COMMENT ON TABLE "DndClass" IS 'D&D 5e character classes';
-COMMENT ON TABLE "DndRace" IS 'D&D 5e character races';
-COMMENT ON TABLE "Subrace" IS 'D&D 5e subraces for each race';
-COMMENT ON TABLE "Trait" IS 'Racial and subracial traits';
-COMMENT ON TABLE "SubraceTrait" IS 'Many-to-many relationship between subraces and traits';
-COMMENT ON TABLE "Background" IS 'D&D 5e character backgrounds';
-COMMENT ON TABLE "Alignment" IS 'D&D 5e character alignments';
-COMMENT ON TABLE "Weapon" IS 'D&D 5e weapons';
-COMMENT ON TABLE "Armor" IS 'D&D 5e armor';
-COMMENT ON TABLE "Equipment" IS 'D&D 5e equipment items';
-COMMENT ON TABLE "MagicalItem" IS 'D&D 5e magical items';
-COMMENT ON TABLE "Treasure" IS 'D&D 5e treasure items';
-COMMENT ON TABLE "Spell" IS 'D&D 5e spells';
-COMMENT ON TABLE "Character" IS 'Player characters';
-COMMENT ON TABLE "ClassSpellLimits" IS 'Spellcasting limits for each class and level';
-
+CREATE INDEX IF NOT EXISTS "ClassWeaponProficiency_classId_proficiencyType_weaponName_idx" ON "ClassWeaponProficiency"("classId", "proficiencyType", "weaponName"); 
