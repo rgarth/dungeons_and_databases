@@ -13,6 +13,13 @@ interface Subrace {
   languages?: string[] | null;
 }
 
+interface Trait {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+}
+
 interface SubraceSelectorProps {
   race: string;
   selectedSubrace?: string | null;
@@ -27,8 +34,10 @@ export function SubraceSelector({
   disabled = false
 }: SubraceSelectorProps) {
   const [subraces, setSubraces] = useState<Subrace[]>([]);
+  const [selectedSubraceTraits, setSelectedSubraceTraits] = useState<Trait[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingTraits, setLoadingTraits] = useState(false);
   const onSubraceChangeRef = useRef(onSubraceChange);
 
   // Update ref when onSubraceChange changes
@@ -74,7 +83,35 @@ export function SubraceSelector({
     };
 
     loadSubraces();
-  }, [race]); // Removed cachedSubraces from dependency array
+  }, [race]);
+
+  // Load traits when subrace is selected
+  useEffect(() => {
+    if (!selectedSubrace) {
+      setSelectedSubraceTraits([]);
+      return;
+    }
+
+    const loadTraits = async () => {
+      setLoadingTraits(true);
+      try {
+        const response = await fetch(`/api/traits?subrace=${encodeURIComponent(selectedSubrace)}`);
+        if (response.ok) {
+          const traits = await response.json();
+          setSelectedSubraceTraits(traits);
+        } else {
+          setSelectedSubraceTraits([]);
+        }
+      } catch (error) {
+        console.error('Error loading subrace traits:', error);
+        setSelectedSubraceTraits([]);
+      } finally {
+        setLoadingTraits(false);
+      }
+    };
+
+    loadTraits();
+  }, [selectedSubrace]);
 
   const handleSubraceSelect = (subrace: Subrace) => {
     onSubraceChangeRef.current(subrace.name);
@@ -166,11 +203,31 @@ export function SubraceSelector({
           </p>
           <div className="text-xs text-slate-400">
             <div><strong>Ability Score Increase:</strong> {selectedSubraceData.abilityScoreIncrease}</div>
-            <div><strong>Traits:</strong> {selectedSubraceData.traits?.join(', ') || 'None'}</div>
+            <div><strong>Traits:</strong> {
+              loadingTraits 
+                ? 'Loading...' 
+                : selectedSubraceTraits.length > 0 
+                  ? selectedSubraceTraits.map(trait => trait.name).join(', ')
+                  : 'None'
+            }</div>
             {selectedSubraceData.languages && selectedSubraceData.languages.length > 0 && (
               <div><strong>Languages:</strong> {selectedSubraceData.languages.join(', ')}</div>
             )}
           </div>
+          
+          {/* Show trait details if available */}
+          {selectedSubraceTraits.length > 0 && (
+            <div className="mt-2 pt-2 border-t border-slate-600">
+              <div className="text-xs text-slate-400 mb-1"><strong>Trait Details:</strong></div>
+              {selectedSubraceTraits.map((trait) => (
+                <div key={trait.id} className="text-xs text-slate-300 mb-1">
+                  <span className="font-medium">{trait.name}</span>
+                  <span className="text-slate-500 ml-1">({trait.type})</span>
+                  <div className="text-slate-400 ml-2">{trait.description}</div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
