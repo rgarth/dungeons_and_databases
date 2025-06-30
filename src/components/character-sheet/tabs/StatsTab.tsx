@@ -119,6 +119,26 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
     setActiveTooltip(activeTooltip === tooltipId ? null : tooltipId);
   };
 
+  // Helper function to get common uses for each saving throw
+  const getSavingThrowUses = (abilityName: string): string => {
+    switch (abilityName) {
+      case 'Strength':
+        return 'Grappling, shoving, breaking free from restraints';
+      case 'Dexterity':
+        return 'Dodging spells, avoiding traps, acrobatic feats';
+      case 'Constitution':
+        return 'Resisting poison, disease, extreme conditions';
+      case 'Intelligence':
+        return 'Resisting psychic damage, illusions, mind control';
+      case 'Wisdom':
+        return 'Resisting charm, fear, deception, perception checks';
+      case 'Charisma':
+        return 'Resisting banishment, possession, social manipulation';
+      default:
+        return 'Various magical and physical effects';
+    }
+  };
+
   return (
     <div className="p-4">
       <div className="space-y-4">
@@ -372,6 +392,7 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
             <Shield className="h-5 w-5 text-green-400" />
             Saving Throws
           </h3>
+          
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {[
               { name: 'Strength', value: effectiveStats.strength },
@@ -388,7 +409,7 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
               return (
                 <div 
                   key={ability.name} 
-                  className={`text-center p-3 rounded-lg border-2 transition-colors ${
+                  className={`text-center p-3 rounded-lg border-2 transition-colors relative ${
                     isProficient 
                       ? 'bg-green-900/20 border-green-600/30' 
                       : 'bg-slate-600 border-slate-500'
@@ -401,9 +422,28 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
                   {isProficient && (
                     <div className="text-xs text-green-300 mt-1">Proficient</div>
                   )}
-                  <div className="text-xs text-slate-400 mt-1">
-                    {calc.getAbilityModifier(ability.name.toLowerCase())}{isProficient ? ` + ${calc.proficiencyBonus}` : ''}
+                  <div className="flex items-center justify-center gap-1 mt-1">
+                    <span className="text-xs text-yellow-300">
+                      {calc.getAbilityModifier(ability.name.toLowerCase())}{isProficient ? ` + ${calc.proficiencyBonus}` : ''}
+                    </span>
+                    <button 
+                      onClick={() => toggleTooltip(`saving-throw-${ability.name.toLowerCase()}`)}
+                      className="cursor-pointer hover:bg-slate-500 rounded p-0.5"
+                    >
+                      <HelpCircle className="h-3 w-3 text-yellow-300" />
+                    </button>
                   </div>
+                  
+                  {/* Tooltip */}
+                  {activeTooltip === `saving-throw-${ability.name.toLowerCase()}` && (
+                    <div className="absolute z-50 top-full left-1/2 transform -translate-x-1/2 mt-2 p-3 bg-slate-800 rounded text-xs text-slate-300 border border-slate-600 w-64 shadow-lg">
+                      <strong className="text-green-300">{ability.name} Saving Throw:</strong><br/>
+                      <strong>Formula:</strong> 1d20 {modifierText}<br/>
+                      <strong>Breakdown:</strong> {ability.name} modifier ({calc.getAbilityModifier(ability.name.toLowerCase()) >= 0 ? '+' : ''}{calc.getAbilityModifier(ability.name.toLowerCase())}){isProficient ? ` + Proficiency (+${calc.proficiencyBonus})` : ''}<br/>
+                      <strong>Common uses:</strong> {getSavingThrowUses(ability.name)}<br/>
+                      <strong>Proficiency:</strong> {isProficient ? 'Yes - from your class' : 'No - only ability modifier'}
+                    </div>
+                  )}
                 </div>
               );
             })}
