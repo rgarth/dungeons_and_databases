@@ -82,9 +82,17 @@ function ColorWheel({ currentColor, onColorChange }: {
     // Cleanup
     return () => {
       if (colorPickerInstanceRef.current) {
-        // Remove the color picker element from DOM
-        colorPickerInstanceRef.current.el.remove();
-        colorPickerInstanceRef.current = null;
+        try {
+          // Safely remove the color picker element from DOM
+          if (colorPickerInstanceRef.current.el && colorPickerInstanceRef.current.el.parentNode) {
+            colorPickerInstanceRef.current.el.parentNode.removeChild(colorPickerInstanceRef.current.el);
+          }
+        } catch (error) {
+          // Element might already be removed, ignore the error
+          console.warn('Color picker cleanup warning:', error);
+        } finally {
+          colorPickerInstanceRef.current = null;
+        }
       }
     };
   }, [isOpen, currentColor, onColorChange]);
@@ -396,10 +404,17 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
   };
 
   const removeDice = (diceType: keyof typeof diceCounts) => {
-    setDiceCounts(prev => ({
-      ...prev,
-      [diceType]: Math.max(0, prev[diceType] - 1)
-    }));
+    setDiceCounts(prev => {
+      const currentCount = prev[diceType];
+      if (currentCount <= 0) {
+        // Prevent removing dice that don't exist
+        return prev;
+      }
+      return {
+        ...prev,
+        [diceType]: currentCount - 1
+      };
+    });
   };
 
   const getTotalDice = () => {
@@ -558,11 +573,20 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
                 {diceCounts[dice.key] > 0 && (
                   <button
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
-                      removeDice(dice.key);
+                      // Double-check that the dice count is still valid before removing
+                      if (diceCounts[dice.key] > 0) {
+                        removeDice(dice.key);
+                      }
                     }}
-                    className="absolute -top-1 -right-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-lg transition-colors cursor-pointer"
+                    onMouseDown={(e) => {
+                      // Prevent the parent button from being triggered
+                      e.stopPropagation();
+                    }}
+                    className="absolute -top-1 -right-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-lg transition-colors cursor-pointer z-10"
                     title={`Remove ${dice.key.toUpperCase()} (${diceCounts[dice.key]})`}
+                    disabled={diceCounts[dice.key] <= 0}
                   >
                     {diceCounts[dice.key]}
                   </button>
