@@ -155,17 +155,18 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
                         </span>
                       )}
                     </div>
-                    <div className="text-sm text-slate-400">{modifierText}</div>
-                    
-                    {/* Ability Score Modifier Tooltip */}
-                    <div className="relative mt-1">
+                    <div className="flex items-center justify-center gap-1 mt-1">
+                      <span className="text-sm text-yellow-300">{modifierText}</span>
                       <button 
                         onClick={() => toggleTooltip(`ability-${ability.name.toLowerCase()}`)}
                         className="cursor-pointer hover:bg-slate-500 rounded p-0.5 inline-flex items-center gap-1 text-xs text-yellow-300 hover:text-yellow-200"
                       >
                         <HelpCircle className="h-3 w-3" />
-                        <span>i</span>
                       </button>
+                    </div>
+                    
+                    {/* Ability Score Modifier Tooltip */}
+                    <div className="relative">
                       {activeTooltip === `ability-${ability.name.toLowerCase()}` && (
                         <div className="absolute z-20 mt-1 p-3 bg-slate-800 rounded text-xs text-slate-300 border border-slate-600 w-64 left-1/2 transform -translate-x-1/2 shadow-lg">
                           <strong className="text-yellow-300">{ability.name} Modifier Breakdown:</strong><br/>
