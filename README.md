@@ -1,6 +1,61 @@
-# 🎲 Dungeons & Databases
+# Dungeons and Databases
 
-A modern D&D 5e character management application built with Next.js, Prisma, and SQLite.
+A D&D 5e character builder and manager built with Next.js, TypeScript, and Supabase.
+
+## Architecture Rules
+
+### Data Architecture
+- **D&D 5e Rules**: Stored in TypeScript files (`src/data/`) - static, version-controlled game data
+- **User Data**: Stored in database (Supabase) - characters, user preferences, state
+- **No database for game rules**: D&D 5e SRD content is static and should be in code
+
+### Code Quality Rules
+- Ask before dropping the databases
+- Supabase cannot use prisma migrations. Please write them in the supabase directory in SQL and run a db push
+- The wizards of the coast 5e rules found online are the LAW. We must adhere to them
+- No artifacts.
+- Less code is better than more code - keep files small, clean, and focused.
+- No fallback mechanisms — they hide real failures.
+- Replace existing components entirely when improving them. Delete legacy versions immediately. Never leave old implementations as dead code.
+- Flag obsolete files to keep the codebase lightweight - actively remove unused code.
+- Avoid race conditions at all costs.
+- Take your time to ultrathink when on extended thinking mode — thinking is cheaper than fixing bugs.
+- Always double check everything you do for correctness and good design before continuing.
+- No hardcoded values that should be in the database - keep data dynamic and configurable.
+- Sensible data structures with proper indexes for performance.
+- Single source of truth per feature - no duplicate implementations.
+- Modern code patterns in clean, focused files - but never alongside legacy versions.
+- **Test-driven development**: Write tests first, then implement functionality. Every feature should have corresponding tests to prevent regressions.
+- Before running a development daemon, check if it is already running and kill the last instance to avoid port conflicts.
+- **Dev server restart command**: `pkill -f "npm run dev" ; pkill -f "next dev" ; sleep 5 ; npm run dev`
+- **Pivot confirmation required**: When you have to pivot on directions, explain why and wait for confirmation.
+
+## Development
+
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+- Supabase account and project
+
+### Setup
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Copy `.env.template` to `.env.local` and fill in your Supabase credentials
+4. Run database migrations: `npx supabase db push`
+5. Start the development server: `npm run dev`
+
+### Database Schema
+The database only contains user data:
+- Characters
+- User preferences
+- Application state
+- User-generated content
+
+All D&D 5e game rules are stored in TypeScript files for performance and simplicity.
+
+## License
+
+MIT
 
 ## ✨ Features
 
