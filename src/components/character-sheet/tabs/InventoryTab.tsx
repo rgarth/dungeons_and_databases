@@ -2,11 +2,20 @@
 
 import { Package, Trash2, Plus, Minus, Coins, Zap, Backpack } from "lucide-react";
 import { EQUIPMENT_CATEGORIES } from "@/lib/dnd/equipment";
-import { equipmentData } from "../../../../prisma/data/equipment-data";
 import type { InventoryItem } from "@/lib/dnd/equipment";
 import type { Treasure } from "@/lib/dnd/data";
 import { getAllTreasures } from "@/lib/dnd/treasure-data-helper";
 import { useState, useEffect } from "react";
+
+interface Equipment {
+  id: number;
+  name: string;
+  type: string;
+  cost: number;
+  weight: number;
+  stackable: boolean;
+  description?: string;
+}
 
 interface InventoryTabProps {
   inventory: InventoryItem[];
@@ -132,21 +141,30 @@ export function InventoryTab({
   const [selectedTreasure, setSelectedTreasure] = useState("");
   const [treasureAddMode, setTreasureAddMode] = useState<"database" | "custom">("database");
   const [allTreasures, setAllTreasures] = useState<Treasure[]>([]);
+  const [equipmentData, setEquipmentData] = useState<Equipment[]>([]);
 
   // Organize inventory into categories
   const organizedInventory = organizeInventory(inventory);
 
-  // Load treasure database on component mount
+  // Load equipment and treasure database on component mount
   useEffect(() => {
-    const loadTreasures = async () => {
+    const loadData = async () => {
       try {
+        // Load equipment data
+        const equipmentResponse = await fetch('/api/equipment');
+        if (equipmentResponse.ok) {
+          const equipment = await equipmentResponse.json();
+          setEquipmentData(equipment);
+        }
+
+        // Load treasure data
         const treasureData = await getAllTreasures();
         setAllTreasures(treasureData);
       } catch (error) {
-        console.error('Error loading treasures:', error);
+        console.error('Error loading data:', error);
       }
     };
-    loadTreasures();
+    loadData();
   }, []);
 
   const handleAddItem = () => {

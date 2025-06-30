@@ -3,15 +3,25 @@
 import { Sword, Package, Shield, Plus, Trash2, Zap } from "lucide-react";
 import { createCharacterCalculations } from "@/services/character/calculations";
 import { createCharacterEquipment } from "@/services/character/equipment";
-// Note: Using hardcoded weapons/armor data - needs database integration
-// import { weaponsData } from '../../../../prisma/data/weapons-data';
-import { armorData } from '../../../../prisma/data/armor-data';
 import { MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon } from "@/lib/dnd/equipment";
 import { canPrepareSpells, getSpellsPreparedCount } from "@/lib/dnd/level-up";
 import type { Weapon, MagicalWeapon, Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { clientCache } from '@/lib/client-cache';
+
+interface DatabaseArmor {
+  id: number;
+  name: string;
+  type: 'Light' | 'Medium' | 'Heavy' | 'Shield';
+  baseArmorClass: number;
+  maxDexterityBonus?: number;
+  minStrength?: number;
+  stealthDisadvantage: boolean;
+  cost: number;
+  weight: number;
+  description?: string;
+}
 
 interface EquipmentTabProps {
   character: {
@@ -83,6 +93,24 @@ export function EquipmentTab({
   const [selectedMagicalTemplate, setSelectedMagicalTemplate] = useState("");
   const [customWeaponName, setCustomWeaponName] = useState("");
   const [selectedWeapon, setSelectedWeapon] = useState<Weapon | null>(null);
+  const [selectedArmor, setSelectedArmor] = useState<Armor | null>(null);
+  const [armorData, setArmorData] = useState<DatabaseArmor[]>([]);
+
+  // Load armor data from database
+  useEffect(() => {
+    const loadArmorData = async () => {
+      try {
+        const response = await fetch('/api/armor');
+        if (response.ok) {
+          const data = await response.json();
+          setArmorData(data);
+        }
+      } catch (error) {
+        console.error('Error loading armor data:', error);
+      }
+    };
+    loadArmorData();
+  }, []);
 
   const handleCreateMagicalWeapon = () => {
     if (selectedBaseWeapon && selectedMagicalTemplate) {
@@ -91,7 +119,7 @@ export function EquipmentTab({
         ...weaponData,
         type: weaponData.type as 'Simple' | 'Martial',
         category: weaponData.category as 'Melee' | 'Ranged',
-        properties: weaponData.properties ? weaponData.properties.split(',').map(p => p.trim()).filter(Boolean) : []
+        properties: weaponData.properties ? weaponData.properties.split(',').map((p: string) => p.trim()).filter(Boolean) : []
       } as Weapon : null;
       const template = MAGICAL_WEAPON_TEMPLATES.find(t => t.name === selectedMagicalTemplate);
       
@@ -105,6 +133,53 @@ export function EquipmentTab({
         setCustomWeaponName("");
         setShowWeaponCreator(false);
       }
+    }
+  };
+
+  const handleAddWeapon = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedWeapon) {
+      onAddWeapon(selectedWeapon);
+      setSelectedWeapon(null);
+    }
+  };
+
+  const handleAddArmor = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedArmor) {
+      onAddArmor(selectedArmor);
+      setSelectedArmor(null);
+    }
+  };
+
+  const handleArmorSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const armorData_item = armorData.find(a => a.name === e.target.value);
+    if (armorData_item) {
+      const armor: Armor = {
+        name: armorData_item.name,
+        type: armorData_item.type,
+        baseAC: armorData_item.baseArmorClass,
+        maxDexBonus: armorData_item.maxDexterityBonus,
+        minStrength: armorData_item.minStrength,
+        stealthDisadvantage: armorData_item.stealthDisadvantage,
+        cost: armorData_item.cost.toString(),
+        weight: armorData_item.weight,
+        description: armorData_item.description || ''
+      };
+      setSelectedArmor(armor);
+    }
+  };
+
+  const handleWeaponSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const weaponData = clientCache.getWeapons().find(w => w.name === e.target.value);
+    if (weaponData) {
+      const weapon: Weapon = {
+        ...weaponData,
+        type: weaponData.type as 'Simple' | 'Martial',
+        category: weaponData.category as 'Melee' | 'Ranged',
+        properties: weaponData.properties ? weaponData.properties.split(',').map((p: string) => p.trim()).filter(Boolean) : []
+      };
+      setSelectedWeapon(weapon);
     }
   };
 
@@ -238,16 +313,7 @@ export function EquipmentTab({
               <div className="flex gap-2">
                 <select
                   value={selectedWeapon ? selectedWeapon.name : ""}
-                  onChange={(e) => {
-                    const weaponData = clientCache.getWeapons().find(w => w.name === e.target.value);
-                    const weapon = weaponData ? {
-                      ...weaponData,
-                      type: weaponData.type as 'Simple' | 'Martial',
-                      category: weaponData.category as 'Melee' | 'Ranged',
-                      properties: weaponData.properties ? weaponData.properties.split(',').map(p => p.trim()).filter(Boolean) : []
-                    } as Weapon : null;
-                    setSelectedWeapon(weapon);
-                  }}
+                  onChange={handleWeaponSelect}
                   className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
                 >
                   <option value="">Select basic weapon to add...</option>
@@ -258,12 +324,7 @@ export function EquipmentTab({
                   ))}
                 </select>
                 <button
-                  onClick={() => {
-                    if (selectedWeapon) {
-                      onAddWeapon(selectedWeapon);
-                      setSelectedWeapon(null);
-                    }
-                  }}
+                  onClick={handleAddWeapon}
                   disabled={!selectedWeapon}
                   className="bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded text-sm font-medium"
                 >
@@ -543,29 +604,26 @@ export function EquipmentTab({
                 Add New Armor
               </h3>
               <p className="text-slate-400 text-sm mb-3">Add armor to your inventory from the equipment database</p>
-              <select
-                onChange={(e) => {
-                  if (e.target.value) {
-                    const armorData_item = armorData.find(a => a.name === e.target.value);
-                    if (armorData_item) {
-                      const armor = {
-                        ...armorData_item,
-                        type: armorData_item.type as 'Light' | 'Medium' | 'Heavy' | 'Shield'
-                      } as Armor;
-                      onAddArmor(armor);
-                    }
-                    e.target.value = "";
-                  }
-                }}
-                className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-              >
-                <option value="">Select armor to add to inventory...</option>
-                {armorData.map(armor => (
-                  <option key={armor.name} value={armor.name}>
-                    {armor.name} - {armor.cost} ({armor.type})
-                  </option>
-                ))}
-              </select>
+              <div className="flex gap-2">
+                <select
+                  onChange={handleArmorSelect}
+                  className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                >
+                  <option value="">Select armor to add to inventory...</option>
+                  {armorData.map(armor => (
+                    <option key={armor.name} value={armor.name}>
+                      {armor.name} - {armor.cost} ({armor.type})
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={handleAddArmor}
+                  disabled={!selectedArmor}
+                  className="bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded text-sm font-medium"
+                >
+                  Add
+                </button>
+              </div>
             </div>
           </div>
 

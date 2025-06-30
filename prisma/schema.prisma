@@ -281,18 +281,6 @@ model Alignment {
   updatedAt   DateTime @updatedAt
 }
 
-model Language {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  script      String
-  category    String
-  description String?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
-  @@map("Language")
-}
-
 model Treasure {
   id          String   @id @default(cuid())
   name        String   @unique
@@ -455,4 +443,14 @@ model SubraceTrait {
   @@unique([subraceId, traitId])
   @@index([subraceId])
   @@index([traitId])
+}
+
+model languages {
+  id          String   @id
+  name        String   @unique
+  script      String
+  category    String
+  description String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime
 }

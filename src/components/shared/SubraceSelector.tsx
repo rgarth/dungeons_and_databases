@@ -166,8 +166,8 @@ export function SubraceSelector({
           </p>
           <div className="text-xs text-slate-400">
             <div><strong>Ability Score Increase:</strong> {selectedSubraceData.abilityScoreIncrease}</div>
-            <div><strong>Traits:</strong> {selectedSubraceData.traits.join(', ')}</div>
-            {selectedSubraceData.languages && (
+            <div><strong>Traits:</strong> {selectedSubraceData.traits?.join(', ') || 'None'}</div>
+            {selectedSubraceData.languages && selectedSubraceData.languages.length > 0 && (
               <div><strong>Languages:</strong> {selectedSubraceData.languages.join(', ')}</div>
             )}
           </div>

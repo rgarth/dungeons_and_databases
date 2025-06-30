@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { cachedSpells } from '@/lib/server/init';
+import { cachedSpells, initializeServerCache } from '@/lib/server/init';
 
 export async function GET(request: NextRequest) {
   try {
+    // Initialize server cache if not already done
+    if (!cachedSpells) {
+      try {
+        await initializeServerCache();
+      } catch (error) {
+        console.warn('Failed to initialize server cache, falling back to direct database queries:', error);
+      }
+    }
+
     const { searchParams } = new URL(request.url);
     const className = searchParams.get('className');
     const level = searchParams.get('level');
@@ -28,33 +37,30 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(filteredSpells);
     }
 
-    // Fallback to database if cache is not initialized
-    let whereClause = {};
-    
-    if (className) {
-      whereClause = {
-        classes: {
-          contains: className
-        }
-      };
-    }
-
-    if (level) {
-      whereClause = {
-        ...whereClause,
-        level: parseInt(level)
-      };
-    }
-
+    // Fallback to direct database query if cache is not available
     const spells = await prisma.spell.findMany({
-      where: whereClause,
       orderBy: [
         { level: 'asc' },
         { name: 'asc' }
       ]
     });
 
-    return NextResponse.json(spells);
+    let filteredSpells = spells;
+    
+    if (className) {
+      filteredSpells = filteredSpells.filter(spell => 
+        spell.classes.includes(className)
+      );
+    }
+
+    if (level) {
+      const levelNum = parseInt(level);
+      filteredSpells = filteredSpells.filter(spell => 
+        spell.level === levelNum
+      );
+    }
+
+    return NextResponse.json(filteredSpells);
   } catch (error) {
     console.error('Error fetching spells:', error);
     return NextResponse.json(

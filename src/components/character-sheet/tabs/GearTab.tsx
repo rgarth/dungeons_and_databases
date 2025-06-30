@@ -5,9 +5,6 @@ import { Package, Shield, Wand2, Plus, X, Trash2, Sparkles, Scroll, AlertTriangl
 import { createCharacterEquipment } from "@/services/character/equipment";
 import { createMagicalItemService, type DiceRoll } from "@/services/character/magical-items";
 import { createEquipmentRulesEngine, type EquipmentValidationResult } from "@/lib/dnd/equipment-rules";
-// Note: Using database data instead of hardcoded arrays
-
-import { magicalItemsData } from '../../../../prisma/data/magical-items-data';
 import type { Weapon, MagicalWeapon, Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
 import { MagicalItem, EquippedMagicalItem, MagicalItemType, MagicalItemRarity, canAttuneMagicalItem, canEquipInSlot } from "@/lib/dnd/magical-items";
@@ -15,6 +12,18 @@ import { ArmorSelector } from "../../shared/ArmorSelector";
 import { WeaponSelector } from "../../shared/WeaponSelector";
 import { CustomWeaponCreator } from "../components/CustomWeaponCreator";
 import { findSpellByName, getSpellsByClass } from "@/lib/dnd/spell-data-helper";
+
+interface DatabaseMagicalItem {
+  id: number;
+  name: string;
+  type: string;
+  rarity: string;
+  attunement: boolean;
+  description?: string;
+  magicalProperties?: string;
+  cost?: number;
+  weight?: number;
+}
 
 interface GearTabProps {
   character: {
@@ -111,8 +120,8 @@ export function GearTab({
   const [showMagicalItemSelector, setShowMagicalItemSelector] = useState(false);
   const [showCustomWeaponCreator, setShowCustomWeaponCreator] = useState(false);
 
-
   const [selectedMagicalItem, setSelectedMagicalItem] = useState("");
+  const [magicalItemsData, setMagicalItemsData] = useState<DatabaseMagicalItem[]>([]);
 
   // Filter states for magical items
   const [magicalItemSearch, setMagicalItemSearch] = useState("");
@@ -142,6 +151,22 @@ export function GearTab({
   } | null>(null);
 
   const currentArmorClass = equipment.calculateArmorClass(equippedArmor);
+
+  // Load magical items data from database
+  useEffect(() => {
+    const loadMagicalItemsData = async () => {
+      try {
+        const response = await fetch('/api/magical-items');
+        if (response.ok) {
+          const data = await response.json();
+          setMagicalItemsData(data);
+        }
+      } catch (error) {
+        console.error('Error loading magical items data:', error);
+      }
+    };
+    loadMagicalItemsData();
+  }, []);
 
   // Update equipment conflicts when equipment changes
   useEffect(() => {
