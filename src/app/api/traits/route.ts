@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
     const traitName = searchParams.get('name');
     const race = searchParams.get('race');
     const subrace = searchParams.get('subrace');
+    const combined = searchParams.get('combined');
 
     if (traitName) {
       // Get specific trait by name
@@ -21,6 +22,12 @@ export async function GET(request: NextRequest) {
       }
 
       return NextResponse.json(trait);
+    }
+
+    if (combined === 'true' && race) {
+      // Get combined race + subrace traits with deduplication
+      const traits = dndDataService.getCombinedTraits(race, subrace || undefined);
+      return NextResponse.json(traits);
     }
 
     if (race || subrace) {

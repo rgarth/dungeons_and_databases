@@ -181,6 +181,33 @@ export class DndDataService {
     return this.traits.filter(trait => subrace.traits.includes(trait.name));
   }
 
+  public getCombinedTraits(raceName: string, subraceName?: string) {
+    // Get race traits
+    const raceTraits = this.getTraitsByRace(raceName);
+    
+    // Get subrace traits if provided
+    const subraceTraits = subraceName ? this.getTraitsBySubrace(subraceName) : [];
+    
+    // Combine and deduplicate by name
+    const allTraits = [...raceTraits, ...subraceTraits];
+    const uniqueTraits = allTraits.filter((trait, index, self) => 
+      index === self.findIndex(t => t.name === trait.name)
+    );
+    
+    // Log if duplicates were found (for debugging)
+    if (allTraits.length !== uniqueTraits.length) {
+      console.warn(`⚠️ Duplicate traits found for ${raceName}${subraceName ? ` + ${subraceName}` : ''}:`, {
+        original: allTraits.map(t => t.name),
+        unique: uniqueTraits.map(t => t.name),
+        duplicates: allTraits.filter((trait, index, self) => 
+          index !== self.findIndex(t => t.name === trait.name)
+        ).map(t => t.name)
+      });
+    }
+    
+    return uniqueTraits;
+  }
+
   public getLanguages() {
     return this.languages;
   }

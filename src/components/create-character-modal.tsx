@@ -91,14 +91,12 @@ interface Trait {
 
 function CombinedTraitsDisplay({ race, subrace, disabled = false }: CombinedTraitsDisplayProps) {
   const [raceTraits, setRaceTraits] = useState<Trait[]>([]);
-  const [subraceTraits, setSubraceTraits] = useState<Trait[]>([]);
   const [raceData, setRaceData] = useState<RaceData | null>(null);
   const [loadingTraits, setLoadingTraits] = useState(false);
 
   useEffect(() => {
     if (!race || disabled) {
       setRaceTraits([]);
-      setSubraceTraits([]);
       setRaceData(null);
       return;
     }
@@ -113,31 +111,19 @@ function CombinedTraitsDisplay({ race, subrace, disabled = false }: CombinedTrai
           setRaceData(raceInfo);
         }
 
-        // Load race traits
-        const raceTraitsResponse = await fetch(`/api/traits?race=${encodeURIComponent(race)}`);
-        if (raceTraitsResponse.ok) {
-          const traits = await raceTraitsResponse.json();
+        // Load combined traits with deduplication
+        const combinedTraitsResponse = await fetch(`/api/traits?combined=true&race=${encodeURIComponent(race)}${subrace ? `&subrace=${encodeURIComponent(subrace)}` : ''}`);
+        if (combinedTraitsResponse.ok) {
+          const traits = await combinedTraitsResponse.json();
           setRaceTraits(traits);
         }
-
-        // Load subrace traits if subrace is selected
-        if (subrace) {
-          const subraceTraitsResponse = await fetch(`/api/traits?subrace=${encodeURIComponent(subrace)}`);
-          if (subraceTraitsResponse.ok) {
-            const traits = await subraceTraitsResponse.json();
-            setSubraceTraits(traits);
-          }
-        } else {
-          setSubraceTraits([]);
+              } catch (error) {
+          console.error('Error loading traits:', error);
+          setRaceTraits([]);
+          setRaceData(null);
+        } finally {
+          setLoadingTraits(false);
         }
-      } catch (error) {
-        console.error('Error loading traits:', error);
-        setRaceTraits([]);
-        setSubraceTraits([]);
-        setRaceData(null);
-      } finally {
-        setLoadingTraits(false);
-      }
     };
 
     loadTraits();
@@ -147,9 +133,8 @@ function CombinedTraitsDisplay({ race, subrace, disabled = false }: CombinedTrai
     return null;
   }
 
-  // Combine all traits
-  const allTraits = [...raceTraits, ...subraceTraits];
-  const hasTraits = allTraits.length > 0;
+  // Use raceTraits directly since it now contains the combined, deduplicated traits
+  const hasTraits = raceTraits.length > 0;
 
   if (!hasTraits) {
     return null;
@@ -173,17 +158,17 @@ function CombinedTraitsDisplay({ race, subrace, disabled = false }: CombinedTrai
         <div><strong>Traits:</strong> {
           loadingTraits 
             ? 'Loading...' 
-            : allTraits.length > 0 
-              ? allTraits.map(trait => trait.name).join(', ')
+            : raceTraits.length > 0 
+              ? raceTraits.map(trait => trait.name).join(', ')
               : 'None'
         }</div>
       </div>
       
       {/* Show trait details if available */}
-      {allTraits.length > 0 && (
+      {raceTraits.length > 0 && (
         <div className="mt-2 pt-2 border-t border-slate-600">
           <div className="text-xs text-slate-400 mb-1"><strong>Trait Details:</strong></div>
-          {allTraits.map((trait, index) => (
+          {raceTraits.map((trait, index) => (
             <div key={`${trait.name}-${trait.type}-${index}`} className="text-xs text-slate-300 mb-1">
               <span className="font-medium">{trait.name}</span>
               <span className="text-slate-500 ml-1">({trait.type})</span>
