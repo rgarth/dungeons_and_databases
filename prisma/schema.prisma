@@ -34,18 +34,18 @@ model Session {
 }
 
 model User {
-  id            String         @id @default(cuid())
+  id            String          @id @default(cuid())
   name          String?
-  email         String         @unique
+  email         String          @unique
   emailVerified DateTime?
   image         String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   accounts      Account[]
   characters    Character[]
   customWeapons CustomWeapon[]
   sessions      Session[]
-  preferences   UserPreference[]
+  preferences   UserPreference?
 }
 
 model Character {
@@ -95,16 +95,16 @@ model Character {
 }
 
 model CustomWeapon {
-  id           String   @id @default(cuid())
-  name         String
+  id             String   @id @default(cuid())
+  name           String
   baseWeaponName String
-  modifier     Int      @default(0)
-  customName   String?
-  description  String?
-  creatorId    String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  creator      User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  modifier       Int      @default(0)
+  customName     String?
+  description    String?
+  creatorId      String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  creator        User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
   @@unique([creatorId, name])
 }
