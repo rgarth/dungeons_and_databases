@@ -228,22 +228,8 @@ export const subracesData: SubraceData[] = [
   },
 
   // Base races as subraces (for races with no subraces)
-  {
-    name: "Human",
-    raceName: "Human",
-    description: "Humans are the most adaptable and ambitious people among the common races.",
-    abilityScoreIncrease: "All ability scores increase by 1",
-    traits: ["Extra Language", "Extra Skill"],
-    languages: ["Common"]
-  },
-  {
-    name: "Half-Orc",
-    raceName: "Half-Orc",
-    description: "Half-orcs are strong and resilient, with a fierce orcish heritage.",
-    abilityScoreIncrease: "Strength +2, Constitution +1",
-    traits: ["Darkvision", "Relentless Endurance", "Savage Attacks"],
-    languages: ["Common", "Orc"]
-  },
+  // Note: Human is excluded because it has no subraces in D&D 5e
+
   {
     name: "Tiefling",
     raceName: "Tiefling",
@@ -260,20 +246,6 @@ export const subracesData: SubraceData[] = [
     traits: ["Darkvision", "Celestial Resistance", "Healing Hands"],
     languages: ["Common", "Celestial"]
   },
-  {
-    name: "Goliath",
-    raceName: "Goliath",
-    description: "Goliaths are a nomadic race of mountain-dwelling giants.",
-    abilityScoreIncrease: "Strength +2, Constitution +1",
-    traits: ["Natural Athlete", "Stone's Endurance", "Powerful Build"],
-    languages: ["Common", "Giant"]
-  },
-  {
-    name: "Tabaxi",
-    raceName: "Tabaxi",
-    description: "Tabaxi are catlike humanoids driven by curiosity.",
-    abilityScoreIncrease: "Dexterity +2, Charisma +1",
-    traits: ["Darkvision", "Feline Agility", "Cat's Claws", "Cat's Talents"],
-    languages: ["Common", "Tabaxi"]
-  }
+
+
 ]; 
