@@ -1,47 +1,28 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { cachedBackgrounds } from '@/lib/server/init';
+import { dndDataService } from '@/lib/dnd-data-service';
 
 export async function GET() {
   try {
-    // Return cached data if available
-    if (cachedBackgrounds) {
-      return NextResponse.json(cachedBackgrounds);
-    }
-
-    // Fallback to database if cache is not initialized
-    const backgrounds = await prisma.background.findMany({
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        phbDescription: true,
-        skillProficiencies: true,
-        languages: true,
-        equipment: true,
-        startingGold: true,
-        feature: true,
-        featureDescription: true,
-        suggestedCharacteristics: true,
-        createdAt: true,
-        updatedAt: true
-      },
-      orderBy: {
-        name: 'asc'
-      }
-    });
-
-    const parsedBackgrounds = backgrounds.map(background => ({
-      ...background,
-      skillProficiencies: JSON.parse(background.skillProficiencies as string),
-      languages: JSON.parse(background.languages as string),
-      equipment: JSON.parse(background.equipment as string),
-      suggestedCharacteristics: background.suggestedCharacteristics 
-        ? JSON.parse(background.suggestedCharacteristics as string) 
-        : null
+    const backgrounds = dndDataService.getBackgrounds();
+    
+    // Transform to match the expected API structure
+    const transformedBackgrounds = backgrounds.map(bg => ({
+      id: bg.id || `bg_${bg.name.toLowerCase().replace(/\s+/g, '_')}`,
+      name: bg.name,
+      description: bg.description,
+      phbDescription: bg.phbDescription,
+      skillProficiencies: bg.skillProficiencies,
+      languages: bg.languages,
+      equipment: bg.equipment,
+      startingGold: bg.startingGold,
+      feature: bg.feature,
+      featureDescription: bg.featureDescription,
+      suggestedCharacteristics: bg.suggestedCharacteristics,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     }));
 
-    return NextResponse.json(parsedBackgrounds);
+    return NextResponse.json(transformedBackgrounds);
   } catch (error) {
     console.error('Failed to fetch backgrounds:', error);
     return NextResponse.json({ error: 'Failed to fetch backgrounds' }, { status: 500 });

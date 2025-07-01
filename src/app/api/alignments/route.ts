@@ -1,32 +1,20 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { cachedAlignments } from '@/lib/server/init';
+import { dndDataService } from '@/lib/dnd-data-service';
 
 export async function GET() {
   try {
-    // Return cached data if available
-    if (cachedAlignments) {
-      return NextResponse.json(cachedAlignments);
-    }
+    const alignments = dndDataService.getAlignments();
+    
+    // Return alignments data directly without synthetic IDs
+    const transformedAlignments = alignments.map(alignment => ({
+      name: alignment.name,
+      shortName: alignment.shortName,
+      description: alignment.description,
+      ethicalAxis: alignment.ethicalAxis,
+      moralAxis: alignment.moralAxis
+    }));
 
-    // Fallback to database if cache is not initialized
-    const alignments = await prisma.alignment.findMany({
-      select: {
-        id: true,
-        name: true,
-        shortName: true,
-        description: true,
-        ethicalAxis: true,
-        moralAxis: true,
-        createdAt: true,
-        updatedAt: true
-      },
-      orderBy: {
-        name: 'asc'
-      }
-    });
-
-    return NextResponse.json(alignments);
+    return NextResponse.json(transformedAlignments);
   } catch (error) {
     console.error('Failed to fetch alignments:', error);
     return NextResponse.json({ error: 'Failed to fetch alignments' }, { status: 500 });

@@ -14,7 +14,9 @@ export const weaponsData = [
     damageType: "Bludgeoning",
     weight: 2,
     properties: "Light",
-    description: "A simple wooden club."
+    description: "A simple wooden club.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Dagger",
@@ -25,7 +27,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 1,
     properties: "Finesse, Light, Thrown (range 20/60)",
-    description: "A small, sharp blade that can be used for stabbing or throwing."
+    description: "A small, sharp blade that can be used for stabbing or throwing.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Greatclub",
@@ -36,7 +40,9 @@ export const weaponsData = [
     damageType: "Bludgeoning",
     weight: 10,
     properties: "Two-Handed",
-    description: "A large, heavy club that requires two hands to wield effectively."
+    description: "A large, heavy club that requires two hands to wield effectively.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Handaxe",
@@ -47,7 +53,9 @@ export const weaponsData = [
     damageType: "Slashing",
     weight: 2,
     properties: "Light, Thrown (range 20/60)",
-    description: "A small axe designed for one-handed use."
+    description: "A small axe designed for one-handed use.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Javelin",
@@ -58,7 +66,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 2,
     properties: "Thrown (range 30/120)",
-    description: "A light spear designed for throwing."
+    description: "A light spear designed for throwing.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Light Hammer",
@@ -69,7 +79,9 @@ export const weaponsData = [
     damageType: "Bludgeoning",
     weight: 2,
     properties: "Light, Thrown (range 20/60)",
-    description: "A small hammer that can be used for melee combat or throwing."
+    description: "A small hammer that can be used for melee combat or throwing.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Mace",
@@ -91,7 +103,9 @@ export const weaponsData = [
     damageType: "Bludgeoning",
     weight: 4,
     properties: "Versatile (1d8)",
-    description: "A long wooden staff that can be wielded with one or two hands."
+    description: "A long wooden staff that can be wielded with one or two hands.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Sickle",
@@ -102,7 +116,9 @@ export const weaponsData = [
     damageType: "Slashing",
     weight: 2,
     properties: "Light",
-    description: "A curved blade attached to a short handle."
+    description: "A curved blade attached to a short handle.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Spear",
@@ -113,7 +129,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 3,
     properties: "Thrown (range 20/60), Versatile (1d8)",
-    description: "A long wooden shaft with a sharp metal point."
+    description: "A long wooden shaft with a sharp metal point.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
 
   // Simple Ranged Weapons
@@ -180,7 +198,9 @@ export const weaponsData = [
     damageType: "Slashing",
     weight: 4,
     properties: "Versatile (1d10)",
-    description: "A heavy axe designed for combat."
+    description: "A heavy axe designed for combat.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Flail",
@@ -191,7 +211,9 @@ export const weaponsData = [
     damageType: "Bludgeoning",
     weight: 2,
     properties: "",
-    description: "A weapon consisting of a handle and a heavy striking head connected by a chain."
+    description: "A weapon consisting of a handle and a heavy striking head connected by a chain.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Glaive",
@@ -202,7 +224,9 @@ export const weaponsData = [
     damageType: "Slashing",
     weight: 6,
     properties: "Heavy, Reach, Two-Handed",
-    description: "A polearm with a long blade on the end."
+    description: "A polearm with a long blade on the end.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Greataxe",
@@ -213,7 +237,9 @@ export const weaponsData = [
     damageType: "Slashing",
     weight: 7,
     properties: "Heavy, Two-Handed",
-    description: "A massive axe that requires two hands to wield."
+    description: "A massive axe that requires two hands to wield.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Greatsword",
@@ -224,7 +250,9 @@ export const weaponsData = [
     damageType: "Slashing",
     weight: 6,
     properties: "Heavy, Two-Handed",
-    description: "A massive sword that requires two hands to wield."
+    description: "A massive sword that requires two hands to wield.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Halberd",
@@ -235,7 +263,9 @@ export const weaponsData = [
     damageType: "Slashing",
     weight: 6,
     properties: "Heavy, Reach, Two-Handed",
-    description: "A polearm with an axe blade and a spear point."
+    description: "A polearm with an axe blade and a spear point.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Lance",
@@ -246,7 +276,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 6,
     properties: "Reach, Special",
-    description: "A long spear designed for mounted combat."
+    description: "A long spear designed for mounted combat.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Longsword",
@@ -257,7 +289,9 @@ export const weaponsData = [
     damageType: "Slashing",
     weight: 3,
     properties: "Versatile (1d10)",
-    description: "A versatile sword that can be wielded with one or two hands."
+    description: "A versatile sword that can be wielded with one or two hands.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Maul",
@@ -268,7 +302,9 @@ export const weaponsData = [
     damageType: "Bludgeoning",
     weight: 10,
     properties: "Heavy, Two-Handed",
-    description: "A massive hammer that requires two hands to wield."
+    description: "A massive hammer that requires two hands to wield.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Morningstar",
@@ -279,7 +315,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 4,
     properties: "",
-    description: "A spiked ball attached to a handle by a chain."
+    description: "A spiked ball attached to a handle by a chain.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Pike",
@@ -290,7 +328,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 18,
     properties: "Heavy, Reach, Two-Handed",
-    description: "A very long spear designed for formation fighting."
+    description: "A very long spear designed for formation fighting.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Rapier",
@@ -301,7 +341,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 2,
     properties: "Finesse",
-    description: "A slender, sharply pointed sword designed for thrusting."
+    description: "A slender, sharply pointed sword designed for thrusting.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Scimitar",
@@ -312,7 +354,9 @@ export const weaponsData = [
     damageType: "Slashing",
     weight: 3,
     properties: "Finesse, Light",
-    description: "A curved sword with a single edge."
+    description: "A curved sword with a single edge.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Shortsword",
@@ -323,7 +367,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 2,
     properties: "Finesse, Light",
-    description: "A short, light sword designed for quick strikes."
+    description: "A short, light sword designed for quick strikes.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Trident",
@@ -334,7 +380,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 4,
     properties: "Thrown (range 20/60), Versatile (1d8)",
-    description: "A three-pronged spear."
+    description: "A three-pronged spear.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "War Pick",
@@ -345,7 +393,9 @@ export const weaponsData = [
     damageType: "Piercing",
     weight: 2,
     properties: "",
-    description: "A pick designed for combat."
+    description: "A pick designed for combat.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Warhammer",
@@ -356,7 +406,9 @@ export const weaponsData = [
     damageType: "Bludgeoning",
     weight: 2,
     properties: "Versatile (1d10)",
-    description: "A hammer designed for combat."
+    description: "A hammer designed for combat.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
   {
     name: "Whip",
@@ -367,7 +419,9 @@ export const weaponsData = [
     damageType: "Slashing",
     weight: 3,
     properties: "Finesse, Reach",
-    description: "A flexible length of leather or rope with a handle."
+    description: "A flexible length of leather or rope with a handle.",
+    ammunitionTypeName: null,
+    suggestedQuantity: null
   },
 
   // Martial Ranged Weapons

@@ -198,6 +198,58 @@ export const traitsData = [
     description: "When you reach 3rd level, you can cast the enlarge/reduce spell on yourself once with this trait, using only the spell's enlarge option. When you reach 5th level, you can cast the invisibility spell on yourself once with this trait. You don't need material components for either spell, and you can't cast them while you're in direct sunlight, although sunlight has no effect on them once cast. You regain the ability to cast these spells with this trait when you finish a long rest. Intelligence is your spellcasting ability for these spells.",
     type: "active"
   },
+
+  // Missing Traits from Races Data
+  {
+    name: "Extra Skill",
+    description: "You gain proficiency in one skill of your choice.",
+    type: "passive"
+  },
+  {
+    name: "Two Skills",
+    description: "You gain proficiency in two skills of your choice.",
+    type: "passive"
+  },
+  {
+    name: "Celestial Resistance",
+    description: "You have resistance to necrotic and radiant damage.",
+    type: "passive"
+  },
+  {
+    name: "Healing Hands",
+    description: "As an action, you can touch a creature and cause it to regain a number of hit points equal to your level. Once you use this trait, you can't use it again until you finish a long rest.",
+    type: "active"
+  },
+  {
+    name: "Natural Athlete",
+    description: "You have proficiency in the Athletics skill.",
+    type: "passive"
+  },
+  {
+    name: "Stone's Endurance",
+    description: "You can focus yourself to occasionally shrug off injury. When you take damage, you can use your reaction to roll a d12. Add your Constitution modifier to the number rolled and reduce the damage by that total. After you use this trait, you can't use it again until you finish a short or long rest.",
+    type: "active"
+  },
+  {
+    name: "Powerful Build",
+    description: "You count as one size larger when determining your carrying capacity and the weight you can push, drag, or lift.",
+    type: "passive"
+  },
+  {
+    name: "Feline Agility",
+    description: "Your reflexes and agility allow you to move with a burst of speed. When you move on your turn in combat, you can double your speed until the end of the turn. Once you use this trait, you can't use it again until you move 0 feet on one of your turns.",
+    type: "active"
+  },
+  {
+    name: "Cat's Claws",
+    description: "Because of your claws, you have a climbing speed of 20 feet. In addition, your claws are natural weapons, which you can use to make unarmed strikes. If you hit with them, you deal slashing damage equal to 1d4 + your Strength modifier, instead of the bludgeoning damage normal for an unarmed strike.",
+    type: "passive"
+  },
+  {
+    name: "Cat's Talents",
+    description: "You have proficiency in the Perception and Stealth skills.",
+    type: "passive"
+  },
   {
     name: "Sunlight Sensitivity",
     description: "You have disadvantage on attack rolls and on Wisdom (Perception) checks that rely on sight when you, the target of your attack, or whatever you are trying to perceive is in direct sunlight.",

@@ -1,25 +1,28 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { cachedArmor } from '@/lib/server/init';
+import { dndDataService } from '@/lib/dnd-data-service';
 
-// GET all armor from database
+// GET all armor from in-memory TypeScript data
 export async function GET() {
   try {
-    // Return cached data if available
-    if (cachedArmor) {
-      return NextResponse.json(cachedArmor);
-    }
-
-    // Fallback to database if cache is not initialized
-    const armor = await prisma.armor.findMany({
-      orderBy: [
-        { type: 'asc' },
-        { baseAC: 'asc' },
-        { name: 'asc' }
-      ]
-    });
+    const armor = dndDataService.getArmor();
     
-    return NextResponse.json(armor);
+    // Transform to match the expected API structure (add database-compatible fields)
+    const transformedArmor = armor.map(item => ({
+      id: item.id || `armor_${item.name.toLowerCase().replace(/\s+/g, '_')}`,
+      name: item.name,
+      type: item.type,
+      baseAC: item.baseAC,
+      maxDexBonus: item.maxDexBonus,
+      minStrength: item.minStrength,
+      stealthDisadvantage: item.stealthDisadvantage,
+      weight: item.weight,
+      cost: item.cost,
+      description: item.description,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }));
+    
+    return NextResponse.json(transformedArmor);
   } catch (error) {
     console.error('Error fetching armor:', error);
     return NextResponse.json(

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { dndDataService } from '@/lib/dnd-data-service';
 
 export async function GET(
   request: NextRequest,
@@ -7,30 +7,16 @@ export async function GET(
 ) {
   try {
     const raceName = decodeURIComponent(params.name);
-    
-    const race = await prisma.dndRace.findUnique({
-      where: { name: raceName },
-      include: {
-        subraces: {
-          select: {
-            id: true,
-            name: true,
-            description: true,
-            abilityScoreIncrease: true,
-            languages: true
-          }
-        }
-      }
-    });
-
+    const race = dndDataService.getRaceByName(raceName);
     if (!race) {
       return NextResponse.json(
         { error: 'Race not found' },
         { status: 404 }
       );
     }
-
-    return NextResponse.json(race);
+    // Attach subraces
+    const subraces = dndDataService.getSubraces().filter((sub: any) => sub.race === race.name);
+    return NextResponse.json({ ...race, subraces });
   } catch (error) {
     console.error('Error fetching race:', error);
     return NextResponse.json(

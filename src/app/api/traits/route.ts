@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { dndDataService } from '@/lib/dnd-data-service';
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,9 +10,8 @@ export async function GET(request: NextRequest) {
 
     if (traitName) {
       // Get specific trait by name
-      const trait = await prisma.trait.findUnique({
-        where: { name: traitName }
-      });
+      const traits = dndDataService.getTraits();
+      const trait = traits.find(t => t.name === traitName);
 
       if (!trait) {
         return NextResponse.json(
@@ -25,47 +24,20 @@ export async function GET(request: NextRequest) {
     }
 
     if (race || subrace) {
-      // Get traits for a specific race or subrace using join table
-      let traits: Array<{ id: string; name: string; description: string; type: string; createdAt: Date; updatedAt: Date }> = [];
-
+      // Get traits for a specific race or subrace
       if (subrace) {
-        // Get subrace traits via join table
-        const subraceTraits = await prisma.subraceTrait.findMany({
-          where: {
-            subrace: {
-              name: subrace
-            }
-          },
-          include: {
-            trait: true
-          }
-        });
-        
-        traits = subraceTraits.map(st => st.trait);
+        // Get subrace traits
+        const traits = dndDataService.getTraitsBySubrace(subrace);
+        return NextResponse.json(traits);
       } else if (race) {
-        // Get race traits via join table (for races with no subraces, look for subrace with same name)
-        const raceTraits = await prisma.subraceTrait.findMany({
-          where: {
-            subrace: {
-              name: race
-            }
-          },
-          include: {
-            trait: true
-          }
-        });
-        
-        traits = raceTraits.map(st => st.trait);
+        // Get race traits
+        const traits = dndDataService.getTraitsByRace(race);
+        return NextResponse.json(traits);
       }
-
-      return NextResponse.json(traits);
     }
 
     // Return all traits if no specific query
-    const allTraits = await prisma.trait.findMany({
-      orderBy: { name: 'asc' }
-    });
-
+    const allTraits = dndDataService.getTraits();
     return NextResponse.json(allTraits);
   } catch (error) {
     console.error('Error fetching traits:', error);
