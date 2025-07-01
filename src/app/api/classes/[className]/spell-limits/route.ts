@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { dndDataService } from '@/lib/dnd-data-service';
 
 // Spellcasting classes in D&D 5e
 const SPELLCASTING_CLASSES = [
@@ -35,20 +35,10 @@ export async function GET(
       });
     }
 
-    // Get spell limits using raw SQL query since Prisma client doesn't have the new model yet
-    const result = await prisma.$queryRaw`
-      SELECT 
-        csl."cantripsKnown",
-        csl."spellsKnown", 
-        csl."spellcastingType",
-        csl."maxSpellLevel",
-        csl."spellLevelLimits"
-      FROM "ClassSpellLimits" csl
-      JOIN "DndClass" dc ON csl."classId" = dc.id
-      WHERE dc.name = ${decodedClassName} AND csl."level" = ${level}
-    `;
+    // Get spell limits from TypeScript data service
+    const spellLimits = dndDataService.getSpellLimits(decodedClassName, level);
 
-    if (!result || !Array.isArray(result) || result.length === 0) {
+    if (!spellLimits) {
       // Return default values for spellcasting classes that don't have data for this level
       // This handles cases like Paladin/Ranger level 1 which don't have spellcasting yet
       return NextResponse.json({
@@ -59,14 +49,6 @@ export async function GET(
         spellLevelLimits: {}
       });
     }
-
-    const spellLimits = result[0] as {
-      cantripsKnown: number;
-      spellsKnown: number;
-      spellcastingType: string;
-      maxSpellLevel: number;
-      spellLevelLimits: Record<string, number>;
-    };
 
     return NextResponse.json(spellLimits);
   } catch (error) {

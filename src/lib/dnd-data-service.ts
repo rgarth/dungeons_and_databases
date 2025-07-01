@@ -21,6 +21,7 @@ import { classArmorSuggestionsData } from '../../prisma/data/armor-suggestions-d
 import { ammunitionSuggestionsData } from '../../prisma/data/ammunition-suggestions-data';
 import { classSpellSuggestionsData } from '../../prisma/data/spell-suggestions-data';
 import { classArmorProficiencies, classWeaponProficiencies } from '../../prisma/data/classes-data';
+import { classSpellLimitsData } from '../../prisma/data/class-spell-limits-data';
 
 // Data service class
 export class DndDataService {
@@ -47,6 +48,7 @@ export class DndDataService {
   private spellSuggestions = classSpellSuggestionsData;
   private armorProficiencies = classArmorProficiencies;
   private weaponProficiencies = classWeaponProficiencies;
+  private spellLimits = classSpellLimitsData;
 
   private constructor() {
     // Initialize data with database-compatible IDs
@@ -269,6 +271,12 @@ export class DndDataService {
     }
 
     return proficiencies;
+  }
+
+  public getSpellLimits(className: string, level: number) {
+    return this.spellLimits.find(limit => 
+      limit.className === className && limit.level === level
+    ) || null;
   }
 
   // Utility methods
