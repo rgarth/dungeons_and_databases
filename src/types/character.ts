@@ -25,6 +25,9 @@ export interface Character {
   speed: number;
   proficiencyBonus: number;
   skills: string[];
+  skillSources?: {
+    [skillName: string]: 'class' | 'background' | 'racial' | 'feat' | 'other';
+  };
   inventory: InventoryItem[];
   weapons: (Weapon | MagicalWeapon)[];
   armor?: Armor[];
