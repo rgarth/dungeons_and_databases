@@ -242,8 +242,13 @@ export async function generateAvatar(characterData: CharacterAvatarData): Promis
 
 async function generateWithReplicateFluxSchnell(characterData: CharacterAvatarData): Promise<AvatarResult> {
   try {
-    // Use a single seed for consistency
-    const sharedSeed = Math.floor(Math.random() * 1000000);
+    // Create a unique seed based on timestamp and character data to avoid caching issues
+    const timestamp = Date.now();
+    const characterHash = JSON.stringify(characterData).split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    const sharedSeed = Math.abs(timestamp + characterHash) % 1000000;
     
     // Generate server-side prompt with anti-bias measures
     const fullBodyPrompt = generateServerPrompt(characterData);
