@@ -762,6 +762,58 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           )}
         </div>
 
+        {/* Background Features Section */}
+        {backgroundData && (
+          <div className="bg-slate-700 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-blue-400" />
+              Background Features
+            </h3>
+            <div className="space-y-3">
+              {/* Background Feature */}
+              <div className="flex flex-wrap gap-2">
+                <div className="relative flex items-center gap-2">
+                  <span className="bg-blue-900/40 text-blue-300 px-3 py-1 rounded-full text-sm font-medium">
+                    {backgroundData.feature}
+                  </span>
+                  <button
+                    onClick={() => toggleTooltip('background-feature')}
+                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                    data-tooltip
+                  >
+                    <HelpCircle className="h-4 w-4" />
+                  </button>
+                  {activeTooltip === 'background-feature' && (
+                    <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-slate-800 rounded text-sm text-slate-300 border border-slate-600 w-80 shadow-lg" data-tooltip>
+                      <strong className="text-blue-300">{backgroundData.feature}</strong><br/>
+                      {backgroundData.featureDescription}<br/>
+                      <span className="text-xs text-slate-400 mt-1 block">
+                        Type: Background Feature
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Background Skill Proficiencies */}
+              {backgroundData.skillProficiencies && backgroundData.skillProficiencies.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium text-slate-300 mb-2">Skill Proficiencies Granted:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {backgroundData.skillProficiencies.map((skill, index) => (
+                      <span key={index} className="bg-green-900/40 text-green-300 px-2 py-1 rounded text-xs font-medium">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+
+            </div>
+          </div>
+        )}
+
         {/* Racial Choices Section */}
         <div className="bg-slate-700 rounded-lg p-4">
           <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
