@@ -3,10 +3,11 @@ import { dndDataService } from '@/lib/dnd-data-service';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { name: string } }
+  { params }: { params: Promise<{ name: string }> }
 ) {
   try {
-    const raceName = decodeURIComponent(params.name);
+    const { name } = await params;
+    const raceName = decodeURIComponent(name);
     const race = dndDataService.getRaceByName(raceName);
     if (!race) {
       return NextResponse.json(
@@ -15,7 +16,7 @@ export async function GET(
       );
     }
     // Attach subraces
-    const subraces = dndDataService.getSubraces().filter((sub: any) => sub.race === race.name);
+    const subraces = dndDataService.getSubraces().filter((sub) => sub.raceName === race.name);
     return NextResponse.json({ ...race, subraces });
   } catch (error) {
     console.error('Error fetching race:', error);
