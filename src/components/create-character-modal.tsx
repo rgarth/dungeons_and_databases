@@ -1680,7 +1680,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                             <div className="text-xs text-slate-400">
                               <strong>Contains:</strong>{' '}
                               {creationOptions.equipmentPacks[selectedEquipmentPack].items
-                                .map(item => `${item.quantity}x ${item.name}`)
+                                .map(item => `${item.name} (${item.quantity})`)
                                 .join(', ')}
                             </div>
                             {calculatedGold > 0 && (

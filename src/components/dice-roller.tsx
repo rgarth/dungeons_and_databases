@@ -288,12 +288,18 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
 
     const loadScripts = async () => {
       try {
+        console.log('🎲 Starting to load dice scripts...');
         // Load scripts in parallel
         await Promise.all([
           loadScriptAndWait('/three.min.js', () => typeof window !== 'undefined' && !!window.THREE),
           loadScriptAndWait('/cannon.min.js', () => typeof window !== 'undefined' && !!window.CANNON),
           loadScriptAndWait('/dice.js', () => typeof window !== 'undefined' && !!window.DICE)
         ]);
+        
+        console.log('🎲 All dice scripts loaded successfully');
+        console.log('🎲 THREE.js available:', typeof window !== 'undefined' && !!window.THREE);
+        console.log('🎲 CANNON.js available:', typeof window !== 'undefined' && !!window.CANNON);
+        console.log('🎲 DICE.js available:', typeof window !== 'undefined' && !!window.DICE);
         
         setScriptsLoaded(true);
       } catch (error) {
@@ -307,12 +313,18 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
 
   // Initialize 3D dice box
   useEffect(() => {
-    if (!scriptsLoaded || !diceContainerRef.current) return;
+    if (!scriptsLoaded || !diceContainerRef.current) {
+      console.log('🎲 Waiting for scripts or container:', { scriptsLoaded, hasContainer: !!diceContainerRef.current });
+      return;
+    }
+
+    console.log('🎲 Initializing 3D dice box...');
 
     const handleResize = () => {
       if (diceBoxRef.current && diceContainerRef.current) {
         // Reinitialize dice box on resize
         try {
+          console.log('🎲 Reinitializing dice box on resize...');
           diceBoxRef.current = new window.DICE.dice_box(diceContainerRef.current);
           
           // Set initial dice color
@@ -330,6 +342,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
 
     // Initialize dice box
     try {
+      console.log('🎲 Creating new dice box instance...');
       diceBoxRef.current = new window.DICE.dice_box(diceContainerRef.current);
       
       // Set initial dice color
@@ -338,6 +351,8 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
         const isDark = isColorDark(diceColor);
         window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
       }
+      
+      console.log('🎲 Dice box initialized successfully');
     } catch (error) {
       console.error('Failed to initialize dice box:', error);
       setInitializationError('Failed to initialize 3D dice');
