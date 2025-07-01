@@ -1,66 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { cachedSpells, initializeServerCache } from '@/lib/server/init';
+import { dndDataService } from '@/lib/dnd-data-service';
 
 export async function GET(request: NextRequest) {
   try {
-    // Initialize server cache if not already done
-    if (!cachedSpells) {
-      try {
-        await initializeServerCache();
-      } catch (error) {
-        console.warn('Failed to initialize server cache, falling back to direct database queries:', error);
-      }
-    }
-
     const { searchParams } = new URL(request.url);
     const className = searchParams.get('className');
     const level = searchParams.get('level');
 
-    // Use cached data if available
-    if (cachedSpells) {
-      let filteredSpells = cachedSpells;
-      
-      if (className) {
-        filteredSpells = filteredSpells.filter(spell => 
-          spell.classes.includes(className)
-        );
-      }
-
-      if (level) {
-        const levelNum = parseInt(level);
-        filteredSpells = filteredSpells.filter(spell => 
-          spell.level === levelNum
-        );
-      }
-
-      return NextResponse.json(filteredSpells);
-    }
-
-    // Fallback to direct database query if cache is not available
-    const spells = await prisma.spell.findMany({
-      orderBy: [
-        { level: 'asc' },
-        { name: 'asc' }
-      ]
-    });
-
-    let filteredSpells = spells;
+    let spells = dndDataService.getSpells();
     
     if (className) {
-      filteredSpells = filteredSpells.filter(spell => 
-        spell.classes.includes(className)
-      );
+      spells = dndDataService.getSpellsByClass(className);
     }
 
     if (level) {
       const levelNum = parseInt(level);
-      filteredSpells = filteredSpells.filter(spell => 
-        spell.level === levelNum
-      );
+      spells = spells.filter(spell => spell.level === levelNum);
     }
 
-    return NextResponse.json(filteredSpells);
+    return NextResponse.json(spells);
   } catch (error) {
     console.error('Error fetching spells:', error);
     return NextResponse.json(

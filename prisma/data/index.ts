@@ -19,6 +19,10 @@ import { classWeaponSuggestionsData } from './weapon-suggestions-data'
 import { classArmorSuggestionsData } from './armor-suggestions-data'
 import { ammunitionSuggestionsData } from './ammunition-suggestions-data'
 import { traitsData } from './traits-data'
+import { spellLevelLimitsData } from './spell-level-limits-data'
+import { classSpellLimitsData } from './spell-limits-data'
+import { subracesData } from './subraces-data'
+import { languagesData } from './languages-data'
 
 // Export all data
 export {
@@ -38,7 +42,11 @@ export {
   classWeaponSuggestionsData,
   classArmorSuggestionsData,
   ammunitionSuggestionsData,
-  traitsData
+  traitsData,
+  spellLevelLimitsData,
+  classSpellLimitsData,
+  subracesData,
+  languagesData
 }
 
 // Export counts for validation
@@ -56,6 +64,11 @@ export const contentCounts = {
   equipmentPacks: equipmentPacksData.length,
   weaponSuggestions: classWeaponSuggestionsData.length,
   armorSuggestions: classArmorSuggestionsData.length,
+  traits: traitsData.length,
+  spellLevelLimits: spellLevelLimitsData.length,
+  classSpellLimits: classSpellLimitsData.length,
+  subraces: subracesData.length,
+  languages: languagesData.length,
   total: spellsData.length + 
          weaponsData.length + 
          armorData.length + 
@@ -68,5 +81,10 @@ export const contentCounts = {
          magicalItemsData.length +
          equipmentPacksData.length +
          classWeaponSuggestionsData.length +
-         classArmorSuggestionsData.length
+         classArmorSuggestionsData.length +
+         traitsData.length +
+         spellLevelLimitsData.length +
+         classSpellLimitsData.length +
+         subracesData.length +
+         languagesData.length
 } 

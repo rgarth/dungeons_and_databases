@@ -359,6 +359,25 @@ describe('CreateCharacterModal', () => {
             ])
           } as Response);
         }
+        if (url.includes('/api/traits?subrace=Red Dragonborn')) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve([
+              {
+                id: 'trait_1',
+                name: 'Breath Weapon (Fire)',
+                description: 'You can use your action to exhale destructive energy.',
+                type: 'active'
+              },
+              {
+                id: 'trait_2',
+                name: 'Damage Resistance (Fire)',
+                description: 'You have resistance to fire damage.',
+                type: 'passive'
+              }
+            ])
+          } as Response);
+        }
         // Default mock for other API calls
         return Promise.resolve({
           ok: true,

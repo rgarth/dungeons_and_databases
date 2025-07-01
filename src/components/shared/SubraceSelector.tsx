@@ -125,7 +125,17 @@ export function SubraceSelector({
 
   const selectedSubraceData = subraces.find(s => s.name === selectedSubrace);
 
-  if (subraces.length === 0) {
+  // Use useEffect to clear subrace when it matches the race (for races without meaningful subraces)
+  useEffect(() => {
+    if (subraces.length === 1 && subraces[0].name === race && selectedSubrace === race) {
+      onSubraceChangeRef.current(null);
+    }
+  }, [subraces, race, selectedSubrace]);
+
+  // Hide subrace selector if:
+  // 1. No subraces exist, OR
+  // 2. Only one subrace exists and it has the same name as the race (e.g., Human -> Human)
+  if (subraces.length === 0 || (subraces.length === 1 && subraces[0].name === race)) {
     return null;
   }
 
@@ -163,7 +173,7 @@ export function SubraceSelector({
             <div className="py-1">
               {subraces.map((subrace) => (
                 <button
-                  key={subrace.id}
+                  key={subrace.name}
                   type="button"
                   onClick={() => handleSubraceSelect(subrace)}
                   className={`
@@ -220,7 +230,7 @@ export function SubraceSelector({
             <div className="mt-2 pt-2 border-t border-slate-600">
               <div className="text-xs text-slate-400 mb-1"><strong>Trait Details:</strong></div>
               {selectedSubraceTraits.map((trait) => (
-                <div key={trait.id} className="text-xs text-slate-300 mb-1">
+                <div key={trait.name} className="text-xs text-slate-300 mb-1">
                   <span className="font-medium">{trait.name}</span>
                   <span className="text-slate-500 ml-1">({trait.type})</span>
                   <div className="text-slate-400 ml-2">{trait.description}</div>

@@ -1210,7 +1210,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
                   >
                     {races?.map((r) => (
-                      <option key={r.id} value={r.name}>{r.name}</option>
+                      <option key={r.name} value={r.name}>{r.name}</option>
                     ))}
                   </select>
                 </div>
@@ -1239,7 +1239,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   >
                     <option value="" disabled>Select a class</option>
                     {classes?.map((cls) => (
-                      <option key={cls.id} value={cls.name}>{cls.name}</option>
+                      <option key={cls.name} value={cls.name}>{cls.name}</option>
                     ))}
                   </select>
                 </div>
@@ -1290,7 +1290,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
                   >
                     {alignments?.map((a) => (
-                      <option key={a.id} value={a.name}>{a.name}</option>
+                      <option key={a.name} value={a.name}>{a.name}</option>
                     ))}
                   </select>
                 </div>
@@ -1615,7 +1615,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                         >
                           <option value={-1}>No Pack - Roll for Starting Gold</option>
                           {creationOptions?.equipmentPacks?.map((pack, index) => (
-                            <option key={String(pack.id)} value={index}>
+                            <option key={`pack-${index}`} value={index}>
                               {pack.name} ({pack.cost})
                             </option>
                           )) || []}

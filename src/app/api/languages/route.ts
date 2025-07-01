@@ -1,15 +1,9 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { dndDataService } from '@/lib/dnd-data-service';
 
 export async function GET() {
   try {
-    const languages = await prisma.languages.findMany({
-      orderBy: [
-        { category: 'asc' },
-        { name: 'asc' }
-      ]
-    });
-
+    const languages = dndDataService.getLanguages();
     return NextResponse.json(languages);
   } catch (error) {
     console.error('Failed to fetch languages:', error);

@@ -1,22 +1,17 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { dndDataService } from '@/lib/dnd-data-service';
 
 export async function GET() {
   try {
-    const races = await prisma.dndRace.findMany({
-      include: {
-        subraces: {
-          select: {
-            id: true,
-            name: true,
-            description: true,
-            abilityScoreIncrease: true,
-            languages: true
-          }
-        }
-      }
-    });
-    return NextResponse.json(races);
+    // Get all races from the in-memory data service
+    const races = dndDataService.getRaces();
+    // Optionally, attach subraces to each race if needed
+    const subraces = dndDataService.getSubraces();
+    const racesWithSubraces = races.map((race: any) => ({
+      ...race,
+      subraces: subraces.filter((sub: any) => sub.race === race.name)
+    }));
+    return NextResponse.json(racesWithSubraces);
   } catch (error) {
     console.error('Error fetching races:', error);
     return new NextResponse('Internal Server Error', { status: 500 });

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { dndDataService } from '@/lib/dnd-data-service';
 
 export async function GET(
   request: NextRequest,
@@ -8,27 +8,25 @@ export async function GET(
   try {
     const { className } = await params;
     
-    const classData = await prisma.dndClass.findUnique({
-      where: {
-        name: className
-      },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        hitDie: true,
-        primaryAbility: true,
-        savingThrows: true,
-        skillChoices: true,
-        startingGoldFormula: true
-      }
-    });
+    const classData = dndDataService.getClassByName(className);
 
     if (!classData) {
       return new NextResponse('Class not found', { status: 404 });
     }
 
-    return NextResponse.json(classData);
+    // Transform to match expected structure
+    const transformedClass = {
+      id: classData.id || `class_${classData.name.toLowerCase()}`,
+      name: classData.name,
+      description: classData.description,
+      hitDie: classData.hitDie,
+      primaryAbility: classData.primaryAbility,
+      savingThrows: classData.savingThrows,
+      skillChoices: classData.skillChoices,
+      startingGoldFormula: null // Not in TypeScript data, will need to be added if needed
+    };
+
+    return NextResponse.json(transformedClass);
   } catch (error) {
     console.error('Error fetching class data:', error);
     return new NextResponse('Internal Server Error', { status: 500 });

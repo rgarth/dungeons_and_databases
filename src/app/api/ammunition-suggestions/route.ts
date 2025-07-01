@@ -1,15 +1,12 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { dndDataService } from '@/lib/dnd-data-service';
 
 export async function GET() {
   try {
-    // Simply return all ammunition suggestions from the database
-    const allAmmunitionSuggestions = await prisma.ammunitionSuggestion.findMany({
-      orderBy: { name: 'asc' }
-    });
-
+    const ammunitionSuggestions = dndDataService.getAmmunitionSuggestions();
+    
     // Add caching headers for better performance
-    const response = NextResponse.json(allAmmunitionSuggestions);
+    const response = NextResponse.json(ammunitionSuggestions);
     response.headers.set('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
     response.headers.set('ETag', `ammunition-${Date.now()}`); // Simple ETag for cache validation
     
