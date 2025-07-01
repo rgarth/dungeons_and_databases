@@ -46,6 +46,7 @@ interface BackgroundTabProps {
     fullBodyAvatar?: string | null;
     languages?: string[];
     skills?: string[];
+    skillSources?: { [skillName: string]: 'class' | 'background' | 'racial' | 'feat' | 'other'; };
     backgroundCharacteristics?: SelectedCharacteristics;
   };
   onUpdate: (updates: { 
@@ -60,6 +61,7 @@ interface BackgroundTabProps {
     notes?: string; 
     languages?: string[];
     skills?: string[];
+    skillSources?: { [skillName: string]: 'class' | 'background' | 'racial' | 'feat' | 'other'; };
     avatar?: string;
     fullBodyAvatar?: string;
     background?: string;
@@ -377,6 +379,41 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
         {info.count}/{info.limit}
       </span>
     );
+  };
+
+  // Helper functions for skill source tracking
+  const getRacialSkills = () => {
+    const skillSources = character.skillSources || {};
+    return (character.skills || []).filter(skill => skillSources[skill] === 'racial');
+  };
+
+  const getClassSkills = () => {
+    const skillSources = character.skillSources || {};
+    return (character.skills || []).filter(skill => skillSources[skill] === 'class');
+  };
+
+
+
+  const addSkillWithSource = (skill: string, source: 'class' | 'background' | 'racial' | 'feat' | 'other') => {
+    const currentSkills = character.skills || [];
+    const currentSources = character.skillSources || {};
+    
+    if (!currentSkills.includes(skill)) {
+      const newSkills = [...currentSkills, skill];
+      const newSources = { ...currentSources, [skill]: source };
+      onUpdate({ skills: newSkills, skillSources: newSources });
+    }
+  };
+
+  const removeSkillWithSource = (skill: string) => {
+    const currentSkills = character.skills || [];
+    const currentSources = character.skillSources || {};
+    
+    const newSkills = currentSkills.filter(s => s !== skill);
+    const newSources = { ...currentSources };
+    delete newSources[skill];
+    
+    onUpdate({ skills: newSkills, skillSources: newSources });
   };
 
   const renderBackstoryEditor = () => {
@@ -833,14 +870,13 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               </p>
               <div className="space-y-2">
                 {/* Show currently selected human skill */}
-                {(character.skills || []).length > 0 && (
+                {getRacialSkills().length > 0 && (
                   <div className="flex items-center gap-2 p-2 bg-slate-700 rounded border border-slate-500">
                     <span className="text-green-400 text-sm">✓</span>
-                    <span className="text-white text-sm">{(character.skills || [])[0]}</span>
+                    <span className="text-white text-sm">{getRacialSkills()[0]}</span>
                     <button
                       onClick={() => {
-                        const newSkills = (character.skills || []).slice(1); // Remove first skill
-                        onUpdate({ skills: newSkills });
+                        removeSkillWithSource(getRacialSkills()[0]);
                       }}
                       className="ml-auto text-red-400 hover:text-red-300 text-xs"
                     >
@@ -849,24 +885,20 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   </div>
                 )}
                 
-                {/* Skill selector (only show if no skill selected) */}
-                {(character.skills || []).length === 0 && (
+                {/* Skill selector (only show if no racial skill selected) */}
+                {getRacialSkills().length === 0 && (
                   <select
                     value=""
                     onChange={(e) => {
                       if (e.target.value) {
-                        const currentSkills = character.skills || [];
-                        if (!currentSkills.includes(e.target.value)) {
-                          const newSkills = [...currentSkills, e.target.value];
-                          onUpdate({ skills: newSkills });
-                        }
+                        addSkillWithSource(e.target.value, 'racial');
                         e.target.value = "";
                       }
                     }}
                     className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
                   >
                     <option value="">Choose a skill...</option>
-                    {Object.keys(SKILLS).map(skill => (
+                    {Object.keys(SKILLS).filter(skill => !(character.skills || []).includes(skill)).map(skill => (
                       <option key={skill} value={skill}>
                         {skill}
                       </option>
@@ -891,16 +923,15 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               </p>
               <div className="space-y-2">
                 {/* Show currently selected Half-Elf skills */}
-                {(character.skills || []).length > 0 && (
+                {getRacialSkills().length > 0 && (
                   <div className="space-y-2">
-                    {(character.skills || []).slice(0, 2).map((skill, index) => (
+                    {getRacialSkills().map((skill, index) => (
                       <div key={index} className="flex items-center gap-2 p-2 bg-slate-700 rounded border border-slate-500">
                         <span className="text-green-400 text-sm">✓</span>
                         <span className="text-white text-sm">{skill}</span>
                         <button
                           onClick={() => {
-                            const newSkills = (character.skills || []).filter((_, i) => i !== index);
-                            onUpdate({ skills: newSkills });
+                            removeSkillWithSource(skill);
                           }}
                           className="ml-auto text-red-400 hover:text-red-300 text-xs"
                         >
@@ -911,23 +942,19 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   </div>
                 )}
                 
-                {/* Skill selectors (only show if less than 2 skills selected) */}
-                {(character.skills || []).length < 2 && (
+                {/* Skill selectors (only show if less than 2 racial skills selected) */}
+                {getRacialSkills().length < 2 && (
                   <select
                     value=""
                     onChange={(e) => {
                       if (e.target.value) {
-                        const currentSkills = character.skills || [];
-                        if (!currentSkills.includes(e.target.value)) {
-                          const newSkills = [...currentSkills, e.target.value];
-                          onUpdate({ skills: newSkills });
-                        }
+                        addSkillWithSource(e.target.value, 'racial');
                         e.target.value = "";
                       }
                     }}
                     className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
                   >
-                    <option value="">Choose {(character.skills || []).length === 0 ? 'first' : 'second'} skill...</option>
+                    <option value="">Choose {getRacialSkills().length === 0 ? 'first' : 'second'} skill...</option>
                     {Object.keys(SKILLS).filter(skill => !(character.skills || []).includes(skill)).map(skill => (
                       <option key={skill} value={skill}>
                         {skill}
@@ -1038,19 +1065,59 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               </div>
             </div>
 
-            {/* Racial/Class Skills */}
+            {/* Class Skills */}
             <div>
-              <div className="text-slate-400 text-sm mb-2">Additional Skills</div>
+              <div className="text-slate-400 text-sm mb-2">Class Skills</div>
               <div className="space-y-1">
-                {(character.skills || []).length > 0 ? (
-                  (character.skills || []).map((skill, index) => (
+                {getClassSkills().length > 0 ? (
+                  getClassSkills().map((skill, index) => (
                     <div key={index} className="text-white text-sm flex items-center gap-2">
                       <span className="w-2 h-2 bg-blue-400 rounded-full"></span>
                       {skill}
                     </div>
                   ))
                 ) : (
-                  <div className="text-slate-500 text-sm">No additional skills selected</div>
+                  <div className="text-slate-500 text-sm">No class skills selected</div>
+                )}
+              </div>
+            </div>
+
+            {/* Racial Skills */}
+            <div>
+              <div className="text-slate-400 text-sm mb-2">Racial Skills</div>
+              <div className="space-y-1">
+                {getRacialSkills().length > 0 ? (
+                  getRacialSkills().map((skill, index) => (
+                    <div key={index} className="text-white text-sm flex items-center gap-2">
+                      <span className="w-2 h-2 bg-purple-400 rounded-full"></span>
+                      {skill}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-slate-500 text-sm">No racial skills selected</div>
+                )}
+              </div>
+            </div>
+
+            {/* Other Skills */}
+            <div>
+              <div className="text-slate-400 text-sm mb-2">Other Skills</div>
+              <div className="space-y-1">
+                {(character.skills || []).filter(skill => {
+                  const skillSources = character.skillSources || {};
+                  return !skillSources[skill] || skillSources[skill] === 'other';
+                }).length > 0 ? (
+                  (character.skills || []).filter(skill => {
+                    const skillSources = character.skillSources || {};
+                    return !skillSources[skill] || skillSources[skill] === 'other';
+                  }).map((skill, index) => (
+                    <div key={index} className="text-white text-sm flex items-center gap-2">
+                      <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+                      {skill}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-slate-500 text-sm">No other skills</div>
                 )}
               </div>
             </div>
