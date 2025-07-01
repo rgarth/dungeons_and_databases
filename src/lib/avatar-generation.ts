@@ -45,7 +45,7 @@ const CLASS_CLOTHING = {
 };
 
 // Races that need skin tone diversity
-const SKIN_TONE_RACES = ['Human', 'Elf', 'Half-Elf', 'Gnome', 'Halfling'];
+const SKIN_TONE_RACES = ['Human', 'Elf', 'Half-Elf', 'Gnome', 'Halfling', 'Tabaxi'];
 
 // Single source of truth: Dragonborn subrace to scale color mapping
 const DRAGONBORN_SCALE_COLORS: Record<string, string> = {
@@ -129,6 +129,9 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
     case 'Human':
       raceDescription = 'human';
       break;
+    case 'Half-Elf':
+      raceDescription = 'half-elf with pointed ears, graceful features, mixed heritage, elven grace, human adaptability, otherworldly beauty, hybrid appearance';
+      break;
     case 'Half-Orc':
       raceDescription = 'half-orc with prominent tusks, greenish-gray skin, broad features, muscular build, orc heritage, intimidating appearance, strong jawline, orcish features';
       break;
@@ -163,6 +166,9 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
     case 'Goliath':
       raceDescription = 'giant humanoid with massive frame, stone gray skin with purple markings, bald head, imposing stature, 7-8 feet tall';
       cameraAngle = ', camera positioned low looking up at the character, dramatic low angle shot to emphasize towering height and imposing presence';
+      break;
+    case 'Tabaxi':
+      raceDescription = 'feline humanoid with cat-like features, fur-covered body, pointed ears, whiskers, cat eyes, agile build, tabaxi appearance, cat-humanoid hybrid';
       break;
     default:
       raceDescription = race.toLowerCase();
