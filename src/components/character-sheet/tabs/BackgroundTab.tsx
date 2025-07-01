@@ -45,6 +45,7 @@ interface BackgroundTabProps {
     avatar?: string | null;
     fullBodyAvatar?: string | null;
     languages?: string[];
+    languageSources?: { [languageName: string]: 'background' | 'racial' | 'class' | 'feat' | 'other' };
     skills?: string[];
     skillSources?: { [skillName: string]: 'class' | 'background' | 'racial' | 'feat' | 'other'; };
     backgroundCharacteristics?: SelectedCharacteristics;
@@ -60,6 +61,7 @@ interface BackgroundTabProps {
     backstory?: string; 
     notes?: string; 
     languages?: string[];
+    languageSources?: { [languageName: string]: 'background' | 'racial' | 'class' | 'feat' | 'other' };
     skills?: string[];
     skillSources?: { [skillName: string]: 'class' | 'background' | 'racial' | 'feat' | 'other'; };
     avatar?: string;
@@ -172,12 +174,15 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
   const getLanguageRequirements = () => {
     const requirements = [];
     
+    // Get language sources from character (similar to skillSources)
+    const languageSources = character.languageSources || {};
+    const learnedLanguages = character.languages || [];
+    // const racialLanguages = getRacialLanguages(character.race);
+    // const classLanguages = getClassLanguages(character.class);
+    
     // Check background language requirements
     if (backgroundData && backgroundData.languages) {
       const backgroundLanguages = backgroundData.languages;
-      const learnedLanguages = character.languages || [];
-      const racialLanguages = getRacialLanguages(character.race);
-      const classLanguages = getClassLanguages(character.class);
       
       // Check for "X of your choice" patterns
       for (const lang of backgroundLanguages) {
@@ -203,11 +208,12 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               };
               required = wordToNumber[match[1].toLowerCase()] || 0;
             }
-            // Only count languages that are not automatic (racial or class)
-            const backgroundLanguages = learnedLanguages.filter(lang => 
-              !racialLanguages.includes(lang) && !classLanguages.includes(lang)
+            
+            // Count languages specifically chosen for background
+            const backgroundChosenLanguages = learnedLanguages.filter(lang => 
+              languageSources[lang] === 'background'
             );
-            const current = backgroundLanguages.length;
+            const current = backgroundChosenLanguages.length;
             const remaining = required - current;
             
             requirements.push({
@@ -226,15 +232,18 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     // Check racial language bonuses
     const racialLanguageBonus = getRacialLanguageBonus(character.race);
     if (racialLanguageBonus) {
-      const learnedLanguages = character.languages || [];
-      const racialLanguages = getRacialLanguages(character.race);
-      const nonRacialLanguages = learnedLanguages.filter(lang => !racialLanguages.includes(lang));
+      // Count languages specifically chosen for racial bonus
+      const racialChosenLanguages = learnedLanguages.filter(lang => 
+        languageSources[lang] === 'racial'
+      );
+      const current = racialChosenLanguages.length;
+      const remaining = racialLanguageBonus.count - current;
       
       requirements.push({
         type: 'racial',
         required: racialLanguageBonus.count,
-        current: nonRacialLanguages.length,
-        remaining: racialLanguageBonus.count - nonRacialLanguages.length,
+        current,
+        remaining,
         description: racialLanguageBonus.description,
         source: character.race
       });
@@ -392,8 +401,6 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     return (character.skills || []).filter(skill => skillSources[skill] === 'class');
   };
 
-
-
   const addSkillWithSource = (skill: string, source: 'class' | 'background' | 'racial' | 'feat' | 'other') => {
     const currentSkills = character.skills || [];
     const currentSources = character.skillSources || {};
@@ -414,6 +421,27 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     delete newSources[skill];
     
     onUpdate({ skills: newSkills, skillSources: newSources });
+  };
+
+  // Helper functions for language source tracking
+  const addLanguageWithSource = (language: string, source: 'background' | 'racial' | 'class' | 'feat' | 'other') => {
+    const currentLanguages = character.languages || [];
+    const languageSources = character.languageSources || {};
+    
+    if (!currentLanguages.includes(language)) {
+      const newLanguages = [...currentLanguages, language];
+      const newSources = { ...languageSources, [language]: source };
+      onUpdate({ languages: newLanguages, languageSources: newSources });
+    }
+  };
+
+  const removeLanguageWithSource = (language: string) => {
+    const languageSources = character.languageSources || {};
+    const newSources = { ...languageSources };
+    delete newSources[language];
+    
+    const newLanguages = (character.languages || []).filter(l => l !== language);
+    onUpdate({ languages: newLanguages, languageSources: newSources });
   };
 
   const renderBackstoryEditor = () => {
@@ -1407,14 +1435,17 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   value=""
                   onChange={(e) => {
                     if (e.target.value) {
-                      const currentLanguages = character.languages || [];
-                      const racialLanguages = getRacialLanguages(character.race);
-                      const classLanguages = getClassLanguages(character.class);
-                      const allKnown = [...racialLanguages, ...classLanguages, ...currentLanguages];
+                      // Determine which requirement this language should satisfy
+                      const languageRequirements = getLanguageRequirements();
+                      const unmetRequirements = languageRequirements.filter(req => req.remaining > 0);
                       
-                      if (!allKnown.includes(e.target.value)) {
-                        const newLanguages = [...currentLanguages, e.target.value];
-                        onUpdate({ languages: newLanguages });
+                      if (unmetRequirements.length > 0) {
+                        // If there are unmet requirements, assign to the first one
+                        const source = unmetRequirements[0].type as 'background' | 'racial';
+                        addLanguageWithSource(e.target.value, source);
+                      } else {
+                        // If all requirements are met, assign as 'other'
+                        addLanguageWithSource(e.target.value, 'other');
                       }
                       e.target.value = ""; // Reset selection
                     }
@@ -1497,6 +1528,15 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   }).map(lang => {
                     const styling = getLanguageStyling(lang, false, false, languages);
                     const language = languages.find(l => l.name === lang);
+                    const languageSources = character.languageSources || {};
+                    const source = languageSources[lang];
+                    const sourceLabels = {
+                      'background': 'Background',
+                      'racial': 'Racial',
+                      'class': 'Class',
+                      'feat': 'Feat',
+                      'other': 'Other'
+                    };
                     return (
                       <span 
                         key={`learned-${lang}`} 
@@ -1504,13 +1544,13 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                         title={language?.description ? `${lang}: ${language.description}` : lang}
                       >
                       {lang}
+                      <span className="text-xs opacity-75">({sourceLabels[source] || 'Other'})</span>
                         {language?.description && (
                           <Info className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
                         )}
                       <button
                         onClick={() => {
-                          const newLanguages = (character.languages || []).filter(l => l !== lang);
-                          onUpdate({ languages: newLanguages });
+                          removeLanguageWithSource(lang);
                         }}
                           className={`${styling.hover} ml-1 text-xs font-bold transition-colors`}
                         title="Remove language"

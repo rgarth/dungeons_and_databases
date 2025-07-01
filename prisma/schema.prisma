@@ -78,6 +78,7 @@ model Character {
   weapons               Json?
   armor                 Json?
   languages             Json?
+  languageSources       Json?
   equipment             Json?
   gold                  Float    @default(0)
   copper                Int      @default(0)
@@ -100,6 +101,7 @@ model Character {
   deathSaveFailures     Int?     @default(0)
   proficiencyBonus      Int?     @default(2)
   skills                Json?
+  skillSources          Json?
   equippedWeapons       Json?
   inventoryWeapons      Json?
   ammunition            Json?

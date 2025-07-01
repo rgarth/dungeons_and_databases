@@ -107,7 +107,8 @@ export async function POST(request: NextRequest) {
       goldPieces,
       avatar,
       fullBodyAvatar,
-      racialTraits
+      racialTraits,
+      languageSources
     } = body;
 
     // Debug ability scores
@@ -320,6 +321,7 @@ export async function POST(request: NextRequest) {
         equipment: processedInventory, // Also set equipment field to match inventory
         skills: skills || [],
         skillSources: skillSources || {},
+        languageSources: languageSources || {},
         weapons: weaponsWithEquipped,
         inventoryWeapons: weaponsWithEquipped,
         ammunition: ammunition || [],
@@ -641,9 +643,9 @@ export async function PATCH(request: NextRequest) {
       updateData.skillSources = body.skillSources;
     }
 
-    // Handle languages updates
-    if (body.languages !== undefined) {
-      updateData.languages = body.languages;
+    // Handle languageSources updates
+    if (body.languageSources !== undefined) {
+      updateData.languageSources = body.languageSources;
     }
 
     // Handle conditions updates
