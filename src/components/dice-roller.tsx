@@ -41,7 +41,7 @@ interface DiceBox {
   bind_swipe: (element: HTMLElement, beforeRoll?: ((notation: DiceResult) => number[] | null), afterRoll?: (notation: DiceResult) => void) => void;
 }
 
-// Custom Color Picker Component - Simple Hexagonal Style
+// Custom Color Picker Component - Hexagonal Style
 function ColorWheel({ currentColor, onColorChange }: { 
   currentColor: string; 
   onColorChange: (color: string) => void; 
@@ -53,12 +53,9 @@ function ColorWheel({ currentColor, onColorChange }: {
 
 
 
-  // Predefined color palette inspired by Pebble's hexagonal picker
-  const colorPalette = [
-    '#FF0000', '#FF4000', '#FF8000', '#FFBF00', '#FFFF00', '#BFFF00', '#80FF00', '#40FF00', '#00FF00',
-    '#00FF40', '#00FF80', '#00FFBF', '#00FFFF', '#00BFFF', '#0080FF', '#0040FF', '#0000FF', '#4000FF',
-    '#8000FF', '#BF00FF', '#FF00FF', '#FF00BF', '#FF0080', '#FF0040', '#9333EA'
-  ];
+
+  
+
 
   // Get current color (simplified to just use hex)
   const getBaseColor = (color: string) => {
@@ -67,27 +64,39 @@ function ColorWheel({ currentColor, onColorChange }: {
 
   // Handle color selection
   const handleColorSelect = (color: string) => {
+    console.log('handleColorSelect called with:', color);
     onColorChange(color);
   };
 
   // Handle brightness/lightness change
   const handleBrightnessChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const brightness = parseInt(e.target.value);
-    const baseColor = getBaseColor(currentColor);
-    // Convert current color to HSL, change lightness, convert back to hex
-    const hslColor = hexToHsl(baseColor);
-    const newHslColor = { ...hslColor, l: brightness };
-    const newHexColor = hslToHex(newHslColor.h, newHslColor.s, newHslColor.l);
-    onColorChange(newHexColor);
+    try {
+      // Convert current color to HSL, change lightness, convert back to hex
+      const hslColor = hexToHsl(currentColor);
+      const newHslColor = { ...hslColor, l: brightness };
+      const newHexColor = hslToHex(newHslColor.h, newHslColor.s, newHslColor.l);
+      onColorChange(newHexColor);
+    } catch (error) {
+      console.warn('Failed to adjust brightness for color:', currentColor, error);
+    }
   };
-
-
 
   // Convert hex to HSL
   const hexToHsl = (hex: string) => {
+    // Ensure hex is valid
+    if (!hex || !hex.startsWith('#') || hex.length !== 7) {
+      throw new Error(`Invalid hex color: ${hex}`);
+    }
+    
     const r = parseInt(hex.slice(1, 3), 16) / 255;
     const g = parseInt(hex.slice(3, 5), 16) / 255;
     const b = parseInt(hex.slice(5, 7), 16) / 255;
+    
+    // Check for invalid values
+    if (isNaN(r) || isNaN(g) || isNaN(b)) {
+      throw new Error(`Invalid hex color values: ${hex}`);
+    }
     
     const max = Math.max(r, g, b);
     const min = Math.min(r, g, b);
@@ -110,8 +119,10 @@ function ColorWheel({ currentColor, onColorChange }: {
 
   // Convert HSL to hex
   const hslToHex = (h: number, s: number, l: number) => {
-    s /= 100;
-    l /= 100;
+    // Normalize hue to 0-360 range
+    h = ((h % 360) + 360) % 360;
+    s = Math.max(0, Math.min(100, s)) / 100;
+    l = Math.max(0, Math.min(100, l)) / 100;
     
     const c = (1 - Math.abs(2 * l - 1)) * s;
     const x = c * (1 - Math.abs((h / 60) % 2 - 1));
@@ -119,12 +130,19 @@ function ColorWheel({ currentColor, onColorChange }: {
     
     let r = 0, g = 0, b = 0;
     
-    if (h >= 0 && h < 60) { r = c; g = x; b = 0; }
-    else if (h >= 60 && h < 120) { r = x; g = c; b = 0; }
-    else if (h >= 120 && h < 180) { r = 0; g = c; b = x; }
-    else if (h >= 180 && h < 240) { r = 0; g = x; b = c; }
-    else if (h >= 240 && h < 300) { r = x; g = 0; b = c; }
-    else if (h >= 300 && h < 360) { r = c; g = 0; b = x; }
+    if (h >= 0 && h < 60) {
+      r = c; g = x; b = 0;
+    } else if (h >= 60 && h < 120) {
+      r = x; g = c; b = 0;
+    } else if (h >= 120 && h < 180) {
+      r = 0; g = c; b = x;
+    } else if (h >= 180 && h < 240) {
+      r = 0; g = x; b = c;
+    } else if (h >= 240 && h < 300) {
+      r = x; g = 0; b = c;
+    } else if (h >= 300 && h < 360) {
+      r = c; g = 0; b = x;
+    }
     
     const rHex = Math.round((r + m) * 255).toString(16).padStart(2, '0');
     const gHex = Math.round((g + m) * 255).toString(16).padStart(2, '0');
@@ -135,12 +153,14 @@ function ColorWheel({ currentColor, onColorChange }: {
 
   // Get current lightness value for brightness slider
   const getCurrentLightness = () => {
-    const baseColor = getBaseColor(currentColor);
-    const hsl = hexToHsl(baseColor);
-    return hsl.l;
+    try {
+      const hsl = hexToHsl(currentColor);
+      return hsl.l;
+    } catch (error) {
+      console.warn('Failed to parse color for lightness:', currentColor, error);
+      return 50; // Default to 50% lightness
+    }
   };
-
-
 
   const handleToggle = () => {
     if (!isOpen && buttonRef.current) {
@@ -207,7 +227,7 @@ function ColorWheel({ currentColor, onColorChange }: {
           style={{ 
             top: pickerPosition.top,
             left: pickerPosition.left,
-            minWidth: '150px'
+            minWidth: '180px'
           }}
         >
           {/* Close button */}
@@ -221,21 +241,54 @@ function ColorWheel({ currentColor, onColorChange }: {
             </svg>
           </button>
           
-          {/* Hexagonal Color Grid */}
+          {/* Gradient Color Wheel */}
           <div className="mb-4">
             <h3 className="text-sm text-slate-300 mb-3 text-center">Choose Color</h3>
-            <div className="grid grid-cols-5 gap-1">
-              {colorPalette.map((color, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleColorSelect(color)}
-                  className={`w-6 h-6 rounded-sm border-2 transition-all hover:scale-110 ${
-                    getBaseColor(currentColor) === color ? 'border-white shadow-lg' : 'border-slate-600'
-                  }`}
-                  style={{ backgroundColor: color }}
-                  title={color}
-                />
-              ))}
+            <div className="flex justify-center">
+              <div 
+                className="relative rounded-full border-2 border-slate-600 cursor-pointer"
+                style={{ 
+                  width: '120px', 
+                  height: '120px',
+                  background: 'conic-gradient(from 0deg, #ff0000 0deg, #ff8000 30deg, #ffff00 60deg, #80ff00 90deg, #00ff00 120deg, #00ff80 150deg, #00ffff 180deg, #0080ff 210deg, #0000ff 240deg, #8000ff 270deg, #ff00ff 300deg, #ff0080 330deg, #ff0000 360deg)'
+                }}
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const centerX = rect.width / 2;
+                  const centerY = rect.height / 2;
+                  const x = e.clientX - rect.left - centerX;
+                  const y = e.clientY - rect.top - centerY;
+                  
+                  // Calculate angle from top (0°) clockwise to match the gradient
+                  // The gradient starts at 0° (red) at the top and goes clockwise
+                  const angle = Math.atan2(x, -y) * 180 / Math.PI;
+                  const normalizedAngle = (angle + 360) % 360;
+                  const hue = normalizedAngle;
+                  
+                  console.log('Color wheel click:', { x, y, angle, normalizedAngle, hue });
+                  
+                  // Convert directly to hex using the hslToHex function
+                  const hexColor = hslToHex(hue, 100, 50);
+                  console.log('Selected color:', hexColor);
+                  console.log('Expected colors for reference:');
+                  console.log('  Red (0°):', hslToHex(0, 100, 50));
+                  console.log('  Green (120°):', hslToHex(120, 100, 50));
+                  console.log('  Blue (240°):', hslToHex(240, 100, 50));
+                  handleColorSelect(hexColor);
+                }}
+                title="Click to select color"
+              >
+                {/* Center indicator */}
+                <div 
+                  className="absolute inset-4 rounded-full border-2 border-white bg-slate-800 flex items-center justify-center"
+                  style={{ backgroundColor: currentColor }}
+                >
+                  <div 
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: currentColor }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -256,18 +309,8 @@ function ColorWheel({ currentColor, onColorChange }: {
               />
             </div>
           </div>
-
-
-
-
           
-          {/* Color preview */}
-          <div className="p-2 bg-slate-700 rounded text-center">
-            <div 
-              className="w-full h-8 rounded border border-slate-600"
-              style={{ backgroundColor: currentColor }}
-            ></div>
-          </div>
+
         </div>
       )}
     </div>
