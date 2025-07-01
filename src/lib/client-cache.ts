@@ -221,7 +221,7 @@ class ClientCache {
       return allSubraces;
     }
     return allSubraces.filter((subrace: any) => 
-      subrace.race?.name?.toLowerCase() === raceName.toLowerCase()
+      subrace.raceName?.toLowerCase() === raceName.toLowerCase()
     );
   }
 

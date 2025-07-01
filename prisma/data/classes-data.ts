@@ -7,6 +7,7 @@ export const classesData = [
   {
     name: "Barbarian",
     description: "A fierce warrior of primitive background who can enter a battle rage",
+    startingGoldFormula: "2d4*10",
     hitDie: 12,
     primaryAbility: "Strength",
     savingThrows: ["Strength", "Constitution"],
@@ -18,6 +19,7 @@ export const classesData = [
   {
     name: "Bard", 
     description: "A master of song, speech, and the magic they contain",
+    startingGoldFormula: "5d4*10",
     hitDie: 8,
     primaryAbility: "Charisma",
     savingThrows: ["Dexterity", "Charisma"],
@@ -29,6 +31,7 @@ export const classesData = [
   {
     name: "Cleric",
     description: "A priestly champion who wields divine magic in service of a higher power",
+    startingGoldFormula: "5d4*10",
     hitDie: 8,
     primaryAbility: "Wisdom",
     savingThrows: ["Wisdom", "Charisma"],
@@ -40,6 +43,7 @@ export const classesData = [
   {
     name: "Druid",
     description: "A priest of the Old Faith, wielding elemental forces and transforming into beasts",
+    startingGoldFormula: "2d4*10",
     hitDie: 8,
     primaryAbility: "Wisdom",
     savingThrows: ["Intelligence", "Wisdom"],
@@ -51,6 +55,7 @@ export const classesData = [
   {
     name: "Fighter",
     description: "A master of martial combat, skilled with a variety of weapons and armor",
+    startingGoldFormula: "5d4*10",
     hitDie: 10,
     primaryAbility: "Strength or Dexterity",
     savingThrows: ["Strength", "Constitution"],
@@ -62,6 +67,7 @@ export const classesData = [
   {
     name: "Monk",
     description: "A master of martial arts, harnessing inner power through discipline and practice",
+    startingGoldFormula: "5d4",
     hitDie: 8,
     primaryAbility: "Dexterity & Wisdom",
     savingThrows: ["Strength", "Dexterity"],
@@ -73,6 +79,7 @@ export const classesData = [
   {
     name: "Paladin",
     description: "A holy warrior bound to a sacred oath",
+    startingGoldFormula: "5d4*10",
     hitDie: 10,
     primaryAbility: "Strength & Charisma",
     savingThrows: ["Wisdom", "Charisma"],
@@ -84,6 +91,7 @@ export const classesData = [
   {
     name: "Ranger",
     description: "A warrior of the wilderness, skilled in tracking, survival, and combat",
+    startingGoldFormula: "5d4*10",
     hitDie: 10,
     primaryAbility: "Dexterity & Wisdom",
     savingThrows: ["Strength", "Dexterity"],
@@ -95,6 +103,7 @@ export const classesData = [
   {
     name: "Rogue",
     description: "A scoundrel who uses stealth and trickery to achieve their goals",
+    startingGoldFormula: "4d4*10",
     hitDie: 8,
     primaryAbility: "Dexterity",
     savingThrows: ["Dexterity", "Intelligence"],
@@ -106,6 +115,7 @@ export const classesData = [
   {
     name: "Sorcerer",
     description: "A spellcaster who draws on inherent magic from a gift or bloodline",
+    startingGoldFormula: "3d4*10",
     hitDie: 6,
     primaryAbility: "Charisma",
     savingThrows: ["Constitution", "Charisma"],
@@ -117,6 +127,7 @@ export const classesData = [
   {
     name: "Warlock",
     description: "A wielder of magic derived from a bargain with an extraplanar entity",
+    startingGoldFormula: "4d4*10",
     hitDie: 8,
     primaryAbility: "Charisma",
     savingThrows: ["Wisdom", "Charisma"],
@@ -128,6 +139,7 @@ export const classesData = [
   {
     name: "Wizard",
     description: "A scholarly magic-user capable of manipulating the structures of spells",
+    startingGoldFormula: "4d4*10",
     hitDie: 6,
     primaryAbility: "Intelligence",
     savingThrows: ["Intelligence", "Wisdom"],

@@ -67,7 +67,7 @@ export function isWeaponProficient(weapon: Weapon, proficiencies: { simple: bool
   if (weapon.type === 'Martial' && proficiencies.martial) return true;
   
   // Check specific weapon proficiencies
-  return proficiencies.specific.includes(weapon.name);
+  return proficiencies.specific?.includes(weapon.name) || false;
 }
 
 export function categorizeWeaponsByProficiency(weapons: Weapon[], proficiencies: { simple: boolean; martial: boolean; specific: string[] }) {

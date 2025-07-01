@@ -16,14 +16,13 @@ export async function GET(
 
     // Transform to match expected structure
     const transformedClass = {
-      id: classData.id || `class_${classData.name.toLowerCase()}`,
       name: classData.name,
       description: classData.description,
       hitDie: classData.hitDie,
       primaryAbility: classData.primaryAbility,
       savingThrows: classData.savingThrows,
       skillChoices: classData.skillChoices,
-      startingGoldFormula: null // Not in TypeScript data, will need to be added if needed
+      startingGoldFormula: classData.startingGoldFormula
     };
 
     return NextResponse.json(transformedClass);

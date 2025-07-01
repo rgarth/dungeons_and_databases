@@ -127,12 +127,12 @@ function ColorWheel({ currentColor, onColorChange }: {
       
       {isOpen && (
         <div 
-          className="absolute z-50 bg-slate-800 border border-slate-600 rounded-lg p-3 shadow-lg"
+          className="fixed z-50 bg-slate-800 border border-slate-600 rounded-lg p-3 shadow-lg"
           style={{ 
-            top: '100%', 
+            bottom: '100%', 
             left: '50%', 
             transform: 'translateX(-50%)',
-            marginTop: '8px',
+            marginBottom: '8px',
             minWidth: '170px'
           }}
         >

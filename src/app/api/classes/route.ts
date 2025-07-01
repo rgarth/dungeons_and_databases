@@ -13,6 +13,7 @@ export async function GET() {
       primaryAbility: cls.primaryAbility,
       savingThrows: cls.savingThrows,
       skillChoices: cls.skillChoices,
+      startingGoldFormula: cls.startingGoldFormula,
       armorProficiencies: [], // Will be populated from classArmorProficiencies if needed
       weaponProficiencies: [] // Will be populated from classWeaponProficiencies if needed
     }));
