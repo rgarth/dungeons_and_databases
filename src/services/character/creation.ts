@@ -22,6 +22,7 @@ import { Spell } from '@/lib/dnd/spells';
 import { Weapon, MagicalWeapon, Armor, Ammunition } from '@/lib/dnd/equipment';
 import { RacialFeaturesService, type RacialTrait } from './racial-features';
 import { getSubclassesForClass, choosesSubclassAtCreation } from '@/lib/dnd/subclasses';
+import { getRacialLanguages, getClassLanguages } from '@/lib/dnd/languages';
 
 
 export type StatMethod = 'rolling-assign' | 'standard' | 'pointbuy';
@@ -56,6 +57,8 @@ export interface CharacterCreationData {
     bonds: string[];
     flaws: string[];
   };
+
+  languages?: string[];
 }
 
 export interface CharacterCreationResult {
@@ -85,6 +88,7 @@ export interface CharacterCreationResult {
   inventory: { name: string; quantity: number }[];
   skills: string[];
   skillSources?: { [skillName: string]: 'class' | 'background' | 'racial' | 'feat' | 'other'; };
+  languageSources?: { [languageName: string]: 'background' | 'racial' | 'class' | 'feat' | 'other' };
   weapons: (Weapon | MagicalWeapon)[]; // All weapons with equipped boolean
   armor: Armor[];
   ammunition: Ammunition[];
@@ -461,27 +465,25 @@ export class CharacterCreationService {
       console.warn('Failed to fetch race equipment, using empty array:', error);
     }
 
-    // Get background equipment from database
-    let backgroundItems: string[] = [];
+    // Get background skills and languages from database
+    let backgroundSkills: string[] = [];
+    let backgroundData: { name: string; skillProficiencies: string[]; languages?: string[] } | undefined = undefined;
     try {
       const backgroundResponse = await fetch('/api/backgrounds');
       if (backgroundResponse.ok) {
         const backgrounds = await backgroundResponse.json();
-        const backgroundData = backgrounds.find((bg: { name: string; equipment: string[] }) => bg.name === data.background);
-        backgroundItems = backgroundData?.equipment || [];
-        if (backgroundItems.length > 0) {
-          console.log(`Background ${data.background} provides equipment:`, backgroundItems);
-        }
+        backgroundData = backgrounds.find((bg: { name: string; skillProficiencies: string[] }) => bg.name === data.background);
+        backgroundSkills = backgroundData?.skillProficiencies || [];
       }
     } catch (error) {
-      console.warn('Failed to fetch background equipment, using empty array:', error);
+      console.warn('Failed to fetch background skills, using empty array:', error);
     }
     
     // Combine all equipment sources with duplicate prevention
     const allEquipmentSources = [
       ...packItems,
       ...raceItems.map(item => ({ name: item, quantity: 1 })),
-      ...backgroundItems.map(item => ({ name: item, quantity: 1 }))
+      ...backgroundSkills.map(skill => ({ name: skill, quantity: 1 }))
     ];
     
     // Merge duplicates by combining quantities
@@ -500,21 +502,8 @@ export class CharacterCreationService {
     console.log('=== EQUIPMENT COMBINATION SUMMARY ===');
     console.log('Equipment Pack items:', packItems.length);
     console.log('Race equipment items:', raceItems.length);
-    console.log('Background equipment items:', backgroundItems.length);
+    console.log('Background equipment items:', backgroundSkills.length);
     console.log('Final combined inventory (duplicates merged):', generalInventory.length);
-    
-    // Get background skills from database
-    let backgroundSkills: string[] = [];
-    try {
-      const backgroundResponse = await fetch('/api/backgrounds');
-      if (backgroundResponse.ok) {
-        const backgrounds = await backgroundResponse.json();
-        const backgroundData = backgrounds.find((bg: { name: string; skillProficiencies: string[] }) => bg.name === data.background);
-        backgroundSkills = backgroundData?.skillProficiencies || [];
-      }
-    } catch (error) {
-      console.warn('Failed to fetch background skills, using empty array:', error);
-    }
     
     // Spellcasting
     const spellcastingAbility = getSpellcastingAbility(characterClass);
@@ -590,6 +579,31 @@ export class CharacterCreationService {
       skillSources[skill] = 'background';
     });
 
+    // Create languageSources mapping for background and racial languages
+    const languageSources: { [languageName: string]: 'background' | 'racial' | 'class' | 'feat' | 'other' } = {};
+    // Background language requirements
+    if (backgroundData && backgroundData.languages) {
+      for (const lang of backgroundData.languages) {
+        if (lang.includes('of your choice')) {
+          // For now, just mark all non-automatic languages as background (UI should refine this)
+          (data.languages || []).forEach(language => {
+            if (!getRacialLanguages(data.race).includes(language) && !getClassLanguages(data.class).includes(language)) {
+              languageSources[language] = 'background';
+            }
+          });
+        }
+      }
+    }
+    // Racial language bonuses
+    const racialBonus = getRacialLanguageBonus(data.race);
+    if (racialBonus) {
+      (data.languages || []).forEach(language => {
+        if (!languageSources[language] && !getClassLanguages(data.class).includes(language)) {
+          languageSources[language] = 'racial';
+        }
+      });
+    }
+
     return {
       name: data.name.trim(),
       race: data.race,
@@ -616,6 +630,7 @@ export class CharacterCreationService {
       inventory: generalInventory,
       skills: backgroundSkills,
       skillSources: skillSources,
+      languageSources: languageSources,
       weapons: (data.selectedWeapons || []).flatMap(w => 
         Array(w.quantity).fill({ ...w.weapon, equipped: false })
       ), // All weapons start unequipped
@@ -656,4 +671,14 @@ export class CharacterCreationService {
 }
 
 // Export a singleton instance
-export const characterCreationService = CharacterCreationService.getInstance(); 
+export const characterCreationService = CharacterCreationService.getInstance();
+
+// Helper function to get racial language bonuses (copy from BackgroundTab)
+function getRacialLanguageBonus(race: string) {
+  const racialBonuses: Record<string, { count: number; description: string }> = {
+    'Human': { count: 1, description: 'One language of your choice' },
+    'Half-Elf': { count: 1, description: 'One language of your choice' },
+    // Add other races with language bonuses as needed
+  };
+  return racialBonuses[race] || null;
+} 
