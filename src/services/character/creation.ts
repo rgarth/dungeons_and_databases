@@ -84,6 +84,7 @@ export interface CharacterCreationResult {
   // Equipment
   inventory: { name: string; quantity: number }[];
   skills: string[];
+  skillSources?: { [skillName: string]: 'class' | 'background' | 'racial' | 'feat' | 'other'; };
   weapons: (Weapon | MagicalWeapon)[]; // All weapons with equipped boolean
   armor: Armor[];
   ammunition: Ammunition[];
@@ -583,6 +584,12 @@ export class CharacterCreationService {
     console.log('=== CLIENT-SIDE EQUIPMENT ===');
     console.log('General inventory (server will separate armor):', generalInventory);
     
+    // Create skillSources mapping for background skills
+    const skillSources: { [skillName: string]: 'class' | 'background' | 'racial' | 'feat' | 'other' } = {};
+    backgroundSkills.forEach(skill => {
+      skillSources[skill] = 'background';
+    });
+
     return {
       name: data.name.trim(),
       race: data.race,
@@ -608,6 +615,7 @@ export class CharacterCreationService {
       // Equipment - server will handle armor separation
       inventory: generalInventory,
       skills: backgroundSkills,
+      skillSources: skillSources,
       weapons: (data.selectedWeapons || []).flatMap(w => 
         Array(w.quantity).fill({ ...w.weapon, equipped: false })
       ), // All weapons start unequipped
