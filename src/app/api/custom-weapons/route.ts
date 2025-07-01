@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { dndDataService } from '@/lib/dnd-data-service';
 import { Session } from 'next-auth';
 
 interface CustomSession extends Session {
@@ -24,15 +25,21 @@ export async function GET() {
       where: {
         creatorId: session.user.id
       },
-      include: {
-        baseWeapon: true
-      },
       orderBy: {
         createdAt: 'desc'
       }
     });
 
-    return NextResponse.json(customWeapons);
+    // Enrich with base weapon data from TypeScript service
+    const enrichedWeapons = customWeapons.map(weapon => {
+      const baseWeapon = dndDataService.getWeaponByName(weapon.baseWeaponName);
+      return {
+        ...weapon,
+        baseWeapon: baseWeapon || null
+      };
+    });
+
+    return NextResponse.json(enrichedWeapons);
   } catch (error) {
     console.error('Error fetching custom weapons:', error);
     return NextResponse.json({ error: 'Failed to fetch custom weapons' }, { status: 500 });
@@ -46,16 +53,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { baseWeaponId, modifier, customName, description } = await request.json();
+    const { baseWeaponName, modifier, customName, description } = await request.json();
 
-    if (!baseWeaponId) {
-      return NextResponse.json({ error: 'Base weapon ID is required' }, { status: 400 });
+    if (!baseWeaponName) {
+      return NextResponse.json({ error: 'Base weapon name is required' }, { status: 400 });
     }
 
-    // Get the base weapon to use its properties
-    const baseWeapon = await prisma.weapon.findUnique({
-      where: { id: baseWeaponId }
-    });
+    // Get the base weapon from TypeScript data service
+    const baseWeapon = dndDataService.getWeaponByName(baseWeaponName);
 
     if (!baseWeapon) {
       return NextResponse.json({ error: 'Base weapon not found' }, { status: 404 });
@@ -68,18 +73,19 @@ export async function POST(request: Request) {
     const customWeapon = await prisma.customWeapon.create({
       data: {
         name: weaponName,
-        baseWeaponId,
+        baseWeaponName,
         modifier,
         customName: customName?.trim() || null,
         description: description?.trim() || null,
         creatorId: session.user.id
-      },
-      include: {
-        baseWeapon: true
       }
     });
 
-    return NextResponse.json(customWeapon);
+    // Return with base weapon data
+    return NextResponse.json({
+      ...customWeapon,
+      baseWeapon
+    });
   } catch (error) {
     console.error('Error creating custom weapon:', error);
     return NextResponse.json({ error: 'Failed to create custom weapon' }, { status: 500 });
