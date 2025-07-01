@@ -90,12 +90,7 @@ export const traitsData = [
     type: "passive"
   },
 
-  // Human Traits
-  {
-    name: "Extra Language",
-    description: "You can speak, read, and write one extra language of your choice.",
-    type: "passive"
-  },
+
 
   // Dragonborn Traits
   {
@@ -141,12 +136,7 @@ export const traitsData = [
     type: "active"
   },
 
-  // Half-Elf Traits
-  {
-    name: "Fey Ancestry",
-    description: "You have advantage on saving throws against being charmed, and magic can't put you to sleep.",
-    type: "passive"
-  },
+
   {
     name: "Skill Versatility",
     description: "You gain proficiency in two skills of your choice.",
