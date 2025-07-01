@@ -727,6 +727,238 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           )}
         </div>
 
+        {/* Racial Choices Section */}
+        <div className="bg-slate-700 rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-purple-400" />
+            Racial Choices
+          </h3>
+          
+          {/* Human Extra Skill */}
+          {character.race === 'Human' && (
+            <div className="mb-4 p-3 bg-slate-600 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-white font-medium">Extra Skill</h4>
+                <span className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Human Trait</span>
+              </div>
+              <p className="text-slate-300 text-sm mb-3">
+                You gain proficiency in one skill of your choice.
+              </p>
+              <div className="flex gap-2">
+                <select
+                  value=""
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      // TODO: Add skill selection logic
+                      console.log('Selected skill:', e.target.value);
+                      e.target.value = "";
+                    }
+                  }}
+                  className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                >
+                  <option value="">Choose a skill...</option>
+                  <option value="Acrobatics">Acrobatics</option>
+                  <option value="Animal Handling">Animal Handling</option>
+                  <option value="Arcana">Arcana</option>
+                  <option value="Athletics">Athletics</option>
+                  <option value="Deception">Deception</option>
+                  <option value="History">History</option>
+                  <option value="Insight">Insight</option>
+                  <option value="Intimidation">Intimidation</option>
+                  <option value="Investigation">Investigation</option>
+                  <option value="Medicine">Medicine</option>
+                  <option value="Nature">Nature</option>
+                  <option value="Perception">Perception</option>
+                  <option value="Performance">Performance</option>
+                  <option value="Persuasion">Persuasion</option>
+                  <option value="Religion">Religion</option>
+                  <option value="Sleight of Hand">Sleight of Hand</option>
+                  <option value="Stealth">Stealth</option>
+                  <option value="Survival">Survival</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {/* Human Extra Language */}
+          {character.race === 'Human' && (
+            <div className="mb-4 p-3 bg-slate-600 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-white font-medium">Extra Language</h4>
+                <span className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Human Trait</span>
+              </div>
+              <p className="text-slate-300 text-sm mb-3">
+                You can speak, read, and write one extra language of your choice.
+              </p>
+              <div className="flex gap-2">
+                <select
+                  value=""
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      const currentLanguages = character.languages || [];
+                      const racialLanguages = getRacialLanguages(character.race);
+                      const classLanguages = getClassLanguages(character.class);
+                      const allKnown = [...racialLanguages, ...classLanguages, ...currentLanguages];
+                      
+                      if (!allKnown.includes(e.target.value)) {
+                        const newLanguages = [...currentLanguages, e.target.value];
+                        onUpdate({ languages: newLanguages });
+                      }
+                      e.target.value = "";
+                    }
+                  }}
+                  className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                  disabled={isLoadingLanguages}
+                >
+                  <option value="">{isLoadingLanguages ? "Loading languages..." : "Choose a language..."}</option>
+                  {languages
+                    .filter(lang => {
+                      const racialLanguages = getRacialLanguages(character.race);
+                      const classLanguages = getClassLanguages(character.class);
+                      const learnedLanguages = character.languages || [];
+                      const allKnown = [...racialLanguages, ...classLanguages, ...learnedLanguages];
+                      return !allKnown.includes(lang.name);
+                    })
+                    .sort((a, b) => {
+                      if (a.category !== b.category) {
+                        const order = ['Standard', 'Exotic', 'Secret'];
+                        return order.indexOf(a.category) - order.indexOf(b.category);
+                      }
+                      return a.name.localeCompare(b.name);
+                    })
+                    .map(lang => (
+                      <option key={lang.name} value={lang.name}>
+                        {lang.name} ({lang.category})
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </div>
+          )}
+
+          {/* Half-Elf Two Skills */}
+          {character.race === 'Half-Elf' && (
+            <div className="mb-4 p-3 bg-slate-600 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-white font-medium">Two Skills</h4>
+                <span className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Half-Elf Trait</span>
+              </div>
+              <p className="text-slate-300 text-sm mb-3">
+                You gain proficiency in two skills of your choice.
+              </p>
+              <div className="space-y-2">
+                <select
+                  value=""
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      // TODO: Add skill selection logic
+                      console.log('Selected skill 1:', e.target.value);
+                      e.target.value = "";
+                    }
+                  }}
+                  className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                >
+                  <option value="">Choose first skill...</option>
+                  <option value="Acrobatics">Acrobatics</option>
+                  <option value="Animal Handling">Animal Handling</option>
+                  <option value="Arcana">Arcana</option>
+                  <option value="Athletics">Athletics</option>
+                  <option value="Deception">Deception</option>
+                  <option value="History">History</option>
+                  <option value="Insight">Insight</option>
+                  <option value="Intimidation">Intimidation</option>
+                  <option value="Investigation">Investigation</option>
+                  <option value="Medicine">Medicine</option>
+                  <option value="Nature">Nature</option>
+                  <option value="Perception">Perception</option>
+                  <option value="Performance">Performance</option>
+                  <option value="Persuasion">Persuasion</option>
+                  <option value="Religion">Religion</option>
+                  <option value="Sleight of Hand">Sleight of Hand</option>
+                  <option value="Stealth">Stealth</option>
+                  <option value="Survival">Survival</option>
+                </select>
+                <select
+                  value=""
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      // TODO: Add skill selection logic
+                      console.log('Selected skill 2:', e.target.value);
+                      e.target.value = "";
+                    }
+                  }}
+                  className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                >
+                  <option value="">Choose second skill...</option>
+                  <option value="Acrobatics">Acrobatics</option>
+                  <option value="Animal Handling">Animal Handling</option>
+                  <option value="Arcana">Arcana</option>
+                  <option value="Athletics">Athletics</option>
+                  <option value="Deception">Deception</option>
+                  <option value="History">History</option>
+                  <option value="Insight">Insight</option>
+                  <option value="Intimidation">Intimidation</option>
+                  <option value="Investigation">Investigation</option>
+                  <option value="Medicine">Medicine</option>
+                  <option value="Nature">Nature</option>
+                  <option value="Perception">Perception</option>
+                  <option value="Performance">Performance</option>
+                  <option value="Persuasion">Persuasion</option>
+                  <option value="Religion">Religion</option>
+                  <option value="Sleight of Hand">Sleight of Hand</option>
+                  <option value="Stealth">Stealth</option>
+                  <option value="Survival">Survival</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {/* Dragonborn Draconic Ancestry */}
+          {character.race === 'Dragonborn' && (
+            <div className="mb-4 p-3 bg-slate-600 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-white font-medium">Draconic Ancestry</h4>
+                <span className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Dragonborn Trait</span>
+              </div>
+              <p className="text-slate-300 text-sm mb-3">
+                Choose one type of dragon from the Draconic Ancestry table.
+              </p>
+              <div className="flex gap-2">
+                <select
+                  value=""
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      // TODO: Add draconic ancestry selection logic
+                      console.log('Selected draconic ancestry:', e.target.value);
+                      e.target.value = "";
+                    }
+                  }}
+                  className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                >
+                  <option value="">Choose draconic ancestry...</option>
+                  <option value="Black">Black</option>
+                  <option value="Blue">Blue</option>
+                  <option value="Brass">Brass</option>
+                  <option value="Bronze">Bronze</option>
+                  <option value="Copper">Copper</option>
+                  <option value="Gold">Gold</option>
+                  <option value="Green">Green</option>
+                  <option value="Red">Red</option>
+                  <option value="Silver">Silver</option>
+                  <option value="White">White</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {/* No racial choices available */}
+          {!['Human', 'Half-Elf', 'Dragonborn'].includes(character.race) && (
+            <div className="text-slate-400 text-sm italic">
+              No racial choices available for {character.race}.
+            </div>
+          )}
+        </div>
+
         {/* Background Summary with Edit Button */}
         <div className="bg-slate-700 rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">

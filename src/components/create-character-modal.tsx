@@ -11,8 +11,14 @@ import { WeaponSuggestion } from "@/lib/dnd/weapon-suggestions";
 import { ArmorSuggestion } from "@/lib/dnd/armor-suggestions";
 import { WeaponSelector } from "@/components/shared/WeaponSelector";
 import { ArmorSelector } from "@/components/shared/ArmorSelector";
-import { SubraceSelector } from "@/components/shared/SubraceSelector";
+import { RaceTraitsCollapsible } from "@/components/shared/RaceTraitsCollapsible";
+import { SubraceTraitsCollapsible } from "@/components/shared/SubraceTraitsCollapsible";
 import { Character } from "@/types/character";
+
+
+
+
+
 
 import { 
   type StatMethod,
@@ -63,123 +69,7 @@ interface Subclass {
   description?: string;
 }
 
-// Add this new component after the existing imports and before the CreateCharacterModal component
-interface CombinedTraitsDisplayProps {
-  race: string;
-  subrace?: string | null;
-  disabled?: boolean;
-}
 
-interface RaceData {
-  name: string;
-  description: string;
-  abilityScoreIncrease: string;
-  size: string;
-  speed: number;
-  languages: string[];
-  traits: string[];
-  subraces: { name: string }[];
-}
-
-interface Trait {
-  name: string;
-  description: string;
-  type: string;
-}
-
-
-
-function CombinedTraitsDisplay({ race, subrace, disabled = false }: CombinedTraitsDisplayProps) {
-  const [raceTraits, setRaceTraits] = useState<Trait[]>([]);
-  const [raceData, setRaceData] = useState<RaceData | null>(null);
-  const [loadingTraits, setLoadingTraits] = useState(false);
-
-  useEffect(() => {
-    if (!race || disabled) {
-      setRaceTraits([]);
-      setRaceData(null);
-      return;
-    }
-
-    const loadTraits = async () => {
-      setLoadingTraits(true);
-      try {
-        // Load race data
-        const raceResponse = await fetch(`/api/races/${encodeURIComponent(race)}`);
-        if (raceResponse.ok) {
-          const raceInfo = await raceResponse.json();
-          setRaceData(raceInfo);
-        }
-
-        // Load combined traits with deduplication
-        const combinedTraitsResponse = await fetch(`/api/traits?combined=true&race=${encodeURIComponent(race)}${subrace ? `&subrace=${encodeURIComponent(subrace)}` : ''}`);
-        if (combinedTraitsResponse.ok) {
-          const traits = await combinedTraitsResponse.json();
-          setRaceTraits(traits);
-        }
-              } catch (error) {
-          console.error('Error loading traits:', error);
-          setRaceTraits([]);
-          setRaceData(null);
-        } finally {
-          setLoadingTraits(false);
-        }
-    };
-
-    loadTraits();
-  }, [race, subrace, disabled]);
-
-  if (!race || disabled || !raceData) {
-    return null;
-  }
-
-  // Use raceTraits directly since it now contains the combined, deduplicated traits
-  const hasTraits = raceTraits.length > 0;
-
-  if (!hasTraits) {
-    return null;
-  }
-
-  return (
-    <div className="mb-4 p-3 bg-slate-700 rounded-lg border border-slate-600">
-      <h4 className="font-medium text-sm text-white mb-2">
-        {subrace ? `${subrace} Racial Traits` : `${raceData.name} Racial Traits`}
-      </h4>
-      <p className="text-sm text-slate-300 mb-2">
-        {raceData.description}
-      </p>
-      <div className="text-xs text-slate-400">
-        <div><strong>Ability Score Increase:</strong> {raceData.abilityScoreIncrease}</div>
-        <div><strong>Size:</strong> {raceData.size}</div>
-        <div><strong>Speed:</strong> {raceData.speed} feet</div>
-        {raceData.languages && raceData.languages.length > 0 && (
-          <div><strong>Languages:</strong> {raceData.languages.join(', ')}</div>
-        )}
-        <div><strong>Traits:</strong> {
-          loadingTraits 
-            ? 'Loading...' 
-            : raceTraits.length > 0 
-              ? raceTraits.map(trait => trait.name).join(', ')
-              : 'None'
-        }</div>
-      </div>
-      
-      {/* Show trait details if available */}
-      {raceTraits.length > 0 && (
-        <div className="mt-2 pt-2 border-t border-slate-600">
-          <div className="text-xs text-slate-400 mb-1"><strong>Trait Details:</strong></div>
-          {raceTraits.map((trait, index) => (
-            <div key={`${trait.name}-${trait.type}-${index}`} className="text-xs text-slate-300 mb-1">
-              <span className="font-medium">{trait.name}</span>
-              <span className="text-slate-500 ml-1">({trait.type})</span>
-              <div className="text-slate-400 ml-2">{trait.description}</div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateCharacterModalProps) {
   // Add missing state variables
@@ -239,6 +129,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const [statMethod, setStatMethod] = useState<StatMethod>('rolling-assign');
   const [abilityScores, setAbilityScores] = useState({} as Record<AbilityScore, number>);
   const [randomScoreArray, setRandomScoreArray] = useState<number[]>([]);
+  const [racialAbilityIncreases, setRacialAbilityIncreases] = useState<Record<string, number>>({});
+  const [subraces, setSubraces] = useState<{ name: string }[]>([]);
+
   
   // Equipment and spells
   const [selectedSpells, setSelectedSpells] = useState<Spell[]>([]);
@@ -321,6 +214,25 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   const handleRaceChange = (newRace: string) => {
     setRace(newRace);
     setSubrace(null); // Clear subrace when race changes
+    setRacialAbilityIncreases({}); // Clear racial ability increases when race changes
+    
+    // Load subraces for the new race
+    const loadSubraces = async () => {
+      try {
+        const response = await fetch(`/api/subraces?race=${encodeURIComponent(newRace)}`);
+        if (response.ok) {
+          const data = await response.json();
+          setSubraces(data);
+        } else {
+          setSubraces([]);
+        }
+      } catch (error) {
+        console.error('Error loading subraces:', error);
+        setSubraces([]);
+      }
+    };
+    
+    loadSubraces();
   };
 
   // Handler to clear subclass when class changes
@@ -328,6 +240,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     setCharacterClass(newClass);
     setSubclass(""); // Clear subclass when class changes
     setSelectedSpells([]); // Clear selected spells when class changes
+
     
     // Auto-select all 1st-level spells for prepared spellcasters
     setTimeout(() => {
@@ -959,6 +872,16 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       // Get equipment items from the selected pack
       const selectedPackItems = creationOptions?.equipmentPacks?.[selectedEquipmentPack]?.items || [];
       
+      // Apply racial ability score increases
+      const finalAbilityScores = {
+        strength: abilityScores.strength + (racialAbilityIncreases.strength || 0),
+        dexterity: abilityScores.dexterity + (racialAbilityIncreases.dexterity || 0),
+        constitution: abilityScores.constitution + (racialAbilityIncreases.constitution || 0),
+        intelligence: abilityScores.intelligence + (racialAbilityIncreases.intelligence || 0),
+        wisdom: abilityScores.wisdom + (racialAbilityIncreases.wisdom || 0),
+        charisma: abilityScores.charisma + (racialAbilityIncreases.charisma || 0),
+      };
+
       // Create character
       const characterData = {
         name,
@@ -970,15 +893,16 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         alignment,
         gender,
         age,
-        // Flatten ability scores to individual properties
-        strength: abilityScores.strength,
-        dexterity: abilityScores.dexterity,
-        constitution: abilityScores.constitution,
-        intelligence: abilityScores.intelligence,
-        wisdom: abilityScores.wisdom,
-        charisma: abilityScores.charisma,
+        // Flatten ability scores to individual properties with racial increases applied
+        strength: finalAbilityScores.strength,
+        dexterity: finalAbilityScores.dexterity,
+        constitution: finalAbilityScores.constitution,
+        intelligence: finalAbilityScores.intelligence,
+        wisdom: finalAbilityScores.wisdom,
+        charisma: finalAbilityScores.charisma,
         // Background characteristics
         backgroundCharacteristics,
+
         spellsKnown: selectedSpells,
         spellsPrepared: selectedSpells, // For level 1, known = prepared
         spellSlots: creationOptions?.spellcasting?.spellSlots || {},
@@ -1316,40 +1240,24 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 </div>
               </div>
 
-              {/* Race selector */}
-              <div className="mb-4">
-                <div>
-                  <label htmlFor="race-select" className="block text-sm font-medium text-slate-300 mb-2">Race</label>
-                  <select
-                    id="race-select"
-                    value={race}
-                    onChange={(e) => handleRaceChange(e.target.value)}
-                    className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
-                    style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
-                  >
-                    {races?.map((r) => (
-                      <option key={r.name} value={r.name}>{r.name}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+              {/* Race selector with collapsible traits */}
+              <RaceTraitsCollapsible
+                race={race}
+                disabled={!races}
+                onRaceChange={handleRaceChange}
+                races={races}
+              />
 
-              {/* Subrace selector - only show if race has subraces */}
-              <div className="mb-4">
-                <SubraceSelector
-                  race={race}
-                  selectedSubrace={subrace}
-                  onSubraceChange={setSubrace}
-                  disabled={!race}
-                />
-              </div>
-
-              {/* Combined race and subrace traits display */}
-              <CombinedTraitsDisplay
+              {/* Subrace selector with collapsible traits */}
+              <SubraceTraitsCollapsible
                 race={race}
                 subrace={subrace}
                 disabled={!race}
+                onSubraceChange={setSubrace}
+                subraces={subraces}
               />
+
+              {/* Racial ability score increases are handled in the background tab */}
 
               {/* Class selector */}
               <div className="mb-4">
@@ -1369,6 +1277,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   </select>
                 </div>
               </div>
+
+
 
               {/* Subclass selector - only show if needed at creation */}
               {(() => {
