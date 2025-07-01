@@ -3,7 +3,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { Session } from 'next-auth';
-import { UserPreference } from '@prisma/client';
 
 interface CustomSession extends Session {
   user: {
@@ -14,7 +13,7 @@ interface CustomSession extends Session {
   }
 }
 
-// Get all preferences for the current user
+// Get user preferences (currently just dieColor)
 export async function GET() {
   try {
     const session = await getServerSession(authOptions) as CustomSession | null;
@@ -22,29 +21,23 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const preferences = await prisma.userPreference.findMany({
+    const preference = await prisma.userPreference.findUnique({
       where: {
         userId: session.user.id
-      },
-      orderBy: {
-        key: 'asc'
       }
     });
 
-    // Convert to key-value object for easier consumption
-    const preferencesObject = preferences.reduce((acc: Record<string, string>, pref) => {
-      acc[pref.key] = pref.value;
-      return acc;
-    }, {} as Record<string, string>);
-
-    return NextResponse.json(preferencesObject);
+    // Return the preference or default values
+    return NextResponse.json({
+      dieColor: preference?.dieColor || '#dc2626' // Default red color
+    });
   } catch (error) {
     console.error('Error fetching user preferences:', error);
     return NextResponse.json({ error: 'Failed to fetch preferences' }, { status: 500 });
   }
 }
 
-// Set a specific preference
+// Update die color preference
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions) as CustomSession | null;
@@ -52,40 +45,42 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { key, value } = await request.json();
+    const { dieColor } = await request.json();
 
-    if (!key || value === undefined) {
-      return NextResponse.json({ error: 'Key and value are required' }, { status: 400 });
+    if (!dieColor) {
+      return NextResponse.json({ error: 'dieColor is required' }, { status: 400 });
+    }
+
+    // Validate hex color format
+    const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+    if (!hexColorRegex.test(dieColor)) {
+      return NextResponse.json({ error: 'Invalid color format. Use hex color (e.g., #ff0000)' }, { status: 400 });
     }
 
     // Use upsert to create or update the preference
     const preference = await prisma.userPreference.upsert({
       where: {
-        userId_key: {
-          userId: session.user.id,
-          key: key
-        }
+        userId: session.user.id
       },
       update: {
-        value: value.toString(),
+        dieColor: dieColor,
         updatedAt: new Date()
       },
       create: {
         id: crypto.randomUUID(),
         userId: session.user.id,
-        key: key,
-        value: value.toString()
+        dieColor: dieColor
       }
     });
 
-    return NextResponse.json({ [key]: preference.value });
+    return NextResponse.json({ dieColor: preference.dieColor });
   } catch (error) {
     console.error('Error setting user preference:', error);
     return NextResponse.json({ error: 'Failed to set preference' }, { status: 500 });
   }
 }
 
-// Update multiple preferences at once
+// Update multiple preferences (currently just dieColor)
 export async function PUT(request: Request) {
   try {
     const session = await getServerSession(authOptions) as CustomSession | null;
@@ -93,40 +88,34 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const preferences = await request.json();
+    const { dieColor } = await request.json();
 
-    if (!preferences || typeof preferences !== 'object') {
-      return NextResponse.json({ error: 'Preferences object is required' }, { status: 400 });
-    }
-
-    const results: Record<string, string> = {};
-
-    // Update each preference
-    for (const [key, value] of Object.entries(preferences)) {
-      if (value !== undefined) {
-        const preference = await prisma.userPreference.upsert({
-          where: {
-            userId_key: {
-              userId: session.user.id,
-              key: key
-            }
-          },
-          update: {
-            value: value.toString(),
-            updatedAt: new Date()
-          },
-          create: {
-            id: crypto.randomUUID(),
-            userId: session.user.id,
-            key: key,
-            value: value.toString()
-          }
-        });
-        results[key] = preference.value;
+    if (dieColor !== undefined) {
+      // Validate hex color format
+      const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+      if (!hexColorRegex.test(dieColor)) {
+        return NextResponse.json({ error: 'Invalid color format. Use hex color (e.g., #ff0000)' }, { status: 400 });
       }
+
+      const preference = await prisma.userPreference.upsert({
+        where: {
+          userId: session.user.id
+        },
+        update: {
+          dieColor: dieColor,
+          updatedAt: new Date()
+        },
+        create: {
+          id: crypto.randomUUID(),
+          userId: session.user.id,
+          dieColor: dieColor
+        }
+      });
+
+      return NextResponse.json({ dieColor: preference.dieColor });
     }
 
-    return NextResponse.json(results);
+    return NextResponse.json({ error: 'No valid preferences provided' }, { status: 400 });
   } catch (error) {
     console.error('Error updating user preferences:', error);
     return NextResponse.json({ error: 'Failed to update preferences' }, { status: 500 });

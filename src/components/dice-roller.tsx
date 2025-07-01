@@ -199,222 +199,170 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
   // Dice color state
   const [diceColor, setDiceColor] = useState('#9333ea'); // Purple-600 to match app theme
 
-  // Load the required scripts
+  // Load user's die color preference on component mount
+  useEffect(() => {
+    const loadUserPreference = async () => {
+      try {
+        const response = await fetch('/api/user-preferences');
+        if (response.ok) {
+          const preferences = await response.json();
+          if (preferences.dieColor) {
+            setDiceColor(preferences.dieColor);
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to load user preference:', error);
+        // Continue with default color if preference loading fails
+      }
+    };
+
+    loadUserPreference();
+  }, []);
+
+  // Save user's die color preference when it changes
+  const saveUserPreference = async (color: string) => {
+    try {
+      await fetch('/api/user-preferences', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ dieColor: color }),
+      });
+    } catch (error) {
+      console.warn('Failed to save user preference:', error);
+      // Continue even if saving fails
+    }
+  };
+
+  // Load 3D dice scripts
   useEffect(() => {
     const loadScriptAndWait = (src: string, globalCheck: () => boolean): Promise<void> => {
       return new Promise((resolve, reject) => {
-        // Check if already loaded and available
+        // Check if already loaded
         if (globalCheck()) {
-          console.log(`${src} already available`);
           resolve();
           return;
         }
 
-        // Check if script tag already exists
+        // Check if script is already being loaded
         const existingScript = document.querySelector(`script[src="${src}"]`);
         if (existingScript) {
-          // Script exists but global not available yet, wait for it
+          // Wait for existing script to load
           const checkInterval = setInterval(() => {
             if (globalCheck()) {
               clearInterval(checkInterval);
-              console.log(`${src} became available`);
               resolve();
             }
           }, 100);
-          
-          // Timeout after 10 seconds
-          setTimeout(() => {
-            clearInterval(checkInterval);
-            reject(new Error(`Timeout waiting for ${src} to become available`));
-          }, 10000);
           return;
         }
 
         const script = document.createElement('script');
         script.src = src;
+        script.async = true;
+        
         script.onload = () => {
-          console.log(`Script loaded: ${src}`);
-          // Wait for the global to be available
+          // Wait a bit for the global object to be available
           const checkInterval = setInterval(() => {
             if (globalCheck()) {
               clearInterval(checkInterval);
-              console.log(`${src} global available`);
               resolve();
             }
-          }, 10);
+          }, 100);
           
           // Timeout after 5 seconds
           setTimeout(() => {
             clearInterval(checkInterval);
-            reject(new Error(`${src} loaded but global not available`));
+            reject(new Error(`Timeout waiting for ${src} to initialize`));
           }, 5000);
         };
+        
         script.onerror = () => {
-          console.error(`Failed to load script: ${src}`);
-          reject(new Error(`Failed to load script: ${src}`));
+          reject(new Error(`Failed to load ${src}`));
         };
+        
         document.head.appendChild(script);
       });
     };
 
     const loadScripts = async () => {
       try {
-        console.log('Starting to load dice scripts...');
-        
-        // Load THREE.js and wait for window.THREE
-        await loadScriptAndWait('/three.min.js', () => !!window.THREE);
-        console.log('THREE.js loaded and available:', !!window.THREE);
-        
-        // Load Cannon.js and wait for window.CANNON
-        await loadScriptAndWait('/cannon.min.js', () => !!window.CANNON);
-        console.log('Cannon.js loaded and available:', !!window.CANNON);
-        
-        // Load dice.js and wait for window.DICE
-        await loadScriptAndWait('/dice.js', () => !!window.DICE);
-        console.log('Dice.js loaded and available:', !!window.DICE);
+        // Load scripts in parallel
+        await Promise.all([
+          loadScriptAndWait('/three.min.js', () => typeof window !== 'undefined' && !!window.THREE),
+          loadScriptAndWait('/cannon.min.js', () => typeof window !== 'undefined' && !!window.CANNON),
+          loadScriptAndWait('/dice.js', () => typeof window !== 'undefined' && !!window.DICE)
+        ]);
         
         setScriptsLoaded(true);
-        console.log('All dice scripts loaded successfully');
       } catch (error) {
         console.error('Failed to load dice scripts:', error);
-        setInitializationError(`Failed to load scripts: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        setInitializationError(error instanceof Error ? error.message : 'Unknown error');
       }
     };
 
     loadScripts();
   }, []);
 
-  // Initialize dice box when scripts are loaded
+  // Initialize 3D dice box
   useEffect(() => {
-    if (scriptsLoaded && diceContainerRef.current && !diceBoxRef.current) {
-      const container = diceContainerRef.current;
-      
-      if (window.DICE && typeof window.DICE.dice_box === 'function') {
-        try {
-          // Give the container explicit dimensions like the original working version
-          container.style.width = '100%';
-          container.style.height = '100%';
-          container.style.minHeight = '400px';
-          container.style.position = 'relative';
-          
-          console.log('Container dimensions:', {
-            width: container.offsetWidth,
-            height: container.offsetHeight,
-            clientWidth: container.clientWidth,
-            clientHeight: container.clientHeight
-          });
-          
-          // Initialize dice box
-          diceBoxRef.current = new window.DICE.dice_box(container);
-          
-          // Set initial dice color
-          if (window.DICE.vars) {
-            window.DICE.vars.dice_color = diceColor;
-            window.DICE.vars.label_color = '#ffffff';
-          }
-          
-          setInitializationError(null);
-          console.log('Dice box initialized successfully');
-        } catch (error) {
-          console.error('Failed to initialize dice box:', error);
-          setInitializationError(`Initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-        }
-      }
-    }
-  }, [scriptsLoaded, diceColor]);
+    if (!scriptsLoaded || !diceContainerRef.current) return;
 
-  // Handle window resize to reinitialize dice box
-  useEffect(() => {
     const handleResize = () => {
       if (diceBoxRef.current && diceContainerRef.current) {
-        console.log('Screen size changed, reinitializing dice box...');
-        
-        // Clear the existing dice box
-        diceBoxRef.current = null;
-        
-        // Clear the container
-        if (diceContainerRef.current) {
-          diceContainerRef.current.innerHTML = '';
-        }
-        
-        // Force re-initialization on next render
-        setTimeout(() => {
-          if (scriptsLoaded && diceContainerRef.current) {
-            const container = diceContainerRef.current;
-            
-            if (window.DICE && typeof window.DICE.dice_box === 'function') {
-              try {
-                // Re-set container dimensions
-                container.style.width = '100%';
-                container.style.height = '100%';
-                container.style.minHeight = '400px';
-                container.style.position = 'relative';
-                
-                console.log('Reinitializing with new dimensions:', {
-                  width: container.offsetWidth,
-                  height: container.offsetHeight,
-                  clientWidth: container.clientWidth,
-                  clientHeight: container.clientHeight
-                });
-                
-                // Re-initialize dice box
-                diceBoxRef.current = new window.DICE.dice_box(container);
-                
-                // Re-set dice color
-                if (window.DICE.vars) {
-                  window.DICE.vars.dice_color = diceColor;
-                  window.DICE.vars.label_color = '#ffffff';
-                }
-                
-                setInitializationError(null);
-                console.log('Dice box reinitialized successfully after resize');
-              } catch (error) {
-                console.error('Failed to reinitialize dice box after resize:', error);
-                setInitializationError(`Reinitialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-              }
-            }
+        // Reinitialize dice box on resize
+        try {
+          diceBoxRef.current = new window.DICE.dice_box(diceContainerRef.current);
+          
+          // Set initial dice color
+          if (window.DICE && window.DICE.vars) {
+            window.DICE.vars.dice_color = diceColor;
+            const isDark = isColorDark(diceColor);
+            window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
           }
-        }, 100);
+        } catch (error) {
+          console.error('Failed to initialize dice box:', error);
+          setInitializationError('Failed to initialize 3D dice');
+        }
       }
     };
 
-    // Add resize listener
+    // Initialize dice box
+    try {
+      diceBoxRef.current = new window.DICE.dice_box(diceContainerRef.current);
+      
+      // Set initial dice color
+      if (window.DICE && window.DICE.vars) {
+        window.DICE.vars.dice_color = diceColor;
+        const isDark = isColorDark(diceColor);
+        window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
+      }
+    } catch (error) {
+      console.error('Failed to initialize dice box:', error);
+      setInitializationError('Failed to initialize 3D dice');
+    }
+
+    // Handle window resize
     window.addEventListener('resize', handleResize);
-    
-    // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
     };
   }, [scriptsLoaded, diceColor]);
 
   const addDice = (diceType: keyof typeof diceCounts) => {
-    setDiceCounts(prev => {
-      const currentTotal = Object.values(prev).reduce((sum, count) => sum + count, 0);
-      
-      // Check total limit (10 dice max)
-      if (currentTotal >= 10) {
-        return prev; // Don't allow adding more dice
-      }
-      
-      return {
-        ...prev,
-        [diceType]: prev[diceType] + 1
-      };
-    });
+    if (getTotalDice() >= 10) return;
+    setDiceCounts(prev => ({
+      ...prev,
+      [diceType]: Math.min(prev[diceType] + 1, 6)
+    }));
   };
 
   const removeDice = (diceType: keyof typeof diceCounts) => {
-    setDiceCounts(prev => {
-      const currentCount = prev[diceType];
-      if (currentCount <= 0) {
-        // Prevent removing dice that don't exist
-        return prev;
-      }
-      return {
-        ...prev,
-        [diceType]: currentCount - 1
-      };
-    });
+    setDiceCounts(prev => ({
+      ...prev,
+      [diceType]: Math.max(prev[diceType] - 1, 0)
+    }));
   };
 
   const getTotalDice = () => {
@@ -423,41 +371,29 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
 
   const buildDiceNotation = () => {
     const parts: string[] = [];
-    
-    Object.entries(diceCounts).forEach(([die, count]) => {
-      if (count > 0) {
-        parts.push(`${count}${die}`);
+    diceTypes.forEach(dice => {
+      if (diceCounts[dice.key] > 0) {
+        parts.push(`${diceCounts[dice.key]}${dice.key}`);
       }
     });
-    
-    if (parts.length === 0) return '';
-    
-    return parts.join('+');
+    return parts.join(' + ');
   };
 
   const rollDice = () => {
     if (!diceBoxRef.current || isRolling || getTotalDice() === 0) return;
-    
+
     const notation = buildDiceNotation();
     if (!notation) return;
-    
+
     setIsRolling(true);
-    
+    setLastResult(null);
+
     try {
-      // Set the dice notation
       diceBoxRef.current.setDice(notation);
-      
-      // Start the roll
       diceBoxRef.current.start_throw(
-        // Before roll callback
-        (notation: DiceResult) => {
-          console.log('Rolling dice:', notation);
-          return null; // Return null to use default values
-        },
-        // After roll callback
-        (notation: DiceResult) => {
-          console.log('Roll completed:', notation);
-          setLastResult(notation);
+        undefined, // beforeRoll
+        (result: DiceResult) => {
+          setLastResult(result);
           setIsRolling(false);
         }
       );
@@ -481,6 +417,9 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
 
   const updateDiceColor = (color: string) => {
     setDiceColor(color);
+    
+    // Save the color preference to the database
+    saveUserPreference(color);
     
     // Update the global dice.js color variables if they exist
     if (typeof window !== 'undefined' && window.DICE && window.DICE.vars) {
