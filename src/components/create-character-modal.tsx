@@ -64,8 +64,9 @@ interface Subclass {
 }
 
 // Add this new component after the existing imports and before the CreateCharacterModal component
-interface RaceTraitsDisplayProps {
+interface CombinedTraitsDisplayProps {
   race: string;
+  subrace?: string | null;
   disabled?: boolean;
 }
 
@@ -86,19 +87,23 @@ interface Trait {
   type: string;
 }
 
-function RaceTraitsDisplay({ race, disabled = false }: RaceTraitsDisplayProps) {
+
+
+function CombinedTraitsDisplay({ race, subrace, disabled = false }: CombinedTraitsDisplayProps) {
   const [raceTraits, setRaceTraits] = useState<Trait[]>([]);
-  const [loadingTraits, setLoadingTraits] = useState(false);
+  const [subraceTraits, setSubraceTraits] = useState<Trait[]>([]);
   const [raceData, setRaceData] = useState<RaceData | null>(null);
+  const [loadingTraits, setLoadingTraits] = useState(false);
 
   useEffect(() => {
     if (!race || disabled) {
       setRaceTraits([]);
+      setSubraceTraits([]);
       setRaceData(null);
       return;
     }
 
-    const loadRaceData = async () => {
+    const loadTraits = async () => {
       setLoadingTraits(true);
       try {
         // Load race data
@@ -109,39 +114,51 @@ function RaceTraitsDisplay({ race, disabled = false }: RaceTraitsDisplayProps) {
         }
 
         // Load race traits
-        const traitsResponse = await fetch(`/api/traits?race=${encodeURIComponent(race)}`);
-        if (traitsResponse.ok) {
-          const traits = await traitsResponse.json();
+        const raceTraitsResponse = await fetch(`/api/traits?race=${encodeURIComponent(race)}`);
+        if (raceTraitsResponse.ok) {
+          const traits = await raceTraitsResponse.json();
           setRaceTraits(traits);
         }
+
+        // Load subrace traits if subrace is selected
+        if (subrace) {
+          const subraceTraitsResponse = await fetch(`/api/traits?subrace=${encodeURIComponent(subrace)}`);
+          if (subraceTraitsResponse.ok) {
+            const traits = await subraceTraitsResponse.json();
+            setSubraceTraits(traits);
+          }
+        } else {
+          setSubraceTraits([]);
+        }
       } catch (error) {
-        console.error('Error loading race data:', error);
+        console.error('Error loading traits:', error);
         setRaceTraits([]);
+        setSubraceTraits([]);
         setRaceData(null);
       } finally {
         setLoadingTraits(false);
       }
     };
 
-    loadRaceData();
-  }, [race, disabled]);
+    loadTraits();
+  }, [race, subrace, disabled]);
 
   if (!race || disabled || !raceData) {
     return null;
   }
 
-  // Only show if race has traits and no meaningful subraces
-  const hasTraits = raceData.traits && raceData.traits.length > 0;
-  const hasSubraces = raceData.subraces && raceData.subraces.length > 1;
-  
-  if (!hasTraits || hasSubraces) {
+  // Combine all traits
+  const allTraits = [...raceTraits, ...subraceTraits];
+  const hasTraits = allTraits.length > 0;
+
+  if (!hasTraits) {
     return null;
   }
 
   return (
     <div className="mb-4 p-3 bg-slate-700 rounded-lg border border-slate-600">
       <h4 className="font-medium text-sm text-white mb-2">
-        {raceData.name} Racial Traits
+        {subrace ? `${subrace} Racial Traits` : `${raceData.name} Racial Traits`}
       </h4>
       <p className="text-sm text-slate-300 mb-2">
         {raceData.description}
@@ -156,17 +173,17 @@ function RaceTraitsDisplay({ race, disabled = false }: RaceTraitsDisplayProps) {
         <div><strong>Traits:</strong> {
           loadingTraits 
             ? 'Loading...' 
-            : raceTraits.length > 0 
-              ? raceTraits.map(trait => trait.name).join(', ')
+            : allTraits.length > 0 
+              ? allTraits.map(trait => trait.name).join(', ')
               : 'None'
         }</div>
       </div>
       
       {/* Show trait details if available */}
-      {raceTraits.length > 0 && (
+      {allTraits.length > 0 && (
         <div className="mt-2 pt-2 border-t border-slate-600">
           <div className="text-xs text-slate-400 mb-1"><strong>Trait Details:</strong></div>
-          {raceTraits.map((trait, index) => (
+          {allTraits.map((trait, index) => (
             <div key={`${trait.name}-${trait.type}-${index}`} className="text-xs text-slate-300 mb-1">
               <span className="font-medium">{trait.name}</span>
               <span className="text-slate-500 ml-1">({trait.type})</span>
@@ -1342,9 +1359,10 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 />
               </div>
 
-              {/* Race traits display - show when no subrace selector */}
-              <RaceTraitsDisplay
+              {/* Combined race and subrace traits display */}
+              <CombinedTraitsDisplay
                 race={race}
+                subrace={subrace}
                 disabled={!race}
               />
 
