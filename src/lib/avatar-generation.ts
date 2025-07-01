@@ -87,103 +87,107 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
   // Build appearance description
   let appearanceDescription = '';
   let cameraAngle = '';
+  const ageDesc = age ? `${age}-year-old` : 'adult';
   
+  // Always generate race-specific features first
+  let raceDescription = '';
+  switch (race) {
+    case 'Gnome':
+      raceDescription = 'small fey humanoid, 3-4 feet tall, pointed ears, intelligent eyes, prominent nose, earth-toned skin, mature features';
+      break;
+    case 'Halfling':
+      raceDescription = 'small humanoid with curly hair and hobbit features';
+      break;
+    case 'Dwarf':
+      raceDescription = 'stout humanoid with broad features and thick hair';
+      break;
+    case 'Elf':
+      // Check if this is a Drow subrace
+      if (subrace === 'Drow') {
+        raceDescription = 'dark elf with black skin, white hair, red eyes, pointed ears, graceful features, underdark heritage, drow appearance';
+        // Skip skin tone and ethnicity diversity for drow - they have specific appearance
+        appearanceDescription = `, A ${ageDesc} ${raceDescription} with age-appropriate features`;
+        
+        // Add body type diversity for drow
+        const bodyType = getRandomItem(BODY_TYPES);
+        appearanceDescription += `, ${bodyType}`;
+        
+        // Add custom appearance if provided
+        if (appearance && appearance.trim()) {
+          appearanceDescription += `, ${appearance.trim()}`;
+        }
+        
+        // Create the full prompt for drow
+        const clothing = CLASS_CLOTHING[characterClass as keyof typeof CLASS_CLOTHING] || 'appropriate clothing';
+        const fullBodyPrompt = `A professional full-body photograph of a ${gender || 'Person'} ${characterClass}${appearanceDescription} in ${clothing}, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping${cameraAngle || ''}`;
+        
+        return fullBodyPrompt;
+      } else {
+        raceDescription = 'tall humanoid with pointed ears and graceful features';
+      }
+      break;
+    case 'Human':
+      raceDescription = 'human';
+      break;
+    case 'Half-Orc':
+      raceDescription = 'half-orc with prominent tusks, greenish-gray skin, broad features, muscular build, orc heritage, intimidating appearance, strong jawline, orcish features';
+      break;
+    case 'Tiefling':
+      // Check if this is a specific Tiefling subrace
+      if (subrace && TIEFLING_INFERNAL_FEATURES[subrace]) {
+        raceDescription = TIEFLING_INFERNAL_FEATURES[subrace];
+      } else {
+        raceDescription = 'demon-blooded humanoid with prominent horns, red skin, glowing eyes, and a long tail';
+      }
+      break;
+    case 'Dragonborn': {
+      // Inject scale color for Dragonborn subraces
+      let scaleColor = '';
+      if (subrace && DRAGONBORN_SCALE_COLORS[subrace]) {
+        scaleColor = DRAGONBORN_SCALE_COLORS[subrace];
+      }
+      raceDescription = `reptilian beings, anthropomorphic dragon with scaled skin${scaleColor ? ', ' + scaleColor : ''}, dragon snout, no ears, reptilian features, NOT human, clearly reptilian appearance`;
+      break;
+    }
+    case 'Aasimar': {
+      // Inject celestial features for Aasimar subraces
+      let celestialFeatures = '';
+      if (subrace && AASIMAR_CELESTIAL_FEATURES[subrace]) {
+        celestialFeatures = AASIMAR_CELESTIAL_FEATURES[subrace];
+      } else {
+        celestialFeatures = 'celestial humanoid with glowing features, angelic appearance, divine radiance, golden halo, celestial wings, otherworldly beauty';
+      }
+      raceDescription = celestialFeatures;
+      break;
+    }
+    case 'Goliath':
+      raceDescription = 'giant humanoid with massive frame, stone gray skin with purple markings, bald head, imposing stature, 7-8 feet tall';
+      cameraAngle = ', camera positioned low looking up at the character, dramatic low angle shot to emphasize towering height and imposing presence';
+      break;
+    default:
+      raceDescription = race.toLowerCase();
+  }
+  
+  // Build the base appearance description with race features
+  appearanceDescription = `, A ${ageDesc} ${raceDescription} with age-appropriate features`;
+  
+  // Add skin tone diversity for races that need it (but NOT for drow)
+  if (SKIN_TONE_RACES.includes(race) && subrace !== 'Drow') {
+    const skinTone = getRandomItem(SKIN_TONES);
+    const ethnicity = getRandomItem(ETHNICITIES);
+    appearanceDescription += `, ${ethnicity} with ${skinTone}`;
+  }
+  
+  // Add body type diversity for all races (with special handling for Half-orc)
+  let bodyType = getRandomItem(BODY_TYPES);
+  if (race === 'Half-Orc') {
+    bodyType = 'muscular build, strong physique, imposing stature';
+  }
+  appearanceDescription += `, ${bodyType}`;
+  
+  // Add custom appearance if provided (in addition to race features)
   if (appearance && appearance.trim()) {
-    // Use user-provided appearance
-    appearanceDescription = `, ${appearance.trim()}`;
-  } else {
-    // Generate anti-bias appearance automatically
-    const ageDesc = age ? `${age}-year-old` : 'adult';
-    
-    // Use descriptive terms instead of race names to avoid AI biases
-    let raceDescription = '';
-    switch (race) {
-      case 'Gnome':
-        raceDescription = 'small fey humanoid, 3-4 feet tall, pointed ears, intelligent eyes, prominent nose, earth-toned skin, mature features';
-        break;
-      case 'Halfling':
-        raceDescription = 'small humanoid with curly hair and hobbit features';
-        break;
-      case 'Dwarf':
-        raceDescription = 'stout humanoid with broad features and thick hair';
-        break;
-      case 'Elf':
-        // Check if this is a Drow subrace
-        if (subrace === 'Drow') {
-          raceDescription = 'dark elf with black skin, white hair, red eyes, pointed ears, graceful features, underdark heritage, drow appearance';
-          // Skip skin tone and ethnicity diversity for drow - they have specific appearance
-          appearanceDescription = `, A ${ageDesc} ${raceDescription} with age-appropriate features`;
-          
-          // Add body type diversity for drow
-          const bodyType = getRandomItem(BODY_TYPES);
-          appearanceDescription += `, ${bodyType}`;
-          
-          // Create the full prompt for drow
-          const clothing = CLASS_CLOTHING[characterClass as keyof typeof CLASS_CLOTHING] || 'appropriate clothing';
-          const fullBodyPrompt = `A professional full-body photograph of a ${gender || 'Person'} ${characterClass}${appearanceDescription} in ${clothing}, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping${cameraAngle || ''}`;
-          
-          return fullBodyPrompt;
-        } else {
-          raceDescription = 'tall humanoid with pointed ears and graceful features';
-        }
-        break;
-      case 'Human':
-        raceDescription = 'human';
-        break;
-      case 'Half-Orc':
-        raceDescription = 'half-orc with prominent tusks, greenish-gray skin, broad features, muscular build, orc heritage, intimidating appearance, strong jawline, orcish features';
-        break;
-      case 'Tiefling':
-        // Check if this is a specific Tiefling subrace
-        if (subrace && TIEFLING_INFERNAL_FEATURES[subrace]) {
-          raceDescription = TIEFLING_INFERNAL_FEATURES[subrace];
-        } else {
-          raceDescription = 'demon-blooded humanoid with prominent horns, red skin, glowing eyes, and a long tail';
-        }
-        break;
-      case 'Dragonborn': {
-        // Inject scale color for Dragonborn subraces
-        let scaleColor = '';
-        if (subrace && DRAGONBORN_SCALE_COLORS[subrace]) {
-          scaleColor = DRAGONBORN_SCALE_COLORS[subrace];
-        }
-        raceDescription = `reptilian beings, anthropomorphic dragon with scaled skin${scaleColor ? ', ' + scaleColor : ''}, dragon snout, no ears, reptilian features, NOT human, clearly reptilian appearance`;
-        break;
-      }
-      case 'Aasimar': {
-        // Inject celestial features for Aasimar subraces
-        let celestialFeatures = '';
-        if (subrace && AASIMAR_CELESTIAL_FEATURES[subrace]) {
-          celestialFeatures = AASIMAR_CELESTIAL_FEATURES[subrace];
-        } else {
-          celestialFeatures = 'celestial humanoid with glowing features, angelic appearance, divine radiance, golden halo, celestial wings, otherworldly beauty';
-        }
-        raceDescription = celestialFeatures;
-        break;
-      }
-      case 'Goliath':
-        raceDescription = 'giant humanoid with massive frame, stone gray skin with purple markings, bald head, imposing stature, 7-8 feet tall';
-        cameraAngle = ', camera positioned low looking up at the character, dramatic low angle shot to emphasize towering height and imposing presence';
-        break;
-      default:
-        raceDescription = race.toLowerCase();
-    }
-    
-    appearanceDescription = `, A ${ageDesc} ${raceDescription} with age-appropriate features`;
-    
-    // Add skin tone diversity for races that need it (but NOT for drow)
-    if (SKIN_TONE_RACES.includes(race) && subrace !== 'Drow') {
-      const skinTone = getRandomItem(SKIN_TONES);
-      const ethnicity = getRandomItem(ETHNICITIES);
-      appearanceDescription += `, ${ethnicity} with ${skinTone}`;
-    }
-    
-    // Add body type diversity for all races (with special handling for Half-orc)
-    let bodyType = getRandomItem(BODY_TYPES);
-    if (race === 'Half-Orc') {
-      bodyType = 'muscular build, strong physique, imposing stature';
-    }
-    appearanceDescription += `, ${bodyType}`;
+    appearanceDescription += `, ${appearance.trim()}`;
   }
   
   // Create the full prompt - use descriptive terms instead of race names
