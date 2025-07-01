@@ -168,7 +168,7 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
       cameraAngle = ', camera positioned low looking up at the character, dramatic low angle shot to emphasize towering height and imposing presence';
       break;
     case 'Tabaxi':
-      raceDescription = 'feline humanoid with cat-like features, fur-covered body, pointed ears, whiskers, cat eyes, agile build, tabaxi appearance, cat-humanoid hybrid';
+      raceDescription = 'anthropomorphised cat, feline humanoid with cat-like features, fur-covered body, pointed ears, whiskers, cat eyes, agile build, tabaxi appearance, cat-humanoid hybrid, NOT human with cat makeup, clearly feline features';
       break;
     default:
       raceDescription = race.toLowerCase();
