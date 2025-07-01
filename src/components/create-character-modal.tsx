@@ -63,6 +63,122 @@ interface Subclass {
   description?: string;
 }
 
+// Add this new component after the existing imports and before the CreateCharacterModal component
+interface RaceTraitsDisplayProps {
+  race: string;
+  disabled?: boolean;
+}
+
+interface RaceData {
+  name: string;
+  description: string;
+  abilityScoreIncrease: string;
+  size: string;
+  speed: number;
+  languages: string[];
+  traits: string[];
+  subraces: { name: string }[];
+}
+
+interface Trait {
+  name: string;
+  description: string;
+  type: string;
+}
+
+function RaceTraitsDisplay({ race, disabled = false }: RaceTraitsDisplayProps) {
+  const [raceTraits, setRaceTraits] = useState<Trait[]>([]);
+  const [loadingTraits, setLoadingTraits] = useState(false);
+  const [raceData, setRaceData] = useState<RaceData | null>(null);
+
+  useEffect(() => {
+    if (!race || disabled) {
+      setRaceTraits([]);
+      setRaceData(null);
+      return;
+    }
+
+    const loadRaceData = async () => {
+      setLoadingTraits(true);
+      try {
+        // Load race data
+        const raceResponse = await fetch(`/api/races/${encodeURIComponent(race)}`);
+        if (raceResponse.ok) {
+          const raceInfo = await raceResponse.json();
+          setRaceData(raceInfo);
+        }
+
+        // Load race traits
+        const traitsResponse = await fetch(`/api/traits?race=${encodeURIComponent(race)}`);
+        if (traitsResponse.ok) {
+          const traits = await traitsResponse.json();
+          setRaceTraits(traits);
+        }
+      } catch (error) {
+        console.error('Error loading race data:', error);
+        setRaceTraits([]);
+        setRaceData(null);
+      } finally {
+        setLoadingTraits(false);
+      }
+    };
+
+    loadRaceData();
+  }, [race, disabled]);
+
+  if (!race || disabled || !raceData) {
+    return null;
+  }
+
+  // Only show if race has traits and no meaningful subraces
+  const hasTraits = raceData.traits && raceData.traits.length > 0;
+  const hasSubraces = raceData.subraces && raceData.subraces.length > 1;
+  
+  if (!hasTraits || hasSubraces) {
+    return null;
+  }
+
+  return (
+    <div className="mb-4 p-3 bg-slate-700 rounded-lg border border-slate-600">
+      <h4 className="font-medium text-sm text-white mb-2">
+        {raceData.name} Racial Traits
+      </h4>
+      <p className="text-sm text-slate-300 mb-2">
+        {raceData.description}
+      </p>
+      <div className="text-xs text-slate-400">
+        <div><strong>Ability Score Increase:</strong> {raceData.abilityScoreIncrease}</div>
+        <div><strong>Size:</strong> {raceData.size}</div>
+        <div><strong>Speed:</strong> {raceData.speed} feet</div>
+        {raceData.languages && raceData.languages.length > 0 && (
+          <div><strong>Languages:</strong> {raceData.languages.join(', ')}</div>
+        )}
+        <div><strong>Traits:</strong> {
+          loadingTraits 
+            ? 'Loading...' 
+            : raceTraits.length > 0 
+              ? raceTraits.map(trait => trait.name).join(', ')
+              : 'None'
+        }</div>
+      </div>
+      
+      {/* Show trait details if available */}
+      {raceTraits.length > 0 && (
+        <div className="mt-2 pt-2 border-t border-slate-600">
+          <div className="text-xs text-slate-400 mb-1"><strong>Trait Details:</strong></div>
+          {raceTraits.map((trait, index) => (
+            <div key={`${trait.name}-${trait.type}-${index}`} className="text-xs text-slate-300 mb-1">
+              <span className="font-medium">{trait.name}</span>
+              <span className="text-slate-500 ml-1">({trait.type})</span>
+              <div className="text-slate-400 ml-2">{trait.description}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateCharacterModalProps) {
   // Add missing state variables
   const [showWeaponSelector, setShowWeaponSelector] = useState(false);
@@ -1225,6 +1341,12 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   disabled={!race}
                 />
               </div>
+
+              {/* Race traits display - show when no subrace selector */}
+              <RaceTraitsDisplay
+                race={race}
+                disabled={!race}
+              />
 
               {/* Class selector */}
               <div className="mb-4">
