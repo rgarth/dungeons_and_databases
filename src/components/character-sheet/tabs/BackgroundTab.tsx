@@ -831,28 +831,48 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               <p className="text-slate-300 text-sm mb-3">
                 You gain proficiency in one skill of your choice.
               </p>
-              <div className="flex gap-2">
-                <select
-                  value=""
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      const currentSkills = character.skills || [];
-                      if (!currentSkills.includes(e.target.value)) {
-                        const newSkills = [...currentSkills, e.target.value];
+              <div className="space-y-2">
+                {/* Show currently selected human skill */}
+                {(character.skills || []).length > 0 && (
+                  <div className="flex items-center gap-2 p-2 bg-slate-700 rounded border border-slate-500">
+                    <span className="text-green-400 text-sm">✓</span>
+                    <span className="text-white text-sm">{(character.skills || [])[0]}</span>
+                    <button
+                      onClick={() => {
+                        const newSkills = (character.skills || []).slice(1); // Remove first skill
                         onUpdate({ skills: newSkills });
+                      }}
+                      className="ml-auto text-red-400 hover:text-red-300 text-xs"
+                    >
+                      Change
+                    </button>
+                  </div>
+                )}
+                
+                {/* Skill selector (only show if no skill selected) */}
+                {(character.skills || []).length === 0 && (
+                  <select
+                    value=""
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        const currentSkills = character.skills || [];
+                        if (!currentSkills.includes(e.target.value)) {
+                          const newSkills = [...currentSkills, e.target.value];
+                          onUpdate({ skills: newSkills });
+                        }
+                        e.target.value = "";
                       }
-                      e.target.value = "";
-                    }
-                  }}
-                  className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-                >
-                  <option value="">Choose a skill...</option>
-                  {Object.keys(SKILLS).filter(skill => !(character.skills || []).includes(skill)).map(skill => (
-                    <option key={skill} value={skill}>
-                      {skill}
-                    </option>
-                  ))}
-                </select>
+                    }}
+                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                  >
+                    <option value="">Choose a skill...</option>
+                    {Object.keys(SKILLS).map(skill => (
+                      <option key={skill} value={skill}>
+                        {skill}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
             </div>
           )}
@@ -924,48 +944,51 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 You gain proficiency in two skills of your choice.
               </p>
               <div className="space-y-2">
-                <select
-                  value=""
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      const currentSkills = character.skills || [];
-                      if (!currentSkills.includes(e.target.value)) {
-                        const newSkills = [...currentSkills, e.target.value];
-                        onUpdate({ skills: newSkills });
+                {/* Show currently selected Half-Elf skills */}
+                {(character.skills || []).length > 0 && (
+                  <div className="space-y-2">
+                    {(character.skills || []).slice(0, 2).map((skill, index) => (
+                      <div key={index} className="flex items-center gap-2 p-2 bg-slate-700 rounded border border-slate-500">
+                        <span className="text-green-400 text-sm">✓</span>
+                        <span className="text-white text-sm">{skill}</span>
+                        <button
+                          onClick={() => {
+                            const newSkills = (character.skills || []).filter((_, i) => i !== index);
+                            onUpdate({ skills: newSkills });
+                          }}
+                          className="ml-auto text-red-400 hover:text-red-300 text-xs"
+                        >
+                          Change
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {/* Skill selectors (only show if less than 2 skills selected) */}
+                {(character.skills || []).length < 2 && (
+                  <select
+                    value=""
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        const currentSkills = character.skills || [];
+                        if (!currentSkills.includes(e.target.value)) {
+                          const newSkills = [...currentSkills, e.target.value];
+                          onUpdate({ skills: newSkills });
+                        }
+                        e.target.value = "";
                       }
-                      e.target.value = "";
-                    }
-                  }}
-                  className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-                >
-                  <option value="">Choose first skill...</option>
-                  {Object.keys(SKILLS).filter(skill => !(character.skills || []).includes(skill)).map(skill => (
-                    <option key={skill} value={skill}>
-                      {skill}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  value=""
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      const currentSkills = character.skills || [];
-                      if (!currentSkills.includes(e.target.value)) {
-                        const newSkills = [...currentSkills, e.target.value];
-                        onUpdate({ skills: newSkills });
-                      }
-                      e.target.value = "";
-                    }
-                  }}
-                  className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-                >
-                  <option value="">Choose second skill...</option>
-                  {Object.keys(SKILLS).filter(skill => !(character.skills || []).includes(skill)).map(skill => (
-                    <option key={skill} value={skill}>
-                      {skill}
-                    </option>
-                  ))}
-                </select>
+                    }}
+                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                  >
+                    <option value="">Choose {(character.skills || []).length === 0 ? 'first' : 'second'} skill...</option>
+                    {Object.keys(SKILLS).filter(skill => !(character.skills || []).includes(skill)).map(skill => (
+                      <option key={skill} value={skill}>
+                        {skill}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
             </div>
           )}
