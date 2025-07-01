@@ -302,12 +302,12 @@ export function WeaponSelector({
           {/* Right panel - Weapon List */}
           <div className="flex-1 p-4 overflow-y-auto">
             <div className="space-y-2">
-              {filteredWeapons.map((weapon) => {
+              {filteredWeapons.map((weapon, index) => {
                 const selected = currentSelectedWeapons.find(sw => sw.weapon.name === weapon.name);
                 const quantity = selected?.quantity || 0;
                 
                 return (
-                  <div key={weapon.name + '-' + weapon.type + '-' + weapon.category} className="flex items-center justify-between p-3 bg-slate-700 rounded-lg">
+                  <div key={`${weapon.name}-${weapon.type}-${weapon.category}-${index}`} className="flex items-center justify-between p-3 bg-slate-700 rounded-lg">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2">
                         <h4 className="font-medium text-white">{weapon.name}</h4>
