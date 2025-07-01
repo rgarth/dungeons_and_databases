@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { createCharacterValidationService } from "@/services/api/character-validation";
 import { getRacialLanguages } from "@/lib/dnd/languages";
 import { getClassLanguages } from "@/lib/dnd/languages";
+import { DndDataService } from "@/lib/dnd-data-service";
 
 export async function GET() {
   try {
@@ -265,6 +266,20 @@ export async function POST(request: NextRequest) {
     // They need to be selected by the user in the character sheet
     // The background language requirements will be shown in the UI
 
+    // Get race data to calculate speed
+    const dndDataService = DndDataService.getInstance();
+    const raceData = dndDataService.getRaceByName(race);
+    
+    if (!raceData) {
+      return NextResponse.json({ error: `Race '${race}' not found` }, { status: 400 });
+    }
+    
+    if (raceData.speed === undefined || raceData.speed === null) {
+      return NextResponse.json({ error: `Race '${race}' is missing speed data` }, { status: 500 });
+    }
+    
+    const speed = raceData.speed;
+
     const character = await prisma.character.create({
       data: {
         name,
@@ -299,6 +314,7 @@ export async function POST(request: NextRequest) {
         hitPoints: hitPoints ?? 10,
         maxHitPoints: maxHitPoints ?? 10,
         armorClass: armorClass ?? 10,
+        speed: speed,
         inventory: processedInventory, // Use processed inventory without weapons or armor
         equipment: processedInventory, // Also set equipment field to match inventory
         skills: skills || [],
