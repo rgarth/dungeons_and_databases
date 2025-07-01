@@ -87,6 +87,7 @@ export async function POST(request: NextRequest) {
       armorClass,
       inventory,
       skills,
+      skillSources,
       weapons,
       inventoryWeapons,
       armor,
@@ -318,6 +319,7 @@ export async function POST(request: NextRequest) {
         inventory: processedInventory, // Use processed inventory without weapons or armor
         equipment: processedInventory, // Also set equipment field to match inventory
         skills: skills || [],
+        skillSources: skillSources || {},
         weapons: weaponsWithEquipped,
         inventoryWeapons: weaponsWithEquipped,
         ammunition: ammunition || [],
@@ -632,6 +634,11 @@ export async function PATCH(request: NextRequest) {
     // Handle skills updates
     if (body.skills !== undefined) {
       updateData.skills = body.skills;
+    }
+
+    // Handle skillSources updates
+    if (body.skillSources !== undefined) {
+      updateData.skillSources = body.skillSources;
     }
 
     // Handle languages updates
