@@ -229,8 +229,8 @@ export function SubraceSelector({
           {selectedSubraceTraits.length > 0 && (
             <div className="mt-2 pt-2 border-t border-slate-600">
               <div className="text-xs text-slate-400 mb-1"><strong>Trait Details:</strong></div>
-              {selectedSubraceTraits.map((trait) => (
-                <div key={trait.name} className="text-xs text-slate-300 mb-1">
+              {selectedSubraceTraits.map((trait, index) => (
+                <div key={`${trait.name}-${trait.type}-${index}`} className="text-xs text-slate-300 mb-1">
                   <span className="font-medium">{trait.name}</span>
                   <span className="text-slate-500 ml-1">({trait.type})</span>
                   <div className="text-slate-400 ml-2">{trait.description}</div>
