@@ -130,6 +130,9 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
       case 'Human':
         raceDescription = 'human';
         break;
+      case 'Half-Orc':
+        raceDescription = 'half-orc with prominent tusks, greenish-gray skin, broad features, muscular build, orc heritage, intimidating appearance, strong jawline, orcish features';
+        break;
       case 'Tiefling':
         // Check if this is a specific Tiefling subrace
         if (subrace && TIEFLING_INFERNAL_FEATURES[subrace]) {
@@ -175,8 +178,11 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
       appearanceDescription += `, ${ethnicity} with ${skinTone}`;
     }
     
-    // Add body type diversity for all races
-    const bodyType = getRandomItem(BODY_TYPES);
+    // Add body type diversity for all races (with special handling for Half-orc)
+    let bodyType = getRandomItem(BODY_TYPES);
+    if (race === 'Half-Orc') {
+      bodyType = 'muscular build, strong physique, imposing stature';
+    }
     appearanceDescription += `, ${bodyType}`;
   }
   
