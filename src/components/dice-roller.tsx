@@ -179,6 +179,8 @@ function DicePreview({ diceType, diceColor }: {
 }
 
 export default function DiceRoller({ className = "" }: DiceRollerProps) {
+  console.log('🎲 DiceRoller component rendered');
+  
   const diceContainerRef = useRef<HTMLDivElement>(null);
   const diceBoxRef = useRef<DiceBox | null>(null);
   const [lastResult, setLastResult] = useState<DiceResult | null>(null);
@@ -237,6 +239,8 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
 
   // Load 3D dice scripts
   useEffect(() => {
+    console.log('🎲 useEffect triggered - about to load scripts');
+    
     const loadScriptAndWait = (src: string, globalCheck: () => boolean): Promise<void> => {
       return new Promise((resolve, reject) => {
         // Check if already loaded
@@ -278,7 +282,8 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
           }, 5000);
         };
         
-        script.onerror = () => {
+        script.onerror = (error) => {
+          console.error(`🎲 Script loading error for ${src}:`, error);
           reject(new Error(`Failed to load ${src}`));
         };
         
