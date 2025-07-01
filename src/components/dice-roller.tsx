@@ -294,12 +294,15 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
     const loadScripts = async () => {
       try {
         console.log('🎲 Starting to load dice scripts...');
-        // Load scripts in parallel
-        await Promise.all([
-          loadScriptAndWait('/three.min.js', () => typeof window !== 'undefined' && !!window.THREE),
-          loadScriptAndWait('/cannon.min.js', () => typeof window !== 'undefined' && !!window.CANNON),
-          loadScriptAndWait('/dice.js', () => typeof window !== 'undefined' && !!window.DICE)
-        ]);
+        // Load scripts sequentially to ensure dependencies are met
+        console.log('🎲 Loading THREE.js...');
+        await loadScriptAndWait('/three.min.js', () => typeof window !== 'undefined' && !!window.THREE);
+        
+        console.log('🎲 Loading CANNON.js...');
+        await loadScriptAndWait('/cannon.min.js', () => typeof window !== 'undefined' && !!window.CANNON);
+        
+        console.log('🎲 Loading DICE.js...');
+        await loadScriptAndWait('/dice.js', () => typeof window !== 'undefined' && !!window.DICE);
         
         console.log('🎲 All dice scripts loaded successfully');
         console.log('🎲 THREE.js available:', typeof window !== 'undefined' && !!window.THREE);
