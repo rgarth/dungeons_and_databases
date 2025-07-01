@@ -45,412 +45,75 @@ model User {
   characters    Character[]
   customWeapons CustomWeapon[]
   sessions      Session[]
+  preferences   UserPreference[]
 }
 
-model Spell {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  level       Int
-  school      String
-  castingTime String
-  range       String
-  components  String
-  duration    String
-  description String
-  classes     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Weapon {
-  id                String                @id @default(cuid())
-  name              String                @unique
-  type              String
-  category          String
-  damage            String
-  damageType        String
-  properties        String
-  weight            Float
-  cost              String
-  stackable         Boolean               @default(false)
-  description       String?
-  ammunitionTypeId  String?               @map("ammunition_type_id")
-  suggestedQuantity Int?                  @map("suggested_quantity")
-  createdAt         DateTime              @default(now())
-  updatedAt         DateTime              @updatedAt
-  customWeapons     CustomWeapon[]
-  ammunitionType    AmmunitionSuggestion? @relation(fields: [ammunitionTypeId], references: [id])
+model Character {
+  id                String   @id @default(cuid())
+  name              String
+  race              String
+  subrace           String?
+  dndClass          String
+  level             Int      @default(1)
+  background        String
+  alignment         String
+  experience        Int      @default(0)
+  strength          Int
+  dexterity         Int
+  constitution      Int
+  intelligence      Int
+  wisdom            Int
+  charisma          Int
+  hitPoints         Int
+  maxHitPoints      Int
+  armorClass        Int
+  initiative        Int
+  speed             Int
+  personalityTraits Json?
+  ideals            Json?
+  bonds             Json?
+  flaws             Json?
+  appearance        String?
+  inventory         Json?
+  weapons           Json?
+  armor             Json?
+  spells            Json?
+  features          Json?
+  proficiencies     Json?
+  languages         Json?
+  equipment         Json?
+  gold              Float    @default(0)
+  copper            Int      @default(0)
+  silver            Int      @default(0)
+  electrum          Int      @default(0)
+  platinum          Int      @default(0)
+  avatarUrl         String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model CustomWeapon {
   id           String   @id @default(cuid())
   name         String
-  baseWeaponId String
+  baseWeaponName String
   modifier     Int      @default(0)
   customName   String?
   description  String?
   creatorId    String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  baseWeapon   Weapon   @relation(fields: [baseWeaponId], references: [id])
   creator      User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
   @@unique([creatorId, name])
 }
 
-model Armor {
-  id                  String   @id @default(cuid())
-  name                String   @unique
-  type                String
-  baseAC              Int
-  maxDexBonus         Int?
-  minStrength         Int?
-  stealthDisadvantage Boolean  @default(false)
-  weight              Float
-  cost                String
-  description         String
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-}
-
-model Equipment {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  type        String
-  cost        String
-  weight      Float?
-  description String?
-  stackable   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model MagicalItem {
-  id                 String   @id @default(cuid())
-  name               String   @unique
-  type               String
-  rarity             String
-  requiresAttunement Boolean  @default(false)
-  description        String
-  weight             Float?
-  cost               String?
-  effects            Json?
-  stackable          Boolean  @default(false)
-  consumable         Boolean  @default(false)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-}
-
-model DndClass {
-  id                  String                   @id @default(cuid())
-  name                String                   @unique
-  description         String
-  hitDie              Int
-  primaryAbility      String
-  savingThrows        Json
-  skillChoices        Json
-  startingGoldFormula String?
-  createdAt           DateTime                 @default(now())
-  updatedAt           DateTime                 @updatedAt
-  armorProficiencies  ClassArmorProficiency[]
-  armorSuggestions    ClassArmorSuggestion[]
-  spellLimits         ClassSpellLimits[]
-  spellSuggestions    ClassSpellSuggestion[]
-  weaponProficiencies ClassWeaponProficiency[]
-  weaponSuggestions   ClassWeaponSuggestion[]
-
-  @@map("DndClass")
-}
-
-model ClassArmorProficiency {
+model UserPreference {
   id        String   @id @default(cuid())
-  classId   String
-  armorType String
+  userId    String   @unique
+  dieColor  String   @default("#dc2626")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  class     DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
-
-  @@unique([classId, armorType])
-}
-
-model ClassWeaponProficiency {
-  id              String   @id @default(cuid())
-  classId         String
-  proficiencyType String
-  weaponName      String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  class           DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
-
-  @@index([classId, proficiencyType, weaponName])
-}
-
-model ClassWeaponSuggestion {
-  id         String   @id @default(cuid())
-  classId    String
-  weaponName String
-  quantity   Int      @default(1)
-  reason     String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  class      DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
-
-  @@index([classId])
-}
-
-model ClassArmorSuggestion {
-  id        String   @id @default(cuid())
-  classId   String
-  armorName String
-  reason    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  class     DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
-
-  @@unique([classId, armorName])
-}
-
-model ClassSpellSuggestion {
-  id        String   @id @default(cuid())
-  classId   String
-  spellName String
-  level     Int
-  reason    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  class     DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
-
-  @@index([classId])
-  @@map("ClassSpellSuggestion")
-}
-
-model DndRace {
-  id                   String    @id @default(cuid())
-  name                 String    @unique
-  description          String
-  abilityScoreIncrease Json
-  size                 String
-  speed                Int
-  languages            Json
-  age                  String?
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
-  subraces             Subrace[]
-}
-
-model Subrace {
-  id                   String         @id @default(cuid())
-  name                 String         @unique
-  raceId               String
-  description          String
-  abilityScoreIncrease Json
-  languages            Json?
-  createdAt            DateTime       @default(now())
-  updatedAt            DateTime       @updatedAt
-  race                 DndRace        @relation(fields: [raceId], references: [id], onDelete: Cascade)
-  subraceTraits        SubraceTrait[]
-
-  @@index([raceId])
-  @@map("Subrace")
-}
-
-model Background {
-  id                       String   @id @default(cuid())
-  name                     String   @unique
-  description              String
-  phbDescription           String?
-  skillProficiencies       Json
-  languages                Json
-  equipment                Json
-  startingGold             Int      @default(0)
-  feature                  String
-  featureDescription       String
-  suggestedCharacteristics Json?
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
-}
-
-model Alignment {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  shortName   String
-  description String
-  ethicalAxis String
-  moralAxis   String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Treasure {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  type        String
-  description String
-  value       Int
-  weight      Float?
-  appearance  String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model EquipmentPack {
-  id          String              @id @default(cuid())
-  name        String              @unique
-  description String
-  cost        String
-  weight      Float               @default(0)
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
-  items       EquipmentPackItem[]
-}
-
-model EquipmentPackItem {
-  id            String        @id @default(cuid())
-  packId        String
-  itemName      String
-  quantity      Int           @default(1)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  equipmentPack EquipmentPack @relation(fields: [packId], references: [id], onDelete: Cascade)
-
-  @@unique([packId, itemName])
-}
-
-model Character {
-  id                    String   @id @default(cuid())
-  name                  String
-  race                  String
-  subrace               String?
-  class                 String
-  subclass              String?
-  level                 Int      @default(1)
-  classes               Json?
-  totalLevel            Int?
-  selectedFeatures      Json?
-  background            String?
-  alignment             String?
-  gender                String?
-  age                   Int?
-  strength              Int      @default(10)
-  dexterity             Int      @default(10)
-  constitution          Int      @default(10)
-  intelligence          Int      @default(10)
-  wisdom                Int      @default(10)
-  charisma              Int      @default(10)
-  hitPoints             Int      @default(10)
-  maxHitPoints          Int      @default(10)
-  temporaryHitPoints    Int      @default(0)
-  armorClass            Int      @default(10)
-  speed                 Int      @default(30)
-  deathSaveSuccesses    Int      @default(0)
-  deathSaveFailures     Int      @default(0)
-  proficiencyBonus      Int      @default(2)
-  skills                Json?
-  inventory             Json?
-  equipment             Json?
-  weapons               Json?
-  equippedWeapons       Json?
-  inventoryWeapons      Json?
-  ammunition            Json?
-  armor                 Json?
-  equippedArmor         Json?
-  inventoryArmor        Json?
-  magicalItems          Json?
-  inventoryMagicalItems Json?
-  attunedItems          Json?
-  copperPieces          Int      @default(0)
-  silverPieces          Int      @default(0)
-  goldPieces            Int      @default(0)
-  treasures             Json?
-  spellsKnown           Json?
-  spellsPrepared        Json?
-  spellSlots            Json?
-  spellcastingAbility   String?
-  spellSaveDC           Int?
-  spellAttackBonus      Int?
-  actions               Json?
-  bonusActions          Json?
-  reactions             Json?
-  appearance            String?
-  personality           String?
-  personalityTraits     Json?
-  ideals                Json?
-  bonds                 Json?
-  flaws                 Json?
-  backstory             String?
-  notes                 String?
-  avatar                String?
-  fullBodyAvatar        String?
-  inspiration           Boolean  @default(false)
-  languages             Json?
-  conditions            Json?
-  racialTraits          Json?
-  userId                String
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
-model ClassSpellLimits {
-  id               String   @id @default(cuid())
-  classId          String
-  level            Int
-  cantripsKnown    Int
-  spellsKnown      Int
-  spellcastingType String
-  maxSpellLevel    Int
-  spellLevelLimits Json
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  class            DndClass @relation(fields: [classId], references: [id], onDelete: Cascade)
-
-  @@unique([classId, level])
-  @@index([classId])
-  @@index([level])
-  @@map("ClassSpellLimits")
-}
-
-model AmmunitionSuggestion {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  weapons     Weapon[]
-}
-
-model Trait {
-  id            String         @id @default(cuid())
-  name          String         @unique
-  description   String
-  type          String         @default("passive")
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  subraceTraits SubraceTrait[]
-}
-
-model SubraceTrait {
-  id        String   @id @default(cuid())
-  subraceId String
-  traitId   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  subrace   Subrace  @relation(fields: [subraceId], references: [id], onDelete: Cascade)
-  trait     Trait    @relation(fields: [traitId], references: [id], onDelete: Cascade)
-
-  @@unique([subraceId, traitId])
-  @@index([subraceId])
-  @@index([traitId])
-}
-
-model languages {
-  id          String   @id
-  name        String   @unique
-  script      String
-  category    String
-  description String?
-  created_at  DateTime @default(now())
-  updated_at  DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
