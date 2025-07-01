@@ -877,61 +877,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             </div>
           )}
 
-          {/* Human Extra Language */}
-          {character.race === 'Human' && (
-            <div className="mb-4 p-3 bg-slate-600 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="text-white font-medium">Extra Language</h4>
-                <span className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Human Trait</span>
-              </div>
-              <p className="text-slate-300 text-sm mb-3">
-                You can speak, read, and write one extra language of your choice.
-              </p>
-              <div className="flex gap-2">
-                <select
-                  value=""
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      const currentLanguages = character.languages || [];
-                      const racialLanguages = getRacialLanguages(character.race);
-                      const classLanguages = getClassLanguages(character.class);
-                      const allKnown = [...racialLanguages, ...classLanguages, ...currentLanguages];
-                      
-                      if (!allKnown.includes(e.target.value)) {
-                        const newLanguages = [...currentLanguages, e.target.value];
-                        onUpdate({ languages: newLanguages });
-                      }
-                      e.target.value = "";
-                    }
-                  }}
-                  className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
-                  disabled={isLoadingLanguages}
-                >
-                  <option value="">{isLoadingLanguages ? "Loading languages..." : "Choose a language..."}</option>
-                  {languages
-                    .filter(lang => {
-                      const racialLanguages = getRacialLanguages(character.race);
-                      const classLanguages = getClassLanguages(character.class);
-                      const learnedLanguages = character.languages || [];
-                      const allKnown = [...racialLanguages, ...classLanguages, ...learnedLanguages];
-                      return !allKnown.includes(lang.name);
-                    })
-                    .sort((a, b) => {
-                      if (a.category !== b.category) {
-                        const order = ['Standard', 'Exotic', 'Secret'];
-                        return order.indexOf(a.category) - order.indexOf(b.category);
-                      }
-                      return a.name.localeCompare(b.name);
-                    })
-                    .map(lang => (
-                      <option key={lang.name} value={lang.name}>
-                        {lang.name} ({lang.category})
-                      </option>
-                    ))}
-                </select>
-              </div>
-            </div>
-          )}
+
 
           {/* Half-Elf Two Skills */}
           {character.race === 'Half-Elf' && (
