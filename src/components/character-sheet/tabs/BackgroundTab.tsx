@@ -22,6 +22,7 @@ import { AvatarGenerator } from '../../shared/AvatarGenerator';
 import { SubraceSelector } from '../../shared/SubraceSelector';
 import type { CharacterAvatarData } from '@/types/character';
 import { getRacialLanguages, getLanguages, getLanguageStyling, type Language, getClassLanguages, getAutomaticLanguages } from "@/lib/dnd/languages";
+import { SKILLS } from "@/lib/dnd/core";
 import Image from 'next/image';
 import { RacialFeaturesService, type RacialTrait } from '@/services/character/racial-features';
 
@@ -44,6 +45,7 @@ interface BackgroundTabProps {
     avatar?: string | null;
     fullBodyAvatar?: string | null;
     languages?: string[];
+    skills?: string[];
     backgroundCharacteristics?: SelectedCharacteristics;
   };
   onUpdate: (updates: { 
@@ -57,6 +59,7 @@ interface BackgroundTabProps {
     backstory?: string; 
     notes?: string; 
     languages?: string[];
+    skills?: string[];
     avatar?: string;
     fullBodyAvatar?: string;
     background?: string;
@@ -682,8 +685,40 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               </div>
               <div>
                 <div className="text-slate-400 text-sm">Alignment</div>
-                <div className="text-white font-medium">{character.alignment || 'Unaligned'}</div>
+                <div className="text-white font-medium">{character.alignment || 'Unaligned'}                </div>
               </div>
+              
+              {/* Display selected draconic ancestry effects */}
+              {character.subrace && (
+                <div className="mt-3 p-3 bg-slate-500/30 rounded-lg">
+                  <div className="text-slate-300 text-sm space-y-1">
+                    <div className="font-medium text-white">{character.subrace}</div>
+                    {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
+                      <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Acid damage</div>
+                    ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
+                      <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Lightning damage</div>
+                    ) : character.subrace.includes('Brass') || character.subrace.includes('Gold') || character.subrace.includes('Red') ? (
+                      <div>• Breath Weapon: 15 ft. cone (Dex save) - Fire damage</div>
+                    ) : character.subrace.includes('Green') ? (
+                      <div>• Breath Weapon: 15 ft. cone (Con save) - Poison damage</div>
+                    ) : character.subrace.includes('Silver') || character.subrace.includes('White') ? (
+                      <div>• Breath Weapon: 15 ft. cone (Con save) - Cold damage</div>
+                    ) : null}
+                    
+                    {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
+                      <div>• Damage Resistance: Acid</div>
+                    ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
+                      <div>• Damage Resistance: Lightning</div>
+                    ) : character.subrace.includes('Brass') || character.subrace.includes('Gold') || character.subrace.includes('Red') ? (
+                      <div>• Damage Resistance: Fire</div>
+                    ) : character.subrace.includes('Green') ? (
+                      <div>• Damage Resistance: Poison</div>
+                    ) : character.subrace.includes('Silver') || character.subrace.includes('White') ? (
+                      <div>• Damage Resistance: Cold</div>
+                    ) : null}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -749,32 +784,22 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   value=""
                   onChange={(e) => {
                     if (e.target.value) {
-                      // TODO: Add skill selection logic
-                      console.log('Selected skill:', e.target.value);
+                      const currentSkills = character.skills || [];
+                      if (!currentSkills.includes(e.target.value)) {
+                        const newSkills = [...currentSkills, e.target.value];
+                        onUpdate({ skills: newSkills });
+                      }
                       e.target.value = "";
                     }
                   }}
                   className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
                 >
                   <option value="">Choose a skill...</option>
-                  <option value="Acrobatics">Acrobatics</option>
-                  <option value="Animal Handling">Animal Handling</option>
-                  <option value="Arcana">Arcana</option>
-                  <option value="Athletics">Athletics</option>
-                  <option value="Deception">Deception</option>
-                  <option value="History">History</option>
-                  <option value="Insight">Insight</option>
-                  <option value="Intimidation">Intimidation</option>
-                  <option value="Investigation">Investigation</option>
-                  <option value="Medicine">Medicine</option>
-                  <option value="Nature">Nature</option>
-                  <option value="Perception">Perception</option>
-                  <option value="Performance">Performance</option>
-                  <option value="Persuasion">Persuasion</option>
-                  <option value="Religion">Religion</option>
-                  <option value="Sleight of Hand">Sleight of Hand</option>
-                  <option value="Stealth">Stealth</option>
-                  <option value="Survival">Survival</option>
+                  {Object.keys(SKILLS).filter(skill => !(character.skills || []).includes(skill)).map(skill => (
+                    <option key={skill} value={skill}>
+                      {skill}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -851,63 +876,43 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   value=""
                   onChange={(e) => {
                     if (e.target.value) {
-                      // TODO: Add skill selection logic
-                      console.log('Selected skill 1:', e.target.value);
+                      const currentSkills = character.skills || [];
+                      if (!currentSkills.includes(e.target.value)) {
+                        const newSkills = [...currentSkills, e.target.value];
+                        onUpdate({ skills: newSkills });
+                      }
                       e.target.value = "";
                     }
                   }}
                   className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
                 >
                   <option value="">Choose first skill...</option>
-                  <option value="Acrobatics">Acrobatics</option>
-                  <option value="Animal Handling">Animal Handling</option>
-                  <option value="Arcana">Arcana</option>
-                  <option value="Athletics">Athletics</option>
-                  <option value="Deception">Deception</option>
-                  <option value="History">History</option>
-                  <option value="Insight">Insight</option>
-                  <option value="Intimidation">Intimidation</option>
-                  <option value="Investigation">Investigation</option>
-                  <option value="Medicine">Medicine</option>
-                  <option value="Nature">Nature</option>
-                  <option value="Perception">Perception</option>
-                  <option value="Performance">Performance</option>
-                  <option value="Persuasion">Persuasion</option>
-                  <option value="Religion">Religion</option>
-                  <option value="Sleight of Hand">Sleight of Hand</option>
-                  <option value="Stealth">Stealth</option>
-                  <option value="Survival">Survival</option>
+                  {Object.keys(SKILLS).filter(skill => !(character.skills || []).includes(skill)).map(skill => (
+                    <option key={skill} value={skill}>
+                      {skill}
+                    </option>
+                  ))}
                 </select>
                 <select
                   value=""
                   onChange={(e) => {
                     if (e.target.value) {
-                      // TODO: Add skill selection logic
-                      console.log('Selected skill 2:', e.target.value);
+                      const currentSkills = character.skills || [];
+                      if (!currentSkills.includes(e.target.value)) {
+                        const newSkills = [...currentSkills, e.target.value];
+                        onUpdate({ skills: newSkills });
+                      }
                       e.target.value = "";
                     }
                   }}
                   className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
                 >
                   <option value="">Choose second skill...</option>
-                  <option value="Acrobatics">Acrobatics</option>
-                  <option value="Animal Handling">Animal Handling</option>
-                  <option value="Arcana">Arcana</option>
-                  <option value="Athletics">Athletics</option>
-                  <option value="Deception">Deception</option>
-                  <option value="History">History</option>
-                  <option value="Insight">Insight</option>
-                  <option value="Intimidation">Intimidation</option>
-                  <option value="Investigation">Investigation</option>
-                  <option value="Medicine">Medicine</option>
-                  <option value="Nature">Nature</option>
-                  <option value="Perception">Perception</option>
-                  <option value="Performance">Performance</option>
-                  <option value="Persuasion">Persuasion</option>
-                  <option value="Religion">Religion</option>
-                  <option value="Sleight of Hand">Sleight of Hand</option>
-                  <option value="Stealth">Stealth</option>
-                  <option value="Survival">Survival</option>
+                  {Object.keys(SKILLS).filter(skill => !(character.skills || []).includes(skill)).map(skill => (
+                    <option key={skill} value={skill}>
+                      {skill}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -925,29 +930,59 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               </p>
               <div className="flex gap-2">
                 <select
-                  value=""
+                  value={character.subrace || ""}
                   onChange={(e) => {
                     if (e.target.value) {
-                      // TODO: Add draconic ancestry selection logic
-                      console.log('Selected draconic ancestry:', e.target.value);
-                      e.target.value = "";
+                      onUpdate({ subrace: e.target.value });
                     }
                   }}
                   className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
                 >
                   <option value="">Choose draconic ancestry...</option>
-                  <option value="Black">Black</option>
-                  <option value="Blue">Blue</option>
-                  <option value="Brass">Brass</option>
-                  <option value="Bronze">Bronze</option>
-                  <option value="Copper">Copper</option>
-                  <option value="Gold">Gold</option>
-                  <option value="Green">Green</option>
-                  <option value="Red">Red</option>
-                  <option value="Silver">Silver</option>
-                  <option value="White">White</option>
+                  <option value="Black Dragonborn">Black Dragonborn</option>
+                  <option value="Blue Dragonborn">Blue Dragonborn</option>
+                  <option value="Brass Dragonborn">Brass Dragonborn</option>
+                  <option value="Bronze Dragonborn">Bronze Dragonborn</option>
+                  <option value="Copper Dragonborn">Copper Dragonborn</option>
+                  <option value="Gold Dragonborn">Gold Dragonborn</option>
+                  <option value="Green Dragonborn">Green Dragonborn</option>
+                  <option value="Red Dragonborn">Red Dragonborn</option>
+                  <option value="Silver Dragonborn">Silver Dragonborn</option>
+                  <option value="White Dragonborn">White Dragonborn</option>
                 </select>
               </div>
+              
+              {/* Display selected draconic ancestry effects */}
+              {character.subrace && (
+                <div className="mt-3 p-3 bg-slate-500/30 rounded-lg">
+                  <div className="text-slate-300 text-sm space-y-1">
+                    <div className="font-medium text-white">{character.subrace}</div>
+                    {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
+                      <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Acid damage</div>
+                    ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
+                      <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Lightning damage</div>
+                    ) : character.subrace.includes('Brass') || character.subrace.includes('Gold') || character.subrace.includes('Red') ? (
+                      <div>• Breath Weapon: 15 ft. cone (Dex save) - Fire damage</div>
+                    ) : character.subrace.includes('Green') ? (
+                      <div>• Breath Weapon: 15 ft. cone (Con save) - Poison damage</div>
+                    ) : character.subrace.includes('Silver') || character.subrace.includes('White') ? (
+                      <div>• Breath Weapon: 15 ft. cone (Con save) - Cold damage</div>
+                    ) : null}
+                    
+                    {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
+                      <div>• Damage Resistance: Acid</div>
+                    ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
+                      <div>• Damage Resistance: Lightning</div>
+                    ) : character.subrace.includes('Brass') || character.subrace.includes('Gold') || character.subrace.includes('Red') ? (
+                      <div>• Damage Resistance: Fire</div>
+                    ) : character.subrace.includes('Green') ? (
+                      <div>• Damage Resistance: Poison</div>
+                    ) : character.subrace.includes('Silver') || character.subrace.includes('White') ? (
+                      <div>• Damage Resistance: Cold</div>
+                    ) : null}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -957,6 +992,56 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               No racial choices available for {character.race}.
             </div>
           )}
+        </div>
+
+        {/* Skill Proficiencies Display */}
+        <div className="bg-slate-700 rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-green-400" />
+            Skill Proficiencies
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Background Skills */}
+            <div>
+              <div className="text-slate-400 text-sm mb-2">Background Skills</div>
+              <div className="space-y-1">
+                {backgroundData?.skillProficiencies?.map((skill, index) => (
+                  <div key={index} className="text-white text-sm flex items-center gap-2">
+                    <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                    {skill}
+                  </div>
+                )) || (
+                  <div className="text-slate-500 text-sm">No background skills</div>
+                )}
+              </div>
+            </div>
+
+            {/* Racial/Class Skills */}
+            <div>
+              <div className="text-slate-400 text-sm mb-2">Additional Skills</div>
+              <div className="space-y-1">
+                {(character.skills || []).length > 0 ? (
+                  (character.skills || []).map((skill, index) => (
+                    <div key={index} className="text-white text-sm flex items-center gap-2">
+                      <span className="w-2 h-2 bg-blue-400 rounded-full"></span>
+                      {skill}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-slate-500 text-sm">No additional skills selected</div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Total Skills Summary */}
+          <div className="mt-4 pt-3 border-t border-slate-600">
+            <div className="text-slate-400 text-sm mb-2">Total Skill Proficiencies</div>
+            <div className="text-white font-medium">
+              {((backgroundData?.skillProficiencies?.length || 0) + (character.skills?.length || 0))} skills
+            </div>
+          </div>
         </div>
 
         {/* Background Summary with Edit Button */}
