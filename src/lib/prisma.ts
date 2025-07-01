@@ -9,11 +9,6 @@ const globalForPrisma = globalThis as unknown as {
 // Configure Prisma for Vercel's serverless environment
 const createPrismaClient = () => {
   return new PrismaClient({
-    datasources: {
-      db: {
-        url: process.env.DIRECT_URL,
-      },
-    },
     log: ['error', 'warn'],
   });
 };

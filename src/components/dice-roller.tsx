@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import iro from '@jaames/iro';
 
 // Declare global objects for TypeScript
 declare global {
@@ -42,65 +41,140 @@ interface DiceBox {
   bind_swipe: (element: HTMLElement, beforeRoll?: ((notation: DiceResult) => number[] | null), afterRoll?: (notation: DiceResult) => void) => void;
 }
 
-// Real Color Wheel Component using iro.js
+// Custom Color Picker Component - Simple Hexagonal Style
 function ColorWheel({ currentColor, onColorChange }: { 
   currentColor: string; 
   onColorChange: (color: string) => void; 
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const colorPickerRef = useRef<HTMLDivElement>(null);
-  const colorPickerInstanceRef = useRef<ReturnType<typeof iro.ColorPicker> | null>(null);
+  const [pickerPosition, setPickerPosition] = useState({ top: 0, left: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const pickerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (isOpen && colorPickerRef.current && !colorPickerInstanceRef.current) {
-      // Initialize iro.js color picker
-      colorPickerInstanceRef.current = iro.ColorPicker(colorPickerRef.current, {
-        width: 150,
-        color: currentColor,
-        borderWidth: 1,
-        borderColor: "#333",
-        layout: [
-          { 
-            component: iro.ui.Wheel,
-            options: {}
-          },
-          { 
-            component: iro.ui.Slider,
-            options: {
-              sliderType: 'value'
-            }
-          }
-        ]
-      });
 
-      // Listen for color changes
-      colorPickerInstanceRef.current.on('color:change', (color: { hexString: string }) => {
-        onColorChange(color.hexString);
-      });
-    }
 
-    // Cleanup
-    return () => {
-      if (colorPickerInstanceRef.current) {
-        try {
-          // Safely remove the color picker element from DOM
-          if (colorPickerInstanceRef.current.el && colorPickerInstanceRef.current.el.parentNode) {
-            colorPickerInstanceRef.current.el.parentNode.removeChild(colorPickerInstanceRef.current.el);
-          }
-        } catch (error) {
-          // Element might already be removed, ignore the error
-          console.warn('Color picker cleanup warning:', error);
-        } finally {
-          colorPickerInstanceRef.current = null;
-        }
+  // Predefined color palette inspired by Pebble's hexagonal picker
+  const colorPalette = [
+    '#FF0000', '#FF4000', '#FF8000', '#FFBF00', '#FFFF00', '#BFFF00', '#80FF00', '#40FF00', '#00FF00',
+    '#00FF40', '#00FF80', '#00FFBF', '#00FFFF', '#00BFFF', '#0080FF', '#0040FF', '#0000FF', '#4000FF',
+    '#8000FF', '#BF00FF', '#FF00FF', '#FF00BF', '#FF0080', '#FF0040', '#9333EA'
+  ];
+
+  // Get current color (simplified to just use hex)
+  const getBaseColor = (color: string) => {
+    return color;
+  };
+
+  // Handle color selection
+  const handleColorSelect = (color: string) => {
+    onColorChange(color);
+  };
+
+  // Handle brightness/lightness change
+  const handleBrightnessChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const brightness = parseInt(e.target.value);
+    const baseColor = getBaseColor(currentColor);
+    // Convert current color to HSL, change lightness, convert back to hex
+    const hslColor = hexToHsl(baseColor);
+    const newHslColor = { ...hslColor, l: brightness };
+    const newHexColor = hslToHex(newHslColor.h, newHslColor.s, newHslColor.l);
+    onColorChange(newHexColor);
+  };
+
+
+
+  // Convert hex to HSL
+  const hexToHsl = (hex: string) => {
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+    
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const diff = max - min;
+    
+    let h = 0;
+    if (diff === 0) h = 0;
+    else if (max === r) h = ((g - b) / diff) % 6;
+    else if (max === g) h = (b - r) / diff + 2;
+    else if (max === b) h = (r - g) / diff + 4;
+    
+    h = Math.round(h * 60);
+    if (h < 0) h += 360;
+    
+    const l = (max + min) / 2;
+    const s = max === 0 ? 0 : diff / (1 - Math.abs(2 * l - 1));
+    
+    return { h, s: s * 100, l: l * 100 };
+  };
+
+  // Convert HSL to hex
+  const hslToHex = (h: number, s: number, l: number) => {
+    s /= 100;
+    l /= 100;
+    
+    const c = (1 - Math.abs(2 * l - 1)) * s;
+    const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+    const m = l - c / 2;
+    
+    let r = 0, g = 0, b = 0;
+    
+    if (h >= 0 && h < 60) { r = c; g = x; b = 0; }
+    else if (h >= 60 && h < 120) { r = x; g = c; b = 0; }
+    else if (h >= 120 && h < 180) { r = 0; g = c; b = x; }
+    else if (h >= 180 && h < 240) { r = 0; g = x; b = c; }
+    else if (h >= 240 && h < 300) { r = x; g = 0; b = c; }
+    else if (h >= 300 && h < 360) { r = c; g = 0; b = x; }
+    
+    const rHex = Math.round((r + m) * 255).toString(16).padStart(2, '0');
+    const gHex = Math.round((g + m) * 255).toString(16).padStart(2, '0');
+    const bHex = Math.round((b + m) * 255).toString(16).padStart(2, '0');
+    
+    return `#${rHex}${gHex}${bHex}`;
+  };
+
+  // Get current lightness value for brightness slider
+  const getCurrentLightness = () => {
+    const baseColor = getBaseColor(currentColor);
+    const hsl = hexToHsl(baseColor);
+    return hsl.l;
+  };
+
+
+
+  const handleToggle = () => {
+    if (!isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      
+      // Calculate position above the button
+      let top = rect.top - 320; // Larger for enhanced picker
+      let left = rect.left - 75; // Center horizontally
+      
+      // Ensure picker doesn't go off-screen
+      if (top < 10) {
+        top = 10;
       }
-    };
-  }, [isOpen, currentColor, onColorChange]);
+      if (left < 20) {
+        left = 20;
+      }
+      if (left + 150 > viewportWidth - 20) {
+        left = viewportWidth - 170;
+      }
+      
+      setPickerPosition({ top, left });
+    }
+    setIsOpen(!isOpen);
+  };
 
-  // Handle click outside to close
+  // Handle click outside to close picker
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (isOpen && colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+      if (isOpen && 
+          pickerRef.current && 
+          !pickerRef.current.contains(event.target as Node) &&
+          buttonRef.current && 
+          !buttonRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -117,7 +191,8 @@ function ColorWheel({ currentColor, onColorChange }: {
   return (
     <div className="relative">
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        ref={buttonRef}
+        onClick={handleToggle}
         className="w-8 h-8 rounded-full border-2 border-slate-600 flex items-center justify-center"
         style={{ backgroundColor: currentColor }}
         title="Choose dice color"
@@ -127,16 +202,72 @@ function ColorWheel({ currentColor, onColorChange }: {
       
       {isOpen && (
         <div 
-          className="fixed z-50 bg-slate-800 border border-slate-600 rounded-lg p-3 shadow-lg"
+          ref={pickerRef}
+          className="fixed z-50 bg-slate-800 border border-slate-600 rounded-lg p-4 shadow-lg"
           style={{ 
-            bottom: '100%', 
-            left: '50%', 
-            transform: 'translateX(-50%)',
-            marginBottom: '8px',
-            minWidth: '170px'
+            top: pickerPosition.top,
+            left: pickerPosition.left,
+            minWidth: '150px'
           }}
         >
-          <div ref={colorPickerRef} className="flex justify-center"></div>
+          {/* Close button */}
+          <button
+            onClick={() => setIsOpen(false)}
+            className="absolute top-2 right-2 text-slate-400 hover:text-white transition-colors p-1 rounded"
+            title="Close color picker"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+          
+          {/* Hexagonal Color Grid */}
+          <div className="mb-4">
+            <h3 className="text-sm text-slate-300 mb-3 text-center">Choose Color</h3>
+            <div className="grid grid-cols-5 gap-1">
+              {colorPalette.map((color, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleColorSelect(color)}
+                  className={`w-6 h-6 rounded-sm border-2 transition-all hover:scale-110 ${
+                    getBaseColor(currentColor) === color ? 'border-white shadow-lg' : 'border-slate-600'
+                  }`}
+                  style={{ backgroundColor: color }}
+                  title={color}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Brightness Slider */}
+          <div className="mb-3">
+            <label className="text-sm text-slate-300">Brightness</label>
+            <div className="relative">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={getCurrentLightness()}
+                onChange={handleBrightnessChange}
+                className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                style={{
+                  background: `linear-gradient(to right, #000, ${getBaseColor(currentColor)}, #fff)`
+                }}
+              />
+            </div>
+          </div>
+
+
+
+
+          
+          {/* Color preview */}
+          <div className="p-2 bg-slate-700 rounded text-center">
+            <div 
+              className="w-full h-8 rounded border border-slate-600"
+              style={{ backgroundColor: currentColor }}
+            ></div>
+          </div>
         </div>
       )}
     </div>
@@ -198,42 +329,34 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
     d20: 0,
   });
   
-  // Dice color state
-  const [diceColor, setDiceColor] = useState('#9333ea'); // Purple-600 to match app theme
-
-  // Load user's die color preference on component mount
-  useEffect(() => {
-    const loadUserPreference = async () => {
-      try {
-        const response = await fetch('/api/user-preferences');
-        if (response.ok) {
-          const preferences = await response.json();
-          if (preferences.dieColor) {
-            setDiceColor(preferences.dieColor);
-          }
-        }
-      } catch (error) {
-        console.warn('Failed to load user preference:', error);
-        // Continue with default color if preference loading fails
-      }
-    };
-
-    loadUserPreference();
-  }, []);
-
-  // Save user's die color preference when it changes
-  const saveUserPreference = async (color: string) => {
+  // Get initial dice color from cookie or default to purple-600
+  const getInitialDiceColor = () => {
     try {
-      await fetch('/api/user-preferences', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ dieColor: color }),
-      });
+      const savedColor = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('diceColor='))
+        ?.split('=')[1];
+      
+      return savedColor || '#9333ea'; // Purple-600 default
     } catch (error) {
-      console.warn('Failed to save user preference:', error);
-      // Continue even if saving fails
+      console.warn('Failed to load dice color preference from cookie:', error);
+      return '#9333ea'; // Purple-600 default
+    }
+  };
+
+  // Dice color state - initialize with cookie value or default
+  const [diceColor, setDiceColor] = useState(getInitialDiceColor());
+
+  // Save user's die color preference to cookie when it changes
+  const saveUserPreference = (color: string) => {
+    try {
+      // Set cookie to expire in 1 year
+      const expires = new Date();
+      expires.setFullYear(expires.getFullYear() + 1);
+      document.cookie = `diceColor=${color}; expires=${expires.toUTCString()}; path=/`;
+    } catch (error) {
+      console.warn('Failed to save dice color preference to cookie:', error);
+      // Continue even if cookie saving fails
     }
   };
 
@@ -335,7 +458,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
           console.log('🎲 Reinitializing dice box on resize...');
           diceBoxRef.current = new window.DICE.dice_box(diceContainerRef.current);
           
-          // Set initial dice color
+          // Set current dice color
           if (window.DICE && window.DICE.vars) {
             window.DICE.vars.dice_color = diceColor;
             const isDark = isColorDark(diceColor);
@@ -371,7 +494,17 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [scriptsLoaded, diceColor]);
+  }, [scriptsLoaded]); // Remove diceColor dependency to prevent reinitialization
+
+  // Update dice color without reinitializing
+  useEffect(() => {
+    if (diceBoxRef.current && window.DICE && window.DICE.vars) {
+      console.log('🎲 Updating dice color to:', diceColor);
+      window.DICE.vars.dice_color = diceColor;
+      const isDark = isColorDark(diceColor);
+      window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
+    }
+  }, [diceColor]);
 
   const addDice = (diceType: keyof typeof diceCounts) => {
     if (getTotalDice() >= 10) return;
@@ -512,7 +645,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
   return (
     <div className={`h-full flex ${className}`}>
       {/* Thin Vertical Dice Selector */}
-      <div className="w-20 bg-slate-800 border-r border-slate-600 flex flex-col items-center py-4 space-y-4">
+      <div className="w-20 bg-slate-800 border-r border-slate-600 flex flex-col items-center py-4 space-y-4 flex-shrink-0">
         {/* Dice Selector */}
         <div className="flex flex-col space-y-3">
           {diceTypes.map(dice => (
@@ -596,12 +729,11 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
       </div>
 
       {/* 3D Dice Container */}
-      <div className="relative flex-1 bg-slate-900">
+      <div className="relative flex-1 bg-slate-900 min-h-0">
         <div 
           ref={diceContainerRef}
           className="absolute inset-0 w-full h-full"
           style={{ 
-            minHeight: '480px',
             background: diceBoxRef.current ? 'transparent' : '#1e293b'
           }}
         >
