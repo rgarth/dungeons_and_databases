@@ -629,6 +629,11 @@ export async function PATCH(request: NextRequest) {
       updateData.deathSaveFailures = body.deathSaveFailures;
     }
 
+    // Handle skills updates
+    if (body.skills !== undefined) {
+      updateData.skills = body.skills;
+    }
+
     // Handle languages updates
     if (body.languages !== undefined) {
       updateData.languages = body.languages;
