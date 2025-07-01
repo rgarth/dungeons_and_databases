@@ -233,10 +233,22 @@ export class CharacterCreationService {
     const subclasses = getSubclassesForClass(characterClass);
     const needsSubclassAtCreation = choosesSubclassAtCreation(characterClass);
 
-    // Get equipment packs from database
+    // Get equipment packs from database and transform to expected format
     let equipmentPacks = [];
     try {
-      equipmentPacks = await getEquipmentPacksFromDatabase();
+      const rawEquipmentPacks = await getEquipmentPacksFromDatabase();
+      // Transform equipment pack data to match expected interface
+      equipmentPacks = rawEquipmentPacks.map((pack: { name: string; description: string; cost: string; items: Array<{ equipmentName: string; quantity: number }> }) => ({
+        ...pack,
+        items: pack.items.map((item: { equipmentName: string; quantity: number }) => ({
+          name: item.equipmentName, // Transform equipmentName to name
+          quantity: item.quantity,
+          type: '', // Will be populated from equipment data if needed
+          cost: '', // Will be populated from equipment data if needed
+          weight: 0, // Will be populated from equipment data if needed
+          description: null // Will be populated from equipment data if needed
+        }))
+      }));
     } catch (error) {
       console.warn('Error fetching equipment packs:', error);
       equipmentPacks = [];
@@ -421,8 +433,8 @@ export class CharacterCreationService {
     let packItems: { name: string; quantity: number }[] = [];
     if (equipmentPackItems.length === 0 && data.selectedEquipmentPack !== undefined && data.selectedEquipmentPack >= 0 && equipmentPacks[data.selectedEquipmentPack]) {
       const selectedPack = equipmentPacks[data.selectedEquipmentPack];
-      packItems = selectedPack.items.map((item: { name: string; quantity: number }) => ({
-        name: item.name,
+      packItems = selectedPack.items.map((item: { equipmentName: string; quantity: number }) => ({
+        name: item.equipmentName,
         quantity: item.quantity
       }));
       console.log('Selected equipment pack items:', packItems);
