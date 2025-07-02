@@ -400,27 +400,27 @@ export function GearTab({
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">Gear & Spells</h2>
-        <p className="text-slate-400">Manage your equipment, magical items, and spells</p>
+        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Gear & Spells</h2>
+        <p className="text-[var(--text-secondary)]">Manage your equipment, magical items, and spells</p>
       </div>
 
       {/* Equipment Conflicts Display */}
       {equipmentConflicts.hasConflicts && (
-        <div className="bg-orange-900/20 border border-orange-500 rounded-lg p-4 mb-6">
+        <div className="bg-[var(--warning-bg)] border border-[var(--warning-border)] rounded-lg p-4 mb-6">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-orange-400 mt-0.5 flex-shrink-0" />
+            <AlertTriangle className="h-5 w-5 text-[var(--warning-text)] mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <h3 className="text-orange-400 font-medium mb-2">Equipment Conflicts Detected</h3>
+              <h3 className="text-[var(--warning-text)] font-medium mb-2">Equipment Conflicts Detected</h3>
               <div className="space-y-1 mb-3">
                 {equipmentConflicts.conflictSummary.map((conflict, index) => (
-                  <div key={index} className="text-orange-300 text-sm">{conflict}</div>
+                  <div key={index} className="text-[var(--warning-text)] text-sm">{conflict}</div>
                 ))}
               </div>
               {equipmentConflicts.suggestions.length > 0 && (
                 <div className="space-y-1">
-                  <div className="text-orange-400 text-sm font-medium">Suggestions:</div>
+                  <div className="text-[var(--warning-text)] text-sm font-medium">Suggestions:</div>
                   {equipmentConflicts.suggestions.map((suggestion, index) => (
-                    <div key={index} className="text-orange-200 text-sm">{suggestion}</div>
+                    <div key={index} className="text-[var(--warning-text)] text-sm">{suggestion}</div>
                   ))}
                 </div>
               )}
@@ -435,8 +435,8 @@ export function GearTab({
           onClick={() => setActiveSection("equipped")}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             activeSection === "equipped"
-              ? "bg-purple-600 text-white"
-              : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+              ? "bg-[var(--accent-color)] text-[var(--text-on-accent)]"
+              : "bg-[var(--muted-bg)] text-[var(--text-secondary)] hover:bg-[var(--muted-hover)]"
           }`}
         >
           <Shield className="h-4 w-4 inline mr-2" />
@@ -446,8 +446,8 @@ export function GearTab({
           onClick={() => setActiveSection("inventory")}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             activeSection === "inventory"
-              ? "bg-purple-600 text-white"
-              : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+              ? "bg-[var(--accent-color)] text-[var(--text-on-accent)]"
+              : "bg-[var(--muted-bg)] text-[var(--text-secondary)] hover:bg-[var(--muted-hover)]"
           }`}
         >
           <Package className="h-4 w-4 inline mr-2" />
@@ -460,22 +460,22 @@ export function GearTab({
           {/* Left Column - Combat Gear */}
           <div className="space-y-6">
             {/* Weapons */}
-            <div className="bg-slate-700 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Wand2 className="h-5 w-5 text-yellow-400" />
+            <div className="bg-[var(--card-bg)] rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+                <Wand2 className="h-5 w-5 text-[var(--accent-color)]" />
                 Equipped Weapons ({equippedWeapons.length}/{weaponLimits.maxEquipped})
               </h3>
               {equippedWeapons.length === 0 ? (
-                <p className="text-slate-400 text-sm">No weapons equipped</p>
+                <p className="text-[var(--text-secondary)] text-sm">No weapons equipped</p>
               ) : (
                 <div className="space-y-2">
                   {equippedWeapons.map((weapon, index) => (
-                    <div key={index} className="bg-slate-600 rounded p-3 flex justify-between items-center">
+                    <div key={index} className="bg-[var(--muted-bg)] rounded p-3 flex justify-between items-center">
                       <div>
-                        <span className="text-white font-medium">
+                        <span className="text-[var(--text-primary)] font-medium">
                           {weapon.name}
                           {weapon.stackable && weapon.quantity && weapon.quantity > 1 && (
-                            <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-1 rounded">
+                            <span className="ml-2 text-xs bg-[var(--accent-color)] text-[var(--text-on-accent)] px-2 py-1 rounded">
                               {weapon.quantity}
                             </span>
                           )}
@@ -485,7 +485,7 @@ export function GearTab({
                             {weapon.rarity}
                           </span>
                         )}
-                        <div className="text-sm text-slate-300">
+                        <div className="text-sm text-[var(--text-secondary)]">
                           {weapon.damage} {weapon.damageType} • {weapon.type}
                         </div>
                       </div>
@@ -493,7 +493,7 @@ export function GearTab({
                         {!weapon.stackable && (
                           <button
                             onClick={() => onUnequipWeapon(index)}
-                            className="p-1 text-slate-400 hover:text-white hover:bg-slate-500 rounded"
+                            className="p-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--muted-hover)] rounded"
                             title={`Unequip ${weapon.name}`}
                           >
                             <Package className="h-4 w-4" />
@@ -501,7 +501,7 @@ export function GearTab({
                         )}
                         <button
                           onClick={() => onRemoveWeapon(index, true)}
-                          className="p-1 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded"
+                          className="p-1 text-[var(--danger-color)] hover:text-[var(--danger-hover)] hover:bg-[var(--danger-bg)] rounded"
                           title={weapon.stackable ? `Use/Remove ${weapon.name}` : `Remove ${weapon.name}`}
                         >
                           <Trash2 className="h-4 w-4" />
