@@ -151,7 +151,7 @@ export function BackgroundSelector({
   if (!backgrounds.length) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-accent)]"></div>
       </div>
     );
   }
@@ -160,14 +160,14 @@ export function BackgroundSelector({
     <div className={`${compact ? 'space-y-4' : 'space-y-6'}`}>
       {/* Background Selection */}
       <div>
-        <label className="block text-white font-medium mb-2">
+        <label className="block text-[var(--color-text-primary)] font-medium mb-2">
           <BookOpen className="h-4 w-4 inline mr-2" />
           {title}
         </label>
         <select
           value={selectedBackground}
           onChange={(e) => onBackgroundChange(e.target.value)}
-          className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+          className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
         >
           <option value="">Select a background...</option>
           {backgrounds.map((bg) => (
@@ -180,23 +180,23 @@ export function BackgroundSelector({
       
       {/* Background Details */}
       {currentBackground && (
-        <div className="bg-slate-700 rounded-lg p-4 space-y-4">
+        <div className="bg-[var(--color-card)] rounded-lg p-4 space-y-4">
           <div>
-            <h4 className="text-white font-medium mb-2">{currentBackground.name}</h4>
-            <p className="text-slate-300 text-sm">{currentBackground.description}</p>
+            <h4 className="text-[var(--color-text-primary)] font-medium mb-2">{currentBackground.name}</h4>
+            <p className="text-[var(--color-text-primary)] text-sm">{currentBackground.description}</p>
           </div>
           
           {showFullDetails && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Skills */}
               <div>
-                <h5 className="text-white font-medium mb-2 flex items-center">
+                <h5 className="text-[var(--color-text-primary)] font-medium mb-2 flex items-center">
                   <Zap className="h-4 w-4 mr-2" />
                   Skill Proficiencies
                 </h5>
                 <div className="space-y-1">
                   {currentBackground.skillProficiencies.map((skill) => (
-                    <div key={skill} className="text-slate-300 text-sm">
+                    <div key={skill} className="text-[var(--color-text-primary)] text-sm">
                       • {skill}
                     </div>
                   ))}
@@ -206,29 +206,29 @@ export function BackgroundSelector({
               {/* Languages */}
               {currentBackground.languages.length > 0 && (
                 <div>
-                  <h5 className="text-white font-medium mb-2 flex items-center">
-                    <Languages className="h-4 w-4 mr-2" />
-                    Languages
-                  </h5>
-                  <div className="space-y-1">
-                    {currentBackground.languages.map((lang) => (
-                      <div key={lang} className="text-slate-300 text-sm">
-                        • {lang}
-                      </div>
-                    ))}
-                  </div>
+                                  <h5 className="text-[var(--color-text-primary)] font-medium mb-2 flex items-center">
+                  <Languages className="h-4 w-4 mr-2" />
+                  Languages
+                </h5>
+                <div className="space-y-1">
+                  {currentBackground.languages.map((lang) => (
+                    <div key={lang} className="text-[var(--color-text-primary)] text-sm">
+                      • {lang}
+                    </div>
+                  ))}
+                </div>
                 </div>
               )}
               
               {/* Equipment */}
               <div>
-                <h5 className="text-white font-medium mb-2 flex items-center">
+                <h5 className="text-[var(--color-text-primary)] font-medium mb-2 flex items-center">
                   <Coins className="h-4 w-4 mr-2" />
                   Equipment
                 </h5>
                 <div className="space-y-1">
                   {currentBackground.equipment.map((item) => (
-                    <div key={item} className="text-slate-300 text-sm">
+                    <div key={item} className="text-[var(--color-text-primary)] text-sm">
                       • {item}
                     </div>
                   ))}
@@ -237,11 +237,11 @@ export function BackgroundSelector({
               
               {/* Feature */}
               <div>
-                <h5 className="text-white font-medium mb-2 flex items-center">
+                <h5 className="text-[var(--color-text-primary)] font-medium mb-2 flex items-center">
                   <Scroll className="h-4 w-4 mr-2" />
                   Feature: {currentBackground.feature}
                 </h5>
-                <p className="text-slate-300 text-sm">
+                <p className="text-[var(--color-text-primary)] text-sm">
                   {currentBackground.featureDescription}
                 </p>
               </div>
@@ -253,25 +253,25 @@ export function BackgroundSelector({
       {/* Characteristics Selection */}
       {showCharacteristics && currentBackground?.suggestedCharacteristics && (
         <div className="space-y-4">
-          <h4 className="text-white font-medium">Character Traits</h4>
+          <h4 className="text-[var(--color-text-primary)] font-medium">Character Traits</h4>
           
           {/* Personality Traits - Two Dropdowns */}
           <div>
-            <h5 className="text-white font-medium mb-2 flex items-center">
-              <Heart className="h-4 w-4 mr-2" />
-              Personality Traits
-            </h5>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {/* First Personality Trait Dropdown */}
-              <div>
-                <label className="block text-slate-300 text-sm mb-1">
-                  Trait 1
-                </label>
-                <select
-                  value={currentCharacteristics.personalityTraits?.[0] || ""}
-                  onChange={(e) => handleCharacteristicChange('personalityTraits', e.target.value, 0)}
-                  className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-                >
+                            <h5 className="text-[var(--color-text-primary)] font-medium mb-2 flex items-center">
+                  <Heart className="h-4 w-4 mr-2" />
+                  Personality Traits
+                </h5>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {/* First Personality Trait Dropdown */}
+                  <div>
+                    <label className="block text-[var(--color-text-secondary)] text-sm mb-1">
+                      Trait 1
+                    </label>
+                    <select
+                      value={currentCharacteristics.personalityTraits?.[0] || ""}
+                      onChange={(e) => handleCharacteristicChange('personalityTraits', e.target.value, 0)}
+                      className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
+                    >
                   <option value="">Select a trait...</option>
                   {currentBackground.suggestedCharacteristics.personalityTraits.map((trait, index) => (
                     <option 
@@ -287,14 +287,14 @@ export function BackgroundSelector({
               
               {/* Second Personality Trait Dropdown */}
               <div>
-                <label className="block text-slate-300 text-sm mb-1">
-                  Trait 2
-                </label>
-                <select
-                  value={currentCharacteristics.personalityTraits?.[1] || ""}
-                  onChange={(e) => handleCharacteristicChange('personalityTraits', e.target.value, 1)}
-                  className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-                >
+                                    <label className="block text-[var(--color-text-secondary)] text-sm mb-1">
+                      Trait 2
+                    </label>
+                    <select
+                      value={currentCharacteristics.personalityTraits?.[1] || ""}
+                      onChange={(e) => handleCharacteristicChange('personalityTraits', e.target.value, 1)}
+                      className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
+                    >
                   <option value="">Select a trait...</option>
                   {currentBackground.suggestedCharacteristics.personalityTraits.map((trait, index) => (
                     <option 
@@ -312,15 +312,15 @@ export function BackgroundSelector({
           
           {/* Ideals - Single Dropdown */}
           <div>
-            <h5 className="text-white font-medium mb-2 flex items-center">
-              <Lightbulb className="h-4 w-4 mr-2" />
-              Ideals
-            </h5>
-            <select
-              value={currentCharacteristics.ideals?.[0] || ""}
-              onChange={(e) => handleCharacteristicChange('ideals', e.target.value)}
-              className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-            >
+                            <h5 className="text-[var(--color-text-primary)] font-medium mb-2 flex items-center">
+                  <Lightbulb className="h-4 w-4 mr-2" />
+                  Ideals
+                </h5>
+                <select
+                  value={currentCharacteristics.ideals?.[0] || ""}
+                  onChange={(e) => handleCharacteristicChange('ideals', e.target.value)}
+                  className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
+                >
               <option value="">Select an ideal...</option>
               {currentBackground.suggestedCharacteristics.ideals.map((ideal, index) => (
                 <option key={index} value={ideal}>
@@ -332,15 +332,15 @@ export function BackgroundSelector({
           
           {/* Bonds - Single Dropdown */}
           <div>
-            <h5 className="text-white font-medium mb-2 flex items-center">
-              <Anchor className="h-4 w-4 mr-2" />
-              Bonds
-            </h5>
-            <select
-              value={currentCharacteristics.bonds?.[0] || ""}
-              onChange={(e) => handleCharacteristicChange('bonds', e.target.value)}
-              className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-            >
+                            <h5 className="text-[var(--color-text-primary)] font-medium mb-2 flex items-center">
+                  <Anchor className="h-4 w-4 mr-2" />
+                  Bonds
+                </h5>
+                <select
+                  value={currentCharacteristics.bonds?.[0] || ""}
+                  onChange={(e) => handleCharacteristicChange('bonds', e.target.value)}
+                  className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
+                >
               <option value="">Select a bond...</option>
               {currentBackground.suggestedCharacteristics.bonds.map((bond, index) => (
                 <option key={index} value={bond}>
@@ -352,15 +352,15 @@ export function BackgroundSelector({
           
           {/* Flaws - Single Dropdown */}
           <div>
-            <h5 className="text-white font-medium mb-2 flex items-center">
-              <Zap className="h-4 w-4 mr-2 text-red-400" />
-              Flaws
-            </h5>
-            <select
-              value={currentCharacteristics.flaws?.[0] || ""}
-              onChange={(e) => handleCharacteristicChange('flaws', e.target.value)}
-              className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
-            >
+                            <h5 className="text-[var(--color-text-primary)] font-medium mb-2 flex items-center">
+                  <Zap className="h-4 w-4 mr-2 text-[var(--color-danger)]" />
+                  Flaws
+                </h5>
+                <select
+                  value={currentCharacteristics.flaws?.[0] || ""}
+                  onChange={(e) => handleCharacteristicChange('flaws', e.target.value)}
+                  className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
+                >
               <option value="">Select a flaw...</option>
               {currentBackground.suggestedCharacteristics.flaws.map((flaw, index) => (
                 <option key={index} value={flaw}>
@@ -374,16 +374,16 @@ export function BackgroundSelector({
       
       {/* Modal buttons */}
       {isModal && (
-        <div className="flex justify-end space-x-2 pt-4 border-t border-slate-600">
+        <div className="flex justify-end space-x-2 pt-4 border-t border-[var(--color-border)]">
           <button
             onClick={handleCancel}
-            className="px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-500 transition-colors"
+            className="px-4 py-2 bg-[var(--color-card-secondary)] text-[var(--color-text-primary)] rounded-lg hover:bg-[var(--color-card)] transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors"
+            className="px-4 py-2 bg-[var(--color-accent)] text-[var(--color-text-primary)] rounded-lg hover:bg-[var(--color-accent-hover)] transition-colors"
           >
             Confirm
           </button>
@@ -396,7 +396,7 @@ export function BackgroundSelector({
   if (isModal) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-slate-800 rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="bg-[var(--color-background)] rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
           {content}
         </div>
       </div>
