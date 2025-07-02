@@ -652,7 +652,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             {!isEditingSummary && (
               <button
                 onClick={handleStartSummaryEdit}
-                className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-3 py-1 rounded-lg transition-colors flex items-center gap-2 text-sm"
+                className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] px-3 py-1 rounded-lg transition-colors flex items-center gap-2 text-sm"
               >
                 <Edit3 className="h-4 w-4" />
                 Edit
@@ -1391,7 +1391,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             </h3>
             <button
               onClick={() => setShowBackgroundModal(true)}
-              className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-text-primary)] px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+              className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
             >
               <Edit3 className="h-4 w-4" />
               Edit Background
