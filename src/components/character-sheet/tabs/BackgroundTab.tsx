@@ -366,6 +366,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     });
   };
 
+
+
   const compileGuidedAnswers = () => {
     return storyService.compileGuidedAnswers(guidedAnswers);
   };
@@ -762,37 +764,47 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 <div className="text-white font-medium">{character.alignment || 'Unaligned'}                </div>
               </div>
               
-              {/* Display selected draconic ancestry effects */}
-              {character.subrace && (
-                <div className="mt-3 p-3 bg-slate-500/30 rounded-lg">
-                  <div className="text-slate-300 text-sm space-y-1">
-                    <div className="font-medium text-white">{character.subrace}</div>
-                    {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
-                      <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Acid damage</div>
-                    ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
-                      <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Lightning damage</div>
-                    ) : character.subrace.includes('Brass') || character.subrace.includes('Gold') || character.subrace.includes('Red') ? (
-                      <div>• Breath Weapon: 15 ft. cone (Dex save) - Fire damage</div>
-                    ) : character.subrace.includes('Green') ? (
-                      <div>• Breath Weapon: 15 ft. cone (Con save) - Poison damage</div>
-                    ) : character.subrace.includes('Silver') || character.subrace.includes('White') ? (
-                      <div>• Breath Weapon: 15 ft. cone (Con save) - Cold damage</div>
-                    ) : null}
-                    
-                    {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
-                      <div>• Damage Resistance: Acid</div>
-                    ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
-                      <div>• Damage Resistance: Lightning</div>
-                    ) : character.subrace.includes('Brass') || character.subrace.includes('Gold') || character.subrace.includes('Red') ? (
-                      <div>• Damage Resistance: Fire</div>
-                    ) : character.subrace.includes('Green') ? (
-                      <div>• Damage Resistance: Poison</div>
-                    ) : character.subrace.includes('Silver') || character.subrace.includes('White') ? (
-                      <div>• Damage Resistance: Cold</div>
-                    ) : null}
+              {/* Display selected draconic ancestry effects - only if there's content to show */}
+              {character.subrace && (() => {
+                const hasBreathWeapon = character.subrace.includes('Black') || character.subrace.includes('Copper') || 
+                                       character.subrace.includes('Blue') || character.subrace.includes('Bronze') || 
+                                       character.subrace.includes('Brass') || character.subrace.includes('Gold') || 
+                                       character.subrace.includes('Red') || character.subrace.includes('Green') || 
+                                       character.subrace.includes('Silver') || character.subrace.includes('White');
+                
+                if (!hasBreathWeapon) return null;
+                
+                return (
+                  <div className="mt-3 p-3 bg-slate-500/30 rounded-lg">
+                    <div className="text-slate-300 text-sm space-y-1">
+                      <div className="font-medium text-white">{character.subrace}</div>
+                      {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
+                        <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Acid damage</div>
+                      ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
+                        <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Lightning damage</div>
+                      ) : character.subrace.includes('Brass') || character.subrace.includes('Gold') || character.subrace.includes('Red') ? (
+                        <div>• Breath Weapon: 15 ft. cone (Dex save) - Fire damage</div>
+                      ) : character.subrace.includes('Green') ? (
+                        <div>• Breath Weapon: 15 ft. cone (Con save) - Poison damage</div>
+                      ) : character.subrace.includes('Silver') || character.subrace.includes('White') ? (
+                        <div>• Breath Weapon: 15 ft. cone (Con save) - Cold damage</div>
+                      ) : null}
+                      
+                      {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
+                        <div>• Damage Resistance: Acid</div>
+                      ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
+                        <div>• Damage Resistance: Lightning</div>
+                      ) : character.subrace.includes('Brass') || character.subrace.includes('Gold') || character.subrace.includes('Red') ? (
+                        <div>• Damage Resistance: Fire</div>
+                      ) : character.subrace.includes('Green') ? (
+                        <div>• Damage Resistance: Poison</div>
+                      ) : character.subrace.includes('Silver') || character.subrace.includes('White') ? (
+                        <div>• Damage Resistance: Cold</div>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
           )}
         </div>
@@ -1037,37 +1049,47 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 </select>
               </div>
               
-              {/* Display selected draconic ancestry effects */}
-              {character.subrace && (
-                <div className="mt-3 p-3 bg-slate-500/30 rounded-lg">
-                  <div className="text-slate-300 text-sm space-y-1">
-                    <div className="font-medium text-white">{character.subrace}</div>
-                    {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
-                      <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Acid damage</div>
-                    ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
-                      <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Lightning damage</div>
-                    ) : character.subrace.includes('Brass') || character.subrace.includes('Gold') || character.subrace.includes('Red') ? (
-                      <div>• Breath Weapon: 15 ft. cone (Dex save) - Fire damage</div>
-                    ) : character.subrace.includes('Green') ? (
-                      <div>• Breath Weapon: 15 ft. cone (Con save) - Poison damage</div>
-                    ) : character.subrace.includes('Silver') || character.subrace.includes('White') ? (
-                      <div>• Breath Weapon: 15 ft. cone (Con save) - Cold damage</div>
-                    ) : null}
-                    
-                    {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
-                      <div>• Damage Resistance: Acid</div>
-                    ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
-                      <div>• Damage Resistance: Lightning</div>
-                    ) : character.subrace.includes('Brass') || character.subrace.includes('Gold') || character.subrace.includes('Red') ? (
-                      <div>• Damage Resistance: Fire</div>
-                    ) : character.subrace.includes('Green') ? (
-                      <div>• Damage Resistance: Poison</div>
-                    ) : character.subrace.includes('Silver') || character.subrace.includes('White') ? (
-                      <div>• Damage Resistance: Cold</div>
-                    ) : null}
+              {/* Display selected draconic ancestry effects - only if there's content to show */}
+              {character.subrace && (() => {
+                const hasBreathWeapon = character.subrace.includes('Black') || character.subrace.includes('Copper') || 
+                                       character.subrace.includes('Blue') || character.subrace.includes('Bronze') || 
+                                       character.subrace.includes('Brass') || character.subrace.includes('Gold') || 
+                                       character.subrace.includes('Red') || character.subrace.includes('Green') || 
+                                       character.subrace.includes('Silver') || character.subrace.includes('White');
+                
+                if (!hasBreathWeapon) return null;
+                
+                return (
+                  <div className="mt-3 p-3 bg-slate-500/30 rounded-lg">
+                    <div className="text-slate-300 text-sm space-y-1">
+                      <div className="font-medium text-white">{character.subrace}</div>
+                      {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
+                        <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Acid damage</div>
+                      ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
+                        <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Lightning damage</div>
+                      ) : character.subrace.includes('Brass') || character.subrace.includes('Gold') || character.subrace.includes('Red') ? (
+                        <div>• Breath Weapon: 15 ft. cone (Dex save) - Fire damage</div>
+                      ) : character.subrace.includes('Green') ? (
+                        <div>• Breath Weapon: 15 ft. cone (Con save) - Poison damage</div>
+                      ) : character.subrace.includes('Silver') || character.subrace.includes('White') ? (
+                        <div>• Breath Weapon: 15 ft. cone (Con save) - Cold damage</div>
+                      ) : null}
+                      
+                      {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
+                        <div>• Damage Resistance: Acid</div>
+                      ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
+                        <div>• Damage Resistance: Lightning</div>
+                      ) : character.subrace.includes('Brass') || character.subrace.includes('Gold') || character.subrace.includes('Red') ? (
+                        <div>• Damage Resistance: Fire</div>
+                      ) : character.subrace.includes('Green') ? (
+                        <div>• Damage Resistance: Poison</div>
+                      ) : character.subrace.includes('Silver') || character.subrace.includes('White') ? (
+                        <div>• Damage Resistance: Cold</div>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
           )}
 
@@ -1449,12 +1471,66 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           {/* Left Column - Character Information */}
           <div className="space-y-4">
-            {/* Combined Appearance & Avatar Section */}
+            {/* Avatar Section - Only show if there's an avatar */}
+            {(avatarUrl || character.avatar) && (
+              <div className="bg-slate-700 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                    <Edit3 className="h-5 w-5 text-blue-400" />
+                    Character Portrait
+                  </h3>
+                </div>
+
+                <div className="space-y-4">
+                  {/* Current Avatar Display */}
+                  <div className="space-y-3">
+                    <Image 
+                      src={avatarUrl || character.avatar || '/default-avatar.png'} 
+                      alt={`${character.name}'s full body portrait`}
+                      width={192}
+                      height={336}
+                      className="w-48 h-84 mx-auto rounded-lg object-contain bg-slate-900 border border-slate-700"
+                    />
+                    <div className="text-center">
+                      <button
+                        onClick={() => {
+                          deleteAvatar.mutate(character.id);
+                        }}
+                        className="text-red-400 hover:text-red-300 text-sm transition-colors"
+                      >
+                        Remove Avatar
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* AI Provider Credit */}
+                  <div className="text-xs text-slate-500 text-center">
+                    <p>🤖 AI avatars by <span className="text-slate-400">Replicate Flux.schnell</span></p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Appearance Section - Inline editing with avatar generation */}
             <div className="bg-slate-700 rounded-lg p-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                  <Edit3 className="h-5 w-5 text-blue-400" />
-                  Appearance & Avatar
+                  <FileText className="h-5 w-5 text-green-400" />
+                  Physical Description
+                  <div className="relative flex items-center gap-2">
+                    <button
+                      onClick={() => toggleTooltip('appearance-hint')}
+                      className="text-slate-400 hover:text-slate-300 transition-colors"
+                      data-tooltip
+                    >
+                      <HelpCircle className="h-4 w-4" />
+                    </button>
+                    {activeTooltip === 'appearance-hint' && (
+                      <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-slate-800 rounded text-sm text-slate-300 border border-slate-600 w-80 shadow-lg whitespace-normal" data-tooltip>
+                        We already know your race and class. Focus on distinctive features, scars, clothing style, or unique characteristics that make your character special.
+                      </div>
+                    )}
+                  </div>
                 </h3>
                 {isEditing === 'appearance' ? (
                   <div className="flex items-center gap-2">
@@ -1484,125 +1560,84 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Left: Avatar Display */}
-                <div className="space-y-4">
-                  <h4 className="text-white font-medium">Character Portrait</h4>
-                  
-                  {/* Current Avatar Display */}
-                  {(avatarUrl || character.avatar) ? (
-                    <div className="space-y-3">
-                      <Image 
-                        src={avatarUrl || character.avatar || '/default-avatar.png'} 
-                        alt={`${character.name}'s full body portrait`}
-                        width={192}
-                        height={336}
-                        className="w-48 h-84 rounded-lg object-contain bg-slate-900 border border-slate-700"
-                      />
-                      <div className="text-center">
-                        <button
-                          onClick={() => {
-                            deleteAvatar.mutate(character.id);
-                          }}
-                          className="text-red-400 hover:text-red-300 text-sm transition-colors"
-                        >
-                          Remove Avatar
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="w-48 h-60 mx-auto rounded-lg border-2 border-dashed border-slate-500 flex flex-col items-center justify-center text-slate-400">
-                      <Edit3 className="h-12 w-12 mb-2" />
-                      <span className="text-sm text-center">No avatar set<br />Generate one below</span>
-                    </div>
-                  )}
-
-                  {/* AI Provider Credit */}
-                  <div className="text-xs text-slate-500 text-center">
-                    <p>🤖 AI avatars by <span className="text-slate-400">Replicate Flux.schnell</span></p>
+              {isEditing === 'appearance' ? (
+                <div className="space-y-3">
+                  <textarea
+                    value={editValues.appearance}
+                    onChange={(e) => handleFieldChange('appearance', e.target.value)}
+                    placeholder="Describe your character's distinctive features, scars, clothing style, or unique characteristics that make them special."
+                    className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
+                    rows={6}
+                  />
+                  <div className="flex justify-end">
+                    {getCharacterCountDisplay('appearance')}
                   </div>
                 </div>
+              ) : (
+                <div className="min-h-[120px] rounded-lg p-3 border border-slate-600">
+                  {character.appearance ? (
+                    <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{character.appearance}</p>
+                  ) : (
+                    <p className="text-slate-500 italic">Describe your character&apos;s distinctive features, scars, clothing style, or unique characteristics.</p>
+                  )}
+                </div>
+              )}
 
-                {/* Right: Appearance Text & Avatar Generation */}
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="text-white font-medium mb-2">Physical Description</h4>
-                    {isEditing === 'appearance' ? (
-                      <div className="space-y-3">
-                        <textarea
-                          value={editValues.appearance}
-                          onChange={(e) => handleFieldChange('appearance', e.target.value)}
-                          placeholder="Describe your character's physical appearance, clothing, distinctive features, scars, etc."
-                          className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
-                          rows={6}
-                        />
-                        <div className="flex justify-end">
-                          {getCharacterCountDisplay('appearance')}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="min-h-[120px] rounded-lg p-3 border border-slate-600">
-                        {character.appearance ? (
-                          <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{character.appearance}</p>
-                        ) : (
-                          <p className="text-slate-500 italic">Describe your character&apos;s physical appearance, clothing, distinctive features, etc.</p>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Avatar Generation */}
-                  <div className="border-t border-slate-600 pt-4">
-                    <h4 className="text-white font-medium mb-3">Generate AI Avatar</h4>
-                    <p className="text-slate-400 text-sm mb-3">
-                      Create a personalized portrait based on your character&apos;s traits and description.
-                    </p>
+              {/* Avatar Generation - Always visible in Physical Description section */}
+              <div className="border-t border-slate-600 pt-4 mt-4">
+                <h4 className="text-white font-medium mb-3">Generate AI Avatar</h4>
+                <p className="text-slate-400 text-sm mb-3">
+                  Create a personalized portrait based on your character&apos;s traits and description.
+                </p>
+                
+                <AvatarGenerator
+                  characterData={{
+                    race: character.race,
+                    class: character.class,
+                    gender: character.gender || 'Male',
+                    alignment: character.alignment,
+                    background: character.background,
+                    personalityTraits: character.backgroundCharacteristics?.personalityTraits || [],
+                    ideals: character.backgroundCharacteristics?.ideals || [],
+                    bonds: character.backgroundCharacteristics?.bonds || [],
+                    flaws: character.backgroundCharacteristics?.flaws || [],
+                    appearance: character.appearance || '',
+                    equippedWeapons: [],
+                    equippedArmor: []
+                  } as CharacterAvatarData}
+                  onAvatarGenerated={async (avatarDataUrl, fullBodyDataUrl) => {
+                    // Get the image URL from Replicate
+                    const imageUrl = fullBodyDataUrl || avatarDataUrl;
+                    if (!imageUrl) return;
                     
-                    <AvatarGenerator
-                      characterData={{
-                        race: character.race,
-                        class: character.class,
-                        gender: character.gender || 'Male',
-                        alignment: character.alignment,
-                        background: character.background,
-                        personalityTraits: character.backgroundCharacteristics?.personalityTraits || [],
-                        ideals: character.backgroundCharacteristics?.ideals || [],
-                        bonds: character.backgroundCharacteristics?.bonds || [],
-                        flaws: character.backgroundCharacteristics?.flaws || [],
-                        appearance: character.appearance || '',
-                        equippedWeapons: [],
-                        equippedArmor: []
-                      } as CharacterAvatarData}
-                      onAvatarGenerated={async (avatarDataUrl, fullBodyDataUrl) => {
-                        // Get the image URL from Replicate
-                        const imageUrl = fullBodyDataUrl || avatarDataUrl;
-                        if (!imageUrl) return;
+                    try {
+                      // Fetch the image from Replicate and convert to base64
+                      const response = await fetch(imageUrl);
+                      const blob = await response.blob();
+                      const reader = new FileReader();
+                      
+                      reader.onloadend = async () => {
+                        const base64Data = reader.result as string;
                         
-                        try {
-                          // Fetch the image from Replicate and convert to base64
-                          const response = await fetch(imageUrl);
-                          const blob = await response.blob();
-                          const reader = new FileReader();
-                          
-                          reader.onloadend = async () => {
-                            const base64Data = reader.result as string;
-                            
-                            // Use the mutation to save avatar and invalidate cache
-                            updateAvatar.mutate({
-                              characterId: character.id,
-                              imageData: base64Data
-                            });
-                          };
-                          
-                          reader.readAsDataURL(blob);
-                        } catch (error) {
-                          console.error('Error processing avatar image:', error);
-                        }
-                      }}
-                      disabled={updateAvatar.isPending}
-                      className="w-full"
-                    />
-                  </div>
+                        // Use the mutation to save avatar and invalidate cache
+                        updateAvatar.mutate({
+                          characterId: character.id,
+                          imageData: base64Data
+                        });
+                      };
+                      
+                      reader.readAsDataURL(blob);
+                    } catch (error) {
+                      console.error('Error processing avatar image:', error);
+                    }
+                  }}
+                  disabled={updateAvatar.isPending}
+                  className="w-full"
+                />
+
+                {/* AI Provider Credit */}
+                <div className="text-xs text-slate-500 text-center mt-3">
+                  <p>🤖 AI avatars by <span className="text-slate-400">Replicate Flux.schnell</span></p>
                 </div>
               </div>
             </div>
@@ -1824,6 +1859,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           onCancel={() => setShowBackgroundModal(false)}
         />
       )}
+
+
     </div>
   );
 } 
