@@ -1,7 +1,7 @@
 "use client";
 
 import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp, FileText, Dices, ChevronDown, MoreVertical } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { getModifier } from "@/lib/dnd/core";
 import { Spell } from "@/lib/dnd/spells";
 import { Weapon, MagicalWeapon, InventoryItem, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, Armor, Ammunition, calculateArmorClass } from "@/lib/dnd/equipment";
@@ -226,7 +226,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   }, [character.id]);
   
   // Use currentCharacter instead of character throughout the component
-  const displayCharacter = {
+  const displayCharacter = useMemo(() => ({
     ...currentCharacter,
     // Transform separate background characteristic fields into combined object for BackgroundTab
     backgroundCharacteristics: {
@@ -235,7 +235,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       bonds: (currentCharacter.bonds as string[]) || [],
       flaws: (currentCharacter.flaws as string[]) || []
     }
-  };
+  }), [currentCharacter]);
   
   const [activeTab, setActiveTab] = useState<"stats" | "actions" | "gear" | "inventory" | "background" | "dice">("stats");
   const [showWeaponCreator, setShowWeaponCreator] = useState(false);

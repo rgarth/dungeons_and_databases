@@ -336,7 +336,7 @@ export function LoadingModal({ onComplete }: LoadingModalProps) {
                   <Loader2 className="w-4 h-4 text-purple-400 animate-spin" />
                 )}
                 {item.status === 'success' && (
-                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <CheckCircle className="w-4 h-4 text-blue-400" />
                 )}
                 {item.status === 'error' && (
                   <div className="relative group">

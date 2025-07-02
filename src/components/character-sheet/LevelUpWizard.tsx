@@ -37,12 +37,15 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
   const levelUpService = createLevelUpService();
 
   useEffect(() => {
-    try {
-      const options = levelUpService.getLevelUpOptions(character);
-      setLevelUpOptions(options);
-    } catch (error) {
-      console.error('Error getting level up options:', error);
-    }
+    const loadOptions = async () => {
+      try {
+        const options = await levelUpService.getLevelUpOptions(character);
+        setLevelUpOptions(options);
+      } catch (error) {
+        console.error('Error getting level up options:', error);
+      }
+    };
+    loadOptions();
   }, [character, levelUpService]);
 
   const getCurrentClass = () => {
@@ -155,7 +158,7 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
     }
   };
 
-  const completeLevelUp = () => {
+  const completeLevelUp = async () => {
     if (!levelUpOptions) return;
 
     try {
@@ -178,7 +181,7 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
         processedSelections['spell'] = selectedSpells;
       }
 
-      const result = levelUpService.processLevelUp(
+      const result = await levelUpService.processLevelUp(
         character,
         processedSelections,
         getSelectedHitPoints()
@@ -259,11 +262,11 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
               
               return (
                 <div key={step} className={`flex-1 text-center ${
-                  isActive ? 'text-purple-400' : isCompleted ? 'text-green-400' : 'text-slate-500'
+                  isActive ? 'text-purple-400' : isCompleted ? 'text-blue-400' : 'text-slate-500'
                 }`}>
                   <div className={`w-8 h-8 mx-auto rounded-full border-2 mb-1 ${
                     isActive ? 'border-purple-400 bg-purple-400' : 
-                    isCompleted ? 'border-green-400 bg-green-400' : 'border-slate-500'
+                    isCompleted ? 'border-blue-400 bg-blue-400' : 'border-slate-500'
                   }`} />
                   {step}
                 </div>

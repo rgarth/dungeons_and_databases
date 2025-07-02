@@ -1477,10 +1477,38 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           <div className="space-y-4">
             {/* Combined Appearance & Avatar Section */}
             <div className="bg-slate-700 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Edit3 className="h-5 w-5 text-blue-400" />
-                Appearance & Avatar
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <Edit3 className="h-5 w-5 text-blue-400" />
+                  Appearance & Avatar
+                </h3>
+                {isEditing === 'appearance' ? (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleSave('appearance')}
+                      className="flex items-center gap-1 text-green-400 hover:text-green-300 transition-colors text-sm"
+                    >
+                      <Save className="h-4 w-4" />
+                      Save
+                    </button>
+                    <button
+                      onClick={handleCancel}
+                      className="flex items-center gap-1 text-red-400 hover:text-red-300 transition-colors text-sm"
+                    >
+                      <X className="h-4 w-4" />
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleStartEdit('appearance')}
+                    className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors text-sm"
+                  >
+                    <Edit3 className="h-4 w-4" />
+                    {character.appearance ? 'Edit' : 'Add'}
+                  </button>
+                )}
+              </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Left: Avatar Display */}
@@ -1546,37 +1574,16 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                           className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
                           rows={6}
                         />
-                        <div className="flex justify-between items-center">
-                          <div className="flex justify-end">
-                            {getCharacterCountDisplay('appearance')}
-                          </div>
-                          <div className="flex gap-2">
-                            <button
-                              onClick={handleCancel}
-                              className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-1 rounded text-sm transition-colors flex items-center gap-1"
-                            >
-                              <X className="h-3 w-3" />
-                              Cancel
-                            </button>
-                            <button
-                              onClick={() => handleSave('appearance')}
-                              className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded text-sm transition-colors flex items-center gap-1"
-                            >
-                              <Save className="h-3 w-3" />
-                              Save
-                            </button>
-                          </div>
+                        <div className="flex justify-end">
+                          {getCharacterCountDisplay('appearance')}
                         </div>
                       </div>
                     ) : (
-                      <div 
-                        onClick={() => handleStartEdit('appearance')}
-                        className="min-h-[120px] cursor-pointer hover:bg-slate-600 rounded-lg p-3 border border-slate-600 hover:border-slate-500 transition-colors"
-                      >
+                      <div className="min-h-[120px] rounded-lg p-3 border border-slate-600">
                         {character.appearance ? (
                           <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{character.appearance}</p>
                         ) : (
-                          <p className="text-slate-500 italic">Click to describe your character&apos;s physical appearance, clothing, distinctive features, etc.</p>
+                          <p className="text-slate-500 italic">Describe your character&apos;s physical appearance, clothing, distinctive features, etc.</p>
                         )}
                       </div>
                     )}
