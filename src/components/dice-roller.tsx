@@ -672,7 +672,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
     return (
       <div className={`flex items-center justify-center h-64 ${className}`}>
         <div className="text-slate-400">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto mb-2"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 mx-auto mb-2" style={{ borderColor: 'var(--color-accent)' }}></div>
           <div>Loading dice roller...</div>
         </div>
       </div>

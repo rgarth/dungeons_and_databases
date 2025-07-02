@@ -8,12 +8,12 @@
 /* Default theme - can be overridden by theme classes */
 :root {
   /* Theme colors - NEW THEMED COMPONENTS (distinctive colors) */
-  --color-surface: #1a1a2e; /* dark blue-gray */
-  --color-card: #16213e; /* darker blue-gray */
-  --color-card-secondary: #0f3460; /* deep blue */
-  --color-card-tertiary: #533483; /* purple-blue */
-  --color-border: #533483; /* purple-blue */
-  --color-border-light: #6b46c1; /* lighter purple */
+  --color-surface: #0f172a; /* dark slate */
+  --color-card: #1e293b; /* slate */
+  --color-card-secondary: #334155; /* slate-700 */
+  --color-card-tertiary: #475569; /* slate-600 */
+  --color-border: #475569; /* slate-600 */
+  --color-border-light: #64748b; /* slate-500 */
   --color-text-primary: #e2e8f0; /* light gray */
   --color-text-secondary: #cbd5e1; /* medium gray */
   --color-text-muted: #94a3b8; /* muted gray */
@@ -26,6 +26,21 @@
   --color-success-text: #ffffff; /* white text on success */
   --color-warning: #d97706; /* amber */
   --color-warning-text: #ffffff; /* white text on warning */
+  --color-warning-bg: #451a03; /* dark amber background */
+  --color-warning-border: #d97706; /* amber border */
+  --color-danger-bg: #450a0a; /* dark red background */
+  --color-danger-border: #dc2626; /* red border */
+  --color-danger-hover: #b91c1c; /* darker red for hover */
+  --color-success-bg: #064e3b; /* dark emerald background */
+  --color-success-hover: #047857; /* darker emerald for hover */
+  --color-accent-bg: #451a03; /* dark amber background */
+  --color-accent-border: #f59e0b; /* amber border */
+  --color-modal-overlay: rgba(0, 0, 0, 0.5); /* modal overlay with opacity */
+  --color-error: #dc2626; /* red for errors */
+  --color-error-text: #ffffff; /* white text on error */
+  --color-error-border: #dc2626; /* red border for errors */
+  --color-error-text-light: #fca5a5; /* light red text for error details */
+  --color-text-tertiary: #64748b; /* tertiary text color */
 }
 
 @theme inline {
