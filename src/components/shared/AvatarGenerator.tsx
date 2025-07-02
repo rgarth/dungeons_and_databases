@@ -98,7 +98,7 @@ export function AvatarGenerator({
       <button
         onClick={generateAvatar}
         disabled={generating || disabled}
-        className="flex items-center gap-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:bg-[var(--color-card-secondary)] disabled:cursor-not-allowed text-[var(--color-text-primary)] px-4 py-2 rounded-lg transition-colors"
+        className="flex items-center gap-2 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:bg-[var(--color-card-secondary)] disabled:cursor-not-allowed text-[var(--color-button-text)] px-4 py-2 rounded-lg transition-colors"
       >
         {generating ? (
           <RefreshCw className="h-4 w-4 animate-spin" />

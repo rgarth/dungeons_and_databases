@@ -412,7 +412,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
       <div className="mt-4 grid grid-cols-2 gap-2">
         <button
           onClick={handleShortRest}
-          className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] text-sm px-3 py-2 rounded font-medium transition-colors flex items-center justify-center gap-1"
+          className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] text-sm px-3 py-2 rounded font-medium transition-colors flex items-center justify-center gap-1"
           title="Take a short rest (1 hour) - recover some HP using Hit Dice"
         >
           <Heart className="h-4 w-4" />

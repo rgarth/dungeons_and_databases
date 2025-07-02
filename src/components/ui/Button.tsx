@@ -28,7 +28,7 @@ export function Button({
   };
 
   const variantClasses = {
-    primary: 'bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white disabled:opacity-50 disabled:cursor-not-allowed',
+    primary: 'bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] disabled:opacity-50 disabled:cursor-not-allowed',
     secondary: 'bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] text-[var(--color-text-primary)] border border-[var(--color-border)]',
     danger: 'bg-[var(--color-danger)] hover:bg-red-600 text-white disabled:opacity-50 disabled:cursor-not-allowed',
     ghost: 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-card-secondary)]'
