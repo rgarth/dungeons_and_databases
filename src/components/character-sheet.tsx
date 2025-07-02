@@ -839,9 +839,9 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   return (
     <>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
-        <div className="bg-slate-800 rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
+        <div className="bg-[var(--color-card)] rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
           {/* Header - Compact & Responsive */}
-          <div className="p-4 border-b border-slate-700">
+          <div className="p-4 border-b border-[var(--color-border)]">
             {/* Main header row */}
             <div className="flex items-center justify-between">
               {/* Avatar and basic info - always visible */}
@@ -1130,16 +1130,16 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       {/* Magical Weapon Creator Modal */}
       {showWeaponCreator && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
-          <div className="bg-slate-800 rounded-lg w-full max-w-md p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Create Magical Weapon</h3>
+          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-md p-6">
+            <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4">Create Magical Weapon</h3>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm text-slate-400 mb-2">Base Weapon</label>
+                <label className="block text-sm text-[var(--color-text-muted)] mb-2">Base Weapon</label>
                 <select
                   value={selectedBaseWeapon}
                   onChange={(e) => setSelectedBaseWeapon(e.target.value)}
-                  className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
                 >
                   <option value="">Select base weapon...</option>
                   {clientCache.getWeapons().map(weapon => (
@@ -1151,11 +1151,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               </div>
 
               <div>
-                <label className="block text-sm text-slate-400 mb-2">Magical Enhancement</label>
+                <label className="block text-sm text-[var(--color-text-muted)] mb-2">Magical Enhancement</label>
                 <select
                   value={selectedMagicalTemplate}
                   onChange={(e) => setSelectedMagicalTemplate(e.target.value)}
-                  className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
                 >
                   <option value="">Select enhancement...</option>
                   {MAGICAL_WEAPON_TEMPLATES.map(template => (
@@ -1167,20 +1167,20 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               </div>
 
               <div>
-                <label className="block text-sm text-slate-400 mb-2">Custom Name (Optional)</label>
+                <label className="block text-sm text-[var(--color-text-muted)] mb-2">Custom Name (Optional)</label>
                 <input
                   type="text"
                   value={customWeaponName}
                   onChange={(e) => setCustomWeaponName(e.target.value)}
                   placeholder="e.g., 'Dawnbreaker' or leave empty for default"
-                  className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
                 />
               </div>
 
               {selectedMagicalTemplate && (
-                <div className="bg-slate-700 p-3 rounded">
-                  <div className="text-xs text-slate-400 mb-1">Enhancement Description:</div>
-                  <div className="text-sm text-slate-300">
+                <div className="bg-[var(--color-card-secondary)] p-3 rounded">
+                  <div className="text-xs text-[var(--color-text-muted)] mb-1">Enhancement Description:</div>
+                  <div className="text-sm text-[var(--color-text-secondary)]">
                     {MAGICAL_WEAPON_TEMPLATES.find(t => t.name === selectedMagicalTemplate)?.description}
                   </div>
                 </div>
@@ -1190,14 +1190,14 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setShowWeaponCreator(false)}
-                className="flex-1 bg-slate-600 hover:bg-slate-500 text-white py-2 px-4 rounded transition-colors"
+                className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-secondary)]/80 text-[var(--color-text-primary)] py-2 px-4 rounded transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreateMagicalWeapon}
                 disabled={!selectedBaseWeapon || !selectedMagicalTemplate}
-                className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-2 px-4 rounded transition-colors"
+                className="flex-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/80 disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-accent-text)] py-2 px-4 rounded transition-colors"
               >
                 Create Weapon
               </button>
