@@ -459,13 +459,13 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     return (
       <div className="space-y-4">
         {/* Mode Selection */}
-        <div className="flex gap-2 p-1 bg-slate-800 rounded-lg">
+        <div className="flex gap-2 p-1 bg-[var(--color-card-secondary)] rounded-lg">
           <button
             onClick={() => setEditMode('freeform')}
             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
               editMode === 'freeform'
-                ? 'bg-purple-600 text-white'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-[var(--color-accent)] text-[var(--color-accent-text)]'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
             }`}
           >
             <FileText className="h-4 w-4 inline mr-2" />
@@ -475,8 +475,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             onClick={() => setEditMode('guided')}
             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
               editMode === 'guided'
-                ? 'bg-purple-600 text-white'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-[var(--color-accent)] text-[var(--color-accent-text)]'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
             }`}
           >
             <HelpCircle className="h-4 w-4 inline mr-2" />
@@ -491,7 +491,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               value={editValues.backstory}
               onChange={(e) => handleFieldChange('backstory', e.target.value)}
               placeholder="Tell your character&apos;s story - their background, history, motivations, and how they became an adventurer."
-              className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
+              className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none resize-vertical"
               rows={8}
             />
             <div className="flex justify-end mt-1">
@@ -503,24 +503,24 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
         {/* Guided Editor */}
         {editMode === 'guided' && (
           <div className="space-y-4 max-h-96 overflow-y-auto">
-            <div className="bg-slate-800 p-3 rounded-lg">
-              <p className="text-slate-300 text-sm">
+            <div className="bg-[var(--color-card-secondary)] p-3 rounded-lg">
+              <p className="text-[var(--color-text-primary)] text-sm">
                 Answer any questions that interest you. Each answered question will be added to your backstory.
-                <span className="text-slate-400 block mt-1">None are required - skip any you don\'t want to answer!</span>
+                <span className="text-[var(--color-text-secondary)] block mt-1">None are required - skip any you don\'t want to answer!</span>
               </p>
             </div>
             
             <div className="space-y-4 max-h-96 overflow-y-auto">
               {storyService.getBackstoryPrompts().map((prompt, index) => (
-                <div key={index} className="bg-slate-600 rounded-lg p-4">
-                  <label className="block text-white font-medium mb-2">
+                <div key={index} className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+                  <label className="block text-[var(--color-text-primary)] font-medium mb-2">
                     {prompt.question}
                   </label>
                   <textarea
                     value={guidedAnswers[index] || ''}
                     onChange={(e) => handleGuidedAnswerChange(index, e.target.value)}
                     placeholder={prompt.placeholder}
-                    className="w-full bg-slate-700 border border-slate-500 rounded px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
+                    className="w-full bg-[var(--color-card)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none resize-vertical"
                     rows={2}
                   />
                   <div className="flex justify-end mt-1">
@@ -540,10 +540,10 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
             {/* Preview */}
             {Object.keys(guidedAnswers).some(key => guidedAnswers[parseInt(key)]?.trim()) && (
-              <div className="bg-slate-800 rounded-lg p-4">
-                <h4 className="text-white font-medium mb-2">Preview:</h4>
-                <div className="bg-slate-700 rounded p-3 max-h-32 overflow-y-auto">
-                  <pre className="text-slate-300 text-sm whitespace-pre-wrap">
+              <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+                <h4 className="text-[var(--color-text-primary)] font-medium mb-2">Preview:</h4>
+                <div className="bg-[var(--color-card)] rounded p-3 max-h-32 overflow-y-auto">
+                  <pre className="text-[var(--color-text-primary)] text-sm whitespace-pre-wrap">
                     {compileGuidedAnswers()}
                   </pre>
                 </div>
@@ -566,16 +566,16 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     const value = (character[field] as string) || '';
 
     return (
-      <div className="bg-slate-700 rounded-lg p-4">
+      <div className="bg-[var(--color-card)] rounded-lg p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
             {icon}
             {title}
           </h3>
           {!isCurrentlyEditing ? (
             <button
               onClick={() => handleStartEdit(field)}
-              className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors text-sm"
+              className="flex items-center gap-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors text-sm"
             >
               <Edit3 className="h-4 w-4" />
               {value ? 'Edit' : 'Add'}
@@ -584,14 +584,14 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => handleSave(field)}
-                className="flex items-center gap-1 text-green-400 hover:text-green-300 transition-colors text-sm"
+                className="flex items-center gap-1 text-[var(--color-success)] hover:text-[var(--color-success-hover)] transition-colors text-sm"
               >
                 <Save className="h-4 w-4" />
                 Save
               </button>
               <button
                 onClick={handleCancel}
-                className="flex items-center gap-1 text-red-400 hover:text-red-300 transition-colors text-sm"
+                className="flex items-center gap-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] transition-colors text-sm"
               >
                 <X className="h-4 w-4" />
                 Cancel
@@ -616,7 +616,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 value={editValues[field]}
                 onChange={(e) => handleFieldChange(field, e.target.value)}
                 placeholder={placeholder}
-                className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
+                className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none resize-vertical"
                 rows={field === 'notes' ? 12 : 4}
               />
               <div className="flex justify-end mt-1">
@@ -627,9 +627,9 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
         ) : (
           <div className={field === 'notes' ? "min-h-[300px]" : "min-h-[60px]"}>
             {value ? (
-              <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{value}</p>
+              <p className="text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap">{value}</p>
             ) : (
-              <p className="text-slate-500 italic">{placeholder}</p>
+              <p className="text-[var(--color-text-muted)] italic">{placeholder}</p>
             )}
           </div>
         )}
@@ -643,16 +643,16 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     <div className="p-4">
       <div className="space-y-4">
         {/* Character Summary */}
-        <div className="bg-slate-700 rounded-lg p-4">
+        <div className="bg-[var(--color-card)] rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-purple-400" />
+            <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-[var(--color-accent)]" />
               Character Summary
             </h3>
             {!isEditingSummary && (
               <button
                 onClick={handleStartSummaryEdit}
-                className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1 rounded-lg transition-colors flex items-center gap-2 text-sm"
+                className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-3 py-1 rounded-lg transition-colors flex items-center gap-2 text-sm"
               >
                 <Edit3 className="h-4 w-4" />
                 Edit
@@ -665,20 +665,20 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-400 text-sm mb-1">Name</label>
+                  <label className="block text-[var(--color-text-secondary)] text-sm mb-1">Name</label>
                   <input
                     type="text"
                     value={summaryEditValues.name}
                     onChange={(e) => setSummaryEditValues(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 text-sm mb-1">Gender</label>
+                  <label className="block text-[var(--color-text-secondary)] text-sm mb-1">Gender</label>
                   <select
                     value={summaryEditValues.gender}
                     onChange={(e) => setSummaryEditValues(prev => ({ ...prev, gender: e.target.value }))}
-                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
                   >
                     <option value="">Not specified</option>
                     <option value="Male">Male</option>
@@ -688,28 +688,28 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-slate-400 text-sm mb-1">Age</label>
+                  <label className="block text-[var(--color-text-secondary)] text-sm mb-1">Age</label>
                   <input
                     type="number"
                     value={summaryEditValues.age}
                     onChange={(e) => setSummaryEditValues(prev => ({ ...prev, age: e.target.value }))}
                     placeholder="Unknown"
                     min="1"
-                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 text-sm mb-1">Alignment</label>
+                  <label className="block text-[var(--color-text-secondary)] text-sm mb-1">Alignment</label>
                   <input
                     type="text"
                     value={summaryEditValues.alignment}
                     onChange={(e) => setSummaryEditValues(prev => ({ ...prev, alignment: e.target.value }))}
                     placeholder="Unaligned"
-                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 text-sm mb-1">Subrace</label>
+                  <label className="block text-[var(--color-text-secondary)] text-sm mb-1">Subrace</label>
                   <SubraceSelector
                     race={character.race}
                     selectedSubrace={summaryEditValues.subrace}
@@ -722,14 +722,14 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               <div className="flex gap-2 justify-end">
                 <button
                   onClick={handleCancelSummary}
-                  className="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                  className="bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] text-[var(--color-text-primary)] px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
                 >
                   <X className="h-4 w-4" />
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveSummary}
-                  className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                  className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
                 >
                   <Save className="h-4 w-4" />
                   Save
@@ -740,28 +740,28 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             /* Display Mode */
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-center">
               <div>
-                <div className="text-slate-400 text-sm">Name</div>
-                <div className="text-white font-medium">{character.name}</div>
+                <div className="text-[var(--color-text-secondary)] text-sm">Name</div>
+                <div className="text-[var(--color-text-primary)] font-medium">{character.name}</div>
               </div>
               <div>
-                <div className="text-slate-400 text-sm">{character.subrace ? 'Subrace' : 'Race'}</div>
-                <div className="text-white font-medium">{character.subrace ? character.subrace : character.race}</div>
+                <div className="text-[var(--color-text-secondary)] text-sm">{character.subrace ? 'Subrace' : 'Race'}</div>
+                <div className="text-[var(--color-text-primary)] font-medium">{character.subrace ? character.subrace : character.race}</div>
               </div>
               <div>
-                <div className="text-slate-400 text-sm">Class</div>
-                <div className="text-white font-medium">{character.class} {character.level}</div>
+                <div className="text-[var(--color-text-secondary)] text-sm">Class</div>
+                <div className="text-[var(--color-text-primary)] font-medium">{character.class} {character.level}</div>
               </div>
               <div>
-                <div className="text-slate-400 text-sm">Gender</div>
-                <div className="text-white font-medium">{character.gender || 'Unknown'}</div>
+                <div className="text-[var(--color-text-secondary)] text-sm">Gender</div>
+                <div className="text-[var(--color-text-primary)] font-medium">{character.gender || 'Unknown'}</div>
               </div>
               <div>
-                <div className="text-slate-400 text-sm">Age</div>
-                <div className="text-white font-medium">{character.age || 'Unknown'}</div>
+                <div className="text-[var(--color-text-secondary)] text-sm">Age</div>
+                <div className="text-[var(--color-text-primary)] font-medium">{character.age || 'Unknown'}</div>
               </div>
               <div>
-                <div className="text-slate-400 text-sm">Alignment</div>
-                <div className="text-white font-medium">{character.alignment || 'Unaligned'}                </div>
+                <div className="text-[var(--color-text-secondary)] text-sm">Alignment</div>
+                <div className="text-[var(--color-text-primary)] font-medium">{character.alignment || 'Unaligned'}                </div>
               </div>
               
               {/* Display selected draconic ancestry effects - only if there's content to show */}
@@ -775,9 +775,9 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 if (!hasBreathWeapon) return null;
                 
                 return (
-                  <div className="mt-3 p-3 bg-slate-500/30 rounded-lg">
-                    <div className="text-slate-300 text-sm space-y-1">
-                      <div className="font-medium text-white">{character.subrace}</div>
+                  <div className="mt-3 p-3 bg-[var(--color-card-tertiary)]/30 rounded-lg">
+                    <div className="text-[var(--color-text-primary)] text-sm space-y-1">
+                      <div className="font-medium text-[var(--color-text-primary)]">{character.subrace}</div>
                       {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
                         <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Acid damage</div>
                       ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
@@ -810,34 +810,34 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
         </div>
 
         {/* Racial Traits Section */}
-        <div className="bg-slate-700 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-purple-400" />
+        <div className="bg-[var(--color-card)] rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-[var(--color-accent)]" />
             Racial Traits
           </h3>
           {traitsError ? (
-            <div className="text-red-400">{traitsError}</div>
+            <div className="text-[var(--color-danger)]">{traitsError}</div>
           ) : racialTraits.length === 0 ? (
-            <div className="text-slate-400">No racial traits found.</div>
+            <div className="text-[var(--color-text-secondary)]">No racial traits found.</div>
           ) : (
             <div className="flex flex-wrap gap-2">
               {racialTraits.map((trait, index) => (
                 <div key={index} className="relative flex items-center gap-2">
-                  <span className="bg-purple-900/40 text-purple-300 px-3 py-1 rounded-full text-sm font-medium">
+                  <span className="bg-[var(--color-accent-bg)] text-[var(--color-accent)] px-3 py-1 rounded-full text-sm font-medium">
                     {trait.name}
                   </span>
                   <button
                     onClick={() => toggleTooltip(`racial-${index}`)}
-                    className="text-purple-400 hover:text-purple-300 transition-colors"
+                    className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors"
                     data-tooltip
                   >
                     <HelpCircle className="h-4 w-4" />
                   </button>
                   {activeTooltip === `racial-${index}` && (
-                    <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-slate-800 rounded text-sm text-slate-300 border border-slate-600 w-80 shadow-lg" data-tooltip>
-                      <strong className="text-purple-300">{trait.name}</strong><br/>
+                    <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-[var(--color-card-secondary)] rounded text-sm text-[var(--color-text-primary)] border border-[var(--color-border)] w-80 shadow-lg" data-tooltip>
+                      <strong className="text-[var(--color-accent)]">{trait.name}</strong><br/>
                       {trait.description}<br/>
-                      <span className="text-xs text-slate-400 mt-1 block">
+                      <span className="text-xs text-[var(--color-text-secondary)] mt-1 block">
                         Type: {trait.type === 'active' ? 'Action Required' : 'Always Active'}
                       </span>
                     </div>
@@ -850,30 +850,30 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
         {/* Background Features Section */}
         {backgroundData && (
-          <div className="bg-slate-700 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-blue-400" />
-              Background Features
-            </h3>
+                  <div className="bg-[var(--color-card)] rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-[var(--color-accent)]" />
+            Background Features
+          </h3>
             <div className="space-y-3">
               {/* Background Feature */}
               <div className="flex flex-wrap gap-2">
                 <div className="relative flex items-center gap-2">
-                  <span className="bg-blue-900/40 text-blue-300 px-3 py-1 rounded-full text-sm font-medium">
+                  <span className="bg-[var(--color-accent-bg)] text-[var(--color-accent)] px-3 py-1 rounded-full text-sm font-medium">
                     {backgroundData.feature}
                   </span>
                   <button
                     onClick={() => toggleTooltip('background-feature')}
-                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                    className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors"
                     data-tooltip
                   >
                     <HelpCircle className="h-4 w-4" />
                   </button>
                   {activeTooltip === 'background-feature' && (
-                    <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-slate-800 rounded text-sm text-slate-300 border border-slate-600 w-80 shadow-lg" data-tooltip>
-                      <strong className="text-blue-300">{backgroundData.feature}</strong><br/>
+                    <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-[var(--color-card-secondary)] rounded text-sm text-[var(--color-text-primary)] border border-[var(--color-border)] w-80 shadow-lg" data-tooltip>
+                      <strong className="text-[var(--color-accent)]">{backgroundData.feature}</strong><br/>
                       {backgroundData.featureDescription}<br/>
-                      <span className="text-xs text-slate-400 mt-1 block">
+                      <span className="text-xs text-[var(--color-text-secondary)] mt-1 block">
                         Type: Background Feature
                       </span>
                     </div>
@@ -884,10 +884,10 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               {/* Background Skill Proficiencies */}
               {backgroundData.skillProficiencies && backgroundData.skillProficiencies.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-medium text-slate-300 mb-2">Skill Proficiencies Granted:</h4>
+                  <h4 className="text-sm font-medium text-[var(--color-text-primary)] mb-2">Skill Proficiencies Granted:</h4>
                   <div className="flex flex-wrap gap-2">
                     {backgroundData.skillProficiencies.map((skill, index) => (
-                      <span key={index} className="bg-green-900/40 text-green-300 px-2 py-1 rounded text-xs font-medium">
+                      <span key={index} className="bg-[var(--color-success-bg)] text-[var(--color-success)] px-2 py-1 rounded text-xs font-medium">
                         {skill}
                       </span>
                     ))}
@@ -901,33 +901,33 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
         )}
 
         {/* Racial Choices Section */}
-        <div className="bg-slate-700 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-purple-400" />
+        <div className="bg-[var(--color-card)] rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-[var(--color-accent)]" />
             Racial Choices
           </h3>
           
           {/* Human Extra Skill */}
           {character.race === 'Human' && (
-            <div className="mb-4 p-3 bg-slate-600 rounded-lg">
+            <div className="mb-4 p-3 bg-[var(--color-card-secondary)] rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="text-white font-medium">Extra Skill</h4>
-                <span className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Human Trait</span>
+                <h4 className="text-[var(--color-text-primary)] font-medium">Extra Skill</h4>
+                <span className="text-xs text-[var(--color-text-secondary)] bg-[var(--color-card)] px-2 py-1 rounded">Human Trait</span>
               </div>
-              <p className="text-slate-300 text-sm mb-3">
+              <p className="text-[var(--color-text-primary)] text-sm mb-3">
                 You gain proficiency in one skill of your choice.
               </p>
               <div className="space-y-2">
                 {/* Show currently selected human skill */}
                 {getRacialSkills().length > 0 && (
-                  <div className="flex items-center gap-2 p-2 bg-slate-700 rounded border border-slate-500">
-                    <span className="text-green-400 text-sm">✓</span>
-                    <span className="text-white text-sm">{getRacialSkills()[0]}</span>
+                  <div className="flex items-center gap-2 p-2 bg-[var(--color-card)] rounded border border-[var(--color-border)]">
+                    <span className="text-[var(--color-success)] text-sm">✓</span>
+                    <span className="text-[var(--color-text-primary)] text-sm">{getRacialSkills()[0]}</span>
                     <button
                       onClick={() => {
                         removeSkillWithSource(getRacialSkills()[0]);
                       }}
-                      className="ml-auto text-red-400 hover:text-red-300 text-xs"
+                      className="ml-auto text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] text-xs"
                     >
                       Change
                     </button>
