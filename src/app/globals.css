@@ -9,6 +9,9 @@
 :root {
   /* Theme colors - NEW THEMED COMPONENTS (distinctive colors) */
   --color-surface: #0f172a; /* dark slate */
+  --color-surface-secondary: #1e293b; /* slate-800 */
+  --color-surface-tertiary: #334155; /* slate-700 */
+  --color-surface-quaternary: #475569; /* slate-600 */
   --color-card: #1e293b; /* slate */
   --color-card-secondary: #334155; /* slate-700 */
   --color-card-tertiary: #475569; /* slate-600 */
@@ -16,31 +19,51 @@
   --color-border-light: #64748b; /* slate-500 */
   --color-text-primary: #e2e8f0; /* light gray */
   --color-text-secondary: #cbd5e1; /* medium gray */
+  --color-text-tertiary: #94a3b8; /* muted gray */
+  --color-text-quaternary: #64748b; /* slate-500 */
   --color-text-muted: #94a3b8; /* muted gray */
+  
+  /* Primary colors */
+  --color-primary: #475569; /* slate-600 for primary actions */
+  --color-primary-hover: #64748b; /* slate-500 for primary hover */
+  
+  /* Accent colors */
   --color-accent: #f59e0b; /* amber/orange instead of purple */
   --color-accent-hover: #d97706; /* darker amber */
   --color-accent-text: #ffffff; /* white text on accent */
-  --color-danger: #dc2626; /* red */
-  --color-danger-text: #ffffff; /* white text on danger */
+  
+  /* Status colors */
   --color-success: #059669; /* emerald */
   --color-success-text: #ffffff; /* white text on success */
+  --color-success-hover: #047857; /* darker emerald for hover */
   --color-warning: #d97706; /* amber */
   --color-warning-text: #ffffff; /* white text on warning */
-  --color-warning-bg: #451a03; /* dark amber background */
-  --color-warning-border: #d97706; /* amber border */
-  --color-danger-bg: #450a0a; /* dark red background */
-  --color-danger-border: #dc2626; /* red border */
-  --color-danger-hover: #b91c1c; /* darker red for hover */
-  --color-success-bg: #064e3b; /* dark emerald background */
-  --color-success-hover: #047857; /* darker emerald for hover */
-  --color-accent-bg: #451a03; /* dark amber background */
-  --color-accent-border: #f59e0b; /* amber border */
-  --color-modal-overlay: rgba(0, 0, 0, 0.5); /* modal overlay with opacity */
   --color-error: #dc2626; /* red for errors */
   --color-error-text: #ffffff; /* white text on error */
+  --color-error-hover: #b91c1c; /* darker red for hover */
+  
+  /* Background variants for status colors */
+  --color-success-bg: #064e3b; /* dark emerald background */
+  --color-warning-bg: #451a03; /* dark amber background */
+  --color-error-bg: #450a0a; /* dark red background */
+  --color-accent-bg: #451a03; /* dark amber background */
+  
+  /* Border variants for status colors */
+  --color-success-border: #059669; /* emerald border */
+  --color-warning-border: #d97706; /* amber border */
   --color-error-border: #dc2626; /* red border for errors */
+  --color-accent-border: #f59e0b; /* amber border */
+  
+  /* Legacy aliases for backward compatibility */
+  --color-danger: var(--color-error); /* alias for error */
+  --color-danger-text: var(--color-error-text); /* alias for error text */
+  --color-danger-hover: var(--color-error-hover); /* alias for error hover */
+  --color-danger-bg: var(--color-error-bg); /* alias for error background */
+  --color-danger-border: var(--color-error-border); /* alias for error border */
+  
+  /* Special purpose colors */
+  --color-overlay: rgba(0, 0, 0, 0.5); /* modal overlay with opacity */
   --color-error-text-light: #fca5a5; /* light red text for error details */
-  --color-text-tertiary: #64748b; /* tertiary text color */
   --color-dice-default: #dc2626; /* red for default dice color */
 }
 
