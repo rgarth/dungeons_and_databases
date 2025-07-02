@@ -400,27 +400,27 @@ export function GearTab({
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Gear & Spells</h2>
-        <p className="text-[var(--text-secondary)]">Manage your equipment, magical items, and spells</p>
+        <h2 className="text-2xl font-bold text-[var(--color-text-primary)] mb-2">Gear & Spells</h2>
+        <p className="text-[var(--color-text-secondary)]">Manage your equipment, magical items, and spells</p>
       </div>
 
       {/* Equipment Conflicts Display */}
       {equipmentConflicts.hasConflicts && (
-        <div className="bg-[var(--warning-bg)] border border-[var(--warning-border)] rounded-lg p-4 mb-6">
+        <div className="bg-[var(--color-warning-bg)] border border-[var(--color-warning-border)] rounded-lg p-4 mb-6">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-[var(--warning-text)] mt-0.5 flex-shrink-0" />
+            <AlertTriangle className="h-5 w-5 text-[var(--color-warning-text)] mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <h3 className="text-[var(--warning-text)] font-medium mb-2">Equipment Conflicts Detected</h3>
+              <h3 className="text-[var(--color-warning-text)] font-medium mb-2">Equipment Conflicts Detected</h3>
               <div className="space-y-1 mb-3">
                 {equipmentConflicts.conflictSummary.map((conflict, index) => (
-                  <div key={index} className="text-[var(--warning-text)] text-sm">{conflict}</div>
+                  <div key={index} className="text-[var(--color-warning-text)] text-sm">{conflict}</div>
                 ))}
               </div>
               {equipmentConflicts.suggestions.length > 0 && (
                 <div className="space-y-1">
-                  <div className="text-[var(--warning-text)] text-sm font-medium">Suggestions:</div>
+                  <div className="text-[var(--color-warning-text)] text-sm font-medium">Suggestions:</div>
                   {equipmentConflicts.suggestions.map((suggestion, index) => (
-                    <div key={index} className="text-[var(--warning-text)] text-sm">{suggestion}</div>
+                    <div key={index} className="text-[var(--color-warning-text)] text-sm">{suggestion}</div>
                   ))}
                 </div>
               )}
@@ -435,8 +435,8 @@ export function GearTab({
           onClick={() => setActiveSection("equipped")}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             activeSection === "equipped"
-              ? "bg-[var(--accent-color)] text-[var(--text-on-accent)]"
-              : "bg-[var(--muted-bg)] text-[var(--text-secondary)] hover:bg-[var(--muted-hover)]"
+              ? "bg-[var(--color-accent)] text-[var(--color-accent-text)]"
+              : "bg-[var(--color-card-secondary)] text-[var(--color-text-secondary)] hover:bg-[var(--color-card-tertiary)]"
           }`}
         >
           <Shield className="h-4 w-4 inline mr-2" />
@@ -446,8 +446,8 @@ export function GearTab({
           onClick={() => setActiveSection("inventory")}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             activeSection === "inventory"
-              ? "bg-[var(--accent-color)] text-[var(--text-on-accent)]"
-              : "bg-[var(--muted-bg)] text-[var(--text-secondary)] hover:bg-[var(--muted-hover)]"
+              ? "bg-[var(--color-accent)] text-[var(--color-accent-text)]"
+              : "bg-[var(--color-card-secondary)] text-[var(--color-text-secondary)] hover:bg-[var(--color-card-tertiary)]"
           }`}
         >
           <Package className="h-4 w-4 inline mr-2" />
@@ -460,22 +460,22 @@ export function GearTab({
           {/* Left Column - Combat Gear */}
           <div className="space-y-6">
             {/* Weapons */}
-            <div className="bg-[var(--card-bg)] rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-                <Wand2 className="h-5 w-5 text-[var(--accent-color)]" />
+            <div className="bg-[var(--color-card)] rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                <Wand2 className="h-5 w-5 text-[var(--color-accent)]" />
                 Equipped Weapons ({equippedWeapons.length}/{weaponLimits.maxEquipped})
               </h3>
               {equippedWeapons.length === 0 ? (
-                <p className="text-[var(--text-secondary)] text-sm">No weapons equipped</p>
+                <p className="text-[var(--color-text-secondary)] text-sm">No weapons equipped</p>
               ) : (
                 <div className="space-y-2">
                   {equippedWeapons.map((weapon, index) => (
-                    <div key={index} className="bg-[var(--muted-bg)] rounded p-3 flex justify-between items-center">
+                    <div key={index} className="bg-[var(--color-card-secondary)] rounded p-3 flex justify-between items-center">
                       <div>
-                        <span className="text-[var(--text-primary)] font-medium">
+                        <span className="text-[var(--color-text-primary)] font-medium">
                           {weapon.name}
                           {weapon.stackable && weapon.quantity && weapon.quantity > 1 && (
-                            <span className="ml-2 text-xs bg-[var(--accent-color)] text-[var(--text-on-accent)] px-2 py-1 rounded">
+                            <span className="ml-2 text-xs bg-[var(--color-accent)] text-[var(--color-accent-text)] px-2 py-1 rounded">
                               {weapon.quantity}
                             </span>
                           )}
@@ -485,7 +485,7 @@ export function GearTab({
                             {weapon.rarity}
                           </span>
                         )}
-                        <div className="text-sm text-[var(--text-secondary)]">
+                        <div className="text-sm text-[var(--color-text-secondary)]">
                           {weapon.damage} {weapon.damageType} • {weapon.type}
                         </div>
                       </div>
@@ -493,7 +493,7 @@ export function GearTab({
                         {!weapon.stackable && (
                           <button
                             onClick={() => onUnequipWeapon(index)}
-                            className="p-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--muted-hover)] rounded"
+                            className="p-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-card-tertiary)] rounded"
                             title={`Unequip ${weapon.name}`}
                           >
                             <Package className="h-4 w-4" />
@@ -501,7 +501,7 @@ export function GearTab({
                         )}
                         <button
                           onClick={() => onRemoveWeapon(index, true)}
-                          className="p-1 text-[var(--danger-color)] hover:text-[var(--danger-hover)] hover:bg-[var(--danger-bg)] rounded"
+                          className="p-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded"
                           title={weapon.stackable ? `Use/Remove ${weapon.name}` : `Remove ${weapon.name}`}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -514,20 +514,20 @@ export function GearTab({
             </div>
 
             {/* Armor */}
-            <div className="bg-slate-700 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Shield className="h-5 w-5 text-blue-400" />
+            <div className="bg-[var(--color-card)] rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                <Shield className="h-5 w-5 text-[var(--color-accent)]" />
                 Equipped Armor (AC: {currentArmorClass})
               </h3>
               {equippedArmor.length === 0 ? (
-                <p className="text-slate-400 text-sm">No armor equipped</p>
+                <p className="text-[var(--color-text-secondary)] text-sm">No armor equipped</p>
               ) : (
                 <div className="space-y-2">
                   {equippedArmor.map((armor, index) => (
-                    <div key={index} className="bg-slate-600 rounded p-3 flex justify-between items-center">
+                    <div key={index} className="bg-[var(--color-card-secondary)] rounded p-3 flex justify-between items-center">
                       <div>
-                        <span className="text-white font-medium">{armor.name}</span>
-                        <div className="text-sm text-slate-300">
+                        <span className="text-[var(--color-text-primary)] font-medium">{armor.name}</span>
+                        <div className="text-sm text-[var(--color-text-secondary)]">
                           AC {armor.baseAC} • {armor.type}
                           {armor.type === 'Medium' && armor.maxDexBonus !== null && ` • Max Dex +${armor.maxDexBonus}`}
                           {armor.type === 'Light' && ` • Full Dex`}
@@ -537,13 +537,13 @@ export function GearTab({
                       <div className="flex gap-1">
                         <button
                           onClick={() => onUnequipArmor(index)}
-                          className="p-1 text-slate-400 hover:text-white hover:bg-slate-500 rounded"
+                          className="p-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-card-tertiary)] rounded"
                         >
                           <Package className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => onRemoveArmor(index, true)}
-                          className="p-1 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded"
+                          className="p-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -558,21 +558,21 @@ export function GearTab({
           {/* Right Column - Magical Items */}
           <div className="space-y-6">
             {/* Magical Items */}
-            <div className="bg-slate-700 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-purple-400" />
+            <div className="bg-[var(--color-card)] rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-[var(--color-accent)]" />
                 Magical Items ({attunedItems.length}/3 attuned)
               </h3>
               {equippedMagicalItems.length === 0 ? (
-                <p className="text-slate-400 text-sm">No magical items equipped</p>
+                <p className="text-[var(--color-text-secondary)] text-sm">No magical items equipped</p>
               ) : (
                 <div className="space-y-2">
                   {equippedMagicalItems.map((item, index) => (
-                    <div key={index} className="bg-slate-600 rounded p-3">
+                    <div key={index} className="bg-[var(--color-card-secondary)] rounded p-3">
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="text-white font-medium">{item.name}</span>
+                            <span className="text-[var(--color-text-primary)] font-medium">{item.name}</span>
                             <span className={`text-xs ${magicalItems.getRarityColor(item.rarity)}`}>
                               {item.rarity}
                             </span>
@@ -581,34 +581,34 @@ export function GearTab({
                                 onClick={() => onToggleAttunement(item.name)}
                                 className={`text-xs px-2 py-1 rounded ${
                                   item.isAttuned
-                                    ? 'bg-purple-600 text-white'
-                                    : 'bg-slate-500 text-slate-300 hover:bg-slate-400'
+                                    ? 'bg-[var(--color-accent)] text-[var(--color-accent-text)]'
+                                    : 'bg-[var(--color-card-secondary)] text-[var(--color-text-secondary)] hover:bg-[var(--color-card-tertiary)]'
                                 }`}
                               >
                                 {item.isAttuned ? 'Attuned' : 'Attune'}
                               </button>
                             )}
                           </div>
-                          <div className="text-sm text-slate-300 mt-1">
+                          <div className="text-sm text-[var(--color-text-secondary)] mt-1">
                             {item.type} • {item.slot || 'No slot restriction'}
                           </div>
                         </div>
                         <div className="flex gap-1">
                           <button
                             onClick={() => onUnequipMagicalItem(index)}
-                            className="p-1 text-slate-400 hover:text-white hover:bg-slate-500 rounded"
+                            className="p-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-card-tertiary)] rounded"
                           >
                             <Package className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => onRemoveMagicalItem(index, true)}
-                            className="p-1 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded"
+                            className="p-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
                         </div>
                       </div>
-                      <div className="text-xs text-slate-400">
+                      <div className="text-xs text-[var(--color-text-secondary)]">
                         {item.effects.map((effect, effectIndex) => (
                           <div key={effectIndex}>• {effect.description}</div>
                         ))}
@@ -620,15 +620,15 @@ export function GearTab({
             </div>
 
             {/* Spell Management */}
-            <div className="bg-slate-700 rounded-lg p-4">
+            <div className="bg-[var(--color-card)] rounded-lg p-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                  <Wand2 className="h-5 w-5 text-indigo-400" />
+                <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
+                  <Wand2 className="h-5 w-5 text-[var(--color-accent)]" />
                   Spells
                 </h3>
                 <button
                   onClick={onOpenSpellPreparation}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded text-sm transition-colors"
+                  className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-3 py-1 rounded text-sm transition-colors"
                 >
                   Manage Spells
                 </button>
@@ -636,17 +636,17 @@ export function GearTab({
               
               {/* Paladin Spellcasting Setup Notice */}
               {character.class === 'Paladin' && character.level >= 2 && !character.spellcastingAbility && (
-                <div className="mb-4 p-3 bg-yellow-900/20 border border-yellow-600/30 rounded-lg">
+                <div className="mb-4 p-3 bg-[var(--color-warning-bg)] border border-[var(--color-warning-border)] rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
-                    <Sparkles className="h-4 w-4 text-yellow-400" />
-                    <span className="text-yellow-300 font-medium">Spellcasting Available!</span>
+                    <Sparkles className="h-4 w-4 text-[var(--color-warning-text)]" />
+                    <span className="text-[var(--color-warning-text)] font-medium">Spellcasting Available!</span>
                   </div>
-                  <p className="text-yellow-200 text-sm mb-3">
+                  <p className="text-[var(--color-warning-text)] text-sm mb-3">
                     Your paladin has reached level 2 and can now cast spells! You need to set up your spellcasting ability and prepare your first spells.
                   </p>
                   <button
                     onClick={onOpenSpellPreparation}
-                    className="bg-yellow-600 hover:bg-yellow-700 text-white text-sm px-3 py-1 rounded font-medium transition-colors"
+                    className="bg-[var(--color-warning)] hover:bg-[var(--color-warning-text)] text-[var(--color-warning-text)] text-sm px-3 py-1 rounded font-medium transition-colors"
                   >
                     Set Up Spellcasting
                   </button>
@@ -655,21 +655,21 @@ export function GearTab({
               
               <div className="space-y-3">
                 <div>
-                  <span className="text-slate-400 text-sm">Prepared Spells: </span>
-                  <span className="text-white">{character.spellsPrepared?.length || 0}</span>
+                  <span className="text-[var(--color-text-secondary)] text-sm">Prepared Spells: </span>
+                  <span className="text-[var(--color-text-primary)]">{character.spellsPrepared?.length || 0}</span>
                 </div>
                 <div>
-                  <span className="text-slate-400 text-sm">Known Spells: </span>
-                  <span className="text-white">{character.spellsKnown?.length || 0}</span>
+                  <span className="text-[var(--color-text-secondary)] text-sm">Known Spells: </span>
+                  <span className="text-[var(--color-text-primary)]">{character.spellsKnown?.length || 0}</span>
                 </div>
                 {character.spellSlots && Object.keys(character.spellSlots).filter(k => k && k !== 'undefined').length > 0 && (
                   <div>
-                    <span className="text-slate-400 text-sm">Spell Slots: </span>
+                    <span className="text-[var(--color-text-secondary)] text-sm">Spell Slots: </span>
                     <div className="flex gap-2 mt-1">
                       {Object.entries(character.spellSlots)
                         .filter(([level, slots]) => level && level !== 'undefined' && slots > 0)
                         .map(([level, slots]) => (
-                        <span key={level} className="bg-slate-600 px-2 py-1 rounded text-xs text-white">
+                        <span key={level} className="bg-[var(--color-card-secondary)] px-2 py-1 rounded text-xs text-[var(--color-text-primary)]">
                           L{level}: {slots}
                         </span>
                       ))}
@@ -685,20 +685,20 @@ export function GearTab({
       {activeSection === "inventory" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Weapons Inventory */}
-          <div className="bg-slate-700 rounded-lg p-4">
+          <div className="bg-[var(--color-card)] rounded-lg p-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">Weapons</h3>
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Weapons</h3>
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowWeaponSelector(true)}
-                  className="bg-yellow-600 hover:bg-yellow-700 text-white p-2 rounded"
+                  className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-2 py-1 rounded"
                   title="Add basic weapons"
                 >
                   <Plus className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => setShowCustomWeaponCreator(true)}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-2 rounded"
+                  className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-2 py-1 rounded"
                   title="Create magical weapons"
                 >
                   <Sparkles className="h-4 w-4" />
@@ -706,10 +706,10 @@ export function GearTab({
               </div>
             </div>
             {inventoryWeapons.length === 0 ? (
-              <div className="text-slate-400 text-sm">
+              <div className="text-[var(--color-text-secondary)] text-sm">
                 <p>No weapons in inventory</p>
                 {equippedWeapons.length > 0 && (
-                  <p className="text-xs mt-1 text-slate-500">
+                  <p className="text-xs mt-1 text-[var(--color-text-secondary)]">
                     💡 Equipped weapons ({equippedWeapons.length}) are shown in &quot;Equipped Gear&quot; tab
                   </p>
                 )}
@@ -717,13 +717,13 @@ export function GearTab({
             ) : (
               <div className="space-y-2">
                 {inventoryWeapons.map((weapon, index) => (
-                  <div key={index} className="bg-slate-600 rounded p-3">
+                  <div key={index} className="bg-[var(--color-card-secondary)] rounded p-3">
                     <div className="flex justify-between items-center">
                       <div>
-                        <span className="text-white font-medium">
+                        <span className="text-[var(--color-text-primary)] font-medium">
                           {weapon.name}
                           {weapon.stackable && weapon.quantity && weapon.quantity > 1 && (
-                            <span className="ml-2 text-xs bg-blue-600 text-white px-2 py-1 rounded">
+                            <span className="ml-2 text-xs bg-[var(--color-accent)] text-[var(--color-accent-text)] px-2 py-1 rounded">
                               {weapon.quantity}
                             </span>
                           )}
@@ -733,20 +733,20 @@ export function GearTab({
                             {weapon.rarity}
                           </span>
                         )}
-                        <div className="text-sm text-slate-300">
+                        <div className="text-sm text-[var(--color-text-secondary)]">
                           {weapon.damage} {weapon.damageType}
                         </div>
                       </div>
                       <div className="flex gap-1">
                         <button
                           onClick={() => onEquipWeapon(weapon, index)}
-                          className="p-1 text-green-400 hover:text-green-300 hover:bg-green-900/20 rounded"
+                          className="p-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-card-tertiary)] rounded"
                         >
                           <Shield className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => onRemoveWeapon(index, false)}
-                          className="p-1 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded"
+                          className="p-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -759,21 +759,21 @@ export function GearTab({
           </div>
 
           {/* Armor Inventory */}
-          <div className="bg-slate-700 rounded-lg p-4">
+          <div className="bg-[var(--color-card)] rounded-lg p-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">Armor</h3>
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Armor</h3>
               <button
                 onClick={() => setShowArmorSelector(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded"
+                className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-2 py-1 rounded"
               >
                 <Plus className="h-4 w-4" />
               </button>
             </div>
             {inventoryArmor.length === 0 ? (
-              <div className="text-slate-400 text-sm">
+              <div className="text-[var(--color-text-secondary)] text-sm">
                 <p>No armor in inventory</p>
                 {equippedArmor.length > 0 && (
-                  <p className="text-xs mt-1 text-slate-500">
+                  <p className="text-xs mt-1 text-[var(--color-text-secondary)]">
                     💡 Equipped armor ({equippedArmor.length}) is shown in &quot;Equipped Gear&quot; tab
                   </p>
                 )}
@@ -781,11 +781,11 @@ export function GearTab({
             ) : (
               <div className="space-y-2">
                 {inventoryArmor.map((armor, index) => (
-                  <div key={index} className="bg-slate-600 rounded p-3">
+                  <div key={index} className="bg-[var(--color-card-secondary)] rounded p-3">
                     <div className="flex justify-between items-center">
                       <div>
-                        <span className="text-white font-medium">{armor.name}</span>
-                        <div className="text-sm text-slate-300">
+                        <span className="text-[var(--color-text-primary)] font-medium">{armor.name}</span>
+                        <div className="text-sm text-[var(--color-text-secondary)]">
                           AC {armor.baseAC} • {armor.type}
                           {armor.type === 'Medium' && armor.maxDexBonus !== null && ` • Max Dex +${armor.maxDexBonus}`}
                           {armor.type === 'Light' && ` • Full Dex`}
@@ -795,13 +795,13 @@ export function GearTab({
                       <div className="flex gap-1">
                         <button
                           onClick={() => onEquipArmor(armor, index)}
-                          className="p-1 text-green-400 hover:text-green-300 hover:bg-green-900/20 rounded"
+                          className="p-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-card-tertiary)] rounded"
                         >
                           <Shield className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => onRemoveArmor(index, false)}
-                          className="p-1 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded"
+                          className="p-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -814,15 +814,15 @@ export function GearTab({
           </div>
 
           {/* Magical Items Inventory */}
-          <div className="bg-slate-700 rounded-lg p-4">
+          <div className="bg-[var(--color-card)] rounded-lg p-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">Magical Items</h3>
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Magical Items</h3>
               <div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setShowMagicalItemSelector(true)}
                     disabled={inventoryMagicalItems.length >= 50}
-                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded"
+                    className="flex items-center gap-2 px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 text-[var(--color-accent-text)] rounded"
                   >
                     <Plus className="h-4 w-4" />
                     Add Magical Item
@@ -831,10 +831,10 @@ export function GearTab({
               </div>
             </div>
             {inventoryMagicalItems.length === 0 ? (
-              <div className="text-slate-400 text-sm">
+              <div className="text-[var(--color-text-secondary)] text-sm">
                 <p>No magical items in inventory</p>
                 {equippedMagicalItems.length > 0 && (
-                  <p className="text-xs mt-1 text-slate-500">
+                  <p className="text-xs mt-1 text-[var(--color-text-secondary)]">
                     💡 Equipped magical items ({equippedMagicalItems.length}) are shown in &quot;Equipped Gear&quot; tab
                   </p>
                 )}
@@ -842,19 +842,19 @@ export function GearTab({
             ) : (
               <div className="space-y-2">
                 {inventoryMagicalItems.map((item, index) => (
-                  <div key={index} className="bg-slate-600 rounded p-3">
+                  <div key={index} className="bg-[var(--color-card-secondary)] rounded p-3">
                     <div className="flex justify-between items-start">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-white font-medium">{item.name}</span>
+                          <span className="text-[var(--color-text-primary)] font-medium">{item.name}</span>
                           <span className={`text-xs ${magicalItems.getRarityColor(item.rarity)}`}>
                             {item.rarity}
                           </span>
                         </div>
-                        <div className="text-sm text-slate-300">
+                        <div className="text-sm text-[var(--color-text-secondary)]">
                           {item.type}
                           {item.requiresAttunement && (
-                            <span className="ml-2 text-xs bg-orange-600 text-white px-1 rounded">
+                            <span className="ml-2 text-xs bg-[var(--color-accent)] text-[var(--color-accent-text)] px-1 rounded">
                               Requires Attunement
                             </span>
                           )}
@@ -864,7 +864,7 @@ export function GearTab({
                         {magicalItems.isConsumable(item) ? (
                           <button
                             onClick={() => handleUseItem(item, index)}
-                            className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded font-medium transition-colors"
+                            className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] text-xs px-2 py-1 rounded font-medium transition-colors"
                             title={`Use ${item.name}`}
                           >
                             {item.type === 'Potion' ? 'Drink' : 'Use'}
@@ -887,8 +887,8 @@ export function GearTab({
                             className={`text-xs px-2 py-1 rounded font-medium transition-colors ${
                               (item.slot && !canEquipInSlot(item, equippedMagicalItems)) ||
                               (item.requiresAttunement && !canAttuneMagicalItem(attunedItems, item.name) && !attunedItems.includes(item.name))
-                                ? 'bg-slate-500 text-slate-400 cursor-not-allowed'
-                                : 'bg-green-600 hover:bg-green-700 text-white'
+                                ? 'bg-[var(--color-card-secondary)] text-[var(--color-text-secondary)] cursor-not-allowed'
+                                : 'bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]'
                             }`}
                             title={
                               item.slot && !canEquipInSlot(item, equippedMagicalItems)
@@ -906,7 +906,7 @@ export function GearTab({
                         )}
                         <button
                           onClick={() => onRemoveMagicalItem(index, false)}
-                          className="bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-1 rounded font-medium transition-colors"
+                          className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)] text-xs px-2 py-1 rounded font-medium transition-colors"
                           title={`Remove ${item.name}`}
                         >
                           <Trash2 className="h-3 w-3" />
@@ -917,18 +917,18 @@ export function GearTab({
                 ))}
               </div>
             )}
-            <div className="bg-slate-600 rounded p-3 flex gap-2">
+            <div className="bg-[var(--color-card-secondary)] rounded p-3 flex gap-2">
               <button
                 onClick={() => setShowMagicalItemSelector(true)}
                 disabled={inventoryMagicalItems.length >= 50}
-                className="flex items-center gap-2 px-3 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded text-sm"
+                className="flex items-center gap-2 px-3 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 text-[var(--color-accent-text)] rounded text-sm"
               >
                 <Sparkles className="h-4 w-4" />
                 Browse Items
               </button>
               <button
                 onClick={() => setShowSpellScrollCreator(true)}
-                className="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm"
+                className="flex items-center gap-2 px-3 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded text-sm"
               >
                 <Scroll className="h-4 w-4" />
                 Create Scroll
@@ -1019,10 +1019,10 @@ export function GearTab({
       )}
 
       {showMagicalItemSelector && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-800 rounded-lg w-full max-w-4xl p-6 max-h-[80vh] overflow-hidden">
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-modal-overlay)' }}>
+          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-4xl p-6 max-h-[80vh] overflow-hidden">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">Add Magical Item ({filteredMagicalItems.length} items)</h3>
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Add Magical Item ({filteredMagicalItems.length} items)</h3>
               <button
                 onClick={() => {
                   setShowMagicalItemSelector(false);
@@ -1030,7 +1030,7 @@ export function GearTab({
                   setSelectedRarity("");
                   setSelectedType("");
                 }}
-                className="text-slate-400 hover:text-white"
+                className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1039,21 +1039,21 @@ export function GearTab({
             {/* Filter Controls */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div>
-                <label className="block text-sm text-slate-300 mb-2">Search</label>
+                <label className="block text-sm text-[var(--color-text-secondary)] mb-2">Search</label>
                 <input
                   type="text"
                   placeholder="Search items..."
                   value={magicalItemSearch}
                   onChange={(e) => setMagicalItemSearch(e.target.value)}
-                  className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white placeholder-slate-400"
+                  className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-card-tertiary)] rounded px-3 py-2 text-[var(--color-text-primary)] placeholder-[var(--color-text-secondary)]"
                 />
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-2">Rarity</label>
+                <label className="block text-sm text-[var(--color-text-secondary)] mb-2">Rarity</label>
                 <select
                   value={selectedRarity}
                   onChange={(e) => setSelectedRarity(e.target.value)}
-                  className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white"
+                  className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-card-tertiary)] rounded px-3 py-2 text-[var(--color-text-primary)]"
                 >
                   <option value="">All Rarities</option>
                   {availableRarities.map(rarity => (
@@ -1062,11 +1062,11 @@ export function GearTab({
                 </select>
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-2">Type</label>
+                <label className="block text-sm text-[var(--color-text-secondary)] mb-2">Type</label>
                 <select
                   value={selectedType}
                   onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white"
+                  className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-card-tertiary)] rounded px-3 py-2 text-[var(--color-text-primary)]"
                 >
                   <option value="">All Types</option>
                   {availableTypes.map(type => (
@@ -1084,25 +1084,25 @@ export function GearTab({
                     onClick={() => setSelectedMagicalItem(item.name)}
                     className={`text-left p-3 rounded border transition-colors ${
                       selectedMagicalItem === item.name
-                        ? 'bg-purple-600 border-purple-500'
-                        : 'bg-slate-600 border-slate-500 hover:bg-slate-500'
+                        ? 'bg-[var(--color-accent)] border-[var(--color-accent-hover)]'
+                        : 'bg-[var(--color-card-secondary)] border-[var(--color-card-tertiary)] hover:bg-[var(--color-card-tertiary)]'
                     }`}
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-white font-medium">{item.name}</span>
+                          <span className="text-[var(--color-text-primary)] font-medium">{item.name}</span>
                           <span className={`text-xs ${magicalItems.getRarityColor(item.rarity)} px-1 rounded`}>
                             {item.rarity}
                           </span>
                           {item.requiresAttunement && (
-                            <span className="text-xs bg-orange-600 text-white px-1 rounded">
+                            <span className="text-xs bg-[var(--color-accent)] text-[var(--color-accent-text)] px-1 rounded">
                               Requires Attunement
                             </span>
                           )}
                         </div>
-                        <div className="text-sm text-slate-300">{item.type}</div>
-                        <div className="text-xs text-slate-400 mt-1 line-clamp-2">
+                        <div className="text-sm text-[var(--color-text-secondary)]">{item.type}</div>
+                        <div className="text-xs text-[var(--color-text-secondary)] mt-1 line-clamp-2">
                           {item.description}
                         </div>
                       </div>
@@ -1111,7 +1111,7 @@ export function GearTab({
                 ))}
               </div>
               {filteredMagicalItems.length === 0 && (
-                <div className="text-center text-slate-400 py-8">
+                <div className="text-center text-[var(--color-text-secondary)] py-8">
                   No items match your search criteria.
                 </div>
               )}
@@ -1124,14 +1124,14 @@ export function GearTab({
                   setSelectedRarity("");
                   setSelectedType("");
                 }}
-                className="flex-1 bg-slate-600 hover:bg-slate-500 text-white py-2 px-4 rounded"
+                className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] text-[var(--color-text-primary)] py-2 px-4 rounded"
               >
                 Cancel
               </button>
               <button
                 onClick={handleAddMagicalItem}
                 disabled={!selectedMagicalItem}
-                className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white py-2 px-4 rounded"
+                className="flex-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] py-2 px-4 rounded"
               >
                 Add Item
               </button>
@@ -1141,13 +1141,13 @@ export function GearTab({
       )}
 
       {showSpellScrollCreator && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-800 rounded-lg w-full max-w-md p-6">
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-modal-overlay)' }}>
+          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-md p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">Create Spell Scroll</h3>
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Create Spell Scroll</h3>
               <button
                 onClick={() => setShowSpellScrollCreator(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1158,7 +1158,7 @@ export function GearTab({
                 setSelectedSpellLevel(Number(e.target.value));
                 setSelectedSpell(""); // Reset spell selection when level changes
               }}
-              className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white mb-4"
+              className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-card-tertiary)] rounded px-3 py-2 text-[var(--color-text-primary)] mb-4"
             >
               <option value="-1">Select spell level...</option>
               <option value="0">Cantrip (0 level)</option>
@@ -1176,7 +1176,7 @@ export function GearTab({
               <select
                 value={selectedSpell}
                 onChange={(e) => setSelectedSpell(e.target.value)}
-                className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white mb-4"
+                className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-card-tertiary)] rounded px-3 py-2 text-[var(--color-text-primary)] mb-4"
               >
                 <option value="">Select spell...</option>
                 {spellsForLevel.map(spell => (
@@ -1189,14 +1189,14 @@ export function GearTab({
             <div className="flex gap-3">
               <button
                 onClick={() => setShowSpellScrollCreator(false)}
-                className="flex-1 bg-slate-600 hover:bg-slate-500 text-white py-2 px-4 rounded"
+                className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] text-[var(--color-text-primary)] py-2 px-4 rounded"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreateSpellScroll}
                 disabled={selectedSpellLevel < 0 || !selectedSpell}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-2 px-4 rounded"
+                className="flex-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] py-2 px-4 rounded"
               >
                 Create Scroll
               </button>
@@ -1207,17 +1207,17 @@ export function GearTab({
 
       {/* Potion Usage Modal */}
       {showPotionUsage && selectedPotion && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-800 rounded-lg w-full max-w-md p-6">
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-modal-overlay)' }}>
+          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-md p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">Use {selectedPotion.name}</h3>
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Use {selectedPotion.name}</h3>
               <button
                 onClick={() => {
                   setShowPotionUsage(false);
                   setSelectedPotion(null);
                   setPotionRolls(null);
                 }}
-                className="text-slate-400 hover:text-white"
+                className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -1228,31 +1228,31 @@ export function GearTab({
               
               return (
                 <div className="space-y-4">
-                  <div className="text-slate-300 text-sm">
+                  <div className="text-[var(--color-text-secondary)] text-sm">
                     {selectedPotion.description}
                   </div>
                   
                   {effects.dice && (
-                    <div className="bg-slate-700 rounded p-4">
+                    <div className="bg-[var(--color-card-secondary)] rounded p-4">
                       <div className="flex items-center justify-between mb-3">
-                        <span className="text-white font-medium">Roll: {effects.dice} + {effects.bonus}</span>
+                        <span className="text-[var(--color-text-primary)] font-medium">Roll: {effects.dice} + {effects.bonus}</span>
                         <button
                           onClick={handleRollPotion}
-                          className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded"
+                          className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] text-sm px-3 py-1 rounded"
                         >
                           Roll Dice
                         </button>
                       </div>
                       
                       {potionRolls && (
-                        <div className="text-center p-3 bg-slate-600 rounded">
-                          <div className="text-2xl font-bold text-green-400 mb-1">
+                        <div className="text-center p-3 bg-[var(--color-card-secondary)] rounded">
+                          <div className="text-2xl font-bold text-[var(--color-text-primary)] mb-1">
                             {potionRolls.total}
                           </div>
-                          <div className="text-xs text-slate-400">
+                          <div className="text-xs text-[var(--color-text-secondary)]">
                             Rolled: {potionRolls.roll} + {effects.bonus} = {potionRolls.total}
                           </div>
-                          <div className="text-sm text-slate-300 mt-2">
+                          <div className="text-sm text-[var(--color-text-secondary)] mt-2">
                             {effects.description}: {potionRolls.total}
                           </div>
                         </div>
@@ -1261,9 +1261,9 @@ export function GearTab({
                   )}
                   
                   {!effects.dice && (
-                    <div className="bg-slate-700 rounded p-4">
-                      <div className="text-white font-medium mb-2">Effect:</div>
-                      <div className="text-slate-300">{effects.description}</div>
+                    <div className="bg-[var(--color-card-secondary)] rounded p-4">
+                      <div className="text-[var(--color-text-primary)] font-medium mb-2">Effect:</div>
+                      <div className="text-[var(--color-text-secondary)]">{effects.description}</div>
                     </div>
                   )}
                   
@@ -1274,13 +1274,13 @@ export function GearTab({
                         setSelectedPotion(null);
                         setPotionRolls(null);
                       }}
-                      className="flex-1 bg-slate-600 hover:bg-slate-500 text-white py-2 px-4 rounded"
+                      className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] text-[var(--color-text-primary)] py-2 px-4 rounded"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleConsumePotion}
-                      className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded"
+                      className="flex-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] py-2 px-4 rounded"
                     >
                       Consume Potion
                     </button>
@@ -1294,30 +1294,30 @@ export function GearTab({
 
       {/* Equipment Validation Modal */}
       {pendingValidation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-800 rounded-lg w-full max-w-md p-6">
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-modal-overlay)' }}>
+          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-md p-6">
             <div className="flex items-start gap-3 mb-4">
               {pendingValidation.validation.canEquip ? (
-                <CheckCircle className="h-6 w-6 text-yellow-400 mt-0.5 flex-shrink-0" />
+                <CheckCircle className="h-6 w-6 text-[var(--color-warning-text)] mt-0.5 flex-shrink-0" />
               ) : (
-                <AlertTriangle className="h-6 w-6 text-red-400 mt-0.5 flex-shrink-0" />
+                <AlertTriangle className="h-6 w-6 text-[var(--color-danger)] mt-0.5 flex-shrink-0" />
               )}
               <div className="flex-1">
                 <h3 className={`font-semibold mb-2 ${
-                  pendingValidation.validation.canEquip ? 'text-yellow-400' : 'text-red-400'
+                  pendingValidation.validation.canEquip ? 'text-[var(--color-warning-text)]' : 'text-[var(--color-danger)]'
                 }`}>
                   {pendingValidation.validation.canEquip ? 'Equipment Warning' : 'Cannot Equip Item'}
                 </h3>
-                <p className="text-white mb-2">
+                <p className="text-[var(--color-text-secondary)] mb-2">
                   Attempting to add: <strong>{pendingValidation.item.name}</strong>
                 </p>
                 
                 {/* Show conflicts */}
                 {pendingValidation.validation.conflicts.length > 0 && (
                   <div className="mb-3">
-                    <div className="text-red-400 text-sm font-medium mb-1">Conflicts:</div>
+                    <div className="text-[var(--color-danger)] text-sm font-medium mb-1">Conflicts:</div>
                     {pendingValidation.validation.conflicts.map((conflict, index) => (
-                      <div key={index} className="text-red-300 text-sm mb-1">
+                      <div key={index} className="text-[var(--color-text-secondary)] text-sm mb-1">
                         • {conflict.message}
                       </div>
                     ))}
@@ -1327,9 +1327,9 @@ export function GearTab({
                 {/* Show warnings */}
                 {pendingValidation.validation.warnings.length > 0 && (
                   <div className="mb-3">
-                    <div className="text-yellow-400 text-sm font-medium mb-1">Warnings:</div>
+                    <div className="text-[var(--color-warning-text)] text-sm font-medium mb-1">Warnings:</div>
                     {pendingValidation.validation.warnings.map((warning, index) => (
-                      <div key={index} className="text-yellow-300 text-sm mb-1">
+                      <div key={index} className="text-[var(--color-text-secondary)] text-sm mb-1">
                         • {warning.message}
                       </div>
                     ))}
@@ -1341,7 +1341,7 @@ export function GearTab({
             <div className="flex gap-3">
               <button
                 onClick={() => setPendingValidation(null)}
-                className="flex-1 bg-slate-600 hover:bg-slate-500 text-white py-2 px-4 rounded"
+                className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] text-[var(--color-text-primary)] py-2 px-4 rounded"
               >
                 Cancel
               </button>
@@ -1356,7 +1356,7 @@ export function GearTab({
                     }
                     setPendingValidation(null);
                   }}
-                  className="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded"
+                  className="flex-1 bg-[var(--color-warning)] hover:bg-[var(--color-warning-text)] text-[var(--color-warning-text)] py-2 px-4 rounded"
                 >
                   Add Anyway
                 </button>

@@ -11,13 +11,30 @@ export function Card({ children, className = '', variant = 'default', onClick }:
   const baseClasses = 'rounded-lg p-4';
   
   const variantClasses = {
-    default: 'bg-[var(--color-card)] border border-[var(--color-border)]',
-    secondary: 'bg-[var(--color-card-secondary)] border border-[var(--color-border)]',
-    tertiary: 'bg-[var(--color-card-tertiary)] border border-[var(--color-border-light)]'
+    default: 'border',
+    secondary: 'border',
+    tertiary: 'border'
+  };
+
+  const getVariantStyles = () => {
+    switch (variant) {
+      case 'default':
+        return { backgroundColor: 'var(--color-card)', borderColor: 'var(--color-border)' };
+      case 'secondary':
+        return { backgroundColor: 'var(--color-card-secondary)', borderColor: 'var(--color-border)' };
+      case 'tertiary':
+        return { backgroundColor: 'var(--color-card-tertiary)', borderColor: 'var(--color-border-light)' };
+      default:
+        return { backgroundColor: 'var(--color-card)', borderColor: 'var(--color-border)' };
+    }
   };
 
   return (
-    <div className={`${baseClasses} ${variantClasses[variant]} ${className}`} onClick={onClick}>
+    <div 
+      className={`${baseClasses} ${variantClasses[variant]} ${className}`} 
+      style={getVariantStyles()}
+      onClick={onClick}
+    >
       {children}
     </div>
   );

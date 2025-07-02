@@ -86,13 +86,13 @@ export class MagicalItemService {
   // Get rarity color for display
   getRarityColor(rarity: string): string {
     switch (rarity) {
-      case 'Common': return 'text-gray-300';
-      case 'Uncommon': return 'text-green-400';
-      case 'Rare': return 'text-blue-400';
-      case 'Very Rare': return 'text-purple-400';
-      case 'Legendary': return 'text-orange-400';
-      case 'Artifact': return 'text-red-400';
-      default: return 'text-gray-300';
+      case 'Common': return 'text-[var(--color-text-muted)]';
+      case 'Uncommon': return 'text-[var(--color-success)]';
+      case 'Rare': return 'text-[var(--color-accent)]';
+      case 'Very Rare': return 'text-[var(--color-card-tertiary)]';
+      case 'Legendary': return 'text-[var(--color-warning)]';
+      case 'Artifact': return 'text-[var(--color-danger)]';
+      default: return 'text-[var(--color-text-muted)]';
     }
   }
 
@@ -116,17 +116,17 @@ export class MagicalItemService {
   // Get spell scroll level color
   getSpellLevelColor(level: number): string {
     switch (level) {
-      case 0: return 'text-slate-300';
-      case 1: return 'text-green-300';
-      case 2: return 'text-blue-300';
-      case 3: return 'text-purple-300';
-      case 4: return 'text-pink-300';
-      case 5: return 'text-orange-300';
-      case 6: return 'text-red-300';
-      case 7: return 'text-yellow-300';
-      case 8: return 'text-indigo-300';
-      case 9: return 'text-cyan-300';
-      default: return 'text-slate-300';
+      case 0: return 'text-[var(--color-text-muted)]';
+      case 1: return 'text-[var(--color-success)]';
+      case 2: return 'text-[var(--color-accent)]';
+      case 3: return 'text-[var(--color-card-tertiary)]';
+      case 4: return 'text-[var(--color-warning)]';
+      case 5: return 'text-[var(--color-danger)]';
+      case 6: return 'text-[var(--color-success)]';
+      case 7: return 'text-[var(--color-accent)]';
+      case 8: return 'text-[var(--color-card-tertiary)]';
+      case 9: return 'text-[var(--color-warning)]';
+      default: return 'text-[var(--color-text-muted)]';
     }
   }
 

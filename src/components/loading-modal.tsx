@@ -303,7 +303,7 @@ export function LoadingModal({ onComplete }: LoadingModalProps) {
   const progress = (completedCount / totalCount) * 100;
 
   return (
-    <div className="fixed inset-0 bg-[var(--color-surface)] bg-opacity-95 flex items-center justify-center z-50">
+    <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'var(--color-surface)', opacity: 0.95 }}>
       <Card className="shadow-xl p-8 max-w-md w-full mx-4">
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-[var(--color-text-primary)] mb-2">Dungeons & Databases</h1>

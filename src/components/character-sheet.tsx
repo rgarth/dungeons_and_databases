@@ -1232,11 +1232,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       {/* Spell Preparation Modal */}
       {showSpellPreparationModal && (
         <div className="fixed inset-0 bg-black/50 flex items-start justify-center p-4 pt-8 z-50">
-          <div className="bg-[var(--card-bg)] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-6 border-b border-[var(--border-color)]">
+          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-[var(--color-border)]">
               <div>
-                <h3 className="text-xl font-semibold text-[var(--text-primary)]">Prepare Spells</h3>
-                <p className="text-[var(--text-secondary)] text-sm">
+                <h3 className="text-xl font-semibold text-[var(--color-text-primary)]">Prepare Spells</h3>
+                <p className="text-[var(--color-text-secondary)] text-sm">
                   Choose spells to prepare for the day ({tempPreparedSpells.filter(s => s.level > 0).length} / {
                     (() => {
                       const spellcastingAbility = currentCharacter.spellcastingAbility || 'intelligence';
@@ -1249,7 +1249,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               </div>
               <button
                 onClick={() => setShowSpellPreparationModal(false)}
-                className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -1275,8 +1275,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 return (
                   <div className="space-y-6">
                     {/* Explanation */}
-                    <div className="p-4 bg-[var(--accent-bg)] border border-[var(--accent-border)] rounded-lg">
-                      <p className="text-[var(--accent-text)] text-sm">
+                    <div className="p-4 bg-[var(--color-accent-bg)] border border-[var(--color-accent-border)] rounded-lg">
+                      <p className="text-[var(--color-accent-text)] text-sm">
                         {spellcastingType === 'spellbook' 
                           ? 'As a Wizard, you prepare spells from your spellbook. Cantrips are always available.'
                           : `As a ${currentCharacter.class}, you can prepare spells from your entire spell list. Cantrips are always available.`
@@ -1288,7 +1288,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                       .sort(([a], [b]) => parseInt(a) - parseInt(b))
                       .map(([level, spells]) => (
                       <div key={level}>
-                        <h4 className="text-lg font-medium text-[var(--text-primary)] mb-3">
+                        <h4 className="text-lg font-medium text-[var(--color-text-primary)] mb-3">
                           {level === '0' ? 'Cantrips' : `Level ${level} Spells`}
                         </h4>
                         <div className="space-y-2">
@@ -1328,10 +1328,10 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                 key={index}
                                 className={`p-3 border rounded-lg cursor-pointer transition-colors ${
                                   isSelected 
-                                    ? 'border-[var(--success-color)] bg-[var(--success-bg)]' 
+                                    ? 'border-[var(--color-success)] bg-[var(--color-success-bg)]' 
                                     : canSelect 
-                                      ? 'border-[var(--border-color)] hover:border-[var(--accent-border)] bg-[var(--card-bg)]'
-                                      : 'border-[var(--border-color)] bg-[var(--card-bg)] opacity-50 cursor-not-allowed'
+                                      ? 'border-[var(--color-border)] hover:border-[var(--color-accent-border)] bg-[var(--color-card)]'
+                                      : 'border-[var(--color-border)] bg-[var(--color-card)] opacity-50 cursor-not-allowed'
                                 }`}
                                 onClick={() => {
                                   // Allow all spells to be clicked
@@ -1354,12 +1354,12 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                               >
                                 <div className="flex items-center justify-between mb-2">
                                   <div className="flex items-center gap-2">
-                                    <span className="text-[var(--text-primary)] font-medium">{spell.name}</span>
-                                    <span className="text-xs bg-[var(--muted-bg)] px-2 py-1 rounded">
+                                    <span className="text-[var(--color-text-primary)] font-medium">{spell.name}</span>
+                                    <span className="text-xs bg-[var(--color-card-secondary)] px-2 py-1 rounded">
                                       {spell.school}
                                     </span>
                                     {isCantrip && (
-                                      <span className="text-xs bg-[var(--warning-bg)] text-[var(--warning-text)] px-2 py-1 rounded">
+                                      <span className="text-xs bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] px-2 py-1 rounded">
                                         Always Available
                                       </span>
                                     )}
@@ -1367,17 +1367,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                   {!isCantrip && (
                                     <span className={`text-xs px-2 py-1 rounded ${
                                       isSelected 
-                                        ? 'bg-[var(--success-color)] text-[var(--text-on-success)]' 
-                                        : 'bg-[var(--muted-bg)] text-[var(--text-secondary)]'
+                                        ? 'bg-[var(--color-success)] text-[var(--color-success-text)]' 
+                                        : 'bg-[var(--color-card-secondary)] text-[var(--color-text-secondary)]'
                                     }`}>
                                       {isSelected ? 'Prepared' : 'Prepare'}
                                     </span>
                                   )}
                                 </div>
-                                <div className="text-[var(--text-secondary)] text-xs mb-2">
+                                <div className="text-[var(--color-text-secondary)] text-xs mb-2">
                                   {spell.castingTime} • {spell.range} • {spell.duration}
                                 </div>
-                                <div className="text-[var(--text-primary)] text-sm">
+                                <div className="text-[var(--color-text-primary)] text-sm">
                                   {spell.description}
                                 </div>
                               </div>
@@ -1391,16 +1391,16 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               })()}
             </div>
 
-            <div className="flex gap-3 p-6 border-t border-[var(--border-color)]">
+            <div className="flex gap-3 p-6 border-t border-[var(--color-border)]">
               <button
                 onClick={handleSaveSpellPreparation}
-                className="flex-1 bg-[var(--success-color)] hover:bg-[var(--success-hover)] text-[var(--text-on-success)] py-2 px-4 rounded transition-colors"
+                className="flex-1 bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] py-2 px-4 rounded transition-colors"
               >
                 Save Prepared Spells
               </button>
               <button
                 onClick={() => setShowSpellPreparationModal(false)}
-                className="flex-1 bg-[var(--muted-bg)] hover:bg-[var(--muted-hover)] text-[var(--text-primary)] py-2 px-4 rounded transition-colors"
+                className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] text-[var(--color-text-primary)] py-2 px-4 rounded transition-colors"
               >
                 Cancel
               </button>
