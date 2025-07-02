@@ -962,12 +962,12 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
           {/* Half-Elf Two Skills */}
           {character.race === 'Half-Elf' && (
-            <div className="mb-4 p-3 bg-slate-600 rounded-lg">
+            <div className="mb-4 p-3 bg-[var(--color-card-secondary)] rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="text-white font-medium">Two Skills</h4>
-                <span className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Half-Elf Trait</span>
+                <h4 className="text-[var(--color-text-primary)] font-medium">Two Skills</h4>
+                <span className="text-xs text-[var(--color-text-secondary)] bg-[var(--color-card)] px-2 py-1 rounded">Half-Elf Trait</span>
               </div>
-              <p className="text-slate-300 text-sm mb-3">
+              <p className="text-[var(--color-text-primary)] text-sm mb-3">
                 You gain proficiency in two skills of your choice.
               </p>
               <div className="space-y-2">
@@ -975,14 +975,14 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 {getRacialSkills().length > 0 && (
                   <div className="space-y-2">
                     {getRacialSkills().map((skill, index) => (
-                      <div key={index} className="flex items-center gap-2 p-2 bg-slate-700 rounded border border-slate-500">
-                        <span className="text-green-400 text-sm">✓</span>
-                        <span className="text-white text-sm">{skill}</span>
+                      <div key={index} className="flex items-center gap-2 p-2 bg-[var(--color-card)] rounded border border-[var(--color-border)]">
+                        <span className="text-[var(--color-success)] text-sm">✓</span>
+                        <span className="text-[var(--color-text-primary)] text-sm">{skill}</span>
                         <button
                           onClick={() => {
                             removeSkillWithSource(skill);
                           }}
-                          className="ml-auto text-red-400 hover:text-red-300 text-xs"
+                          className="ml-auto text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] text-xs"
                         >
                           Change
                         </button>
@@ -1017,12 +1017,12 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
           {/* Dragonborn Draconic Ancestry */}
           {character.race === 'Dragonborn' && (
-            <div className="mb-4 p-3 bg-slate-600 rounded-lg">
+            <div className="mb-4 p-3 bg-[var(--color-card-secondary)] rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="text-white font-medium">Draconic Ancestry</h4>
-                <span className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Dragonborn Trait</span>
+                <h4 className="text-[var(--color-text-primary)] font-medium">Draconic Ancestry</h4>
+                <span className="text-xs text-[var(--color-text-secondary)] bg-[var(--color-card)] px-2 py-1 rounded">Dragonborn Trait</span>
               </div>
-              <p className="text-slate-300 text-sm mb-3">
+              <p className="text-[var(--color-text-primary)] text-sm mb-3">
                 Choose one type of dragon from the Draconic Ancestry table.
               </p>
               <div className="flex gap-2">
@@ -1033,7 +1033,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                       onUpdate({ subrace: e.target.value });
                     }
                   }}
-                  className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                  className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
                 >
                   <option value="">Choose draconic ancestry...</option>
                   <option value="Black Dragonborn">Black Dragonborn</option>
