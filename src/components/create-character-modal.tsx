@@ -1191,14 +1191,15 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   }, []); // Remove loadAllClassData dependency - it's stable with useCallback
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
-      <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[95vh] overflow-y-auto modal-content">
-        <div className="flex justify-between items-center p-6 border-b border-slate-700">
-          <h2 className="text-2xl font-bold text-white">Create New Character</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
+      <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[95vh] overflow-y-auto modal-content" style={{ backgroundColor: 'var(--color-surface)' }}>
+        <div className="flex justify-between items-center p-6 border-b border-slate-700" style={{ borderColor: 'var(--color-border)' }}>
+          <h2 className="text-2xl font-bold text-white" style={{ color: 'var(--color-text-primary)' }}>Create New Character</h2>
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
               className="text-slate-400 hover:text-white transition-colors"
+              style={{ color: 'var(--color-text-secondary)', '--tw-hover-color': 'var(--color-text-primary)' } as React.CSSProperties}
             >
               <X className="h-6 w-6" />
             </button>
@@ -1219,11 +1220,19 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           {/* Step indicator */}
           <div className="flex items-center justify-center mb-6">
             <div className="flex items-center space-x-4">
-              <div className={`flex items-center justify-center w-8 h-8 rounded-full ${currentStep === 'basic' ? 'bg-purple-600 text-white' : 'bg-slate-600 text-slate-300'}`}>
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full ${currentStep === 'basic' ? 'text-white' : 'text-slate-300'}`} 
+                   style={{ 
+                     backgroundColor: currentStep === 'basic' ? 'var(--color-primary)' : 'var(--color-surface-secondary)',
+                     color: currentStep === 'basic' ? 'var(--color-text-primary)' : 'var(--color-text-secondary)'
+                   }}>
                 1
               </div>
-              <div className="w-16 h-1 bg-slate-600 rounded"></div>
-              <div className={`flex items-center justify-center w-8 h-8 rounded-full ${currentStep === 'background' ? 'bg-purple-600 text-white' : 'bg-slate-600 text-slate-300'}`}>
+              <div className="w-16 h-1 bg-slate-600 rounded" style={{ backgroundColor: 'var(--color-surface-secondary)' }}></div>
+              <div className={`flex items-center justify-center w-8 h-8 rounded-full ${currentStep === 'background' ? 'text-white' : 'text-slate-300'}`}
+                   style={{ 
+                     backgroundColor: currentStep === 'background' ? 'var(--color-primary)' : 'var(--color-surface-secondary)',
+                     color: currentStep === 'background' ? 'var(--color-text-primary)' : 'var(--color-text-secondary)'
+                   }}>
                 2
               </div>
             </div>
@@ -1234,18 +1243,28 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               {/* First row: Name and Age */}
               <div className="flex items-end gap-4 mb-4">
                 <div className="flex-1">
-                  <label htmlFor="character-name" className="block text-sm font-medium text-slate-300 mb-2">Name</label>
+                  <label htmlFor="character-name" className="block text-sm font-medium text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>Name</label>
                   <div className="relative">
                     <input
                       id="character-name"
-                      className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                      className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none"
+                      style={{ 
+                        backgroundColor: 'var(--color-surface-secondary)',
+                        borderColor: 'var(--color-border)',
+                        color: 'var(--color-text-primary)',
+                        '--tw-focus-border-color': 'var(--color-primary)'
+                      } as React.CSSProperties}
                       placeholder="Character Name"
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                     />
                     <button
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-slate-400 hover:text-purple-400 transition-colors disabled:opacity-50"
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 transition-colors disabled:opacity-50"
+                      style={{ 
+                        color: 'var(--color-text-secondary)',
+                        '--tw-hover-color': 'var(--color-primary)'
+                      } as React.CSSProperties}
                       title="Generate fantasy name"
                       type="button"
                       onClick={handleGenerateName}
@@ -1255,10 +1274,16 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   </div>
                 </div>
                 <div className="w-32">
-                  <label htmlFor="character-age" className="block text-sm font-medium text-slate-300 mb-2">Age (Optional)</label>
+                  <label htmlFor="character-age" className="block text-sm font-medium text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>Age (Optional)</label>
                   <input
                     id="character-age"
-                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none"
+                    style={{ 
+                      backgroundColor: 'var(--color-surface-secondary)',
+                      borderColor: 'var(--color-border)',
+                      color: 'var(--color-text-primary)',
+                      '--tw-focus-border-color': 'var(--color-primary)'
+                    } as React.CSSProperties}
                     max={1000}
                     min={1}
                     placeholder="Age"
@@ -1291,13 +1316,20 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               {/* Class selector */}
               <div className="mb-4">
                 <div>
-                  <label htmlFor="class-select" className="block text-sm font-medium text-slate-300 mb-2">Class</label>
+                  <label htmlFor="class-select" className="block text-sm font-medium text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>Class</label>
                   <select
                     id="class-select"
                     value={characterClass || ''}
                     onChange={(e) => handleClassChange(e.target.value)}
-                    className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
-                    style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
+                    className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:outline-none appearance-none"
+                    style={{ 
+                      WebkitAppearance: 'none', 
+                      MozAppearance: 'none',
+                      backgroundColor: 'var(--color-surface-secondary)',
+                      borderColor: 'var(--color-border)',
+                      color: 'var(--color-text-primary)',
+                      '--tw-focus-border-color': 'var(--color-primary)'
+                    } as React.CSSProperties}
                   >
                     <option value="" disabled>Select a class</option>
                     {classes?.map((cls) => (
@@ -1320,14 +1352,20 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 });
                 return needsSubclassAtCreation && (
                   <div className="mb-4">
-                    <label htmlFor="subclass-select" className="block text-sm font-medium text-slate-300 mb-2">
+                    <label htmlFor="subclass-select" className="block text-sm font-medium text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>
                       Subclass *
                     </label>
                     <select
                       id="subclass-select"
                       value={subclass}
                       onChange={(e) => setSubclass(e.target.value)}
-                      className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
+                      className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:outline-none appearance-none"
+                      style={{ 
+                        backgroundColor: 'var(--color-surface-secondary)',
+                        borderColor: 'var(--color-border)',
+                        color: 'var(--color-text-primary)',
+                        '--tw-focus-border-color': 'var(--color-primary)'
+                      } as React.CSSProperties}
                     >
                       <option value="">Choose subclass...</option>
                       {creationOptions?.subclasses?.map((s) => (
@@ -1335,7 +1373,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                       ))}
                     </select>
                     {subclass && creationOptions?.subclasses?.find((s) => s.name === subclass)?.description && (
-                      <p className="text-slate-400 mt-2">
+                      <p className="text-slate-400 mt-2" style={{ color: 'var(--color-text-tertiary)' }}>
                         {creationOptions.subclasses.find((s) => s.name === subclass)?.description}
                       </p>
                     )}
@@ -1346,12 +1384,18 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               {/* Third row: Alignment | Gender */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label htmlFor="alignment-select" className="block text-sm font-medium text-slate-300 mb-2">Alignment</label>
+                  <label htmlFor="alignment-select" className="block text-sm font-medium text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>Alignment</label>
                   <select
                     id="alignment-select"
                     value={alignment}
                     onChange={(e) => setAlignment(e.target.value)}
-                    className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
+                    className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:outline-none appearance-none"
+                    style={{ 
+                      backgroundColor: 'var(--color-surface-secondary)',
+                      borderColor: 'var(--color-border)',
+                      color: 'var(--color-text-primary)',
+                      '--tw-focus-border-color': 'var(--color-primary)'
+                    } as React.CSSProperties}
                   >
                     {alignments?.map((a) => (
                       <option key={a.name} value={a.name}>{a.name}</option>
@@ -1359,12 +1403,19 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Gender (for name generation)</label>
+                  <label className="block text-sm font-medium text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>Gender (for name generation)</label>
                   <select
                     value={gender}
                     onChange={(e) => setGender(e.target.value)}
-                    className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
-                    style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
+                    className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:outline-none appearance-none"
+                    style={{ 
+                      WebkitAppearance: 'none', 
+                      MozAppearance: 'none',
+                      backgroundColor: 'var(--color-surface-secondary)',
+                      borderColor: 'var(--color-border)',
+                      color: 'var(--color-text-primary)',
+                      '--tw-focus-border-color': 'var(--color-primary)'
+                    } as React.CSSProperties}
                   >
                     <option value="">Not specified</option>
                     <option value="Male">Male</option>
@@ -1378,12 +1429,18 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               {/* Ability Scores */}
               <div>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-                  <h3 className="text-lg font-semibold text-white">Ability Scores</h3>
+                  <h3 className="text-lg font-semibold text-white" style={{ color: 'var(--color-text-primary)' }}>Ability Scores</h3>
                   <div className="flex items-center gap-2 w-full sm:w-auto">
                     <select
                       value={statMethod}
                       onChange={(e) => handleStatMethodChange(e.target.value as StatMethod)}
-                      className="flex-1 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm focus:border-purple-500 focus:outline-none"
+                      className="flex-1 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-white text-sm focus:outline-none"
+                      style={{ 
+                        backgroundColor: 'var(--color-surface-secondary)',
+                        borderColor: 'var(--color-border)',
+                        color: 'var(--color-text-primary)',
+                        '--tw-focus-border-color': 'var(--color-primary)'
+                      } as React.CSSProperties}
                     >
                       <option value="rolling-assign">Roll & Assign</option>
                       <option value="standard">Standard Array</option>
@@ -1392,7 +1449,11 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     <button
                       type="button"
                       onClick={handleGenerateStats}
-                      className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors whitespace-nowrap"
+                      className="text-white px-3 py-1 rounded text-sm flex items-center gap-1 transition-colors whitespace-nowrap"
+                      style={{ 
+                        backgroundColor: 'var(--color-primary)',
+                        '--tw-hover-bg': 'var(--color-primary-hover)'
+                      } as React.CSSProperties}
                     >
                       <Dice6 className="h-4 w-4" />
                       {statMethod === 'rolling-assign' ? 'Reroll' : 'Regenerate'}
@@ -1401,11 +1462,11 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 </div>
 
                 {statMethod === 'rolling-assign' && randomScoreArray.length > 0 && (
-                  <div className="mb-4 p-3 bg-slate-700 rounded-lg">
-                    <p className="text-sm text-slate-300 mb-2">Rolled scores (drag to assign):</p>
+                  <div className="mb-4 p-3 bg-slate-700 rounded-lg" style={{ backgroundColor: 'var(--color-surface-secondary)' }}>
+                    <p className="text-sm text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>Rolled scores (drag to assign):</p>
                     <div className="flex gap-2">
                       {randomScoreArray.map((score, index) => (
-                        <div key={index} className="bg-slate-600 px-2 py-1 rounded text-center text-white font-mono">
+                        <div key={index} className="bg-slate-600 px-2 py-1 rounded text-center text-white font-mono" style={{ backgroundColor: 'var(--color-surface-tertiary)', color: 'var(--color-text-primary)' }}>
                           {score}
                         </div>
                       ))}
@@ -1414,15 +1475,15 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 )}
 
                 {statMethod === 'pointbuy' && (
-                  <div className="mb-4 p-3 bg-slate-700 rounded-lg">
-                    <p className="text-sm text-slate-300 mb-2">
-                      Points remaining: <span className={`font-bold ${pointBuyValidation.remaining === 0 ? 'text-green-400' : pointBuyValidation.remaining < 0 ? 'text-red-400' : 'text-yellow-400'}`}>
+                  <div className="mb-4 p-3 bg-slate-700 rounded-lg" style={{ backgroundColor: 'var(--color-surface-secondary)' }}>
+                    <p className="text-sm text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>
+                      Points remaining: <span className="font-bold" style={{ color: pointBuyValidation.remaining === 0 ? 'var(--color-success)' : pointBuyValidation.remaining < 0 ? 'var(--color-error)' : 'var(--color-warning)' }}>
                         {pointBuyValidation.remaining}
                       </span>
-                      {pointBuyValidation.remaining === 0 && <span className="text-green-400 ml-2">✓ Valid</span>}
-                      {pointBuyValidation.remaining < 0 && <span className="text-red-400 ml-2">⚠️ Too many points used</span>}
+                      {pointBuyValidation.remaining === 0 && <span className="ml-2" style={{ color: 'var(--color-success)' }}>✓ Valid</span>}
+                      {pointBuyValidation.remaining < 0 && <span className="ml-2" style={{ color: 'var(--color-error)' }}>⚠️ Too many points used</span>}
                     </p>
-                    <div className="text-xs text-slate-400">
+                    <div className="text-xs text-slate-400" style={{ color: 'var(--color-text-tertiary)' }}>
                       <p>Point costs: 8=0, 9=1, 10=2, 11=3, 12=4, 13=5, 14=7, 15=9</p>
                     </div>
                   </div>
@@ -1433,18 +1494,19 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     <div
                       key={ability}
                       className="bg-slate-700 rounded-lg p-3 flex flex-col items-center"
+                      style={{ backgroundColor: 'var(--color-surface-secondary)' }}
                     >
-                      <div className="text-sm font-medium text-slate-300 mb-2">{ability}</div>
-                      <div className="text-2xl font-bold text-white">
+                      <div className="text-sm font-medium text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>{ability}</div>
+                      <div className="text-2xl font-bold text-white" style={{ color: 'var(--color-text-primary)' }}>
                         {abilityScores[ability]}
                       </div>
-                      <div className="text-xs text-slate-400">
+                      <div className="text-xs text-slate-400" style={{ color: 'var(--color-text-tertiary)' }}>
                         {getModifier(abilityScores[ability])}
                       </div>
                       
                       {/* Point Buy Cost Display */}
                       {statMethod === 'pointbuy' && (
-                        <div className="text-xs text-slate-500 mt-1">
+                        <div className="text-xs text-slate-500 mt-1" style={{ color: 'var(--color-text-quaternary)' }}>
                           Cost: {POINT_BUY_COSTS[abilityScores[ability] as keyof typeof POINT_BUY_COSTS] || 0}
                         </div>
                       )}
@@ -1456,7 +1518,13 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                             type="button"
                             onClick={() => handlePointBuyChange(ability, -1)}
                             disabled={abilityScores[ability] <= 8}
-                            className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded flex items-center justify-center text-sm font-bold transition-colors"
+                            className="w-6 h-6 text-white rounded flex items-center justify-center text-sm font-bold transition-colors"
+                            style={{ 
+                              backgroundColor: 'var(--color-surface-tertiary)',
+                              '--tw-hover-bg': 'var(--color-surface-quaternary)',
+                              '--tw-disabled-bg': 'var(--color-surface)',
+                              '--tw-disabled-color': 'var(--color-text-quaternary)'
+                            } as React.CSSProperties}
                           >
                             -
                           </button>
@@ -1464,7 +1532,13 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                             type="button"
                             onClick={() => handlePointBuyChange(ability, 1)}
                             disabled={abilityScores[ability] >= 15}
-                            className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded flex items-center justify-center text-sm font-bold transition-colors"
+                            className="w-6 h-6 text-white rounded flex items-center justify-center text-sm font-bold transition-colors"
+                            style={{ 
+                              backgroundColor: 'var(--color-surface-tertiary)',
+                              '--tw-hover-bg': 'var(--color-surface-quaternary)',
+                              '--tw-disabled-bg': 'var(--color-surface)',
+                              '--tw-disabled-color': 'var(--color-text-quaternary)'
+                            } as React.CSSProperties}
                           >
                             +
                           </button>
@@ -1475,9 +1549,14 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                       {(statMethod === 'rolling-assign' || statMethod === 'standard') && (
                         <div
                           onClick={() => handleTap(ability)}
-                          className={`w-full text-center py-2 mt-auto text-xs text-slate-400 cursor-pointer bg-slate-600 rounded hover:bg-slate-500 transition-colors ${
-                            tappedAbility === ability ? 'bg-slate-400' : ''
+                          className={`w-full text-center py-2 mt-auto text-xs cursor-pointer rounded transition-colors ${
+                            tappedAbility === ability ? '' : ''
                           }`}
+                          style={{ 
+                            backgroundColor: tappedAbility === ability ? 'var(--color-primary)' : 'var(--color-surface-tertiary)',
+                            color: tappedAbility === ability ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)',
+                            '--tw-hover-bg': 'var(--color-surface-quaternary)'
+                          } as React.CSSProperties}
                         >
                           {tappedAbility === ability ? 'Tap another to swap' : 'Tap to select'}
                         </div>
@@ -1490,13 +1569,13 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               {/* Spellcasting */}
               {spellcasting.canCastAtLevel1 && (
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-4">Spellcasting</h3>
-                  <div className="mb-4 p-3 bg-slate-700 rounded-lg">
-                    <div className="grid grid-cols-2 gap-4 text-sm text-slate-300">
-                      <div>Spellcasting Ability: <span className="text-white">{spellcasting.ability}</span></div>
-                      <div>Spell Save DC: <span className="text-white">{spellcastingStats?.spellSaveDC || '--'}</span></div>
-                      <div>Spell Attack Bonus: <span className="text-white">+{spellcastingStats?.spellAttackBonus || '--'}</span></div>
-                      <div>Selected Spells: <span className="text-white">{selectedSpells.length}</span></div>
+                  <h3 className="text-lg font-semibold text-white mb-4" style={{ color: 'var(--color-text-primary)' }}>Spellcasting</h3>
+                  <div className="mb-4 p-3 bg-slate-700 rounded-lg" style={{ backgroundColor: 'var(--color-surface-secondary)' }}>
+                    <div className="grid grid-cols-2 gap-4 text-sm text-slate-300" style={{ color: 'var(--color-text-secondary)' }}>
+                      <div>Spellcasting Ability: <span className="text-white" style={{ color: 'var(--color-text-primary)' }}>{spellcasting.ability}</span></div>
+                      <div>Spell Save DC: <span className="text-white" style={{ color: 'var(--color-text-primary)' }}>{spellcastingStats?.spellSaveDC || '--'}</span></div>
+                      <div>Spell Attack Bonus: <span className="text-white" style={{ color: 'var(--color-text-primary)' }}>+{spellcastingStats?.spellAttackBonus || '--'}</span></div>
+                      <div>Selected Spells: <span className="text-white" style={{ color: 'var(--color-text-primary)' }}>{selectedSpells.length}</span></div>
                     </div>
                     
                     {/* Spell selection guidance */}
@@ -1511,16 +1590,16 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                       const spellsNeeded = Math.max(0, maxSpells - selectedSpellsCount);
                       
                       return (
-                        <div className="mt-3 pt-3 border-t border-slate-600">
-                          <div className="text-sm text-slate-300 mb-2">
+                        <div className="mt-3 pt-3 border-t border-slate-600" style={{ borderColor: 'var(--color-border)' }}>
+                          <div className="text-sm text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>
                             <span className="font-medium">Spell Selection Requirements:</span>
                           </div>
                           <div className="grid grid-cols-2 gap-4 text-xs">
-                            <div className={`flex items-center gap-2 ${selectedCantrips >= maxCantrips ? 'text-green-400' : 'text-yellow-400'}`}>
+                            <div className="flex items-center gap-2" style={{ color: selectedCantrips >= maxCantrips ? 'var(--color-success)' : 'var(--color-warning)' }}>
                               <span>{selectedCantrips}/{maxCantrips} Cantrips</span>
                               {selectedCantrips >= maxCantrips && <span>✓</span>}
                             </div>
-                            <div className={`flex items-center gap-2 ${selectedSpellsCount >= maxSpells ? 'text-green-400' : 'text-yellow-400'}`}>
+                            <div className="flex items-center gap-2" style={{ color: selectedSpellsCount >= maxSpells ? 'var(--color-success)' : 'var(--color-warning)' }}>
                               <span>
                                 {spellLimits?.spellcastingType === 'prepared' && maxSpells === 0 
                                   ? `All Spells (${selectedSpellsCount} selected)`
@@ -1531,7 +1610,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                             </div>
                           </div>
                           {(cantripsNeeded > 0 || (spellsNeeded > 0 && spellLimits?.spellcastingType !== 'prepared')) && (
-                            <div className="mt-2 text-xs text-yellow-400">
+                            <div className="mt-2 text-xs" style={{ color: 'var(--color-warning)' }}>
                               ⚠️ Please select {cantripsNeeded} more cantrip{cantripsNeeded !== 1 ? 's' : ''} and {spellsNeeded} more spell{spellsNeeded !== 1 ? 's' : ''}
                             </div>
                           )}
@@ -1546,9 +1625,15 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                         key={String(spell.name)}
                         className={`flex items-center p-2 rounded cursor-pointer transition-colors ${
                           selectedSpells.some(s => s.name === spell.name)
-                            ? 'bg-purple-600 text-white'
-                            : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
+                            ? 'text-white'
+                            : 'text-slate-300'
                         }`}
+                        style={{ 
+                          backgroundColor: selectedSpells.some(s => s.name === spell.name)
+                            ? 'var(--color-primary)'
+                            : 'var(--color-surface-secondary)',
+                          '--tw-hover-bg': 'var(--color-surface-tertiary)'
+                        } as React.CSSProperties}
                       >
                         <input
                           type="checkbox"
@@ -1557,8 +1642,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                           className="sr-only"
                         />
                         <div>
-                          <div className="font-medium text-sm">{spell.name}</div>
-                          <div className="text-xs opacity-75">{spell.school} {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}</div>
+                          <div className="font-medium text-sm" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}>{spell.name}</div>
+                          <div className="text-xs opacity-75" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)' }}>{spell.school} {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}</div>
                         </div>
                       </label>
                     ))}
@@ -1568,41 +1653,46 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
               {/* Equipment */}
               <div>
-                <h3 className="text-lg font-semibold text-white mb-4">Starting Equipment</h3>
+                <h3 className="text-lg font-semibold text-white mb-4" style={{ color: 'var(--color-text-primary)' }}>Starting Equipment</h3>
                 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>
                     Starting Weapons
                   </label>
                   
                   <button
                     type="button"
                     onClick={() => setShowWeaponSelector(true)}
-                    className="w-full p-3 bg-slate-700 hover:bg-slate-600 rounded-lg border border-slate-600 text-left transition-colors"
+                    className="w-full p-3 rounded-lg border text-left transition-colors"
+                    style={{ 
+                      backgroundColor: 'var(--color-surface-secondary)',
+                      borderColor: 'var(--color-border)',
+                      '--tw-hover-bg': 'var(--color-surface-tertiary)'
+                    } as React.CSSProperties}
                   >
                     <div className="flex justify-between items-center">
                       <div>
-                        <div className="text-sm text-white mb-1">Select Weapons</div>
-                        <div className="text-xs text-slate-400">
+                        <div className="text-sm text-white mb-1" style={{ color: 'var(--color-text-primary)' }}>Select Weapons</div>
+                        <div className="text-xs text-slate-400" style={{ color: 'var(--color-text-tertiary)' }}>
                           {selectedWeapons.length > 0 
                             ? `${selectedWeapons.reduce((sum, sw) => sum + sw.quantity, 0)} weapons selected`
                             : 'Click to choose starting weapons'
                           }
                         </div>
                       </div>
-                      <div className="text-slate-400">→</div>
+                      <div className="text-slate-400" style={{ color: 'var(--color-text-tertiary)' }}>→</div>
                     </div>
                   </button>
 
                   {/* Selected Weapons Summary */}
                   {selectedWeapons.length > 0 && (
-                    <div className="mt-3 bg-slate-600 rounded-lg p-3">
-                      <h4 className="text-sm font-medium text-white mb-2">
+                    <div className="mt-3 bg-slate-600 rounded-lg p-3" style={{ backgroundColor: 'var(--color-surface-tertiary)' }}>
+                      <h4 className="text-sm font-medium text-white mb-2" style={{ color: 'var(--color-text-primary)' }}>
                         Selected Weapons ({selectedWeapons.reduce((sum, sw) => sum + sw.quantity, 0)})
                       </h4>
                       <div className="space-y-1">
                         {selectedWeapons.map(({ weapon, quantity }: { weapon: Weapon; quantity: number }, index: number) => (
-                          <div key={`${String(weapon.name)}-${index}`} className="text-sm text-slate-300">
+                          <div key={`${String(weapon.name)}-${index}`} className="text-sm text-slate-300" style={{ color: 'var(--color-text-secondary)' }}>
                             • {quantity}x {weapon.name} ({weapon.damage} {weapon.damageType})
                           </div>
                         ))}
@@ -1612,38 +1702,43 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                  <label className="block text-sm font-medium text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>
                     Starting Armor
                   </label>
                   
                   <button
                     type="button"
                     onClick={() => setShowArmorSelector(true)}
-                    className="w-full p-3 bg-slate-700 hover:bg-slate-600 rounded-lg border border-slate-600 text-left transition-colors"
+                    className="w-full p-3 rounded-lg border text-left transition-colors"
+                    style={{ 
+                      backgroundColor: 'var(--color-surface-secondary)',
+                      borderColor: 'var(--color-border)',
+                      '--tw-hover-bg': 'var(--color-surface-tertiary)'
+                    } as React.CSSProperties}
                   >
                     <div className="flex justify-between items-center">
                       <div>
-                        <div className="text-sm text-white mb-1">Select Armor</div>
-                        <div className="text-xs text-slate-400">
+                        <div className="text-sm text-white mb-1" style={{ color: 'var(--color-text-primary)' }}>Select Armor</div>
+                        <div className="text-xs text-slate-400" style={{ color: 'var(--color-text-tertiary)' }}>
                           {selectedArmor.length > 0 
                             ? `${selectedArmor.length} armor pieces selected`
                             : 'Click to choose starting armor'
                           }
                         </div>
                       </div>
-                      <div className="text-slate-400">→</div>
+                      <div className="text-slate-400" style={{ color: 'var(--color-text-tertiary)' }}>→</div>
                     </div>
                   </button>
 
                   {/* Selected Armor Summary */}
                   {selectedArmor.length > 0 && (
-                    <div className="mt-3 bg-slate-600 rounded-lg p-3">
-                      <h4 className="text-sm font-medium text-white mb-2">
+                    <div className="mt-3 bg-slate-600 rounded-lg p-3" style={{ backgroundColor: 'var(--color-surface-tertiary)' }}>
+                      <h4 className="text-sm font-medium text-white mb-2" style={{ color: 'var(--color-text-primary)' }}>
                         Selected Armor ({selectedArmor.length})
                       </h4>
                       <div className="space-y-1">
                         {selectedArmor.map((armor: Armor, index: number) => (
-                          <div key={`${armor.name}-${index}`} className="text-sm text-slate-300">
+                          <div key={`${armor.name}-${index}`} className="text-sm text-slate-300" style={{ color: 'var(--color-text-secondary)' }}>
                             • {armor.name} (AC {armor.baseAC}{armor.maxDexBonus !== null ? ` + Dex (max ${armor.maxDexBonus})` : ' + Dex'})
                           </div>
                         ))}
@@ -1660,14 +1755,14 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               <div className="space-y-6">
                 {/* Equipment Pack Selection - MOVED ABOVE BACKGROUND */}
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-4">Starting Equipment Choice</h3>
+                  <h3 className="text-lg font-semibold text-white mb-4" style={{ color: 'var(--color-text-primary)' }}>Starting Equipment Choice</h3>
                   
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                    <label className="block text-sm font-medium text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>
                       Equipment Pack
                     </label>
                     {loadingOptions ? (
-                      <div className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-400">
+                      <div className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-slate-400" style={{ backgroundColor: 'var(--color-surface-secondary)', borderColor: 'var(--color-border)', color: 'var(--color-text-tertiary)' }}>
                         Loading equipment packs...
                       </div>
                     ) : (
@@ -1675,7 +1770,13 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                         <select
                           value={selectedEquipmentPack}
                           onChange={(e) => handleEquipmentPackChange(Number(e.target.value))}
-                          className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                          className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none"
+                          style={{ 
+                            backgroundColor: 'var(--color-surface-secondary)',
+                            borderColor: 'var(--color-border)',
+                            color: 'var(--color-text-primary)',
+                            '--tw-focus-border-color': 'var(--color-primary)'
+                          } as React.CSSProperties}
                         >
                           <option value={-1}>No Pack - Roll for Starting Gold</option>
                           {creationOptions?.equipmentPacks?.map((pack, index) => (
@@ -1687,33 +1788,33 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                         
                         {/* Show selected pack details */}
                         {selectedEquipmentPack === -1 ? (
-                          <div className="mt-2 p-3 bg-slate-700 rounded-lg">
-                            <div className="text-sm text-slate-300 mb-2">
+                          <div className="mt-2 p-3 bg-slate-700 rounded-lg" style={{ backgroundColor: 'var(--color-surface-secondary)' }}>
+                            <div className="text-sm text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>
                               You will roll for starting gold based on your class instead of taking an equipment pack.
                             </div>
                             {goldRollDetails ? (
-                              <div className="text-xs text-yellow-400 mt-1">
+                              <div className="text-xs text-yellow-400 mt-1" style={{ color: 'var(--color-warning)' }}>
                                 <strong>Starting Gold:</strong> {calculatedGold} gp <span className="block">({goldRollDetails})</span>
                               </div>
                             ) : (
-                              <div className="text-xs text-slate-400 mt-1">
+                              <div className="text-xs text-slate-400 mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
                                 <em>Roll to see your starting gold!</em>
                               </div>
                             )}
                           </div>
                         ) : creationOptions?.equipmentPacks?.[selectedEquipmentPack] && (
-                          <div className="mt-2 p-3 bg-slate-700 rounded-lg">
-                            <div className="text-sm text-slate-300 mb-2">
+                          <div className="mt-2 p-3 bg-slate-700 rounded-lg" style={{ backgroundColor: 'var(--color-surface-secondary)' }}>
+                            <div className="text-sm text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>
                               {creationOptions.equipmentPacks[selectedEquipmentPack].description}
                             </div>
-                            <div className="text-xs text-slate-400">
+                            <div className="text-xs text-slate-400" style={{ color: 'var(--color-text-tertiary)' }}>
                               <strong>Contains:</strong>{' '}
                               {creationOptions.equipmentPacks[selectedEquipmentPack].items
                                 .map(item => `${item.name} (${item.quantity})`)
                                 .join(', ')}
                             </div>
                             {calculatedGold > 0 && (
-                              <div className="text-xs text-yellow-400 mt-1">
+                              <div className="text-xs text-yellow-400 mt-1" style={{ color: 'var(--color-warning)' }}>
                                 <strong>Starting Gold:</strong> {calculatedGold} gp (from {background} background)
                               </div>
                             )}
@@ -1725,7 +1826,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-4">Select Your Background</h3>
+                  <h3 className="text-lg font-semibold text-white mb-4" style={{ color: 'var(--color-text-primary)' }}>Select Your Background</h3>
                   <BackgroundSelector
                     selectedBackground={background}
                     selectedCharacteristics={backgroundCharacteristics}
@@ -1737,25 +1838,31 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 </div>
 
                 {/* Avatar Generator */}
-                <div className="border-t border-slate-700 pt-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">Generate Avatar (Optional)</h3>
-                  <div className="bg-slate-800 rounded-lg p-4">
-                    <p className="text-slate-300 text-sm mb-4">
+                <div className="border-t border-slate-700 pt-6" style={{ borderColor: 'var(--color-border)' }}>
+                  <h3 className="text-lg font-semibold text-white mb-4" style={{ color: 'var(--color-text-primary)' }}>Generate Avatar (Optional)</h3>
+                  <div className="bg-slate-800 rounded-lg p-4" style={{ backgroundColor: 'var(--color-surface)' }}>
+                    <p className="text-slate-300 text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
                       Create a personalized AI-generated avatar based on your character&apos;s traits, equipment, and background.
                       <br />
-                      <span className="text-slate-400 text-xs">
+                      <span className="text-slate-400 text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
                         💡 Add custom appearance below, or leave blank for diverse, realistic features (fights AI bias toward young/white/thin).
                       </span>
                     </p>
                     
                     {/* Appearance Field */}
                     <div className="mb-4">
-                      <label className="block text-sm font-medium text-slate-300 mb-2">
+                      <label className="block text-sm font-medium text-slate-300 mb-2" style={{ color: 'var(--color-text-secondary)' }}>
                         Appearance (Optional)
                       </label>
                       <textarea
                         placeholder="Describe physical features, scars, distinctive marks, etc. Leave blank for AI to create diverse, realistic appearance."
-                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none text-sm"
+                        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none text-sm"
+                        style={{ 
+                          backgroundColor: 'var(--color-surface-secondary)',
+                          borderColor: 'var(--color-border)',
+                          color: 'var(--color-text-primary)',
+                          '--tw-focus-border-color': 'var(--color-primary)'
+                        } as React.CSSProperties}
                         rows={2}
                         value={appearance || ''}
                         onChange={(e) => setAppearance(e.target.value)}
@@ -1765,7 +1872,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Left: Avatar Preview */}
                       <div className="space-y-3">
-                        <h4 className="text-white font-medium">Avatar Preview</h4>
+                        <h4 className="text-white font-medium" style={{ color: 'var(--color-text-primary)' }}>Avatar Preview</h4>
                         {generatedFullBodyAvatar ? (
                           <div className="space-y-3">
                             <Image
@@ -1773,7 +1880,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                               alt="Generated character avatar"
                               width={192}
                               height={336}
-                              className="w-48 mx-auto rounded-lg border-2 border-purple-500 object-cover"
+                              className="w-48 mx-auto rounded-lg border-2 object-cover"
+                              style={{ borderColor: 'var(--color-primary)' }}
                               priority
                             />
                             <div className="text-center">
@@ -1783,13 +1891,17 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                                   setGeneratedFullBodyAvatar('');
                                 }}
                                 className="text-red-400 hover:text-red-300 text-sm transition-colors"
+                                style={{ 
+                                  color: 'var(--color-error)',
+                                  '--tw-hover-color': 'var(--color-error-hover)'
+                                } as React.CSSProperties}
                               >
                                 Remove Avatar
                               </button>
                             </div>
                           </div>
                         ) : (
-                          <div className="w-48 h-80 mx-auto rounded-lg border-2 border-dashed border-slate-500 flex flex-col items-center justify-center text-slate-400">
+                          <div className="w-48 h-80 mx-auto rounded-lg border-2 border-dashed border-slate-500 flex flex-col items-center justify-center text-slate-400" style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-tertiary)' }}>
                             <div className="text-4xl mb-2">🎨</div>
                             <span className="text-sm text-center">No avatar generated<br />Click generate below</span>
                           </div>
@@ -1798,7 +1910,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
 
                       {/* Right: Avatar Generation */}
                       <div className="space-y-4">
-                        <h4 className="text-white font-medium">Generate AI Avatar</h4>
+                        <h4 className="text-white font-medium" style={{ color: 'var(--color-text-primary)' }}>Generate AI Avatar</h4>
                         <AvatarGenerator
                           characterData={{
                             race,
@@ -1833,11 +1945,15 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           )}
 
           {/* Submit */}
-          <div className="flex justify-end gap-4 pt-4 border-t border-slate-700">
+          <div className="flex justify-end gap-4 pt-4 border-t border-slate-700" style={{ borderColor: 'var(--color-border)' }}>
             <button
               type="button"
               onClick={currentStep === 'basic' ? onClose : () => setCurrentStep('basic')}
               className="px-4 py-2 text-slate-400 hover:text-white transition-colors"
+              style={{ 
+                color: 'var(--color-text-secondary)',
+                '--tw-hover-color': 'var(--color-text-primary)'
+              } as React.CSSProperties}
             >
               {currentStep === 'basic' ? 'Cancel' : 'Back'}
             </button>
@@ -1849,7 +1965,13 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                   handleNext();
                 }}
                 disabled={!characterClass || (needsSubclassAtCreation && !subclass) || (statMethod === 'pointbuy' && !pointBuyValidation.isValid)}
-                className="bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg transition-colors"
+                className="text-white px-6 py-2 rounded-lg transition-colors"
+                style={{ 
+                  backgroundColor: 'var(--color-primary)',
+                  '--tw-hover-bg': 'var(--color-primary-hover)',
+                  '--tw-disabled-bg': 'var(--color-surface-secondary)',
+                  '--tw-disabled-cursor': 'not-allowed'
+                } as React.CSSProperties}
               >
                 Next
               </button>
@@ -1859,9 +1981,13 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                 disabled={isSubmitting || !background}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                   isSubmitting
-                    ? 'bg-slate-600 cursor-not-allowed'
-                    : 'bg-amber-600 hover:bg-amber-700 text-white'
+                    ? 'cursor-not-allowed'
+                    : 'text-white'
                 }`}
+                style={{ 
+                  backgroundColor: isSubmitting ? 'var(--color-surface-secondary)' : 'var(--color-accent)',
+                  '--tw-hover-bg': 'var(--color-accent-hover)'
+                } as React.CSSProperties}
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-2">
