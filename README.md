@@ -26,6 +26,7 @@ A D&D 5e character builder and manager built with Next.js, TypeScript, and Supab
 - Single source of truth per feature - no duplicate implementations.
 - Modern code patterns in clean, focused files - but never alongside legacy versions.
 - **Test-driven development**: Write tests first, then implement functionality. Every feature should have corresponding tests to prevent regressions.
+- **No theme logic in business logic**: All colors must be in CSS. No hardcoded colors in className strings or React components.
 - Before running a development daemon, check if it is already running and kill the last instance to avoid port conflicts.
 - **Dev server restart command**: `pkill -f "npm run dev" ; pkill -f "next dev" ; sleep 5 ; npm run dev`
 - **Pivot confirmation required**: When you have to pivot on directions, explain why and wait for confirmation.
