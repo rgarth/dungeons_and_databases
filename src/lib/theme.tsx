@@ -17,6 +17,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Load theme from localStorage on mount
     const savedTheme = localStorage.getItem('theme') as Theme;
+    console.log('Loading theme from localStorage:', savedTheme);
     if (savedTheme && (savedTheme === 'theme-dndb-dark' || savedTheme === 'theme-dndb-light')) {
       setTheme(savedTheme);
     }
@@ -25,6 +26,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Apply theme to document and save to localStorage
     const root = document.documentElement;
+    
+    console.log('Applying theme to document:', theme);
     
     // Remove existing theme classes
     root.classList.remove('theme-dndb-dark', 'theme-dndb-light');
