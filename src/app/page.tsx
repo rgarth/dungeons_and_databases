@@ -8,6 +8,7 @@ import { CreateCharacterModal } from "../components/create-character-modal";
 import { LoadingModal } from "../components/loading-modal";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Character } from "@/types/character";
+import { Button } from "../components/ui";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -60,42 +61,44 @@ export default function Home() {
   // Show login screen if not authenticated
   if (!session) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="bg-slate-800 p-8 rounded-lg shadow-xl max-w-md w-full">
-          <h1 className="text-2xl font-bold text-white mb-6 text-center">Dungeons & Databases</h1>
-          <button
+      <div className="min-h-screen bg-[var(--color-surface)] flex items-center justify-center">
+        <div className="bg-[var(--color-card)] p-8 rounded-lg shadow-xl max-w-md w-full border border-[var(--color-border)]">
+          <h1 className="text-2xl font-bold text-[var(--color-text-primary)] mb-6 text-center">Dungeons & Databases</h1>
+          <Button
             onClick={() => signIn('google')}
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition-colors"
+            className="w-full"
+            size="lg"
           >
             Sign In with Google
-          </button>
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-[var(--color-surface)]">
       {/* Header */}
-      <header className="bg-slate-800 border-b border-slate-700">
+      <header className="bg-[var(--color-card)] border-b border-[var(--color-border)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col gap-4">
-            <h1 className="text-2xl font-bold text-white text-center">Dungeons & Databases</h1>
+            <h1 className="text-2xl font-bold text-[var(--color-text-primary)] text-center">Dungeons & Databases</h1>
             <div className="flex items-center justify-center gap-4">
-              <button
+              <Button
                 onClick={() => setShowCreateModal(true)}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition-colors flex items-center gap-2"
+                className="flex items-center gap-2"
               >
                 <Plus className="h-5 w-5" />
                 New Character
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
                 onClick={() => signOut()}
-                className="text-slate-300 hover:text-white transition-colors flex items-center gap-2"
+                className="flex items-center gap-2"
               >
                 <LogOut className="h-5 w-5" />
                 Sign Out
-              </button>
+              </Button>
             </div>
           </div>
         </div>

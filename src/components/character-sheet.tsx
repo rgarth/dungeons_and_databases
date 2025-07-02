@@ -858,12 +858,12 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                     />
                   </div>
                 ) : null}
-                <User className={`h-6 w-6 sm:h-7 sm:w-7 text-purple-400 flex-shrink-0 ${avatarUrl ? 'hidden' : ''}`} />
+                <User className={`h-6 w-6 sm:h-7 sm:w-7 text-[var(--color-accent)] flex-shrink-0 ${avatarUrl ? 'hidden' : ''}`} />
                 
                 {/* Character info */}
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-xl sm:text-2xl font-bold text-white truncate">{displayCharacter.name}</h1>
-                  <p className="text-slate-300 text-sm sm:text-base truncate">
+                  <h1 className="text-xl sm:text-2xl font-bold text-[var(--color-text-primary)] truncate">{displayCharacter.name}</h1>
+                  <p className="text-[var(--color-text-secondary)] text-sm sm:text-base truncate">
                     Level {displayCharacter.level} {displayCharacter.subrace || displayCharacter.race} {displayCharacter.class}
                     {displayCharacter.background && (
                       <span className="hidden sm:inline"> • {displayCharacter.background}</span>
@@ -877,7 +877,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 {/* Level Up button */}
                 <button
                   onClick={() => setShowLevelUpModal(true)}
-                  className="flex items-center gap-2 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm"
+                  className="flex items-center gap-2 px-3 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded-lg transition-colors text-sm"
                   title="Level Up"
                 >
                   <span>Level Up</span>
@@ -887,7 +887,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 <div className="relative" ref={actionsMenuRef}>
                   <button
                     onClick={() => setShowActionsMenu(!showActionsMenu)}
-                    className="text-slate-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-slate-700"
+                    className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors p-2 rounded-lg hover:bg-[var(--color-card-secondary)]"
                     title="Actions"
                   >
                     <MoreVertical className="h-5 w-5" />
@@ -895,7 +895,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                   
                   {/* Dropdown menu */}
                   {showActionsMenu && (
-                    <div className="absolute right-0 top-full mt-1 bg-slate-700 rounded-lg border border-slate-600 shadow-lg z-10 min-w-[140px]">
+                    <div className="absolute right-0 top-full mt-1 bg-[var(--color-card)] rounded-lg border border-[var(--color-border)] shadow-lg z-10 min-w-[140px]">
                       <button
                         onClick={() => {
                           // Trigger PDF export
@@ -903,7 +903,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                           if (pdfButton) pdfButton.click();
                           setShowActionsMenu(false);
                         }}
-                        className="w-full px-3 py-2 text-left text-white hover:bg-slate-600 transition-colors border-b border-slate-600"
+                        className="w-full px-3 py-2 text-left text-[var(--color-text-primary)] hover:bg-[var(--color-card-secondary)] transition-colors border-b border-[var(--color-border)]"
                       >
                         Export PDF
                       </button>
@@ -913,7 +913,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                           setShowDeleteDialog(true);
                           setShowActionsMenu(false);
                         }}
-                        className="w-full px-3 py-2 text-left text-red-400 hover:bg-slate-600 rounded-b-lg transition-colors"
+                        className="w-full px-3 py-2 text-left text-[var(--color-danger)] hover:bg-[var(--color-card-secondary)] rounded-b-lg transition-colors"
                       >
                         Delete
                       </button>
@@ -924,7 +924,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 {/* Close button - always visible */}
                 <button
                   onClick={onClose}
-                  className="text-slate-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-slate-700"
+                  className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors p-2 rounded-lg hover:bg-[var(--color-card-secondary)]"
                   title="Close"
                 >
                   <X className="h-5 w-5" />
@@ -934,15 +934,15 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
           </div>
 
           {/* Tab Navigation - Responsive */}
-          <div className="border-b border-slate-700">
+          <div className="border-b border-transparent">
             {/* Desktop: Show all tabs in a row */}
             <div className="hidden lg:flex items-end">
               <button
                 onClick={() => setActiveTab("stats")}
                 className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                   activeTab === "stats"
-                    ? "text-purple-400 border-b-2 border-purple-400"
-                    : "text-slate-400 hover:text-white"
+                    ? "text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]"
+                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 <BarChart3 className="h-4 w-4" />
@@ -952,8 +952,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onClick={() => setActiveTab("actions")}
                 className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                   activeTab === "actions"
-                    ? "text-purple-400 border-b-2 border-purple-400"
-                    : "text-slate-400 hover:text-white"
+                    ? "text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]"
+                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 <Swords className="h-4 w-4" />
@@ -963,8 +963,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onClick={() => setActiveTab("gear")}
                 className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                   activeTab === "gear"
-                    ? "text-purple-400 border-b-2 border-purple-400"
-                    : "text-slate-400 hover:text-white"
+                    ? "text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]"
+                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 <Package className="h-4 w-4" />
@@ -974,8 +974,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onClick={() => setActiveTab("inventory")}
                 className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                   activeTab === "inventory"
-                    ? "text-purple-400 border-b-2 border-purple-400"
-                    : "text-slate-400 hover:text-white"
+                    ? "text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]"
+                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 <Coins className="h-4 w-4" />
@@ -985,8 +985,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onClick={() => setActiveTab("background")}
                 className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                   activeTab === "background"
-                    ? "text-purple-400 border-b-2 border-purple-400"
-                    : "text-slate-400 hover:text-white"
+                    ? "text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]"
+                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 <FileText className="h-4 w-4" />
@@ -996,8 +996,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onClick={() => setActiveTab("dice")}
                 className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                   activeTab === "dice"
-                    ? "text-purple-400 border-b-2 border-purple-400"
-                    : "text-slate-400 hover:text-white"
+                    ? "text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]"
+                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 <Dices className="h-4 w-4" />
@@ -1011,7 +1011,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 <select
                   value={activeTab}
                   onChange={(e) => setActiveTab(e.target.value as typeof activeTab)}
-                  className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-white font-medium focus:border-purple-500 focus:outline-none appearance-none cursor-pointer"
+                  className="w-full bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg px-4 py-3 text-[var(--color-text-primary)] font-medium focus:border-[var(--color-accent)] focus:outline-none appearance-none cursor-pointer"
                 >
                   <option value="stats">📊 Stats</option>
                   <option value="actions">⚔️ Actions</option>
@@ -1020,7 +1020,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                   <option value="background">📄 Background / Notes</option>
                   <option value="dice">🎲 Dice Roll</option>
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--color-text-secondary)] pointer-events-none" />
               </div>
             </div>
           </div>
