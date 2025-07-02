@@ -545,8 +545,6 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
           // Set current dice color
           if (window.DICE && window.DICE.vars) {
             window.DICE.vars.dice_color = diceColor;
-            const isDark = isColorDark(diceColor);
-            window.DICE.vars.label_color = isDark ? getComputedCSSValue('--color-text-primary') : getComputedCSSValue('--color-surface');
           }
         } catch (error) {
           console.error('Failed to initialize dice box:', error);
@@ -563,8 +561,6 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
       // Set initial dice color
       if (window.DICE && window.DICE.vars) {
         window.DICE.vars.dice_color = diceColor;
-        const isDark = isColorDark(diceColor);
-        window.DICE.vars.label_color = isDark ? getComputedCSSValue('--color-text-primary') : getComputedCSSValue('--color-surface');
       }
       
       console.log('🎲 Dice box initialized successfully');
@@ -585,8 +581,6 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
     if (diceBoxRef.current && window.DICE && window.DICE.vars) {
       console.log('🎲 Updating dice color to:', diceColor);
       window.DICE.vars.dice_color = diceColor;
-      const isDark = isColorDark(diceColor);
-      window.DICE.vars.label_color = isDark ? getComputedCSSValue('--color-text-primary') : getComputedCSSValue('--color-surface');
     }
   }, [diceColor]);
 
@@ -664,9 +658,6 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
     // Update the global dice.js color variables if they exist
     if (typeof window !== 'undefined' && window.DICE && window.DICE.vars) {
       window.DICE.vars.dice_color = color;
-      // Optionally adjust label color for contrast
-      const isDark = isColorDark(color);
-      window.DICE.vars.label_color = isDark ? getComputedCSSValue('--color-text-primary') : getComputedCSSValue('--color-surface');
       
       // Clear material cache so new dice use the updated colors
       if (window.DICE.clearMaterialCache) {
@@ -675,22 +666,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
     }
   };
 
-  // Helper function to get computed CSS variable value
-  const getComputedCSSValue = (variableName: string): string => {
-    return getComputedStyle(document.documentElement)
-      .getPropertyValue(variableName)
-      .trim();
-  };
 
-  // Helper function to determine if a color is dark
-  const isColorDark = (color: string): boolean => {
-    const hex = color.replace('#', '');
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-    return brightness < 128;
-  };
 
   const diceTypes = [
     { key: 'd4' as const, sides: 4 },
