@@ -225,3 +225,24 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Theme selector button - all colors in CSS */
+.theme-selector-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+  border-radius: 0.5rem;
+  color: var(--color-text-primary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.theme-selector-button:hover {
+  background-color: var(--color-surface-secondary);
+}
