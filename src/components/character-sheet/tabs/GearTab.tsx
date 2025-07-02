@@ -634,7 +634,7 @@ export function GearTab({
                 </h3>
                 <button
                   onClick={onOpenSpellPreparation}
-                  className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-3 py-1 rounded text-sm transition-colors"
+                  className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] px-3 py-1 rounded text-sm transition-colors"
                 >
                   Manage Spells
                 </button>
