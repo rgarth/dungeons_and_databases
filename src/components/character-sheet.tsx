@@ -874,28 +874,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
               {/* Actions - Desktop: buttons, Mobile: hamburger menu */}
               <div className="flex items-center gap-2 flex-shrink-0">
-                {/* Desktop buttons */}
-                <div className="hidden md:flex items-center gap-2">
-                  <PDFExport character={displayCharacter} />
-                  <button
-                    onClick={() => setShowLevelUpModal(true)}
-                    className="flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm"
-                    title="Level Up"
-                  >
-                    <TrendingUp className="h-4 w-4" />
-                    <span className="hidden lg:inline">Level Up</span>
-                  </button>
-                  <button
-                    onClick={() => setShowDeleteDialog(true)}
-                    className="text-red-400 hover:text-red-300 transition-colors p-2 rounded-lg hover:bg-red-500/10"
-                    title="Delete Character"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
+                {/* Level Up button */}
+                <button
+                  onClick={() => setShowLevelUpModal(true)}
+                  className="flex items-center gap-2 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm"
+                  title="Level Up"
+                >
+                  <span>Level Up</span>
+                </button>
 
-                {/* Mobile hamburger menu */}
-                <div className="md:hidden relative" ref={actionsMenuRef}>
+                {/* Hamburger menu for all screen sizes */}
+                <div className="relative" ref={actionsMenuRef}>
                   <button
                     onClick={() => setShowActionsMenu(!showActionsMenu)}
                     className="text-slate-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-slate-700"
@@ -907,27 +896,25 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                   {/* Dropdown menu */}
                   {showActionsMenu && (
                     <div className="absolute right-0 top-full mt-1 bg-slate-700 rounded-lg border border-slate-600 shadow-lg z-10 min-w-[140px]">
-                      <div className="px-3 py-2 border-b border-slate-600">
-                        <PDFExport character={displayCharacter} className="w-full justify-center" />
-                      </div>
                       <button
                         onClick={() => {
-                          setShowLevelUpModal(true);
+                          // Trigger PDF export
+                          const pdfButton = document.querySelector('[title="Export to PDF"]') as HTMLButtonElement;
+                          if (pdfButton) pdfButton.click();
                           setShowActionsMenu(false);
                         }}
-                        className="flex items-center gap-2 w-full px-3 py-2 text-left text-white hover:bg-slate-600 transition-colors"
+                        className="w-full px-3 py-2 text-left text-white hover:bg-slate-600 transition-colors border-b border-slate-600"
                       >
-                        <TrendingUp className="h-4 w-4 text-green-400" />
-                        Level Up
+                        Export PDF
                       </button>
+
                       <button
                         onClick={() => {
                           setShowDeleteDialog(true);
                           setShowActionsMenu(false);
                         }}
-                        className="flex items-center gap-2 w-full px-3 py-2 text-left text-red-400 hover:bg-slate-600 rounded-b-lg transition-colors"
+                        className="w-full px-3 py-2 text-left text-red-400 hover:bg-slate-600 rounded-b-lg transition-colors"
                       >
-                        <Trash2 className="h-4 w-4" />
                         Delete
                       </button>
                     </div>
