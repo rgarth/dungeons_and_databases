@@ -16,7 +16,7 @@ export function ThemeSelector() {
   return (
     <button
       onClick={toggleTheme}
-      className="flex items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-[var(--color-surface-secondary)] rounded-lg border-2 border-[var(--color-primary)] bg-[var(--color-primary)] text-[var(--color-primary-text)] font-semibold"
+      className="flex items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-[var(--color-surface-secondary)] rounded-lg text-[var(--color-text-primary)]"
       title={`Switch to ${theme === 'theme-dndb-dark' ? 'Light' : 'Dark'} theme`}
     >
       {theme === 'theme-dndb-dark' ? (

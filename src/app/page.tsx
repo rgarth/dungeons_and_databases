@@ -95,7 +95,6 @@ export default function Home() {
                 <Plus className="h-5 w-5" />
                 New Character
               </Button>
-              <ThemeSelector />
               <Button
                 variant="ghost"
                 onClick={() => signOut()}
@@ -106,8 +105,8 @@ export default function Home() {
               </Button>
             </div>
 
-            {/* Mobile hamburger menu */}
-            <div className="md:hidden">
+            {/* Hamburger menu for both desktop and mobile */}
+            <div>
               <Button
                 variant="ghost"
                 onClick={() => setShowMenu(!showMenu)}
@@ -118,9 +117,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Mobile menu dropdown */}
+          {/* Menu dropdown for both desktop and mobile */}
           {showMenu && (
-            <div className="md:hidden mt-4 space-y-2">
+            <div className="mt-4 space-y-2">
               <Button
                 onClick={() => {
                   setShowCreateModal(true);
