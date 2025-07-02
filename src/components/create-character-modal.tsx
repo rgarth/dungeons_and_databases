@@ -906,6 +906,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         charisma: finalAbilityScores.charisma,
         // Background characteristics
         backgroundCharacteristics,
+        // Character appearance
+        appearance,
 
         spellsKnown: selectedSpells,
         spellsPrepared: selectedSpells, // For level 1, known = prepared
