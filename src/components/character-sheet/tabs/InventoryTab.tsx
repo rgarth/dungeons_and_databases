@@ -353,7 +353,7 @@ export function InventoryTab({
                     <button
                       onClick={handleAddItem}
                       disabled={!selectedEquipment}
-                      className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-accent-text)] p-2 rounded transition-colors"
+                      className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] p-2 rounded transition-colors"
                     >
                       <Plus className="h-4 w-4" />
                     </button>
@@ -372,7 +372,7 @@ export function InventoryTab({
                   <button
                     onClick={handleAddItem}
                     disabled={!newItem.trim()}
-                    className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-accent-text)] p-2 rounded transition-colors"
+                    className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] p-2 rounded transition-colors"
                   >
                     <Plus className="h-4 w-4" />
                   </button>
@@ -563,7 +563,7 @@ export function InventoryTab({
                 <button
                   onClick={handleAddTreasure}
                   disabled={!selectedTreasure}
-                  className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-accent-text)] p-2 rounded transition-colors"
+                  className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] p-2 rounded transition-colors"
                 >
                   <Plus className="h-4 w-4" />
                 </button>
@@ -588,7 +588,7 @@ export function InventoryTab({
                   <button
                     onClick={handleAddTreasure}
                     disabled={!newTreasureName.trim() || !newTreasureValue.trim()}
-                    className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-accent-text)] p-2 rounded transition-colors"
+                    className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] p-2 rounded transition-colors"
                   >
                     <Plus className="h-4 w-4" />
                   </button>

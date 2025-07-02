@@ -15,8 +15,8 @@
   --color-card: #1a1a1a; /* dark charcoal */
   --color-card-secondary: #2a2a2a; /* medium charcoal */
   --color-card-tertiary: #3a3a3a; /* light charcoal */
-  --color-border: #dc2626; /* D&D red */
-  --color-border-light: #ef4444; /* lighter red */
+  --color-border: #374151; /* dark grey dungeon color */
+  --color-border-light: #4b5563; /* lighter grey */
   --color-text-primary: #f3f4f6; /* light gray */
   --color-text-secondary: #d1d5db; /* medium gray */
   --color-text-tertiary: #9ca3af; /* muted gray */
@@ -27,10 +27,15 @@
   --color-primary: #dc2626; /* D&D red for primary actions */
   --color-primary-hover: #b91c1c; /* darker red for primary hover */
   
-  /* Accent colors */
-  --color-accent: #fbbf24; /* D&D gold */
-  --color-accent-hover: #f59e0b; /* darker gold */
-  --color-accent-text: #000000; /* black text on gold */
+  /* Accent colors - copper for tabs and text */
+  --color-accent: #b45309; /* deep copper/gold for tabs and text */
+  --color-accent-hover: #92400e; /* darker copper */
+  --color-accent-text: #ffffff; /* white text on copper */
+  
+  /* Button colors - blood red for buttons */
+  --color-button: #991b1b; /* deep blood red for buttons */
+  --color-button-hover: #7f1d1d; /* darker blood red */
+  --color-button-text: #ffffff; /* white text on blood red */
   
   /* Status colors */
   --color-success: #059669; /* emerald */
