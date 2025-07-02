@@ -5,6 +5,7 @@ import { SessionProvider } from "@/components/providers/session-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { DndDataProvider } from "@/components/providers/dnd-data-provider";
 import { ClientCacheProvider } from "@/components/providers/client-cache-provider";
+import { ThemeProvider } from "@/lib/theme";
 import { Providers } from "./providers";
 import { AuthGate } from "@/components/auth-gate";
 
@@ -31,20 +32,22 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers />
-        <SessionProvider>
-          <AuthGate>
-            <QueryProvider>
-              <DndDataProvider>
-                <ClientCacheProvider>
-                  <main className="min-h-screen" style={{ background: 'var(--color-surface)' }}>
-                    {children}
-                  </main>
-                </ClientCacheProvider>
-              </DndDataProvider>
-            </QueryProvider>
-          </AuthGate>
-        </SessionProvider>
+        <ThemeProvider>
+          <Providers />
+          <SessionProvider>
+            <AuthGate>
+              <QueryProvider>
+                <DndDataProvider>
+                  <ClientCacheProvider>
+                    <main className="min-h-screen" style={{ background: 'var(--color-surface)' }}>
+                      {children}
+                    </main>
+                  </ClientCacheProvider>
+                </DndDataProvider>
+              </QueryProvider>
+            </AuthGate>
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
