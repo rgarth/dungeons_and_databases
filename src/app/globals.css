@@ -7,38 +7,38 @@
 
 /* Default theme - can be overridden by theme classes */
 :root {
-  /* Theme colors - NEW THEMED COMPONENTS (distinctive colors) */
-  --color-surface: #0f172a; /* dark slate */
-  --color-surface-secondary: #1e293b; /* slate-800 */
-  --color-surface-tertiary: #334155; /* slate-700 */
-  --color-surface-quaternary: #475569; /* slate-600 */
-  --color-card: #1e293b; /* slate */
-  --color-card-secondary: #334155; /* slate-700 */
-  --color-card-tertiary: #475569; /* slate-600 */
-  --color-border: #475569; /* slate-600 */
-  --color-border-light: #64748b; /* slate-500 */
-  --color-text-primary: #e2e8f0; /* light gray */
-  --color-text-secondary: #cbd5e1; /* medium gray */
-  --color-text-tertiary: #94a3b8; /* muted gray */
-  --color-text-quaternary: #64748b; /* slate-500 */
-  --color-text-muted: #94a3b8; /* muted gray */
+  /* Theme colors - AUTHENTIC D&D STYLING */
+  --color-surface: #0a0a0a; /* deep black */
+  --color-surface-secondary: #1a1a1a; /* dark charcoal */
+  --color-surface-tertiary: #2a2a2a; /* medium charcoal */
+  --color-surface-quaternary: #3a3a3a; /* light charcoal */
+  --color-card: #1a1a1a; /* dark charcoal */
+  --color-card-secondary: #2a2a2a; /* medium charcoal */
+  --color-card-tertiary: #3a3a3a; /* light charcoal */
+  --color-border: #dc2626; /* D&D red */
+  --color-border-light: #ef4444; /* lighter red */
+  --color-text-primary: #f3f4f6; /* light gray */
+  --color-text-secondary: #d1d5db; /* medium gray */
+  --color-text-tertiary: #9ca3af; /* muted gray */
+  --color-text-quaternary: #6b7280; /* slate-500 */
+  --color-text-muted: #9ca3af; /* muted gray */
   
   /* Primary colors */
-  --color-primary: #475569; /* slate-600 for primary actions */
-  --color-primary-hover: #64748b; /* slate-500 for primary hover */
+  --color-primary: #dc2626; /* D&D red for primary actions */
+  --color-primary-hover: #b91c1c; /* darker red for primary hover */
   
   /* Accent colors */
-  --color-accent: #f59e0b; /* amber/orange instead of purple */
-  --color-accent-hover: #d97706; /* darker amber */
-  --color-accent-text: #ffffff; /* white text on accent */
+  --color-accent: #fbbf24; /* D&D gold */
+  --color-accent-hover: #f59e0b; /* darker gold */
+  --color-accent-text: #000000; /* black text on gold */
   
   /* Status colors */
   --color-success: #059669; /* emerald */
   --color-success-text: #ffffff; /* white text on success */
   --color-success-hover: #047857; /* darker emerald for hover */
-  --color-warning: #d97706; /* amber */
-  --color-warning-text: #ffffff; /* white text on warning */
-  --color-error: #dc2626; /* red for errors */
+  --color-warning: #fbbf24; /* gold for warnings */
+  --color-warning-text: #000000; /* black text on gold warning */
+  --color-error: #dc2626; /* D&D red for errors */
   --color-error-text: #ffffff; /* white text on error */
   --color-error-hover: #b91c1c; /* darker red for hover */
   
@@ -50,9 +50,9 @@
   
   /* Border variants for status colors */
   --color-success-border: #059669; /* emerald border */
-  --color-warning-border: #d97706; /* amber border */
-  --color-error-border: #dc2626; /* red border for errors */
-  --color-accent-border: #f59e0b; /* amber border */
+  --color-warning-border: #fbbf24; /* gold border */
+  --color-error-border: #dc2626; /* D&D red border for errors */
+  --color-accent-border: #fbbf24; /* gold border */
   
   /* Legacy aliases for backward compatibility */
   --color-danger: var(--color-error); /* alias for error */
@@ -62,9 +62,9 @@
   --color-danger-border: var(--color-error-border); /* alias for error border */
   
   /* Special purpose colors */
-  --color-overlay: rgba(0, 0, 0, 0.5); /* modal overlay with opacity */
+  --color-overlay: rgba(0, 0, 0, 0.7); /* darker modal overlay */
   --color-error-text-light: #fca5a5; /* light red text for error details */
-  --color-dice-default: #dc2626; /* red for default dice color */
+  --color-dice-default: #dc2626; /* D&D red for default dice color */
 }
 
 @theme inline {
