@@ -136,13 +136,21 @@ export function useCharacterMutations() {
 
       return { previousCharacters };
     },
+    onSuccess: (updatedCharacter, { id }) => {
+      // Update the cache with the server response to ensure consistency
+      queryClient.setQueryData(['characters'], (old: Character[] = []) =>
+        old.map((char) => (char.id === id ? updatedCharacter : char))
+      );
+    },
     onError: (err, variables, context) => {
       if (context?.previousCharacters) {
         queryClient.setQueryData(['characters'], context.previousCharacters);
       }
     },
-    // Don't invalidate cache immediately to prevent overwriting local changes
-    // The optimistic update should be sufficient for immediate UI feedback
+    onSettled: () => {
+      // Invalidate queries to ensure fresh data is fetched when needed
+      queryClient.invalidateQueries({ queryKey: ['characters'] });
+    },
   });
 
   // Delete character mutation with optimistic update

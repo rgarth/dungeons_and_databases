@@ -75,6 +75,34 @@ const TIEFLING_INFERNAL_FEATURES: Record<string, string> = {
   'Mephistopheles Tiefling': 'red skin, prominent horns, long tail, infernal heritage, demonic features, mephistopheles bloodline',
 };
 
+// Tabaxi fur patterns and colors (based on real cat breeds and patterns)
+const TABAXI_FUR_PATTERNS = [
+  // Solid colors
+  'solid orange fur', 'solid black fur', 'solid white fur', 'solid gray fur', 'solid brown fur', 'solid cream fur',
+  
+  // Tabby patterns
+  'orange tabby fur with dark stripes', 'brown tabby fur with black stripes', 'gray tabby fur with dark stripes', 'cream tabby fur with brown stripes',
+  
+  // Calico patterns
+  'calico fur with patches of orange, black, and white', 'dilute calico fur with patches of cream, gray, and white',
+  
+  // Tortoiseshell patterns
+  'tortoiseshell fur with mottled orange and black', 'dilute tortoiseshell fur with mottled cream and gray',
+  
+  // Tuxedo patterns
+  'black and white tuxedo fur', 'gray and white tuxedo fur',
+  
+  // Bicolor patterns
+  'orange and white bicolor fur', 'black and white bicolor fur', 'gray and white bicolor fur',
+  
+  // Pointed patterns (like Siamese)
+  'cream fur with darker points on ears, face, paws, and tail', 'white fur with gray points on ears, face, paws, and tail',
+  
+  // Special patterns
+  'ginger fur with white chest and paws', 'black fur with white paws and chest', 'gray fur with white paws and chest',
+  'orange fur with white belly and paws', 'brown fur with lighter underbelly', 'cream fur with darker face mask'
+];
+
 // Utility function to get random item from array
 function getRandomItem<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
@@ -167,9 +195,11 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
       raceDescription = 'giant humanoid with massive frame, stone gray skin with purple markings, bald head, imposing stature, 7-8 feet tall';
       cameraAngle = ', camera positioned low looking up at the character, dramatic low angle shot to emphasize towering height and imposing presence';
       break;
-    case 'Tabaxi':
-      raceDescription = 'anthropomorphised cat, feline humanoid with cat-like features, fur-covered body, pointed ears, whiskers, cat eyes, agile build, tabaxi appearance, cat-humanoid hybrid, NOT human with cat makeup, clearly feline features';
+    case 'Tabaxi': {
+      const furPattern = getRandomItem(TABAXI_FUR_PATTERNS);
+      raceDescription = `anthropomorphised cat, feline humanoid with cat-like features, ${furPattern}, pointed ears, whiskers, cat eyes, agile build, tabaxi appearance, cat-humanoid hybrid, NOT human with cat makeup, clearly feline features`;
       break;
+    }
     default:
       raceDescription = race.toLowerCase();
   }
