@@ -643,6 +643,11 @@ export async function PATCH(request: NextRequest) {
       updateData.skillSources = body.skillSources;
     }
 
+    // Handle languages updates
+    if (body.languages !== undefined) {
+      updateData.languages = body.languages;
+    }
+
     // Handle languageSources updates
     if (body.languageSources !== undefined) {
       updateData.languageSources = body.languageSources;

@@ -3,9 +3,10 @@
 import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp, FileText, Dices, ChevronDown, MoreVertical } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { getModifier } from "@/lib/dnd/core";
-import { Spell, getClassSpells } from "@/lib/dnd/spells";
+import { Spell } from "@/lib/dnd/spells";
 import { Weapon, MagicalWeapon, InventoryItem, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, Armor, Ammunition, calculateArmorClass } from "@/lib/dnd/equipment";
 import { Action, canEquipArmor } from "@/lib/dnd/combat";
+import { useCharacterMutations } from "@/hooks/use-character-mutations";
 import { Treasure } from "@/lib/dnd/data";
 import { MagicalItem, EquippedMagicalItem, applyMagicalItemEffects } from "@/lib/dnd/magical-items";
 import { ActiveCondition } from "@/lib/dnd/conditions";
@@ -74,6 +75,8 @@ interface CharacterSheetProps {
     avatar?: string | null;
     inspiration?: boolean;
     languages?: string[];
+    languageSources?: { [languageName: string]: 'background' | 'racial' | 'class' | 'feat' | 'other' };
+    skillSources?: { [skillName: string]: 'class' | 'background' | 'racial' | 'feat' | 'other' };
     conditions?: ActiveCondition[];
     equippedWeapons?: (Weapon | MagicalWeapon)[];
     deathSaveSuccesses?: number;
@@ -91,7 +94,8 @@ interface CharacterSheetProps {
   onCharacterUpdated?: () => void;
 }
 
-export function CharacterSheet({ character, onClose, onCharacterDeleted, onCharacterUpdated }: CharacterSheetProps) {
+export function CharacterSheet({ character, onClose, onCharacterDeleted }: CharacterSheetProps) {
+  const { updateCharacter: updateCharacterMutation } = useCharacterMutations();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showLevelUpModal, setShowLevelUpModal] = useState(false);
   const [showSpellPreparationModal, setShowSpellPreparationModal] = useState(false);
@@ -105,9 +109,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
   const pendingUpdatesRef = useRef<Record<string, unknown>>({});
   const actionsMenuRef = useRef<HTMLDivElement>(null);
   
-  // Sync currentCharacter with character prop when it changes (important for reopening characters)
+  // Sync currentCharacter with character prop when character ID changes (important for reopening characters)
   useEffect(() => {
     console.log('CharacterSheet: Loading character');
+    console.log('CharacterSheet: Character prop data:', {
+      id: character.id,
+      name: character.name,
+      languages: character.languages,
+      languageSources: character.languageSources,
+      skills: character.skills,
+      skillSources: character.skillSources
+    });
     setCurrentCharacter(character);
     setCopperPieces(character.copperPieces || 0);
     setSilverPieces(character.silverPieces || 0);
@@ -131,7 +143,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
       
       return (character.inventory as string[]).map(name => ({ name, quantity: 1 }));
     });
-  }, [character]);
+  }, [character.id]); // Only sync when character ID changes, not when character data updates
 
   // Clean up all state when unmounting
   useEffect(() => {
@@ -280,76 +292,15 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
     }
   };
 
-  const updateCharacter = async (updates: {
-    inventory?: InventoryItem[];
-    copperPieces?: number;
-    silverPieces?: number;
-    goldPieces?: number;
-    treasures?: Treasure[];
-    weapons?: (Weapon | MagicalWeapon)[];
-    inventoryWeapons?: (Weapon | MagicalWeapon)[];
-    armor?: Armor[];
-    inventoryArmor?: Armor[];
-    magicalItems?: EquippedMagicalItem[];
-    inventoryMagicalItems?: MagicalItem[];
-    attunedItems?: string[];
-    hitPoints?: number;
-    temporaryHitPoints?: number;
-    spellsPrepared?: Spell[];
-    avatar?: string | null;
-    appearance?: string;
-    personality?: string;
-    backstory?: string;
-    notes?: string;
-    inspiration?: boolean;
-    languages?: string[];
-    conditions?: ActiveCondition[];
-    deathSaveSuccesses?: number;
-    deathSaveFailures?: number;
-    ammunition?: Ammunition[];
-    backgroundCharacteristics?: {
-      personalityTraits: string[];
-      ideals: string[];
-      bonds: string[];
-      flaws: string[];
-    };
-  } | Record<string, unknown>) => {
+  const updateCharacter = async (updates: Record<string, unknown>) => {
     // Update local state immediately for responsive UI
     setCurrentCharacter(prev => ({ ...prev, ...updates }));
     
-    // Accumulate updates for debounced database save
-    pendingUpdatesRef.current = { ...pendingUpdatesRef.current, ...updates };
-    
-    // Clear existing timeout and set new one
-    if (updateTimeoutRef.current) {
-      clearTimeout(updateTimeoutRef.current);
-    }
-    
-    updateTimeoutRef.current = setTimeout(async () => {
-      try {
-        const updatesToSend = { ...pendingUpdatesRef.current };
-        pendingUpdatesRef.current = {}; // Clear pending updates
-        
-        console.log('CharacterSheet: Sending debounced updates to database:', updatesToSend);
-        
-        const response = await fetch(`/api/characters?id=${character.id}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatesToSend),
-        });
-        
-        if (!response.ok) {
-          console.error('Failed to update character:', response.status, response.statusText);
-          const errorText = await response.text();
-          console.error('Error response:', errorText);
-        } else {
-          console.log('CharacterSheet: Debounced database update successful');
-          onCharacterUpdated?.();
-        }
-      } catch (error) {
-        console.error('Error updating character:', error);
-      }
-    }, 500); // 500ms debounce delay
+    // Use the React Query mutation for proper cache management
+    updateCharacterMutation.mutate({
+      id: character.id,
+      data: updates
+    });
   };
 
   const handleCreateMagicalWeapon = () => {
@@ -362,7 +313,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
           ...weaponData,
           type: weaponData.type as 'Simple' | 'Martial',
           category: weaponData.category as 'Melee' | 'Ranged',
-          properties: weaponData.properties ? weaponData.properties.split(',').map(p => p.trim()).filter(Boolean) : []
+          properties: weaponData.properties ? weaponData.properties.split(',').map((p: string) => p.trim()).filter(Boolean) : []
         } as Weapon;
         const magicalWeapon = createMagicalWeapon(baseWeapon, template, customWeaponName.trim() || undefined);
         
@@ -1327,11 +1278,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, onChara
                 const spellcastingType = getSpellcastingType(currentCharacter.class);
                 const availableSpells = spellcastingType === 'spellbook' 
                   ? (currentCharacter.spellsKnown || [])  // Wizards prepare from spellbook
-                  : getClassSpells(currentCharacter.class, currentCharacter.level); // Clerics/Druids from class list
+                  : []; // For non-spellbook classes, we'll handle this differently
                 
                 // Group spells by level
                 const spellsByLevel: Record<number, Spell[]> = {};
-                availableSpells.forEach(spell => {
+                availableSpells.forEach((spell: Spell) => {
                   if (!spellsByLevel[spell.level]) {
                     spellsByLevel[spell.level] = [];
                   }
