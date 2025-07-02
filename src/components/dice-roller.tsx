@@ -546,7 +546,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
           if (window.DICE && window.DICE.vars) {
             window.DICE.vars.dice_color = diceColor;
             const isDark = isColorDark(diceColor);
-            window.DICE.vars.label_color = isDark ? 'var(--color-text-primary)' : 'var(--color-surface)';
+            window.DICE.vars.label_color = isDark ? getComputedCSSValue('--color-text-primary') : getComputedCSSValue('--color-surface');
           }
         } catch (error) {
           console.error('Failed to initialize dice box:', error);
@@ -564,7 +564,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
       if (window.DICE && window.DICE.vars) {
         window.DICE.vars.dice_color = diceColor;
         const isDark = isColorDark(diceColor);
-        window.DICE.vars.label_color = isDark ? 'var(--color-text-primary)' : 'var(--color-surface)';
+        window.DICE.vars.label_color = isDark ? getComputedCSSValue('--color-text-primary') : getComputedCSSValue('--color-surface');
       }
       
       console.log('🎲 Dice box initialized successfully');
@@ -586,7 +586,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
       console.log('🎲 Updating dice color to:', diceColor);
       window.DICE.vars.dice_color = diceColor;
       const isDark = isColorDark(diceColor);
-      window.DICE.vars.label_color = isDark ? 'var(--color-text-primary)' : 'var(--color-surface)';
+      window.DICE.vars.label_color = isDark ? getComputedCSSValue('--color-text-primary') : getComputedCSSValue('--color-surface');
     }
   }, [diceColor]);
 
@@ -666,13 +666,20 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
       window.DICE.vars.dice_color = color;
       // Optionally adjust label color for contrast
       const isDark = isColorDark(color);
-      window.DICE.vars.label_color = isDark ? 'var(--color-text-primary)' : 'var(--color-surface)';
+      window.DICE.vars.label_color = isDark ? getComputedCSSValue('--color-text-primary') : getComputedCSSValue('--color-surface');
       
       // Clear material cache so new dice use the updated colors
       if (window.DICE.clearMaterialCache) {
         window.DICE.clearMaterialCache();
       }
     }
+  };
+
+  // Helper function to get computed CSS variable value
+  const getComputedCSSValue = (variableName: string): string => {
+    return getComputedStyle(document.documentElement)
+      .getPropertyValue(variableName)
+      .trim();
   };
 
   // Helper function to determine if a color is dark
@@ -798,10 +805,10 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
             style={{
               backgroundColor: isRolling || totalDice === 0 || !diceBoxRef.current 
                 ? 'var(--color-card-secondary)' 
-                : 'var(--color-success)',
+                : '#000000',
               color: isRolling || totalDice === 0 || !diceBoxRef.current 
                 ? 'var(--color-text-muted)' 
-                : 'var(--color-success-text)'
+                : '#ffffff'
             }}
             title="Roll dice"
           >
