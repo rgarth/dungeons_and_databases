@@ -828,7 +828,7 @@ export function GearTab({
                   <button
                     onClick={() => setShowMagicalItemSelector(true)}
                     disabled={inventoryMagicalItems.length >= 50}
-                    className="flex items-center gap-2 px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 text-[var(--color-accent-text)] rounded"
+                    className="flex items-center gap-2 px-4 py-2 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 text-[var(--color-button-text)] rounded"
                   >
                     <Plus className="h-4 w-4" />
                     Add Magical Item
@@ -927,14 +927,14 @@ export function GearTab({
               <button
                 onClick={() => setShowMagicalItemSelector(true)}
                 disabled={inventoryMagicalItems.length >= 50}
-                className="flex items-center gap-2 px-3 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 text-[var(--color-accent-text)] rounded text-sm"
+                className="flex items-center gap-2 px-3 py-2 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 text-[var(--color-button-text)] rounded text-sm"
               >
                 <Sparkles className="h-4 w-4" />
                 Browse Items
               </button>
               <button
                 onClick={() => setShowSpellScrollCreator(true)}
-                className="flex items-center gap-2 px-3 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded text-sm"
+                className="flex items-center gap-2 px-3 py-2 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] rounded text-sm"
               >
                 <Scroll className="h-4 w-4" />
                 Create Scroll
@@ -1137,7 +1137,7 @@ export function GearTab({
               <button
                 onClick={handleAddMagicalItem}
                 disabled={!selectedMagicalItem}
-                className="flex-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] py-2 px-4 rounded"
+                className="flex-1 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] py-2 px-4 rounded"
               >
                 Add Item
               </button>
@@ -1202,7 +1202,7 @@ export function GearTab({
               <button
                 onClick={handleCreateSpellScroll}
                 disabled={selectedSpellLevel < 0 || !selectedSpell}
-                className="flex-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] py-2 px-4 rounded"
+                className="flex-1 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] py-2 px-4 rounded"
               >
                 Create Scroll
               </button>
@@ -1286,7 +1286,7 @@ export function GearTab({
                     </button>
                     <button
                       onClick={handleConsumePotion}
-                      className="flex-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] py-2 px-4 rounded"
+                      className="flex-1 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] py-2 px-4 rounded"
                     >
                       Consume Potion
                     </button>

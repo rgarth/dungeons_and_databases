@@ -1985,8 +1985,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     : 'text-white'
                 }`}
                 style={{ 
-                  backgroundColor: isSubmitting ? 'var(--color-surface-secondary)' : 'var(--color-accent)',
-                  '--tw-hover-bg': 'var(--color-accent-hover)'
+                          backgroundColor: isSubmitting ? 'var(--color-surface-secondary)' : 'var(--color-button)',
+        '--tw-hover-bg': 'var(--color-button-hover)'
                 } as React.CSSProperties}
               >
                 {isSubmitting ? (

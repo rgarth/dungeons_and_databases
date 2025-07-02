@@ -877,7 +877,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 {/* Level Up button */}
                 <button
                   onClick={() => setShowLevelUpModal(true)}
-                  className="flex items-center gap-2 px-3 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded-lg transition-colors text-sm"
+                  className="flex items-center gap-2 px-3 py-2 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] rounded-lg transition-colors text-sm"
                   title="Level Up"
                 >
                   <span>Level Up</span>
@@ -1197,7 +1197,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               <button
                 onClick={handleCreateMagicalWeapon}
                 disabled={!selectedBaseWeapon || !selectedMagicalTemplate}
-                className="flex-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/80 disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-accent-text)] py-2 px-4 rounded transition-colors"
+                className="flex-1 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] py-2 px-4 rounded transition-colors"
               >
                 Create Weapon
               </button>

@@ -383,7 +383,7 @@ export function BackgroundSelector({
           </button>
           <button
             onClick={handleConfirm}
-            className="px-4 py-2 bg-[var(--color-accent)] text-[var(--color-text-primary)] rounded-lg hover:bg-[var(--color-accent-hover)] transition-colors"
+            className="px-4 py-2 bg-[var(--color-button)] text-[var(--color-button-text)] rounded-lg hover:bg-[var(--color-button-hover)] transition-colors"
           >
             Confirm
           </button>
