@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 
 export type Theme = 'theme-dndb-dark' | 'theme-dndb-light';
 
@@ -11,19 +12,28 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const THEME_COOKIE_NAME = 'dndb-theme';
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('theme-dndb-dark');
 
   useEffect(() => {
-    // Load theme from localStorage on mount
-    const savedTheme = localStorage.getItem('theme') as Theme;
+    // Load theme from cookie on mount
+    const savedTheme = Cookies.get(THEME_COOKIE_NAME) as Theme;
+    
+    // Validate theme and set default if invalid
     if (savedTheme && (savedTheme === 'theme-dndb-dark' || savedTheme === 'theme-dndb-light')) {
       setTheme(savedTheme);
+    } else {
+      // Set default theme and save to cookie
+      const defaultTheme: Theme = 'theme-dndb-dark';
+      setTheme(defaultTheme);
+      Cookies.set(THEME_COOKIE_NAME, defaultTheme, { expires: 365 }); // 1 year expiry
     }
   }, []);
 
   useEffect(() => {
-    // Apply theme to document and save to localStorage
+    // Apply theme to document and save to cookie
     const root = document.documentElement;
     
     // Remove existing theme classes
@@ -32,8 +42,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Add current theme class
     root.classList.add(theme);
     
-    // Save to localStorage
-    localStorage.setItem('theme', theme);
+    // Save to cookie
+    Cookies.set(THEME_COOKIE_NAME, theme, { expires: 365 }); // 1 year expiry
   }, [theme]);
 
   return (

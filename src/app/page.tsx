@@ -120,25 +120,24 @@ export default function Home() {
           {/* Menu dropdown for both desktop and mobile */}
           {showMenu && (
             <div className="mt-4 space-y-2">
-              <Button
+              <button
                 onClick={() => {
                   setShowCreateModal(true);
                   setShowMenu(false);
                 }}
-                className="flex items-center gap-2 w-full justify-start"
+                className="hamburger-menu-item"
               >
-                <Plus className="h-5 w-5" />
-                New Character
-              </Button>
+                <Plus className="h-4 w-4" />
+                <span>New Character</span>
+              </button>
               <ThemeSelector />
-              <Button
-                variant="ghost"
+              <button
                 onClick={() => signOut()}
-                className="flex items-center gap-2 w-full justify-start"
+                className="hamburger-menu-item"
               >
-                <LogOut className="h-5 w-5" />
-                Sign Out
-              </Button>
+                <LogOut className="h-4 w-4" />
+                <span>Sign Out</span>
+              </button>
             </div>
           )}
         </div>
