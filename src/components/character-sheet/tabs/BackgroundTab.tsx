@@ -1101,66 +1101,66 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           )}
         </div>
 
-        {/* Skill Proficiencies Display */}
-        <div className="bg-slate-700 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-green-400" />
+                  {/* Skill Proficiencies Display */}
+          <div className="bg-[var(--color-card)] rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-[var(--color-success)]" />
             Skill Proficiencies
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Background Skills */}
             <div>
-              <div className="text-slate-400 text-sm mb-2">Background Skills</div>
+              <div className="text-[var(--color-text-secondary)] text-sm mb-2">Background Skills</div>
               <div className="space-y-1">
                 {backgroundData?.skillProficiencies?.map((skill, index) => (
-                  <div key={index} className="text-white text-sm flex items-center gap-2">
-                    <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                  <div key={index} className="text-[var(--color-text-primary)] text-sm flex items-center gap-2">
+                    <span className="w-2 h-2 bg-[var(--color-success)] rounded-full"></span>
                     {skill}
                   </div>
                 )) || (
-                  <div className="text-slate-500 text-sm">No background skills</div>
+                  <div className="text-[var(--color-text-muted)] text-sm">No background skills</div>
                 )}
               </div>
             </div>
 
             {/* Class Skills */}
             <div>
-              <div className="text-slate-400 text-sm mb-2">Class Skills</div>
+              <div className="text-[var(--color-text-secondary)] text-sm mb-2">Class Skills</div>
               <div className="space-y-1">
                 {getClassSkills().length > 0 ? (
                   getClassSkills().map((skill, index) => (
-                    <div key={index} className="text-white text-sm flex items-center gap-2">
-                      <span className="w-2 h-2 bg-blue-400 rounded-full"></span>
+                    <div key={index} className="text-[var(--color-text-primary)] text-sm flex items-center gap-2">
+                      <span className="w-2 h-2 bg-[var(--color-accent)] rounded-full"></span>
                       {skill}
                     </div>
                   ))
                 ) : (
-                  <div className="text-slate-500 text-sm">No class skills selected</div>
+                  <div className="text-[var(--color-text-muted)] text-sm">No class skills selected</div>
                 )}
               </div>
             </div>
 
             {/* Racial Skills */}
             <div>
-              <div className="text-slate-400 text-sm mb-2">Racial Skills</div>
+              <div className="text-[var(--color-text-secondary)] text-sm mb-2">Racial Skills</div>
               <div className="space-y-1">
                 {getRacialSkills().length > 0 ? (
                   getRacialSkills().map((skill, index) => (
-                    <div key={index} className="text-white text-sm flex items-center gap-2">
-                      <span className="w-2 h-2 bg-purple-400 rounded-full"></span>
+                    <div key={index} className="text-[var(--color-text-primary)] text-sm flex items-center gap-2">
+                      <span className="w-2 h-2 bg-[var(--color-card-tertiary)] rounded-full"></span>
                       {skill}
                     </div>
                   ))
                 ) : (
-                  <div className="text-slate-500 text-sm">No racial skills selected</div>
+                  <div className="text-[var(--color-text-muted)] text-sm">No racial skills selected</div>
                 )}
               </div>
             </div>
 
             {/* Other Skills */}
             <div>
-              <div className="text-slate-400 text-sm mb-2">Other Skills</div>
+              <div className="text-[var(--color-text-secondary)] text-sm mb-2">Other Skills</div>
               <div className="space-y-1">
                 {(character.skills || []).filter(skill => {
                   const skillSources = character.skillSources || {};
@@ -1170,22 +1170,22 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                     const skillSources = character.skillSources || {};
                     return !skillSources[skill] || skillSources[skill] === 'other';
                   }).map((skill, index) => (
-                    <div key={index} className="text-white text-sm flex items-center gap-2">
-                      <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+                    <div key={index} className="text-[var(--color-text-primary)] text-sm flex items-center gap-2">
+                      <span className="w-2 h-2 bg-[var(--color-warning)] rounded-full"></span>
                       {skill}
                     </div>
                   ))
                 ) : (
-                  <div className="text-slate-500 text-sm">No other skills</div>
+                  <div className="text-[var(--color-text-muted)] text-sm">No other skills</div>
                 )}
               </div>
             </div>
           </div>
 
           {/* Total Skills Summary */}
-          <div className="mt-4 pt-3 border-t border-slate-600">
-            <div className="text-slate-400 text-sm mb-2">Total Skill Proficiencies</div>
-            <div className="text-white font-medium">
+          <div className="mt-4 pt-3 border-t border-[var(--color-border)]">
+            <div className="text-[var(--color-text-secondary)] text-sm mb-2">Total Skill Proficiencies</div>
+            <div className="text-[var(--color-text-primary)] font-medium">
               {((backgroundData?.skillProficiencies?.length || 0) + (character.skills?.length || 0))} skills
             </div>
           </div>
