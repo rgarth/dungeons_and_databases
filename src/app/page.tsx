@@ -2,10 +2,11 @@
 
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useState } from "react";
-import { Plus, LogOut } from "lucide-react";
+import { Plus, LogOut, Menu, X } from "lucide-react";
 import { CharacterCard } from "../components/character-card";
 import { CreateCharacterModal } from "../components/create-character-modal";
 import { LoadingModal } from "../components/loading-modal";
+import { ThemeSelector } from "../components/ThemeSelector";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Character } from "@/types/character";
 import { Button } from "../components/ui";
@@ -13,6 +14,7 @@ import { Button } from "../components/ui";
 export default function Home() {
   const { data: session, status } = useSession();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const [assetsLoaded, setAssetsLoaded] = useState(false);
   const queryClient = useQueryClient();
 
@@ -81,9 +83,11 @@ export default function Home() {
       {/* Header */}
       <header className="bg-[var(--color-card)] border-b border-[var(--color-border)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col gap-4">
-            <h1 className="text-2xl font-bold text-[var(--color-text-primary)] text-center">Dungeons & Databases</h1>
-            <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Dungeons & Databases</h1>
+            
+            {/* Desktop menu */}
+            <div className="hidden md:flex items-center gap-4">
               <Button
                 onClick={() => setShowCreateModal(true)}
                 className="flex items-center gap-2"
@@ -91,6 +95,7 @@ export default function Home() {
                 <Plus className="h-5 w-5" />
                 New Character
               </Button>
+              <ThemeSelector />
               <Button
                 variant="ghost"
                 onClick={() => signOut()}
@@ -100,7 +105,43 @@ export default function Home() {
                 Sign Out
               </Button>
             </div>
+
+            {/* Mobile hamburger menu */}
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                onClick={() => setShowMenu(!showMenu)}
+                className="p-2"
+              >
+                {showMenu ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </Button>
+            </div>
           </div>
+
+          {/* Mobile menu dropdown */}
+          {showMenu && (
+            <div className="md:hidden mt-4 space-y-2">
+              <Button
+                onClick={() => {
+                  setShowCreateModal(true);
+                  setShowMenu(false);
+                }}
+                className="flex items-center gap-2 w-full justify-start"
+              >
+                <Plus className="h-5 w-5" />
+                New Character
+              </Button>
+              <ThemeSelector />
+              <Button
+                variant="ghost"
+                onClick={() => signOut()}
+                className="flex items-center gap-2 w-full justify-start"
+              >
+                <LogOut className="h-5 w-5" />
+                Sign Out
+              </Button>
+            </div>
+          )}
         </div>
       </header>
 

@@ -5,7 +5,141 @@
   --foreground: #171717;
 }
 
-/* Default theme - can be overridden by theme classes */
+/* DNDB Dark Theme (current theme) */
+.theme-dndb-dark {
+  /* Theme colors - AUTHENTIC D&D STYLING */
+  --color-surface: #0a0a0a; /* deep black */
+  --color-surface-secondary: #1a1a1a; /* dark charcoal */
+  --color-surface-tertiary: #2a2a2a; /* medium charcoal */
+  --color-surface-quaternary: #3a3a3a; /* light charcoal */
+  --color-card: #1a1a1a; /* dark charcoal */
+  --color-card-secondary: #2a2a2a; /* medium charcoal */
+  --color-card-tertiary: #3a3a3a; /* light charcoal */
+  --color-border: #374151; /* dark grey dungeon color */
+  --color-border-light: #4b5563; /* lighter grey */
+  --color-text-primary: #f3f4f6; /* light gray */
+  --color-text-secondary: #d1d5db; /* medium gray */
+  --color-text-tertiary: #9ca3af; /* muted gray */
+  --color-text-quaternary: #6b7280; /* slate-500 */
+  --color-text-muted: #9ca3af; /* muted gray */
+  
+  /* Primary colors */
+  --color-primary: #dc2626; /* D&D red for primary actions */
+  --color-primary-hover: #b91c1c; /* darker red for primary hover */
+  
+  /* Accent colors - copper for tabs and text */
+  --color-accent: #b45309; /* deep copper/gold for tabs and text */
+  --color-accent-hover: #92400e; /* darker copper */
+  --color-accent-text: #ffffff; /* white text on copper */
+  
+  /* Button colors - blood red for buttons */
+  --color-button: #991b1b; /* deep blood red for buttons */
+  --color-button-hover: #7f1d1d; /* darker blood red */
+  --color-button-text: #ffffff; /* white text on blood red */
+  
+  /* Status colors */
+  --color-success: #059669; /* emerald */
+  --color-success-text: #ffffff; /* white text on success */
+  --color-success-hover: #047857; /* darker emerald for hover */
+  --color-warning: #fbbf24; /* gold for warnings */
+  --color-warning-text: #000000; /* black text on gold warning */
+  --color-error: #dc2626; /* D&D red for errors */
+  --color-error-text: #ffffff; /* white text on error */
+  --color-error-hover: #b91c1c; /* darker red for hover */
+  
+  /* Background variants for status colors */
+  --color-success-bg: #064e3b; /* dark emerald background */
+  --color-warning-bg: #451a03; /* dark amber background */
+  --color-error-bg: #450a0a; /* dark red background */
+  --color-accent-bg: #451a03; /* dark amber background */
+  
+  /* Border variants for status colors */
+  --color-success-border: #059669; /* emerald border */
+  --color-warning-border: #fbbf24; /* gold border */
+  --color-error-border: #dc2626; /* D&D red border for errors */
+  --color-accent-border: #fbbf24; /* gold border */
+  
+  /* Legacy aliases for backward compatibility */
+  --color-danger: var(--color-error); /* alias for error */
+  --color-danger-text: var(--color-error-text); /* alias for error text */
+  --color-danger-hover: var(--color-error-hover); /* alias for error hover */
+  --color-danger-bg: var(--color-error-bg); /* alias for error background */
+  --color-danger-border: var(--color-error-border); /* alias for error border */
+  
+  /* Special purpose colors */
+  --color-overlay: rgba(0, 0, 0, 0.7); /* darker modal overlay */
+  --color-error-text-light: #fca5a5; /* light red text for error details */
+  --color-dice-default: #dc2626; /* D&D red for default dice color */
+}
+
+/* DNDB Light Theme - Parchment style */
+.theme-dndb-light {
+  /* Theme colors - PARCHMENT STYLING */
+  --color-surface: #f5f1e8; /* light parchment */
+  --color-surface-secondary: #e8e0d0; /* medium parchment */
+  --color-surface-tertiary: #d4c8b0; /* darker parchment */
+  --color-surface-quaternary: #c4b898; /* even darker parchment */
+  --color-card: #e8e0d0; /* medium parchment */
+  --color-card-secondary: #d4c8b0; /* darker parchment */
+  --color-card-tertiary: #c4b898; /* even darker parchment */
+  --color-border: #a8997a; /* brown border */
+  --color-border-light: #b8a88a; /* lighter brown border */
+  --color-text-primary: #2d1b0e; /* dark brown text */
+  --color-text-secondary: #4a3c2a; /* medium brown text */
+  --color-text-tertiary: #6b5b47; /* lighter brown text */
+  --color-text-quaternary: #8a7a66; /* very light brown text */
+  --color-text-muted: #6b5b47; /* muted brown text */
+  
+  /* Primary colors - same accent as dark theme */
+  --color-primary: #dc2626; /* D&D red for primary actions */
+  --color-primary-hover: #b91c1c; /* darker red for primary hover */
+  
+  /* Accent colors - same copper as dark theme */
+  --color-accent: #b45309; /* deep copper/gold for tabs and text */
+  --color-accent-hover: #92400e; /* darker copper */
+  --color-accent-text: #ffffff; /* white text on copper */
+  
+  /* Button colors - same blood red as dark theme */
+  --color-button: #991b1b; /* deep blood red for buttons */
+  --color-button-hover: #7f1d1d; /* darker blood red */
+  --color-button-text: #ffffff; /* white text on blood red */
+  
+  /* Status colors - adjusted for light theme */
+  --color-success: #059669; /* emerald */
+  --color-success-text: #ffffff; /* white text on success */
+  --color-success-hover: #047857; /* darker emerald for hover */
+  --color-warning: #d97706; /* darker gold for warnings on light background */
+  --color-warning-text: #ffffff; /* white text on gold warning */
+  --color-error: #dc2626; /* D&D red for errors */
+  --color-error-text: #ffffff; /* white text on error */
+  --color-error-hover: #b91c1c; /* darker red for hover */
+  
+  /* Background variants for status colors - lighter for light theme */
+  --color-success-bg: #d1fae5; /* light emerald background */
+  --color-warning-bg: #fef3c7; /* light amber background */
+  --color-error-bg: #fee2e2; /* light red background */
+  --color-accent-bg: #fef3c7; /* light amber background */
+  
+  /* Border variants for status colors */
+  --color-success-border: #059669; /* emerald border */
+  --color-warning-border: #d97706; /* darker gold border */
+  --color-error-border: #dc2626; /* D&D red border for errors */
+  --color-accent-border: #d97706; /* darker gold border */
+  
+  /* Legacy aliases for backward compatibility */
+  --color-danger: var(--color-error); /* alias for error */
+  --color-danger-text: var(--color-error-text); /* alias for error text */
+  --color-danger-hover: var(--color-error-hover); /* alias for error hover */
+  --color-danger-bg: var(--color-error-bg); /* alias for error background */
+  --color-danger-border: var(--color-error-border); /* alias for error border */
+  
+  /* Special purpose colors */
+  --color-overlay: rgba(0, 0, 0, 0.5); /* lighter modal overlay for light theme */
+  --color-error-text-light: #dc2626; /* dark red text for error details on light background */
+  --color-dice-default: #dc2626; /* D&D red for default dice color */
+}
+
+/* Default theme - DNDB Dark */
 :root {
   /* Theme colors - AUTHENTIC D&D STYLING */
   --color-surface: #0a0a0a; /* deep black */
