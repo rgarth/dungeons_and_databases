@@ -108,7 +108,8 @@ export async function POST(request: NextRequest) {
       avatar,
       fullBodyAvatar,
       racialTraits,
-      languageSources
+      languageSources,
+      appearance
     } = body;
 
     // Debug ability scores
@@ -307,6 +308,7 @@ export async function POST(request: NextRequest) {
         // Personal information
         gender: gender || null,
         age: age || null,
+        appearance: appearance || null,
         strength: strength ?? 10,
         dexterity: dexterity ?? 10,
         constitution: constitution ?? 10,
