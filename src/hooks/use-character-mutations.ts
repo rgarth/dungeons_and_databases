@@ -1,8 +1,30 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { Character } from '@/types/character';
 import { useSession } from 'next-auth/react';
 import { CharacterCreationData } from '@/types/character-creation';
 import { toast } from 'react-hot-toast';
+
+// Custom hook for fetching avatar data
+export function useAvatar(characterId: string) {
+  return useQuery({
+    queryKey: ['avatar', characterId],
+    queryFn: async () => {
+      const response = await fetch(`/api/characters/${characterId}/avatar`);
+      if (response.status === 404) {
+        // Character has no avatar - this is expected
+        return null;
+      }
+      if (!response.ok) {
+        throw new Error('Failed to fetch avatar');
+      }
+      const data = await response.json();
+      return data.imageData;
+    },
+    enabled: !!characterId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  });
+}
 
 export function useCharacterMutations() {
   const queryClient = useQueryClient();
@@ -184,9 +206,59 @@ export function useCharacterMutations() {
     },
   });
 
+  // Avatar update mutation - invalidates avatar cache
+  const updateAvatar = useMutation({
+    mutationFn: async ({ characterId, imageData }: { characterId: string; imageData: string }) => {
+      const response = await fetch(`/api/characters/${characterId}/avatar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageData }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to save avatar');
+      }
+      return response.json();
+    },
+    onSuccess: (data, { characterId }) => {
+      // Invalidate the specific avatar cache for this character
+      queryClient.invalidateQueries({ queryKey: ['avatar', characterId] });
+      
+      // Also invalidate characters cache to update any avatar-related fields
+      queryClient.invalidateQueries({ queryKey: ['characters'] });
+    },
+    onError: (error) => {
+      console.error('Avatar update failed:', error);
+    },
+  });
+
+  // Delete avatar mutation
+  const deleteAvatar = useMutation({
+    mutationFn: async (characterId: string) => {
+      const response = await fetch(`/api/characters/${characterId}/avatar`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete avatar');
+      }
+      return response.json();
+    },
+    onSuccess: (data, characterId) => {
+      // Invalidate the specific avatar cache for this character
+      queryClient.invalidateQueries({ queryKey: ['avatar', characterId] });
+      
+      // Also invalidate characters cache to update any avatar-related fields
+      queryClient.invalidateQueries({ queryKey: ['characters'] });
+    },
+    onError: (error) => {
+      console.error('Avatar deletion failed:', error);
+    },
+  });
+
   return {
     createCharacter,
     updateCharacter,
     deleteCharacter,
+    updateAvatar,
+    deleteAvatar,
   };
 } 

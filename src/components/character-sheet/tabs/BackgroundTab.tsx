@@ -25,6 +25,7 @@ import { getRacialLanguages, getLanguages, getLanguageStyling, type Language, ge
 import { SKILLS } from "@/lib/dnd/core";
 import Image from 'next/image';
 import { RacialFeaturesService, type RacialTrait } from '@/services/character/racial-features';
+import { useCharacterMutations, useAvatar } from '@/hooks/use-character-mutations';
 
 interface BackgroundTabProps {
   character: {
@@ -103,8 +104,9 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
   const [traitsError, setTraitsError] = useState<string | null>(null);
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [loadingAvatar, setLoadingAvatar] = useState(false);
+  // Use React Query for avatar fetching
+  const { data: avatarUrl } = useAvatar(character.id);
+  const { updateAvatar, deleteAvatar } = useCharacterMutations();
 
   // Load languages from database
   useEffect(() => {
@@ -633,35 +635,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     );
   };
 
-  // Fetch avatar image from API when character.id changes
-  useEffect(() => {
-    let isMounted = true;
-    async function fetchAvatar() {
-      setLoadingAvatar(true);
-      try {
-        const res = await fetch(`/api/characters/${character.id}/avatar`);
-        if (res.ok) {
-          const data = await res.json();
-          if (isMounted && data.imageData) {
-            setAvatarUrl(data.imageData);
-          }
-        } else if (res.status === 404) {
-          // Character has no avatar - this is expected
-          setAvatarUrl(null);
-        } else {
-          setAvatarUrl(null);
-        }
-      } catch {
-        setAvatarUrl(null);
-      } finally {
-        setLoadingAvatar(false);
-      }
-    }
-    if (character.id) {
-      fetchAvatar();
-    }
-    return () => { isMounted = false; };
-  }, [character.id]);
+
 
   return (
     <div className="p-4">
@@ -1527,20 +1501,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                       />
                       <div className="text-center">
                         <button
-                          onClick={async () => {
-                            try {
-                              // Delete avatar from database
-                              await fetch(`/api/characters/${character.id}/avatar`, {
-                                method: 'DELETE',
-                              });
-                              
-                              // Clear local state
-                              setAvatarUrl(null);
-                              
-                              // Don't update character avatar fields - we use our own storage system
-                            } catch (error) {
-                              console.error('Error removing avatar:', error);
-                            }
+                          onClick={() => {
+                            deleteAvatar.mutate(character.id);
                           }}
                           className="text-red-400 hover:text-red-300 text-sm transition-colors"
                         >
@@ -1625,16 +1587,11 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                           reader.onloadend = async () => {
                             const base64Data = reader.result as string;
                             
-                            // Save base64 data to our API
-                            await fetch(`/api/characters/${character.id}/avatar`, {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ imageData: base64Data }),
+                            // Use the mutation to save avatar and invalidate cache
+                            updateAvatar.mutate({
+                              characterId: character.id,
+                              imageData: base64Data
                             });
-                            
-                            // Update the local state with the base64 data
-                            setAvatarUrl(base64Data);
-                            // Don't update character avatar field - we use our own storage system
                           };
                           
                           reader.readAsDataURL(blob);
@@ -1642,7 +1599,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                           console.error('Error processing avatar image:', error);
                         }
                       }}
-                      disabled={loadingAvatar}
+                      disabled={updateAvatar.isPending}
                       className="w-full"
                     />
                   </div>
