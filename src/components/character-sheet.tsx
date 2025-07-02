@@ -103,6 +103,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentCharacter, setCurrentCharacter] = useState(character);
   const [showActionsMenu, setShowActionsMenu] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   
   // Add debouncing for character updates to prevent race conditions
   const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -196,6 +197,33 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       }
     };
   }, []);
+
+  // Fetch avatar from API when character changes
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchAvatar() {
+      try {
+        const res = await fetch(`/api/characters/${character.id}/avatar`);
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data.imageData) {
+            setAvatarUrl(data.imageData);
+          }
+        } else if (res.status === 404) {
+          // Character has no avatar - this is expected
+          setAvatarUrl(null);
+        } else {
+          setAvatarUrl(null);
+        }
+      } catch {
+        setAvatarUrl(null);
+      }
+    }
+    if (character.id) {
+      fetchAvatar();
+    }
+    return () => { isMounted = false; };
+  }, [character.id]);
   
   // Use currentCharacter instead of character throughout the component
   const displayCharacter = {
@@ -219,15 +247,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   const [goldPieces, setGoldPieces] = useState(0);
   const [treasures, setTreasures] = useState<Treasure[]>([]);
   
-  // Debug logging for character data
-  console.log('CharacterSheet rendered with character:', {
-    id: character.id,
-    name: character.name,
-    inventoryWeapons: character.inventoryWeapons,
-    inventoryArmor: character.inventoryArmor,
-    weapons: character.weapons, // Database field for equipped weapons
-    armor: character.armor // Database field for equipped armor
-  });
+
   
   // Derived state from character weapons using equipped boolean
   const equippedWeapons = currentCharacter.weapons?.filter(weapon => weapon.equipped) || [];
@@ -851,10 +871,10 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               {/* Avatar and basic info - always visible */}
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 {/* Avatar or default icon */}
-                {displayCharacter.avatar ? (
+                {avatarUrl ? (
                   <div className="w-24 h-24 rounded-full overflow-hidden">
                     <Image 
-                      src={displayCharacter.avatar} 
+                      src={avatarUrl} 
                       alt={`${displayCharacter.name}'s avatar`}
                       width={96}
                       height={96}
@@ -862,7 +882,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                     />
                   </div>
                 ) : null}
-                <User className={`h-6 w-6 sm:h-7 sm:w-7 text-purple-400 flex-shrink-0 ${displayCharacter.avatar ? 'hidden' : ''}`} />
+                <User className={`h-6 w-6 sm:h-7 sm:w-7 text-purple-400 flex-shrink-0 ${avatarUrl ? 'hidden' : ''}`} />
                 
                 {/* Character info */}
                 <div className="min-w-0 flex-1">

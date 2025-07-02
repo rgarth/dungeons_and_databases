@@ -912,9 +912,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
         armor: selectedArmor,
         ammunition: selectedAmmunition,
         // Send calculated gold
-        goldPieces: calculatedGold,
+        goldPieces: calculatedGold
         // Currency will be calculated by the service based on equipment pack cost
-        avatar: generatedFullBodyAvatar || undefined
       };
 
       console.log('🎯 CREATING CHARACTER WITH EQUIPMENT:');
@@ -935,6 +934,31 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       }
 
       const createdCharacter = await response.json();
+      
+      // Save avatar to our storage system if one was generated
+      if (generatedFullBodyAvatar) {
+        try {
+          // Fetch the image from Replicate and convert to base64
+          const response = await fetch(generatedFullBodyAvatar);
+          const blob = await response.blob();
+          const reader = new FileReader();
+          
+          reader.onloadend = async () => {
+            const base64Data = reader.result as string;
+            
+            // Save base64 data to our API
+            await fetch(`/api/characters/${createdCharacter.id}/avatar`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ imageData: base64Data }),
+            });
+          };
+          
+          reader.readAsDataURL(blob);
+        } catch (error) {
+          console.error('Error saving avatar after character creation:', error);
+        }
+      }
       
       // Show toast with gold roll details if "No Pack" was selected
       if (selectedEquipmentPack === -1 && createdCharacter.goldRollDetails) {

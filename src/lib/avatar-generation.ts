@@ -248,7 +248,7 @@ async function generateWithReplicateFluxSchnell(characterData: CharacterAvatarDa
     // Generate server-side prompt with anti-bias measures
     const fullBodyPrompt = generateServerPrompt(characterData);
 
-    console.log('🎨 Full Body Prompt:', fullBodyPrompt);
+    // Full body prompt generated
     console.log('🔑 Using API key:', REPLICATE_API_KEY ? 'Present' : 'Missing');
 
     // Generate full body image with correct Flux.schnell parameters
@@ -267,7 +267,7 @@ async function generateWithReplicateFluxSchnell(characterData: CharacterAvatarDa
       }
     };
 
-    console.log('📤 Sending request to Replicate:', JSON.stringify(requestBody, null, 2));
+    console.log('📤 Sending request to Replicate');
 
     const fullBodyResponse = await fetch(`${REPLICATE_BASE_URL}/predictions`, {
       method: 'POST',
@@ -290,7 +290,7 @@ async function generateWithReplicateFluxSchnell(characterData: CharacterAvatarDa
     }
 
     const fullBodyPrediction = await fullBodyResponse.json();
-    console.log('📋 Replicate prediction created:', fullBodyPrediction.id);
+    // Replicate prediction created
     
     const fullBodyImage = await pollForCompletion(fullBodyPrediction.id);
 

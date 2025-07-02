@@ -57,11 +57,11 @@ export function AvatarGenerator({
         setResult(data);
         
         if (data.success && data.fullBodyImage && onAvatarGenerated) {
-          console.log('🖼️ Server provided full body image, using for avatar...');
+          // Server provided full body image
           
           // Use the full body image directly - CSS will handle the framing
           onAvatarGenerated(data.fullBodyImage, data.fullBodyImage);
-          console.log('✅ Full body image set for avatar display');
+                      // Full body image set for avatar display
         }
       } else {
         const errorData = await response.json();
