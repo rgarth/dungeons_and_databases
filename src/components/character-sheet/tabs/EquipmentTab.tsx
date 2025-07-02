@@ -326,7 +326,7 @@ export function EquipmentTab({
                 <button
                   onClick={handleAddWeapon}
                   disabled={!selectedWeapon}
-                  className="bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded text-sm font-medium"
+                  className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] px-4 py-2 rounded text-sm font-medium"
                 >
                   Add Weapon
                 </button>
@@ -378,7 +378,7 @@ export function EquipmentTab({
                         <button
                           onClick={() => onEquipWeapon(weapon, index)}
                           disabled={atLimit}
-                          className="bg-green-600 hover:bg-green-700 disabled:bg-slate-500 disabled:opacity-50 text-white text-sm px-3 py-1 rounded font-medium"
+                          className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:bg-[var(--color-card-secondary)] disabled:opacity-50 text-[var(--color-button-text)] text-sm px-3 py-1 rounded font-medium"
                           title={atLimit ? "At weapon limit" : "Equip weapon"}
                         >
                           {atLimit ? "Limit Reached" : "Equip"}
@@ -573,7 +573,7 @@ export function EquipmentTab({
                         <button
                           onClick={() => onEquipArmor(armor, index)}
                           disabled={!canEquip || !hasStrengthReq}
-                          className="bg-green-600 hover:bg-green-700 disabled:bg-slate-500 disabled:opacity-50 text-white text-sm px-3 py-1 rounded font-medium"
+                          className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:bg-[var(--color-card-secondary)] disabled:opacity-50 text-[var(--color-button-text)] text-sm px-3 py-1 rounded font-medium"
                           title={!canEquip ? "Class cannot use this armor" : !hasStrengthReq ? "Insufficient strength" : "Equip armor"}
                         >
                           {!canEquip ? "Can't Use" : !hasStrengthReq ? "Too Heavy" : "Equip"}
@@ -619,7 +619,7 @@ export function EquipmentTab({
                 <button
                   onClick={handleAddArmor}
                   disabled={!selectedArmor}
-                  className="bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2 rounded text-sm font-medium"
+                  className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] px-4 py-2 rounded text-sm font-medium"
                 >
                   Add
                 </button>
