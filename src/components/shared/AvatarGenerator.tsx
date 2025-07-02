@@ -98,7 +98,7 @@ export function AvatarGenerator({
       <button
         onClick={generateAvatar}
         disabled={generating || disabled}
-        className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition-colors"
+        className="flex items-center gap-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:bg-[var(--color-card-secondary)] disabled:cursor-not-allowed text-[var(--color-text-primary)] px-4 py-2 rounded-lg transition-colors"
       >
         {generating ? (
           <RefreshCw className="h-4 w-4 animate-spin" />
@@ -110,17 +110,17 @@ export function AvatarGenerator({
 
       {/* Generation Status */}
       {generating && (
-        <div className="p-3 bg-blue-900/20 border border-blue-600/30 rounded-lg">
-          <p className="text-blue-300 text-sm">
+        <div className="p-3 bg-[var(--color-accent-bg)] border border-[var(--color-accent-border)] rounded-lg">
+          <p className="text-[var(--color-accent)] text-sm">
             🎨 Creating your personalized avatar using AI...
           </p>
-          <p className="text-blue-400 text-xs mt-1">
+          <p className="text-[var(--color-accent-text)] text-xs mt-1">
             Using Replicate Realistic Vision v5.1 for high-quality D&D character generation.
           </p>
-          <p className="text-green-400 text-xs mt-1">
+          <p className="text-[var(--color-success)] text-xs mt-1">
             ✅ Anti-trope protection: Realistic armor, practical clothing, respectful character design
           </p>
-          <p className="text-blue-400 text-xs">
+          <p className="text-[var(--color-accent-text)] text-xs">
             Character: {characterData.race} {characterData.class} ({characterData.gender || 'Unspecified'})
           </p>
         </div>
@@ -128,19 +128,19 @@ export function AvatarGenerator({
 
       {/* Success Message */}
       {result && result.success && (
-        <div className="p-3 bg-green-900/20 border border-green-600/30 rounded-lg">
-          <p className="text-green-300 text-sm">
+        <div className="p-3 bg-[var(--color-success-bg)] border border-[var(--color-success-border)] rounded-lg">
+          <p className="text-[var(--color-success)] text-sm">
             ✅ Avatar generated successfully!
           </p>
           {result.service && (
-            <p className="text-green-400 text-xs mt-1">
+            <p className="text-[var(--color-success-text)] text-xs mt-1">
               Generated using: {result.service}
             </p>
           )}
-          <p className="text-green-400 text-xs">
+          <p className="text-[var(--color-success-text)] text-xs">
             🛡️ Respectful fantasy design with practical armor and realistic proportions
           </p>
-          <p className="text-green-400 text-xs">
+          <p className="text-[var(--color-success-text)] text-xs">
             ✂️ Avatar cropped from full body image for perfect consistency
           </p>
         </div>
@@ -148,17 +148,17 @@ export function AvatarGenerator({
 
       {/* Error Display */}
       {result && !result.success && (
-        <div className="p-3 bg-red-900/20 border border-red-600/30 rounded-lg">
-          <p className="text-red-300 text-sm font-medium">Avatar Generation Failed</p>
-          <p className="text-red-400 text-xs mt-1">{result.error}</p>
-          <p className="text-red-400 text-xs mt-2">
+        <div className="p-3 bg-[var(--color-danger-bg)] border border-[var(--color-danger-border)] rounded-lg">
+          <p className="text-[var(--color-danger)] text-sm font-medium">Avatar Generation Failed</p>
+          <p className="text-[var(--color-danger-text)] text-xs mt-1">{result.error}</p>
+          <p className="text-[var(--color-danger-text)] text-xs mt-2">
             💡 Try again - sometimes the AI service is busy. Each generation is unique!
           </p>
         </div>
       )}
 
       {/* Usage Note */}
-      <div className="text-xs text-slate-500">
+      <div className="text-xs text-[var(--color-text-muted)]">
         <p>💡 Each generation is unique and based on your character&apos;s traits</p>
         <p>🎮 Uses Replicate Realistic Vision v5.1 for high-quality D&D character generation</p>
         <p>✂️ Avatar automatically cropped from full body image for perfect consistency</p>
