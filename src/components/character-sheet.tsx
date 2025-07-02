@@ -6,7 +6,7 @@ import { getModifier } from "@/lib/dnd/core";
 import { Spell } from "@/lib/dnd/spells";
 import { Weapon, MagicalWeapon, InventoryItem, MAGICAL_WEAPON_TEMPLATES, createMagicalWeapon, Armor, Ammunition, calculateArmorClass } from "@/lib/dnd/equipment";
 import { Action, canEquipArmor } from "@/lib/dnd/combat";
-import { useCharacterMutations } from "@/hooks/use-character-mutations";
+import { useCharacterMutations, useAvatar } from "@/hooks/use-character-mutations";
 import { Treasure } from "@/lib/dnd/data";
 import { MagicalItem, EquippedMagicalItem, applyMagicalItemEffects } from "@/lib/dnd/magical-items";
 import { ActiveCondition } from "@/lib/dnd/conditions";
@@ -103,7 +103,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentCharacter, setCurrentCharacter] = useState(character);
   const [showActionsMenu, setShowActionsMenu] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  // Use React Query for avatar fetching
+  const { data: avatarUrl } = useAvatar(character.id);
   
   // Add debouncing for character updates to prevent race conditions
   const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -198,32 +199,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     };
   }, []);
 
-  // Fetch avatar from API when character changes
-  useEffect(() => {
-    let isMounted = true;
-    async function fetchAvatar() {
-      try {
-        const res = await fetch(`/api/characters/${character.id}/avatar`);
-        if (res.ok) {
-          const data = await res.json();
-          if (isMounted && data.imageData) {
-            setAvatarUrl(data.imageData);
-          }
-        } else if (res.status === 404) {
-          // Character has no avatar - this is expected
-          setAvatarUrl(null);
-        } else {
-          setAvatarUrl(null);
-        }
-      } catch {
-        setAvatarUrl(null);
-      }
-    }
-    if (character.id) {
-      fetchAvatar();
-    }
-    return () => { isMounted = false; };
-  }, [character.id]);
+
   
   // Use currentCharacter instead of character throughout the component
   const displayCharacter = useMemo(() => ({

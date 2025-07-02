@@ -31,6 +31,7 @@ import { useDndData } from '@/components/providers/dnd-data-provider';
 import { BackgroundSelector, SelectedCharacteristics as BackgroundCharacteristics } from '@/components/shared/BackgroundSelector';
 import { AvatarGenerator } from '@/components/shared/AvatarGenerator';
 import { clientCache } from "@/lib/client-cache";
+import { useCharacterMutations } from '@/hooks/use-character-mutations';
 
 interface CreateCharacterModalProps {
   onClose: () => void;
@@ -177,6 +178,9 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Gold calculation state
   const [calculatedGold, setCalculatedGold] = useState<number>(0);
   const [goldRollDetails, setGoldRollDetails] = useState<string>('');
+
+  // Avatar mutations
+  const { updateAvatar } = useCharacterMutations();
 
   // Cache for class starting gold formulas
   // const classFormulaCache = useRef<Map<string, { formula: string; timestamp: number }>>(new Map());
@@ -946,11 +950,10 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           reader.onloadend = async () => {
             const base64Data = reader.result as string;
             
-            // Save base64 data to our API
-            await fetch(`/api/characters/${createdCharacter.id}/avatar`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ imageData: base64Data }),
+            // Use the mutation to save avatar and invalidate cache
+            updateAvatar.mutate({
+              characterId: createdCharacter.id,
+              imageData: base64Data
             });
           };
           

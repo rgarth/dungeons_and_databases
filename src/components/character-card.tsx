@@ -4,7 +4,7 @@ import { Heart, Shield, Trash2, RefreshCw } from "lucide-react";
 import { useState, useEffect } from "react";
 import { CharacterSheet } from "./character-sheet";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
-import { useCharacterMutations } from '@/hooks/use-character-mutations';
+import { useCharacterMutations, useAvatar } from '@/hooks/use-character-mutations';
 import { toast } from 'react-hot-toast';
 import { Character } from '@/types/character';
 import Image from 'next/image';
@@ -18,37 +18,13 @@ interface CharacterCardProps {
 export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdated }: CharacterCardProps) {
   const [showSheet, setShowSheet] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  // Use React Query for avatar fetching
+  const { data: avatarUrl } = useAvatar(character.id);
   const { deleteCharacter } = useCharacterMutations();
   const isOptimistic = character.isOptimistic;
   const hpPercentage = (character.hitPoints / character.maxHitPoints) * 100;
 
-  // Fetch avatar from API when character changes
-  useEffect(() => {
-    let isMounted = true;
-    async function fetchAvatar() {
-      try {
-        const res = await fetch(`/api/characters/${character.id}/avatar`);
-        if (res.ok) {
-          const data = await res.json();
-          if (isMounted && data.imageData) {
-            setAvatarUrl(data.imageData);
-          }
-        } else if (res.status === 404) {
-          // Character has no avatar - this is expected
-          setAvatarUrl(null);
-        } else {
-          setAvatarUrl(null);
-        }
-      } catch {
-        setAvatarUrl(null);
-      }
-    }
-    if (character.id) {
-      fetchAvatar();
-    }
-    return () => { isMounted = false; };
-  }, [character.id]);
+
 
   // Clean up sheet state when character changes
   useEffect(() => {
