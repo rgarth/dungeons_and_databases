@@ -1,6 +1,6 @@
 "use client";
 
-import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp, FileText, Dices, ChevronDown, MoreVertical } from "lucide-react";
+import { User, BarChart3, Swords, X, Package, Coins, FileText, Dices, ChevronDown, MoreVertical } from "lucide-react";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { getModifier } from "@/lib/dnd/core";
 import { Spell } from "@/lib/dnd/spells";
@@ -15,7 +15,7 @@ import { LevelUpWizard } from "./character-sheet/LevelUpWizard";
 import { getSpellcastingType, getSpellsPreparedCount } from "@/lib/dnd/level-up";
 import { StatsTab, ActionsTab, GearTab, InventoryTab, BackgroundTab } from "./character-sheet/";
 import DiceRoller from "./dice-roller";
-import { PDFExport } from "./character-sheet/PDFExport";
+
 import Image from 'next/image';
 import { toast } from 'react-hot-toast';
 import { clientCache } from '@/lib/client-cache';
@@ -1231,12 +1231,12 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
       {/* Spell Preparation Modal */}
       {showSpellPreparationModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
-          <div className="bg-slate-800 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-6 border-b border-slate-600">
+        <div className="fixed inset-0 bg-black/50 flex items-start justify-center p-4 pt-8 z-50">
+          <div className="bg-[var(--card-bg)] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-[var(--border-color)]">
               <div>
-                <h3 className="text-xl font-semibold text-white">Prepare Spells</h3>
-                <p className="text-slate-400 text-sm">
+                <h3 className="text-xl font-semibold text-[var(--text-primary)]">Prepare Spells</h3>
+                <p className="text-[var(--text-secondary)] text-sm">
                   Choose spells to prepare for the day ({tempPreparedSpells.filter(s => s.level > 0).length} / {
                     (() => {
                       const spellcastingAbility = currentCharacter.spellcastingAbility || 'intelligence';
@@ -1249,7 +1249,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               </div>
               <button
                 onClick={() => setShowSpellPreparationModal(false)}
-                className="text-slate-400 hover:text-white transition-colors"
+                className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -1275,8 +1275,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 return (
                   <div className="space-y-6">
                     {/* Explanation */}
-                    <div className="p-4 bg-blue-900/20 border border-blue-600/30 rounded-lg">
-                      <p className="text-blue-300 text-sm">
+                    <div className="p-4 bg-[var(--accent-bg)] border border-[var(--accent-border)] rounded-lg">
+                      <p className="text-[var(--accent-text)] text-sm">
                         {spellcastingType === 'spellbook' 
                           ? 'As a Wizard, you prepare spells from your spellbook. Cantrips are always available.'
                           : `As a ${currentCharacter.class}, you can prepare spells from your entire spell list. Cantrips are always available.`
@@ -1288,7 +1288,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                       .sort(([a], [b]) => parseInt(a) - parseInt(b))
                       .map(([level, spells]) => (
                       <div key={level}>
-                        <h4 className="text-lg font-medium text-white mb-3">
+                        <h4 className="text-lg font-medium text-[var(--text-primary)] mb-3">
                           {level === '0' ? 'Cantrips' : `Level ${level} Spells`}
                         </h4>
                         <div className="space-y-2">
@@ -1328,10 +1328,10 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                 key={index}
                                 className={`p-3 border rounded-lg cursor-pointer transition-colors ${
                                   isSelected 
-                                    ? 'border-green-500 bg-green-900/20' 
+                                    ? 'border-[var(--success-color)] bg-[var(--success-bg)]' 
                                     : canSelect 
-                                      ? 'border-slate-600 hover:border-blue-400 bg-slate-700'
-                                      : 'border-slate-600 bg-slate-700 opacity-50 cursor-not-allowed'
+                                      ? 'border-[var(--border-color)] hover:border-[var(--accent-border)] bg-[var(--card-bg)]'
+                                      : 'border-[var(--border-color)] bg-[var(--card-bg)] opacity-50 cursor-not-allowed'
                                 }`}
                                 onClick={() => {
                                   // Allow all spells to be clicked
@@ -1354,12 +1354,12 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                               >
                                 <div className="flex items-center justify-between mb-2">
                                   <div className="flex items-center gap-2">
-                                    <span className="text-white font-medium">{spell.name}</span>
-                                    <span className="text-xs bg-slate-600 px-2 py-1 rounded">
+                                    <span className="text-[var(--text-primary)] font-medium">{spell.name}</span>
+                                    <span className="text-xs bg-[var(--muted-bg)] px-2 py-1 rounded">
                                       {spell.school}
                                     </span>
                                     {isCantrip && (
-                                      <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">
+                                      <span className="text-xs bg-[var(--warning-bg)] text-[var(--warning-text)] px-2 py-1 rounded">
                                         Always Available
                                       </span>
                                     )}
@@ -1367,17 +1367,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                   {!isCantrip && (
                                     <span className={`text-xs px-2 py-1 rounded ${
                                       isSelected 
-                                        ? 'bg-green-600 text-white' 
-                                        : 'bg-slate-600 text-slate-300'
+                                        ? 'bg-[var(--success-color)] text-[var(--text-on-success)]' 
+                                        : 'bg-[var(--muted-bg)] text-[var(--text-secondary)]'
                                     }`}>
                                       {isSelected ? 'Prepared' : 'Prepare'}
                                     </span>
                                   )}
                                 </div>
-                                <div className="text-slate-400 text-xs mb-2">
+                                <div className="text-[var(--text-secondary)] text-xs mb-2">
                                   {spell.castingTime} • {spell.range} • {spell.duration}
                                 </div>
-                                <div className="text-slate-300 text-sm">
+                                <div className="text-[var(--text-primary)] text-sm">
                                   {spell.description}
                                 </div>
                               </div>
@@ -1391,16 +1391,16 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               })()}
             </div>
 
-            <div className="flex gap-3 p-6 border-t border-slate-600">
+            <div className="flex gap-3 p-6 border-t border-[var(--border-color)]">
               <button
                 onClick={handleSaveSpellPreparation}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition-colors"
+                className="flex-1 bg-[var(--success-color)] hover:bg-[var(--success-hover)] text-[var(--text-on-success)] py-2 px-4 rounded transition-colors"
               >
                 Save Prepared Spells
               </button>
               <button
                 onClick={() => setShowSpellPreparationModal(false)}
-                className="flex-1 bg-slate-600 hover:bg-slate-500 text-white py-2 px-4 rounded transition-colors"
+                className="flex-1 bg-[var(--muted-bg)] hover:bg-[var(--muted-hover)] text-[var(--text-primary)] py-2 px-4 rounded transition-colors"
               >
                 Cancel
               </button>
