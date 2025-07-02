@@ -318,7 +318,7 @@ export function LoadingModal({ onComplete }: LoadingModalProps) {
           </div>
           <div className="w-full bg-[var(--color-card-secondary)] rounded-full h-2">
             <div 
-              className="bg-[var(--color-accent)] h-2 rounded-full transition-all duration-300 ease-out"
+              className="bg-[var(--color-primary)] h-2 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
