@@ -51,12 +51,6 @@ function ColorWheel({ currentColor, onColorChange }: {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
 
-
-
-
-  
-
-
   // Get current color (simplified to just use hex)
   const getBaseColor = (color: string) => {
     return color;
@@ -213,8 +207,11 @@ function ColorWheel({ currentColor, onColorChange }: {
       <button
         ref={buttonRef}
         onClick={handleToggle}
-        className="w-8 h-8 rounded-full border-2 border-slate-600 flex items-center justify-center"
-        style={{ backgroundColor: currentColor }}
+        className="w-8 h-8 rounded-full border-2 flex items-center justify-center"
+        style={{ 
+          backgroundColor: currentColor,
+          borderColor: 'var(--color-border)'
+        }}
         title="Choose dice color"
       >
         <div className="w-4 h-4 rounded-full" style={{ backgroundColor: currentColor }}></div>
@@ -223,17 +220,22 @@ function ColorWheel({ currentColor, onColorChange }: {
       {isOpen && (
         <div 
           ref={pickerRef}
-          className="fixed z-50 bg-slate-800 border border-slate-600 rounded-lg p-4 shadow-lg"
+          className="fixed z-50 rounded-lg p-4 shadow-lg"
           style={{ 
             top: pickerPosition.top,
             left: pickerPosition.left,
-            minWidth: '180px'
+            minWidth: '180px',
+            backgroundColor: 'var(--color-card)',
+            border: '1px solid var(--color-border)'
           }}
         >
           {/* Close button */}
           <button
             onClick={() => setIsOpen(false)}
-            className="absolute top-2 right-2 text-slate-400 hover:text-white transition-colors p-1 rounded"
+            className="absolute top-2 right-2 transition-colors p-1 rounded"
+            style={{ 
+              color: 'var(--color-text-secondary)'
+            }}
             title="Close color picker"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -243,9 +245,17 @@ function ColorWheel({ currentColor, onColorChange }: {
           
           {/* Reset button */}
           <button
-            onClick={() => handleColorSelect('#7c3aed')}
-            className="absolute top-2 left-2 text-slate-400 hover:text-purple-400 transition-colors p-1 rounded"
-            title="Reset to DNDB purple"
+            onClick={() => {
+              const defaultColor = getComputedStyle(document.documentElement)
+                .getPropertyValue('--color-dice-default')
+                .trim();
+              handleColorSelect(defaultColor || '#dc2626');
+            }}
+            className="absolute top-2 left-2 transition-colors p-1 rounded"
+            style={{ 
+              color: 'var(--color-text-secondary)'
+            }}
+            title="Reset to default red"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
@@ -257,15 +267,16 @@ function ColorWheel({ currentColor, onColorChange }: {
           
           {/* Gradient Color Wheel */}
           <div className="mb-4">
-            <h3 className="text-sm text-slate-300 mb-3 text-center">Choose Color</h3>
+            <h3 className="text-sm mb-3 text-center" style={{ color: 'var(--color-text-secondary)' }}>Choose Color</h3>
             <div className="flex justify-center">
               <div 
-                className="relative rounded-full border-2 border-slate-600 cursor-pointer"
+                className="relative rounded-full border-2 cursor-pointer"
                 style={{ 
                   width: '120px', 
                   height: '120px',
                   background: 'conic-gradient(from 0deg, #ff0000 0deg, #ff8000 30deg, #ffff00 60deg, #80ff00 90deg, #00ff00 120deg, #00ff80 150deg, #00ffff 180deg, #0080ff 210deg, #0000ff 240deg, #8000ff 270deg, #ff00ff 300deg, #ff0080 330deg, #ff0000 360deg)',
-                  padding: '8px'
+                  padding: '8px',
+                  borderColor: 'var(--color-border)'
                 }}
                 onClick={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();
@@ -295,8 +306,11 @@ function ColorWheel({ currentColor, onColorChange }: {
               >
                 {/* Center indicator */}
                 <div 
-                  className="absolute inset-8 rounded-full border-2 border-white bg-slate-800 flex items-center justify-center"
-                  style={{ backgroundColor: currentColor }}
+                  className="absolute inset-8 rounded-full border-2 flex items-center justify-center"
+                  style={{ 
+                    backgroundColor: 'var(--color-surface)',
+                    borderColor: 'var(--color-text-primary)'
+                  }}
                 >
                   <div 
                     className="w-2 h-2 rounded-full"
@@ -309,7 +323,7 @@ function ColorWheel({ currentColor, onColorChange }: {
 
           {/* Brightness Slider */}
           <div className="mb-3">
-            <label className="text-sm text-slate-300">Brightness</label>
+            <label className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Brightness</label>
             <div className="relative">
               <input
                 type="range"
@@ -317,9 +331,10 @@ function ColorWheel({ currentColor, onColorChange }: {
                 max="100"
                 value={getCurrentLightness()}
                 onChange={handleBrightnessChange}
-                className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                className="w-full h-2 rounded-lg appearance-none cursor-pointer"
                 style={{
-                  background: `linear-gradient(to right, #000, ${getBaseColor(currentColor)}, #fff)`
+                  background: `linear-gradient(to right, #000, ${getBaseColor(currentColor)}, #fff)`,
+                  backgroundColor: 'var(--color-card-secondary)'
                 }}
               />
             </div>
@@ -339,7 +354,7 @@ function DicePreview({ diceType, diceColor }: {
 }) {
   return (
     <div 
-      className="w-12 h-12 bg-slate-700 rounded-lg border-2 border-slate-600 overflow-hidden flex items-center justify-center"
+      className="w-12 h-12 rounded-lg border-2 overflow-hidden flex items-center justify-center"
       style={{ 
         minHeight: '48px',
         width: '48px',
@@ -347,18 +362,20 @@ function DicePreview({ diceType, diceColor }: {
         position: 'relative',
         overflow: 'hidden',
         borderRadius: '8px',
-        backgroundColor: '#1e293b'
+        backgroundColor: 'var(--color-card)',
+        borderColor: 'var(--color-border)'
       }}
     >
       {/* Simple colored square with dice type label */}
       <div 
-        className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-lg"
+        className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs shadow-lg"
         style={{ 
           backgroundColor: diceColor,
           width: '32px',
           height: '32px',
           fontSize: '10px',
-          lineHeight: '1'
+          lineHeight: '1',
+          color: 'var(--color-text-primary)'
         }}
       >
         {diceType.toUpperCase()}
@@ -387,7 +404,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
     d20: 0,
   });
   
-  // Get initial dice color from cookie or default to purple-600
+  // Get initial dice color from cookie or default to theme red
   const getInitialDiceColor = () => {
     try {
       const savedColor = document.cookie
@@ -395,10 +412,19 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
         .find(row => row.startsWith('diceColor='))
         ?.split('=')[1];
       
-      return savedColor || '#9333ea'; // Purple-600 default
+      if (savedColor) {
+        return savedColor;
+      }
+      
+      // Get the computed value of the CSS variable for default dice color
+      const defaultColor = getComputedStyle(document.documentElement)
+        .getPropertyValue('--color-dice-default')
+        .trim();
+      
+      return defaultColor || '#dc2626'; // Fallback to red if CSS variable not found
     } catch (error) {
       console.warn('Failed to load dice color preference from cookie:', error);
-      return '#9333ea'; // Purple-600 default
+      return '#dc2626'; // Fallback to red
     }
   };
 
@@ -520,7 +546,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
           if (window.DICE && window.DICE.vars) {
             window.DICE.vars.dice_color = diceColor;
             const isDark = isColorDark(diceColor);
-            window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
+            window.DICE.vars.label_color = isDark ? 'var(--color-text-primary)' : 'var(--color-surface)';
           }
         } catch (error) {
           console.error('Failed to initialize dice box:', error);
@@ -538,7 +564,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
       if (window.DICE && window.DICE.vars) {
         window.DICE.vars.dice_color = diceColor;
         const isDark = isColorDark(diceColor);
-        window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
+        window.DICE.vars.label_color = isDark ? 'var(--color-text-primary)' : 'var(--color-surface)';
       }
       
       console.log('🎲 Dice box initialized successfully');
@@ -560,7 +586,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
       console.log('🎲 Updating dice color to:', diceColor);
       window.DICE.vars.dice_color = diceColor;
       const isDark = isColorDark(diceColor);
-      window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
+      window.DICE.vars.label_color = isDark ? 'var(--color-text-primary)' : 'var(--color-surface)';
     }
   }, [diceColor]);
 
@@ -640,7 +666,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
       window.DICE.vars.dice_color = color;
       // Optionally adjust label color for contrast
       const isDark = isColorDark(color);
-      window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
+      window.DICE.vars.label_color = isDark ? 'var(--color-text-primary)' : 'var(--color-surface)';
       
       // Clear material cache so new dice use the updated colors
       if (window.DICE.clearMaterialCache) {
@@ -671,7 +697,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
   if (!scriptsLoaded) {
     return (
       <div className={`flex items-center justify-center h-64 ${className}`}>
-        <div className="text-slate-400">
+        <div style={{ color: 'var(--color-text-secondary)' }}>
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 mx-auto mb-2" style={{ borderColor: 'var(--color-accent)' }}></div>
           <div>Loading dice roller...</div>
         </div>
@@ -682,13 +708,17 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
   if (initializationError) {
     return (
       <div className={`flex items-center justify-center h-64 ${className}`}>
-        <div className="text-red-400 text-center">
+        <div className="text-center" style={{ color: 'var(--color-error)' }}>
           <div className="text-lg mb-2">⚠️</div>
           <div>Dice roller failed to initialize</div>
-          <div className="text-xs mt-2 text-slate-400">{initializationError}</div>
+          <div className="text-xs mt-2" style={{ color: 'var(--color-text-secondary)' }}>{initializationError}</div>
           <button 
             onClick={() => window.location.reload()} 
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            className="mt-4 px-4 py-2 rounded"
+            style={{ 
+              backgroundColor: 'var(--color-error)',
+              color: 'var(--color-error-text)'
+            }}
           >
             Reload Page
           </button>
@@ -703,7 +733,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
   return (
     <div className={`h-full flex ${className}`}>
       {/* Thin Vertical Dice Selector */}
-      <div className="w-20 bg-slate-800 border-r border-slate-600 flex flex-col items-center py-4 space-y-4 flex-shrink-0">
+      <div className="w-20 flex flex-col items-center py-4 space-y-4 flex-shrink-0" style={{ backgroundColor: 'var(--color-card)', borderRight: '1px solid var(--color-border)' }}>
         {/* Dice Selector */}
         <div className="flex flex-col space-y-3">
           {diceTypes.map(dice => (
@@ -737,7 +767,11 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
                       // Prevent the parent button from being triggered
                       e.stopPropagation();
                     }}
-                    className="absolute -top-1 -right-1 bg-red-500 hover:bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-lg transition-colors cursor-pointer z-10"
+                    className="absolute -top-1 -right-1 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-lg transition-colors cursor-pointer z-10"
+                    style={{ 
+                      backgroundColor: 'var(--color-danger)',
+                      color: 'var(--color-danger-text)'
+                    }}
                     title={`Remove ${dice.key.toUpperCase()} (${diceCounts[dice.key]})`}
                     disabled={diceCounts[dice.key] <= 0}
                   >
@@ -751,7 +785,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
 
         {/* Color Wheel */}
         <div className="flex flex-col items-center space-y-2">
-          <span className="text-slate-300 text-xs font-medium">Color</span>
+          <span className="text-xs font-medium" style={{ color: 'var(--color-text-secondary)' }}>Color</span>
           <ColorWheel currentColor={diceColor} onColorChange={updateDiceColor} />
         </div>
 
@@ -760,11 +794,15 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
           <button
             onClick={rollDice}
             disabled={isRolling || totalDice === 0 || !diceBoxRef.current}
-            className={`w-12 h-12 rounded-lg font-bold text-lg transition-colors shadow-lg ${
-              isRolling || totalDice === 0 || !diceBoxRef.current
-                ? 'bg-slate-600 text-slate-400 cursor-not-allowed'
-                : 'bg-green-600 hover:bg-green-700 text-white'
-            }`}
+            className="w-12 h-12 rounded-lg font-bold text-lg transition-colors shadow-lg"
+            style={{
+              backgroundColor: isRolling || totalDice === 0 || !diceBoxRef.current 
+                ? 'var(--color-card-secondary)' 
+                : 'var(--color-success)',
+              color: isRolling || totalDice === 0 || !diceBoxRef.current 
+                ? 'var(--color-text-muted)' 
+                : 'var(--color-success-text)'
+            }}
             title="Roll dice"
           >
             {isRolling ? '...' : '🎲'}
@@ -773,7 +811,11 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
           <button
             onClick={clearAll}
             disabled={totalDice === 0}
-            className="w-12 h-8 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors text-xs shadow-lg"
+            className="w-12 h-8 rounded-lg transition-colors text-xs shadow-lg"
+            style={{
+              backgroundColor: 'var(--color-card-secondary)',
+              color: 'var(--color-text-primary)'
+            }}
             title="Clear all"
           >
             Clear
@@ -781,24 +823,24 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
         </div>
 
         {/* Total Dice Counter */}
-        <div className="text-slate-300 text-xs text-center">
+        <div className="text-xs text-center" style={{ color: 'var(--color-text-secondary)' }}>
           {totalDice}/10
         </div>
       </div>
 
       {/* 3D Dice Container */}
-      <div className="relative flex-1 bg-slate-900 min-h-0">
+      <div className="relative flex-1 min-h-0" style={{ backgroundColor: 'var(--color-surface)' }}>
         <div 
           ref={diceContainerRef}
           className="absolute inset-0 w-full h-full"
           style={{ 
-            background: diceBoxRef.current ? 'transparent' : '#1e293b'
+            background: diceBoxRef.current ? 'transparent' : 'var(--color-card)'
           }}
         >
           {/* Fallback content when dice box not loaded */}
           {!diceBoxRef.current && !initializationError && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-slate-400 text-center">
+              <div className="text-center" style={{ color: 'var(--color-text-secondary)' }}>
                 <div className="text-lg mb-2">🎲</div>
                 <div>3D Dice Initializing...</div>
                 <div className="text-xs mt-2">
@@ -811,14 +853,14 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
         
         {/* Results Display - Bottom Right Corner */}
         {lastResult && (
-          <div className="absolute bottom-4 right-4 bg-slate-800/95 rounded-lg p-4 backdrop-blur-sm border border-slate-600 max-w-xs">
-            <div className="text-slate-300 text-sm font-medium mb-1">Results:</div>
-            <div className="text-white">
-              <div className="text-xl font-bold text-green-400 mb-1">
+          <div className="absolute bottom-4 right-4 rounded-lg p-4 backdrop-blur-sm max-w-xs" style={{ backgroundColor: 'var(--color-card)', border: '1px solid var(--color-border)' }}>
+            <div className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>Results:</div>
+            <div style={{ color: 'var(--color-text-primary)' }}>
+              <div className="text-xl font-bold mb-1" style={{ color: 'var(--color-success)' }}>
                 Total: {lastResult.resultTotal}
               </div>
-              <div className="text-sm text-slate-300">{lastResult.resultString}</div>
-              <div className="text-xs text-slate-400 mt-1">
+              <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{lastResult.resultString}</div>
+              <div className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
                 Dice: {lastResult.set.join(', ')}
               </div>
             </div>
@@ -827,8 +869,8 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
 
         {/* Notation Display - Top Left */}
         {notation && (
-          <div className="absolute top-4 left-4 bg-slate-800/95 rounded-lg p-3 backdrop-blur-sm border border-slate-600">
-            <div className="text-slate-300 text-sm font-mono">
+          <div className="absolute top-4 left-4 rounded-lg p-3 backdrop-blur-sm" style={{ backgroundColor: 'var(--color-card)', border: '1px solid var(--color-border)' }}>
+            <div className="text-sm font-mono" style={{ color: 'var(--color-text-secondary)' }}>
               {notation}
             </div>
           </div>

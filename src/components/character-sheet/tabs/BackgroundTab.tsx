@@ -944,7 +944,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                         e.target.value = "";
                       }
                     }}
-                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
                   >
                     <option value="">Choose a skill...</option>
                     {Object.keys(SKILLS).filter(skill => !(character.skills || []).includes(skill)).map(skill => (
@@ -1001,7 +1001,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                         e.target.value = "";
                       }
                     }}
-                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
                   >
                     <option value="">Choose {getRacialSkills().length === 0 ? 'first' : 'second'} skill...</option>
                     {Object.keys(SKILLS).filter(skill => !(character.skills || []).includes(skill)).map(skill => (
@@ -1060,9 +1060,9 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 if (!hasBreathWeapon) return null;
                 
                 return (
-                  <div className="mt-3 p-3 bg-slate-500/30 rounded-lg">
-                    <div className="text-slate-300 text-sm space-y-1">
-                      <div className="font-medium text-white">{character.subrace}</div>
+                  <div className="mt-3 p-3 bg-[var(--color-card-secondary)] rounded-lg">
+                    <div className="text-[var(--color-text-primary)] text-sm space-y-1">
+                      <div className="font-medium text-[var(--color-text-primary)]">{character.subrace}</div>
                       {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
                         <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Acid damage</div>
                       ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
@@ -1095,7 +1095,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
           {/* No racial choices available */}
           {!['Human', 'Half-Elf', 'Dragonborn'].includes(character.race) && (
-            <div className="text-slate-400 text-sm italic">
+            <div className="text-[var(--color-text-secondary)] text-sm italic">
               No racial choices available for {character.race}.
             </div>
           )}
@@ -1377,7 +1377,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             
             {/* Empty state */}
             {getAutomaticLanguages(character.race, character.class).length === 0 && (!character.languages || character.languages.length === 0) && (
-              <div className="text-slate-500 text-sm italic">No languages known</div>
+              <div className="text-[var(--color-text-muted)] text-sm italic">No languages known</div>
             )}
           </div>
         </div>
@@ -1584,9 +1584,9 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               )}
 
               {/* Avatar Generation - Always visible in Physical Description section */}
-              <div className="border-t border-slate-600 pt-4 mt-4">
-                <h4 className="text-white font-medium mb-3">Generate AI Avatar</h4>
-                <p className="text-slate-400 text-sm mb-3">
+              <div className="border-t border-[var(--color-border)] pt-4 mt-4">
+                <h4 className="text-[var(--color-text-primary)] font-medium mb-3">Generate AI Avatar</h4>
+                <p className="text-[var(--color-text-secondary)] text-sm mb-3">
                   Create a personalized portrait based on your character&apos;s traits and description.
                 </p>
                 
@@ -1636,29 +1636,29 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 />
 
                 {/* AI Provider Credit */}
-                <div className="text-xs text-slate-500 text-center mt-3">
-                  <p>🤖 AI avatars by <span className="text-slate-400">Replicate Flux.schnell</span></p>
+                <div className="text-xs text-[var(--color-text-muted)] text-center mt-3">
+                  <p>🤖 AI avatars by <span className="text-[var(--color-text-secondary)]">Replicate Flux.schnell</span></p>
                 </div>
               </div>
             </div>
 
             {/* Languages Section - Compact Design */}
-            <div className="bg-slate-700 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                <Languages className="h-5 w-5 text-indigo-400" />
+            <div className="bg-[var(--color-card)] rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+                <Languages className="h-5 w-5 text-[var(--color-accent)]" />
                 Languages Known
               </h3>
               
               {/* Language Requirements Tooltip */}
               {languageRequirements && languageRequirements.length > 0 && languageRequirements.some(req => req.remaining > 0) && (
-                <div className="mb-4 p-3 bg-amber-900/30 border border-amber-600/30 rounded-lg">
-                  <div className="flex items-center gap-2 text-amber-300">
+                <div className="mb-4 p-3 bg-[var(--color-warning-bg)] border border-[var(--color-warning-border)] rounded-lg">
+                  <div className="flex items-center gap-2 text-[var(--color-warning)]">
                     <AlertCircle className="h-4 w-4" />
                     <span className="text-sm font-medium">
                       Language Requirements
                     </span>
                   </div>
-                  <div className="text-amber-200 text-sm mt-1 space-y-1">
+                  <div className="text-[var(--color-warning-text)] text-sm mt-1 space-y-1">
                     {languageRequirements.filter(req => req.remaining > 0).map((req, index) => (
                       <p key={index}>
                         <strong>{req.source}</strong>: {req.description}. 
@@ -1666,7 +1666,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                       </p>
                     ))}
                   </div>
-                  <p className="text-amber-300 text-xs mt-2">
+                  <p className="text-[var(--color-warning)] text-xs mt-2">
                     You need to select {languageRequirements.reduce((total, req) => total + req.remaining, 0)} more language{languageRequirements.reduce((total, req) => total + req.remaining, 0) !== 1 ? 's' : ''} below.
                   </p>
                 </div>
@@ -1674,17 +1674,17 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               
               {/* Language Requirements Met */}
               {languageRequirements && languageRequirements.length > 0 && languageRequirements.every(req => req.remaining === 0) && (
-                <div className="mb-4 p-3 bg-green-900/30 border border-green-600/30 rounded-lg">
-                  <div className="flex items-center gap-2 text-green-300">
+                <div className="mb-4 p-3 bg-[var(--color-success-bg)] border border-[var(--color-success-border)] rounded-lg">
+                  <div className="flex items-center gap-2 text-[var(--color-success)]">
                     <Info className="h-4 w-4" />
                     <span className="text-sm font-medium">
                       All Language Requirements Met
                     </span>
                   </div>
-                  <p className="text-green-200 text-sm mt-1">
+                  <p className="text-[var(--color-success-text)] text-sm mt-1">
                     All language requirements have been satisfied:
                   </p>
-                  <div className="text-green-200 text-sm mt-1 space-y-1">
+                  <div className="text-[var(--color-success-text)] text-sm mt-1 space-y-1">
                     {languageRequirements.map((req, index) => (
                       <p key={index}>
                         <strong>{req.source}</strong>: {req.description} ✓
@@ -1715,7 +1715,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                       e.target.value = ""; // Reset selection
                     }
                   }}
-                  className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                  className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
                   disabled={isLoadingLanguages}
                 >
                   <option value="">{isLoadingLanguages ? "Loading languages..." : "Add a language..."}</option>
@@ -1742,7 +1742,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
               {/* All Known Languages List */}
               <div className="space-y-2">
-                <div className="text-sm text-slate-400 mb-2">Known languages:</div>
+                <div className="text-sm text-[var(--color-text-secondary)] mb-2">Known languages:</div>
                 <div className="flex flex-wrap gap-2">
                   {/* Racial Languages */}
                   {getRacialLanguages(character.race).map(lang => {
@@ -1826,7 +1826,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 
                 {/* Empty state */}
                 {getAutomaticLanguages(character.race, character.class).length === 0 && (!character.languages || character.languages.length === 0) && (
-                  <div className="text-slate-500 text-sm italic">No languages known</div>
+                  <div className="text-[var(--color-text-muted)] text-sm italic">No languages known</div>
                 )}
               </div>
             </div>
@@ -1838,7 +1838,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               "Notes",
               "notes",
               "Any additional notes, campaign information, character development, or other details.",
-              <Edit3 className="h-5 w-5 text-purple-400" />
+              <Edit3 className="h-5 w-5 text-[var(--color-accent)]" />
             )}
           </div>
         </div>

@@ -41,6 +41,7 @@
   --color-error-border: #dc2626; /* red border for errors */
   --color-error-text-light: #fca5a5; /* light red text for error details */
   --color-text-tertiary: #64748b; /* tertiary text color */
+  --color-dice-default: #dc2626; /* red for default dice color */
 }
 
 @theme inline {
