@@ -8,6 +8,7 @@ import { useCharacterMutations, useAvatar } from '@/hooks/use-character-mutation
 import { toast } from 'react-hot-toast';
 import { Character } from '@/types/character';
 import Image from 'next/image';
+import { Card, Button } from "./ui";
 
 interface CharacterCardProps {
   character: Character;
@@ -55,8 +56,8 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
   
   return (
     <>
-      <div 
-        className="bg-slate-800 rounded-lg p-6 border border-slate-700 hover:border-purple-500 transition-colors cursor-pointer"
+      <Card 
+        className="p-6 hover:border-[var(--color-accent)] transition-colors cursor-pointer"
         onClick={() => setShowSheet(true)}
       >
         <div className="flex justify-between items-start mb-4">
@@ -73,52 +74,53 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
                 />
               </div>
             ) : (
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-2xl font-bold">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-hover)] flex items-center justify-center text-[var(--color-accent-text)] text-2xl font-bold">
                 {character.name.charAt(0).toUpperCase()}
               </div>
             )}
             
             <div>
-              <h3 className="text-xl font-bold text-white">{character.name}</h3>
-              <p className="text-slate-400 text-sm mt-1">
+              <h3 className="text-xl font-bold text-[var(--color-text-primary)]">{character.name}</h3>
+              <p className="text-[var(--color-text-secondary)] text-sm mt-1">
                 {character.subrace || character.race} {character.class}
               </p>
-              <div className="bg-purple-600 text-white text-sm font-semibold px-2 py-0.5 rounded mt-2 inline-block">
+              <div className="bg-[var(--color-accent)] text-[var(--color-accent-text)] text-sm font-semibold px-2 py-0.5 rounded mt-2 inline-block">
                 Level {character.level}
               </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
             {isOptimistic && (
-              <div className="flex items-center gap-2 text-yellow-400 text-sm">
+              <div className="flex items-center gap-2 text-[var(--color-warning)] text-sm">
                 <RefreshCw className="h-4 w-4 animate-spin" />
                 <span>Syncing...</span>
               </div>
             )}
-            <button
+            <Button
+              variant="ghost"
               onClick={handleDeleteClick}
-              className="text-red-400 hover:text-red-300 transition-colors p-2 rounded-lg hover:bg-red-500/10"
+              className="text-[var(--color-danger)] hover:text-[var(--color-danger)]/80 p-2"
               title="Delete Character"
             >
               <Trash2 className="h-5 w-5" />
-            </button>
+            </Button>
           </div>
         </div>
 
         <div className="space-y-3">
           {/* Hit Points */}
           <div className="flex items-center gap-2">
-            <Heart className="h-4 w-4 text-red-400" />
+            <Heart className="h-4 w-4 text-[var(--color-danger)]" />
             <div className="flex-1">
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-slate-300">Hit Points</span>
-                <span className="text-white font-medium">
+                <span className="text-[var(--color-text-secondary)]">Hit Points</span>
+                <span className="text-[var(--color-text-primary)] font-medium">
                   {character.hitPoints}/{character.maxHitPoints}
                 </span>
               </div>
-              <div className="w-full bg-slate-700 rounded-full h-2">
+              <div className="w-full bg-[var(--color-card-secondary)] rounded-full h-2">
                 <div
-                  className="bg-red-500 h-2 rounded-full"
+                  className="bg-[var(--color-danger)] h-2 rounded-full"
                   style={{ width: `${hpPercentage}%` }}
                 />
               </div>
@@ -127,12 +129,12 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
 
           {/* Armor Class */}
           <div className="flex items-center gap-2">
-            <Shield className="h-4 w-4 text-blue-400" />
-            <span className="text-slate-300">Armor Class</span>
-            <span className="text-white font-medium ml-auto">{character.armorClass}</span>
+            <Shield className="h-4 w-4 text-[var(--color-accent)]" />
+            <span className="text-[var(--color-text-secondary)]">Armor Class</span>
+            <span className="text-[var(--color-text-primary)] font-medium ml-auto">{character.armorClass}</span>
           </div>
         </div>
-      </div>
+      </Card>
 
       {showSheet && (
         <CharacterSheet
