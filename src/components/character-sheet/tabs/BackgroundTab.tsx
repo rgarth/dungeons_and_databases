@@ -1194,22 +1194,22 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
         
 
         {/* Languages Section - Compact Design */}
-        <div className="bg-slate-700 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-            <Languages className="h-5 w-5 text-indigo-400" />
+        <div className="bg-[var(--color-card)] rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+            <Languages className="h-5 w-5 text-[var(--color-accent)]" />
             Languages Known
           </h3>
           
           {/* Language Requirements Tooltip */}
           {languageRequirements && languageRequirements.length > 0 && languageRequirements.some(req => req.remaining > 0) && (
-            <div className="mb-4 p-3 bg-amber-900/30 border border-amber-600/30 rounded-lg">
-              <div className="flex items-center gap-2 text-amber-300">
+            <div className="mb-4 p-3 bg-[var(--color-warning-bg)] border border-[var(--color-warning-border)] rounded-lg">
+              <div className="flex items-center gap-2 text-[var(--color-warning)]">
                 <AlertCircle className="h-4 w-4" />
                 <span className="text-sm font-medium">
                   Language Requirements
                 </span>
               </div>
-              <div className="text-amber-200 text-sm mt-1 space-y-1">
+              <div className="text-[var(--color-warning-text)] text-sm mt-1 space-y-1">
                 {languageRequirements.filter(req => req.remaining > 0).map((req, index) => (
                   <p key={index}>
                     <strong>{req.source}</strong>: {req.description}. 
@@ -1217,7 +1217,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   </p>
                 ))}
               </div>
-              <p className="text-amber-300 text-xs mt-2">
+              <p className="text-[var(--color-warning)] text-xs mt-2">
                 You need to select {languageRequirements.reduce((total, req) => total + req.remaining, 0)} more language{languageRequirements.reduce((total, req) => total + req.remaining, 0) !== 1 ? 's' : ''} below.
               </p>
             </div>
@@ -1225,17 +1225,17 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           
           {/* Language Requirements Met */}
           {languageRequirements && languageRequirements.length > 0 && languageRequirements.every(req => req.remaining === 0) && (
-            <div className="mb-4 p-3 bg-green-900/30 border border-green-600/30 rounded-lg">
-              <div className="flex items-center gap-2 text-green-300">
+            <div className="mb-4 p-3 bg-[var(--color-success-bg)] border border-[var(--color-success-border)] rounded-lg">
+              <div className="flex items-center gap-2 text-[var(--color-success)]">
                 <Info className="h-4 w-4" />
                 <span className="text-sm font-medium">
                   All Language Requirements Met
                 </span>
               </div>
-              <p className="text-green-200 text-sm mt-1">
+              <p className="text-[var(--color-success-text)] text-sm mt-1">
                 All language requirements have been satisfied:
               </p>
-              <div className="text-green-200 text-sm mt-1 space-y-1">
+              <div className="text-[var(--color-success-text)] text-sm mt-1 space-y-1">
                 {languageRequirements.map((req, index) => (
                   <p key={index}>
                     <strong>{req.source}</strong>: {req.description} ✓
@@ -1266,7 +1266,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   e.target.value = ""; // Reset selection
                 }
               }}
-              className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+              className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
               disabled={isLoadingLanguages}
             >
               <option value="">{isLoadingLanguages ? "Loading languages..." : "Add a language..."}</option>
@@ -1293,7 +1293,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
           {/* All Known Languages List */}
           <div className="space-y-2">
-            <div className="text-sm text-slate-400 mb-2">Known languages:</div>
+            <div className="text-sm text-[var(--color-text-secondary)] mb-2">Known languages:</div>
             <div className="flex flex-wrap gap-2">
               {/* Racial Languages */}
               {getRacialLanguages(character.race).map(lang => {
@@ -1383,15 +1383,15 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
         </div>
 
         {/* Background Summary with Edit Button */}
-        <div className="bg-slate-700 rounded-lg p-4">
+        <div className="bg-[var(--color-card)] rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-purple-400" />
+            <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-[var(--color-accent)]" />
               Background & Traits
             </h3>
             <button
               onClick={() => setShowBackgroundModal(true)}
-              className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+              className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-text-primary)] px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
             >
               <Edit3 className="h-4 w-4" />
               Edit Background
@@ -1400,13 +1400,13 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <div className="text-slate-400 text-sm mb-1">Background</div>
-              <div className="text-white font-medium">{character.background || 'No background selected'}</div>
+              <div className="text-[var(--color-text-secondary)] text-sm mb-1">Background</div>
+              <div className="text-[var(--color-text-primary)] font-medium">{character.background || 'No background selected'}</div>
               {languageRequirements && languageRequirements.length > 0 && languageRequirements.some(req => req.remaining > 0) && (
                 <div className="mt-2 text-xs space-y-1">
                   {languageRequirements.filter(req => req.remaining > 0).map((req, index) => (
                     <div key={index}>
-                      <span className="text-amber-400 flex items-center gap-1">
+                      <span className="text-[var(--color-warning)] flex items-center gap-1">
                         <AlertCircle className="h-3 w-3" />
                         {req.type === 'background' ? 'Background' : 'Racial'} language: {req.remaining} needed
                       </span>
@@ -1419,46 +1419,46 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             {character.backgroundCharacteristics && (
               <>
                 <div>
-                  <div className="text-slate-400 text-sm mb-1">Personality Traits</div>
-                  <div className="text-white text-sm space-y-1">
+                  <div className="text-[var(--color-text-secondary)] text-sm mb-1">Personality Traits</div>
+                  <div className="text-[var(--color-text-primary)] text-sm space-y-1">
                     {((character.backgroundCharacteristics?.personalityTraits ?? []).length > 0) 
                       ? (character.backgroundCharacteristics?.personalityTraits ?? []).map((trait, index) => (
                           <div key={index}>• {trait}</div>
                         ))
-                      : <div className="text-slate-500">None selected</div>
+                      : <div className="text-[var(--color-text-muted)]">None selected</div>
                     }
                   </div>
                 </div>
                 <div>
-                  <div className="text-slate-400 text-sm mb-1">Ideals</div>
-                  <div className="text-white text-sm space-y-1">
+                  <div className="text-[var(--color-text-secondary)] text-sm mb-1">Ideals</div>
+                  <div className="text-[var(--color-text-primary)] text-sm space-y-1">
                     {((character.backgroundCharacteristics?.ideals ?? []).length > 0) 
                       ? (character.backgroundCharacteristics?.ideals ?? []).map((ideal, index) => (
                           <div key={index}>• {ideal}</div>
                         ))
-                      : <div className="text-slate-500">None selected</div>
+                      : <div className="text-[var(--color-text-muted)]">None selected</div>
                     }
                   </div>
                 </div>
                 <div>
-                  <div className="text-slate-400 text-sm mb-1">Bonds</div>
-                  <div className="text-white text-sm space-y-1">
+                  <div className="text-[var(--color-text-secondary)] text-sm mb-1">Bonds</div>
+                  <div className="text-[var(--color-text-primary)] text-sm space-y-1">
                     {((character.backgroundCharacteristics?.bonds ?? []).length > 0) 
                       ? (character.backgroundCharacteristics?.bonds ?? []).map((bond, index) => (
                           <div key={index}>• {bond}</div>
                         ))
-                      : <div className="text-slate-500">None selected</div>
+                      : <div className="text-[var(--color-text-muted)]">None selected</div>
                     }
                   </div>
                 </div>
                 <div>
-                  <div className="text-slate-400 text-sm mb-1">Flaws</div>
-                  <div className="text-white text-sm space-y-1">
+                  <div className="text-[var(--color-text-secondary)] text-sm mb-1">Flaws</div>
+                  <div className="text-[var(--color-text-primary)] text-sm space-y-1">
                     {((character.backgroundCharacteristics?.flaws ?? []).length > 0) 
                       ? (character.backgroundCharacteristics?.flaws ?? []).map((flaw, index) => (
                           <div key={index}>• {flaw}</div>
                         ))
-                      : <div className="text-slate-500">None selected</div>
+                      : <div className="text-[var(--color-text-muted)]">None selected</div>
                     }
                   </div>
                 </div>
@@ -1473,10 +1473,10 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           <div className="space-y-4">
             {/* Avatar Section - Only show if there's an avatar */}
             {(avatarUrl || character.avatar) && (
-              <div className="bg-slate-700 rounded-lg p-4">
+              <div className="bg-[var(--color-card)] rounded-lg p-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                    <Edit3 className="h-5 w-5 text-blue-400" />
+                  <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
+                    <Edit3 className="h-5 w-5 text-[var(--color-accent)]" />
                     Character Portrait
                   </h3>
                 </div>
@@ -1489,14 +1489,14 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                       alt={`${character.name}'s full body portrait`}
                       width={192}
                       height={336}
-                      className="w-48 h-84 mx-auto rounded-lg object-contain bg-slate-900 border border-slate-700"
+                      className="w-48 h-84 mx-auto rounded-lg object-contain bg-[var(--color-background)] border border-[var(--color-border)]"
                     />
                     <div className="text-center">
                       <button
                         onClick={() => {
                           deleteAvatar.mutate(character.id);
                         }}
-                        className="text-red-400 hover:text-red-300 text-sm transition-colors"
+                        className="text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] text-sm transition-colors"
                       >
                         Remove Avatar
                       </button>
@@ -1504,29 +1504,29 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   </div>
 
                   {/* AI Provider Credit */}
-                  <div className="text-xs text-slate-500 text-center">
-                    <p>🤖 AI avatars by <span className="text-slate-400">Replicate Flux.schnell</span></p>
+                  <div className="text-xs text-[var(--color-text-muted)] text-center">
+                    <p>🤖 AI avatars by <span className="text-[var(--color-text-secondary)]">Replicate Flux.schnell</span></p>
                   </div>
                 </div>
               </div>
             )}
 
             {/* Appearance Section - Inline editing with avatar generation */}
-            <div className="bg-slate-700 rounded-lg p-4">
+            <div className="bg-[var(--color-card)] rounded-lg p-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-green-400" />
+                <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-[var(--color-accent)]" />
                   Physical Description
                   <div className="relative flex items-center gap-2">
                     <button
                       onClick={() => toggleTooltip('appearance-hint')}
-                      className="text-slate-400 hover:text-slate-300 transition-colors"
+                      className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
                       data-tooltip
                     >
                       <HelpCircle className="h-4 w-4" />
                     </button>
                     {activeTooltip === 'appearance-hint' && (
-                      <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-slate-800 rounded text-sm text-slate-300 border border-slate-600 w-80 shadow-lg whitespace-normal" data-tooltip>
+                      <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-[var(--color-card-secondary)] rounded text-sm text-[var(--color-text-primary)] border border-[var(--color-border)] w-80 shadow-lg whitespace-normal" data-tooltip>
                         We already know your race and class. Focus on distinctive features, scars, clothing style, or unique characteristics that make your character special.
                       </div>
                     )}
@@ -1536,14 +1536,14 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleSave('appearance')}
-                      className="flex items-center gap-1 text-green-400 hover:text-green-300 transition-colors text-sm"
+                      className="flex items-center gap-1 text-[var(--color-success)] hover:text-[var(--color-success-hover)] transition-colors text-sm"
                     >
                       <Save className="h-4 w-4" />
                       Save
                     </button>
                     <button
                       onClick={handleCancel}
-                      className="flex items-center gap-1 text-red-400 hover:text-red-300 transition-colors text-sm"
+                      className="flex items-center gap-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] transition-colors text-sm"
                     >
                       <X className="h-4 w-4" />
                       Cancel
@@ -1552,7 +1552,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 ) : (
                   <button
                     onClick={() => handleStartEdit('appearance')}
-                    className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors text-sm"
+                    className="flex items-center gap-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors text-sm"
                   >
                     <Edit3 className="h-4 w-4" />
                     {character.appearance ? 'Edit' : 'Add'}
@@ -1566,7 +1566,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                     value={editValues.appearance}
                     onChange={(e) => handleFieldChange('appearance', e.target.value)}
                     placeholder="Describe your character's distinctive features, scars, clothing style, or unique characteristics that make them special."
-                    className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none resize-vertical"
                     rows={6}
                   />
                   <div className="flex justify-end">
@@ -1574,11 +1574,11 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   </div>
                 </div>
               ) : (
-                <div className="min-h-[120px] rounded-lg p-3 border border-slate-600">
+                <div className="min-h-[120px] rounded-lg p-3 border border-[var(--color-border)]">
                   {character.appearance ? (
-                    <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{character.appearance}</p>
+                    <p className="text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap">{character.appearance}</p>
                   ) : (
-                    <p className="text-slate-500 italic">Describe your character&apos;s distinctive features, scars, clothing style, or unique characteristics.</p>
+                    <p className="text-[var(--color-text-muted)] italic">Describe your character&apos;s distinctive features, scars, clothing style, or unique characteristics.</p>
                   )}
                 </div>
               )}
