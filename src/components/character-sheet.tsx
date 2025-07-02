@@ -528,9 +528,9 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     toast.success(`🛡️ Equipped ${armor.name} (${acBonus} AC)`, {
       duration: 3000,
       style: {
-        background: '#1e293b',
-        color: '#e2e8f0',
-        border: '1px solid #475569'
+        background: 'var(--color-card)',
+        color: 'var(--color-text-primary)',
+        border: '1px solid var(--color-border)'
       }
     });
   };
@@ -557,9 +557,9 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     toast.success(`🛡️ Unequipped ${armor.name} (${acLoss} AC)`, {
       duration: 3000,
       style: {
-        background: '#1e293b',
-        color: '#e2e8f0',
-        border: '1px solid #475569'
+        background: 'var(--color-card)',
+        color: 'var(--color-text-primary)',
+        border: '1px solid var(--color-border)'
       }
     });
   };
