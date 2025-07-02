@@ -266,10 +266,16 @@ export function GearTab({
     const itemData = magicalItemsData.find(i => i.name === selectedMagicalItem);
     if (itemData) {
       const item = {
-        ...itemData,
+        id: itemData.id.toString(),
+        name: itemData.name,
         type: itemData.type as MagicalItemType,
         rarity: itemData.rarity as MagicalItemRarity,
-        effects: itemData.effects ? JSON.parse(itemData.effects) : []
+        description: itemData.description,
+        weight: itemData.weight,
+        cost: itemData.cost,
+        effects: itemData.magicalProperties ? JSON.parse(itemData.magicalProperties) : [],
+        requiresAttunement: itemData.attunement,
+        stackable: false
       } as MagicalItem;
       onAddMagicalItem(item);
       setSelectedMagicalItem("");
@@ -336,7 +342,7 @@ export function GearTab({
   const filteredMagicalItems = magicalItemsData.filter(item => {
     const matchesSearch = !magicalItemSearch || 
       item.name.toLowerCase().includes(magicalItemSearch.toLowerCase()) ||
-      item.description.toLowerCase().includes(magicalItemSearch.toLowerCase());
+      (item.description && item.description.toLowerCase().includes(magicalItemSearch.toLowerCase()));
     
     const matchesRarity = !selectedRarity || item.rarity === selectedRarity;
     const matchesType = !selectedType || item.type === selectedType;
@@ -1095,7 +1101,7 @@ export function GearTab({
                           <span className={`text-xs ${magicalItems.getRarityColor(item.rarity)} px-1 rounded`}>
                             {item.rarity}
                           </span>
-                          {item.requiresAttunement && (
+                          {item.attunement && (
                             <span className="text-xs bg-[var(--color-accent)] text-[var(--color-accent-text)] px-1 rounded">
                               Requires Attunement
                             </span>
