@@ -77,8 +77,9 @@ export function useCharacterMutations() {
           bonds: [],
           flaws: []
         },
-        // Ensure subclass is undefined, not null
-        subclass: newCharacter.subclass || undefined
+        // Ensure subclass and subrace are undefined, not null
+        subclass: newCharacter.subclass || undefined,
+        subrace: newCharacter.subrace || undefined
       };
 
       // Optimistically update to the new value
@@ -140,9 +141,8 @@ export function useCharacterMutations() {
         queryClient.setQueryData(['characters'], context.previousCharacters);
       }
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['characters'] });
-    },
+    // Don't invalidate cache immediately to prevent overwriting local changes
+    // The optimistic update should be sufficient for immediate UI feedback
   });
 
   // Delete character mutation with optimistic update
