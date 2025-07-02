@@ -145,9 +145,9 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
         {/* First Row - Ability Scores (2 columns) + HP Management (1 column) */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Ability Scores - 2/3 */}
-          <div className="lg:col-span-2 bg-slate-700 rounded-lg p-4">
+          <div className="lg:col-span-2 bg-[var(--color-card)] rounded-lg p-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-white">Ability Scores</h3>
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Ability Scores</h3>
 
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -165,21 +165,21 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
                 const proficientSkills = skills.filter(skill => calc.isSkillProficient(skill));
                 
                 return (
-                  <div key={ability.name} className="text-center bg-slate-600 rounded-lg p-3">
-                    <div className="text-sm text-slate-300 mb-1">{ability.short}</div>
-                    <div className={`text-2xl font-bold ${effectiveStats[ability.name.toLowerCase() as keyof typeof effectiveStats] !== ability.baseValue ? 'text-purple-300' : 'text-white'}`}>
+                  <div key={ability.name} className="text-center bg-[var(--color-card-secondary)] rounded-lg p-3">
+                    <div className="text-sm text-[var(--color-text-secondary)] mb-1">{ability.short}</div>
+                    <div className={`text-2xl font-bold ${effectiveStats[ability.name.toLowerCase() as keyof typeof effectiveStats] !== ability.baseValue ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-primary)]'}`}>
                       {effectiveStats[ability.name.toLowerCase() as keyof typeof effectiveStats]}
                       {effectiveStats[ability.name.toLowerCase() as keyof typeof effectiveStats] !== ability.baseValue && (
-                        <span className="text-xs text-slate-400 ml-1">
+                        <span className="text-xs text-[var(--color-text-muted)] ml-1">
                           (was {ability.baseValue})
                         </span>
                       )}
                     </div>
                     <div className="flex items-center justify-center gap-1 mt-1">
-                      <span className="text-sm text-yellow-300">{modifierText}</span>
+                      <span className="text-sm text-[var(--color-accent)]">{modifierText}</span>
                       <button 
                         onClick={() => toggleTooltip(`ability-${ability.name.toLowerCase()}`)}
-                        className="cursor-pointer hover:bg-slate-500 rounded p-0.5 inline-flex items-center gap-1 text-xs text-yellow-300 hover:text-yellow-200"
+                        className="cursor-pointer hover:bg-[var(--color-card-tertiary)] rounded p-0.5 inline-flex items-center gap-1 text-xs text-[var(--color-accent)] hover:text-[var(--color-accent-hover)]"
                       >
                         <HelpCircle className="h-3 w-3" />
                       </button>
@@ -188,31 +188,31 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
                     {/* Ability Score Modifier Tooltip */}
                     <div className="relative">
                       {activeTooltip === `ability-${ability.name.toLowerCase()}` && (
-                        <div className="absolute z-20 mt-1 p-3 bg-slate-800 rounded text-xs text-slate-300 border border-slate-600 w-64 left-1/2 transform -translate-x-1/2 shadow-lg">
-                          <strong className="text-yellow-300">{ability.name} Modifier Breakdown:</strong><br/>
+                        <div className="absolute z-20 mt-1 p-3 bg-[var(--color-card)] rounded text-xs text-[var(--color-text-secondary)] border border-[var(--color-border)] w-64 left-1/2 transform -translate-x-1/2 shadow-lg">
+                          <strong className="text-[var(--color-accent)]">{ability.name} Modifier Breakdown:</strong><br/>
                           <div className="mt-2 space-y-1">
                             <div className="flex justify-between">
                               <span>Base Score:</span>
-                              <span className="text-slate-400">{ability.baseValue}</span>
+                              <span className="text-[var(--color-text-muted)]">{ability.baseValue}</span>
                             </div>
                             {effectiveStats[ability.name.toLowerCase() as keyof typeof effectiveStats] !== ability.baseValue && (
                               <div className="flex justify-between">
                                 <span>Racial Bonus:</span>
-                                <span className="text-green-400">+{effectiveStats[ability.name.toLowerCase() as keyof typeof effectiveStats] - ability.baseValue}</span>
+                                <span className="text-[var(--color-success)]">+{effectiveStats[ability.name.toLowerCase() as keyof typeof effectiveStats] - ability.baseValue}</span>
                               </div>
                             )}
                             <div className="flex justify-between">
                               <span>Modifier Formula:</span>
-                              <span className="text-slate-400">({effectiveStats[ability.name.toLowerCase() as keyof typeof effectiveStats]} - 10) ÷ 2</span>
+                              <span className="text-[var(--color-text-muted)]">({effectiveStats[ability.name.toLowerCase() as keyof typeof effectiveStats]} - 10) ÷ 2</span>
                             </div>
-                            <div className="border-t border-slate-600 pt-1 mt-1">
+                            <div className="border-t border-[var(--color-border)] pt-1 mt-1">
                               <div className="flex justify-between font-semibold">
                                 <span>Total Modifier:</span>
-                                <span className="text-yellow-300">{modifierText}</span>
+                                <span className="text-[var(--color-accent)]">{modifierText}</span>
                               </div>
                             </div>
                           </div>
-                          <div className="mt-2 text-xs text-slate-400">
+                          <div className="mt-2 text-xs text-[var(--color-text-muted)]">
                             <strong>Used for:</strong> {ability.name} checks, saves, and related skills
                           </div>
                         </div>
@@ -229,17 +229,17 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
                           
                           return (
                             <div key={skill} className="relative">
-                              <div className="bg-purple-900/40 text-purple-300 px-2 py-1 rounded text-xs font-medium inline-flex items-center gap-1">
+                              <div className="bg-[var(--color-accent)]/20 text-[var(--color-accent)] px-2 py-1 rounded text-xs font-medium inline-flex items-center gap-1">
                                 <span>{skill} {modifierText}</span>
                                 <button 
                                   onClick={() => toggleTooltip(`skill-${ability.name}-${skill}`)}
-                                  className="cursor-pointer hover:bg-purple-800/40 rounded p-0.5"
+                                  className="cursor-pointer hover:bg-[var(--color-accent)]/30 rounded p-0.5"
                                 >
-                                  <HelpCircle className="h-2.5 w-2.5 text-purple-200 opacity-60" />
+                                  <HelpCircle className="h-2.5 w-2.5 text-[var(--color-accent)] opacity-60" />
                                 </button>
                               </div>
                               {activeTooltip === `skill-${ability.name}-${skill}` && (
-                                <div className="absolute z-10 mt-1 p-2 bg-slate-800 rounded text-xs text-slate-300 border border-slate-600 w-48 left-1/2 transform -translate-x-1/2">
+                                <div className="absolute z-10 mt-1 p-2 bg-[var(--color-card)] rounded text-xs text-[var(--color-text-secondary)] border border-[var(--color-border)] w-48 left-1/2 transform -translate-x-1/2">
                                   <strong>{skill} Check:</strong> Roll 1d20 {modifierText}<br/>
                                   <strong>Breakdown:</strong> {ability.name} modifier ({modifier >= 0 ? '+' : ''}{modifier}) + Proficiency (+{calc.proficiencyBonus})<br/>
                                   <strong>Why:</strong> You&apos;re trained in this skill!
