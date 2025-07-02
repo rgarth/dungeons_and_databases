@@ -131,6 +131,7 @@ model Character {
   inspiration           Boolean? @default(false)
   conditions            Json?
   racialTraits          Json?
+  avatarImage           AvatarImage?
 }
 
 model CustomWeapon {
@@ -155,4 +156,14 @@ model UserPreference {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AvatarImage {
+  id          String   @id @default(cuid())
+  characterId String   @unique @map("character_id")
+  imageData   Bytes    @map("image_data")
+  mimeType    String   @default("image/png") @map("mime_type")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
 }

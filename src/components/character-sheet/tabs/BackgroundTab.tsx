@@ -103,6 +103,9 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
   const [traitsError, setTraitsError] = useState<string | null>(null);
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [loadingAvatar, setLoadingAvatar] = useState(false);
+
   // Load languages from database
   useEffect(() => {
     const loadLanguages = async () => {
@@ -111,6 +114,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
         setLanguages(languagesData);
       } catch (error) {
         console.error('Failed to load languages:', error);
+        // Set empty array as fallback to prevent component crashes
+        setLanguages([]);
       } finally {
         setIsLoadingLanguages(false);
       }
@@ -627,6 +632,36 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
       </div>
     );
   };
+
+  // Fetch avatar image from API when character.id changes
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchAvatar() {
+      setLoadingAvatar(true);
+      try {
+        const res = await fetch(`/api/characters/${character.id}/avatar`);
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data.imageData) {
+            setAvatarUrl(data.imageData);
+          }
+        } else if (res.status === 404) {
+          // Character has no avatar - this is expected
+          setAvatarUrl(null);
+        } else {
+          setAvatarUrl(null);
+        }
+      } catch {
+        setAvatarUrl(null);
+      } finally {
+        setLoadingAvatar(false);
+      }
+    }
+    if (character.id) {
+      fetchAvatar();
+    }
+    return () => { isMounted = false; };
+  }, [character.id]);
 
   return (
     <div className="p-4">
@@ -1453,10 +1488,10 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   <h4 className="text-white font-medium">Character Portrait</h4>
                   
                   {/* Current Avatar Display */}
-                  {(character.avatar) ? (
+                  {(avatarUrl || character.avatar) ? (
                     <div className="space-y-3">
                       <Image 
-                        src={character.avatar || '/default-avatar.png'} 
+                        src={avatarUrl || character.avatar || '/default-avatar.png'} 
                         alt={`${character.name}'s full body portrait`}
                         width={192}
                         height={336}
@@ -1464,7 +1499,21 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                       />
                       <div className="text-center">
                         <button
-                          onClick={() => onUpdate({ avatar: undefined })}
+                          onClick={async () => {
+                            try {
+                              // Delete avatar from database
+                              await fetch(`/api/characters/${character.id}/avatar`, {
+                                method: 'DELETE',
+                              });
+                              
+                              // Clear local state
+                              setAvatarUrl(null);
+                              
+                              // Don't update character avatar fields - we use our own storage system
+                            } catch (error) {
+                              console.error('Error removing avatar:', error);
+                            }
+                          }}
                           className="text-red-400 hover:text-red-300 text-sm transition-colors"
                         >
                           Remove Avatar
@@ -1555,12 +1604,38 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                         equippedWeapons: [],
                         equippedArmor: []
                       } as CharacterAvatarData}
-                      onAvatarGenerated={(avatarDataUrl, fullBodyDataUrl) => {
-                        onUpdate({ 
-                          avatar: fullBodyDataUrl || avatarDataUrl
-                        });
+                      onAvatarGenerated={async (avatarDataUrl, fullBodyDataUrl) => {
+                        // Get the image URL from Replicate
+                        const imageUrl = fullBodyDataUrl || avatarDataUrl;
+                        if (!imageUrl) return;
+                        
+                        try {
+                          // Fetch the image from Replicate and convert to base64
+                          const response = await fetch(imageUrl);
+                          const blob = await response.blob();
+                          const reader = new FileReader();
+                          
+                          reader.onloadend = async () => {
+                            const base64Data = reader.result as string;
+                            
+                            // Save base64 data to our API
+                            await fetch(`/api/characters/${character.id}/avatar`, {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ imageData: base64Data }),
+                            });
+                            
+                            // Update the local state with the base64 data
+                            setAvatarUrl(base64Data);
+                            // Don't update character avatar field - we use our own storage system
+                          };
+                          
+                          reader.readAsDataURL(blob);
+                        } catch (error) {
+                          console.error('Error processing avatar image:', error);
+                        }
                       }}
-                      disabled={false}
+                      disabled={loadingAvatar}
                       className="w-full"
                     />
                   </div>

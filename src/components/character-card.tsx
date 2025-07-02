@@ -18,9 +18,37 @@ interface CharacterCardProps {
 export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdated }: CharacterCardProps) {
   const [showSheet, setShowSheet] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const { deleteCharacter } = useCharacterMutations();
   const isOptimistic = character.isOptimistic;
   const hpPercentage = (character.hitPoints / character.maxHitPoints) * 100;
+
+  // Fetch avatar from API when character changes
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchAvatar() {
+      try {
+        const res = await fetch(`/api/characters/${character.id}/avatar`);
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && data.imageData) {
+            setAvatarUrl(data.imageData);
+          }
+        } else if (res.status === 404) {
+          // Character has no avatar - this is expected
+          setAvatarUrl(null);
+        } else {
+          setAvatarUrl(null);
+        }
+      } catch {
+        setAvatarUrl(null);
+      }
+    }
+    if (character.id) {
+      fetchAvatar();
+    }
+    return () => { isMounted = false; };
+  }, [character.id]);
 
   // Clean up sheet state when character changes
   useEffect(() => {
@@ -58,10 +86,10 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-start gap-3">
             {/* Avatar */}
-            {character.avatar ? (
+            {avatarUrl ? (
               <div className="w-24 h-24 rounded-full overflow-hidden">
                 <Image 
-                  src={character.avatar} 
+                  src={avatarUrl} 
                   alt={`${character.name}'s avatar`}
                   width={96}
                   height={96}

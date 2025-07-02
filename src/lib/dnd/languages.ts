@@ -11,11 +11,31 @@ export interface Language {
 
 // Get all languages from API
 export async function getLanguages(): Promise<Language[]> {
-  const response = await fetch('/api/languages');
-  if (!response.ok) {
-    throw new Error('Failed to fetch languages');
+  const maxRetries = 3;
+  let lastError: Error | null = null;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch('/api/languages');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch languages: ${response.status} ${response.statusText}`);
+      }
+      return response.json();
+    } catch (error) {
+      lastError = error as Error;
+      console.warn(`Language fetch attempt ${attempt} failed:`, error);
+      
+      // Don't retry on the last attempt
+      if (attempt === maxRetries) {
+        break;
+      }
+      
+      // Wait a bit before retrying
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+    }
   }
-  return response.json();
+  
+  throw lastError || new Error('Failed to fetch languages after multiple attempts');
 }
 
 // Get languages by category
