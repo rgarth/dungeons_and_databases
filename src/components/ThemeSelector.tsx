@@ -6,10 +6,7 @@ import { Moon, Sun } from 'lucide-react';
 export function ThemeSelector() {
   const { theme, setTheme } = useTheme();
 
-  console.log('ThemeSelector rendered, current theme:', theme);
-
   const toggleTheme = () => {
-    console.log('Toggling theme from', theme, 'to', theme === 'theme-dndb-dark' ? 'theme-dndb-light' : 'theme-dndb-dark');
     setTheme(theme === 'theme-dndb-dark' ? 'theme-dndb-light' : 'theme-dndb-dark');
   };
 
