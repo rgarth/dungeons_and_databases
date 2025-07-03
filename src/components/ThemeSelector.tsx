@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from '@/lib/theme';
-import { Moon, Sun, Palette } from 'lucide-react';
+import { Moon, Sun, Palette, TreePine, Mountain, Crown } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 
 export function ThemeSelector() {
@@ -12,6 +12,9 @@ export function ThemeSelector() {
   const themes = [
     { id: 'theme-dndb-dark', name: 'DNDB Dark', icon: Moon },
     { id: 'theme-dndb-light', name: 'DNDB Light', icon: Sun },
+    { id: 'theme-enchanted-forest', name: 'Enchanted Forest', icon: TreePine },
+    { id: 'theme-dungeon', name: 'Dungeon', icon: Mountain },
+    { id: 'theme-nobility', name: 'Nobility', icon: Crown },
   ] as const;
 
   // Close menu when clicking outside

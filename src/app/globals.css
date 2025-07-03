@@ -316,3 +316,204 @@ body {
   background-color: var(--color-accent);
   color: var(--color-accent-text);
 }
+
+/* Enchanted Forest Theme - Nature inspired */
+.theme-enchanted-forest {
+  /* Theme colors - FOREST STYLING */
+  --color-surface: #0d1b0d; /* deep forest green */
+  --color-surface-secondary: #1a2e1a; /* dark forest */
+  --color-surface-tertiary: #2a3f2a; /* medium forest */
+  --color-surface-quaternary: #3a4f3a; /* light forest */
+  --color-card: #1a2e1a; /* dark forest */
+  --color-card-secondary: #2a3f2a; /* medium forest */
+  --color-card-tertiary: #3a4f3a; /* light forest */
+  --color-border: #4a5f4a; /* forest border */
+  --color-border-light: #5a6f5a; /* lighter forest border */
+  --color-text-primary: #e8f5e8; /* light green text */
+  --color-text-secondary: #c8e5c8; /* medium green text */
+  --color-text-tertiary: #a8d5a8; /* muted green text */
+  --color-text-quaternary: #88c588; /* very light green text */
+  --color-text-muted: #a8d5a8; /* muted green text */
+  
+  /* Primary colors - forest green */
+  --color-primary: #22c55e; /* vibrant green for primary actions */
+  --color-primary-hover: #16a34a; /* darker green for primary hover */
+  
+  /* Accent colors - golden oak */
+  --color-accent: #d97706; /* golden oak for tabs and text */
+  --color-accent-hover: #b45309; /* darker golden oak */
+  --color-accent-text: #ffffff; /* white text on golden oak */
+  
+  /* Button colors - forest green */
+  --color-button: #16a34a; /* deep forest green for buttons */
+  --color-button-hover: #15803d; /* darker forest green */
+  --color-button-text: #ffffff; /* white text on forest green */
+  
+  /* Status colors */
+  --color-success: #22c55e; /* vibrant green */
+  --color-success-text: #ffffff; /* white text on success */
+  --color-success-hover: #16a34a; /* darker green for hover */
+  --color-warning: #fbbf24; /* golden amber for warnings */
+  --color-warning-text: #000000; /* black text on golden amber */
+  --color-error: #ef4444; /* bright red for errors */
+  --color-error-text: #ffffff; /* white text on error */
+  --color-error-hover: #dc2626; /* darker red for hover */
+  
+  /* Background variants for status colors */
+  --color-success-bg: #064e3b; /* dark green background */
+  --color-warning-bg: #451a03; /* dark amber background */
+  --color-error-bg: #450a0a; /* dark red background */
+  --color-accent-bg: #451a03; /* dark amber background */
+  
+  /* Border variants for status colors */
+  --color-success-border: #22c55e; /* green border */
+  --color-warning-border: #fbbf24; /* golden border */
+  --color-error-border: #ef4444; /* red border for errors */
+  --color-accent-border: #fbbf24; /* golden border */
+  
+  /* Legacy aliases for backward compatibility */
+  --color-danger: var(--color-error); /* alias for error */
+  --color-danger-text: var(--color-error-text); /* alias for error text */
+  --color-danger-hover: var(--color-error-hover); /* alias for error hover */
+  --color-danger-bg: var(--color-error-bg); /* alias for error background */
+  --color-danger-border: var(--color-error-border); /* alias for error border */
+  
+  /* Special purpose colors */
+  --color-overlay: rgba(13, 27, 13, 0.7); /* forest overlay */
+  --color-error-text-light: #fca5a5; /* light red text for error details */
+  --color-dice-default: #22c55e; /* forest green for default dice color */
+}
+
+/* Dungeon Theme - Dark and mysterious */
+.theme-dungeon {
+  /* Theme colors - DUNGEON STYLING */
+  --color-surface: #0a0a0a; /* deep black */
+  --color-surface-secondary: #1a1a1a; /* dark stone */
+  --color-surface-tertiary: #2a2a2a; /* medium stone */
+  --color-surface-quaternary: #3a3a3a; /* light stone */
+  --color-card: #1a1a1a; /* dark stone */
+  --color-card-secondary: #2a2a2a; /* medium stone */
+  --color-card-tertiary: #3a3a3a; /* light stone */
+  --color-border: #4a4a4a; /* stone border */
+  --color-border-light: #5a5a5a; /* lighter stone border */
+  --color-text-primary: #f3f4f6; /* light gray text */
+  --color-text-secondary: #d1d5db; /* medium gray text */
+  --color-text-tertiary: #9ca3af; /* muted gray text */
+  --color-text-quaternary: #6b7280; /* very light gray text */
+  --color-text-muted: #9ca3af; /* muted gray text */
+  
+  /* Primary colors - torch orange */
+  --color-primary: #f97316; /* torch orange for primary actions */
+  --color-primary-hover: #ea580c; /* darker torch orange for primary hover */
+  
+  /* Accent colors - ancient gold */
+  --color-accent: #fbbf24; /* ancient gold for tabs and text */
+  --color-accent-hover: #f59e0b; /* darker ancient gold */
+  --color-accent-text: #000000; /* black text on ancient gold */
+  
+  /* Button colors - torch orange */
+  --color-button: #ea580c; /* deep torch orange for buttons */
+  --color-button-hover: #c2410c; /* darker torch orange */
+  --color-button-text: #ffffff; /* white text on torch orange */
+  
+  /* Status colors */
+  --color-success: #10b981; /* emerald */
+  --color-success-text: #ffffff; /* white text on success */
+  --color-success-hover: #059669; /* darker emerald for hover */
+  --color-warning: #fbbf24; /* ancient gold for warnings */
+  --color-warning-text: #000000; /* black text on ancient gold */
+  --color-error: #ef4444; /* bright red for errors */
+  --color-error-text: #ffffff; /* white text on error */
+  --color-error-hover: #dc2626; /* darker red for hover */
+  
+  /* Background variants for status colors */
+  --color-success-bg: #064e3b; /* dark emerald background */
+  --color-warning-bg: #451a03; /* dark amber background */
+  --color-error-bg: #450a0a; /* dark red background */
+  --color-accent-bg: #451a03; /* dark amber background */
+  
+  /* Border variants for status colors */
+  --color-success-border: #10b981; /* emerald border */
+  --color-warning-border: #fbbf24; /* ancient gold border */
+  --color-error-border: #ef4444; /* red border for errors */
+  --color-accent-border: #fbbf24; /* ancient gold border */
+  
+  /* Legacy aliases for backward compatibility */
+  --color-danger: var(--color-error); /* alias for error */
+  --color-danger-text: var(--color-error-text); /* alias for error text */
+  --color-danger-hover: var(--color-error-hover); /* alias for error hover */
+  --color-danger-bg: var(--color-error-bg); /* alias for error background */
+  --color-danger-border: var(--color-error-border); /* alias for error border */
+  
+  /* Special purpose colors */
+  --color-overlay: rgba(0, 0, 0, 0.8); /* darker dungeon overlay */
+  --color-error-text-light: #fca5a5; /* light red text for error details */
+  --color-dice-default: #f97316; /* torch orange for default dice color */
+}
+
+/* Nobility Theme - Purple and slate */
+.theme-nobility {
+  /* Theme colors - NOBILITY STYLING */
+  --color-surface: #0f0f23; /* deep purple-black */
+  --color-surface-secondary: #1a1a2e; /* dark purple */
+  --color-surface-tertiary: #2a2a3e; /* medium purple */
+  --color-surface-quaternary: #3a3a4e; /* light purple */
+  --color-card: #1a1a2e; /* dark purple */
+  --color-card-secondary: #2a2a3e; /* medium purple */
+  --color-card-tertiary: #3a3a4e; /* light purple */
+  --color-border: #4a4a5e; /* purple border */
+  --color-border-light: #5a5a6e; /* lighter purple border */
+  --color-text-primary: #f3f4f6; /* light gray text */
+  --color-text-secondary: #d1d5db; /* medium gray text */
+  --color-text-tertiary: #9ca3af; /* muted gray text */
+  --color-text-quaternary: #6b7280; /* very light gray text */
+  --color-text-muted: #9ca3af; /* muted gray text */
+  
+  /* Primary colors - royal purple */
+  --color-primary: #8b5cf6; /* royal purple for primary actions */
+  --color-primary-hover: #7c3aed; /* darker royal purple for primary hover */
+  
+  /* Accent colors - silver */
+  --color-accent: #94a3b8; /* silver for tabs and text */
+  --color-accent-hover: #64748b; /* darker silver */
+  --color-accent-text: #ffffff; /* white text on silver */
+  
+  /* Button colors - royal purple */
+  --color-button: #7c3aed; /* deep royal purple for buttons */
+  --color-button-hover: #6d28d9; /* darker royal purple */
+  --color-button-text: #ffffff; /* white text on royal purple */
+  
+  /* Status colors */
+  --color-success: #10b981; /* emerald */
+  --color-success-text: #ffffff; /* white text on success */
+  --color-success-hover: #059669; /* darker emerald for hover */
+  --color-warning: #fbbf24; /* gold for warnings */
+  --color-warning-text: #000000; /* black text on gold */
+  --color-error: #ef4444; /* bright red for errors */
+  --color-error-text: #ffffff; /* white text on error */
+  --color-error-hover: #dc2626; /* darker red for hover */
+  
+  /* Background variants for status colors */
+  --color-success-bg: #064e3b; /* dark emerald background */
+  --color-warning-bg: #451a03; /* dark amber background */
+  --color-error-bg: #450a0a; /* dark red background */
+  --color-accent-bg: #334155; /* dark slate background */
+  
+  /* Border variants for status colors */
+  --color-success-border: #10b981; /* emerald border */
+  --color-warning-border: #fbbf24; /* gold border */
+  --color-error-border: #ef4444; /* red border for errors */
+  --color-accent-border: #94a3b8; /* silver border */
+  
+  /* Legacy aliases for backward compatibility */
+  --color-danger: var(--color-error); /* alias for error */
+  --color-danger-text: var(--color-error-text); /* alias for error text */
+  --color-danger-hover: var(--color-error-hover); /* alias for error hover */
+  --color-danger-bg: var(--color-error-bg); /* alias for error background */
+  --color-danger-border: var(--color-error-border); /* alias for error border */
+  
+  /* Special purpose colors */
+  --color-overlay: rgba(15, 15, 35, 0.7); /* purple overlay */
+  --color-error-text-light: #fca5a5; /* light red text for error details */
+  --color-dice-default: #8b5cf6; /* royal purple for default dice color */
+}
