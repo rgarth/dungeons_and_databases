@@ -17,6 +17,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Class not found' }, { status: 404 });
     }
 
+    // For weapon proficiencies, we need to return the weapons object directly
+    if (!includeArmor) {
+      return NextResponse.json(proficiencies.weapons);
+    }
+
     return NextResponse.json(proficiencies);
   } catch (error) {
     console.error('Error fetching class proficiencies:', error);

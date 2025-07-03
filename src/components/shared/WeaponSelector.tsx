@@ -224,21 +224,28 @@ export function WeaponSelector({
   });
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col">
-        <div className="flex justify-between items-center p-6 border-b border-slate-700">
-          <h2 className="text-xl font-semibold text-white">{title}</h2>
+    <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{
+      backgroundColor: 'var(--color-overlay)'
+    }}>
+      <div className="rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col border shadow-lg" style={{
+        backgroundColor: 'var(--color-card)',
+        borderColor: 'var(--color-border)',
+        border: '1px solid var(--color-border)'
+      }}>
+        <div className="flex justify-between items-center p-4 md:p-6 border-b" style={{ borderColor: 'var(--color-border)' }}>
+          <h2 className="text-lg md:text-xl font-semibold" style={{ color: 'var(--color-text-primary)' }}>{title}</h2>
           <button
             onClick={handleClose}
-            className="text-slate-400 hover:text-white transition-colors"
+            className="transition-colors"
+            style={{ color: 'var(--color-text-tertiary)' }}
           >
-            <X size={24} />
+            <X size={20} className="md:w-6 md:h-6" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-hidden flex">
+        <div className="flex-1 overflow-hidden flex flex-col md:flex-row">
           {/* Left panel - Categories and Search */}
-          <div className="w-1/3 border-r border-slate-700 p-4">
+          <div className="w-full md:w-1/3 border-b md:border-b-0 md:border-r p-4" style={{ borderColor: 'var(--color-border)' }}>
             {/* Search */}
             <div className="mb-4">
               <input
@@ -246,19 +253,32 @@ export function WeaponSelector({
                 placeholder="Search weapons..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 rounded-md focus:outline-none"
+                style={{
+                  backgroundColor: 'var(--color-surface-secondary)',
+                  borderColor: 'var(--color-border)',
+                  color: 'var(--color-text-primary)',
+                  border: '1px solid var(--color-border)',
+                  '--tw-placeholder-color': 'var(--color-text-tertiary)'
+                } as React.CSSProperties}
               />
             </div>
 
             {/* Categories */}
             <div className="mb-4">
-              <h3 className="text-sm font-medium text-slate-300 mb-2">Categories</h3>
+              <h3 className="text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>Categories</h3>
               <div className="space-y-1">
                 <button
                   onClick={() => setSelectedCategory('All')}
                   className={`w-full text-left px-2 py-1 rounded text-sm transition-colors ${
-                    selectedCategory === 'All' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-700'
+                    selectedCategory === 'All' ? '' : ''
                   }`}
+                  style={{
+                    backgroundColor: selectedCategory === 'All' ? 'var(--color-accent)' : 'transparent',
+                    color: selectedCategory === 'All' ? 'var(--color-accent-text)' : 'var(--color-text-tertiary)',
+                    '--tw-hover-bg': 'var(--color-surface-tertiary)',
+                    '--tw-hover-color': 'var(--color-text-primary)'
+                  } as React.CSSProperties}
                 >
                   All Weapons
                 </button>
@@ -267,8 +287,14 @@ export function WeaponSelector({
                     key={category}
                     onClick={() => setSelectedCategory(category)}
                     className={`w-full text-left px-2 py-1 rounded text-sm transition-colors ${
-                      selectedCategory === category ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-700'
+                      selectedCategory === category ? '' : ''
                     }`}
+                    style={{
+                      backgroundColor: selectedCategory === category ? 'var(--color-accent)' : 'transparent',
+                      color: selectedCategory === category ? 'var(--color-accent-text)' : 'var(--color-text-tertiary)',
+                      '--tw-hover-bg': 'var(--color-surface-tertiary)',
+                      '--tw-hover-color': 'var(--color-text-primary)'
+                    } as React.CSSProperties}
                   >
                     {category} ({weaponCategories[category].length})
                   </button>
@@ -279,19 +305,24 @@ export function WeaponSelector({
             {/* Suggestions */}
             {showSuggestions && weaponSuggestions.length > 0 && (
               <div className="mb-4">
-                <h3 className="text-sm font-medium text-slate-300 mb-2">Suggestions for {characterClass}</h3>
+                <h3 className="text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>Suggestions for {characterClass}</h3>
                 <div className="space-y-2">
                   {weaponSuggestions.map((suggestion, index) => (
-                    <div key={index} className="text-sm text-slate-400">
-                      <span className="font-medium">{suggestion.weaponName}</span>
-                      {suggestion.quantity > 1 && <span className="text-slate-500"> (x{suggestion.quantity})</span>}
-                      {suggestion.reason && <span className="text-slate-500"> - {suggestion.reason}</span>}
+                    <div key={index} className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
+                      <span className="font-medium" style={{ color: 'var(--color-text-secondary)' }}>{suggestion.weaponName}</span>
+                      {suggestion.quantity > 1 && <span style={{ color: 'var(--color-text-quaternary)' }}> (x{suggestion.quantity})</span>}
+                      {suggestion.reason && <span style={{ color: 'var(--color-text-quaternary)' }}> - {suggestion.reason}</span>}
                     </div>
                   ))}
                 </div>
                 <button
                   onClick={handleApplySuggestion}
-                  className="px-3 py-1 text-sm bg-amber-600 hover:bg-amber-700 text-white rounded-md transition-colors mt-2"
+                  className="px-3 py-1 text-sm rounded-md transition-colors mt-2"
+                  style={{
+                    backgroundColor: 'var(--color-accent)',
+                    color: 'var(--color-accent-text)',
+                    '--tw-hover-bg': 'var(--color-accent-hover)'
+                  } as React.CSSProperties}
                 >
                   Apply Suggestions
                 </button>
@@ -307,35 +338,42 @@ export function WeaponSelector({
                 const quantity = selected?.quantity || 0;
                 
                 return (
-                  <div key={`${weapon.name}-${weapon.type}-${weapon.category}-${index}`} className="flex items-center justify-between p-3 bg-slate-700 rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2">
-                        <h4 className="font-medium text-white">{weapon.name}</h4>
-                        <span className="text-xs bg-slate-600 text-slate-300 px-2 py-1 rounded">
+                  <div key={`${weapon.name}-${weapon.type}-${weapon.category}-${index}`} className="flex items-center justify-between p-3 rounded-lg" style={{
+                    backgroundColor: 'var(--color-surface-secondary)'
+                  }}>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-2 flex-wrap">
+                        <h4 className="font-medium text-sm md:text-base" style={{ color: 'var(--color-text-primary)' }}>{weapon.name}</h4>
+                        <span className="text-xs px-2 py-1 rounded" style={{
+                          backgroundColor: 'var(--color-surface-tertiary)',
+                          color: 'var(--color-text-secondary)'
+                        }}>
                           {weapon.type} {weapon.category}
                         </span>
                       </div>
-                      <div className="text-sm text-slate-400 mt-1">
+                      <div className="text-xs md:text-sm mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
                         {weapon.damage} {weapon.damageType} • {weapon.cost} • {weapon.weight} lb
                       </div>
                       {weapon.properties.length > 0 && (
-                        <div className="text-xs text-slate-500 mt-1">
+                        <div className="text-xs mt-1" style={{ color: 'var(--color-text-quaternary)' }}>
                           {weapon.properties.join(', ')}
                         </div>
                       )}
                     </div>
                     
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 ml-2">
                       <button
                         onClick={() => handleWeaponQuantityChange(weapon, Math.max(0, quantity - 1))}
-                        className="p-1 text-slate-400 hover:text-white transition-colors"
+                        className="p-1 transition-colors"
+                        style={{ color: 'var(--color-text-tertiary)' }}
                       >
                         <Minus size={16} />
                       </button>
-                      <span className="text-white w-8 text-center">{quantity}</span>
+                      <span className="w-6 md:w-8 text-center text-sm" style={{ color: 'var(--color-text-primary)' }}>{quantity}</span>
                       <button
                         onClick={() => handleWeaponQuantityChange(weapon, quantity + 1)}
-                        className="p-1 text-slate-400 hover:text-white transition-colors"
+                        className="p-1 transition-colors"
+                        style={{ color: 'var(--color-text-tertiary)' }}
                       >
                         <Plus size={16} />
                       </button>
@@ -347,16 +385,22 @@ export function WeaponSelector({
           </div>
         </div>
 
-        <div className="p-6 border-t border-slate-700 flex justify-end space-x-4">
+        <div className="p-4 md:p-6 border-t flex justify-end space-x-4" style={{ borderColor: 'var(--color-border)' }}>
           <button
             onClick={handleClose}
-            className="px-4 py-2 text-slate-400 hover:text-white transition-colors"
+            className="px-3 md:px-4 py-2 text-sm md:text-base transition-colors"
+            style={{ color: 'var(--color-text-secondary)' }}
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+            className="px-3 md:px-4 py-2 rounded transition-colors text-sm md:text-base"
+            style={{
+              backgroundColor: 'var(--color-primary)',
+              color: 'var(--color-text-primary)',
+              '--tw-hover-bg': 'var(--color-primary-hover)'
+            } as React.CSSProperties}
           >
             Confirm
           </button>

@@ -65,12 +65,13 @@ export function SubraceTraitsCollapsible({
     <div className="mb-4">
       {/* Subrace selector with info icon */}
       <div className="flex items-center gap-2 mb-2">
-        <label className="block text-sm font-medium text-slate-300">Subrace</label>
+        <label className="block text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Subrace</label>
         {subraceData && (
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-slate-400 hover:text-slate-200 transition-colors"
+            className="transition-colors"
+            style={{ color: 'var(--color-text-tertiary)' }}
             title="View subrace details"
           >
             <Info className="h-4 w-4" />
@@ -82,8 +83,15 @@ export function SubraceTraitsCollapsible({
       <select
         value={subrace || ''}
         onChange={(e) => onSubraceChange?.(e.target.value || null)}
-        className="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 text-base text-white focus:border-purple-500 focus:outline-none appearance-none"
-        style={{ WebkitAppearance: 'none', MozAppearance: 'none' }}
+        className="w-full rounded px-3 py-2 text-base focus:outline-none appearance-none"
+        style={{ 
+          WebkitAppearance: 'none', 
+          MozAppearance: 'none',
+          backgroundColor: 'var(--color-surface-secondary)',
+          borderColor: 'var(--color-border)',
+          color: 'var(--color-text-primary)',
+          border: '1px solid var(--color-border)'
+        }}
       >
         <option value="" disabled>Select a subrace</option>
         {subraces?.map((s) => (
@@ -93,53 +101,56 @@ export function SubraceTraitsCollapsible({
 
       {/* Collapsible traits section */}
       {isExpanded && (
-        <div className="mb-3 p-3 bg-slate-800 border border-slate-600 rounded-lg">
+        <div className="mb-3 p-3 rounded-lg border" style={{ 
+          backgroundColor: 'var(--color-card-secondary)', 
+          borderColor: 'var(--color-border)' 
+        }}>
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-medium text-white">{subrace} Traits</h4>
+            <h4 className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>{subrace} Traits</h4>
             <button
               type="button"
               onClick={() => setIsExpanded(false)}
-              className="text-slate-400 hover:text-slate-200"
+              style={{ color: 'var(--color-text-tertiary)' }}
             >
               <ChevronUp className="h-4 w-4" />
             </button>
           </div>
 
           {loading ? (
-            <div className="text-sm text-slate-400">Loading traits...</div>
+            <div className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>Loading traits...</div>
           ) : (
             <div className="space-y-3">
               {/* Subrace description */}
               <div>
-                <p className="text-sm text-slate-300">{subraceData?.description}</p>
+                <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{subraceData?.description}</p>
               </div>
 
               {/* Ability score increase */}
               {subraceData?.abilityScoreIncrease && (
                 <div>
-                  <h5 className="text-xs font-medium text-slate-400 mb-1">Ability Score Increase</h5>
-                  <p className="text-sm text-slate-300">{subraceData.abilityScoreIncrease}</p>
+                  <h5 className="text-xs font-medium mb-1" style={{ color: 'var(--color-text-tertiary)' }}>Ability Score Increase</h5>
+                  <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{subraceData.abilityScoreIncrease}</p>
                 </div>
               )}
 
               {/* Languages */}
               {subraceData?.languages && subraceData.languages.length > 0 && (
                 <div>
-                  <h5 className="text-xs font-medium text-slate-400 mb-1">Languages</h5>
-                  <p className="text-sm text-slate-300">{subraceData.languages.join(', ')}</p>
+                  <h5 className="text-xs font-medium mb-1" style={{ color: 'var(--color-text-tertiary)' }}>Languages</h5>
+                  <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{subraceData.languages.join(', ')}</p>
                 </div>
               )}
 
               {/* Traits */}
               {traits.length > 0 && (
                 <div>
-                  <h5 className="text-xs font-medium text-slate-400 mb-1">Traits</h5>
+                  <h5 className="text-xs font-medium mb-1" style={{ color: 'var(--color-text-tertiary)' }}>Traits</h5>
                   <div className="space-y-2">
                     {traits.map((trait, index) => (
                       <div key={index} className="text-sm">
-                        <div className="font-medium text-slate-300">{trait.name}</div>
-                        <div className="text-slate-400 text-xs mb-1">Type: {trait.type}</div>
-                        <div className="text-slate-300 text-xs">{trait.description}</div>
+                        <div className="font-medium" style={{ color: 'var(--color-text-secondary)' }}>{trait.name}</div>
+                        <div className="text-xs mb-1" style={{ color: 'var(--color-text-tertiary)' }}>Type: {trait.type}</div>
+                        <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{trait.description}</div>
                       </div>
                     ))}
                   </div>
