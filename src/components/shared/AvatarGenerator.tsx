@@ -110,17 +110,21 @@ export function AvatarGenerator({
 
       {/* Generation Status */}
       {generating && (
-        <div className="p-3 bg-[var(--color-accent-bg)] border border-[var(--color-accent-border)] rounded-lg">
-          <p className="text-[var(--color-accent)] text-sm">
+        <div className="p-3 rounded-lg border" style={{
+          backgroundColor: 'var(--color-surface-secondary)',
+          borderColor: 'var(--color-accent)',
+          border: '1px solid var(--color-accent)'
+        }}>
+          <p className="text-sm" style={{ color: 'var(--color-accent)' }}>
             🎨 Creating your personalized avatar using AI...
           </p>
-          <p className="text-[var(--color-accent-text)] text-xs mt-1">
+          <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>
             Using Replicate Realistic Vision v5.1 for high-quality D&D character generation.
           </p>
-          <p className="text-[var(--color-success)] text-xs mt-1">
+          <p className="text-xs mt-1" style={{ color: 'var(--color-success)' }}>
             ✅ Anti-trope protection: Realistic armor, practical clothing, respectful character design
           </p>
-          <p className="text-[var(--color-accent-text)] text-xs">
+          <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
             Character: {characterData.race} {characterData.class} ({characterData.gender || 'Unspecified'})
           </p>
         </div>
@@ -128,19 +132,23 @@ export function AvatarGenerator({
 
       {/* Success Message */}
       {result && result.success && (
-        <div className="p-3 bg-[var(--color-success-bg)] border border-[var(--color-success-border)] rounded-lg">
-          <p className="text-[var(--color-success)] text-sm">
+        <div className="p-3 rounded-lg border" style={{
+          backgroundColor: 'var(--color-surface-secondary)',
+          borderColor: 'var(--color-success)',
+          border: '1px solid var(--color-success)'
+        }}>
+          <p className="text-sm" style={{ color: 'var(--color-success)' }}>
             ✅ Avatar generated successfully!
           </p>
           {result.service && (
-            <p className="text-[var(--color-success-text)] text-xs mt-1">
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>
               Generated using: {result.service}
             </p>
           )}
-          <p className="text-[var(--color-success-text)] text-xs">
+          <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
             🛡️ Respectful fantasy design with practical armor and realistic proportions
           </p>
-          <p className="text-[var(--color-success-text)] text-xs">
+          <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
             ✂️ Avatar cropped from full body image for perfect consistency
           </p>
         </div>
@@ -148,17 +156,21 @@ export function AvatarGenerator({
 
       {/* Error Display */}
       {result && !result.success && (
-        <div className="p-3 bg-[var(--color-danger-bg)] border border-[var(--color-danger-border)] rounded-lg">
-          <p className="text-[var(--color-danger)] text-sm font-medium">Avatar Generation Failed</p>
-          <p className="text-[var(--color-danger-text)] text-xs mt-1">{result.error}</p>
-          <p className="text-[var(--color-danger-text)] text-xs mt-2">
+        <div className="p-3 rounded-lg border" style={{
+          backgroundColor: 'var(--color-surface-secondary)',
+          borderColor: 'var(--color-error)',
+          border: '1px solid var(--color-error)'
+        }}>
+          <p className="text-sm font-medium" style={{ color: 'var(--color-error)' }}>Avatar Generation Failed</p>
+          <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>{result.error}</p>
+          <p className="text-xs mt-2" style={{ color: 'var(--color-text-secondary)' }}>
             💡 Try again - sometimes the AI service is busy. Each generation is unique!
           </p>
         </div>
       )}
 
       {/* Usage Note */}
-      <div className="text-xs text-[var(--color-text-muted)]">
+      <div className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
         <p>💡 Each generation is unique and based on your character&apos;s traits</p>
         <p>🎮 Uses Replicate Realistic Vision v5.1 for high-quality D&D character generation</p>
         <p>✂️ Avatar automatically cropped from full body image for perfect consistency</p>

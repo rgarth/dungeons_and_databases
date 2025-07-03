@@ -887,7 +887,11 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   <h4 className="text-sm font-medium text-[var(--color-text-primary)] mb-2">Skill Proficiencies Granted:</h4>
                   <div className="flex flex-wrap gap-2">
                     {backgroundData.skillProficiencies.map((skill, index) => (
-                      <span key={index} className="bg-[var(--color-success-bg)] text-[var(--color-success)] px-2 py-1 rounded text-xs font-medium">
+                      <span key={index} className="px-2 py-1 rounded text-xs font-medium" style={{
+                        backgroundColor: 'var(--color-surface-secondary)',
+                        color: 'var(--color-success)',
+                        border: '1px solid var(--color-success)'
+                      }}>
                         {skill}
                       </span>
                     ))}
@@ -1202,14 +1206,18 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           
           {/* Language Requirements Tooltip */}
           {languageRequirements && languageRequirements.length > 0 && languageRequirements.some(req => req.remaining > 0) && (
-            <div className="mb-4 p-3 bg-[var(--color-warning-bg)] border border-[var(--color-warning-border)] rounded-lg">
-              <div className="flex items-center gap-2 text-[var(--color-warning)]">
+            <div className="mb-4 p-3 rounded-lg border" style={{
+              backgroundColor: 'var(--color-surface-secondary)',
+              borderColor: 'var(--color-warning)',
+              border: '1px solid var(--color-warning)'
+            }}>
+              <div className="flex items-center gap-2" style={{ color: 'var(--color-warning)' }}>
                 <AlertCircle className="h-4 w-4" />
                 <span className="text-sm font-medium">
                   Language Requirements
                 </span>
               </div>
-              <div className="text-[var(--color-warning-text)] text-sm mt-1 space-y-1">
+              <div className="text-sm mt-1 space-y-1" style={{ color: 'var(--color-text-secondary)' }}>
                 {languageRequirements.filter(req => req.remaining > 0).map((req, index) => (
                   <p key={index}>
                     <strong>{req.source}</strong>: {req.description}. 
@@ -1217,7 +1225,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   </p>
                 ))}
               </div>
-              <p className="text-[var(--color-warning)] text-xs mt-2">
+              <p className="text-xs mt-2" style={{ color: 'var(--color-warning)' }}>
                 You need to select {languageRequirements.reduce((total, req) => total + req.remaining, 0)} more language{languageRequirements.reduce((total, req) => total + req.remaining, 0) !== 1 ? 's' : ''} below.
               </p>
             </div>
@@ -1225,17 +1233,21 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           
           {/* Language Requirements Met */}
           {languageRequirements && languageRequirements.length > 0 && languageRequirements.every(req => req.remaining === 0) && (
-            <div className="mb-4 p-3 bg-[var(--color-success-bg)] border border-[var(--color-success-border)] rounded-lg">
-              <div className="flex items-center gap-2 text-[var(--color-success)]">
+            <div className="mb-4 p-3 rounded-lg border" style={{
+              backgroundColor: 'var(--color-surface-secondary)',
+              borderColor: 'var(--color-success)',
+              border: '1px solid var(--color-success)'
+            }}>
+              <div className="flex items-center gap-2" style={{ color: 'var(--color-success)' }}>
                 <Info className="h-4 w-4" />
                 <span className="text-sm font-medium">
                   All Language Requirements Met
                 </span>
               </div>
-              <p className="text-[var(--color-success-text)] text-sm mt-1">
+              <p className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
                 All language requirements have been satisfied:
               </p>
-              <div className="text-[var(--color-success-text)] text-sm mt-1 space-y-1">
+              <div className="text-sm mt-1 space-y-1" style={{ color: 'var(--color-text-secondary)' }}>
                 {languageRequirements.map((req, index) => (
                   <p key={index}>
                     <strong>{req.source}</strong>: {req.description} ✓
@@ -1639,195 +1651,6 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 <div className="text-xs text-[var(--color-text-muted)] text-center mt-3">
                   <p>🤖 AI avatars by <span className="text-[var(--color-text-secondary)]">Replicate Flux.schnell</span></p>
                 </div>
-              </div>
-            </div>
-
-            {/* Languages Section - Compact Design */}
-            <div className="bg-[var(--color-card)] rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
-                <Languages className="h-5 w-5 text-[var(--color-accent)]" />
-                Languages Known
-              </h3>
-              
-              {/* Language Requirements Tooltip */}
-              {languageRequirements && languageRequirements.length > 0 && languageRequirements.some(req => req.remaining > 0) && (
-                <div className="mb-4 p-3 bg-[var(--color-warning-bg)] border border-[var(--color-warning-border)] rounded-lg">
-                  <div className="flex items-center gap-2 text-[var(--color-warning)]">
-                    <AlertCircle className="h-4 w-4" />
-                    <span className="text-sm font-medium">
-                      Language Requirements
-                    </span>
-                  </div>
-                  <div className="text-[var(--color-warning-text)] text-sm mt-1 space-y-1">
-                    {languageRequirements.filter(req => req.remaining > 0).map((req, index) => (
-                      <p key={index}>
-                        <strong>{req.source}</strong>: {req.description}. 
-                        You have selected {req.current} of {req.required}.
-                      </p>
-                    ))}
-                  </div>
-                  <p className="text-[var(--color-warning)] text-xs mt-2">
-                    You need to select {languageRequirements.reduce((total, req) => total + req.remaining, 0)} more language{languageRequirements.reduce((total, req) => total + req.remaining, 0) !== 1 ? 's' : ''} below.
-                  </p>
-                </div>
-              )}
-              
-              {/* Language Requirements Met */}
-              {languageRequirements && languageRequirements.length > 0 && languageRequirements.every(req => req.remaining === 0) && (
-                <div className="mb-4 p-3 bg-[var(--color-success-bg)] border border-[var(--color-success-border)] rounded-lg">
-                  <div className="flex items-center gap-2 text-[var(--color-success)]">
-                    <Info className="h-4 w-4" />
-                    <span className="text-sm font-medium">
-                      All Language Requirements Met
-                    </span>
-                  </div>
-                  <p className="text-[var(--color-success-text)] text-sm mt-1">
-                    All language requirements have been satisfied:
-                  </p>
-                  <div className="text-[var(--color-success-text)] text-sm mt-1 space-y-1">
-                    {languageRequirements.map((req, index) => (
-                      <p key={index}>
-                        <strong>{req.source}</strong>: {req.description} ✓
-                      </p>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {/* Add Language Controls */}
-              <div className="flex gap-2 mb-4">
-                <select
-                  value=""
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      // Determine which requirement this language should satisfy
-                      const languageRequirements = getLanguageRequirements();
-                      const unmetRequirements = languageRequirements.filter(req => req.remaining > 0);
-                      
-                      if (unmetRequirements.length > 0) {
-                        // If there are unmet requirements, assign to the first one
-                        const source = unmetRequirements[0].type as 'background' | 'racial';
-                        addLanguageWithSource(e.target.value, source);
-                      } else {
-                        // If all requirements are met, assign as 'other'
-                        addLanguageWithSource(e.target.value, 'other');
-                      }
-                      e.target.value = ""; // Reset selection
-                    }
-                  }}
-                  className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
-                  disabled={isLoadingLanguages}
-                >
-                  <option value="">{isLoadingLanguages ? "Loading languages..." : "Add a language..."}</option>
-                  {languages
-                    .filter(lang => {
-                      const learnedLanguages = character.languages || [];
-                      return !learnedLanguages.includes(lang.name);
-                    })
-                    .sort((a, b) => {
-                      // Sort by category, then by name
-                      if (a.category !== b.category) {
-                        const order = ['Standard', 'Exotic', 'Secret'];
-                        return order.indexOf(a.category) - order.indexOf(b.category);
-                      }
-                      return a.name.localeCompare(b.name);
-                    })
-                    .map(lang => (
-                      <option key={lang.name} value={lang.name}>
-                        {lang.name} ({lang.category})
-                      </option>
-                    ))}
-                </select>
-              </div>
-
-              {/* All Known Languages List */}
-              <div className="space-y-2">
-                <div className="text-sm text-[var(--color-text-secondary)] mb-2">Known languages:</div>
-                <div className="flex flex-wrap gap-2">
-                  {/* Racial Languages */}
-                  {getRacialLanguages(character.race).map(lang => {
-                    const styling = getLanguageStyling(lang, true, false, languages);
-                    const language = languages.find(l => l.name === lang);
-                    return (
-                      <span 
-                        key={`racial-${lang}`} 
-                        className={`${styling.bg} ${styling.text} px-3 py-1 rounded-full text-sm border ${styling.border} flex items-center gap-2 group relative`}
-                        title={language?.description ? `${lang}: ${language.description}` : lang}
-                      >
-                      {lang}
-                      <span className="text-xs opacity-75">(Racial)</span>
-                        {language?.description && (
-                          <Info className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
-                        )}
-                    </span>
-                    );
-                  })}
-                  
-                  {/* Class-Granted Languages */}
-                  {getClassLanguages(character.class).map(lang => {
-                    const styling = getLanguageStyling(lang, false, true, languages);
-                    const language = languages.find(l => l.name === lang);
-                    return (
-                      <span 
-                        key={`class-${lang}`} 
-                        className={`${styling.bg} ${styling.text} px-3 py-1 rounded-full text-sm border ${styling.border} flex items-center gap-2 group relative`}
-                        title={language?.description ? `${lang}: ${language.description}` : lang}
-                      >
-                        {lang}
-                        <span className="text-xs opacity-75">(Class)</span>
-                        {language?.description && (
-                          <Info className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
-                        )}
-                      </span>
-                    );
-                  })}
-                  
-                  {/* Learned Languages - Only show languages not already granted by race or class */}
-                  {(character.languages || []).filter(lang => {
-                    const racialLanguages = getRacialLanguages(character.race);
-                    const classLanguages = getClassLanguages(character.class);
-                    return !racialLanguages.includes(lang) && !classLanguages.includes(lang);
-                  }).map(lang => {
-                    const styling = getLanguageStyling(lang, false, false, languages);
-                    const language = languages.find(l => l.name === lang);
-                    const languageSources = character.languageSources || {};
-                    const source = languageSources[lang];
-                    const sourceLabels = {
-                      'background': 'Background',
-                      'racial': 'Racial',
-                      'class': 'Class',
-                      'feat': 'Feat',
-                      'other': 'Other'
-                    };
-                    return (
-                      <span 
-                        key={`learned-${lang}`} 
-                        className={`${styling.bg} ${styling.text} px-3 py-1 rounded-full text-sm border ${styling.border} flex items-center gap-2 group relative`}
-                        title={language?.description ? `${lang}: ${language.description}` : lang}
-                      >
-                      {lang}
-                      <span className="text-xs opacity-75">({sourceLabels[source] || 'Other'})</span>
-                        {language?.description && (
-                          <Info className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
-                        )}
-                      <button
-                        onClick={() => {
-                          removeLanguageWithSource(lang);
-                        }}
-                          className={`${styling.hover} ml-1 text-xs font-bold transition-colors`}
-                        title="Remove language"
-                      >
-                        ×
-                      </button>
-                    </span>
-                    );
-                  })}
-                </div>
-                
-                {/* Empty state */}
-                {getAutomaticLanguages(character.race, character.class).length === 0 && (!character.languages || character.languages.length === 0) && (
-                  <div className="text-[var(--color-text-muted)] text-sm italic">No languages known</div>
-                )}
               </div>
             </div>
           </div>

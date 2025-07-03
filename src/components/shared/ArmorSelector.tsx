@@ -157,38 +157,49 @@ export function ArmorSelector({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col">
-        <div className="flex justify-between items-center p-6 border-b border-slate-700">
-          <h2 className="text-2xl font-bold text-white">Select Armor</h2>
+    <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{
+      backgroundColor: 'var(--color-overlay)'
+    }}>
+      <div className="rounded-lg w-full max-w-4xl max-h-[90vh] flex flex-col border shadow-lg" style={{
+        backgroundColor: 'var(--color-card)',
+        borderColor: 'var(--color-border)',
+        border: '1px solid var(--color-border)'
+      }}>
+        <div className="flex justify-between items-center p-4 md:p-6 border-b" style={{ borderColor: 'var(--color-border)' }}>
+          <h2 className="text-lg md:text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>Select Armor</h2>
           <button
             onClick={onClose || onCancel}
-            className="text-slate-400 hover:text-white transition-colors"
+            className="transition-colors"
+            style={{ color: 'var(--color-text-tertiary)' }}
           >
             ✕
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6">
           {loadingArmor && (
-            <div className="text-center text-slate-400 mb-4">
+            <div className="text-center mb-4" style={{ color: 'var(--color-text-tertiary)' }}>
               Loading armor data...
             </div>
           )}
           
           {loadingProficiencies && (
-            <div className="text-center text-slate-400 mb-4">
+            <div className="text-center mb-4" style={{ color: 'var(--color-text-tertiary)' }}>
               Loading armor proficiencies...
             </div>
           )}
           
           {!loadingArmor && Object.entries(armorCategories).map(([categoryName, armors]) => (
             <div key={categoryName} className="mb-6">
-              <h3 className={`text-lg font-semibold mb-3 capitalize ${
-                categoryName.includes('Proficient -') ? 'text-green-400' :
-                categoryName.includes('Non-Proficient -') ? 'text-red-400' :
-                'text-white'
-              }`}>
+              <h3 className={`text-base md:text-lg font-semibold mb-3 capitalize ${
+                categoryName.includes('Proficient -') ? '' :
+                categoryName.includes('Non-Proficient -') ? '' :
+                ''
+              }`} style={{
+                color: categoryName.includes('Proficient -') ? 'var(--color-success)' :
+                       categoryName.includes('Non-Proficient -') ? 'var(--color-error)' :
+                       'var(--color-text-primary)'
+              }}>
                 {categoryName}
               </h3>
               <div className="space-y-2">
@@ -200,41 +211,50 @@ export function ArmorSelector({
                     <div
                       key={armor.name}
                       className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                        isSelected
-                          ? 'border-purple-500 bg-purple-500/10'
-                          : isProficient 
-                            ? 'border-slate-600 bg-slate-700 hover:border-slate-500'
-                            : 'border-red-600/50 bg-red-900/10 hover:border-red-500/50'
+                        isSelected ? '' : ''
                       }`}
+                      style={{
+                        borderColor: isSelected ? 'var(--color-accent)' :
+                                    isProficient ? 'var(--color-border)' : 'var(--color-error)',
+                        backgroundColor: isSelected ? 'var(--color-accent-bg)' :
+                                         isProficient ? 'var(--color-surface-secondary)' : 'var(--color-error-bg)',
+                        opacity: isProficient ? 1 : 0.5
+                      }}
                       onClick={() => handleArmorToggle(armor)}
                     >
                       <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className={`font-medium ${
-                              isSelected ? 'text-purple-300' : 
-                              isProficient ? 'text-white' : 'text-red-300'
-                            }`}>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-medium text-sm md:text-base" style={{
+                              color: isSelected ? 'var(--color-accent-text)' : 
+                                     isProficient ? 'var(--color-text-primary)' : 'var(--color-error-text)'
+                            }}>
                               {armor.name}
                             </span>
                             {isSelected && (
-                              <span className="text-xs px-2 py-1 bg-purple-500 text-white rounded">
+                              <span className="text-xs px-2 py-1 rounded" style={{
+                                backgroundColor: 'var(--color-accent)',
+                                color: 'var(--color-accent-text)'
+                              }}>
                                 Selected
                               </span>
                             )}
                             {!isProficient && showProficiencies && (
-                              <span className="text-xs px-2 py-1 bg-red-600 text-white rounded">
+                              <span className="text-xs px-2 py-1 rounded" style={{
+                                backgroundColor: 'var(--color-error)',
+                                color: 'var(--color-error-text)'
+                              }}>
                                 Not Proficient
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-slate-400 mt-1">{armor.description}</p>
-                          <div className="flex gap-4 mt-2 text-xs text-slate-400">
+                          <p className="text-xs md:text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>{armor.description}</p>
+                          <div className="flex flex-col md:flex-row gap-2 md:gap-4 mt-2 text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
                             <span>AC: {armor.baseAC}{armor.maxDexBonus !== null ? ` + Dex (max ${armor.maxDexBonus})` : ' + Dex'}</span>
                             <span>Weight: {armor.weight} lb</span>
                             <span>Cost: {armor.cost}</span>
                             {armor.minStrength && <span>Min Str: {armor.minStrength}</span>}
-                            {armor.stealthDisadvantage && <span className="text-red-400">Stealth Disadvantage</span>}
+                            {armor.stealthDisadvantage && <span style={{ color: 'var(--color-error)' }}>Stealth Disadvantage</span>}
                           </div>
                         </div>
                       </div>
@@ -246,16 +266,22 @@ export function ArmorSelector({
           ))}
         </div>
 
-        <div className="p-6 border-t border-slate-700 flex justify-end gap-3">
+        <div className="p-4 md:p-6 border-t flex justify-end gap-3" style={{ borderColor: 'var(--color-border)' }}>
           <button
             onClick={onCancel || onClose}
-            className="px-4 py-2 text-slate-300 hover:text-white transition-colors"
+            className="px-3 md:px-4 py-2 text-sm md:text-base transition-colors"
+            style={{ color: 'var(--color-text-secondary)' }}
           >
             Cancel
           </button>
           <button
             onClick={() => onConfirm?.(internalSelectedArmor)}
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            className="px-3 md:px-4 py-2 rounded-lg transition-colors text-sm md:text-base"
+            style={{
+              backgroundColor: 'var(--color-primary)',
+              color: 'var(--color-text-primary)',
+              '--tw-hover-bg': 'var(--color-primary-hover)'
+            } as React.CSSProperties}
           >
             Confirm Selection
           </button>
