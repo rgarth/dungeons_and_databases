@@ -891,7 +891,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
 
       {/* 3D Dice Container */}
       <div className="relative flex-1 min-h-0" style={{ 
-        background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)'
+        background: 'var(--color-dice-canvas-bg)'
       }}>
         <div 
           ref={diceContainerRef}

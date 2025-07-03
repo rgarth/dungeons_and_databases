@@ -65,6 +65,7 @@
   --color-overlay: rgba(0, 0, 0, 0.7); /* darker modal overlay */
   --color-error-text-light: #fca5a5; /* light red text for error details */
   --color-dice-default: #dc2626; /* D&D red for default dice color */
+  --color-dice-canvas-bg: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); /* dark gradient for dice canvas */
   
   /* Tailwind compatibility */
   --background: #0a0a0a;
@@ -136,6 +137,7 @@
   --color-overlay: rgba(0, 0, 0, 0.7); /* darker modal overlay */
   --color-error-text-light: #fca5a5; /* light red text for error details */
   --color-dice-default: #dc2626; /* D&D red for default dice color */
+  --color-dice-canvas-bg: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); /* dark gradient for dice canvas */
 }
 
 /* DNDB Light Theme - Parchment style */
@@ -203,6 +205,7 @@
   --color-overlay: rgba(0, 0, 0, 0.5); /* lighter modal overlay for light theme */
   --color-error-text-light: #dc2626; /* dark red text for error details on light background */
   --color-dice-default: #dc2626; /* D&D red for default dice color */
+  --color-dice-canvas-bg: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); /* dark gradient for dice canvas */
 }
 
 @theme inline {
@@ -317,59 +320,59 @@ body {
   color: var(--color-accent-text);
 }
 
-/* Enchanted Forest Theme - Nature inspired */
+/* Enchanted Forest Theme - Deep green and oaken wood */
 .theme-enchanted-forest {
-  /* Theme colors - FOREST STYLING - Lighter and airier */
-  --color-surface: #f0f7f0; /* very light mint */
-  --color-surface-secondary: #e0f0e0; /* light mint */
-  --color-surface-tertiary: #d0e8d0; /* medium mint */
-  --color-surface-quaternary: #c0e0c0; /* darker mint */
-  --color-card: #e0f0e0; /* light mint */
-  --color-card-secondary: #d0e8d0; /* medium mint */
-  --color-card-tertiary: #c0e0c0; /* darker mint */
-  --color-border: #a0c0a0; /* forest border */
-  --color-border-light: #b0d0b0; /* lighter forest border */
-  --color-text-primary: #1a3a1a; /* dark green text */
-  --color-text-secondary: #2a4a2a; /* medium green text */
-  --color-text-tertiary: #3a5a3a; /* lighter green text */
-  --color-text-quaternary: #4a6a4a; /* very light green text */
-  --color-text-muted: #3a5a3a; /* muted green text */
+  /* Theme colors - DEEP FOREST & OAKEN WOOD STYLING */
+  --color-surface: #0a1a0a; /* deep forest black */
+  --color-surface-secondary: #1a2a1a; /* dark forest green */
+  --color-surface-tertiary: #2a3a2a; /* medium forest green */
+  --color-surface-quaternary: #3a4a3a; /* light forest green */
+  --color-card: #1a2a1a; /* dark forest green */
+  --color-card-secondary: #2a3a2a; /* medium forest green */
+  --color-card-tertiary: #3a4a3a; /* light forest green */
+  --color-border: #4a5a4a; /* forest border */
+  --color-border-light: #5a6a5a; /* lighter forest border */
+  --color-text-primary: #e0f0e0; /* light mint text */
+  --color-text-secondary: #c0e0c0; /* medium mint text */
+  --color-text-tertiary: #a0d0a0; /* muted mint text */
+  --color-text-quaternary: #80c080; /* very light mint text */
+  --color-text-muted: #a0d0a0; /* muted mint text */
   
-  /* Primary colors - forest green */
-  --color-primary: #22c55e; /* vibrant green for primary actions */
-  --color-primary-hover: #16a34a; /* darker green for primary hover */
+  /* Primary colors - deep forest green */
+  --color-primary: #166534; /* deep forest green for primary actions */
+  --color-primary-hover: #14532d; /* darker forest green for primary hover */
   
-  /* Accent colors - golden oak */
-  --color-accent: #d97706; /* golden oak for tabs and text */
-  --color-accent-hover: #b45309; /* darker golden oak */
-  --color-accent-text: #ffffff; /* white text on golden oak */
+  /* Accent colors - oaken wood brown */
+  --color-accent: #92400e; /* deep oaken wood for tabs and text */
+  --color-accent-hover: #78350f; /* darker oaken wood */
+  --color-accent-text: #ffffff; /* white text on oaken wood */
   
-  /* Button colors - forest green */
-  --color-button: #16a34a; /* deep forest green for buttons */
-  --color-button-hover: #15803d; /* darker forest green */
+  /* Button colors - deep forest green */
+  --color-button: #14532d; /* deep forest green for buttons */
+  --color-button-hover: #134e2a; /* darker forest green */
   --color-button-text: #ffffff; /* white text on forest green */
   
   /* Status colors */
-  --color-success: #22c55e; /* vibrant green */
+  --color-success: #16a34a; /* vibrant green */
   --color-success-text: #ffffff; /* white text on success */
-  --color-success-hover: #16a34a; /* darker green for hover */
-  --color-warning: #fbbf24; /* golden amber for warnings */
-  --color-warning-text: #000000; /* black text on golden amber */
-  --color-error: #ef4444; /* bright red for errors */
+  --color-success-hover: #15803d; /* darker green for hover */
+  --color-warning: #92400e; /* oaken wood for warnings */
+  --color-warning-text: #ffffff; /* white text on oaken wood */
+  --color-error: #dc2626; /* D&D red for errors */
   --color-error-text: #ffffff; /* white text on error */
-  --color-error-hover: #dc2626; /* darker red for hover */
+  --color-error-hover: #b91c1c; /* darker red for hover */
   
-  /* Background variants for status colors - lighter for light theme */
-  --color-success-bg: #d1fae5; /* light emerald background */
-  --color-warning-bg: #fef3c7; /* light amber background */
-  --color-error-bg: #fee2e2; /* light red background */
-  --color-accent-bg: #fef3c7; /* light amber background */
+  /* Background variants for status colors */
+  --color-success-bg: #064e3b; /* dark emerald background */
+  --color-warning-bg: #451a03; /* dark oaken background */
+  --color-error-bg: #450a0a; /* dark red background */
+  --color-accent-bg: #451a03; /* dark oaken background */
   
   /* Border variants for status colors */
-  --color-success-border: #22c55e; /* green border */
-  --color-warning-border: #fbbf24; /* golden border */
-  --color-error-border: #ef4444; /* red border for errors */
-  --color-accent-border: #fbbf24; /* golden border */
+  --color-success-border: #16a34a; /* green border */
+  --color-warning-border: #92400e; /* oaken border */
+  --color-error-border: #dc2626; /* red border for errors */
+  --color-accent-border: #92400e; /* oaken border */
   
   /* Legacy aliases for backward compatibility */
   --color-danger: var(--color-error); /* alias for error */
@@ -379,64 +382,65 @@ body {
   --color-danger-border: var(--color-error-border); /* alias for error border */
   
   /* Special purpose colors */
-  --color-overlay: rgba(240, 247, 240, 0.7); /* light forest overlay */
-  --color-error-text-light: #dc2626; /* dark red text for error details */
-  --color-dice-default: #22c55e; /* forest green for default dice color */
+  --color-overlay: rgba(10, 26, 10, 0.8); /* dark forest overlay */
+  --color-error-text-light: #fca5a5; /* light red text for error details */
+  --color-dice-default: #166534; /* deep forest green for default dice color */
+  --color-dice-canvas-bg: linear-gradient(135deg, #1a2a1a 0%, #0a1a0a 100%); /* deep green gradient for dice canvas */
 }
 
-/* Dungeon Theme - Dark and oppressive */
+/* Dungeon Theme - Heavy grays, no coppers or yellows */
 .theme-dungeon {
-  /* Theme colors - DUNGEON STYLING - More oppressive greys */
+  /* Theme colors - HEAVY GRAY DUNGEON STYLING */
   --color-surface: #0a0a0a; /* deep black */
-  --color-surface-secondary: #1a1a1a; /* dark stone */
-  --color-surface-tertiary: #2a2a2a; /* medium stone */
-  --color-surface-quaternary: #3a3a3a; /* light stone */
-  --color-card: #1a1a1a; /* dark stone */
-  --color-card-secondary: #2a2a2a; /* medium stone */
-  --color-card-tertiary: #3a3a3a; /* light stone */
-  --color-border: #4a4a4a; /* stone border */
-  --color-border-light: #5a5a5a; /* lighter stone border */
-  --color-text-primary: #e0e0e0; /* light grey text */
-  --color-text-secondary: #c0c0c0; /* medium grey text */
-  --color-text-tertiary: #a0a0a0; /* muted grey text */
-  --color-text-quaternary: #808080; /* very light grey text */
-  --color-text-muted: #a0a0a0; /* muted grey text */
+  --color-surface-secondary: #1a1a1a; /* dark gray */
+  --color-surface-tertiary: #2a2a2a; /* medium gray */
+  --color-surface-quaternary: #3a3a3a; /* light gray */
+  --color-card: #1a1a1a; /* dark gray */
+  --color-card-secondary: #2a2a2a; /* medium gray */
+  --color-card-tertiary: #3a3a3a; /* light gray */
+  --color-border: #4a4a4a; /* gray border */
+  --color-border-light: #5a5a5a; /* lighter gray border */
+  --color-text-primary: #e0e0e0; /* light gray text */
+  --color-text-secondary: #c0c0c0; /* medium gray text */
+  --color-text-tertiary: #a0a0a0; /* muted gray text */
+  --color-text-quaternary: #808080; /* very light gray text */
+  --color-text-muted: #a0a0a0; /* muted gray text */
   
-  /* Primary colors - torch orange */
-  --color-primary: #f97316; /* torch orange for primary actions */
-  --color-primary-hover: #ea580c; /* darker torch orange for primary hover */
+  /* Primary colors - steel gray */
+  --color-primary: #6b7280; /* steel gray for primary actions */
+  --color-primary-hover: #4b5563; /* darker steel gray for primary hover */
   
-  /* Accent colors - ancient gold */
-  --color-accent: #fbbf24; /* ancient gold for tabs and text */
-  --color-accent-hover: #f59e0b; /* darker ancient gold */
-  --color-accent-text: #000000; /* black text on ancient gold */
+  /* Accent colors - iron gray */
+  --color-accent: #4b5563; /* iron gray for tabs and text */
+  --color-accent-hover: #374151; /* darker iron gray */
+  --color-accent-text: #ffffff; /* white text on iron gray */
   
-  /* Button colors - torch orange */
-  --color-button: #ea580c; /* deep torch orange for buttons */
-  --color-button-hover: #c2410c; /* darker torch orange */
-  --color-button-text: #ffffff; /* white text on torch orange */
+  /* Button colors - steel gray */
+  --color-button: #4b5563; /* steel gray for buttons */
+  --color-button-hover: #374151; /* darker steel gray */
+  --color-button-text: #ffffff; /* white text on steel gray */
   
   /* Status colors */
-  --color-success: #10b981; /* emerald */
+  --color-success: #6b7280; /* steel gray for success */
   --color-success-text: #ffffff; /* white text on success */
-  --color-success-hover: #059669; /* darker emerald for hover */
-  --color-warning: #fbbf24; /* ancient gold for warnings */
-  --color-warning-text: #000000; /* black text on ancient gold */
+  --color-success-hover: #4b5563; /* darker steel gray for hover */
+  --color-warning: #9ca3af; /* light gray for warnings */
+  --color-warning-text: #000000; /* black text on light gray */
   --color-error: #ef4444; /* bright red for errors */
   --color-error-text: #ffffff; /* white text on error */
   --color-error-hover: #dc2626; /* darker red for hover */
   
   /* Background variants for status colors */
-  --color-success-bg: #064e3b; /* dark emerald background */
-  --color-warning-bg: #451a03; /* dark amber background */
+  --color-success-bg: #374151; /* dark gray background */
+  --color-warning-bg: #6b7280; /* medium gray background */
   --color-error-bg: #450a0a; /* dark red background */
-  --color-accent-bg: #451a03; /* dark amber background */
+  --color-accent-bg: #374151; /* dark gray background */
   
   /* Border variants for status colors */
-  --color-success-border: #10b981; /* emerald border */
-  --color-warning-border: #fbbf24; /* ancient gold border */
+  --color-success-border: #6b7280; /* steel gray border */
+  --color-warning-border: #9ca3af; /* light gray border */
   --color-error-border: #ef4444; /* red border for errors */
-  --color-accent-border: #fbbf24; /* ancient gold border */
+  --color-accent-border: #4b5563; /* iron gray border */
   
   /* Legacy aliases for backward compatibility */
   --color-danger: var(--color-error); /* alias for error */
@@ -448,7 +452,8 @@ body {
   /* Special purpose colors */
   --color-overlay: rgba(0, 0, 0, 0.8); /* darker dungeon overlay */
   --color-error-text-light: #fca5a5; /* light red text for error details */
-  --color-dice-default: #f97316; /* torch orange for default dice color */
+  --color-dice-default: #6b7280; /* steel gray for default dice color */
+  --color-dice-canvas-bg: linear-gradient(135deg, #2a2a2a 0%, #0a0a0a 100%); /* heavy gray gradient for dice canvas */
 }
 
 /* Nobility Theme - Purple and slate - original colors */
