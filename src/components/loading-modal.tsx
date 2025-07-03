@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { Card } from './ui';
 
 interface LoadingItem {
   id: string;
@@ -302,22 +303,22 @@ export function LoadingModal({ onComplete }: LoadingModalProps) {
   const progress = (completedCount / totalCount) * 100;
 
   return (
-    <div className="fixed inset-0 bg-slate-900 bg-opacity-95 flex items-center justify-center z-50">
-      <div className="bg-slate-800 rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+    <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'var(--color-surface)', opacity: 0.95 }}>
+      <Card className="shadow-xl p-8 max-w-md w-full mx-4">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-white mb-2">Dungeons & Databases</h1>
-          <p className="text-slate-300">Loading your adventure...</p>
+          <h1 className="text-2xl font-bold text-[var(--color-text-primary)] mb-2">Dungeons & Databases</h1>
+          <p className="text-[var(--color-text-secondary)]">Loading your adventure...</p>
         </div>
 
         {/* Progress bar */}
         <div className="mb-6">
-          <div className="flex justify-between text-sm text-slate-300 mb-2">
+          <div className="flex justify-between text-sm text-[var(--color-text-secondary)] mb-2">
             <span>Loading assets...</span>
             <span>{completedCount}/{totalCount}</span>
           </div>
-          <div className="w-full bg-slate-700 rounded-full h-2">
+          <div className="w-full bg-[var(--color-card-secondary)] rounded-full h-2">
             <div 
-              className="bg-purple-600 h-2 rounded-full transition-all duration-300 ease-out"
+              className="bg-[var(--color-primary)] h-2 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -326,23 +327,23 @@ export function LoadingModal({ onComplete }: LoadingModalProps) {
         {/* Loading items list */}
         <div className="space-y-2 max-h-64 overflow-y-auto">
           {loadingItems.map((item) => (
-            <div key={item.id} className="flex items-center justify-between p-2 rounded bg-slate-700">
-              <span className="text-sm text-slate-200">{item.name}</span>
+            <div key={item.id} className="flex items-center justify-between p-2 rounded bg-[var(--color-card-secondary)]">
+              <span className="text-sm text-[var(--color-text-primary)]">{item.name}</span>
               <div className="flex items-center">
                 {item.status === 'pending' && (
-                  <div className="w-4 h-4 border-2 border-slate-500 rounded-full" />
+                  <div className="w-4 h-4 border-2 border-[var(--color-text-tertiary)] rounded-full" />
                 )}
                 {item.status === 'loading' && (
-                  <Loader2 className="w-4 h-4 text-purple-400 animate-spin" />
+                  <Loader2 className="w-4 h-4 text-[var(--color-accent)] animate-spin" />
                 )}
                 {item.status === 'success' && (
-                  <CheckCircle className="w-4 h-4 text-blue-400" />
+                  <CheckCircle className="w-4 h-4 text-[var(--color-success)]" />
                 )}
                 {item.status === 'error' && (
                   <div className="relative group">
-                    <XCircle className="w-4 h-4 text-red-400" />
+                    <XCircle className="w-4 h-4 text-[var(--color-error)]" />
                     {item.error && (
-                      <div className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-red-900 text-red-100 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                      <div className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-[var(--color-error)] text-[var(--color-error-text)] text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                         {item.error}
                       </div>
                     )}
@@ -355,7 +356,7 @@ export function LoadingModal({ onComplete }: LoadingModalProps) {
 
         {/* Error summary */}
         {loadingItems.some(item => item.status === 'error') && (
-          <div className="mt-4 p-3 bg-red-900 bg-opacity-50 border border-red-700 rounded text-sm text-red-200">
+          <div className="mt-4 p-3 bg-[var(--color-error)] bg-opacity-50 border border-[var(--color-error-border)] rounded text-sm text-[var(--color-error-text)]">
             <p className="font-semibold mb-1">Some assets failed to load:</p>
             <ul className="space-y-1">
               {loadingItems
@@ -363,13 +364,13 @@ export function LoadingModal({ onComplete }: LoadingModalProps) {
                 .map(item => (
                   <li key={item.id} className="flex items-center gap-2">
                     <span>• {item.name}:</span>
-                    <span className="text-red-300">{item.error}</span>
+                    <span className="text-[var(--color-error-text-light)]">{item.error}</span>
                   </li>
                 ))}
             </ul>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 } 
