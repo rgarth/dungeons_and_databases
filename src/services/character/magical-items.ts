@@ -84,6 +84,7 @@ export class MagicalItemService {
   }
 
   // Get rarity color for display
+  // DEPRECATED: Use getRarityColor from @/lib/theme-utils instead
   getRarityColor(rarity: string): string {
     switch (rarity) {
       case 'Common': return 'text-[var(--color-text-muted)]';
@@ -114,6 +115,7 @@ export class MagicalItemService {
   }
 
   // Get spell scroll level color
+  // DEPRECATED: Use getSpellLevelColor from @/lib/theme-utils instead
   getSpellLevelColor(level: number): string {
     switch (level) {
       case 0: return 'text-[var(--color-text-muted)]';
