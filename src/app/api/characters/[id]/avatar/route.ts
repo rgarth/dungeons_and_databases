@@ -44,6 +44,21 @@ export async function POST(
       // Remove the data URL prefix (e.g., "data:image/png;base64,")
       const base64Data = imageData.replace(/^data:image\/[a-z]+;base64,/, '');
       binaryData = Buffer.from(base64Data, 'base64');
+      
+      // Compress the image to reduce storage size and improve loading
+      try {
+        const sharp = (await import('sharp')).default;
+        const compressedBuffer = await sharp(binaryData)
+          .resize(512, 512, { fit: 'inside', withoutEnlargement: true }) // Max 512x512
+          .jpeg({ quality: 80, progressive: true }) // Compress to JPEG with 80% quality
+          .toBuffer();
+        
+        binaryData = compressedBuffer;
+        mimeType = 'image/jpeg'; // Always save as JPEG for consistency
+      } catch (compressionError) {
+        console.warn('Image compression failed, using original:', compressionError);
+        // Continue with original image if compression fails
+      }
     } catch (error) {
       return NextResponse.json({ error: "Invalid image data format" }, { status: 400 });
     }
