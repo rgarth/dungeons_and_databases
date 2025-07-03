@@ -181,16 +181,19 @@ export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: Custom
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
-      <div className="bg-slate-800 rounded-lg w-full max-w-4xl max-h-[95vh] overflow-y-auto">
-        <div className="flex justify-between items-center p-6 border-b border-slate-700">
+    <div className="fixed inset-0 flex items-start justify-center p-4 pt-8 z-50" style={{ backgroundColor: 'var(--color-modal-overlay)' }}>
+      <div className="bg-[var(--color-card)] rounded-lg w-full max-w-4xl max-h-[95vh] overflow-y-auto">
+        <div className="flex justify-between items-center p-6 border-b" style={{ borderColor: 'var(--color-border)' }}>
           <div className="flex items-center gap-3">
-            <Star className="h-6 w-6 text-purple-400" />
-            <h2 className="text-xl font-bold text-white">Custom Magical Weapons</h2>
+            <Star className="h-6 w-6" style={{ color: 'var(--color-accent)' }} />
+            <h2 className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>Custom Magical Weapons</h2>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors"
+            className="transition-colors"
+            style={{ color: 'var(--color-text-secondary)' }}
+            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-text-primary)'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}
           >
             <X className="h-6 w-6" />
           </button>
@@ -200,20 +203,27 @@ export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: Custom
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Creation Form */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Zap className="h-5 w-5 text-yellow-400" />
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
+                <Zap className="h-5 w-5" style={{ color: 'var(--color-warning)' }} />
                 Create New Magical Weapon
               </h3>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
                     Base Weapon *
                   </label>
                   <select
                     value={baseWeaponId}
                     onChange={(e) => setBaseWeaponId(e.target.value)}
-                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    className="w-full rounded-lg px-3 py-2 focus:outline-none"
+                    style={{
+                      backgroundColor: 'var(--color-card-secondary)',
+                      border: '1px solid var(--color-border)',
+                      color: 'var(--color-text-primary)'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = 'var(--color-accent)'}
+                    onBlur={(e) => e.target.style.borderColor = 'var(--color-border)'}
                     disabled={loadingWeapons}
                   >
                     <option value="">Select base weapon...</option>
@@ -226,13 +236,20 @@ export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: Custom
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
                     Magical Bonus
                   </label>
                   <select
                     value={modifier}
                     onChange={(e) => setModifier(Number(e.target.value))}
-                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    className="w-full rounded-lg px-3 py-2 focus:outline-none"
+                    style={{
+                      backgroundColor: 'var(--color-card-secondary)',
+                      border: '1px solid var(--color-border)',
+                      color: 'var(--color-text-primary)'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = 'var(--color-accent)'}
+                    onBlur={(e) => e.target.style.borderColor = 'var(--color-border)'}
                   >
                     <option value={0}>No bonus (Masterwork)</option>
                     <option value={1}>+1 (Uncommon)</option>
@@ -242,7 +259,7 @@ export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: Custom
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
                     Custom Name (Optional)
                   </label>
                   <div className="flex gap-2">
@@ -251,25 +268,42 @@ export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: Custom
                       value={customName}
                       onChange={(e) => setCustomName(e.target.value)}
                       placeholder={generateWeaponName() || "e.g., Flamberge of Doom"}
-                      className="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none"
+                      className="flex-1 rounded-lg px-3 py-2 focus:outline-none"
+                      style={{
+                        backgroundColor: 'var(--color-card-secondary)',
+                        border: '1px solid var(--color-border)',
+                        color: 'var(--color-text-primary)'
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = 'var(--color-accent)'}
+                      onBlur={(e) => e.target.style.borderColor = 'var(--color-border)'}
                     />
                     <button
                       type="button"
                       onClick={() => setCustomName(generateMagicWeaponName())}
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-3 py-2 rounded-lg transition-all flex items-center gap-1 whitespace-nowrap"
+                      className="px-3 py-2 rounded-lg transition-all flex items-center gap-1 whitespace-nowrap"
+                      style={{
+                        background: 'linear-gradient(to right, var(--color-accent), var(--color-accent-hover))',
+                        color: 'var(--color-accent-text)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(to right, var(--color-accent-hover), var(--color-accent))';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(to right, var(--color-accent), var(--color-accent-hover))';
+                      }}
                       title="Generate random magic weapon name"
                     >
                       <Sparkles className="h-4 w-4" />
                       Generate
                     </button>
                   </div>
-                  <div className="text-xs text-slate-400 mt-1">
+                  <div className="text-xs mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
                     Leave blank to use: {generateWeaponName()}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
                     Description (Optional)
                   </label>
                   <textarea
@@ -277,26 +311,37 @@ export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: Custom
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Describe any special properties or lore..."
                     rows={3}
-                    className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-none"
+                    className="w-full rounded-lg px-3 py-2 focus:outline-none resize-none"
+                    style={{
+                      backgroundColor: 'var(--color-card-secondary)',
+                      border: '1px solid var(--color-border)',
+                      color: 'var(--color-text-primary)'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = 'var(--color-accent)'}
+                    onBlur={(e) => e.target.style.borderColor = 'var(--color-border)'}
                   />
                 </div>
 
                 {/* Preview */}
                 {selectedBaseWeapon && (
-                  <div className="bg-slate-700 rounded-lg p-4 border border-purple-500/30">
-                    <h4 className="text-sm font-medium text-purple-300 mb-2">Preview</h4>
+                  <div className="rounded-lg p-4 border" style={{
+                    backgroundColor: 'var(--color-card-secondary)',
+                    borderColor: 'var(--color-accent)',
+                    opacity: 0.3
+                  }}>
+                    <h4 className="text-sm font-medium mb-2" style={{ color: 'var(--color-accent)' }}>Preview</h4>
                     <div className="space-y-1 text-sm">
-                      <div className="text-white font-medium">{finalWeaponName}</div>
-                      <div className="text-slate-300">
+                      <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{finalWeaponName}</div>
+                      <div style={{ color: 'var(--color-text-secondary)' }}>
                         Damage: {selectedBaseWeapon.damage}{modifier > 0 ? ` + ${modifier}` : ''} {selectedBaseWeapon.damageType}
                       </div>
-                      <div className="text-slate-300">
+                      <div style={{ color: 'var(--color-text-secondary)' }}>
                         Attack Bonus: {modifier > 0 ? `+${modifier}` : '+0'}
                       </div>
-                      <div className="text-slate-400">
+                      <div style={{ color: 'var(--color-text-tertiary)' }}>
                         Type: {selectedBaseWeapon.type} {selectedBaseWeapon.category}
                       </div>
-                      <div className="text-slate-400">
+                      <div style={{ color: 'var(--color-text-tertiary)' }}>
                         Properties: {selectedBaseWeapon.properties.join(', ')}
                       </div>
                     </div>
@@ -306,7 +351,19 @@ export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: Custom
                 <button
                   onClick={handleCreate}
                   disabled={!baseWeaponId || isCreating}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
+                  className="w-full px-4 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    background: 'linear-gradient(to right, var(--color-accent), var(--color-accent-hover))',
+                    color: 'var(--color-accent-text)'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!e.currentTarget.disabled) {
+                      e.currentTarget.style.background = 'linear-gradient(to right, var(--color-accent-hover), var(--color-accent))';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(to right, var(--color-accent), var(--color-accent-hover))';
+                  }}
                 >
                   {isCreating ? (
                     <>Creating...</>
@@ -322,29 +379,32 @@ export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: Custom
 
             {/* Existing Custom Weapons */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Your Custom Weapons</h3>
+              <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>Your Custom Weapons</h3>
               
               {loadingCustomWeapons ? (
-                <div className="text-center text-slate-400 py-8">
+                <div className="text-center py-8" style={{ color: 'var(--color-text-tertiary)' }}>
                   Loading your weapons...
                 </div>
               ) : customWeapons.length === 0 ? (
-                <div className="bg-slate-700 rounded-lg p-6 text-center">
-                  <Star className="h-12 w-12 text-slate-500 mx-auto mb-3" />
-                  <div className="text-slate-400">No custom weapons yet</div>
-                  <div className="text-sm text-slate-500 mt-1">
+                <div className="rounded-lg p-6 text-center" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                  <Star className="h-12 w-12 mx-auto mb-3" style={{ color: 'var(--color-text-quaternary)' }} />
+                  <div style={{ color: 'var(--color-text-tertiary)' }}>No custom weapons yet</div>
+                  <div className="text-sm mt-1" style={{ color: 'var(--color-text-quaternary)' }}>
                     Create your first magical weapon!
                   </div>
                 </div>
               ) : (
                 <div className="space-y-3 max-h-96 overflow-y-auto">
                   {customWeapons.map((weapon) => (
-                    <div key={weapon.id} className="bg-slate-700 rounded-lg p-4 border border-slate-600">
+                    <div key={weapon.id} className="rounded-lg p-4 border" style={{
+                      backgroundColor: 'var(--color-card-secondary)',
+                      borderColor: 'var(--color-border)'
+                    }}>
                       <div className="flex justify-between items-start mb-2">
                         <div>
-                          <h4 className="text-white font-medium">{weapon.name}</h4>
+                          <h4 className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{weapon.name}</h4>
                           {weapon.customName && weapon.customName !== weapon.name && (
-                            <div className="text-xs text-slate-400">
+                            <div className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
                               Based on: {weapon.baseWeapon.name}
                             </div>
                           )}
@@ -352,13 +412,25 @@ export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: Custom
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleAddToInventory(weapon)}
-                            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs"
+                            className="px-3 py-1 rounded text-xs transition-colors"
+                            style={{
+                              backgroundColor: 'var(--color-success)',
+                              color: 'var(--color-success-text)'
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-success-hover)'}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-success)'}
                           >
                             Add to Inventory
                           </button>
                           <button
                             onClick={() => handleDelete(weapon.id)}
-                            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs"
+                            className="px-3 py-1 rounded text-xs transition-colors"
+                            style={{
+                              backgroundColor: 'var(--color-danger)',
+                              color: 'var(--color-danger-text)'
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-danger-hover)'}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-danger)'}
                           >
                             Delete
                           </button>
@@ -367,30 +439,30 @@ export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: Custom
                       
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <div className="text-slate-300">
+                          <div style={{ color: 'var(--color-text-secondary)' }}>
                             Damage: {weapon.enhancedDamage} {weapon.baseWeapon.damageType}
                           </div>
-                          <div className="text-slate-300">
+                          <div style={{ color: 'var(--color-text-secondary)' }}>
                             Attack: {weapon.enhancedToHit}
                           </div>
                         </div>
                         <div>
-                          <div className="text-slate-400">
+                          <div style={{ color: 'var(--color-text-tertiary)' }}>
                             Type: {weapon.type} {weapon.category}
                           </div>
-                          <div className="text-slate-400">
+                          <div style={{ color: 'var(--color-text-tertiary)' }}>
                             Weight: {weapon.weight} lbs
                           </div>
                         </div>
                       </div>
                       
-                                             {weapon.description && (
-                         <div className="mt-3 text-sm text-slate-300 italic">
-                           &ldquo;{weapon.description}&rdquo;
-                         </div>
-                       )}
+                      {weapon.description && (
+                        <div className="mt-3 text-sm italic" style={{ color: 'var(--color-text-secondary)' }}>
+                          &ldquo;{weapon.description}&rdquo;
+                        </div>
+                      )}
                       
-                      <div className="mt-2 text-xs text-slate-500">
+                      <div className="mt-2 text-xs" style={{ color: 'var(--color-text-quaternary)' }}>
                         Created: {new Date(weapon.createdAt).toLocaleDateString()}
                       </div>
                     </div>
