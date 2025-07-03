@@ -12,6 +12,7 @@ import { ArmorSelector } from "../../shared/ArmorSelector";
 import { WeaponSelector } from "../../shared/WeaponSelector";
 import { CustomWeaponCreator } from "../components/CustomWeaponCreator";
 import { findSpellByName, getSpellsByClass } from "@/lib/dnd/spell-data-helper";
+import { useStatusStyles, useOpacityStyles, useBorderLeftStyles, useInteractiveButtonStyles } from "@/hooks/use-theme";
 
 interface DatabaseMagicalItem {
   id: number;
@@ -151,6 +152,12 @@ export function GearTab({
   } | null>(null);
 
   const currentArmorClass = equipment.calculateArmorClass(equippedArmor);
+
+  // Theme hooks
+  const statusStyles = useStatusStyles();
+  const opacityStyles = useOpacityStyles();
+  const borderLeftStyles = useBorderLeftStyles();
+  const interactiveButtonStyles = useInteractiveButtonStyles();
 
   // Load magical items data from database
   useEffect(() => {
@@ -412,11 +419,17 @@ export function GearTab({
 
       {/* Equipment Conflicts Display */}
       {equipmentConflicts.hasConflicts && (
-        <div className="bg-[var(--color-warning-bg)] border border-[var(--color-warning-border)] rounded-lg p-4 mb-6">
+        <div 
+          className="rounded-lg p-4 mb-6"
+          style={statusStyles.warning}
+        >
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-[var(--color-warning-text)] mt-0.5 flex-shrink-0" />
+                          <AlertTriangle 
+                className="h-5 w-5 mt-0.5 flex-shrink-0" 
+                style={{ color: 'var(--color-warning)' }}
+              />
             <div className="flex-1">
-              <h3 className="text-[var(--color-warning-text)] font-medium mb-2">Equipment Conflicts Detected</h3>
+                              <h3 className="font-medium mb-2" style={{ color: 'var(--color-warning)' }}>Equipment Conflicts Detected</h3>
               <div className="space-y-1 mb-3">
                 {equipmentConflicts.conflictSummary.map((conflict, index) => (
                   <div key={index} className="text-[var(--color-warning-text)] text-sm">{conflict}</div>
@@ -481,7 +494,13 @@ export function GearTab({
                         <span className="text-[var(--color-text-primary)] font-medium">
                           {weapon.name}
                           {weapon.stackable && weapon.quantity && weapon.quantity > 1 && (
-                            <span className="ml-2 text-xs bg-[var(--color-accent)] text-[var(--color-accent-text)] px-2 py-1 rounded">
+                            <span 
+                              className="ml-2 text-xs px-2 py-1 rounded"
+                              style={{
+                                backgroundColor: 'var(--color-accent)',
+                                color: 'var(--color-accent-text)'
+                              }}
+                            >
                               {weapon.quantity}
                             </span>
                           )}
@@ -585,11 +604,14 @@ export function GearTab({
                             {item.requiresAttunement && (
                               <button
                                 onClick={() => onToggleAttunement(item.name)}
-                                className={`text-xs px-2 py-1 rounded ${
-                                  item.isAttuned
-                                    ? 'bg-[var(--color-accent)] text-[var(--color-accent-text)]'
-                                    : 'bg-[var(--color-card-secondary)] text-[var(--color-text-secondary)] hover:bg-[var(--color-card-tertiary)]'
-                                }`}
+                                className="text-xs px-2 py-1 rounded"
+                                style={item.isAttuned ? {
+                                  backgroundColor: 'var(--color-accent)',
+                                  color: 'var(--color-accent-text)'
+                                } : {
+                                  backgroundColor: 'var(--color-card-secondary)',
+                                  color: 'var(--color-text-secondary)'
+                                }}
                               >
                                 {item.isAttuned ? 'Attuned' : 'Attune'}
                               </button>
@@ -642,17 +664,24 @@ export function GearTab({
               
               {/* Paladin Spellcasting Setup Notice */}
               {character.class === 'Paladin' && character.level >= 2 && !character.spellcastingAbility && (
-                <div className="mb-4 p-3 bg-[var(--color-warning-bg)] border border-[var(--color-warning-border)] rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Sparkles className="h-4 w-4 text-[var(--color-warning-text)]" />
-                    <span className="text-[var(--color-warning-text)] font-medium">Spellcasting Available!</span>
-                  </div>
-                  <p className="text-[var(--color-warning-text)] text-sm mb-3">
+                <div 
+                  className="mb-4 p-3 rounded-lg"
+                  style={statusStyles.warning}
+                >
+                                      <div className="flex items-center gap-2 mb-2">
+                      <Sparkles 
+                        className="h-4 w-4" 
+                        style={{ color: 'var(--color-warning)' }}
+                      />
+                      <span className="font-medium" style={{ color: 'var(--color-warning)' }}>Spellcasting Available!</span>
+                    </div>
+                    <p className="text-sm mb-3" style={{ color: 'var(--color-warning)' }}>
                     Your paladin has reached level 2 and can now cast spells! You need to set up your spellcasting ability and prepare your first spells.
                   </p>
                   <button
                     onClick={onOpenSpellPreparation}
-                    className="bg-[var(--color-warning)] hover:bg-[var(--color-warning-text)] text-[var(--color-warning-text)] text-sm px-3 py-1 rounded font-medium transition-colors"
+                    className="text-sm px-3 py-1 rounded font-medium transition-colors"
+                    style={interactiveButtonStyles.warning}
                   >
                     Set Up Spellcasting
                   </button>
@@ -697,7 +726,17 @@ export function GearTab({
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowWeaponSelector(true)}
-                  className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-2 py-1 rounded"
+                  className="px-2 py-1 rounded"
+                  style={{
+                    backgroundColor: 'var(--color-accent)',
+                    color: 'var(--color-accent-text)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--color-accent)';
+                  }}
                   title="Add basic weapons"
                 >
                   <Plus className="h-4 w-4" />
