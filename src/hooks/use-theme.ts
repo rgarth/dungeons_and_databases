@@ -1,5 +1,19 @@
 import { useState, useEffect } from 'react';
-import { getThemeColors, getStatusStyles, getButtonStyles, getInputStyles, getCardStyles, getTagStyles, getLanguageStyles, getRarityColor, getSpellLevelColor } from '@/lib/theme-utils';
+import { 
+  getThemeColors, 
+  getStatusStyles, 
+  getButtonStyles, 
+  getInputStyles, 
+  getCardStyles, 
+  getTagStyles, 
+  getLanguageStyles, 
+  getRarityColor, 
+  getSpellLevelColor,
+  getConditionSeverityStyles,
+  getOpacityStyles,
+  getBorderLeftStyles,
+  getInteractiveButtonStyles
+} from '@/lib/theme-utils';
 
 // Hook to get current theme colors
 export function useThemeColors() {
@@ -113,5 +127,59 @@ export function useSpellLevelColors() {
     level7: getSpellLevelColor(7),
     level8: getSpellLevelColor(8),
     level9: getSpellLevelColor(9),
+  };
+}
+
+// Hook for condition severity styles
+export function useConditionSeverityStyles() {
+  return {
+    getStyles: getConditionSeverityStyles,
+    minor: getConditionSeverityStyles('Minor'),
+    major: getConditionSeverityStyles('Major'),
+    severe: getConditionSeverityStyles('Severe'),
+    default: getConditionSeverityStyles('Default'),
+  };
+}
+
+// Hook for opacity styles
+export function useOpacityStyles() {
+  return {
+    getStyles: getOpacityStyles,
+    success20: getOpacityStyles('success', 20),
+    success30: getOpacityStyles('success', 30),
+    success50: getOpacityStyles('success', 50),
+    warning20: getOpacityStyles('warning', 20),
+    warning30: getOpacityStyles('warning', 30),
+    warning50: getOpacityStyles('warning', 50),
+    error20: getOpacityStyles('error', 20),
+    error30: getOpacityStyles('error', 30),
+    error50: getOpacityStyles('error', 50),
+    accent20: getOpacityStyles('accent', 20),
+    accent30: getOpacityStyles('accent', 30),
+    accent50: getOpacityStyles('accent', 50),
+  };
+}
+
+// Hook for border-left styles
+export function useBorderLeftStyles() {
+  return {
+    getStyles: getBorderLeftStyles,
+    success: getBorderLeftStyles('success'),
+    warning: getBorderLeftStyles('warning'),
+    error: getBorderLeftStyles('error'),
+    info: getBorderLeftStyles('info'),
+    accent: getBorderLeftStyles('accent'),
+  };
+}
+
+// Hook for interactive button styles
+export function useInteractiveButtonStyles() {
+  return {
+    getStyles: getInteractiveButtonStyles,
+    success: getInteractiveButtonStyles('success'),
+    warning: getInteractiveButtonStyles('warning'),
+    error: getInteractiveButtonStyles('error'),
+    info: getInteractiveButtonStyles('info'),
+    accent: getInteractiveButtonStyles('accent'),
   };
 } 

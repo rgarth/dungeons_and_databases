@@ -348,4 +348,103 @@ export function getSpellLevelColor(level: number) {
     case 9: return colors.warning;
     default: return colors.textMuted;
   }
+}
+
+// Theme-aware condition severity styles
+export function getConditionSeverityStyles(severity: string) {
+  const colors = getThemeColors();
+  
+  switch (severity) {
+    case 'Minor':
+      return {
+        backgroundColor: `${colors.warning}30`, // 30% opacity
+        color: colors.warning,
+        borderColor: `${colors.warning}30`,
+        border: `1px solid ${colors.warning}30`,
+      };
+    case 'Major':
+      return {
+        backgroundColor: `${colors.warning}50`, // 50% opacity
+        color: colors.warning,
+        borderColor: `${colors.warning}50`,
+        border: `1px solid ${colors.warning}50`,
+      };
+    case 'Severe':
+      return {
+        backgroundColor: `${colors.error}30`, // 30% opacity
+        color: colors.error,
+        borderColor: `${colors.error}30`,
+        border: `1px solid ${colors.error}30`,
+      };
+    default:
+      return {
+        backgroundColor: colors.cardSecondary,
+        color: colors.textSecondary,
+        borderColor: `${colors.border}30`,
+        border: `1px solid ${colors.border}30`,
+      };
+  }
+}
+
+// Theme-aware opacity styles for badges and tags
+export function getOpacityStyles(type: 'success' | 'warning' | 'error' | 'info' | 'accent', opacity: 20 | 30 | 50 = 20) {
+  const colors = getThemeColors();
+  
+  const colorMap = {
+    success: colors.success,
+    warning: colors.warning,
+    error: colors.error,
+    info: colors.accent,
+    accent: colors.accent,
+  };
+  
+  const color = colorMap[type];
+  const opacityHex = opacity === 20 ? '33' : opacity === 30 ? '4D' : '80'; // Convert to hex
+  
+  return {
+    backgroundColor: `${color}${opacityHex}`,
+    color: color,
+    borderColor: `${color}${opacityHex}`,
+    border: `1px solid ${color}${opacityHex}`,
+  };
+}
+
+// Theme-aware border-left styles for cards
+export function getBorderLeftStyles(type: 'success' | 'warning' | 'error' | 'info' | 'accent') {
+  const colors = getThemeColors();
+  
+  const colorMap = {
+    success: colors.success,
+    warning: colors.warning,
+    error: colors.error,
+    info: colors.accent,
+    accent: colors.accent,
+  };
+  
+  return {
+    borderLeft: `4px solid ${colorMap[type]}`,
+  };
+}
+
+// Theme-aware button styles with hover states
+export function getInteractiveButtonStyles(type: 'success' | 'warning' | 'error' | 'info' | 'accent') {
+  const colors = getThemeColors();
+  
+  const colorMap = {
+    success: colors.success,
+    warning: colors.warning,
+    error: colors.error,
+    info: colors.accent,
+    accent: colors.accent,
+  };
+  
+  const color = colorMap[type];
+  
+  return {
+    border: `1px solid ${color}`,
+    color: color,
+    backgroundColor: 'transparent',
+    hoverBackground: color,
+    hoverColor: type === 'warning' ? colors.warningText : colors.successText,
+  };
 } 
