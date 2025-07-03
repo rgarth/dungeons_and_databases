@@ -615,10 +615,17 @@ export function ActionsTab({
                         {character.spellsPrepared && character.spellsPrepared.length > 0 ? (
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                             {character.spellsPrepared.filter(spell => spell && spell.name && spell.level !== undefined).map((spell, index) => (
-                              <div key={index} className="bg-[var(--color-card-secondary)] p-3 rounded border-l-4 border-[var(--color-accent)]">
+                              <div 
+                              key={index} 
+                              className="bg-[var(--color-card-secondary)] p-3 rounded"
+                              style={borderLeftStyles.accent}
+                            >
                                 <div className="flex items-center gap-2 mb-2">
                                   <span className="text-[var(--color-text-primary)] font-medium">{spell.name}</span>
-                                  <span className="text-xs bg-[var(--color-accent)]/20 text-[var(--color-accent)] px-2 py-1 rounded">
+                                  <span 
+                                    className="text-xs px-2 py-1 rounded"
+                                    style={opacityStyles.accent20}
+                                  >
                                     {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
                                   </span>
                                 </div>
@@ -664,8 +671,11 @@ export function ActionsTab({
                   // Clerics, Druids, Paladins - know all class spells, prepare daily
                   return (
                     <div>
-                      <div className="mb-3 p-3 bg-[var(--color-warning)]/20 border border-[var(--color-warning)]/30 rounded-lg">
-                        <p className="text-[var(--color-warning)] text-sm">
+                      <div 
+                        className="mb-3 p-3 rounded-lg"
+                        style={opacityStyles.warning20}
+                      >
+                        <p className="text-sm" style={{ color: 'var(--color-warning)' }}>
                           <strong>{character.class} Spellcasting:</strong> You know all {character.class} spells and can prepare {maxPrepared} per day.
                         </p>
                       </div>
@@ -685,10 +695,17 @@ export function ActionsTab({
                       {character.spellsPrepared && character.spellsPrepared.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {character.spellsPrepared.filter(spell => spell && spell.name && spell.level !== undefined).map((spell, index) => (
-                            <div key={index} className="bg-[var(--color-card-secondary)] p-3 rounded border-l-4 border-[var(--color-warning)]">
+                            <div 
+                              key={index} 
+                              className="bg-[var(--color-card-secondary)] p-3 rounded"
+                              style={borderLeftStyles.warning}
+                            >
                               <div className="flex items-center gap-2 mb-2">
                                 <span className="text-[var(--color-text-primary)] font-medium">{spell.name}</span>
-                                <span className="text-xs bg-[var(--color-warning)]/20 text-[var(--color-warning)] px-2 py-1 rounded">
+                                <span 
+                                  className="text-xs px-2 py-1 rounded"
+                                  style={opacityStyles.warning20}
+                                >
                                   {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
                                 </span>
                               </div>
@@ -721,22 +738,41 @@ export function ActionsTab({
                 <h4 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3">Magical Item Spells</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {allMagicalItemSpells.map((itemSpell, index) => (
-                    <div key={index} className={`bg-[var(--color-card-secondary)] p-3 rounded border-l-4 ${itemSpell.canUse ? 'border-[var(--color-warning)]' : 'border-[var(--color-border)]'}`}>
+                    <div 
+                      key={index} 
+                      className="bg-[var(--color-card-secondary)] p-3 rounded"
+                      style={itemSpell.canUse ? borderLeftStyles.warning : { borderLeft: '4px solid var(--color-border)' }}
+                    >
                       <div className="flex items-center gap-2 mb-2">
-                        <span className={`font-medium ${itemSpell.canUse ? 'text-[var(--color-text-primary)]' : 'text-[var(--color-text-muted)]'}`}>
+                        <span 
+                          className="font-medium"
+                          style={{ color: itemSpell.canUse ? 'var(--color-text-primary)' : 'var(--color-text-muted)' }}
+                        >
                           {itemSpell.spell.name}
                         </span>
-                        <span className={`text-xs px-2 py-1 rounded ${itemSpell.canUse ? 'bg-[var(--color-warning)]/20 text-[var(--color-warning)]' : 'bg-[var(--color-card)] text-[var(--color-text-muted)]'}`}>
+                        <span 
+                          className="text-xs px-2 py-1 rounded"
+                          style={itemSpell.canUse ? opacityStyles.warning20 : { backgroundColor: 'var(--color-card)', color: 'var(--color-text-muted)' }}
+                        >
                           {itemSpell.spell.level === 0 ? 'Cantrip' : `Level ${itemSpell.spell.level}`}
                         </span>
-                        <span className={`text-xs px-2 py-1 rounded ${itemSpell.canUse ? 'bg-[var(--color-accent)]/20 text-[var(--color-accent)]' : 'bg-[var(--color-card)] text-[var(--color-text-muted)]'}`}>
+                        <span 
+                          className="text-xs px-2 py-1 rounded"
+                          style={itemSpell.canUse ? opacityStyles.accent20 : { backgroundColor: 'var(--color-card)', color: 'var(--color-text-muted)' }}
+                        >
                           {itemSpell.uses}
                         </span>
                       </div>
-                      <div className={`text-xs mb-2 ${itemSpell.canUse ? 'text-[var(--color-text-secondary)]' : 'text-[var(--color-text-muted)]'}`}>
+                      <div 
+                        className="text-xs mb-2"
+                        style={{ color: itemSpell.canUse ? 'var(--color-text-secondary)' : 'var(--color-text-muted)' }}
+                      >
                         {itemSpell.spell.description}
                       </div>
-                      <div className={`text-xs ${itemSpell.canUse ? 'text-[var(--color-warning)]' : 'text-[var(--color-text-muted)]'}`}>
+                      <div 
+                        className="text-xs"
+                        style={{ color: itemSpell.canUse ? 'var(--color-warning)' : 'var(--color-text-muted)' }}
+                      >
                         <strong>Source:</strong> {itemSpell.source}
                         {itemSpell.requiresAttunement && !itemSpell.isAttuned && (
                           <span className="ml-2 text-[var(--color-danger)]">(Requires Attunement)</span>
