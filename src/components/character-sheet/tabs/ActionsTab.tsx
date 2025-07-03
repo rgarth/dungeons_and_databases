@@ -12,6 +12,7 @@ import { findSpellByName } from "@/lib/dnd/spell-data-helper";
 import type { MagicalItem } from "@/lib/dnd/magical-items";
 import { CONDITIONS, getCondition, type ActiveCondition } from "@/lib/dnd/conditions";
 import { useEffect, useState } from "react";
+import { useConditionSeverityStyles, useOpacityStyles, useBorderLeftStyles, useInteractiveButtonStyles } from "@/hooks/use-theme";
 
 interface ActionsTabProps {
   character: {
@@ -79,6 +80,12 @@ export function ActionsTab({
 }: ActionsTabProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _unused = onUpdateDeathSaves;
+  
+  // Theme hooks
+  const conditionSeverityStyles = useConditionSeverityStyles();
+  const opacityStyles = useOpacityStyles();
+  const borderLeftStyles = useBorderLeftStyles();
+  const interactiveButtonStyles = useInteractiveButtonStyles();
   
   // Create service instances for clean calculations
   const calc = createCharacterCalculations({
@@ -242,19 +249,15 @@ export function ActionsTab({
                   const condition = getCondition(activeCondition.name);
                   if (!condition) return null;
 
-                  const getSeverityColor = (severity: string) => {
-                    switch (severity) {
-                      case 'Minor': return 'bg-[var(--color-warning)]/30 text-[var(--color-warning)] border-[var(--color-warning)]/30';
-                      case 'Major': return 'bg-[var(--color-warning)]/50 text-[var(--color-warning)] border-[var(--color-warning)]/50';
-                      case 'Severe': return 'bg-[var(--color-danger)]/30 text-[var(--color-danger)] border-[var(--color-danger)]/30';
-                      default: return 'bg-[var(--color-card-secondary)] text-[var(--color-text-secondary)] border-[var(--color-border)]/30';
-                    }
+                  const getSeverityStyles = (severity: string) => {
+                    return conditionSeverityStyles.getStyles(severity);
                   };
 
                   return (
                     <span 
                       key={index} 
-                      className={`px-2 py-1 rounded-full text-xs border flex items-center gap-1 ${getSeverityColor(condition.severity)}`}
+                      className="px-2 py-1 rounded-full text-xs border flex items-center gap-1"
+                      style={getSeverityStyles(condition.severity)}
                       title={condition.description}
                     >
                       {condition.name}
@@ -336,17 +339,27 @@ export function ActionsTab({
                 const magicalDamageBonus = isMagical ? (weapon as MagicalWeapon).damageBonus || 0 : 0;
 
                 return (
-                  <div key={index} className="bg-[var(--color-card-secondary)] p-4 rounded-lg border-l-4 border-[var(--color-danger)]">
+                  <div 
+                    key={index} 
+                    className="bg-[var(--color-card-secondary)] p-4 rounded-lg"
+                    style={borderLeftStyles.error}
+                  >
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-[var(--color-text-primary)] font-bold text-lg">{weapon.name}</span>
 
                       {isMagical && (
-                        <span className="text-xs bg-[var(--color-accent)]/20 text-[var(--color-accent)] px-2 py-1 rounded">
+                        <span 
+                          className="text-xs px-2 py-1 rounded"
+                          style={opacityStyles.accent20}
+                        >
                           {(weapon as MagicalWeapon).rarity}
                         </span>
                       )}
                       {!isProficient && (
-                        <span className="text-xs bg-[var(--color-warning)]/20 text-[var(--color-warning)] px-2 py-1 rounded">
+                        <span 
+                          className="text-xs px-2 py-1 rounded"
+                          style={opacityStyles.warning20}
+                        >
                           No Proficiency
                         </span>
                       )}
@@ -427,7 +440,8 @@ export function ActionsTab({
                                   <button
                                     onClick={() => onUseAmmunition(ammo?.name || ammoType)}
                                     disabled={!ammo || ammo.quantity <= 0}
-                                    className="px-2 py-1 text-xs border border-[var(--color-danger)] text-[var(--color-danger)] hover:bg-[var(--color-danger)] hover:text-[var(--color-danger-text)] disabled:opacity-50 disabled:cursor-not-allowed rounded font-medium transition-all duration-200"
+                                    className="px-2 py-1 text-xs disabled:opacity-50 disabled:cursor-not-allowed rounded font-medium transition-all duration-200"
+                                    style={interactiveButtonStyles.error}
                                     title={ammo && ammo.quantity > 0 
                                       ? `Use ${ammo.name} (-1, ${ammo.quantity} remaining)` 
                                       : `No ${ammoType}s to use`}
@@ -531,18 +545,28 @@ export function ActionsTab({
                   // Bards, Sorcerers, Warlocks, Rangers, EKs, ATs - their known spells are always prepared
                   return (
                     <div>
-                      <div className="mb-3 p-3 bg-[var(--color-success)]/20 border border-[var(--color-success)]/30 rounded-lg">
-                        <p className="text-[var(--color-success)] text-sm">
+                      <div 
+                        className="mb-3 p-3 rounded-lg"
+                        style={opacityStyles.success20}
+                      >
+                        <p className="text-sm" style={{ color: 'var(--color-success)' }}>
                           <strong>{character.class} Spellcasting:</strong> All known spells are always available to cast.
                         </p>
                       </div>
                       <h4 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3">Known Spells</h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto">
                         {(character.spellsKnown || []).filter(spell => spell && spell.name && spell.level !== undefined).map((spell, index) => (
-                          <div key={index} className="bg-[var(--color-card-secondary)] p-3 rounded border-l-4 border-[var(--color-success)]">
+                          <div 
+                            key={index} 
+                            className="bg-[var(--color-card-secondary)] p-3 rounded"
+                            style={borderLeftStyles.success}
+                          >
                             <div className="flex items-center gap-2 mb-2">
                               <span className="text-[var(--color-text-primary)] font-medium">{spell.name}</span>
-                              <span className="text-xs bg-[var(--color-success)]/20 text-[var(--color-success)] px-2 py-1 rounded">
+                              <span 
+                                className="text-xs px-2 py-1 rounded"
+                                style={opacityStyles.success20}
+                              >
                                 {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
                               </span>
                             </div>
@@ -565,8 +589,11 @@ export function ActionsTab({
                   // Wizards - have spellbook + daily preparation
                   return (
                     <div className="space-y-6">
-                      <div className="mb-3 p-3 bg-[var(--color-accent)]/20 border border-[var(--color-accent)]/30 rounded-lg">
-                        <p className="text-[var(--color-accent)] text-sm">
+                      <div 
+                        className="mb-3 p-3 rounded-lg"
+                        style={opacityStyles.accent20}
+                      >
+                        <p className="text-sm" style={{ color: 'var(--color-accent)' }}>
                           <strong>Wizard Spellcasting:</strong> You have a spellbook containing all learned spells, but can only prepare {maxPrepared} per day.
                         </p>
                       </div>
