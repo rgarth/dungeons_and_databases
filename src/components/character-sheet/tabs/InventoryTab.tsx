@@ -1,6 +1,6 @@
 "use client";
 
-import { Package, Trash2, Plus, Minus, Coins, Zap, Backpack } from "lucide-react";
+import { Package, Trash2, Plus, Minus, Coins, Zap } from "lucide-react";
 import { EQUIPMENT_CATEGORIES } from "@/lib/dnd/equipment";
 import type { InventoryItem } from "@/lib/dnd/equipment";
 import type { Treasure } from "@/lib/dnd/data";
@@ -28,61 +28,70 @@ interface InventoryTabProps {
   onTreasuresUpdate: (treasures: Treasure[]) => void;
 }
 
-// Equipment categories for organization
+// Equipment categories for organization - based on actual equipment data types
 const EQUIPMENT_CATEGORIES_ORGANIZED: Record<string, string[]> = {
-  "Starting Equipment": [
-    "Backpack", "Bedroll", "Mess Kit", "Tinderbox", "Torch", "Rations (1 day)", "Waterskin", "Rope, Hempen (50 feet)",
-    "Chest", "Case, Map or Scroll", "Clothes, Fine", "Ink (1 ounce bottle)", "Ink Pen", "Lamp", "Paper (one sheet)", 
-    "Perfume (vial)", "Sealing Wax", "Soap", "Clothes, Costume", "Disguise Kit", "Blanket", "Alms Box", 
-    "Incense (1 block)", "Censer", "Vestments", "Book", "Parchment (one sheet)", "Little Bag of Sand", "Small Knife"
-  ],
   "Adventuring Gear": [
-    "Ball Bearings (bag of 1,000)", "String (10 feet)", "Bell", "Crowbar", "Hammer", "Piton", "Lantern, Hooded", "Oil (flask)",
+    // All items with type "Adventuring Gear" from the database
     "Abacus", "Acid (vial)", "Alchemist's Fire (flask)", "Ammunition, Arrows (20)", "Ammunition, Blowgun Needles (50)",
-    "Ammunition, Crossbow Bolts (20)", "Ammunition, Sling Bullets (20)", "Antitoxin (vial)", "Barrel", "Basket",
-    "Block and Tackle", "Bottle, Glass", "Bucket", "Caltrops (bag of 20)", "Case, Crossbow Bolt", "Chain (10 feet)",
-    "Chalk (1 piece)", "Climber's Kit", "Clothes, Common", "Clothes, Traveler's", "Component Pouch", "Fishing Tackle",
-    "Flask or Tankard", "Grappling Hook", "Hammer, Sledge", "Healer's Kit", "Holy Water (flask)", "Hourglass",
-    "Hunting Trap", "Jug or Pitcher", "Ladder (10-foot)", "Lock", "Magnifying Glass", "Manacles", "Mirror, Steel",
-    "Pole (10-foot)", "Pot, Iron", "Potion of Healing", "Pouch", "Quiver", "Ram, Portable", "Robes", "Sack",
-    "Scale, Merchant's", "Shovel", "Signal Whistle", "Signet Ring", "Spellbook", "Spikes, Iron (10)", "Spyglass",
-    "Tent, Two-person", "Vial", "Whetstone"
+    "Ammunition, Crossbow Bolts (20)", "Ammunition, Sling Bullets (20)", "Antitoxin (vial)", "Backpack", "Ball Bearings (bag of 1,000)",
+    "Barrel", "Basket", "Bedroll", "Bell", "Blanket", "Block and Tackle", "Book", "Bottle, Glass", "Bucket", "Caltrops (bag of 20)",
+    "Candle", "Case, Crossbow Bolt", "Case, Map or Scroll", "Chain (10 feet)", "Chalk (1 piece)", "Chest", "Climber's Kit",
+    "Clothes, Common", "Clothes, Costume", "Clothes, Fine", "Clothes, Traveler's", "Component Pouch", "Crowbar", "Fishing Tackle",
+    "Flask or Tankard", "Grappling Hook", "Hammer", "Hammer, Sledge", "Healer's Kit", "Holy Water (flask)", "Hourglass",
+    "Hunting Trap", "Ink (1 ounce bottle)", "Ink Pen", "Jug or Pitcher", "Ladder (10-foot)", "Lamp", "Lantern, Bullseye",
+    "Lantern, Hooded", "Lock", "Magnifying Glass", "Manacles", "Mess Kit", "Mirror, Steel", "Oil (flask)", "Paper (one sheet)",
+    "Parchment (one sheet)", "Perfume (vial)", "Pick, Miner's", "Piton", "Poison, Basic (vial)", "Pole (10-foot)", "Pot, Iron",
+    "Potion of Healing", "Pouch", "Quiver", "Ram, Portable", "Rations (1 day)", "Robes", "Rope, Hempen (50 feet)", "Rope, Silk (50 feet)",
+    "Sack", "Scale, Merchant's", "Sealing Wax", "Shovel", "Signal Whistle", "Signet Ring", "Soap", "Spellbook", "Spikes, Iron (10)",
+    "Spyglass", "Tent, Two-person", "Tinderbox", "Torch", "Vial", "Waterskin", "Whetstone", "String (10 feet)", "Alms Box",
+    "Incense (1 block)", "Censer", "Vestments", "Little Bag of Sand"
   ],
-  "Tools & Equipment": [
-    "Crowbar", "Hammer", "Piton", "Tinderbox", "Lantern, Hooded", "Disguise Kit", "Small Knife", "Healer's Kit",
-    "Climber's Kit", "Fishing Tackle", "Lock", "Manacles", "Pick, Miner's", "Ram, Portable", "Shovel"
+  "Tools": [
+    // All items with type "Tool" from the database
+    "Disguise Kit", "Small Knife"
   ],
-  "Lighting & Fire": [
-    "Candle", "Torch", "Oil (flask)", "Tinderbox", "Lamp", "Lantern, Bullseye", "Lantern, Hooded"
+  "Arcane Focus": [
+    // All items with type "Arcane Focus" from the database
+    "Crystal", "Orb", "Rod", "Staff", "Wand"
   ],
-  "Survival Gear": [
-    "Bedroll", "Rations (1 day)", "Waterskin", "Rope, Hempen (50 feet)", "Rope, Silk (50 feet)", "Tent, Two-person",
-    "Blanket", "Clothes, Traveler's"
+  "Druidcraft Focus": [
+    // All items with type "Druidcraft Focus" from the database
+    "Sprig of Mistletoe", "Totem", "Wooden Staff"
   ],
-  "Containers": [
-    "Backpack", "Waterskin", "Barrel", "Basket", "Bottle, Glass", "Bucket", "Chest", "Case, Crossbow Bolt",
-    "Case, Map or Scroll", "Flask or Tankard", "Jug or Pitcher", "Pouch", "Quiver", "Sack", "Vial"
-  ],
-  "Clothing & Apparel": [
-    "Clothes, Common", "Clothes, Costume", "Clothes, Fine", "Clothes, Traveler's", "Robes", "Vestments"
-  ],
-  "Writing & Study": [
-    "Book", "Ink (1 ounce bottle)", "Ink Pen", "Paper (one sheet)", "Parchment (one sheet)", "Little Bag of Sand",
-    "Sealing Wax", "Spellbook"
-  ],
-  "Religious Items": [
-    "Alms Box", "Incense (1 block)", "Censer", "Vestments", "Holy Water (flask)"
+  "Holy Symbol": [
+    // All items with type "Holy Symbol" from the database
+    "Amulet", "Emblem", "Reliquary"
   ],
   "Miscellaneous": [] // For items that don't fit other categories
 };
 
 // Function to categorize an item
 const categorizeItem = (itemName: string): string => {
+  // Normalize the item name for better matching
+  const normalizedName = itemName.toLowerCase().trim();
+  
   for (const [category, items] of Object.entries(EQUIPMENT_CATEGORIES_ORGANIZED)) {
+    // Check for exact matches first
     if (items.includes(itemName)) {
       return category;
     }
+    
+    // Check for normalized matches
+    const normalizedItems = items.map(item => item.toLowerCase().trim());
+    if (normalizedItems.includes(normalizedName)) {
+      return category;
+    }
+    
+    // Check for partial matches (for items that might have variations)
+    for (const item of items) {
+      const normalizedItem = item.toLowerCase().trim();
+      if (normalizedName.includes(normalizedItem) || normalizedItem.includes(normalizedName)) {
+        console.log(`🔍 Partial match found: "${itemName}" matches "${item}" in category "${category}"`);
+        return category;
+      }
+    }
   }
+  
   // Debug logging for uncategorized items
   console.log(`⚠️ Uncategorized item: "${itemName}" - adding to Miscellaneous`);
   return "Miscellaneous";
@@ -106,6 +115,7 @@ const organizeInventory = (inventory: InventoryItem[]) => {
       organized[category] = [];
     }
     organized[category].push(item);
+    console.log(`📦 Categorized "${item.name}" → ${category}`);
   });
   
   // Remove empty categories
@@ -115,7 +125,7 @@ const organizeInventory = (inventory: InventoryItem[]) => {
     }
   });
   
-  console.log('📦 Organized inventory:', Object.entries(organized).map(([category, items]) => 
+  console.log('📦 Final organized inventory:', Object.entries(organized).map(([category, items]) => 
     `${category}: ${items.map(item => `${item.name} (${item.quantity})`).join(', ')}`
   ));
   
@@ -273,18 +283,16 @@ export function InventoryTab({
   // Helper function to get category icon
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case "Starting Equipment":
-        return <Backpack className="h-4 w-4" />;
       case "Adventuring Gear":
         return <Package className="h-4 w-4" />;
-      case "Tools & Equipment":
+      case "Tools":
         return <Package className="h-4 w-4" />;
-      case "Lighting & Fire":
-        return <Zap className="h-4 w-4" />;
-      case "Survival Gear":
+      case "Arcane Focus":
         return <Package className="h-4 w-4" />;
-      case "Containers":
-        return <Backpack className="h-4 w-4" />;
+      case "Druidcraft Focus":
+        return <Package className="h-4 w-4" />;
+      case "Holy Symbol":
+        return <Package className="h-4 w-4" />;
       default:
         return <Package className="h-4 w-4" />;
     }

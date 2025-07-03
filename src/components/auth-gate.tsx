@@ -1,6 +1,7 @@
 "use client";
 import { useSession, signIn } from "next-auth/react";
 import React from "react";
+import Image from "next/image";
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
@@ -16,7 +17,16 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   if (status === "unauthenticated") {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen" style={{ background: 'var(--color-surface)' }}>
-        <h1 className="text-2xl mb-6 font-bold" style={{ color: 'var(--color-text-primary)' }}>Dungeons & Databases</h1>
+        <div className="flex flex-col items-center mb-6">
+          <Image
+            src="/favicon.svg"
+            alt="Dungeons & Databases Logo"
+            width={64}
+            height={64}
+            className="w-16 h-16 mb-4"
+          />
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>Dungeons & Databases</h1>
+        </div>
         <p className="mb-4" style={{ color: 'var(--color-text-secondary)' }}>Sign in to continue</p>
         <button
           onClick={() => signIn("google")}

@@ -1065,7 +1065,7 @@ export function GearTab({
 
       {showMagicalItemSelector && (
         <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-modal-overlay)' }}>
-          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-4xl p-6 max-h-[80vh] overflow-hidden">
+          <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg w-full max-w-4xl p-6 max-h-[80vh] overflow-hidden">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Add Magical Item ({filteredMagicalItems.length} items)</h3>
               <button
@@ -1187,7 +1187,7 @@ export function GearTab({
 
       {showSpellScrollCreator && (
         <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-modal-overlay)' }}>
-          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-md p-6">
+          <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg w-full max-w-md p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Create Spell Scroll</h3>
               <button
