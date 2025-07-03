@@ -20,7 +20,7 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
   const [showSheet, setShowSheet] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   // Use React Query for avatar fetching
-  const { data: avatarUrl } = useAvatar(character.id);
+  const { data: avatarUrl, isLoading: isAvatarLoading } = useAvatar(character.id);
   const { deleteCharacter } = useCharacterMutations();
   const isOptimistic = character.isOptimistic;
   const hpPercentage = (character.hitPoints / character.maxHitPoints) * 100;
@@ -63,7 +63,11 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-start gap-3">
             {/* Avatar */}
-            {avatarUrl ? (
+            {isAvatarLoading ? (
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--color-card-secondary)] to-[var(--color-card)] animate-pulse flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-[var(--color-border)] animate-pulse" />
+              </div>
+            ) : avatarUrl ? (
               <div className="w-24 h-24 rounded-full overflow-hidden">
                 <Image 
                   src={avatarUrl} 

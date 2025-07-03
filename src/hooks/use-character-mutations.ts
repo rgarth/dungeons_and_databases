@@ -21,8 +21,48 @@ export function useAvatar(characterId: string) {
       return data.imageData;
     },
     enabled: !!characterId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 30 * 60 * 1000, // 30 minutes - avatars don't change often
+    gcTime: 60 * 60 * 1000, // 1 hour - keep in memory longer
+    refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    refetchOnMount: false, // Don't refetch on component mount if we have cached data
+  });
+}
+
+// Hook to preload avatars for multiple characters
+export function usePreloadAvatars(characterIds: string[]) {
+  const queryClient = useQueryClient();
+  
+  return useQuery({
+    queryKey: ['preload-avatars', characterIds.sort().join(',')],
+    queryFn: async () => {
+      // Preload all avatars in parallel
+      const promises = characterIds.map(async (id) => {
+        try {
+          const response = await fetch(`/api/characters/${id}/avatar`);
+          if (response.status === 404) return null;
+          if (!response.ok) return null;
+          const data = await response.json();
+          return { id, avatar: data.imageData };
+        } catch (error) {
+          console.error(`Failed to preload avatar for character ${id}:`, error);
+          return null;
+        }
+      });
+      
+      const results = await Promise.all(promises);
+      
+      // Cache each avatar individually
+      results.forEach(result => {
+        if (result) {
+          queryClient.setQueryData(['avatar', result.id], result.avatar);
+        }
+      });
+      
+      return results.filter(Boolean);
+    },
+    enabled: characterIds.length > 0,
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    gcTime: 60 * 60 * 1000, // 1 hour
   });
 }
 

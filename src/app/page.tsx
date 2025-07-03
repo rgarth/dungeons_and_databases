@@ -86,27 +86,8 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Dungeons & Databases</h1>
             
-            {/* Desktop menu */}
-            <div className="hidden md:flex items-center gap-4">
-              <Button
-                onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-5 w-5" />
-                New Character
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => signOut()}
-                className="flex items-center gap-2"
-              >
-                <LogOut className="h-5 w-5" />
-                Sign Out
-              </Button>
-            </div>
-
-            {/* Hamburger menu for both desktop and mobile */}
-            <div>
+            {/* Hamburger menu for all screen sizes */}
+            <div className="relative">
               <Button
                 variant="ghost"
                 onClick={() => setShowMenu(!showMenu)}
@@ -114,37 +95,40 @@ export default function Home() {
               >
                 {showMenu ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
+
+              {/* Menu dropdown positioned under the button */}
+              {showMenu && (
+                <div className="absolute right-0 top-full mt-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg shadow-lg z-10 min-w-[200px]">
+                  <div className="p-2 space-y-1">
+                    <ThemeSelector />
+                    <button
+                      onClick={() => signOut()}
+                      className="hamburger-menu-item"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-
-          {/* Menu dropdown for both desktop and mobile */}
-          {showMenu && (
-            <div className="mt-4 space-y-2">
-              <button
-                onClick={() => {
-                  setShowCreateModal(true);
-                  setShowMenu(false);
-                }}
-                className="hamburger-menu-item"
-              >
-                <Plus className="h-4 w-4" />
-                <span>New Character</span>
-              </button>
-              <ThemeSelector />
-              <button
-                onClick={() => signOut()}
-                className="hamburger-menu-item"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>Sign Out</span>
-              </button>
-            </div>
-          )}
         </div>
       </header>
 
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* New Character Button */}
+        <div className="mb-8">
+          <Button
+            onClick={() => setShowCreateModal(true)}
+            className="flex items-center gap-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-6 py-3 text-lg font-semibold"
+          >
+            <Plus className="h-6 w-6" />
+            New Character
+          </Button>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {characters.map((character) => (
             <CharacterCard
