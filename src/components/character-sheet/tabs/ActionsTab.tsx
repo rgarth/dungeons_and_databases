@@ -219,7 +219,18 @@ export function ActionsTab({
                     e.target.value = ""; // Reset selection
                   }
                 }}
-                className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-warning)] focus:outline-none"
+                className="w-full rounded px-3 py-2 text-sm focus:outline-none"
+                style={{
+                  backgroundColor: 'var(--color-card-secondary)',
+                  border: '1px solid var(--color-border)',
+                  color: 'var(--color-text-primary)',
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = 'var(--color-warning)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'var(--color-border)';
+                }}
               >
                 <option value="">Add condition...</option>
                 {CONDITIONS
@@ -452,7 +463,8 @@ export function ActionsTab({
                                 {onRecoverAmmunition && (
                                   <button
                                     onClick={() => onRecoverAmmunition(ammo?.name || ammoType)}
-                                    className="px-2 py-1 text-xs border border-[var(--color-success)] text-[var(--color-success)] hover:bg-[var(--color-success)] hover:text-[var(--color-success-text)] rounded font-medium transition-all duration-200"
+                                    className="px-2 py-1 text-xs rounded font-medium transition-all duration-200"
+                                    style={interactiveButtonStyles.success}
                                     title={`Recover ${ammoType} after combat (+1)`}
                                   >
                                     +1
@@ -467,7 +479,10 @@ export function ActionsTab({
 
                     {/* Magical Properties */}
                     {isMagical && (weapon as MagicalWeapon).magicalProperties && (
-                      <div className="mt-3 p-2 bg-[var(--color-accent)]/20 rounded border border-[var(--color-accent)]/30">
+                      <div 
+                        className="mt-3 p-2 rounded"
+                        style={opacityStyles.accent20}
+                      >
                         <div className="text-[var(--color-accent)] text-xs font-medium mb-1">Magical Properties:</div>
                         <div className="text-[var(--color-text-secondary)] text-xs">{(weapon as MagicalWeapon).magicalProperties}</div>
                       </div>
@@ -524,7 +539,11 @@ export function ActionsTab({
                       {/* Spell slot dots for visual tracking */}
                       <div className="flex justify-center gap-1 mt-2">
                         {Array.from({length: total}, (_, i) => (
-                          <div key={i} className="w-2 h-2 bg-[var(--color-accent)] rounded-full"></div>
+                          <div 
+                            key={i} 
+                            className="w-2 h-2 rounded-full"
+                            style={{ backgroundColor: 'var(--color-accent)' }}
+                          ></div>
                         ))}
                       </div>
                     </div>
@@ -606,7 +625,17 @@ export function ActionsTab({
                           </h4>
                           <button
                             onClick={onOpenSpellPreparation}
-                            className="bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/80 text-[var(--color-accent-text)] text-sm px-3 py-1 rounded font-medium transition-colors"
+                            className="text-sm px-3 py-1 rounded font-medium transition-colors"
+                            style={{
+                              backgroundColor: 'var(--color-accent)',
+                              color: 'var(--color-accent-text)',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = 'var(--color-accent)';
+                            }}
                             title="Change prepared spells"
                           >
                             Prepare Spells
