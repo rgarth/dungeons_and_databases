@@ -352,6 +352,18 @@ function DicePreview({ diceType, diceColor }: {
   diceType: string; 
   diceColor: string; 
 }) {
+  // Determine text color based on dice color brightness
+  const isColorDark = (color: string): boolean => {
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness < 128;
+  };
+
+  const textColor = isColorDark(diceColor) ? '#ffffff' : '#000000';
+
   return (
     <div 
       className="w-12 h-12 rounded-lg border-2 overflow-hidden flex items-center justify-center"
@@ -375,7 +387,7 @@ function DicePreview({ diceType, diceColor }: {
           height: '32px',
           fontSize: '10px',
           lineHeight: '1',
-          color: 'var(--color-text-primary)'
+          color: textColor
         }}
       >
         {diceType.toUpperCase()}

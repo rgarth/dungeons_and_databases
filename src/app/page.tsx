@@ -3,6 +3,7 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useState } from "react";
 import { Plus, LogOut, Menu, X } from "lucide-react";
+import Image from "next/image";
 import { CharacterCard } from "../components/character-card";
 import { CreateCharacterModal } from "../components/create-character-modal";
 import { LoadingModal } from "../components/loading-modal";
@@ -84,7 +85,16 @@ export default function Home() {
       <header className="bg-[var(--color-card)] border-b border-[var(--color-border)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Dungeons & Databases</h1>
+            <div className="flex items-center gap-3">
+              <Image
+                src="/favicon.svg"
+                alt="Dungeons & Databases Logo"
+                width={32}
+                height={32}
+                className="w-8 h-8"
+              />
+              <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Dungeons & Databases</h1>
+            </div>
             
             {/* Hamburger menu for all screen sizes */}
             <div className="relative">
