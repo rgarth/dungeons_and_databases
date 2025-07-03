@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 
-export type Theme = 'theme-dndb-dark' | 'theme-dndb-light';
+export type Theme = 'theme-dndb-dark' | 'theme-dndb-light' | 'theme-enchanted-forest' | 'theme-dungeon' | 'theme-nobility';
 
 interface ThemeContextType {
   theme: Theme;
@@ -22,7 +22,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const savedTheme = Cookies.get(THEME_COOKIE_NAME) as Theme;
     
     // Validate theme and set default if invalid
-    if (savedTheme && (savedTheme === 'theme-dndb-dark' || savedTheme === 'theme-dndb-light')) {
+    const validThemes: Theme[] = ['theme-dndb-dark', 'theme-dndb-light', 'theme-enchanted-forest', 'theme-dungeon', 'theme-nobility'];
+    if (savedTheme && validThemes.includes(savedTheme)) {
       setTheme(savedTheme);
     } else {
       // Set default theme and save to cookie
@@ -37,7 +38,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const root = document.documentElement;
     
     // Remove existing theme classes
-    root.classList.remove('theme-dndb-dark', 'theme-dndb-light');
+    root.classList.remove('theme-dndb-dark', 'theme-dndb-light', 'theme-enchanted-forest', 'theme-dungeon', 'theme-nobility');
     
     // Add current theme class
     root.classList.add(theme);
