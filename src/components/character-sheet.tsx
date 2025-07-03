@@ -1,6 +1,6 @@
 "use client";
 
-import { User, BarChart3, Swords, X, Trash2, Package, Coins, TrendingUp, FileText, Dices, ChevronDown, MoreVertical } from "lucide-react";
+import { User, BarChart3, Swords, X, Package, Coins, FileText, Dices, ChevronDown, MoreVertical } from "lucide-react";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { getModifier } from "@/lib/dnd/core";
 import { Spell } from "@/lib/dnd/spells";
@@ -15,7 +15,7 @@ import { LevelUpWizard } from "./character-sheet/LevelUpWizard";
 import { getSpellcastingType, getSpellsPreparedCount } from "@/lib/dnd/level-up";
 import { StatsTab, ActionsTab, GearTab, InventoryTab, BackgroundTab } from "./character-sheet/";
 import DiceRoller from "./dice-roller";
-import { PDFExport } from "./character-sheet/PDFExport";
+
 import Image from 'next/image';
 import { toast } from 'react-hot-toast';
 import { clientCache } from '@/lib/client-cache';
@@ -528,9 +528,9 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     toast.success(`🛡️ Equipped ${armor.name} (${acBonus} AC)`, {
       duration: 3000,
       style: {
-        background: '#1e293b',
-        color: '#e2e8f0',
-        border: '1px solid #475569'
+        background: 'var(--color-card)',
+        color: 'var(--color-text-primary)',
+        border: '1px solid var(--color-border)'
       }
     });
   };
@@ -557,9 +557,9 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     toast.success(`🛡️ Unequipped ${armor.name} (${acLoss} AC)`, {
       duration: 3000,
       style: {
-        background: '#1e293b',
-        color: '#e2e8f0',
-        border: '1px solid #475569'
+        background: 'var(--color-card)',
+        color: 'var(--color-text-primary)',
+        border: '1px solid var(--color-border)'
       }
     });
   };
@@ -838,10 +838,10 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
-        <div className="bg-slate-800 rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
+      <div className="fixed inset-0 bg-black/50 flex items-start justify-center p-4 pt-8 z-50">
+        <div className="bg-[var(--color-card)] rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
           {/* Header - Compact & Responsive */}
-          <div className="p-4 border-b border-slate-700">
+          <div className="p-4 border-b border-[var(--color-border)]">
             {/* Main header row */}
             <div className="flex items-center justify-between">
               {/* Avatar and basic info - always visible */}
@@ -858,12 +858,12 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                     />
                   </div>
                 ) : null}
-                <User className={`h-6 w-6 sm:h-7 sm:w-7 text-purple-400 flex-shrink-0 ${avatarUrl ? 'hidden' : ''}`} />
+                <User className={`h-6 w-6 sm:h-7 sm:w-7 text-[var(--color-accent)] flex-shrink-0 ${avatarUrl ? 'hidden' : ''}`} />
                 
                 {/* Character info */}
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-xl sm:text-2xl font-bold text-white truncate">{displayCharacter.name}</h1>
-                  <p className="text-slate-300 text-sm sm:text-base truncate">
+                  <h1 className="text-xl sm:text-2xl font-bold text-[var(--color-text-primary)] truncate">{displayCharacter.name}</h1>
+                  <p className="text-[var(--color-text-secondary)] text-sm sm:text-base truncate">
                     Level {displayCharacter.level} {displayCharacter.subrace || displayCharacter.race} {displayCharacter.class}
                     {displayCharacter.background && (
                       <span className="hidden sm:inline"> • {displayCharacter.background}</span>
@@ -877,7 +877,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 {/* Level Up button */}
                 <button
                   onClick={() => setShowLevelUpModal(true)}
-                  className="flex items-center gap-2 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm"
+                  className="flex items-center gap-2 px-3 py-2 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] rounded-lg transition-colors text-sm"
                   title="Level Up"
                 >
                   <span>Level Up</span>
@@ -887,7 +887,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 <div className="relative" ref={actionsMenuRef}>
                   <button
                     onClick={() => setShowActionsMenu(!showActionsMenu)}
-                    className="text-slate-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-slate-700"
+                    className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors p-2 rounded-lg hover:bg-[var(--color-card-secondary)]"
                     title="Actions"
                   >
                     <MoreVertical className="h-5 w-5" />
@@ -895,7 +895,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                   
                   {/* Dropdown menu */}
                   {showActionsMenu && (
-                    <div className="absolute right-0 top-full mt-1 bg-slate-700 rounded-lg border border-slate-600 shadow-lg z-10 min-w-[140px]">
+                    <div className="absolute right-0 top-full mt-1 bg-[var(--color-card)] rounded-lg border border-[var(--color-border)] shadow-lg z-10 min-w-[140px]">
                       <button
                         onClick={() => {
                           // Trigger PDF export
@@ -903,7 +903,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                           if (pdfButton) pdfButton.click();
                           setShowActionsMenu(false);
                         }}
-                        className="w-full px-3 py-2 text-left text-white hover:bg-slate-600 transition-colors border-b border-slate-600"
+                        className="w-full px-3 py-2 text-left text-[var(--color-text-primary)] hover:bg-[var(--color-card-secondary)] transition-colors border-b border-[var(--color-border)]"
                       >
                         Export PDF
                       </button>
@@ -913,7 +913,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                           setShowDeleteDialog(true);
                           setShowActionsMenu(false);
                         }}
-                        className="w-full px-3 py-2 text-left text-red-400 hover:bg-slate-600 rounded-b-lg transition-colors"
+                        className="w-full px-3 py-2 text-left text-[var(--color-danger)] hover:bg-[var(--color-card-secondary)] rounded-b-lg transition-colors"
                       >
                         Delete
                       </button>
@@ -924,7 +924,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 {/* Close button - always visible */}
                 <button
                   onClick={onClose}
-                  className="text-slate-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-slate-700"
+                  className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors p-2 rounded-lg hover:bg-[var(--color-card-secondary)]"
                   title="Close"
                 >
                   <X className="h-5 w-5" />
@@ -934,15 +934,15 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
           </div>
 
           {/* Tab Navigation - Responsive */}
-          <div className="border-b border-slate-700">
+          <div className="border-b border-transparent">
             {/* Desktop: Show all tabs in a row */}
             <div className="hidden lg:flex items-end">
               <button
                 onClick={() => setActiveTab("stats")}
                 className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                   activeTab === "stats"
-                    ? "text-purple-400 border-b-2 border-purple-400"
-                    : "text-slate-400 hover:text-white"
+                    ? "text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]"
+                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 <BarChart3 className="h-4 w-4" />
@@ -952,8 +952,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onClick={() => setActiveTab("actions")}
                 className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                   activeTab === "actions"
-                    ? "text-purple-400 border-b-2 border-purple-400"
-                    : "text-slate-400 hover:text-white"
+                    ? "text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]"
+                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 <Swords className="h-4 w-4" />
@@ -963,8 +963,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onClick={() => setActiveTab("gear")}
                 className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                   activeTab === "gear"
-                    ? "text-purple-400 border-b-2 border-purple-400"
-                    : "text-slate-400 hover:text-white"
+                    ? "text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]"
+                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 <Package className="h-4 w-4" />
@@ -974,8 +974,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onClick={() => setActiveTab("inventory")}
                 className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                   activeTab === "inventory"
-                    ? "text-purple-400 border-b-2 border-purple-400"
-                    : "text-slate-400 hover:text-white"
+                    ? "text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]"
+                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 <Coins className="h-4 w-4" />
@@ -985,8 +985,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onClick={() => setActiveTab("background")}
                 className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                   activeTab === "background"
-                    ? "text-purple-400 border-b-2 border-purple-400"
-                    : "text-slate-400 hover:text-white"
+                    ? "text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]"
+                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 <FileText className="h-4 w-4" />
@@ -996,8 +996,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onClick={() => setActiveTab("dice")}
                 className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
                   activeTab === "dice"
-                    ? "text-purple-400 border-b-2 border-purple-400"
-                    : "text-slate-400 hover:text-white"
+                    ? "text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]"
+                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
                 }`}
               >
                 <Dices className="h-4 w-4" />
@@ -1011,7 +1011,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 <select
                   value={activeTab}
                   onChange={(e) => setActiveTab(e.target.value as typeof activeTab)}
-                  className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-white font-medium focus:border-purple-500 focus:outline-none appearance-none cursor-pointer"
+                  className="w-full bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg px-4 py-3 text-[var(--color-text-primary)] font-medium focus:border-[var(--color-accent)] focus:outline-none appearance-none cursor-pointer"
                 >
                   <option value="stats">📊 Stats</option>
                   <option value="actions">⚔️ Actions</option>
@@ -1020,7 +1020,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                   <option value="background">📄 Background / Notes</option>
                   <option value="dice">🎲 Dice Roll</option>
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--color-text-secondary)] pointer-events-none" />
               </div>
             </div>
           </div>
@@ -1129,17 +1129,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
       {/* Magical Weapon Creator Modal */}
       {showWeaponCreator && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
-          <div className="bg-slate-800 rounded-lg w-full max-w-md p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Create Magical Weapon</h3>
+        <div className="fixed inset-0 bg-black/50 flex items-start justify-center p-4 pt-8 z-50">
+          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-md p-6">
+            <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4">Create Magical Weapon</h3>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm text-slate-400 mb-2">Base Weapon</label>
+                <label className="block text-sm text-[var(--color-text-muted)] mb-2">Base Weapon</label>
                 <select
                   value={selectedBaseWeapon}
                   onChange={(e) => setSelectedBaseWeapon(e.target.value)}
-                  className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
                 >
                   <option value="">Select base weapon...</option>
                   {clientCache.getWeapons().map(weapon => (
@@ -1151,11 +1151,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               </div>
 
               <div>
-                <label className="block text-sm text-slate-400 mb-2">Magical Enhancement</label>
+                <label className="block text-sm text-[var(--color-text-muted)] mb-2">Magical Enhancement</label>
                 <select
                   value={selectedMagicalTemplate}
                   onChange={(e) => setSelectedMagicalTemplate(e.target.value)}
-                  className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
                 >
                   <option value="">Select enhancement...</option>
                   {MAGICAL_WEAPON_TEMPLATES.map(template => (
@@ -1167,20 +1167,20 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               </div>
 
               <div>
-                <label className="block text-sm text-slate-400 mb-2">Custom Name (Optional)</label>
+                <label className="block text-sm text-[var(--color-text-muted)] mb-2">Custom Name (Optional)</label>
                 <input
                   type="text"
                   value={customWeaponName}
                   onChange={(e) => setCustomWeaponName(e.target.value)}
                   placeholder="e.g., 'Dawnbreaker' or leave empty for default"
-                  className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                  className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
                 />
               </div>
 
               {selectedMagicalTemplate && (
-                <div className="bg-slate-700 p-3 rounded">
-                  <div className="text-xs text-slate-400 mb-1">Enhancement Description:</div>
-                  <div className="text-sm text-slate-300">
+                <div className="bg-[var(--color-card-secondary)] p-3 rounded">
+                  <div className="text-xs text-[var(--color-text-muted)] mb-1">Enhancement Description:</div>
+                  <div className="text-sm text-[var(--color-text-secondary)]">
                     {MAGICAL_WEAPON_TEMPLATES.find(t => t.name === selectedMagicalTemplate)?.description}
                   </div>
                 </div>
@@ -1190,14 +1190,14 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setShowWeaponCreator(false)}
-                className="flex-1 bg-slate-600 hover:bg-slate-500 text-white py-2 px-4 rounded transition-colors"
+                className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-secondary)]/80 text-[var(--color-text-primary)] py-2 px-4 rounded transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreateMagicalWeapon}
                 disabled={!selectedBaseWeapon || !selectedMagicalTemplate}
-                className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-2 px-4 rounded transition-colors"
+                className="flex-1 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] py-2 px-4 rounded transition-colors"
               >
                 Create Weapon
               </button>
@@ -1231,12 +1231,12 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
       {/* Spell Preparation Modal */}
       {showSpellPreparationModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50">
-          <div className="bg-slate-800 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-6 border-b border-slate-600">
+        <div className="fixed inset-0 bg-black/50 flex items-start justify-center p-4 pt-8 z-50">
+          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-[var(--color-border)]">
               <div>
-                <h3 className="text-xl font-semibold text-white">Prepare Spells</h3>
-                <p className="text-slate-400 text-sm">
+                <h3 className="text-xl font-semibold text-[var(--color-text-primary)]">Prepare Spells</h3>
+                <p className="text-[var(--color-text-secondary)] text-sm">
                   Choose spells to prepare for the day ({tempPreparedSpells.filter(s => s.level > 0).length} / {
                     (() => {
                       const spellcastingAbility = currentCharacter.spellcastingAbility || 'intelligence';
@@ -1249,7 +1249,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               </div>
               <button
                 onClick={() => setShowSpellPreparationModal(false)}
-                className="text-slate-400 hover:text-white transition-colors"
+                className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -1275,8 +1275,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 return (
                   <div className="space-y-6">
                     {/* Explanation */}
-                    <div className="p-4 bg-blue-900/20 border border-blue-600/30 rounded-lg">
-                      <p className="text-blue-300 text-sm">
+                    <div className="p-4 bg-[var(--color-accent-bg)] border border-[var(--color-accent-border)] rounded-lg">
+                      <p className="text-[var(--color-accent-text)] text-sm">
                         {spellcastingType === 'spellbook' 
                           ? 'As a Wizard, you prepare spells from your spellbook. Cantrips are always available.'
                           : `As a ${currentCharacter.class}, you can prepare spells from your entire spell list. Cantrips are always available.`
@@ -1288,7 +1288,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                       .sort(([a], [b]) => parseInt(a) - parseInt(b))
                       .map(([level, spells]) => (
                       <div key={level}>
-                        <h4 className="text-lg font-medium text-white mb-3">
+                        <h4 className="text-lg font-medium text-[var(--color-text-primary)] mb-3">
                           {level === '0' ? 'Cantrips' : `Level ${level} Spells`}
                         </h4>
                         <div className="space-y-2">
@@ -1328,10 +1328,10 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                 key={index}
                                 className={`p-3 border rounded-lg cursor-pointer transition-colors ${
                                   isSelected 
-                                    ? 'border-green-500 bg-green-900/20' 
+                                    ? 'border-[var(--color-success)] bg-[var(--color-success-bg)]' 
                                     : canSelect 
-                                      ? 'border-slate-600 hover:border-blue-400 bg-slate-700'
-                                      : 'border-slate-600 bg-slate-700 opacity-50 cursor-not-allowed'
+                                      ? 'border-[var(--color-border)] hover:border-[var(--color-accent-border)] bg-[var(--color-card)]'
+                                      : 'border-[var(--color-border)] bg-[var(--color-card)] opacity-50 cursor-not-allowed'
                                 }`}
                                 onClick={() => {
                                   // Allow all spells to be clicked
@@ -1354,12 +1354,12 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                               >
                                 <div className="flex items-center justify-between mb-2">
                                   <div className="flex items-center gap-2">
-                                    <span className="text-white font-medium">{spell.name}</span>
-                                    <span className="text-xs bg-slate-600 px-2 py-1 rounded">
+                                    <span className="text-[var(--color-text-primary)] font-medium">{spell.name}</span>
+                                    <span className="text-xs bg-[var(--color-card-secondary)] px-2 py-1 rounded">
                                       {spell.school}
                                     </span>
                                     {isCantrip && (
-                                      <span className="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded">
+                                      <span className="text-xs bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] px-2 py-1 rounded">
                                         Always Available
                                       </span>
                                     )}
@@ -1367,17 +1367,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                   {!isCantrip && (
                                     <span className={`text-xs px-2 py-1 rounded ${
                                       isSelected 
-                                        ? 'bg-green-600 text-white' 
-                                        : 'bg-slate-600 text-slate-300'
+                                        ? 'bg-[var(--color-success)] text-[var(--color-success-text)]' 
+                                        : 'bg-[var(--color-card-secondary)] text-[var(--color-text-secondary)]'
                                     }`}>
                                       {isSelected ? 'Prepared' : 'Prepare'}
                                     </span>
                                   )}
                                 </div>
-                                <div className="text-slate-400 text-xs mb-2">
+                                <div className="text-[var(--color-text-secondary)] text-xs mb-2">
                                   {spell.castingTime} • {spell.range} • {spell.duration}
                                 </div>
-                                <div className="text-slate-300 text-sm">
+                                <div className="text-[var(--color-text-primary)] text-sm">
                                   {spell.description}
                                 </div>
                               </div>
@@ -1391,16 +1391,16 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               })()}
             </div>
 
-            <div className="flex gap-3 p-6 border-t border-slate-600">
+            <div className="flex gap-3 p-6 border-t border-[var(--color-border)]">
               <button
                 onClick={handleSaveSpellPreparation}
-                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition-colors"
+                className="flex-1 bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] py-2 px-4 rounded transition-colors"
               >
                 Save Prepared Spells
               </button>
               <button
                 onClick={() => setShowSpellPreparationModal(false)}
-                className="flex-1 bg-slate-600 hover:bg-slate-500 text-white py-2 px-4 rounded transition-colors"
+                className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] text-[var(--color-text-primary)] py-2 px-4 rounded transition-colors"
               >
                 Cancel
               </button>

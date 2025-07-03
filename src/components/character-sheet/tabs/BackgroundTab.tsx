@@ -459,13 +459,13 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     return (
       <div className="space-y-4">
         {/* Mode Selection */}
-        <div className="flex gap-2 p-1 bg-slate-800 rounded-lg">
+        <div className="flex gap-2 p-1 bg-[var(--color-card-secondary)] rounded-lg">
           <button
             onClick={() => setEditMode('freeform')}
             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
               editMode === 'freeform'
-                ? 'bg-purple-600 text-white'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-[var(--color-accent)] text-[var(--color-accent-text)]'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
             }`}
           >
             <FileText className="h-4 w-4 inline mr-2" />
@@ -475,8 +475,8 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             onClick={() => setEditMode('guided')}
             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
               editMode === 'guided'
-                ? 'bg-purple-600 text-white'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-[var(--color-accent)] text-[var(--color-accent-text)]'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
             }`}
           >
             <HelpCircle className="h-4 w-4 inline mr-2" />
@@ -491,7 +491,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               value={editValues.backstory}
               onChange={(e) => handleFieldChange('backstory', e.target.value)}
               placeholder="Tell your character&apos;s story - their background, history, motivations, and how they became an adventurer."
-              className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
+              className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none resize-vertical"
               rows={8}
             />
             <div className="flex justify-end mt-1">
@@ -503,24 +503,24 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
         {/* Guided Editor */}
         {editMode === 'guided' && (
           <div className="space-y-4 max-h-96 overflow-y-auto">
-            <div className="bg-slate-800 p-3 rounded-lg">
-              <p className="text-slate-300 text-sm">
+            <div className="bg-[var(--color-card-secondary)] p-3 rounded-lg">
+              <p className="text-[var(--color-text-primary)] text-sm">
                 Answer any questions that interest you. Each answered question will be added to your backstory.
-                <span className="text-slate-400 block mt-1">None are required - skip any you don\'t want to answer!</span>
+                <span className="text-[var(--color-text-secondary)] block mt-1">None are required - skip any you don\'t want to answer!</span>
               </p>
             </div>
             
             <div className="space-y-4 max-h-96 overflow-y-auto">
               {storyService.getBackstoryPrompts().map((prompt, index) => (
-                <div key={index} className="bg-slate-600 rounded-lg p-4">
-                  <label className="block text-white font-medium mb-2">
+                <div key={index} className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+                  <label className="block text-[var(--color-text-primary)] font-medium mb-2">
                     {prompt.question}
                   </label>
                   <textarea
                     value={guidedAnswers[index] || ''}
                     onChange={(e) => handleGuidedAnswerChange(index, e.target.value)}
                     placeholder={prompt.placeholder}
-                    className="w-full bg-slate-700 border border-slate-500 rounded px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
+                    className="w-full bg-[var(--color-card)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none resize-vertical"
                     rows={2}
                   />
                   <div className="flex justify-end mt-1">
@@ -540,10 +540,10 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
             {/* Preview */}
             {Object.keys(guidedAnswers).some(key => guidedAnswers[parseInt(key)]?.trim()) && (
-              <div className="bg-slate-800 rounded-lg p-4">
-                <h4 className="text-white font-medium mb-2">Preview:</h4>
-                <div className="bg-slate-700 rounded p-3 max-h-32 overflow-y-auto">
-                  <pre className="text-slate-300 text-sm whitespace-pre-wrap">
+              <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+                <h4 className="text-[var(--color-text-primary)] font-medium mb-2">Preview:</h4>
+                <div className="bg-[var(--color-card)] rounded p-3 max-h-32 overflow-y-auto">
+                  <pre className="text-[var(--color-text-primary)] text-sm whitespace-pre-wrap">
                     {compileGuidedAnswers()}
                   </pre>
                 </div>
@@ -566,16 +566,16 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     const value = (character[field] as string) || '';
 
     return (
-      <div className="bg-slate-700 rounded-lg p-4">
+      <div className="bg-[var(--color-card)] rounded-lg p-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
             {icon}
             {title}
           </h3>
           {!isCurrentlyEditing ? (
             <button
               onClick={() => handleStartEdit(field)}
-              className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors text-sm"
+              className="flex items-center gap-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors text-sm"
             >
               <Edit3 className="h-4 w-4" />
               {value ? 'Edit' : 'Add'}
@@ -584,14 +584,14 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => handleSave(field)}
-                className="flex items-center gap-1 text-green-400 hover:text-green-300 transition-colors text-sm"
+                className="flex items-center gap-1 text-[var(--color-success)] hover:text-[var(--color-success-hover)] transition-colors text-sm"
               >
                 <Save className="h-4 w-4" />
                 Save
               </button>
               <button
                 onClick={handleCancel}
-                className="flex items-center gap-1 text-red-400 hover:text-red-300 transition-colors text-sm"
+                className="flex items-center gap-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] transition-colors text-sm"
               >
                 <X className="h-4 w-4" />
                 Cancel
@@ -616,7 +616,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 value={editValues[field]}
                 onChange={(e) => handleFieldChange(field, e.target.value)}
                 placeholder={placeholder}
-                className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
+                className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none resize-vertical"
                 rows={field === 'notes' ? 12 : 4}
               />
               <div className="flex justify-end mt-1">
@@ -627,9 +627,9 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
         ) : (
           <div className={field === 'notes' ? "min-h-[300px]" : "min-h-[60px]"}>
             {value ? (
-              <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{value}</p>
+              <p className="text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap">{value}</p>
             ) : (
-              <p className="text-slate-500 italic">{placeholder}</p>
+              <p className="text-[var(--color-text-muted)] italic">{placeholder}</p>
             )}
           </div>
         )}
@@ -643,16 +643,16 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
     <div className="p-4">
       <div className="space-y-4">
         {/* Character Summary */}
-        <div className="bg-slate-700 rounded-lg p-4">
+        <div className="bg-[var(--color-card)] rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-purple-400" />
+            <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-[var(--color-accent)]" />
               Character Summary
             </h3>
             {!isEditingSummary && (
               <button
                 onClick={handleStartSummaryEdit}
-                className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1 rounded-lg transition-colors flex items-center gap-2 text-sm"
+                className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] px-3 py-1 rounded-lg transition-colors flex items-center gap-2 text-sm"
               >
                 <Edit3 className="h-4 w-4" />
                 Edit
@@ -665,20 +665,20 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-400 text-sm mb-1">Name</label>
+                  <label className="block text-[var(--color-text-secondary)] text-sm mb-1">Name</label>
                   <input
                     type="text"
                     value={summaryEditValues.name}
                     onChange={(e) => setSummaryEditValues(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 text-sm mb-1">Gender</label>
+                  <label className="block text-[var(--color-text-secondary)] text-sm mb-1">Gender</label>
                   <select
                     value={summaryEditValues.gender}
                     onChange={(e) => setSummaryEditValues(prev => ({ ...prev, gender: e.target.value }))}
-                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
                   >
                     <option value="">Not specified</option>
                     <option value="Male">Male</option>
@@ -688,28 +688,28 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-slate-400 text-sm mb-1">Age</label>
+                  <label className="block text-[var(--color-text-secondary)] text-sm mb-1">Age</label>
                   <input
                     type="number"
                     value={summaryEditValues.age}
                     onChange={(e) => setSummaryEditValues(prev => ({ ...prev, age: e.target.value }))}
                     placeholder="Unknown"
                     min="1"
-                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 text-sm mb-1">Alignment</label>
+                  <label className="block text-[var(--color-text-secondary)] text-sm mb-1">Alignment</label>
                   <input
                     type="text"
                     value={summaryEditValues.alignment}
                     onChange={(e) => setSummaryEditValues(prev => ({ ...prev, alignment: e.target.value }))}
                     placeholder="Unaligned"
-                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 text-sm mb-1">Subrace</label>
+                  <label className="block text-[var(--color-text-secondary)] text-sm mb-1">Subrace</label>
                   <SubraceSelector
                     race={character.race}
                     selectedSubrace={summaryEditValues.subrace}
@@ -722,14 +722,14 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               <div className="flex gap-2 justify-end">
                 <button
                   onClick={handleCancelSummary}
-                  className="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                  className="bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] text-[var(--color-text-primary)] px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
                 >
                   <X className="h-4 w-4" />
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveSummary}
-                  className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                  className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
                 >
                   <Save className="h-4 w-4" />
                   Save
@@ -740,28 +740,28 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             /* Display Mode */
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-center">
               <div>
-                <div className="text-slate-400 text-sm">Name</div>
-                <div className="text-white font-medium">{character.name}</div>
+                <div className="text-[var(--color-text-secondary)] text-sm">Name</div>
+                <div className="text-[var(--color-text-primary)] font-medium">{character.name}</div>
               </div>
               <div>
-                <div className="text-slate-400 text-sm">{character.subrace ? 'Subrace' : 'Race'}</div>
-                <div className="text-white font-medium">{character.subrace ? character.subrace : character.race}</div>
+                <div className="text-[var(--color-text-secondary)] text-sm">{character.subrace ? 'Subrace' : 'Race'}</div>
+                <div className="text-[var(--color-text-primary)] font-medium">{character.subrace ? character.subrace : character.race}</div>
               </div>
               <div>
-                <div className="text-slate-400 text-sm">Class</div>
-                <div className="text-white font-medium">{character.class} {character.level}</div>
+                <div className="text-[var(--color-text-secondary)] text-sm">Class</div>
+                <div className="text-[var(--color-text-primary)] font-medium">{character.class} {character.level}</div>
               </div>
               <div>
-                <div className="text-slate-400 text-sm">Gender</div>
-                <div className="text-white font-medium">{character.gender || 'Unknown'}</div>
+                <div className="text-[var(--color-text-secondary)] text-sm">Gender</div>
+                <div className="text-[var(--color-text-primary)] font-medium">{character.gender || 'Unknown'}</div>
               </div>
               <div>
-                <div className="text-slate-400 text-sm">Age</div>
-                <div className="text-white font-medium">{character.age || 'Unknown'}</div>
+                <div className="text-[var(--color-text-secondary)] text-sm">Age</div>
+                <div className="text-[var(--color-text-primary)] font-medium">{character.age || 'Unknown'}</div>
               </div>
               <div>
-                <div className="text-slate-400 text-sm">Alignment</div>
-                <div className="text-white font-medium">{character.alignment || 'Unaligned'}                </div>
+                <div className="text-[var(--color-text-secondary)] text-sm">Alignment</div>
+                <div className="text-[var(--color-text-primary)] font-medium">{character.alignment || 'Unaligned'}                </div>
               </div>
               
               {/* Display selected draconic ancestry effects - only if there's content to show */}
@@ -775,9 +775,9 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 if (!hasBreathWeapon) return null;
                 
                 return (
-                  <div className="mt-3 p-3 bg-slate-500/30 rounded-lg">
-                    <div className="text-slate-300 text-sm space-y-1">
-                      <div className="font-medium text-white">{character.subrace}</div>
+                  <div className="mt-3 p-3 bg-[var(--color-card-tertiary)]/30 rounded-lg">
+                    <div className="text-[var(--color-text-primary)] text-sm space-y-1">
+                      <div className="font-medium text-[var(--color-text-primary)]">{character.subrace}</div>
                       {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
                         <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Acid damage</div>
                       ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
@@ -810,34 +810,34 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
         </div>
 
         {/* Racial Traits Section */}
-        <div className="bg-slate-700 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-purple-400" />
+        <div className="bg-[var(--color-card)] rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-[var(--color-accent)]" />
             Racial Traits
           </h3>
           {traitsError ? (
-            <div className="text-red-400">{traitsError}</div>
+            <div className="text-[var(--color-danger)]">{traitsError}</div>
           ) : racialTraits.length === 0 ? (
-            <div className="text-slate-400">No racial traits found.</div>
+            <div className="text-[var(--color-text-secondary)]">No racial traits found.</div>
           ) : (
             <div className="flex flex-wrap gap-2">
               {racialTraits.map((trait, index) => (
                 <div key={index} className="relative flex items-center gap-2">
-                  <span className="bg-purple-900/40 text-purple-300 px-3 py-1 rounded-full text-sm font-medium">
+                  <span className="bg-[var(--color-accent-bg)] text-[var(--color-accent)] px-3 py-1 rounded-full text-sm font-medium">
                     {trait.name}
                   </span>
                   <button
                     onClick={() => toggleTooltip(`racial-${index}`)}
-                    className="text-purple-400 hover:text-purple-300 transition-colors"
+                    className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors"
                     data-tooltip
                   >
                     <HelpCircle className="h-4 w-4" />
                   </button>
                   {activeTooltip === `racial-${index}` && (
-                    <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-slate-800 rounded text-sm text-slate-300 border border-slate-600 w-80 shadow-lg" data-tooltip>
-                      <strong className="text-purple-300">{trait.name}</strong><br/>
+                    <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-[var(--color-card-secondary)] rounded text-sm text-[var(--color-text-primary)] border border-[var(--color-border)] w-80 shadow-lg" data-tooltip>
+                      <strong className="text-[var(--color-accent)]">{trait.name}</strong><br/>
                       {trait.description}<br/>
-                      <span className="text-xs text-slate-400 mt-1 block">
+                      <span className="text-xs text-[var(--color-text-secondary)] mt-1 block">
                         Type: {trait.type === 'active' ? 'Action Required' : 'Always Active'}
                       </span>
                     </div>
@@ -850,30 +850,30 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
         {/* Background Features Section */}
         {backgroundData && (
-          <div className="bg-slate-700 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-blue-400" />
-              Background Features
-            </h3>
+                  <div className="bg-[var(--color-card)] rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-[var(--color-accent)]" />
+            Background Features
+          </h3>
             <div className="space-y-3">
               {/* Background Feature */}
               <div className="flex flex-wrap gap-2">
                 <div className="relative flex items-center gap-2">
-                  <span className="bg-blue-900/40 text-blue-300 px-3 py-1 rounded-full text-sm font-medium">
+                  <span className="bg-[var(--color-accent-bg)] text-[var(--color-accent)] px-3 py-1 rounded-full text-sm font-medium">
                     {backgroundData.feature}
                   </span>
                   <button
                     onClick={() => toggleTooltip('background-feature')}
-                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                    className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors"
                     data-tooltip
                   >
                     <HelpCircle className="h-4 w-4" />
                   </button>
                   {activeTooltip === 'background-feature' && (
-                    <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-slate-800 rounded text-sm text-slate-300 border border-slate-600 w-80 shadow-lg" data-tooltip>
-                      <strong className="text-blue-300">{backgroundData.feature}</strong><br/>
+                    <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-[var(--color-card-secondary)] rounded text-sm text-[var(--color-text-primary)] border border-[var(--color-border)] w-80 shadow-lg" data-tooltip>
+                      <strong className="text-[var(--color-accent)]">{backgroundData.feature}</strong><br/>
                       {backgroundData.featureDescription}<br/>
-                      <span className="text-xs text-slate-400 mt-1 block">
+                      <span className="text-xs text-[var(--color-text-secondary)] mt-1 block">
                         Type: Background Feature
                       </span>
                     </div>
@@ -884,10 +884,10 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               {/* Background Skill Proficiencies */}
               {backgroundData.skillProficiencies && backgroundData.skillProficiencies.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-medium text-slate-300 mb-2">Skill Proficiencies Granted:</h4>
+                  <h4 className="text-sm font-medium text-[var(--color-text-primary)] mb-2">Skill Proficiencies Granted:</h4>
                   <div className="flex flex-wrap gap-2">
                     {backgroundData.skillProficiencies.map((skill, index) => (
-                      <span key={index} className="bg-green-900/40 text-green-300 px-2 py-1 rounded text-xs font-medium">
+                      <span key={index} className="bg-[var(--color-success-bg)] text-[var(--color-success)] px-2 py-1 rounded text-xs font-medium">
                         {skill}
                       </span>
                     ))}
@@ -901,33 +901,33 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
         )}
 
         {/* Racial Choices Section */}
-        <div className="bg-slate-700 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-purple-400" />
+        <div className="bg-[var(--color-card)] rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-[var(--color-accent)]" />
             Racial Choices
           </h3>
           
           {/* Human Extra Skill */}
           {character.race === 'Human' && (
-            <div className="mb-4 p-3 bg-slate-600 rounded-lg">
+            <div className="mb-4 p-3 bg-[var(--color-card-secondary)] rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="text-white font-medium">Extra Skill</h4>
-                <span className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Human Trait</span>
+                <h4 className="text-[var(--color-text-primary)] font-medium">Extra Skill</h4>
+                <span className="text-xs text-[var(--color-text-secondary)] bg-[var(--color-card)] px-2 py-1 rounded">Human Trait</span>
               </div>
-              <p className="text-slate-300 text-sm mb-3">
+              <p className="text-[var(--color-text-primary)] text-sm mb-3">
                 You gain proficiency in one skill of your choice.
               </p>
               <div className="space-y-2">
                 {/* Show currently selected human skill */}
                 {getRacialSkills().length > 0 && (
-                  <div className="flex items-center gap-2 p-2 bg-slate-700 rounded border border-slate-500">
-                    <span className="text-green-400 text-sm">✓</span>
-                    <span className="text-white text-sm">{getRacialSkills()[0]}</span>
+                  <div className="flex items-center gap-2 p-2 bg-[var(--color-card)] rounded border border-[var(--color-border)]">
+                    <span className="text-[var(--color-success)] text-sm">✓</span>
+                    <span className="text-[var(--color-text-primary)] text-sm">{getRacialSkills()[0]}</span>
                     <button
                       onClick={() => {
                         removeSkillWithSource(getRacialSkills()[0]);
                       }}
-                      className="ml-auto text-red-400 hover:text-red-300 text-xs"
+                      className="ml-auto text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] text-xs"
                     >
                       Change
                     </button>
@@ -944,7 +944,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                         e.target.value = "";
                       }
                     }}
-                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
                   >
                     <option value="">Choose a skill...</option>
                     {Object.keys(SKILLS).filter(skill => !(character.skills || []).includes(skill)).map(skill => (
@@ -962,12 +962,12 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
           {/* Half-Elf Two Skills */}
           {character.race === 'Half-Elf' && (
-            <div className="mb-4 p-3 bg-slate-600 rounded-lg">
+            <div className="mb-4 p-3 bg-[var(--color-card-secondary)] rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="text-white font-medium">Two Skills</h4>
-                <span className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Half-Elf Trait</span>
+                <h4 className="text-[var(--color-text-primary)] font-medium">Two Skills</h4>
+                <span className="text-xs text-[var(--color-text-secondary)] bg-[var(--color-card)] px-2 py-1 rounded">Half-Elf Trait</span>
               </div>
-              <p className="text-slate-300 text-sm mb-3">
+              <p className="text-[var(--color-text-primary)] text-sm mb-3">
                 You gain proficiency in two skills of your choice.
               </p>
               <div className="space-y-2">
@@ -975,14 +975,14 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 {getRacialSkills().length > 0 && (
                   <div className="space-y-2">
                     {getRacialSkills().map((skill, index) => (
-                      <div key={index} className="flex items-center gap-2 p-2 bg-slate-700 rounded border border-slate-500">
-                        <span className="text-green-400 text-sm">✓</span>
-                        <span className="text-white text-sm">{skill}</span>
+                      <div key={index} className="flex items-center gap-2 p-2 bg-[var(--color-card)] rounded border border-[var(--color-border)]">
+                        <span className="text-[var(--color-success)] text-sm">✓</span>
+                        <span className="text-[var(--color-text-primary)] text-sm">{skill}</span>
                         <button
                           onClick={() => {
                             removeSkillWithSource(skill);
                           }}
-                          className="ml-auto text-red-400 hover:text-red-300 text-xs"
+                          className="ml-auto text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] text-xs"
                         >
                           Change
                         </button>
@@ -1001,7 +1001,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                         e.target.value = "";
                       }
                     }}
-                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
                   >
                     <option value="">Choose {getRacialSkills().length === 0 ? 'first' : 'second'} skill...</option>
                     {Object.keys(SKILLS).filter(skill => !(character.skills || []).includes(skill)).map(skill => (
@@ -1017,12 +1017,12 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
           {/* Dragonborn Draconic Ancestry */}
           {character.race === 'Dragonborn' && (
-            <div className="mb-4 p-3 bg-slate-600 rounded-lg">
+            <div className="mb-4 p-3 bg-[var(--color-card-secondary)] rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <h4 className="text-white font-medium">Draconic Ancestry</h4>
-                <span className="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Dragonborn Trait</span>
+                <h4 className="text-[var(--color-text-primary)] font-medium">Draconic Ancestry</h4>
+                <span className="text-xs text-[var(--color-text-secondary)] bg-[var(--color-card)] px-2 py-1 rounded">Dragonborn Trait</span>
               </div>
-              <p className="text-slate-300 text-sm mb-3">
+              <p className="text-[var(--color-text-primary)] text-sm mb-3">
                 Choose one type of dragon from the Draconic Ancestry table.
               </p>
               <div className="flex gap-2">
@@ -1033,7 +1033,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                       onUpdate({ subrace: e.target.value });
                     }
                   }}
-                  className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                  className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
                 >
                   <option value="">Choose draconic ancestry...</option>
                   <option value="Black Dragonborn">Black Dragonborn</option>
@@ -1060,9 +1060,9 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 if (!hasBreathWeapon) return null;
                 
                 return (
-                  <div className="mt-3 p-3 bg-slate-500/30 rounded-lg">
-                    <div className="text-slate-300 text-sm space-y-1">
-                      <div className="font-medium text-white">{character.subrace}</div>
+                  <div className="mt-3 p-3 bg-[var(--color-card-secondary)] rounded-lg">
+                    <div className="text-[var(--color-text-primary)] text-sm space-y-1">
+                      <div className="font-medium text-[var(--color-text-primary)]">{character.subrace}</div>
                       {character.subrace.includes('Black') || character.subrace.includes('Copper') ? (
                         <div>• Breath Weapon: 5 by 30 ft. line (Dex save) - Acid damage</div>
                       ) : character.subrace.includes('Blue') || character.subrace.includes('Bronze') ? (
@@ -1095,72 +1095,72 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
           {/* No racial choices available */}
           {!['Human', 'Half-Elf', 'Dragonborn'].includes(character.race) && (
-            <div className="text-slate-400 text-sm italic">
+            <div className="text-[var(--color-text-secondary)] text-sm italic">
               No racial choices available for {character.race}.
             </div>
           )}
         </div>
 
-        {/* Skill Proficiencies Display */}
-        <div className="bg-slate-700 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-green-400" />
+                  {/* Skill Proficiencies Display */}
+          <div className="bg-[var(--color-card)] rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-[var(--color-success)]" />
             Skill Proficiencies
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Background Skills */}
             <div>
-              <div className="text-slate-400 text-sm mb-2">Background Skills</div>
+              <div className="text-[var(--color-text-secondary)] text-sm mb-2">Background Skills</div>
               <div className="space-y-1">
                 {backgroundData?.skillProficiencies?.map((skill, index) => (
-                  <div key={index} className="text-white text-sm flex items-center gap-2">
-                    <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                  <div key={index} className="text-[var(--color-text-primary)] text-sm flex items-center gap-2">
+                    <span className="w-2 h-2 bg-[var(--color-success)] rounded-full"></span>
                     {skill}
                   </div>
                 )) || (
-                  <div className="text-slate-500 text-sm">No background skills</div>
+                  <div className="text-[var(--color-text-muted)] text-sm">No background skills</div>
                 )}
               </div>
             </div>
 
             {/* Class Skills */}
             <div>
-              <div className="text-slate-400 text-sm mb-2">Class Skills</div>
+              <div className="text-[var(--color-text-secondary)] text-sm mb-2">Class Skills</div>
               <div className="space-y-1">
                 {getClassSkills().length > 0 ? (
                   getClassSkills().map((skill, index) => (
-                    <div key={index} className="text-white text-sm flex items-center gap-2">
-                      <span className="w-2 h-2 bg-blue-400 rounded-full"></span>
+                    <div key={index} className="text-[var(--color-text-primary)] text-sm flex items-center gap-2">
+                      <span className="w-2 h-2 bg-[var(--color-accent)] rounded-full"></span>
                       {skill}
                     </div>
                   ))
                 ) : (
-                  <div className="text-slate-500 text-sm">No class skills selected</div>
+                  <div className="text-[var(--color-text-muted)] text-sm">No class skills selected</div>
                 )}
               </div>
             </div>
 
             {/* Racial Skills */}
             <div>
-              <div className="text-slate-400 text-sm mb-2">Racial Skills</div>
+              <div className="text-[var(--color-text-secondary)] text-sm mb-2">Racial Skills</div>
               <div className="space-y-1">
                 {getRacialSkills().length > 0 ? (
                   getRacialSkills().map((skill, index) => (
-                    <div key={index} className="text-white text-sm flex items-center gap-2">
-                      <span className="w-2 h-2 bg-purple-400 rounded-full"></span>
+                    <div key={index} className="text-[var(--color-text-primary)] text-sm flex items-center gap-2">
+                      <span className="w-2 h-2 bg-[var(--color-card-tertiary)] rounded-full"></span>
                       {skill}
                     </div>
                   ))
                 ) : (
-                  <div className="text-slate-500 text-sm">No racial skills selected</div>
+                  <div className="text-[var(--color-text-muted)] text-sm">No racial skills selected</div>
                 )}
               </div>
             </div>
 
             {/* Other Skills */}
             <div>
-              <div className="text-slate-400 text-sm mb-2">Other Skills</div>
+              <div className="text-[var(--color-text-secondary)] text-sm mb-2">Other Skills</div>
               <div className="space-y-1">
                 {(character.skills || []).filter(skill => {
                   const skillSources = character.skillSources || {};
@@ -1170,22 +1170,22 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                     const skillSources = character.skillSources || {};
                     return !skillSources[skill] || skillSources[skill] === 'other';
                   }).map((skill, index) => (
-                    <div key={index} className="text-white text-sm flex items-center gap-2">
-                      <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+                    <div key={index} className="text-[var(--color-text-primary)] text-sm flex items-center gap-2">
+                      <span className="w-2 h-2 bg-[var(--color-warning)] rounded-full"></span>
                       {skill}
                     </div>
                   ))
                 ) : (
-                  <div className="text-slate-500 text-sm">No other skills</div>
+                  <div className="text-[var(--color-text-muted)] text-sm">No other skills</div>
                 )}
               </div>
             </div>
           </div>
 
           {/* Total Skills Summary */}
-          <div className="mt-4 pt-3 border-t border-slate-600">
-            <div className="text-slate-400 text-sm mb-2">Total Skill Proficiencies</div>
-            <div className="text-white font-medium">
+          <div className="mt-4 pt-3 border-t border-[var(--color-border)]">
+            <div className="text-[var(--color-text-secondary)] text-sm mb-2">Total Skill Proficiencies</div>
+            <div className="text-[var(--color-text-primary)] font-medium">
               {((backgroundData?.skillProficiencies?.length || 0) + (character.skills?.length || 0))} skills
             </div>
           </div>
@@ -1194,22 +1194,22 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
         
 
         {/* Languages Section - Compact Design */}
-        <div className="bg-slate-700 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-            <Languages className="h-5 w-5 text-indigo-400" />
+        <div className="bg-[var(--color-card)] rounded-lg p-4">
+          <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+            <Languages className="h-5 w-5 text-[var(--color-accent)]" />
             Languages Known
           </h3>
           
           {/* Language Requirements Tooltip */}
           {languageRequirements && languageRequirements.length > 0 && languageRequirements.some(req => req.remaining > 0) && (
-            <div className="mb-4 p-3 bg-amber-900/30 border border-amber-600/30 rounded-lg">
-              <div className="flex items-center gap-2 text-amber-300">
+            <div className="mb-4 p-3 bg-[var(--color-warning-bg)] border border-[var(--color-warning-border)] rounded-lg">
+              <div className="flex items-center gap-2 text-[var(--color-warning)]">
                 <AlertCircle className="h-4 w-4" />
                 <span className="text-sm font-medium">
                   Language Requirements
                 </span>
               </div>
-              <div className="text-amber-200 text-sm mt-1 space-y-1">
+              <div className="text-[var(--color-warning-text)] text-sm mt-1 space-y-1">
                 {languageRequirements.filter(req => req.remaining > 0).map((req, index) => (
                   <p key={index}>
                     <strong>{req.source}</strong>: {req.description}. 
@@ -1217,7 +1217,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   </p>
                 ))}
               </div>
-              <p className="text-amber-300 text-xs mt-2">
+              <p className="text-[var(--color-warning)] text-xs mt-2">
                 You need to select {languageRequirements.reduce((total, req) => total + req.remaining, 0)} more language{languageRequirements.reduce((total, req) => total + req.remaining, 0) !== 1 ? 's' : ''} below.
               </p>
             </div>
@@ -1225,17 +1225,17 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           
           {/* Language Requirements Met */}
           {languageRequirements && languageRequirements.length > 0 && languageRequirements.every(req => req.remaining === 0) && (
-            <div className="mb-4 p-3 bg-green-900/30 border border-green-600/30 rounded-lg">
-              <div className="flex items-center gap-2 text-green-300">
+            <div className="mb-4 p-3 bg-[var(--color-success-bg)] border border-[var(--color-success-border)] rounded-lg">
+              <div className="flex items-center gap-2 text-[var(--color-success)]">
                 <Info className="h-4 w-4" />
                 <span className="text-sm font-medium">
                   All Language Requirements Met
                 </span>
               </div>
-              <p className="text-green-200 text-sm mt-1">
+              <p className="text-[var(--color-success-text)] text-sm mt-1">
                 All language requirements have been satisfied:
               </p>
-              <div className="text-green-200 text-sm mt-1 space-y-1">
+              <div className="text-[var(--color-success-text)] text-sm mt-1 space-y-1">
                 {languageRequirements.map((req, index) => (
                   <p key={index}>
                     <strong>{req.source}</strong>: {req.description} ✓
@@ -1266,7 +1266,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   e.target.value = ""; // Reset selection
                 }
               }}
-              className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+              className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
               disabled={isLoadingLanguages}
             >
               <option value="">{isLoadingLanguages ? "Loading languages..." : "Add a language..."}</option>
@@ -1293,7 +1293,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
           {/* All Known Languages List */}
           <div className="space-y-2">
-            <div className="text-sm text-slate-400 mb-2">Known languages:</div>
+            <div className="text-sm text-[var(--color-text-secondary)] mb-2">Known languages:</div>
             <div className="flex flex-wrap gap-2">
               {/* Racial Languages */}
               {getRacialLanguages(character.race).map(lang => {
@@ -1377,21 +1377,21 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             
             {/* Empty state */}
             {getAutomaticLanguages(character.race, character.class).length === 0 && (!character.languages || character.languages.length === 0) && (
-              <div className="text-slate-500 text-sm italic">No languages known</div>
+              <div className="text-[var(--color-text-muted)] text-sm italic">No languages known</div>
             )}
           </div>
         </div>
 
         {/* Background Summary with Edit Button */}
-        <div className="bg-slate-700 rounded-lg p-4">
+        <div className="bg-[var(--color-card)] rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-purple-400" />
+            <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-[var(--color-accent)]" />
               Background & Traits
             </h3>
             <button
               onClick={() => setShowBackgroundModal(true)}
-              className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+              className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
             >
               <Edit3 className="h-4 w-4" />
               Edit Background
@@ -1400,13 +1400,13 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <div className="text-slate-400 text-sm mb-1">Background</div>
-              <div className="text-white font-medium">{character.background || 'No background selected'}</div>
+              <div className="text-[var(--color-text-secondary)] text-sm mb-1">Background</div>
+              <div className="text-[var(--color-text-primary)] font-medium">{character.background || 'No background selected'}</div>
               {languageRequirements && languageRequirements.length > 0 && languageRequirements.some(req => req.remaining > 0) && (
                 <div className="mt-2 text-xs space-y-1">
                   {languageRequirements.filter(req => req.remaining > 0).map((req, index) => (
                     <div key={index}>
-                      <span className="text-amber-400 flex items-center gap-1">
+                      <span className="text-[var(--color-warning)] flex items-center gap-1">
                         <AlertCircle className="h-3 w-3" />
                         {req.type === 'background' ? 'Background' : 'Racial'} language: {req.remaining} needed
                       </span>
@@ -1419,46 +1419,46 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             {character.backgroundCharacteristics && (
               <>
                 <div>
-                  <div className="text-slate-400 text-sm mb-1">Personality Traits</div>
-                  <div className="text-white text-sm space-y-1">
+                  <div className="text-[var(--color-text-secondary)] text-sm mb-1">Personality Traits</div>
+                  <div className="text-[var(--color-text-primary)] text-sm space-y-1">
                     {((character.backgroundCharacteristics?.personalityTraits ?? []).length > 0) 
                       ? (character.backgroundCharacteristics?.personalityTraits ?? []).map((trait, index) => (
                           <div key={index}>• {trait}</div>
                         ))
-                      : <div className="text-slate-500">None selected</div>
+                      : <div className="text-[var(--color-text-muted)]">None selected</div>
                     }
                   </div>
                 </div>
                 <div>
-                  <div className="text-slate-400 text-sm mb-1">Ideals</div>
-                  <div className="text-white text-sm space-y-1">
+                  <div className="text-[var(--color-text-secondary)] text-sm mb-1">Ideals</div>
+                  <div className="text-[var(--color-text-primary)] text-sm space-y-1">
                     {((character.backgroundCharacteristics?.ideals ?? []).length > 0) 
                       ? (character.backgroundCharacteristics?.ideals ?? []).map((ideal, index) => (
                           <div key={index}>• {ideal}</div>
                         ))
-                      : <div className="text-slate-500">None selected</div>
+                      : <div className="text-[var(--color-text-muted)]">None selected</div>
                     }
                   </div>
                 </div>
                 <div>
-                  <div className="text-slate-400 text-sm mb-1">Bonds</div>
-                  <div className="text-white text-sm space-y-1">
+                  <div className="text-[var(--color-text-secondary)] text-sm mb-1">Bonds</div>
+                  <div className="text-[var(--color-text-primary)] text-sm space-y-1">
                     {((character.backgroundCharacteristics?.bonds ?? []).length > 0) 
                       ? (character.backgroundCharacteristics?.bonds ?? []).map((bond, index) => (
                           <div key={index}>• {bond}</div>
                         ))
-                      : <div className="text-slate-500">None selected</div>
+                      : <div className="text-[var(--color-text-muted)]">None selected</div>
                     }
                   </div>
                 </div>
                 <div>
-                  <div className="text-slate-400 text-sm mb-1">Flaws</div>
-                  <div className="text-white text-sm space-y-1">
+                  <div className="text-[var(--color-text-secondary)] text-sm mb-1">Flaws</div>
+                  <div className="text-[var(--color-text-primary)] text-sm space-y-1">
                     {((character.backgroundCharacteristics?.flaws ?? []).length > 0) 
                       ? (character.backgroundCharacteristics?.flaws ?? []).map((flaw, index) => (
                           <div key={index}>• {flaw}</div>
                         ))
-                      : <div className="text-slate-500">None selected</div>
+                      : <div className="text-[var(--color-text-muted)]">None selected</div>
                     }
                   </div>
                 </div>
@@ -1473,10 +1473,10 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
           <div className="space-y-4">
             {/* Avatar Section - Only show if there's an avatar */}
             {(avatarUrl || character.avatar) && (
-              <div className="bg-slate-700 rounded-lg p-4">
+              <div className="bg-[var(--color-card)] rounded-lg p-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                    <Edit3 className="h-5 w-5 text-blue-400" />
+                  <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
+                    <Edit3 className="h-5 w-5 text-[var(--color-accent)]" />
                     Character Portrait
                   </h3>
                 </div>
@@ -1489,14 +1489,14 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                       alt={`${character.name}'s full body portrait`}
                       width={192}
                       height={336}
-                      className="w-48 h-84 mx-auto rounded-lg object-contain bg-slate-900 border border-slate-700"
+                      className="w-48 h-84 mx-auto rounded-lg object-contain bg-[var(--color-background)] border border-[var(--color-border)]"
                     />
                     <div className="text-center">
                       <button
                         onClick={() => {
                           deleteAvatar.mutate(character.id);
                         }}
-                        className="text-red-400 hover:text-red-300 text-sm transition-colors"
+                        className="text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] text-sm transition-colors"
                       >
                         Remove Avatar
                       </button>
@@ -1504,29 +1504,29 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   </div>
 
                   {/* AI Provider Credit */}
-                  <div className="text-xs text-slate-500 text-center">
-                    <p>🤖 AI avatars by <span className="text-slate-400">Replicate Flux.schnell</span></p>
+                  <div className="text-xs text-[var(--color-text-muted)] text-center">
+                    <p>🤖 AI avatars by <span className="text-[var(--color-text-secondary)]">Replicate Flux.schnell</span></p>
                   </div>
                 </div>
               </div>
             )}
 
             {/* Appearance Section - Inline editing with avatar generation */}
-            <div className="bg-slate-700 rounded-lg p-4">
+            <div className="bg-[var(--color-card)] rounded-lg p-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-green-400" />
+                <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-[var(--color-accent)]" />
                   Physical Description
                   <div className="relative flex items-center gap-2">
                     <button
                       onClick={() => toggleTooltip('appearance-hint')}
-                      className="text-slate-400 hover:text-slate-300 transition-colors"
+                      className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
                       data-tooltip
                     >
                       <HelpCircle className="h-4 w-4" />
                     </button>
                     {activeTooltip === 'appearance-hint' && (
-                      <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-slate-800 rounded text-sm text-slate-300 border border-slate-600 w-80 shadow-lg whitespace-normal" data-tooltip>
+                      <div className="absolute z-50 top-full left-0 mt-2 p-3 bg-[var(--color-card-secondary)] rounded text-sm text-[var(--color-text-primary)] border border-[var(--color-border)] w-80 shadow-lg whitespace-normal" data-tooltip>
                         We already know your race and class. Focus on distinctive features, scars, clothing style, or unique characteristics that make your character special.
                       </div>
                     )}
@@ -1536,14 +1536,14 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleSave('appearance')}
-                      className="flex items-center gap-1 text-green-400 hover:text-green-300 transition-colors text-sm"
+                      className="flex items-center gap-1 text-[var(--color-success)] hover:text-[var(--color-success-hover)] transition-colors text-sm"
                     >
                       <Save className="h-4 w-4" />
                       Save
                     </button>
                     <button
                       onClick={handleCancel}
-                      className="flex items-center gap-1 text-red-400 hover:text-red-300 transition-colors text-sm"
+                      className="flex items-center gap-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] transition-colors text-sm"
                     >
                       <X className="h-4 w-4" />
                       Cancel
@@ -1552,7 +1552,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 ) : (
                   <button
                     onClick={() => handleStartEdit('appearance')}
-                    className="flex items-center gap-1 text-slate-400 hover:text-white transition-colors text-sm"
+                    className="flex items-center gap-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors text-sm"
                   >
                     <Edit3 className="h-4 w-4" />
                     {character.appearance ? 'Edit' : 'Add'}
@@ -1566,7 +1566,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                     value={editValues.appearance}
                     onChange={(e) => handleFieldChange('appearance', e.target.value)}
                     placeholder="Describe your character's distinctive features, scars, clothing style, or unique characteristics that make them special."
-                    className="w-full bg-slate-600 border border-slate-500 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-purple-500 focus:outline-none resize-vertical"
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded-lg px-3 py-2 text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-accent)] focus:outline-none resize-vertical"
                     rows={6}
                   />
                   <div className="flex justify-end">
@@ -1574,19 +1574,19 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                   </div>
                 </div>
               ) : (
-                <div className="min-h-[120px] rounded-lg p-3 border border-slate-600">
+                <div className="min-h-[120px] rounded-lg p-3 border border-[var(--color-border)]">
                   {character.appearance ? (
-                    <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{character.appearance}</p>
+                    <p className="text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap">{character.appearance}</p>
                   ) : (
-                    <p className="text-slate-500 italic">Describe your character&apos;s distinctive features, scars, clothing style, or unique characteristics.</p>
+                    <p className="text-[var(--color-text-muted)] italic">Describe your character&apos;s distinctive features, scars, clothing style, or unique characteristics.</p>
                   )}
                 </div>
               )}
 
               {/* Avatar Generation - Always visible in Physical Description section */}
-              <div className="border-t border-slate-600 pt-4 mt-4">
-                <h4 className="text-white font-medium mb-3">Generate AI Avatar</h4>
-                <p className="text-slate-400 text-sm mb-3">
+              <div className="border-t border-[var(--color-border)] pt-4 mt-4">
+                <h4 className="text-[var(--color-text-primary)] font-medium mb-3">Generate AI Avatar</h4>
+                <p className="text-[var(--color-text-secondary)] text-sm mb-3">
                   Create a personalized portrait based on your character&apos;s traits and description.
                 </p>
                 
@@ -1636,29 +1636,29 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 />
 
                 {/* AI Provider Credit */}
-                <div className="text-xs text-slate-500 text-center mt-3">
-                  <p>🤖 AI avatars by <span className="text-slate-400">Replicate Flux.schnell</span></p>
+                <div className="text-xs text-[var(--color-text-muted)] text-center mt-3">
+                  <p>🤖 AI avatars by <span className="text-[var(--color-text-secondary)]">Replicate Flux.schnell</span></p>
                 </div>
               </div>
             </div>
 
             {/* Languages Section - Compact Design */}
-            <div className="bg-slate-700 rounded-lg p-4">
-              <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                <Languages className="h-5 w-5 text-indigo-400" />
+            <div className="bg-[var(--color-card)] rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+                <Languages className="h-5 w-5 text-[var(--color-accent)]" />
                 Languages Known
               </h3>
               
               {/* Language Requirements Tooltip */}
               {languageRequirements && languageRequirements.length > 0 && languageRequirements.some(req => req.remaining > 0) && (
-                <div className="mb-4 p-3 bg-amber-900/30 border border-amber-600/30 rounded-lg">
-                  <div className="flex items-center gap-2 text-amber-300">
+                <div className="mb-4 p-3 bg-[var(--color-warning-bg)] border border-[var(--color-warning-border)] rounded-lg">
+                  <div className="flex items-center gap-2 text-[var(--color-warning)]">
                     <AlertCircle className="h-4 w-4" />
                     <span className="text-sm font-medium">
                       Language Requirements
                     </span>
                   </div>
-                  <div className="text-amber-200 text-sm mt-1 space-y-1">
+                  <div className="text-[var(--color-warning-text)] text-sm mt-1 space-y-1">
                     {languageRequirements.filter(req => req.remaining > 0).map((req, index) => (
                       <p key={index}>
                         <strong>{req.source}</strong>: {req.description}. 
@@ -1666,7 +1666,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                       </p>
                     ))}
                   </div>
-                  <p className="text-amber-300 text-xs mt-2">
+                  <p className="text-[var(--color-warning)] text-xs mt-2">
                     You need to select {languageRequirements.reduce((total, req) => total + req.remaining, 0)} more language{languageRequirements.reduce((total, req) => total + req.remaining, 0) !== 1 ? 's' : ''} below.
                   </p>
                 </div>
@@ -1674,17 +1674,17 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               
               {/* Language Requirements Met */}
               {languageRequirements && languageRequirements.length > 0 && languageRequirements.every(req => req.remaining === 0) && (
-                <div className="mb-4 p-3 bg-green-900/30 border border-green-600/30 rounded-lg">
-                  <div className="flex items-center gap-2 text-green-300">
+                <div className="mb-4 p-3 bg-[var(--color-success-bg)] border border-[var(--color-success-border)] rounded-lg">
+                  <div className="flex items-center gap-2 text-[var(--color-success)]">
                     <Info className="h-4 w-4" />
                     <span className="text-sm font-medium">
                       All Language Requirements Met
                     </span>
                   </div>
-                  <p className="text-green-200 text-sm mt-1">
+                  <p className="text-[var(--color-success-text)] text-sm mt-1">
                     All language requirements have been satisfied:
                   </p>
-                  <div className="text-green-200 text-sm mt-1 space-y-1">
+                  <div className="text-[var(--color-success-text)] text-sm mt-1 space-y-1">
                     {languageRequirements.map((req, index) => (
                       <p key={index}>
                         <strong>{req.source}</strong>: {req.description} ✓
@@ -1715,7 +1715,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                       e.target.value = ""; // Reset selection
                     }
                   }}
-                  className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                  className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
                   disabled={isLoadingLanguages}
                 >
                   <option value="">{isLoadingLanguages ? "Loading languages..." : "Add a language..."}</option>
@@ -1742,7 +1742,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
 
               {/* All Known Languages List */}
               <div className="space-y-2">
-                <div className="text-sm text-slate-400 mb-2">Known languages:</div>
+                <div className="text-sm text-[var(--color-text-secondary)] mb-2">Known languages:</div>
                 <div className="flex flex-wrap gap-2">
                   {/* Racial Languages */}
                   {getRacialLanguages(character.race).map(lang => {
@@ -1826,7 +1826,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
                 
                 {/* Empty state */}
                 {getAutomaticLanguages(character.race, character.class).length === 0 && (!character.languages || character.languages.length === 0) && (
-                  <div className="text-slate-500 text-sm italic">No languages known</div>
+                  <div className="text-[var(--color-text-muted)] text-sm italic">No languages known</div>
                 )}
               </div>
             </div>
@@ -1838,7 +1838,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               "Notes",
               "notes",
               "Any additional notes, campaign information, character development, or other details.",
-              <Edit3 className="h-5 w-5 text-purple-400" />
+              <Edit3 className="h-5 w-5 text-[var(--color-accent)]" />
             )}
           </div>
         </div>

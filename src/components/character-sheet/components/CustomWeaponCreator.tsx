@@ -30,7 +30,7 @@ interface CustomWeaponCreatorProps {
 }
 
 export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: CustomWeaponCreatorProps) {
-  const [baseWeaponId, setBaseWeaponId] = useState('');
+  const [baseWeaponId, setBaseWeaponId] = useState<string>('');
   const [modifier, setModifier] = useState(1);
   const [customName, setCustomName] = useState('');
   const [description, setDescription] = useState('');
@@ -66,7 +66,9 @@ export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: Custom
   const weaponsMap = useMemo(() => {
     const map = new Map<string, Weapon>();
     weapons.forEach(weapon => {
-      map.set(weapon.id, weapon);
+      if (weapon.id) {
+        map.set(weapon.id, weapon);
+      }
     });
     return map;
   }, [weapons]);

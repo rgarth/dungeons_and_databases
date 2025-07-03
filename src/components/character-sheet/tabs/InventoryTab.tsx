@@ -296,8 +296,8 @@ export function InventoryTab({
         {/* Left Column - Organized Inventory */}
         <div className="space-y-6">
           {/* Add Item Controls */}
-          <div className="bg-slate-700 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <div className="bg-[var(--color-card)] rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
               <Plus className="h-5 w-5" />
               Add Items
             </h3>
@@ -308,8 +308,8 @@ export function InventoryTab({
                   onClick={() => setAddMode("equipment")}
                   className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-colors ${
                     addMode === "equipment" 
-                      ? "bg-purple-600 text-white" 
-                      : "bg-slate-600 text-slate-300 hover:bg-slate-500"
+                      ? "bg-[var(--color-accent)] text-[var(--color-accent-text)]" 
+                      : "bg-[var(--color-card-secondary)] text-[var(--color-text-secondary)] hover:bg-[var(--color-card-tertiary)]"
                   }`}
                 >
                   Equipment
@@ -318,8 +318,8 @@ export function InventoryTab({
                   onClick={() => setAddMode("custom")}
                   className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-colors ${
                     addMode === "custom" 
-                      ? "bg-purple-600 text-white" 
-                      : "bg-slate-600 text-slate-300 hover:bg-slate-500"
+                      ? "bg-[var(--color-accent)] text-[var(--color-accent-text)]" 
+                      : "bg-[var(--color-card-secondary)] text-[var(--color-text-secondary)] hover:bg-[var(--color-card-tertiary)]"
                   }`}
                 >
                   Custom
@@ -331,7 +331,7 @@ export function InventoryTab({
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
                   >
                     {EQUIPMENT_CATEGORIES.filter(cat => cat !== 'Armor').map(category => (
                       <option key={category} value={category}>{category}</option>
@@ -341,7 +341,7 @@ export function InventoryTab({
                     <select
                       value={selectedEquipment}
                       onChange={(e) => setSelectedEquipment(e.target.value)}
-                      className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                      className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
                     >
                       <option value="">Select item...</option>
                       {equipmentData.filter(equipment => equipment.type === selectedCategory && equipment.type !== 'Armor').map(equipment => (
@@ -353,7 +353,7 @@ export function InventoryTab({
                     <button
                       onClick={handleAddItem}
                       disabled={!selectedEquipment}
-                      className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
+                      className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] p-2 rounded transition-colors"
                     >
                       <Plus className="h-4 w-4" />
                     </button>
@@ -366,13 +366,13 @@ export function InventoryTab({
                     value={newItem}
                     onChange={(e) => setNewItem(e.target.value)}
                     placeholder="Enter custom item name..."
-                    className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                    className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
                     onKeyPress={(e) => e.key === 'Enter' && handleAddItem()}
                   />
                   <button
                     onClick={handleAddItem}
                     disabled={!newItem.trim()}
-                    className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
+                    className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] p-2 rounded transition-colors"
                   >
                     <Plus className="h-4 w-4" />
                   </button>
@@ -384,41 +384,41 @@ export function InventoryTab({
           {/* Organized Inventory Categories */}
           <div className="space-y-4">
             {Object.entries(organizedInventory).map(([category, items]) => (
-              <div key={category} className="bg-slate-700 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <div key={category} className="bg-[var(--color-card)] rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
                   {getCategoryIcon(category)}
                   {category}
-                  <span className="text-slate-400 text-sm font-normal">({items.length} items)</span>
+                  <span className="text-[var(--color-text-secondary)] text-sm font-normal">({items.length} items)</span>
                 </h3>
                 
                 <div className="space-y-2">
                   {items.map((item, index) => {
                     const globalIndex = inventory.findIndex(invItem => invItem.name === item.name);
                     return (
-                      <div key={`${category}-${index}`} className="bg-slate-600 p-3 rounded flex items-center justify-between">
+                      <div key={`${category}-${index}`} className="bg-[var(--color-card-secondary)] p-3 rounded flex items-center justify-between">
                         <div className="flex-1">
-                          <span className="text-white font-medium">{item.name}</span>
+                          <span className="text-[var(--color-text-primary)] font-medium">{item.name}</span>
                           {item.quantity > 1 && (
-                            <span className="text-slate-400 text-sm ml-2">x{item.quantity}</span>
+                            <span className="text-[var(--color-text-secondary)] text-sm ml-2">x{item.quantity}</span>
                           )}
                         </div>
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleQuantityChange(globalIndex, -1)}
-                            className="w-6 h-6 bg-slate-500 hover:bg-slate-400 rounded text-white text-xs"
+                            className="w-6 h-6 bg-[var(--color-card-tertiary)] hover:bg-[var(--color-border-light)] rounded text-[var(--color-text-primary)] text-xs"
                           >
                             <Minus className="h-3 w-3 mx-auto" />
                           </button>
-                          <span className="text-white text-sm w-8 text-center">{item.quantity}</span>
+                          <span className="text-[var(--color-text-primary)] text-sm w-8 text-center">{item.quantity}</span>
                           <button
                             onClick={() => handleQuantityChange(globalIndex, 1)}
-                            className="w-6 h-6 bg-slate-500 hover:bg-slate-400 rounded text-white text-xs"
+                            className="w-6 h-6 bg-[var(--color-card-tertiary)] hover:bg-[var(--color-border-light)] rounded text-[var(--color-text-primary)] text-xs"
                           >
                             <Plus className="h-3 w-3 mx-auto" />
                           </button>
                           <button
                             onClick={() => handleRemoveItem(globalIndex)}
-                            className="text-red-400 hover:text-red-300 transition-colors p-1"
+                            className="text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] transition-colors p-1"
                           >
                             <Trash2 className="h-3 w-3" />
                           </button>
@@ -431,11 +431,11 @@ export function InventoryTab({
             ))}
             
             {Object.keys(organizedInventory).length === 0 && (
-              <div className="bg-slate-700 rounded-lg p-4">
-                <div className="text-center py-6 border-2 border-dashed border-slate-600 rounded-lg">
-                  <Package className="h-8 w-8 text-slate-500 mx-auto mb-2" />
-                  <p className="text-slate-500 text-sm">No items in inventory</p>
-                  <p className="text-slate-600 text-xs">Add equipment or custom items above</p>
+              <div className="bg-[var(--color-card)] rounded-lg p-4">
+                <div className="text-center py-6 border-2 border-dashed border-[var(--color-border)] rounded-lg">
+                  <Package className="h-8 w-8 text-[var(--color-text-muted)] mx-auto mb-2" />
+                  <p className="text-[var(--color-text-muted)] text-sm">No items in inventory</p>
+                  <p className="text-[var(--color-text-secondary)] text-xs">Add equipment or custom items above</p>
                 </div>
               </div>
             )}
@@ -445,27 +445,27 @@ export function InventoryTab({
         {/* Right Column - Money & Treasures */}
         <div className="space-y-6">
           {/* Money */}
-          <div className="bg-slate-700 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Coins className="h-5 w-5 text-yellow-400" />
+          <div className="bg-[var(--color-card)] rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+              <Coins className="h-5 w-5 text-[var(--color-accent)]" />
               Money
             </h3>
             <div className="space-y-3">
               {/* Gold */}
               <div className="flex items-center justify-between">
-                <span className="text-yellow-400 font-medium">Gold Pieces</span>
+                <span className="text-[var(--color-accent)] font-medium">Gold Pieces</span>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleMoneyChange('gold', -1)}
                     disabled={goldPieces <= 0}
-                    className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 rounded text-white text-sm"
+                    className="w-6 h-6 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] disabled:opacity-50 rounded text-[var(--color-text-primary)] text-sm"
                   >
                     <Minus className="h-3 w-3 mx-auto" />
                   </button>
-                  <span className="text-white font-bold w-8 text-center">{goldPieces}</span>
+                  <span className="text-[var(--color-text-primary)] font-bold w-8 text-center">{goldPieces}</span>
                   <button
                     onClick={() => handleMoneyChange('gold', 1)}
-                    className="w-6 h-6 bg-slate-600 hover:bg-slate-500 rounded text-white text-sm"
+                    className="w-6 h-6 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] rounded text-[var(--color-text-primary)] text-sm"
                   >
                     <Plus className="h-3 w-3 mx-auto" />
                   </button>
@@ -473,19 +473,19 @@ export function InventoryTab({
               </div>
               {/* Silver */}
               <div className="flex items-center justify-between">
-                <span className="text-slate-300 font-medium">Silver Pieces</span>
+                <span className="text-[var(--color-text-secondary)] font-medium">Silver Pieces</span>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleMoneyChange('silver', -1)}
                     disabled={silverPieces <= 0}
-                    className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 rounded text-white text-sm"
+                    className="w-6 h-6 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] disabled:opacity-50 rounded text-[var(--color-text-primary)] text-sm"
                   >
                     <Minus className="h-3 w-3 mx-auto" />
                   </button>
-                  <span className="text-white font-bold w-8 text-center">{silverPieces}</span>
+                  <span className="text-[var(--color-text-primary)] font-bold w-8 text-center">{silverPieces}</span>
                   <button
                     onClick={() => handleMoneyChange('silver', 1)}
-                    className="w-6 h-6 bg-slate-600 hover:bg-slate-500 rounded text-white text-sm"
+                    className="w-6 h-6 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] rounded text-[var(--color-text-primary)] text-sm"
                   >
                     <Plus className="h-3 w-3 mx-auto" />
                   </button>
@@ -493,19 +493,19 @@ export function InventoryTab({
               </div>
               {/* Copper */}
               <div className="flex items-center justify-between">
-                <span className="text-orange-400 font-medium">Copper Pieces</span>
+                <span className="text-[var(--color-warning)] font-medium">Copper Pieces</span>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleMoneyChange('copper', -1)}
                     disabled={copperPieces <= 0}
-                    className="w-6 h-6 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 rounded text-white text-sm"
+                    className="w-6 h-6 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] disabled:opacity-50 rounded text-[var(--color-text-primary)] text-sm"
                   >
                     <Minus className="h-3 w-3 mx-auto" />
                   </button>
-                  <span className="text-white font-bold w-8 text-center">{copperPieces}</span>
+                  <span className="text-[var(--color-text-primary)] font-bold w-8 text-center">{copperPieces}</span>
                   <button
                     onClick={() => handleMoneyChange('copper', 1)}
-                    className="w-6 h-6 bg-slate-600 hover:bg-slate-500 rounded text-white text-sm"
+                    className="w-6 h-6 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] rounded text-[var(--color-text-primary)] text-sm"
                   >
                     <Plus className="h-3 w-3 mx-auto" />
                   </button>
@@ -515,9 +515,9 @@ export function InventoryTab({
           </div>
 
           {/* Treasures */}
-          <div className="bg-slate-700 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Zap className="h-5 w-5 text-purple-400" />
+          <div className="bg-[var(--color-card)] rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+              <Zap className="h-5 w-5 text-[var(--color-accent)]" />
               Treasures & Valuables
             </h3>
             
@@ -527,8 +527,8 @@ export function InventoryTab({
                 onClick={() => setTreasureAddMode("database")}
                 className={`flex-1 py-2 px-2 rounded text-xs font-medium transition-colors ${
                   treasureAddMode === "database" 
-                    ? "bg-purple-600 text-white" 
-                    : "bg-slate-600 text-slate-300 hover:bg-slate-500"
+                    ? "bg-[var(--color-accent)] text-[var(--color-accent-text)]" 
+                    : "bg-[var(--color-card-secondary)] text-[var(--color-text-secondary)] hover:bg-[var(--color-card-tertiary)]"
                 }`}
               >
                 Database
@@ -537,8 +537,8 @@ export function InventoryTab({
                 onClick={() => setTreasureAddMode("custom")}
                 className={`flex-1 py-2 px-2 rounded text-xs font-medium transition-colors ${
                   treasureAddMode === "custom" 
-                    ? "bg-purple-600 text-white" 
-                    : "bg-slate-600 text-slate-300 hover:bg-slate-500"
+                    ? "bg-[var(--color-accent)] text-[var(--color-accent-text)]" 
+                    : "bg-[var(--color-card-secondary)] text-[var(--color-text-secondary)] hover:bg-[var(--color-card-tertiary)]"
                 }`}
               >
                 Custom
@@ -551,7 +551,7 @@ export function InventoryTab({
                 <select
                   value={selectedTreasure}
                   onChange={(e) => setSelectedTreasure(e.target.value)}
-                  className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                  className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
                 >
                   <option value="">Select treasure...</option>
                   {allTreasures.map(treasure => (
@@ -563,7 +563,7 @@ export function InventoryTab({
                 <button
                   onClick={handleAddTreasure}
                   disabled={!selectedTreasure}
-                  className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
+                  className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] p-2 rounded transition-colors"
                 >
                   <Plus className="h-4 w-4" />
                 </button>
@@ -575,7 +575,7 @@ export function InventoryTab({
                   value={newTreasureName}
                   onChange={(e) => setNewTreasureName(e.target.value)}
                   placeholder="Treasure name..."
-                  className="w-full bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                  className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
                 />
                 <div className="flex gap-2">
                   <input
@@ -583,12 +583,12 @@ export function InventoryTab({
                     value={newTreasureValue}
                     onChange={(e) => setNewTreasureValue(e.target.value)}
                     placeholder="Value in gp..."
-                    className="flex-1 bg-slate-600 border border-slate-500 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                    className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
                   />
                   <button
                     onClick={handleAddTreasure}
                     disabled={!newTreasureName.trim() || !newTreasureValue.trim()}
-                    className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded transition-colors"
+                    className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] p-2 rounded transition-colors"
                   >
                     <Plus className="h-4 w-4" />
                   </button>
@@ -599,24 +599,24 @@ export function InventoryTab({
             {/* Treasure List */}
             <div className="space-y-2 max-h-80 overflow-y-auto">
               {treasures.map((treasure, index) => (
-                <div key={index} className="bg-slate-600 p-3 rounded flex items-center justify-between">
+                <div key={index} className="bg-[var(--color-card-secondary)] p-3 rounded flex items-center justify-between">
                   <div className="flex-1">
-                    <span className="text-white font-medium">{treasure.name}</span>
-                    <span className="text-purple-400 text-sm ml-2">{treasure.value} gp</span>
+                    <span className="text-[var(--color-text-primary)] font-medium">{treasure.name}</span>
+                    <span className="text-[var(--color-accent)] text-sm ml-2">{treasure.value} gp</span>
                   </div>
                   <button
                     onClick={() => handleRemoveTreasure(index)}
-                    className="text-red-400 hover:text-red-300 transition-colors p-1"
+                    className="text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] transition-colors p-1"
                   >
                     <Trash2 className="h-3 w-3" />
                   </button>
                 </div>
               ))}
               {treasures.length === 0 && (
-                <div className="text-center py-6 border-2 border-dashed border-slate-600 rounded-lg">
-                  <Zap className="h-8 w-8 text-slate-500 mx-auto mb-2" />
-                  <p className="text-slate-500 text-sm">No treasures collected</p>
-                  <p className="text-slate-600 text-xs">Add treasures from database or create custom ones</p>
+                <div className="text-center py-6 border-2 border-dashed border-[var(--color-border)] rounded-lg">
+                  <Zap className="h-8 w-8 text-[var(--color-text-muted)] mx-auto mb-2" />
+                  <p className="text-[var(--color-text-muted)] text-sm">No treasures collected</p>
+                  <p className="text-[var(--color-text-secondary)] text-xs">Add treasures from database or create custom ones</p>
                 </div>
               )}
             </div>
