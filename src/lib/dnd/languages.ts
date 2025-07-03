@@ -79,6 +79,7 @@ export function getAutomaticLanguages(race: string, characterClass: string): str
 }
 
 // Get language styling classes based on category and source
+// DEPRECATED: Use getLanguageStyles from @/lib/theme-utils instead
 export function getLanguageStyling(languageName: string, isRacial: boolean = false, isClassGranted: boolean = false, languages: Language[] = []) {
   const language = languages.find(lang => lang.name === languageName);
   
