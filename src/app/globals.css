@@ -451,37 +451,37 @@ body {
   --color-dice-default: #f97316; /* torch orange for default dice color */
 }
 
-/* Nobility Theme - Purple and slate - lighter */
+/* Nobility Theme - Purple and slate - original colors */
 .theme-nobility {
-  /* Theme colors - NOBILITY STYLING - More slate and lighter */
-  --color-surface: #f8f9fa; /* very light slate */
-  --color-surface-secondary: #e9ecef; /* light slate */
-  --color-surface-tertiary: #dee2e6; /* medium slate */
-  --color-surface-quaternary: #ced4da; /* darker slate */
-  --color-card: #e9ecef; /* light slate */
-  --color-card-secondary: #dee2e6; /* medium slate */
-  --color-card-tertiary: #ced4da; /* darker slate */
-  --color-border: #adb5bd; /* slate border */
-  --color-border-light: #6c757d; /* darker slate border */
-  --color-text-primary: #212529; /* dark slate text */
-  --color-text-secondary: #495057; /* medium slate text */
-  --color-text-tertiary: #6c757d; /* lighter slate text */
-  --color-text-quaternary: #868e96; /* very light slate text */
-  --color-text-muted: #6c757d; /* muted slate text */
+  /* Theme colors - NOBILITY STYLING - Original purple/slate colors */
+  --color-surface: #0f172a; /* slate-900 */
+  --color-surface-secondary: #1e293b; /* slate-800 */
+  --color-surface-tertiary: #334155; /* slate-700 */
+  --color-surface-quaternary: #475569; /* slate-600 */
+  --color-card: #1e293b; /* slate-800 */
+  --color-card-secondary: #334155; /* slate-700 */
+  --color-card-tertiary: #475569; /* slate-600 */
+  --color-border: #475569; /* slate-600 */
+  --color-border-light: #64748b; /* slate-500 */
+  --color-text-primary: #f8fafc; /* slate-50 - white */
+  --color-text-secondary: #cbd5e1; /* slate-300 */
+  --color-text-tertiary: #94a3b8; /* slate-400 */
+  --color-text-quaternary: #64748b; /* slate-500 */
+  --color-text-muted: #94a3b8; /* slate-400 */
   
-  /* Primary colors - royal purple */
-  --color-primary: #8b5cf6; /* royal purple for primary actions */
-  --color-primary-hover: #7c3aed; /* darker royal purple for primary hover */
+  /* Primary colors - purple */
+  --color-primary: #9333ea; /* purple-600 */
+  --color-primary-hover: #7c3aed; /* purple-700 */
   
-  /* Accent colors - silver */
-  --color-accent: #6c757d; /* slate for tabs and text */
-  --color-accent-hover: #495057; /* darker slate */
-  --color-accent-text: #ffffff; /* white text on slate */
+  /* Accent colors - purple */
+  --color-accent: #9333ea; /* purple-600 */
+  --color-accent-hover: #7c3aed; /* purple-700 */
+  --color-accent-text: #ffffff; /* white text on purple */
   
-  /* Button colors - royal purple */
-  --color-button: #7c3aed; /* deep royal purple for buttons */
-  --color-button-hover: #6d28d9; /* darker royal purple */
-  --color-button-text: #ffffff; /* white text on royal purple */
+  /* Button colors - purple */
+  --color-button: #9333ea; /* purple-600 */
+  --color-button-hover: #7c3aed; /* purple-700 */
+  --color-button-text: #ffffff; /* white text on purple */
   
   /* Status colors */
   --color-success: #10b981; /* emerald */
@@ -493,17 +493,17 @@ body {
   --color-error-text: #ffffff; /* white text on error */
   --color-error-hover: #dc2626; /* darker red for hover */
   
-  /* Background variants for status colors - lighter for light theme */
-  --color-success-bg: #d1fae5; /* light emerald background */
-  --color-warning-bg: #fef3c7; /* light amber background */
-  --color-error-bg: #fee2e2; /* light red background */
-  --color-accent-bg: #f8f9fa; /* light slate background */
+  /* Background variants for status colors */
+  --color-success-bg: #064e3b; /* dark emerald background */
+  --color-warning-bg: #451a03; /* dark amber background */
+  --color-error-bg: #450a0a; /* dark red background */
+  --color-accent-bg: #581c87; /* dark purple background */
   
   /* Border variants for status colors */
   --color-success-border: #10b981; /* emerald border */
   --color-warning-border: #fbbf24; /* gold border */
   --color-error-border: #ef4444; /* red border for errors */
-  --color-accent-border: #6c757d; /* slate border */
+  --color-accent-border: #9333ea; /* purple border */
   
   /* Legacy aliases for backward compatibility */
   --color-danger: var(--color-error); /* alias for error */
@@ -513,7 +513,7 @@ body {
   --color-danger-border: var(--color-error-border); /* alias for error border */
   
   /* Special purpose colors */
-  --color-overlay: rgba(248, 249, 250, 0.7); /* light slate overlay */
-  --color-error-text-light: #dc2626; /* dark red text for error details */
-  --color-dice-default: #8b5cf6; /* royal purple for default dice color */
+  --color-overlay: rgba(15, 23, 42, 0.7); /* slate-900 overlay */
+  --color-error-text-light: #fca5a5; /* light red text for error details */
+  --color-dice-default: #9333ea; /* purple-600 for default dice color */
 }

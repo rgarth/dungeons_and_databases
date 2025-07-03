@@ -442,6 +442,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
 
   // Dice color state - initialize with cookie value or default
   const [diceColor, setDiceColor] = useState(getInitialDiceColor());
+  const [userHasCustomizedColor, setUserHasCustomizedColor] = useState(false);
 
   // Save user's die color preference to cookie when it changes
   const saveUserPreference = (color: string) => {
@@ -450,11 +451,60 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
       const expires = new Date();
       expires.setFullYear(expires.getFullYear() + 1);
       document.cookie = `diceColor=${color}; expires=${expires.toUTCString()}; path=/`;
+      document.cookie = `diceColorCustomized=true; expires=${expires.toUTCString()}; path=/`;
+      setUserHasCustomizedColor(true);
     } catch (error) {
       console.warn('Failed to save dice color preference to cookie:', error);
       // Continue even if cookie saving fails
     }
   };
+
+  // Check if user has customized dice color
+  useEffect(() => {
+    try {
+      const hasCustomized = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('diceColorCustomized='))
+        ?.split('=')[1];
+      
+      setUserHasCustomizedColor(hasCustomized === 'true');
+    } catch (error) {
+      console.warn('Failed to check dice color customization status:', error);
+    }
+  }, []);
+
+  // Listen for theme changes and update dice color if user hasn't customized
+  useEffect(() => {
+    const handleThemeChange = () => {
+      if (!userHasCustomizedColor) {
+        // Get the current theme's default dice color
+        const defaultColor = getComputedStyle(document.documentElement)
+          .getPropertyValue('--color-dice-default')
+          .trim();
+        
+        if (defaultColor && defaultColor !== diceColor) {
+          console.log('🎲 Theme changed, updating dice color to:', defaultColor);
+          setDiceColor(defaultColor);
+        }
+      }
+    };
+
+    // Listen for theme class changes on the document element
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          handleThemeChange();
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    return () => observer.disconnect();
+  }, [userHasCustomizedColor, diceColor]);
 
   // Load 3D dice scripts
   useEffect(() => {
@@ -840,7 +890,9 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
       </div>
 
       {/* 3D Dice Container */}
-      <div className="relative flex-1 min-h-0" style={{ backgroundColor: 'var(--color-surface)' }}>
+      <div className="relative flex-1 min-h-0" style={{ 
+        background: 'linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)'
+      }}>
         <div 
           ref={diceContainerRef}
           className="absolute inset-0 w-full h-full"
