@@ -1106,6 +1106,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                   setCurrentCharacter(prev => ({ ...prev, ...updates }));
                   updateCharacter(updates);
                 }}
+                onOpenSpellManagement={handleOpenSpellManagement}
+                onOpenSpellPreparation={handleOpenSpellPreparation}
               />
             )}
 
