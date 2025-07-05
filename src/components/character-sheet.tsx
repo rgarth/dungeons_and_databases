@@ -100,6 +100,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   const [showLevelUpModal, setShowLevelUpModal] = useState(false);
   const [showSpellPreparationModal, setShowSpellPreparationModal] = useState(false);
   const [tempPreparedSpells, setTempPreparedSpells] = useState<Spell[]>([]);
+  const [spellTabActive, setSpellTabActive] = useState<'cantrips' | 'spells'>('cantrips');
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentCharacter, setCurrentCharacter] = useState(character);
   const [showActionsMenu, setShowActionsMenu] = useState(false);
@@ -1258,8 +1259,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               </button>
             </div>
             
-            <div className="p-6 max-h-[60vh] overflow-y-auto">
-              {/* Spell Selection */}
+            <div className="p-6">
+              {/* Spell Selection with Tabs */}
               {(() => {
                 const spellcastingType = getSpellcastingType(currentCharacter.class);
                 
@@ -1303,14 +1304,20 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                   );
                 }
                 
+                // Separate cantrips and spells
+                const cantrips = availableSpells.filter(spell => spell.level === 0);
+                const spells = availableSpells.filter(spell => spell.level > 0);
+                
                 // Group spells by level
                 const spellsByLevel: Record<number, Spell[]> = {};
-                availableSpells.forEach((spell: Spell) => {
+                spells.forEach((spell: Spell) => {
                   if (!spellsByLevel[spell.level]) {
                     spellsByLevel[spell.level] = [];
                   }
                   spellsByLevel[spell.level].push(spell);
                 });
+                
+
                 
                 return (
                   <div className="space-y-6">
@@ -1324,79 +1331,153 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                       </p>
                     </div>
                     
-                    {Object.entries(spellsByLevel)
-                      .sort(([a], [b]) => parseInt(a) - parseInt(b))
-                      .map(([level, spells]) => (
-                      <div key={level}>
-                        <h4 className="text-lg font-medium text-[var(--color-text-primary)] mb-3">
-                          {level === '0' ? 'Cantrips' : `Level ${level} Spells`}
-                        </h4>
-                        <div className="space-y-2">
-                          {spells.map((spell, index) => {
-                            const isSelected = tempPreparedSpells.some(s => s.name === spell.name);
-                            const isCantrip = spell.level === 0;
-                            const spellcastingAbility = currentCharacter.spellcastingAbility || 'intelligence';
-                            const abilityValue = currentCharacter[spellcastingAbility as keyof typeof currentCharacter] as number || 10;
-                            const abilityModifier = getModifier(abilityValue);
-                            const maxPrepared = getSpellsPreparedCount(
-                              currentCharacter.class, 
-                              currentCharacter.level, 
-                              abilityModifier
-                            );
-                            // Count only non-cantrip spells toward the preparation limit
-                            const currentNonCantripsPrepared = tempPreparedSpells.filter(s => s.level > 0).length;
-                            const canSelect = isSelected || isCantrip || currentNonCantripsPrepared < maxPrepared;
-                            
-                            return (
-                              <div
-                                key={index}
-                                className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                                  isSelected 
-                                    ? 'border-[var(--color-success)] bg-[var(--color-success-bg)]' 
-                                    : canSelect 
-                                      ? 'border-[var(--color-border)] hover:border-[var(--color-accent-border)] bg-[var(--color-card)]'
-                                      : 'border-[var(--color-border)] bg-[var(--color-card)] opacity-50 cursor-not-allowed'
-                                }`}
-                                onClick={() => {
-                                  if (canSelect) {
-                                    handleTogglePreparedSpell(spell);
-                                  }
-                                }}
-                              >
-                                <div className="flex items-center justify-between mb-2">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-[var(--color-text-primary)] font-medium">{spell.name}</span>
-                                    <span className="text-xs bg-[var(--color-card-secondary)] px-2 py-1 rounded">
-                                      {spell.school}
-                                    </span>
-                                    {isCantrip && (
-                                      <span className="text-xs bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] px-2 py-1 rounded">
-                                        Always Available
-                                      </span>
-                                    )}
-                                  </div>
-                                  {!isCantrip && (
-                                    <span className={`text-xs px-2 py-1 rounded ${
-                                      isSelected 
-                                        ? 'bg-[var(--color-success)] text-[var(--color-success-text)]' 
-                                        : 'bg-[var(--color-card-secondary)] text-[var(--color-text-secondary)]'
-                                    }`}>
-                                      {isSelected ? 'Prepared' : 'Prepare'}
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="text-[var(--color-text-secondary)] text-xs mb-2">
-                                  {spell.castingTime} • {spell.range} • {spell.duration}
-                                </div>
-                                <div className="text-[var(--color-text-primary)] text-sm">
-                                  {spell.description}
-                                </div>
+                    {/* Tab Navigation */}
+                    <div className="flex border-b border-[var(--color-border)]">
+                      <button
+                        onClick={() => setSpellTabActive('cantrips')}
+                        className={`px-4 py-2 font-medium transition-colors ${
+                          spellTabActive === 'cantrips'
+                            ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]'
+                            : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                        }`}
+                      >
+                        Cantrips ({cantrips.length})
+                      </button>
+                      <button
+                        onClick={() => setSpellTabActive('spells')}
+                        className={`px-4 py-2 font-medium transition-colors ${
+                          spellTabActive === 'spells'
+                            ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]'
+                            : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                        }`}
+                      >
+                        Spells ({spells.length})
+                      </button>
+                    </div>
+                    
+                    {/* Tab Content */}
+                    <div className="max-h-[50vh] overflow-y-auto">
+                      {spellTabActive === 'cantrips' && (
+                        <div className="space-y-3">
+                          <h4 className="text-lg font-medium text-[var(--color-text-primary)] mb-3">
+                            Cantrips (Always Available)
+                          </h4>
+                          {cantrips.length === 0 ? (
+                            <div className="text-center py-4">
+                              <div className="text-[var(--color-text-secondary)] text-sm">
+                                No cantrips available
                               </div>
-                            );
-                          })}
+                            </div>
+                          ) : (
+                            <div className="space-y-2">
+                              {cantrips.map((spell, index) => {
+                                const isSelected = tempPreparedSpells.some(s => s.name === spell.name);
+                                
+                                return (
+                                  <div
+                                    key={index}
+                                    className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                                      isSelected 
+                                        ? 'border-[var(--color-success)] bg-[var(--color-success-bg)]' 
+                                        : 'border-[var(--color-border)] hover:border-[var(--color-accent-border)] bg-[var(--color-card)]'
+                                    }`}
+                                    onClick={() => handleTogglePreparedSpell(spell)}
+                                  >
+                                    <div className="flex items-center justify-between mb-2">
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-[var(--color-text-primary)] font-medium">{spell.name}</span>
+                                        <span className="text-xs bg-[var(--color-card-secondary)] px-2 py-1 rounded">
+                                          {spell.school}
+                                        </span>
+                                        <span className="text-xs bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] px-2 py-1 rounded">
+                                          Always Available
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div className="text-[var(--color-text-secondary)] text-xs mb-2">
+                                      {spell.castingTime} • {spell.range} • {spell.duration}
+                                    </div>
+                                    <div className="text-[var(--color-text-primary)] text-sm">
+                                      {spell.description}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    ))}
+                      )}
+                      
+                      {spellTabActive === 'spells' && (
+                        <div className="space-y-6">
+                          {Object.entries(spellsByLevel)
+                            .sort(([a], [b]) => parseInt(a) - parseInt(b))
+                            .map(([level, levelSpells]) => (
+                            <div key={level}>
+                              <h4 className="text-lg font-medium text-[var(--color-text-primary)] mb-3">
+                                Level {level} Spells
+                              </h4>
+                              <div className="space-y-2">
+                                {levelSpells.map((spell, index) => {
+                                  const isSelected = tempPreparedSpells.some(s => s.name === spell.name);
+                                  const spellcastingAbility = currentCharacter.spellcastingAbility || 'intelligence';
+                                  const abilityValue = currentCharacter[spellcastingAbility as keyof typeof currentCharacter] as number || 10;
+                                  const abilityModifier = getModifier(abilityValue);
+                                  const maxPrepared = getSpellsPreparedCount(
+                                    currentCharacter.class, 
+                                    currentCharacter.level, 
+                                    abilityModifier
+                                  );
+                                  // Count only non-cantrip spells toward the preparation limit
+                                  const currentNonCantripsPrepared = tempPreparedSpells.filter(s => s.level > 0).length;
+                                  const canSelect = isSelected || currentNonCantripsPrepared < maxPrepared;
+                                  
+                                  return (
+                                    <div
+                                      key={index}
+                                      className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                                        isSelected 
+                                          ? 'border-[var(--color-success)] bg-[var(--color-success-bg)]' 
+                                          : canSelect 
+                                            ? 'border-[var(--color-border)] hover:border-[var(--color-accent-border)] bg-[var(--color-card)]'
+                                            : 'border-[var(--color-border)] bg-[var(--color-card)] opacity-50 cursor-not-allowed'
+                                      }`}
+                                      onClick={() => {
+                                        if (canSelect) {
+                                          handleTogglePreparedSpell(spell);
+                                        }
+                                      }}
+                                    >
+                                      <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-[var(--color-text-primary)] font-medium">{spell.name}</span>
+                                          <span className="text-xs bg-[var(--color-card-secondary)] px-2 py-1 rounded">
+                                            {spell.school}
+                                          </span>
+                                        </div>
+                                        <span className={`text-xs px-2 py-1 rounded ${
+                                          isSelected 
+                                            ? 'bg-[var(--color-success)] text-[var(--color-success-text)]' 
+                                            : 'bg-[var(--color-card-secondary)] text-[var(--color-text-secondary)]'
+                                        }`}>
+                                          {isSelected ? 'Prepared' : 'Prepare'}
+                                        </span>
+                                      </div>
+                                      <div className="text-[var(--color-text-secondary)] text-xs mb-2">
+                                        {spell.castingTime} • {spell.range} • {spell.duration}
+                                      </div>
+                                      <div className="text-[var(--color-text-primary)] text-sm">
+                                        {spell.description}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 );
               })()}
