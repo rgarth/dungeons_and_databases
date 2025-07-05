@@ -1055,11 +1055,17 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       const limits = getCachedSpellLimits(characterClass, 1);
       if (limits?.spellcastingType === 'prepared' && limits.spellsKnown === 0) {
         // For prepared spellcasters, auto-select all 1st-level spells
+        // BUT don't interfere with cantrip selection - let user choose their cantrips
         const firstLevelSpells = spellcasting.availableSpells.filter(spell => spell.level === 1);
         setSelectedSpells(prev => {
-          // Keep existing cantrips, add all 1st-level spells
+          // Keep existing cantrips (user's choice), add all 1st-level spells
           const existingCantrips = prev.filter(spell => spell.level === 0);
-          return [...existingCantrips, ...firstLevelSpells];
+          const existingSpells = prev.filter(spell => spell.level > 0);
+          // Only add 1st-level spells if we don't already have them
+          const newFirstLevelSpells = firstLevelSpells.filter(spell => 
+            !existingSpells.some(existing => existing.name === spell.name)
+          );
+          return [...existingCantrips, ...existingSpells, ...newFirstLevelSpells];
         });
       }
     }
