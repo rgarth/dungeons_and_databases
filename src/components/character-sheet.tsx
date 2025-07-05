@@ -102,6 +102,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   const [showLevelUpModal, setShowLevelUpModal] = useState(false);
   const [showSpellPreparationModal, setShowSpellPreparationModal] = useState(false);
   const [tempPreparedSpells, setTempPreparedSpells] = useState<Spell[]>([]);
+  const [availableSpells, setAvailableSpells] = useState<Spell[]>([]);
   const [spellTabActive, setSpellTabActive] = useState<'cantrips' | 'spells'>('cantrips');
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentCharacter, setCurrentCharacter] = useState(character);
@@ -708,14 +709,44 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     console.log('Level up completed successfully!');
   };
 
-  const handleOpenSpellPreparation = () => {
-    setTempPreparedSpells(currentCharacter.spellsPrepared || []);
-    setShowSpellPreparationModal(true);
+  const handleOpenSpellPreparation = async () => {
+    try {
+      // Get all available spells for this class
+      const maxSpellLevel = getMaxSpellLevel(currentCharacter.class, currentCharacter.level);
+      const availableSpells = await getSpellsByClass(currentCharacter.class, maxSpellLevel);
+      
+      // Get current prepared spells
+      const currentPreparedSpells = currentCharacter.spellsPrepared || [];
+      
+      setTempPreparedSpells(currentPreparedSpells);
+      setAvailableSpells(availableSpells);
+      setShowSpellPreparationModal(true);
+    } catch (error) {
+      console.error('Error loading spells:', error);
+    }
   };
 
   const handleOpenSpellManagement = () => {
     setTempKnownSpells(currentCharacter.spellsKnown || []);
     setShowSpellManagementModal(true);
+  };
+
+  const handleOpenCantripManagement = async () => {
+    try {
+      // Get available cantrips from the class spell list
+      const maxSpellLevel = getMaxSpellLevel(currentCharacter.class, currentCharacter.level);
+      const availableSpells = await getSpellsByClass(currentCharacter.class, maxSpellLevel);
+      const availableCantrips = availableSpells.filter(spell => spell.level === 0);
+      
+      // Get current cantrips from prepared spells
+      const currentCantrips = currentCharacter.spellsPrepared?.filter(spell => spell.level === 0) || [];
+      
+      setTempKnownCantrips(currentCantrips);
+      setAvailableCantrips(availableCantrips);
+      setShowCantripManagementModal(true);
+    } catch (error) {
+      console.error('Error loading cantrips:', error);
+    }
   };
 
   const handleReplaceSpell = async (spellToReplace: Spell) => {
@@ -741,6 +772,28 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     }
   };
 
+  const handleReplaceCantrip = async (cantripToReplace: Spell) => {
+    try {
+      // Get available cantrips for this class
+      const availableCantrips = await getSpellsByClass(currentCharacter.class, 0); // Level 0 = cantrips
+      
+      // Filter out cantrips the character already knows (except the one being replaced)
+      const currentCantripNames = tempKnownCantrips.map(s => s.name);
+      const replacementOptions = availableCantrips.filter(cantrip => 
+        cantrip.name !== cantripToReplace.name && 
+        cantrip.level === 0 &&
+        !currentCantripNames.includes(cantrip.name)
+      );
+      
+      setCantripToReplace(cantripToReplace);
+      setAvailableReplacementCantrips(replacementOptions);
+      setSelectedReplacementCantrip('');
+      setShowCantripReplacementModal(true);
+    } catch (error) {
+      console.error('Error loading replacement cantrips:', error);
+    }
+  };
+
   const handleConfirmSpellReplacement = () => {
     if (!spellToReplace || !selectedReplacementSpell) return;
     
@@ -758,6 +811,23 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     setSelectedReplacementSpell('');
   };
 
+  const handleConfirmCantripReplacement = () => {
+    if (!cantripToReplace || !selectedReplacementCantrip) return;
+    
+    const replacementCantrip = availableReplacementCantrips.find(c => c.name === selectedReplacementCantrip);
+    if (!replacementCantrip) return;
+    
+    // Replace the cantrip in the temporary list
+    const updatedCantrips = tempKnownCantrips.map(cantrip => 
+      cantrip.name === cantripToReplace.name ? replacementCantrip : cantrip
+    );
+    
+    setTempKnownCantrips(updatedCantrips);
+    setShowCantripReplacementModal(false);
+    setCantripToReplace(null);
+    setSelectedReplacementCantrip('');
+  };
+
   const handleSaveSpellChanges = async () => {
     try {
       // Update the character's known spells
@@ -765,6 +835,21 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       setShowSpellManagementModal(false);
     } catch (error) {
       console.error('Error saving spell changes:', error);
+    }
+  };
+
+  const handleSaveCantripChanges = async () => {
+    try {
+      // For prepared spellcasters, we need to update the prepared spells
+      // Replace cantrips in the prepared spells list
+      const currentPreparedSpells = currentCharacter.spellsPrepared || [];
+      const nonCantripSpells = currentPreparedSpells.filter(spell => spell.level > 0);
+      const updatedPreparedSpells = [...nonCantripSpells, ...tempKnownCantrips];
+      
+      await updateCharacter({ spellsPrepared: updatedPreparedSpells });
+      setShowCantripManagementModal(false);
+    } catch (error) {
+      console.error('Error saving cantrip changes:', error);
     }
   };
 
@@ -904,6 +989,15 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   const [spellToReplace, setSpellToReplace] = useState<Spell | null>(null);
   const [availableReplacementSpells, setAvailableReplacementSpells] = useState<Spell[]>([]);
   const [selectedReplacementSpell, setSelectedReplacementSpell] = useState<string>('');
+  
+  // Cantrip management state (for prepared spellcasters)
+  const [showCantripManagementModal, setShowCantripManagementModal] = useState(false);
+  const [showCantripReplacementModal, setShowCantripReplacementModal] = useState(false);
+  const [tempKnownCantrips, setTempKnownCantrips] = useState<Spell[]>([]);
+  const [availableCantrips, setAvailableCantrips] = useState<Spell[]>([]);
+  const [cantripToReplace, setCantripToReplace] = useState<Spell | null>(null);
+  const [availableReplacementCantrips, setAvailableReplacementCantrips] = useState<Spell[]>([]);
+  const [selectedReplacementCantrip, setSelectedReplacementCantrip] = useState<string>('');
 
   return (
     <>
@@ -1152,6 +1246,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onAddMagicalItem={handleAddMagicalItem}
                 onOpenSpellPreparation={handleOpenSpellPreparation}
                 onOpenSpellManagement={handleOpenSpellManagement}
+                onOpenCantripManagement={handleOpenCantripManagement}
                 weaponLimits={weaponLimits}
               />
             )}
@@ -1476,11 +1571,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       {/* Spell Preparation Modal */}
       {showSpellPreparationModal && (
         <div className="fixed inset-0 flex items-start justify-center p-4 pt-8 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
-          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-6 border-b border-[var(--color-border)]">
+          <div className="bg-card rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-border">
               <div>
-                <h3 className="text-xl font-semibold text-[var(--color-text-primary)]">Prepare Spells</h3>
-                <p className="text-[var(--color-text-secondary)] text-sm">
+                <h3 className="text-xl font-semibold text-foreground">Prepare Spells</h3>
+                <p className="text-muted-foreground text-sm">
                   {(() => {
                     const spellcastingType = getSpellcastingType(currentCharacter.class);
                     if (spellcastingType === 'known') {
@@ -1496,7 +1591,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               </div>
               <button
                 onClick={() => setShowSpellPreparationModal(false)}
-                className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -1507,24 +1602,15 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               {(() => {
                 const spellcastingType = getSpellcastingType(currentCharacter.class);
                 
-                // Get available spells based on class type
-                let availableSpells: Spell[] = [];
-                if (spellcastingType === 'spellbook') {
-                  // Wizards prepare from their spellbook
-                  availableSpells = currentCharacter.spellsKnown || [];
-                } else if (spellcastingType === 'prepared') {
-                  // Clerics, Druids, Paladins prepare from their entire class spell list
-                  // For now, we'll use their current prepared spells as the available list
-                  // In a full implementation, this would load all class spells
-                  availableSpells = currentCharacter.spellsPrepared || [];
-                } else {
+                // Use the availableSpells state that was loaded when opening the modal
+                if (spellcastingType === 'known') {
                   // Known spellcasters (Sorcerers, Bards, etc.) don't prepare spells
                   return (
                     <div className="text-center py-8">
-                      <div className="text-[var(--color-text-secondary)] text-lg mb-4">
+                      <div className="text-muted-foreground text-lg mb-4">
                         {currentCharacter.class}s don&apos;t prepare spells daily
                       </div>
-                      <div className="text-[var(--color-text-tertiary)] text-sm">
+                      <div className="text-muted-foreground/60 text-sm">
                         As a {currentCharacter.class}, all your known spells are always available to cast.
                       </div>
                     </div>
@@ -1534,14 +1620,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 if (availableSpells.length === 0) {
                   return (
                     <div className="text-center py-8">
-                      <div className="text-[var(--color-text-secondary)] text-lg mb-4">
-                        No spells available
+                      <div className="text-muted-foreground text-lg mb-4">
+                        Loading spells...
                       </div>
-                      <div className="text-[var(--color-text-tertiary)] text-sm">
-                        {spellcastingType === 'spellbook' 
-                          ? 'Your spellbook is empty. Learn spells during your adventures.'
-                          : 'No spells are currently available for preparation.'
-                        }
+                      <div className="text-muted-foreground/60 text-sm">
+                        Please wait while we load your available spells.
                       </div>
                     </div>
                   );
@@ -1565,8 +1648,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 return (
                   <div className="space-y-6">
                     {/* Explanation */}
-                    <div className="p-4 bg-[var(--color-accent-bg)] border border-[var(--color-accent-border)] rounded-lg">
-                      <p className="text-[var(--color-accent-text)] text-sm">
+                    <div className="p-4 bg-accent/10 border border-accent/20 rounded-lg">
+                      <p className="text-accent-foreground text-sm">
                         {spellcastingType === 'spellbook' 
                           ? 'As a Wizard, you prepare spells from your spellbook. Cantrips are always available.'
                           : `As a ${currentCharacter.class}, you can prepare spells from your entire spell list. Cantrips are always available.`
@@ -1575,13 +1658,13 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                     </div>
                     
                     {/* Tab Navigation */}
-                    <div className="flex border-b border-[var(--color-border)]">
+                    <div className="flex border-b border-border">
                       <button
                         onClick={() => setSpellTabActive('cantrips')}
                         className={`px-4 py-2 font-medium transition-colors ${
                           spellTabActive === 'cantrips'
-                            ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]'
-                            : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                            ? 'text-accent border-b-2 border-accent'
+                            : 'text-muted-foreground hover:text-foreground'
                         }`}
                       >
                         Cantrips ({cantrips.length})
@@ -1590,8 +1673,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                         onClick={() => setSpellTabActive('spells')}
                         className={`px-4 py-2 font-medium transition-colors ${
                           spellTabActive === 'spells'
-                            ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]'
-                            : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                            ? 'text-accent border-b-2 border-accent'
+                            : 'text-muted-foreground hover:text-foreground'
                         }`}
                       >
                         Spells ({spells.length})
@@ -1602,12 +1685,12 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                     <div className="max-h-[50vh] overflow-y-auto">
                       {spellTabActive === 'cantrips' && (
                         <div className="space-y-3">
-                          <h4 className="text-lg font-medium text-[var(--color-text-primary)] mb-3">
+                          <h4 className="text-lg font-medium text-foreground mb-3">
                             Cantrips (Always Available)
                           </h4>
                           {cantrips.length === 0 ? (
                             <div className="text-center py-4">
-                              <div className="text-[var(--color-text-secondary)] text-sm">
+                              <div className="text-muted-foreground text-sm">
                                 No cantrips available
                               </div>
                             </div>
@@ -1621,26 +1704,26 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                     key={index}
                                     className={`p-3 border rounded-lg cursor-pointer transition-colors ${
                                       isSelected 
-                                        ? 'border-[var(--color-success)] bg-[var(--color-success-bg)]' 
-                                        : 'border-[var(--color-border)] hover:border-[var(--color-accent-border)] bg-[var(--color-card)]'
+                                        ? 'border-green-500 bg-green-500/10' 
+                                        : 'border-border hover:border-accent/50 bg-card'
                                     }`}
                                     onClick={() => handleTogglePreparedSpell(spell)}
                                   >
                                     <div className="flex items-center justify-between mb-2">
                                       <div className="flex items-center gap-2">
-                                        <span className="text-[var(--color-text-primary)] font-medium">{spell.name}</span>
-                                        <span className="text-xs bg-[var(--color-card-secondary)] px-2 py-1 rounded">
+                                        <span className="text-foreground font-medium">{spell.name}</span>
+                                        <span className="text-xs bg-muted px-2 py-1 rounded">
                                           {spell.school}
                                         </span>
-                                        <span className="text-xs bg-[var(--color-warning-bg)] text-[var(--color-warning-text)] px-2 py-1 rounded">
+                                        <span className="text-xs bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 px-2 py-1 rounded">
                                           Always Available
                                         </span>
                                       </div>
                                     </div>
-                                    <div className="text-[var(--color-text-secondary)] text-xs mb-2">
+                                    <div className="text-muted-foreground text-xs mb-2">
                                       {spell.castingTime} • {spell.range} • {spell.duration}
                                     </div>
-                                    <div className="text-[var(--color-text-primary)] text-sm">
+                                    <div className="text-foreground text-sm">
                                       {spell.description}
                                     </div>
                                   </div>
@@ -1657,7 +1740,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                             .sort(([a], [b]) => parseInt(a) - parseInt(b))
                             .map(([level, levelSpells]) => (
                             <div key={level}>
-                              <h4 className="text-lg font-medium text-[var(--color-text-primary)] mb-3">
+                              <h4 className="text-lg font-medium text-foreground mb-3">
                                 Level {level} Spells
                               </h4>
                               <div className="space-y-2">
@@ -1680,10 +1763,10 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                       key={index}
                                       className={`p-3 border rounded-lg cursor-pointer transition-colors ${
                                         isSelected 
-                                          ? 'border-[var(--color-success)] bg-[var(--color-success-bg)]' 
+                                          ? 'border-green-500 bg-green-500/10' 
                                           : canSelect 
-                                            ? 'border-[var(--color-border)] hover:border-[var(--color-accent-border)] bg-[var(--color-card)]'
-                                            : 'border-[var(--color-border)] bg-[var(--color-card)] opacity-50 cursor-not-allowed'
+                                            ? 'border-border hover:border-accent/50 bg-card'
+                                            : 'border-border bg-muted opacity-50 cursor-not-allowed'
                                       }`}
                                       onClick={() => {
                                         if (canSelect) {
@@ -1693,23 +1776,23 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                     >
                                       <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
-                                          <span className="text-[var(--color-text-primary)] font-medium">{spell.name}</span>
-                                          <span className="text-xs bg-[var(--color-card-secondary)] px-2 py-1 rounded">
+                                          <span className="text-foreground font-medium">{spell.name}</span>
+                                          <span className="text-xs bg-muted px-2 py-1 rounded">
                                             {spell.school}
                                           </span>
                                         </div>
                                         <span className={`text-xs px-2 py-1 rounded ${
                                           isSelected 
-                                            ? 'bg-[var(--color-success)] text-[var(--color-success-text)]' 
-                                            : 'bg-[var(--color-card-secondary)] text-[var(--color-text-secondary)]'
+                                            ? 'bg-green-600 text-white' 
+                                            : 'bg-muted text-muted-foreground'
                                         }`}>
                                           {isSelected ? 'Prepared' : 'Prepare'}
                                         </span>
                                       </div>
-                                      <div className="text-[var(--color-text-secondary)] text-xs mb-2">
+                                      <div className="text-muted-foreground text-xs mb-2">
                                         {spell.castingTime} • {spell.range} • {spell.duration}
                                       </div>
-                                      <div className="text-[var(--color-text-primary)] text-sm">
+                                      <div className="text-foreground text-sm">
                                         {spell.description}
                                       </div>
                                     </div>
@@ -1726,14 +1809,14 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               })()}
             </div>
 
-            <div className="flex gap-3 p-6 border-t border-[var(--color-border)]">
+            <div className="flex gap-3 p-6 border-t border-border">
               {(() => {
                 const spellcastingType = getSpellcastingType(currentCharacter.class);
                 if (spellcastingType === 'known') {
                   return (
                     <button
                       onClick={() => setShowSpellPreparationModal(false)}
-                      className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] text-[var(--color-text-primary)] py-2 px-4 rounded transition-colors"
+                      className="flex-1 bg-muted hover:bg-muted/80 text-foreground py-2 px-4 rounded transition-colors"
                     >
                       Close
                     </button>
@@ -1743,19 +1826,220 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                   <>
                     <button
                       onClick={handleSaveSpellPreparation}
-                      className="flex-1 bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] py-2 px-4 rounded transition-colors"
+                      className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition-colors"
                     >
                       Save Prepared Spells
                     </button>
                     <button
                       onClick={() => setShowSpellPreparationModal(false)}
-                      className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] text-[var(--color-text-primary)] py-2 px-4 rounded transition-colors"
+                      className="flex-1 bg-muted hover:bg-muted/80 text-foreground py-2 px-4 rounded transition-colors"
                     >
                       Cancel
                     </button>
                   </>
                 );
               })()}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cantrip Management Modal (for prepared spellcasters) */}
+      {showCantripManagementModal && (
+        <div className="fixed inset-0 flex items-start justify-center p-4 pt-8 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
+          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-[var(--color-border)]">
+              <div>
+                <h3 className="text-xl font-semibold text-[var(--color-text-primary)]">Manage Cantrips</h3>
+                <p className="text-[var(--color-text-secondary)] text-sm">
+                  {currentCharacter.class}s can swap cantrips when they gain levels. You can replace existing cantrips with new ones from your class spell list.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowCantripManagementModal(false)}
+                className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+                        <div className="p-6">
+              <div className="space-y-6">
+                {/* Current Cantrips Section */}
+                <div>
+                  <h4 className="text-lg font-medium text-[var(--color-text-primary)] mb-3">
+                    Current Cantrips ({tempKnownCantrips.length})
+                  </h4>
+                  
+                  {tempKnownCantrips.length === 0 ? (
+                    <div className="text-center py-4">
+                      <div className="text-[var(--color-text-secondary)] text-sm">
+                        No cantrips selected yet
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {tempKnownCantrips.map((cantrip, index) => (
+                        <div
+                          key={index}
+                          className="p-4 border border-[var(--color-border)] rounded-lg bg-[var(--color-card-secondary)]"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[var(--color-text-primary)] font-medium">{cantrip.name}</span>
+                              <span className="text-xs bg-[var(--color-muted)] px-2 py-1 rounded">
+                                {cantrip.school}
+                              </span>
+                            </div>
+                            <button
+                              onClick={() => handleReplaceCantrip(cantrip)}
+                              className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] text-sm transition-colors"
+                            >
+                              Replace
+                            </button>
+                          </div>
+                          <div className="text-[var(--color-text-secondary)] text-xs mb-2">
+                            {cantrip.castingTime} • {cantrip.range} • {cantrip.duration}
+                          </div>
+                          <div className="text-[var(--color-text-secondary)] text-sm">
+                            {cantrip.description}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Available Cantrips Section */}
+                <div>
+                  <h4 className="text-lg font-medium text-[var(--color-text-primary)] mb-3">
+                    Available Cantrips ({availableCantrips.length})
+                  </h4>
+                  
+                  {availableCantrips.length === 0 ? (
+                    <div className="text-center py-4">
+                      <div className="text-[var(--color-text-secondary)] text-sm">
+                        No cantrips available for your class
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {availableCantrips.map((cantrip, index) => {
+                        const isSelected = tempKnownCantrips.some(c => c.name === cantrip.name);
+                        
+                        return (
+                          <div
+                            key={index}
+                            className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                              isSelected 
+                                ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10' 
+                                : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50 bg-[var(--color-card-secondary)]'
+                            }`}
+                            onClick={() => {
+                              if (isSelected) {
+                                // Remove cantrip
+                                setTempKnownCantrips(prev => prev.filter(c => c.name !== cantrip.name));
+                              } else {
+                                // Add cantrip
+                                setTempKnownCantrips(prev => [...prev, cantrip]);
+                              }
+                            }}
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[var(--color-text-primary)] font-medium">{cantrip.name}</span>
+                                <span className="text-xs bg-[var(--color-muted)] px-2 py-1 rounded">
+                                  {cantrip.school}
+                                </span>
+                              </div>
+                              <span className={`text-xs px-2 py-1 rounded ${
+                                isSelected 
+                                  ? 'bg-[var(--color-accent)] text-[var(--color-accent-text)]' 
+                                  : 'bg-[var(--color-muted)] text-[var(--color-text-secondary)]'
+                              }`}>
+                                {isSelected ? 'Selected' : 'Select'}
+                              </span>
+                            </div>
+                            <div className="text-[var(--color-text-secondary)] text-xs mb-2">
+                              {cantrip.castingTime} • {cantrip.range} • {cantrip.duration}
+                            </div>
+                            <div className="text-[var(--color-text-secondary)] text-sm">
+                              {cantrip.description}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 p-6 border-t border-[var(--color-border)]">
+              <button
+                onClick={handleSaveCantripChanges}
+                className="flex-1 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] py-2 px-4 rounded transition-colors"
+              >
+                Save Changes
+              </button>
+              <button
+                onClick={() => setShowCantripManagementModal(false)}
+                className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-secondary)]/80 text-[var(--color-text-primary)] py-2 px-4 rounded transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cantrip Replacement Modal */}
+      {showCantripReplacementModal && (
+        <div className="fixed inset-0 flex items-start justify-center p-4 pt-8 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
+          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Replace Cantrip</h3>
+              <button
+                onClick={() => setShowCantripReplacementModal(false)}
+                className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <p className="text-[var(--color-text-secondary)] text-sm mb-3">
+                Replace <span className="font-medium text-[var(--color-text-primary)]">{cantripToReplace?.name}</span> with:
+              </p>
+              
+              <select
+                value={selectedReplacementCantrip}
+                onChange={(e) => setSelectedReplacementCantrip(e.target.value)}
+                className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
+              >
+                <option value="">Select a replacement cantrip...</option>
+                {availableReplacementCantrips.map((cantrip) => (
+                  <option key={cantrip.name} value={cantrip.name}>
+                    {cantrip.name} ({cantrip.school})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowCantripReplacementModal(false)}
+                className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-secondary)]/80 text-[var(--color-text-primary)] py-2 px-4 rounded transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmCantripReplacement}
+                disabled={!selectedReplacementCantrip}
+                className="flex-1 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] py-2 px-4 rounded transition-colors"
+              >
+                Replace
+              </button>
             </div>
           </div>
         </div>
