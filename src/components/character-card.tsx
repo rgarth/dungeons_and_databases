@@ -43,8 +43,8 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
     }
   };
 
-  const handleDeleteClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent opening character sheet
+  const handleDeleteClick = (e?: React.MouseEvent<HTMLButtonElement>) => {
+    e?.stopPropagation(); // Prevent opening character sheet
     setShowDeleteDialog(true);
   };
 
@@ -61,30 +61,30 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
         onClick={() => setShowSheet(true)}
       >
         <div className="flex justify-between items-start mb-4">
-          <div className="flex items-start gap-3">
+          <div className="flex items-start gap-3 min-w-0 flex-1">
             {/* Avatar */}
             {isAvatarLoading ? (
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--color-card-secondary)] to-[var(--color-card)] animate-pulse flex items-center justify-center">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--color-card-secondary)] to-[var(--color-card)] animate-pulse flex items-center justify-center flex-shrink-0">
                 <div className="w-8 h-8 rounded-full bg-[var(--color-border)] animate-pulse" />
               </div>
             ) : avatarUrl ? (
-              <div className="w-24 h-24 rounded-full overflow-hidden">
+              <div className="w-24 h-24 rounded-full overflow-hidden relative flex-shrink-0">
                 <Image 
                   src={avatarUrl} 
                   alt={`${character.name}'s avatar`}
                   width={96}
                   height={96}
-                  className="w-full h-full object-cover object-top scale-150 translate-y-1/4"
+                  className="absolute inset-0 w-full h-full object-cover object-top scale-150 translate-y-1/4"
                 />
               </div>
             ) : (
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-hover)] flex items-center justify-center text-[var(--color-accent-text)] text-2xl font-bold">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-hover)] flex items-center justify-center text-[var(--color-accent-text)] text-2xl font-bold flex-shrink-0">
                 {character.name.charAt(0).toUpperCase()}
               </div>
             )}
             
-            <div>
-              <h3 className="text-xl font-bold text-[var(--color-text-primary)]">{character.name}</h3>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-xl font-bold text-[var(--color-text-primary)] break-words">{character.name}</h3>
               <p className="text-[var(--color-text-secondary)] text-sm mt-1">
                 {character.subrace || character.race} {character.class}
               </p>
@@ -93,7 +93,7 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0 ml-2">
             {isOptimistic && (
               <div className="flex items-center gap-2 text-[var(--color-warning)] text-sm">
                 <RefreshCw className="h-4 w-4 animate-spin" />
@@ -104,7 +104,6 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
               variant="ghost"
               onClick={handleDeleteClick}
               className="text-[var(--color-danger)] hover:text-[var(--color-danger)]/80 p-2"
-              title="Delete Character"
             >
               <Trash2 className="h-5 w-5" />
             </Button>
