@@ -67,6 +67,37 @@
   --color-dice-default: #dc2626; /* D&D red for default dice color */
   --color-dice-canvas-bg: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); /* dark gradient for dice canvas */
   
+  /* Language colors - DNDB Dark Theme */
+  --color-language-racial-bg: rgba(59, 130, 246, 0.3); /* blue-900/30 */
+  --color-language-racial-text: #93c5fd; /* blue-300 */
+  --color-language-racial-border: rgba(37, 99, 235, 0.3); /* blue-600/30 */
+  --color-language-racial-hover: #bfdbfe; /* blue-200 */
+  
+  --color-language-class-bg: rgba(239, 68, 68, 0.3); /* red-900/30 */
+  --color-language-class-text: #fca5a5; /* red-300 */
+  --color-language-class-border: rgba(220, 38, 38, 0.3); /* red-600/30 */
+  --color-language-class-hover: #fecaca; /* red-200 */
+  
+  --color-language-standard-bg: rgba(34, 197, 94, 0.3); /* green-900/30 */
+  --color-language-standard-text: #86efac; /* green-300 */
+  --color-language-standard-border: rgba(22, 163, 74, 0.3); /* green-600/30 */
+  --color-language-standard-hover: #bbf7d0; /* green-200 */
+  
+  --color-language-exotic-bg: rgba(249, 115, 22, 0.3); /* orange-900/30 */
+  --color-language-exotic-text: #fdba74; /* orange-300 */
+  --color-language-exotic-border: rgba(234, 88, 12, 0.3); /* orange-600/30 */
+  --color-language-exotic-hover: #fed7aa; /* orange-200 */
+  
+  --color-language-secret-bg: rgba(147, 51, 234, 0.3); /* purple-900/30 */
+  --color-language-secret-text: #c4b5fd; /* purple-300 */
+  --color-language-secret-border: rgba(124, 58, 237, 0.3); /* purple-600/30 */
+  --color-language-secret-hover: #ddd6fe; /* purple-200 */
+  
+  --color-language-default-bg: rgba(55, 65, 81, 0.3); /* gray-900/30 */
+  --color-language-default-text: #d1d5db; /* gray-300 */
+  --color-language-default-border: rgba(75, 85, 99, 0.3); /* gray-600/30 */
+  --color-language-default-hover: #e5e7eb; /* gray-200 */
+  
   /* Tailwind compatibility */
   --background: #0a0a0a;
   --foreground: #f3f4f6;
@@ -138,6 +169,37 @@
   --color-error-text-light: #fca5a5; /* light red text for error details */
   --color-dice-default: #dc2626; /* D&D red for default dice color */
   --color-dice-canvas-bg: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); /* dark gradient for dice canvas */
+  
+  /* Language colors - DNDB Dark Theme */
+  --color-language-racial-bg: rgba(59, 130, 246, 0.3); /* blue-900/30 */
+  --color-language-racial-text: #93c5fd; /* blue-300 */
+  --color-language-racial-border: rgba(37, 99, 235, 0.3); /* blue-600/30 */
+  --color-language-racial-hover: #bfdbfe; /* blue-200 */
+  
+  --color-language-class-bg: rgba(239, 68, 68, 0.3); /* red-900/30 */
+  --color-language-class-text: #fca5a5; /* red-300 */
+  --color-language-class-border: rgba(220, 38, 38, 0.3); /* red-600/30 */
+  --color-language-class-hover: #fecaca; /* red-200 */
+  
+  --color-language-standard-bg: rgba(34, 197, 94, 0.3); /* green-900/30 */
+  --color-language-standard-text: #86efac; /* green-300 */
+  --color-language-standard-border: rgba(22, 163, 74, 0.3); /* green-600/30 */
+  --color-language-standard-hover: #bbf7d0; /* green-200 */
+  
+  --color-language-exotic-bg: rgba(249, 115, 22, 0.3); /* orange-900/30 */
+  --color-language-exotic-text: #fdba74; /* orange-300 */
+  --color-language-exotic-border: rgba(234, 88, 12, 0.3); /* orange-600/30 */
+  --color-language-exotic-hover: #fed7aa; /* orange-200 */
+  
+  --color-language-secret-bg: rgba(147, 51, 234, 0.3); /* purple-900/30 */
+  --color-language-secret-text: #c4b5fd; /* purple-300 */
+  --color-language-secret-border: rgba(124, 58, 237, 0.3); /* purple-600/30 */
+  --color-language-secret-hover: #ddd6fe; /* purple-200 */
+  
+  --color-language-default-bg: rgba(55, 65, 81, 0.3); /* gray-900/30 */
+  --color-language-default-text: #d1d5db; /* gray-300 */
+  --color-language-default-border: rgba(75, 85, 99, 0.3); /* gray-600/30 */
+  --color-language-default-hover: #e5e7eb; /* gray-200 */
 }
 
 /* DNDB Light Theme - Parchment style */
@@ -206,6 +268,55 @@
   --color-error-text-light: #fca5a5; /* light red text for error details */
   --color-dice-default: #dc2626; /* D&D red for default dice color */
   --color-dice-canvas-bg: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); /* dark gradient for dice canvas */
+  
+  /* Language colors - Light Theme */
+  --color-language-racial-bg: rgba(59, 130, 246, 0.2); /* blue-900/20 - lighter for light theme */
+  --color-language-racial-text: #1e40af; /* blue-700 - darker for light theme */
+  --color-language-racial-border: rgba(37, 99, 235, 0.3); /* blue-600/30 */
+  --color-language-racial-hover: #1d4ed8; /* blue-600 - darker hover */
+  
+  --color-language-class-bg: rgba(239, 68, 68, 0.2); /* red-900/20 - lighter for light theme */
+  --color-language-class-text: #b91c1c; /* red-700 - darker for light theme */
+  --color-language-class-border: rgba(220, 38, 38, 0.3); /* red-600/30 */
+  --color-language-class-hover: #dc2626; /* red-600 - darker hover */
+  
+  --color-language-standard-bg: rgba(34, 197, 94, 0.2); /* green-900/20 - lighter for light theme */
+  --color-language-standard-text: #15803d; /* green-700 - darker for light theme */
+  --color-language-standard-border: rgba(22, 163, 74, 0.3); /* green-600/30 */
+  --color-language-standard-hover: #16a34a; /* green-600 - darker hover */
+  
+  --color-language-exotic-bg: rgba(249, 115, 22, 0.2); /* orange-900/20 - lighter for light theme */
+  --color-language-exotic-text: #c2410c; /* orange-700 - darker for light theme */
+  --color-language-exotic-border: rgba(234, 88, 12, 0.3); /* orange-600/30 */
+  --color-language-exotic-hover: #ea580c; /* orange-600 - darker hover */
+  
+  --color-language-secret-bg: rgba(147, 51, 234, 0.2); /* purple-900/20 - lighter for light theme */
+  --color-language-secret-text: #7c3aed; /* purple-700 - darker for light theme */
+  --color-language-secret-border: rgba(124, 58, 237, 0.3); /* purple-600/30 */
+  --color-language-secret-hover: #9333ea; /* purple-600 - darker hover */
+  
+  --color-language-default-bg: rgba(55, 65, 81, 0.2); /* gray-900/20 - lighter for light theme */
+  --color-language-default-text: #374151; /* gray-700 - darker for light theme */
+  --color-language-default-border: rgba(75, 85, 99, 0.3); /* gray-600/30 */
+  --color-language-default-hover: #4b5563; /* gray-600 - darker hover */
+  
+  /* Individual language colors for backward compatibility */
+  --color-language-common: #6b7280; /* gray for common */
+  --color-language-dwarvish: #92400e; /* brown for dwarvish */
+  --color-language-elvish: #059669; /* green for elvish */
+  --color-language-giant: #dc2626; /* red for giant */
+  --color-language-gnomish: #7c3aed; /* purple for gnomish */
+  --color-language-goblin: #ea580c; /* orange for goblin */
+  --color-language-halfling: #16a34a; /* green for halfling */
+  --color-language-orc: #dc2626; /* red for orc */
+  --color-language-abyssal: #7c2d12; /* dark red for abyssal */
+  --color-language-celestial: #fbbf24; /* yellow for celestial */
+  --color-language-deep-speech: #1e40af; /* blue for deep speech */
+  --color-language-draconic: #dc2626; /* red for draconic */
+  --color-language-infernal: #dc2626; /* red for infernal */
+  --color-language-primordial: #0891b2; /* cyan for primordial */
+  --color-language-sylvan: #059669; /* green for sylvan */
+  --color-language-undercommon: #6b7280; /* gray for undercommon */
 }
 
 @theme inline {
@@ -386,6 +497,24 @@ body {
   --color-error-text-light: #fca5a5; /* light red text for error details */
   --color-dice-default: #166534; /* deep forest green for default dice color */
   --color-dice-canvas-bg: linear-gradient(135deg, #1a2a1a 0%, #0a1a0a 100%); /* deep green gradient for dice canvas */
+  
+  /* Language colors */
+  --color-language-common: #6b7280; /* gray for common */
+  --color-language-dwarvish: #92400e; /* brown for dwarvish */
+  --color-language-elvish: #059669; /* green for elvish */
+  --color-language-giant: #dc2626; /* red for giant */
+  --color-language-gnomish: #7c3aed; /* purple for gnomish */
+  --color-language-goblin: #ea580c; /* orange for goblin */
+  --color-language-halfling: #16a34a; /* green for halfling */
+  --color-language-orc: #dc2626; /* red for orc */
+  --color-language-abyssal: #7c2d12; /* dark red for abyssal */
+  --color-language-celestial: #fbbf24; /* yellow for celestial */
+  --color-language-deep-speech: #1e40af; /* blue for deep speech */
+  --color-language-draconic: #dc2626; /* red for draconic */
+  --color-language-infernal: #dc2626; /* red for infernal */
+  --color-language-primordial: #0891b2; /* cyan for primordial */
+  --color-language-sylvan: #059669; /* green for sylvan */
+  --color-language-undercommon: #6b7280; /* gray for undercommon */
 }
 
 /* Dungeon Theme - Heavy grays, no coppers or yellows */
@@ -454,6 +583,24 @@ body {
   --color-error-text-light: #fca5a5; /* light red text for error details */
   --color-dice-default: #6b7280; /* steel gray for default dice color */
   --color-dice-canvas-bg: linear-gradient(135deg, #2a2a2a 0%, #0a0a0a 100%); /* heavy gray gradient for dice canvas */
+  
+  /* Language colors */
+  --color-language-common: #6b7280; /* gray for common */
+  --color-language-dwarvish: #92400e; /* brown for dwarvish */
+  --color-language-elvish: #059669; /* green for elvish */
+  --color-language-giant: #dc2626; /* red for giant */
+  --color-language-gnomish: #7c3aed; /* purple for gnomish */
+  --color-language-goblin: #ea580c; /* orange for goblin */
+  --color-language-halfling: #16a34a; /* green for halfling */
+  --color-language-orc: #dc2626; /* red for orc */
+  --color-language-abyssal: #7c2d12; /* dark red for abyssal */
+  --color-language-celestial: #fbbf24; /* yellow for celestial */
+  --color-language-deep-speech: #1e40af; /* blue for deep speech */
+  --color-language-draconic: #dc2626; /* red for draconic */
+  --color-language-infernal: #dc2626; /* red for infernal */
+  --color-language-primordial: #0891b2; /* cyan for primordial */
+  --color-language-sylvan: #059669; /* green for sylvan */
+  --color-language-undercommon: #6b7280; /* gray for undercommon */
 }
 
 /* Nobility Theme - Purple and slate - original colors */
@@ -521,4 +668,22 @@ body {
   --color-overlay: var(--color-surface); /* theme surface color for modal overlay */
   --color-error-text-light: #fca5a5; /* light red text for error details */
   --color-dice-default: #9333ea; /* purple-600 for default dice color */
+  
+  /* Language colors */
+  --color-language-common: #6b7280; /* gray for common */
+  --color-language-dwarvish: #92400e; /* brown for dwarvish */
+  --color-language-elvish: #059669; /* green for elvish */
+  --color-language-giant: #dc2626; /* red for giant */
+  --color-language-gnomish: #7c3aed; /* purple for gnomish */
+  --color-language-goblin: #ea580c; /* orange for goblin */
+  --color-language-halfling: #16a34a; /* green for halfling */
+  --color-language-orc: #dc2626; /* red for orc */
+  --color-language-abyssal: #7c2d12; /* dark red for abyssal */
+  --color-language-celestial: #fbbf24; /* yellow for celestial */
+  --color-language-deep-speech: #1e40af; /* blue for deep speech */
+  --color-language-draconic: #dc2626; /* red for draconic */
+  --color-language-infernal: #dc2626; /* red for infernal */
+  --color-language-primordial: #0891b2; /* cyan for primordial */
+  --color-language-sylvan: #059669; /* green for sylvan */
+  --color-language-undercommon: #6b7280; /* gray for undercommon */
 }
