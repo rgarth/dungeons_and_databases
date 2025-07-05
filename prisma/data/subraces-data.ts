@@ -227,25 +227,4 @@ export const subracesData: SubraceData[] = [
     languages: null
   },
 
-  // Base races as subraces (for races with no subraces)
-  // Note: Human is excluded because it has no subraces in D&D 5e
-
-  {
-    name: "Tiefling",
-    raceName: "Tiefling",
-    description: "Tieflings are touched by infernal power, with fiendish traits.",
-    abilityScoreIncrease: "Charisma +2, Intelligence +1",
-    traits: ["Darkvision", "Hellish Resistance", "Infernal Legacy"],
-    languages: ["Common", "Infernal"]
-  },
-  {
-    name: "Aasimar",
-    raceName: "Aasimar",
-    description: "Aasimar are touched by the power of good.",
-    abilityScoreIncrease: "Charisma +2",
-    traits: ["Darkvision", "Celestial Resistance", "Healing Hands"],
-    languages: ["Common", "Celestial"]
-  },
-
-
 ]; 
