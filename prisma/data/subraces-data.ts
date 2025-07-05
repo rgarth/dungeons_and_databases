@@ -19,7 +19,7 @@ export const subracesData: SubraceData[] = [
     raceName: "Elf",
     description: "High elves value scholarship and the pursuit of magical knowledge. They are often found in libraries and universities.",
     abilityScoreIncrease: "Intelligence +1",
-    traits: ["Elf Weapon Training", "Cantrip", "Extra Language"],
+    traits: ["Elf Weapon Training", "High Elf Cantrip", "Extra Language"],
     languages: ["One extra language of your choice"]
   },
   {
@@ -27,7 +27,7 @@ export const subracesData: SubraceData[] = [
     raceName: "Elf",
     description: "Wood elves are reclusive, living in small communities in the depths of forests. They are attuned to nature and magic.",
     abilityScoreIncrease: "Wisdom +1",
-    traits: ["Elf Weapon Training", "Fleet of Foot", "Mask of the Wild"],
+    traits: ["Elf Weapon Training", "Wood Elf Fleet of Foot", "Wood Elf Mask of the Wild"],
     languages: null
   },
   {
@@ -81,7 +81,7 @@ export const subracesData: SubraceData[] = [
     raceName: "Gnome",
     description: "Forest gnomes are reclusive and shy. They are known for their ability to communicate with small animals.",
     abilityScoreIncrease: "Dexterity +1",
-    traits: ["Natural Illusionist", "Speak with Small Beasts"],
+    traits: ["Forest Gnome Natural Illusionist", "Speak with Small Beasts"],
     languages: null
   },
   {
@@ -89,7 +89,7 @@ export const subracesData: SubraceData[] = [
     raceName: "Gnome",
     description: "Rock gnomes are inventive and curious. They are known for their tinkering and their love of gadgets.",
     abilityScoreIncrease: "Constitution +1",
-    traits: ["Artificer's Lore", "Tinker"],
+    traits: ["Rock Gnome Artificer's Lore", "Rock Gnome Tinker"],
     languages: null
   },
 
