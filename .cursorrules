@@ -7,6 +7,7 @@
 # Development Rules
 - Ask before dropping the databases
 - Supabase cannot use prisma migrations. Please write them in the supbase directory in SQL and run a db push
+- ASK BEFORE RUNNING ANY MIGRATIONS. THE DB NEEDS TO BE STABLE
 - The wizards of the coast 5e rules found online are the LAW. We must adhere to them
 - No artifacts.
 - Less code is better than more code - keep files small, clean, and focused.

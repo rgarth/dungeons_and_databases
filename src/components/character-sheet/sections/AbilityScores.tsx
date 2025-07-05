@@ -24,14 +24,14 @@ export function AbilityScores({ character }: AbilityScoresProps) {
   ];
 
   return (
-    <div className="bg-slate-700 rounded-lg p-4">
-      <h3 className="text-lg font-semibold text-white mb-4">Ability Scores</h3>
+    <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+      <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4">Ability Scores</h3>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {abilities.map((ability) => (
-          <div key={ability.name} className="bg-slate-600 rounded-lg p-3 text-center">
-            <div className="text-xs text-slate-400 mb-1 font-medium">{ability.short}</div>
-            <div className="text-xl font-bold text-white mb-1">{ability.value}</div>
-            <div className="text-sm text-slate-300">
+          <div key={ability.name} className="bg-[var(--color-card-tertiary)] rounded-lg p-3 text-center">
+            <div className="text-xs text-[var(--color-text-tertiary)] mb-1 font-medium">{ability.short}</div>
+            <div className="text-xl font-bold text-[var(--color-text-primary)] mb-1">{ability.value}</div>
+            <div className="text-sm text-[var(--color-text-secondary)]">
               {getModifier(ability.value) >= 0 ? '+' : ''}{getModifier(ability.value)}
             </div>
           </div>

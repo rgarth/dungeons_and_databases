@@ -13,6 +13,7 @@ import { WeaponSelector } from "../../shared/WeaponSelector";
 import { CustomWeaponCreator } from "../components/CustomWeaponCreator";
 import { findSpellByName, getSpellsByClass } from "@/lib/dnd/spell-data-helper";
 import { useStatusStyles, useOpacityStyles, useBorderLeftStyles, useInteractiveButtonStyles } from "@/hooks/use-theme";
+import { getRarityColor } from "@/lib/theme-utils";
 
 interface DatabaseMagicalItem {
   id: number;
@@ -506,7 +507,7 @@ export function GearTab({
                           )}
                         </span>
                         {'rarity' in weapon && (
-                          <span className={`ml-2 text-xs ${magicalItems.getRarityColor(weapon.rarity)}`}>
+                          <span className={`ml-2 text-xs ${getRarityColor(weapon.rarity)}`}>
                             {weapon.rarity}
                           </span>
                         )}
@@ -598,7 +599,7 @@ export function GearTab({
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="text-[var(--color-text-primary)] font-medium">{item.name}</span>
-                            <span className={`text-xs ${magicalItems.getRarityColor(item.rarity)}`}>
+                            <span className={`text-xs ${getRarityColor(item.rarity)}`}>
                               {item.rarity}
                             </span>
                             {item.requiresAttunement && (
@@ -774,7 +775,7 @@ export function GearTab({
                           )}
                         </span>
                         {'rarity' in weapon && (
-                          <span className={`ml-2 text-xs ${magicalItems.getRarityColor(weapon.rarity)}`}>
+                          <span className={`ml-2 text-xs ${getRarityColor(weapon.rarity)}`}>
                             {weapon.rarity}
                           </span>
                         )}
@@ -892,7 +893,7 @@ export function GearTab({
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="text-[var(--color-text-primary)] font-medium">{item.name}</span>
-                          <span className={`text-xs ${magicalItems.getRarityColor(item.rarity)}`}>
+                          <span className={`text-xs ${getRarityColor(item.rarity)} px-1 rounded`}>
                             {item.rarity}
                           </span>
                         </div>
@@ -1137,7 +1138,7 @@ export function GearTab({
                       <div className="flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-[var(--color-text-primary)] font-medium">{item.name}</span>
-                          <span className={`text-xs ${magicalItems.getRarityColor(item.rarity)} px-1 rounded`}>
+                          <span className={`text-xs ${getRarityColor(item.rarity)} px-1 rounded`}>
                             {item.rarity}
                           </span>
                           {item.attunement && (

@@ -83,19 +83,7 @@ export class MagicalItemService {
            item.name.toLowerCase().includes('scroll');
   }
 
-  // Get rarity color for display
-  // DEPRECATED: Use getRarityColor from @/lib/theme-utils instead
-  getRarityColor(rarity: string): string {
-    switch (rarity) {
-      case 'Common': return 'text-[var(--color-text-muted)]';
-      case 'Uncommon': return 'text-[var(--color-success)]';
-      case 'Rare': return 'text-[var(--color-accent)]';
-      case 'Very Rare': return 'text-[var(--color-card-tertiary)]';
-      case 'Legendary': return 'text-[var(--color-warning)]';
-      case 'Artifact': return 'text-[var(--color-danger)]';
-      default: return 'text-[var(--color-text-muted)]';
-    }
-  }
+
 
   // Get ordinal suffix for numbers (1st, 2nd, 3rd, etc.)
   getOrdinalSuffix(num: number): string {
@@ -114,23 +102,7 @@ export class MagicalItemService {
     }
   }
 
-  // Get spell scroll level color
-  // DEPRECATED: Use getSpellLevelColor from @/lib/theme-utils instead
-  getSpellLevelColor(level: number): string {
-    switch (level) {
-      case 0: return 'text-[var(--color-text-muted)]';
-      case 1: return 'text-[var(--color-success)]';
-      case 2: return 'text-[var(--color-accent)]';
-      case 3: return 'text-[var(--color-card-tertiary)]';
-      case 4: return 'text-[var(--color-warning)]';
-      case 5: return 'text-[var(--color-danger)]';
-      case 6: return 'text-[var(--color-success)]';
-      case 7: return 'text-[var(--color-accent)]';
-      case 8: return 'text-[var(--color-card-tertiary)]';
-      case 9: return 'text-[var(--color-warning)]';
-      default: return 'text-[var(--color-text-muted)]';
-    }
-  }
+
 
   // Validate item limits (for UI enforcement)
   validateItemLimits(

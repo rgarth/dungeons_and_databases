@@ -381,7 +381,7 @@ export function PDFExport({ character, className }: PDFExportProps) {
   return (
     <button
       onClick={exportToPDF}
-      className={`flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm ${className}`}
+              className={`flex items-center gap-2 px-3 py-2 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] rounded-lg transition-colors text-sm ${className}`}
       title="Export to PDF"
     >
       <Download className="h-4 w-4" />
