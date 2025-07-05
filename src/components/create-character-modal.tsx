@@ -136,6 +136,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   
   // Equipment and spells
   const [selectedSpells, setSelectedSpells] = useState<Spell[]>([]);
+  const [spellTabActive, setSpellTabActive] = useState<'cantrips' | 'spells'>('cantrips');
   const [selectedWeapons, setSelectedWeapons] = useState<{weapon: Weapon, quantity: number}[]>([]);
   const [selectedAmmunition, setSelectedAmmunition] = useState<Ammunition[]>([]);
   const [selectedEquipmentPack, setSelectedEquipmentPack] = useState<number>(-1); // Default to no pack
@@ -1619,34 +1620,123 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     })()}
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-48 overflow-y-auto">
-                    {spellcasting.availableSpells.map((spell) => (
-                      <label
-                        key={String(spell.name)}
-                        className={`flex items-center p-2 rounded cursor-pointer transition-colors ${
-                          selectedSpells.some(s => s.name === spell.name)
-                            ? 'text-white'
-                            : 'text-slate-300'
-                        }`}
-                        style={{ 
-                          backgroundColor: selectedSpells.some(s => s.name === spell.name)
-                            ? 'var(--color-primary)'
-                            : 'var(--color-surface-secondary)',
-                          '--tw-hover-bg': 'var(--color-surface-tertiary)'
-                        } as React.CSSProperties}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedSpells.some(s => s.name === spell.name)}
-                          onChange={() => handleSpellToggle(spell)}
-                          className="sr-only"
-                        />
-                        <div>
-                          <div className="font-medium text-sm" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}>{spell.name}</div>
-                          <div className="text-xs opacity-75" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)' }}>{spell.school} {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}</div>
-                        </div>
-                      </label>
-                    ))}
+                  {/* Tab Navigation */}
+                  <div className="flex border-b border-[var(--color-border)] mb-4">
+                    <button
+                      type="button"
+                      onClick={() => setSpellTabActive('cantrips')}
+                      className={`px-4 py-2 font-medium transition-colors ${
+                        spellTabActive === 'cantrips'
+                          ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]'
+                          : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                      }`}
+                    >
+                      Cantrips ({spellcasting.availableSpells.filter(s => s.level === 0).length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSpellTabActive('spells')}
+                      className={`px-4 py-2 font-medium transition-colors ${
+                        spellTabActive === 'spells'
+                          ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]'
+                          : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                      }`}
+                    >
+                      Spells ({spellcasting.availableSpells.filter(s => s.level > 0).length})
+                    </button>
+                  </div>
+
+                  {/* Tab Content */}
+                  <div className="max-h-48 overflow-y-auto">
+                    {spellTabActive === 'cantrips' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        {spellcasting.availableSpells
+                          .filter(spell => spell.level === 0)
+                          .map((spell) => (
+                          <label
+                            key={String(spell.name)}
+                            className={`flex items-center p-2 rounded cursor-pointer transition-colors ${
+                              selectedSpells.some(s => s.name === spell.name)
+                                ? 'text-white'
+                                : 'text-slate-300'
+                            }`}
+                            style={{ 
+                              backgroundColor: selectedSpells.some(s => s.name === spell.name)
+                                ? 'var(--color-primary)'
+                                : 'var(--color-surface-secondary)',
+                              '--tw-hover-bg': 'var(--color-surface-tertiary)'
+                            } as React.CSSProperties}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedSpells.some(s => s.name === spell.name)}
+                              onChange={() => handleSpellToggle(spell)}
+                              className="sr-only"
+                            />
+                            <div>
+                              <div className="font-medium text-sm" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}>{spell.name}</div>
+                              <div className="text-xs opacity-75" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)' }}>{spell.school} Cantrip</div>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                    
+                    {spellTabActive === 'spells' && (
+                      <div className="space-y-4">
+                        {(() => {
+                          // Group spells by level
+                          const spellsByLevel: Record<number, Spell[]> = {};
+                          spellcasting.availableSpells
+                            .filter(spell => spell.level > 0)
+                            .forEach((spell: Spell) => {
+                              if (!spellsByLevel[spell.level]) {
+                                spellsByLevel[spell.level] = [];
+                              }
+                              spellsByLevel[spell.level].push(spell);
+                            });
+                          
+                          return Object.entries(spellsByLevel)
+                            .sort(([a], [b]) => parseInt(a) - parseInt(b))
+                            .map(([level, levelSpells]) => (
+                              <div key={level}>
+                                <h4 className="text-sm font-medium text-[var(--color-text-primary)] mb-2">
+                                  Level {level} Spells
+                                </h4>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                                  {levelSpells.map((spell) => (
+                                    <label
+                                      key={String(spell.name)}
+                                      className={`flex items-center p-2 rounded cursor-pointer transition-colors ${
+                                        selectedSpells.some(s => s.name === spell.name)
+                                          ? 'text-white'
+                                          : 'text-slate-300'
+                                      }`}
+                                      style={{ 
+                                        backgroundColor: selectedSpells.some(s => s.name === spell.name)
+                                          ? 'var(--color-primary)'
+                                          : 'var(--color-surface-secondary)',
+                                        '--tw-hover-bg': 'var(--color-surface-tertiary)'
+                                      } as React.CSSProperties}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        checked={selectedSpells.some(s => s.name === spell.name)}
+                                        onChange={() => handleSpellToggle(spell)}
+                                        className="sr-only"
+                                      />
+                                      <div>
+                                        <div className="font-medium text-sm" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}>{spell.name}</div>
+                                        <div className="text-xs opacity-75" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)' }}>{spell.school} Level {spell.level}</div>
+                                      </div>
+                                    </label>
+                                  ))}
+                                </div>
+                              </div>
+                            ));
+                        })()}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
