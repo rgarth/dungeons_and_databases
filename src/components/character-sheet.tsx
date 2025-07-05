@@ -711,9 +711,46 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
   const handleOpenSpellPreparation = async () => {
     try {
-      // Get all available spells for this class
-      const maxSpellLevel = getMaxSpellLevel(currentCharacter.class, currentCharacter.level);
-      const availableSpells = await getSpellsByClass(currentCharacter.class, maxSpellLevel);
+      const spellcastingType = getSpellcastingType(currentCharacter.class);
+      let availableSpells: Spell[] = [];
+      
+      if (spellcastingType === 'spellbook') {
+        // Wizards prepare from their spellbook
+        availableSpells = currentCharacter.spellsKnown || [];
+      } else if (spellcastingType === 'prepared') {
+        // Clerics, Druids, Paladins prepare from their entire class spell list
+        const maxSpellLevel = getMaxSpellLevel(currentCharacter.class, currentCharacter.level);
+        const allClassSpells = await getSpellsByClass(currentCharacter.class, maxSpellLevel);
+        
+        // For prepared spellcasters, they can prepare from all class spells
+        // But cantrips are limited to what they know
+        const allCantrips = allClassSpells.filter(spell => spell.level === 0);
+        const allSpells = allClassSpells.filter(spell => spell.level > 0);
+        
+        // Get the cantrips they know (from prepared spells, since that's where cantrips are stored)
+        const knownCantrips = (currentCharacter.spellsPrepared || []).filter(spell => spell.level === 0);
+        
+        // If they don't have any cantrips prepared yet, they should see the cantrips they can choose from
+        // This would be based on their class spell limits
+        const spellLimitsResponse = await fetch(`/api/classes/${encodeURIComponent(currentCharacter.class)}/spell-limits?level=${currentCharacter.level}`);
+        const spellLimits = await spellLimitsResponse.json();
+        const maxCantrips = spellLimits?.cantripsKnown || 0;
+        
+        // If they have fewer cantrips than their limit, show available cantrips to choose from
+        if (knownCantrips.length < maxCantrips) {
+          // Show cantrips they don't know yet
+          const unknownCantrips = allCantrips.filter(cantrip => 
+            !knownCantrips.some(known => known.name === cantrip.name)
+          );
+          availableSpells = [...knownCantrips, ...unknownCantrips, ...allSpells];
+        } else {
+          // They have their full cantrip complement, just show what they know + all spells
+          availableSpells = [...knownCantrips, ...allSpells];
+        }
+      } else {
+        // Known spellcasters don't prepare spells
+        availableSpells = [];
+      }
       
       // Get current prepared spells
       const currentPreparedSpells = currentCharacter.spellsPrepared || [];
