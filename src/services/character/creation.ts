@@ -330,9 +330,10 @@ export class CharacterCreationService {
         
       case 'prepared':
         // Clerics, Druids, Paladins - have access to all class spells, prepare subset
+        // They start with no prepared spells and must prepare them daily
         return {
           spellsKnown: null, // They know all class spells
-          spellsPrepared: selectedSpells
+          spellsPrepared: [] // Start with no prepared spells
         };
         
       default:
