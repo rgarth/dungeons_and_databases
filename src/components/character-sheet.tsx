@@ -711,6 +711,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     setShowSpellPreparationModal(true);
   };
 
+  const handleOpenSpellManagement = () => {
+    setTempKnownSpells(currentCharacter.spellsKnown || []);
+    setShowSpellManagementModal(true);
+  };
+
   const handleUseSpellScroll = (scrollIndex: number) => {
     // Remove the spell scroll from inventory when used
     const updatedInventoryItems = inventoryMagicalItems.filter((_, i) => i !== scrollIndex);
@@ -836,6 +841,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     setCurrentCharacter(prev => ({ ...prev, ammunition: updatedAmmunition }));
     updateCharacter({ ammunition: updatedAmmunition });
   };
+
+  // New state for spell management (for known spell classes)
+  const [showSpellManagementModal, setShowSpellManagementModal] = useState(false);
+  const [tempKnownSpells, setTempKnownSpells] = useState<Spell[]>([]);
+  const [spellManagementTabActive, setSpellManagementTabActive] = useState<'cantrips' | 'spells'>('cantrips');
 
   return (
     <>
@@ -1081,6 +1091,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onAddArmor={handleAddArmor}
                 onAddMagicalItem={handleAddMagicalItem}
                 onOpenSpellPreparation={handleOpenSpellPreparation}
+                onOpenSpellManagement={handleOpenSpellManagement}
                 weaponLimits={weaponLimits}
               />
             )}
@@ -1228,6 +1239,135 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
           onClose={() => setShowLevelUpModal(false)}
           onLevelUp={handleLevelUp}
         />
+      )}
+
+      {/* Spell Management Modal (for known spell classes) */}
+      {showSpellManagementModal && (
+        <div className="fixed inset-0 flex items-start justify-center p-4 pt-8 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
+          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-[var(--color-border)]">
+              <div>
+                <h3 className="text-xl font-semibold text-[var(--color-text-primary)]">Manage Known Spells</h3>
+                <p className="text-[var(--color-text-secondary)] text-sm">
+                  {currentCharacter.class}s have a limited number of spells they know. You can replace existing spells with new ones from your class spell list.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowSpellManagementModal(false)}
+                className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              {/* Spell Management with Tabs */}
+              <div className="mb-4">
+                <div className="flex border-b border-[var(--color-border)]">
+                  <button
+                    onClick={() => setSpellManagementTabActive('cantrips')}
+                    className={`px-4 py-2 text-sm font-medium transition-colors ${
+                      spellManagementTabActive === 'cantrips'
+                        ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]'
+                        : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                    }`}
+                  >
+                    Cantrips ({tempKnownSpells.filter(s => s.level === 0).length})
+                  </button>
+                  <button
+                    onClick={() => setSpellManagementTabActive('spells')}
+                    className={`px-4 py-2 text-sm font-medium transition-colors ${
+                      spellManagementTabActive === 'spells'
+                        ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]'
+                        : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                    }`}
+                  >
+                    Spells ({tempKnownSpells.filter(s => s.level > 0).length})
+                  </button>
+                </div>
+              </div>
+
+              {spellManagementTabActive === 'cantrips' && (
+                <div>
+                  <h4 className="text-lg font-medium text-[var(--color-text-primary)] mb-3">Current Cantrips</h4>
+                  <div className="space-y-2">
+                    {tempKnownSpells
+                      .filter(spell => spell.level === 0)
+                      .map((spell, index) => (
+                        <div key={index} className="bg-[var(--color-card-secondary)] p-3 rounded">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <span className="font-medium text-[var(--color-text-primary)]">{spell.name}</span>
+                              <div className="text-sm text-[var(--color-text-secondary)]">{spell.school} • {spell.castingTime}</div>
+                            </div>
+                            <button
+                              onClick={() => {
+                                // TODO: Implement spell replacement
+                                console.log('Replace cantrip:', spell.name);
+                              }}
+                              className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] text-sm"
+                            >
+                              Replace
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+
+              {spellManagementTabActive === 'spells' && (
+                <div>
+                  <h4 className="text-lg font-medium text-[var(--color-text-primary)] mb-3">Current Spells</h4>
+                  <div className="space-y-2">
+                    {tempKnownSpells
+                      .filter(spell => spell.level > 0)
+                      .sort((a, b) => a.level - b.level)
+                      .map((spell, index) => (
+                        <div key={index} className="bg-[var(--color-card-secondary)] p-3 rounded">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <span className="font-medium text-[var(--color-text-primary)]">{spell.name}</span>
+                              <div className="text-sm text-[var(--color-text-secondary)]">
+                                Level {spell.level} • {spell.school} • {spell.castingTime}
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => {
+                                // TODO: Implement spell replacement
+                                console.log('Replace spell:', spell.name);
+                              }}
+                              className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] text-sm"
+                            >
+                              Replace
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 p-6 border-t border-[var(--color-border)]">
+              <button
+                onClick={() => setShowSpellManagementModal(false)}
+                className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-secondary)]/80 text-[var(--color-text-primary)] py-2 px-4 rounded transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  // TODO: Save spell changes
+                  setShowSpellManagementModal(false);
+                }}
+                className="flex-1 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] py-2 px-4 rounded transition-colors"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Spell Preparation Modal */}

@@ -12,6 +12,7 @@ import { ArmorSelector } from "../../shared/ArmorSelector";
 import { WeaponSelector } from "../../shared/WeaponSelector";
 import { CustomWeaponCreator } from "../components/CustomWeaponCreator";
 import { findSpellByName, getSpellsByClass } from "@/lib/dnd/spell-data-helper";
+import { getSpellcastingType } from "@/lib/dnd/level-up";
 import { useStatusStyles, useOpacityStyles, useBorderLeftStyles, useInteractiveButtonStyles } from "@/hooks/use-theme";
 import { getRarityColor } from "@/lib/theme-utils";
 
@@ -63,6 +64,7 @@ interface GearTabProps {
   onAddArmor: (armor: Armor) => void;
   onAddMagicalItem: (item: MagicalItem) => void;
   onOpenSpellPreparation: () => void;
+  onOpenSpellManagement?: () => void;
   weaponLimits: { maxEquipped: number; maxInventory: number };
 }
 
@@ -89,6 +91,7 @@ export function GearTab({
   onAddArmor,
   onAddMagicalItem,
   onOpenSpellPreparation,
+  onOpenSpellManagement,
   weaponLimits
 }: GearTabProps) {
   // Create service instances for clean calculations
@@ -655,12 +658,33 @@ export function GearTab({
                   <Wand2 className="h-5 w-5 text-[var(--color-accent)]" />
                   Spells
                 </h3>
-                <button
-                  onClick={onOpenSpellPreparation}
-                  className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] px-3 py-1 rounded text-sm transition-colors"
-                >
-                  Manage Spells
-                </button>
+                {(() => {
+                  const spellcastingType = getSpellcastingType(character.class);
+                  
+                  if (spellcastingType === 'known') {
+                    // For Sorcerers, Bards, Warlocks - show spell management
+                    return (
+                      <button
+                        onClick={onOpenSpellManagement}
+                        className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] px-3 py-1 rounded text-sm transition-colors"
+                      >
+                        Manage Known Spells
+                      </button>
+                    );
+                  } else if (spellcastingType === 'prepared' || spellcastingType === 'spellbook') {
+                    // For Wizards, Clerics, Druids, Paladins - show spell preparation
+                    return (
+                      <button
+                        onClick={onOpenSpellPreparation}
+                        className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] px-3 py-1 rounded text-sm transition-colors"
+                      >
+                        Prepare Spells
+                      </button>
+                    );
+                  } else {
+                    return null;
+                  }
+                })()}
               </div>
               
               {/* Paladin Spellcasting Setup Notice */}
