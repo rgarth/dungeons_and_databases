@@ -1237,14 +1237,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               <div>
                 <h3 className="text-xl font-semibold text-[var(--color-text-primary)]">Prepare Spells</h3>
                 <p className="text-[var(--color-text-secondary)] text-sm">
-                  Choose spells to prepare for the day ({tempPreparedSpells.filter(s => s.level > 0).length} / {
-                    (() => {
-                      const spellcastingAbility = currentCharacter.spellcastingAbility || 'intelligence';
-                      const abilityValue = currentCharacter[spellcastingAbility as keyof typeof currentCharacter] as number || 10;
-                      const abilityModifier = getModifier(abilityValue);
-                      return getSpellsPreparedCount(currentCharacter.class, currentCharacter.level, abilityModifier);
-                    })()
-                  } prepared) • Cantrips are always available
+                  {(() => {
+                    const spellcastingType = getSpellcastingType(currentCharacter.class);
+                    if (spellcastingType === 'known') {
+                      return `${currentCharacter.class}s don't prepare spells - all known spells are always available`;
+                    }
+                    const spellcastingAbility = currentCharacter.spellcastingAbility || 'intelligence';
+                    const abilityValue = currentCharacter[spellcastingAbility as keyof typeof currentCharacter] as number || 10;
+                    const abilityModifier = getModifier(abilityValue);
+                    const maxPrepared = getSpellsPreparedCount(currentCharacter.class, currentCharacter.level, abilityModifier);
+                    return `Choose spells to prepare for the day (${tempPreparedSpells.filter(s => s.level > 0).length} / ${maxPrepared} prepared) • Cantrips are always available`;
+                  })()}
                 </p>
               </div>
               <button
@@ -1259,9 +1262,46 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               {/* Spell Selection */}
               {(() => {
                 const spellcastingType = getSpellcastingType(currentCharacter.class);
-                const availableSpells = spellcastingType === 'spellbook' 
-                  ? (currentCharacter.spellsKnown || [])  // Wizards prepare from spellbook
-                  : []; // For non-spellbook classes, we'll handle this differently
+                
+                // Get available spells based on class type
+                let availableSpells: Spell[] = [];
+                if (spellcastingType === 'spellbook') {
+                  // Wizards prepare from their spellbook
+                  availableSpells = currentCharacter.spellsKnown || [];
+                } else if (spellcastingType === 'prepared') {
+                  // Clerics, Druids, Paladins prepare from their entire class spell list
+                  // For now, we'll use their current prepared spells as the available list
+                  // In a full implementation, this would load all class spells
+                  availableSpells = currentCharacter.spellsPrepared || [];
+                } else {
+                  // Known spellcasters (Sorcerers, Bards, etc.) don't prepare spells
+                  return (
+                    <div className="text-center py-8">
+                      <div className="text-[var(--color-text-secondary)] text-lg mb-4">
+                        {currentCharacter.class}s don&apos;t prepare spells daily
+                      </div>
+                      <div className="text-[var(--color-text-tertiary)] text-sm">
+                        As a {currentCharacter.class}, all your known spells are always available to cast.
+                      </div>
+                    </div>
+                  );
+                }
+                
+                if (availableSpells.length === 0) {
+                  return (
+                    <div className="text-center py-8">
+                      <div className="text-[var(--color-text-secondary)] text-lg mb-4">
+                        No spells available
+                      </div>
+                      <div className="text-[var(--color-text-tertiary)] text-sm">
+                        {spellcastingType === 'spellbook' 
+                          ? 'Your spellbook is empty. Learn spells during your adventures.'
+                          : 'No spells are currently available for preparation.'
+                        }
+                      </div>
+                    </div>
+                  );
+                }
                 
                 // Group spells by level
                 const spellsByLevel: Record<number, Spell[]> = {};
@@ -1307,22 +1347,6 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                             const currentNonCantripsPrepared = tempPreparedSpells.filter(s => s.level > 0).length;
                             const canSelect = isSelected || isCantrip || currentNonCantripsPrepared < maxPrepared;
                             
-                            // Debug logging
-                            if (index === 0 && level !== '0') {
-                              console.log('Spell preparation debug:', {
-                                spellName: spell.name,
-                                spellLevel: spell.level,
-                                isCantrip,
-                                isSelected,
-                                tempPreparedLength: tempPreparedSpells.length,
-                                maxPrepared,
-                                abilityModifier,
-                                spellcastingAbility,
-                                abilityValue,
-                                canSelect
-                              });
-                            }
-                            
                             return (
                               <div
                                 key={index}
@@ -1334,21 +1358,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                       : 'border-[var(--color-border)] bg-[var(--color-card)] opacity-50 cursor-not-allowed'
                                 }`}
                                 onClick={() => {
-                                  // Allow all spells to be clicked
                                   if (canSelect) {
                                     handleTogglePreparedSpell(spell);
-                                    if (isCantrip) {
-                                      console.log('Cantrip toggled - always available regardless');
-                                    }
-                                  } else {
-                                    console.log('Spell not selectable:', { 
-                                      canSelect, 
-                                      maxPrepared, 
-                                      currentNonCantrips: currentNonCantripsPrepared,
-                                      totalPrepared: tempPreparedSpells.length,
-                                      isCantrip,
-                                      spellLevel: spell.level
-                                    });
                                   }
                                 }}
                               >
@@ -1392,18 +1403,35 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
             </div>
 
             <div className="flex gap-3 p-6 border-t border-[var(--color-border)]">
-              <button
-                onClick={handleSaveSpellPreparation}
-                className="flex-1 bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] py-2 px-4 rounded transition-colors"
-              >
-                Save Prepared Spells
-              </button>
-              <button
-                onClick={() => setShowSpellPreparationModal(false)}
-                className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] text-[var(--color-text-primary)] py-2 px-4 rounded transition-colors"
-              >
-                Cancel
-              </button>
+              {(() => {
+                const spellcastingType = getSpellcastingType(currentCharacter.class);
+                if (spellcastingType === 'known') {
+                  return (
+                    <button
+                      onClick={() => setShowSpellPreparationModal(false)}
+                      className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] text-[var(--color-text-primary)] py-2 px-4 rounded transition-colors"
+                    >
+                      Close
+                    </button>
+                  );
+                }
+                return (
+                  <>
+                    <button
+                      onClick={handleSaveSpellPreparation}
+                      className="flex-1 bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] py-2 px-4 rounded transition-colors"
+                    >
+                      Save Prepared Spells
+                    </button>
+                    <button
+                      onClick={() => setShowSpellPreparationModal(false)}
+                      className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-tertiary)] text-[var(--color-text-primary)] py-2 px-4 rounded transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                );
+              })()}
             </div>
           </div>
         </div>
