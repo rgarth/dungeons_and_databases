@@ -755,7 +755,17 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       // Get current prepared spells
       const currentPreparedSpells = currentCharacter.spellsPrepared || [];
       
-      setTempPreparedSpells(currentPreparedSpells);
+      // For prepared spellcasters, ensure cantrips are always included
+      let initialPreparedSpells = currentPreparedSpells;
+      if (spellcastingType === 'prepared') {
+        const currentSpells = currentPreparedSpells.filter(spell => spell.level > 0);
+        const availableCantrips = availableSpells.filter(spell => spell.level === 0);
+        
+        // Always include all available cantrips
+        initialPreparedSpells = [...availableCantrips, ...currentSpells];
+      }
+      
+      setTempPreparedSpells(initialPreparedSpells);
       setAvailableSpells(availableSpells);
       setShowSpellPreparationModal(true);
     } catch (error) {
@@ -898,6 +908,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   };
 
   const handleTogglePreparedSpell = (spell: Spell) => {
+    // Cantrips are always prepared and cannot be toggled
+    if (spell.level === 0) {
+      return;
+    }
+    
     const isCurrentlyPrepared = tempPreparedSpells.some(s => s.name === spell.name);
     const spellcastingAbility = currentCharacter.spellcastingAbility || 'intelligence';
     const abilityValue = currentCharacter[spellcastingAbility as keyof typeof currentCharacter] as number || 10;
@@ -912,7 +927,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       setTempPreparedSpells(prev => prev.filter(s => s.name !== spell.name));
     } else {
       // Add to prepared spells if under limit (only check limit for non-cantrips)
-      if (spell.level === 0 || currentNonCantripsPrepared < maxPrepared) {
+      if (currentNonCantripsPrepared < maxPrepared) {
         setTempPreparedSpells(prev => [...prev, spell]);
       }
     }
@@ -1734,17 +1749,12 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                           ) : (
                             <div className="space-y-2">
                               {cantrips.map((spell, index) => {
-                                const isSelected = tempPreparedSpells.some(s => s.name === spell.name);
+                                // Cantrips are always prepared and available
                                 
                                 return (
                                   <div
                                     key={index}
-                                    className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                                      isSelected 
-                                        ? 'border-green-500 bg-green-500/10' 
-                                        : 'border-border hover:border-accent/50 bg-card'
-                                    }`}
-                                    onClick={() => handleTogglePreparedSpell(spell)}
+                                    className="p-3 border border-green-500 bg-green-500/10 rounded-lg cursor-default transition-colors"
                                   >
                                     <div className="flex items-center justify-between mb-2">
                                       <div className="flex items-center gap-2">
@@ -1752,8 +1762,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                         <span className="text-xs bg-muted px-2 py-1 rounded">
                                           {spell.school}
                                         </span>
-                                        <span className="text-xs bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 px-2 py-1 rounded">
-                                          Always Available
+                                        <span className="text-xs bg-green-600 text-white px-2 py-1 rounded">
+                                          Always Prepared
                                         </span>
                                       </div>
                                     </div>
