@@ -313,7 +313,7 @@ function ColorWheel({ currentColor, onColorChange }: {
                   }}
                 >
                   <div 
-                    className="w-2 h-2 rounded-full"
+                    className="w-8 h-8 rounded-full"
                     style={{ backgroundColor: currentColor }}
                   />
                 </div>

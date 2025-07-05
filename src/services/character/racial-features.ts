@@ -72,31 +72,44 @@ export class RacialFeaturesService {
       const traits: RacialTrait[] = [];
       
       // Get race traits from the new traits API
+      console.log(`Fetching race traits for: ${race}`);
       const raceTraitsResponse = await fetch(`/api/traits?race=${encodeURIComponent(race)}`);
+      console.log(`Race traits response status: ${raceTraitsResponse.status}`);
+      
       if (raceTraitsResponse.ok) {
         const raceTraits = await raceTraitsResponse.json();
+        console.log(`Found ${raceTraits.length} race traits:`, raceTraits.map((t: { name: string }) => t.name));
         traits.push(...raceTraits.map((trait: { name: string; description: string; type: string }) => ({
           name: trait.name,
           description: trait.description,
           type: trait.type,
           effect: this.getTraitEffect(trait.name)
         })));
+      } else {
+        console.error(`Failed to fetch race traits: ${raceTraitsResponse.status} ${raceTraitsResponse.statusText}`);
       }
       
       // Get subrace traits if subrace is provided
       if (subrace) {
+        console.log(`Fetching subrace traits for: ${subrace}`);
         const subraceTraitsResponse = await fetch(`/api/traits?subrace=${encodeURIComponent(subrace)}`);
+        console.log(`Subrace traits response status: ${subraceTraitsResponse.status}`);
+        
         if (subraceTraitsResponse.ok) {
           const subraceTraits = await subraceTraitsResponse.json();
+          console.log(`Found ${subraceTraits.length} subrace traits:`, subraceTraits.map((t: { name: string }) => t.name));
           traits.push(...subraceTraits.map((trait: { name: string; description: string; type: string }) => ({
             name: trait.name,
             description: trait.description,
             type: trait.type,
             effect: this.getTraitEffect(trait.name)
           })));
+        } else {
+          console.error(`Failed to fetch subrace traits: ${subraceTraitsResponse.status} ${subraceTraitsResponse.statusText}`);
         }
       }
       
+      console.log(`Total traits found: ${traits.length}`);
       return traits;
     } catch (error) {
       console.error('Error fetching racial traits:', error);
