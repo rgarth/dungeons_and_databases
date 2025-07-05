@@ -60,6 +60,14 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
         className="p-6 hover:border-[var(--color-accent)] transition-colors cursor-pointer"
         onClick={() => setShowSheet(true)}
       >
+        {/* Syncing indicator - positioned at the top */}
+        {isOptimistic && (
+          <div className="flex items-center justify-center gap-2 text-[var(--color-warning)] text-sm mb-4 p-2 bg-[var(--color-warning)]/10 rounded-lg border border-[var(--color-warning)]/20">
+            <RefreshCw className="h-4 w-4 animate-spin" />
+            <span>Syncing with database...</span>
+          </div>
+        )}
+
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-start gap-3 min-w-0 flex-1">
             {/* Avatar */}
@@ -94,12 +102,6 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
             </div>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-            {isOptimistic && (
-              <div className="flex items-center gap-2 text-[var(--color-warning)] text-sm">
-                <RefreshCw className="h-4 w-4 animate-spin" />
-                <span>Syncing...</span>
-              </div>
-            )}
             <Button
               variant="ghost"
               onClick={handleDeleteClick}
