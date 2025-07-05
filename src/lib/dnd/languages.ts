@@ -84,20 +84,20 @@ export function getLanguageStyling(languageName: string, isRacial: boolean = fal
   
   if (!language) {
     return {
-      bg: isRacial ? "bg-blue-900/30" : isClassGranted ? "bg-red-900/30" : "bg-green-900/30",
-      text: isRacial ? "text-blue-300" : isClassGranted ? "text-red-300" : "text-green-300",
-      border: isRacial ? "border-blue-600/30" : isClassGranted ? "border-red-600/30" : "border-green-600/30",
-      hover: isRacial ? "hover:text-blue-200" : isClassGranted ? "hover:text-red-200" : "hover:text-green-200"
+      bg: isRacial ? "bg-[var(--color-language-racial-bg)]" : isClassGranted ? "bg-[var(--color-language-class-bg)]" : "bg-[var(--color-language-standard-bg)]",
+      text: isRacial ? "text-[var(--color-language-racial-text)]" : isClassGranted ? "text-[var(--color-language-class-text)]" : "text-[var(--color-language-standard-text)]",
+      border: isRacial ? "border-[var(--color-language-racial-border)]" : isClassGranted ? "border-[var(--color-language-class-border)]" : "border-[var(--color-language-standard-border)]",
+      hover: isRacial ? "hover:text-[var(--color-language-racial-hover)]" : isClassGranted ? "hover:text-[var(--color-language-class-hover)]" : "hover:text-[var(--color-language-standard-hover)]"
     };
   }
 
   // Special styling for secret languages (like Thieves' Cant)
   if (language.category === 'Secret') {
     return {
-      bg: "bg-purple-900/30",
-      text: "text-purple-300",
-      border: "border-purple-600/30",
-      hover: "hover:text-purple-200"
+      bg: "bg-[var(--color-language-secret-bg)]",
+      text: "text-[var(--color-language-secret-text)]",
+      border: "border-[var(--color-language-secret-border)]",
+      hover: "hover:text-[var(--color-language-secret-hover)]"
     };
   }
 
@@ -105,24 +105,24 @@ export function getLanguageStyling(languageName: string, isRacial: boolean = fal
   switch (language.category) {
     case 'Standard':
       return {
-        bg: "bg-green-900/30",
-        text: "text-green-300",
-        border: "border-green-600/30",
-        hover: "hover:text-green-200"
+        bg: "bg-[var(--color-language-standard-bg)]",
+        text: "text-[var(--color-language-standard-text)]",
+        border: "border-[var(--color-language-standard-border)]",
+        hover: "hover:text-[var(--color-language-standard-hover)]"
       };
     case 'Exotic':
       return {
-        bg: "bg-orange-900/30",
-        text: "text-orange-300",
-        border: "border-orange-600/30",
-        hover: "hover:text-orange-200"
+        bg: "bg-[var(--color-language-exotic-bg)]",
+        text: "text-[var(--color-language-exotic-text)]",
+        border: "border-[var(--color-language-exotic-border)]",
+        hover: "hover:text-[var(--color-language-exotic-hover)]"
       };
     default:
       return {
-        bg: "bg-gray-900/30",
-        text: "text-gray-300",
-        border: "border-gray-600/30",
-        hover: "hover:text-gray-200"
+        bg: "bg-[var(--color-language-default-bg)]",
+        text: "text-[var(--color-language-default-text)]",
+        border: "border-[var(--color-language-default-border)]",
+        hover: "hover:text-[var(--color-language-default-hover)]"
       };
   }
 }
