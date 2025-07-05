@@ -13,6 +13,8 @@ import { ActiveCondition } from "@/lib/dnd/conditions";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import { LevelUpWizard } from "./character-sheet/LevelUpWizard";
 import { getSpellcastingType, getSpellsPreparedCount } from "@/lib/dnd/level-up";
+import { getMaxSpellLevel } from "@/lib/dnd/spells";
+import { getSpellsByClass } from "@/lib/dnd/spell-data-helper";
 import { StatsTab, ActionsTab, GearTab, InventoryTab, BackgroundTab } from "./character-sheet/";
 import DiceRoller from "./dice-roller";
 
@@ -716,6 +718,56 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     setShowSpellManagementModal(true);
   };
 
+  const handleReplaceSpell = async (spellToReplace: Spell) => {
+    try {
+      // Get available spells for this class
+      const maxSpellLevel = getMaxSpellLevel(currentCharacter.class, currentCharacter.level);
+      const availableSpells = await getSpellsByClass(currentCharacter.class, maxSpellLevel);
+      
+      // Filter out spells the character already knows (except the one being replaced)
+      const currentSpellNames = tempKnownSpells.map(s => s.name);
+      const replacementOptions = availableSpells.filter(spell => 
+        spell.name !== spellToReplace.name && 
+        spell.level === spellToReplace.level &&
+        !currentSpellNames.includes(spell.name)
+      );
+      
+      setSpellToReplace(spellToReplace);
+      setAvailableReplacementSpells(replacementOptions);
+      setSelectedReplacementSpell('');
+      setShowSpellReplacementModal(true);
+    } catch (error) {
+      console.error('Error loading replacement spells:', error);
+    }
+  };
+
+  const handleConfirmSpellReplacement = () => {
+    if (!spellToReplace || !selectedReplacementSpell) return;
+    
+    const replacementSpell = availableReplacementSpells.find(s => s.name === selectedReplacementSpell);
+    if (!replacementSpell) return;
+    
+    // Replace the spell in the temporary list
+    const updatedSpells = tempKnownSpells.map(spell => 
+      spell.name === spellToReplace.name ? replacementSpell : spell
+    );
+    
+    setTempKnownSpells(updatedSpells);
+    setShowSpellReplacementModal(false);
+    setSpellToReplace(null);
+    setSelectedReplacementSpell('');
+  };
+
+  const handleSaveSpellChanges = async () => {
+    try {
+      // Update the character's known spells
+      await updateCharacter({ spellsKnown: tempKnownSpells });
+      setShowSpellManagementModal(false);
+    } catch (error) {
+      console.error('Error saving spell changes:', error);
+    }
+  };
+
   const handleUseSpellScroll = (scrollIndex: number) => {
     // Remove the spell scroll from inventory when used
     const updatedInventoryItems = inventoryMagicalItems.filter((_, i) => i !== scrollIndex);
@@ -846,6 +898,12 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   const [showSpellManagementModal, setShowSpellManagementModal] = useState(false);
   const [tempKnownSpells, setTempKnownSpells] = useState<Spell[]>([]);
   const [spellManagementTabActive, setSpellManagementTabActive] = useState<'cantrips' | 'spells'>('cantrips');
+  
+  // Spell replacement state
+  const [showSpellReplacementModal, setShowSpellReplacementModal] = useState(false);
+  const [spellToReplace, setSpellToReplace] = useState<Spell | null>(null);
+  const [availableReplacementSpells, setAvailableReplacementSpells] = useState<Spell[]>([]);
+  const [selectedReplacementSpell, setSelectedReplacementSpell] = useState<string>('');
 
   return (
     <>
@@ -1301,10 +1359,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                               <div className="text-sm text-[var(--color-text-secondary)]">{spell.school} • {spell.castingTime}</div>
                             </div>
                             <button
-                              onClick={() => {
-                                // TODO: Implement spell replacement
-                                console.log('Replace cantrip:', spell.name);
-                              }}
+                              onClick={() => handleReplaceSpell(spell)}
                               className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] text-sm"
                             >
                               Replace
@@ -1333,10 +1388,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                               </div>
                             </div>
                             <button
-                              onClick={() => {
-                                // TODO: Implement spell replacement
-                                console.log('Replace spell:', spell.name);
-                              }}
+                              onClick={() => handleReplaceSpell(spell)}
                               className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] text-sm"
                             >
                               Replace
@@ -1357,13 +1409,62 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  // TODO: Save spell changes
-                  setShowSpellManagementModal(false);
-                }}
+                onClick={handleSaveSpellChanges}
                 className="flex-1 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] py-2 px-4 rounded transition-colors"
               >
                 Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Spell Replacement Modal */}
+      {showSpellReplacementModal && spellToReplace && (
+        <div className="fixed inset-0 flex items-start justify-center p-4 pt-8 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
+          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Replace Spell</h3>
+              <button
+                onClick={() => setShowSpellReplacementModal(false)}
+                className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <p className="text-[var(--color-text-secondary)] text-sm mb-3">
+                Replace <span className="font-medium text-[var(--color-text-primary)]">{spellToReplace.name}</span> with:
+              </p>
+              
+              <select
+                value={selectedReplacementSpell}
+                onChange={(e) => setSelectedReplacementSpell(e.target.value)}
+                className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
+              >
+                <option value="">Select a replacement spell...</option>
+                {availableReplacementSpells.map((spell) => (
+                  <option key={spell.name} value={spell.name}>
+                    {spell.name} (Level {spell.level} {spell.school})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowSpellReplacementModal(false)}
+                className="flex-1 bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-secondary)]/80 text-[var(--color-text-primary)] py-2 px-4 rounded transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmSpellReplacement}
+                disabled={!selectedReplacementSpell}
+                className="flex-1 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] py-2 px-4 rounded transition-colors"
+              >
+                Replace
               </button>
             </div>
           </div>
