@@ -181,7 +181,7 @@ export function CustomWeaponCreator({ isOpen, onClose, onWeaponCreated }: Custom
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-start justify-center p-4 pt-8 z-50" style={{ backgroundColor: 'var(--color-modal-overlay)' }}>
+    <div className="fixed inset-0 flex items-start justify-center p-4 pt-8 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
       <div className="bg-[var(--color-card)] rounded-lg w-full max-w-4xl max-h-[95vh] overflow-y-auto">
         <div className="flex justify-between items-center p-6 border-b" style={{ borderColor: 'var(--color-border)' }}>
           <div className="flex items-center gap-3">

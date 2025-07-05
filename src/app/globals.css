@@ -202,6 +202,8 @@
   --color-language-default-hover: #e5e7eb; /* gray-200 */
 }
 
+
+
 /* DNDB Light Theme - Parchment style */
 .theme-dndb-light {
   /* Theme colors - PARCHMENT STYLING */
@@ -227,7 +229,7 @@
   /* Accent colors - same copper as dark theme */
   --color-accent: #b45309; /* deep copper/gold for tabs and text */
   --color-accent-hover: #92400e; /* darker copper */
-  --color-accent-text: #ffffff; /* white text on copper */
+  --color-accent-text: #ffffff; /* white text on copper - always white since copper background is dark */
   
   /* Button colors - same blood red as dark theme */
   --color-button: #991b1b; /* deep blood red for buttons */
@@ -602,6 +604,75 @@ body {
   --color-language-sylvan: #059669; /* green for sylvan */
   --color-language-undercommon: #6b7280; /* gray for undercommon */
 }
+
+/* Theme utility classes - all colors in CSS */
+.border-accent {
+  border-color: var(--color-accent);
+}
+
+.bg-accent {
+  background-color: var(--color-accent);
+}
+
+.text-accent {
+  color: var(--color-accent);
+}
+
+.text-accent-text {
+  color: var(--color-accent-text);
+}
+
+.bg-accent-hover {
+  background-color: var(--color-accent-hover);
+}
+
+.text-error {
+  color: var(--color-error);
+}
+
+.text-error-hover {
+  color: var(--color-error-hover);
+}
+
+.bg-error {
+  background-color: var(--color-error);
+}
+
+.text-warning {
+  color: var(--color-warning);
+}
+
+.bg-warning-bg {
+  background-color: var(--color-warning-bg);
+}
+
+.border-warning-border {
+  border-color: var(--color-warning-border);
+}
+
+/* Override Tailwind accent colors with CSS variables */
+.bg-accent {
+  background-color: var(--color-accent) !important;
+}
+
+.text-accent {
+  color: var(--color-accent) !important;
+}
+
+.border-accent {
+  border-color: var(--color-accent) !important;
+}
+
+/* Text color classes using theme variables */
+.text-foreground {
+  color: var(--color-text-primary) !important;
+}
+
+.text-muted-foreground {
+  color: var(--color-text-muted) !important;
+}
+
+
 
 /* Nobility Theme - Purple and slate - original colors */
 .theme-nobility {

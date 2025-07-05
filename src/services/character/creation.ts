@@ -304,15 +304,9 @@ export class CharacterCreationService {
   // Determine spell preparation based on class type
   determineSpellPreparation(
     characterClass: string,
-    selectedSpells: Spell[],
-    abilityScores: Record<AbilityScore, number>
+    selectedSpells: Spell[]
   ): { spellsKnown: Spell[] | null; spellsPrepared: Spell[] | null } {
     if (!selectedSpells || selectedSpells.length === 0) {
-      return { spellsKnown: null, spellsPrepared: null };
-    }
-
-    const spellcastingAbility = getSpellcastingAbility(characterClass);
-    if (!spellcastingAbility) {
       return { spellsKnown: null, spellsPrepared: null };
     }
 
@@ -328,10 +322,10 @@ export class CharacterCreationService {
         
       case 'spellbook':
         // Wizards - spells go in spellbook, prepare subset daily
-        const maxPreparedWizard = 1 + getModifier(abilityScores.intelligence);
+        // Wizards start with no prepared spells and must prepare them daily
         return {
           spellsKnown: selectedSpells,
-          spellsPrepared: selectedSpells.slice(0, maxPreparedWizard)
+          spellsPrepared: [] // Start with no prepared spells
         };
         
       case 'prepared':
@@ -510,8 +504,7 @@ export class CharacterCreationService {
     const spellcastingStats = this.calculateSpellcastingStats(characterClass, finalAbilityScores);
     const { spellsKnown, spellsPrepared } = this.determineSpellPreparation(
       characterClass, 
-      data.selectedSpells, 
-      finalAbilityScores
+      data.selectedSpells
     );
     const spellSlots = spellcastingAbility ? getSpellSlots(characterClass, 1) : undefined;
     

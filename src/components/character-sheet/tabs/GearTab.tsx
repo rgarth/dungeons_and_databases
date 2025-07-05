@@ -65,6 +65,7 @@ interface GearTabProps {
   onAddMagicalItem: (item: MagicalItem) => void;
   onOpenSpellPreparation: () => void;
   onOpenSpellManagement?: () => void;
+  onOpenCantripManagement?: () => void;
   weaponLimits: { maxEquipped: number; maxInventory: number };
 }
 
@@ -92,6 +93,7 @@ export function GearTab({
   onAddMagicalItem,
   onOpenSpellPreparation,
   onOpenSpellManagement,
+  onOpenCantripManagement,
   weaponLimits
 }: GearTabProps) {
   // Create service instances for clean calculations
@@ -672,15 +674,35 @@ export function GearTab({
                       </button>
                     );
                   } else if (spellcastingType === 'prepared' || spellcastingType === 'spellbook') {
-                    // For Wizards, Clerics, Druids, Paladins - show spell preparation
+                    // For Wizards, Clerics, Druids, Paladins - show spell preparation and cantrip management
                     return (
-                      <button
-                        onClick={onOpenSpellPreparation}
-                        className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] px-3 py-1 rounded text-sm transition-colors"
-                      >
-                        Prepare Spells
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={onOpenSpellPreparation}
+                          className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] px-3 py-1 rounded text-sm transition-colors"
+                        >
+                          Prepare Spells
+                        </button>
+                        {onOpenCantripManagement && (
+                          <button
+                            onClick={onOpenCantripManagement}
+                            className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-3 py-1 rounded text-sm transition-colors"
+                          >
+                            Manage Cantrips
+                          </button>
+                        )}
+                      </div>
                     );
+                  } else if (spellcastingType === 'none') {
+                    // For non-spellcasters - show cantrip management if they have cantrips
+                    return onOpenCantripManagement ? (
+                      <button
+                        onClick={onOpenCantripManagement}
+                        className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-3 py-1 rounded text-sm transition-colors"
+                      >
+                        Manage Cantrips
+                      </button>
+                    ) : null;
                   } else {
                     return null;
                   }
@@ -1089,7 +1111,7 @@ export function GearTab({
       )}
 
       {showMagicalItemSelector && (
-        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-modal-overlay)' }}>
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
           <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg w-full max-w-4xl p-6 max-h-[80vh] overflow-hidden">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Add Magical Item ({filteredMagicalItems.length} items)</h3>
@@ -1211,7 +1233,7 @@ export function GearTab({
       )}
 
       {showSpellScrollCreator && (
-        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-modal-overlay)' }}>
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
           <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg w-full max-w-md p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Create Spell Scroll</h3>
@@ -1277,7 +1299,7 @@ export function GearTab({
 
       {/* Potion Usage Modal */}
       {showPotionUsage && selectedPotion && (
-        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-modal-overlay)' }}>
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
           <div className="bg-[var(--color-card)] rounded-lg w-full max-w-md p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Use {selectedPotion.name}</h3>
@@ -1364,7 +1386,7 @@ export function GearTab({
 
       {/* Equipment Validation Modal */}
       {pendingValidation && (
-        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-modal-overlay)' }}>
+        <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
           <div className="bg-[var(--color-card)] rounded-lg w-full max-w-md p-6">
             <div className="flex items-start gap-3 mb-4">
               {pendingValidation.validation.canEquip ? (
