@@ -62,7 +62,7 @@
   --color-danger-border: var(--color-error-border); /* alias for error border */
   
   /* Special purpose colors */
-  --color-overlay: rgba(0, 0, 0, 0.7); /* darker modal overlay */
+  --color-overlay: var(--color-surface); /* theme surface color for modal overlay */
   --color-error-text-light: #fca5a5; /* light red text for error details */
   --color-dice-default: #dc2626; /* D&D red for default dice color */
   --color-dice-canvas-bg: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); /* dark gradient for dice canvas */
@@ -134,7 +134,7 @@
   --color-danger-border: var(--color-error-border); /* alias for error border */
   
   /* Special purpose colors */
-  --color-overlay: rgba(0, 0, 0, 0.7); /* darker modal overlay */
+  --color-overlay: var(--color-surface); /* theme surface color for modal overlay */
   --color-error-text-light: #fca5a5; /* light red text for error details */
   --color-dice-default: #dc2626; /* D&D red for default dice color */
   --color-dice-canvas-bg: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); /* dark gradient for dice canvas */
@@ -202,8 +202,8 @@
   --color-danger-border: var(--color-error-border); /* alias for error border */
   
   /* Special purpose colors */
-  --color-overlay: rgba(0, 0, 0, 0.5); /* lighter modal overlay for light theme */
-  --color-error-text-light: #dc2626; /* dark red text for error details on light background */
+  --color-overlay: var(--color-surface); /* theme surface color for modal overlay */
+  --color-error-text-light: #fca5a5; /* light red text for error details */
   --color-dice-default: #dc2626; /* D&D red for default dice color */
   --color-dice-canvas-bg: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); /* dark gradient for dice canvas */
 }
@@ -382,7 +382,7 @@ body {
   --color-danger-border: var(--color-error-border); /* alias for error border */
   
   /* Special purpose colors */
-  --color-overlay: rgba(10, 26, 10, 0.8); /* dark forest overlay */
+  --color-overlay: var(--color-surface); /* theme surface color for modal overlay */
   --color-error-text-light: #fca5a5; /* light red text for error details */
   --color-dice-default: #166534; /* deep forest green for default dice color */
   --color-dice-canvas-bg: linear-gradient(135deg, #1a2a1a 0%, #0a1a0a 100%); /* deep green gradient for dice canvas */
@@ -450,7 +450,7 @@ body {
   --color-danger-border: var(--color-error-border); /* alias for error border */
   
   /* Special purpose colors */
-  --color-overlay: rgba(0, 0, 0, 0.8); /* darker dungeon overlay */
+  --color-overlay: var(--color-surface); /* theme surface color for modal overlay */
   --color-error-text-light: #fca5a5; /* light red text for error details */
   --color-dice-default: #6b7280; /* steel gray for default dice color */
   --color-dice-canvas-bg: linear-gradient(135deg, #2a2a2a 0%, #0a0a0a 100%); /* heavy gray gradient for dice canvas */
@@ -518,7 +518,7 @@ body {
   --color-danger-border: var(--color-error-border); /* alias for error border */
   
   /* Special purpose colors */
-  --color-overlay: rgba(15, 23, 42, 0.7); /* slate-900 overlay */
+  --color-overlay: var(--color-surface); /* theme surface color for modal overlay */
   --color-error-text-light: #fca5a5; /* light red text for error details */
   --color-dice-default: #9333ea; /* purple-600 for default dice color */
 }

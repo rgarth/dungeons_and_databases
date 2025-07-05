@@ -8,7 +8,7 @@ export default function LegalPage() {
       
       <div className="space-y-8">
         {/* D&D SRD Attribution */}
-        <section className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+        <section className="bg-[var(--color-card-secondary)] p-6 rounded-lg">
           <h2 className="text-2xl font-semibold mb-4">D&D 5e Content Attribution</h2>
           <div className="space-y-4 text-sm leading-relaxed">
             <p>
@@ -18,7 +18,7 @@ export default function LegalPage() {
                 href="https://dnd.wizards.com/resources/systems-reference-document" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 underline"
+                className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline"
               >
                 https://dnd.wizards.com/resources/systems-reference-document
               </a>.
@@ -29,7 +29,7 @@ export default function LegalPage() {
                 href="https://creativecommons.org/licenses/by/4.0/legalcode" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 underline"
+                className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline"
               >
                 Creative Commons Attribution 4.0 International License
               </a>.
@@ -43,7 +43,7 @@ export default function LegalPage() {
         {/* Open Game License */}
         <section>
           <h2 className="text-2xl font-semibold mb-4">Open Game License</h2>
-          <div className="bg-gray-100 dark:bg-gray-900 p-4 rounded text-xs leading-relaxed">
+          <div className="bg-[var(--color-card-tertiary)] p-4 rounded text-xs leading-relaxed">
             <p className="font-semibold mb-2">OPEN GAME LICENSE Version 1.0a</p>
             <p className="mb-2">
               The following text is the property of Wizards of the Coast, Inc. and is Copyright 2000 Wizards of the Coast, Inc ("Wizards"). All Rights Reserved.
@@ -59,7 +59,7 @@ export default function LegalPage() {
               <Link 
                 href="https://www.wizards.com/default.asp?x=d20/oglfaq/20040123f" 
                 target="_blank" 
-                className="text-blue-600 hover:text-blue-800 underline"
+                className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline"
               >
                 View Complete OGL License
               </Link>
@@ -76,7 +76,7 @@ export default function LegalPage() {
               href="https://opensource.org/licenses/MIT" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline"
+              className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline"
             >
               MIT License
             </a>. 
@@ -106,7 +106,7 @@ export default function LegalPage() {
       <div className="mt-12 pt-8 border-t text-center">
         <Link 
           href="/" 
-          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="inline-flex items-center px-4 py-2 bg-[var(--color-button)] text-[var(--color-button-text)] rounded-lg hover:bg-[var(--color-button-hover)] transition-colors"
         >
           ← Back to App
         </Link>

@@ -17,7 +17,7 @@ export default function StatsTab({ character }: StatsTabProps) {
         <div key={index} className="flex items-center">
           <span className="mr-2">{trait.name}</span>
           <button
-            className="text-blue-500 hover:text-blue-700"
+            className="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)]"
             onClick={() => alert(trait.description)}
           >
             <svg

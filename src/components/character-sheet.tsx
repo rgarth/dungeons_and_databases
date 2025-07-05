@@ -838,7 +838,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 flex items-start justify-center p-4 pt-8 z-50">
+      <div className="fixed inset-0 flex items-start justify-center p-4 pt-8 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
         <div className="bg-[var(--color-card)] rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
           {/* Header - Compact & Responsive */}
           <div className="p-4 border-b border-[var(--color-border)]">
@@ -1129,7 +1129,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
       {/* Magical Weapon Creator Modal */}
       {showWeaponCreator && (
-        <div className="fixed inset-0 bg-black/50 flex items-start justify-center p-4 pt-8 z-50">
+        <div className="fixed inset-0 flex items-start justify-center p-4 pt-8 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
           <div className="bg-[var(--color-card)] rounded-lg w-full max-w-md p-6">
             <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4">Create Magical Weapon</h3>
             
@@ -1231,7 +1231,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
       {/* Spell Preparation Modal */}
       {showSpellPreparationModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-start justify-center p-4 pt-8 z-50">
+        <div className="fixed inset-0 flex items-start justify-center p-4 pt-8 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
           <div className="bg-[var(--color-card)] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-[var(--color-border)]">
               <div>

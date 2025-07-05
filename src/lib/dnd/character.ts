@@ -92,19 +92,7 @@ export interface CharacterCreationData {
   backstory?: string;
 }
 
-export interface StartingEquipment {
-  weapons: Weapon[];
-  armor: Armor[];
-  equipment: string[];
-  money: {
-    copper: number;
-    silver: number;
-    gold: number;
-  };
-}
-
 // Equipment pack options are now database-driven via /api/equipment-packs
-// This function has been removed - use the API route instead
 
 // Database-driven equipment pack retrieval (implemented via API)
 export async function getEquipmentPacksFromDatabase() {

@@ -1,7 +1,7 @@
 "use client";
 
-import { Package, Trash2, Plus, Minus, Coins, Zap } from "lucide-react";
-import { EQUIPMENT_CATEGORIES } from "@/lib/dnd/equipment";
+import { Package, Trash2, Plus, Minus, Coins, Zap, Search } from "lucide-react";
+// Equipment categories will be dynamically generated from the equipment data
 import type { InventoryItem } from "@/lib/dnd/equipment";
 import type { Treasure } from "@/lib/dnd/data";
 import { getAllTreasures } from "@/lib/dnd/treasure-data-helper";
@@ -28,67 +28,30 @@ interface InventoryTabProps {
   onTreasuresUpdate: (treasures: Treasure[]) => void;
 }
 
-// Equipment categories for organization - based on actual equipment data types
-const EQUIPMENT_CATEGORIES_ORGANIZED: Record<string, string[]> = {
-  "Adventuring Gear": [
-    // All items with type "Adventuring Gear" from the database
-    "Abacus", "Acid (vial)", "Alchemist's Fire (flask)", "Ammunition, Arrows (20)", "Ammunition, Blowgun Needles (50)",
-    "Ammunition, Crossbow Bolts (20)", "Ammunition, Sling Bullets (20)", "Antitoxin (vial)", "Backpack", "Ball Bearings (bag of 1,000)",
-    "Barrel", "Basket", "Bedroll", "Bell", "Blanket", "Block and Tackle", "Book", "Bottle, Glass", "Bucket", "Caltrops (bag of 20)",
-    "Candle", "Case, Crossbow Bolt", "Case, Map or Scroll", "Chain (10 feet)", "Chalk (1 piece)", "Chest", "Climber's Kit",
-    "Clothes, Common", "Clothes, Costume", "Clothes, Fine", "Clothes, Traveler's", "Component Pouch", "Crowbar", "Fishing Tackle",
-    "Flask or Tankard", "Grappling Hook", "Hammer", "Hammer, Sledge", "Healer's Kit", "Holy Water (flask)", "Hourglass",
-    "Hunting Trap", "Ink (1 ounce bottle)", "Ink Pen", "Jug or Pitcher", "Ladder (10-foot)", "Lamp", "Lantern, Bullseye",
-    "Lantern, Hooded", "Lock", "Magnifying Glass", "Manacles", "Mess Kit", "Mirror, Steel", "Oil (flask)", "Paper (one sheet)",
-    "Parchment (one sheet)", "Perfume (vial)", "Pick, Miner's", "Piton", "Poison, Basic (vial)", "Pole (10-foot)", "Pot, Iron",
-    "Potion of Healing", "Pouch", "Quiver", "Ram, Portable", "Rations (1 day)", "Robes", "Rope, Hempen (50 feet)", "Rope, Silk (50 feet)",
-    "Sack", "Scale, Merchant's", "Sealing Wax", "Shovel", "Signal Whistle", "Signet Ring", "Soap", "Spellbook", "Spikes, Iron (10)",
-    "Spyglass", "Tent, Two-person", "Tinderbox", "Torch", "Vial", "Waterskin", "Whetstone", "String (10 feet)", "Alms Box",
-    "Incense (1 block)", "Censer", "Vestments", "Little Bag of Sand"
-  ],
-  "Tools": [
-    // All items with type "Tool" from the database
-    "Disguise Kit", "Small Knife"
-  ],
-  "Arcane Focus": [
-    // All items with type "Arcane Focus" from the database
-    "Crystal", "Orb", "Rod", "Staff", "Wand"
-  ],
-  "Druidcraft Focus": [
-    // All items with type "Druidcraft Focus" from the database
-    "Sprig of Mistletoe", "Totem", "Wooden Staff"
-  ],
-  "Holy Symbol": [
-    // All items with type "Holy Symbol" from the database
-    "Amulet", "Emblem", "Reliquary"
-  ],
-  "Miscellaneous": [] // For items that don't fit other categories
-};
+// Equipment categories will be dynamically generated from the equipment data
 
-// Function to categorize an item
-const categorizeItem = (itemName: string): string => {
+// Function to categorize an item using the actual equipment data
+const categorizeItem = (itemName: string, equipmentData: Equipment[]): string => {
   // Normalize the item name for better matching
   const normalizedName = itemName.toLowerCase().trim();
   
-  for (const [category, items] of Object.entries(EQUIPMENT_CATEGORIES_ORGANIZED)) {
-    // Check for exact matches first
-    if (items.includes(itemName)) {
-      return category;
-    }
-    
-    // Check for normalized matches
-    const normalizedItems = items.map(item => item.toLowerCase().trim());
-    if (normalizedItems.includes(normalizedName)) {
-      return category;
-    }
-    
-    // Check for partial matches (for items that might have variations)
-    for (const item of items) {
-      const normalizedItem = item.toLowerCase().trim();
-      if (normalizedName.includes(normalizedItem) || normalizedItem.includes(normalizedName)) {
-        console.log(`🔍 Partial match found: "${itemName}" matches "${item}" in category "${category}"`);
-        return category;
-      }
+  // First, try to find the item in the equipment data
+  const equipmentItem = equipmentData.find(item => 
+    item.name.toLowerCase().trim() === normalizedName ||
+    item.name === itemName
+  );
+  
+  if (equipmentItem) {
+    console.log(`📦 Found equipment item: "${itemName}" with type "${equipmentItem.type}"`);
+    return equipmentItem.type;
+  }
+  
+  // If not found in equipment data, check for partial matches
+  for (const item of equipmentData) {
+    const normalizedItem = item.name.toLowerCase().trim();
+    if (normalizedName.includes(normalizedItem) || normalizedItem.includes(normalizedName)) {
+      console.log(`🔍 Partial match found: "${itemName}" matches "${item.name}" in category "${item.type}"`);
+      return item.type;
     }
   }
   
@@ -98,11 +61,15 @@ const categorizeItem = (itemName: string): string => {
 };
 
 // Function to organize inventory into categories
-const organizeInventory = (inventory: InventoryItem[]) => {
+const organizeInventory = (inventory: InventoryItem[], equipmentData: Equipment[]) => {
   const organized: Record<string, InventoryItem[]> = {};
   
-  // Initialize categories
-  Object.keys(EQUIPMENT_CATEGORIES_ORGANIZED).forEach(category => {
+  // Initialize categories based on equipment data types
+  const categories = new Set<string>();
+  equipmentData.forEach(item => categories.add(item.type));
+  categories.add("Miscellaneous"); // Always include miscellaneous
+  
+  categories.forEach(category => {
     organized[category] = [];
   });
   
@@ -110,7 +77,7 @@ const organizeInventory = (inventory: InventoryItem[]) => {
   
   // Categorize items
   inventory.forEach(item => {
-    const category = categorizeItem(item.name);
+    const category = categorizeItem(item.name, equipmentData);
     if (!organized[category]) {
       organized[category] = [];
     }
@@ -143,7 +110,9 @@ export function InventoryTab({
   onTreasuresUpdate
 }: InventoryTabProps) {
   const [newItem, setNewItem] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("Adventuring Gear");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [treasureSearchTerm, setTreasureSearchTerm] = useState<string>("");
   const [selectedEquipment, setSelectedEquipment] = useState<string>("");
   const [addMode, setAddMode] = useState<"equipment" | "custom">("equipment");
   const [newTreasureName, setNewTreasureName] = useState("");
@@ -154,7 +123,7 @@ export function InventoryTab({
   const [equipmentData, setEquipmentData] = useState<Equipment[]>([]);
 
   // Organize inventory into categories
-  const organizedInventory = organizeInventory(inventory);
+  const organizedInventory = organizeInventory(inventory, equipmentData);
 
   // Load equipment and treasure database on component mount
   useEffect(() => {
@@ -165,6 +134,9 @@ export function InventoryTab({
         if (equipmentResponse.ok) {
           const equipment = await equipmentResponse.json();
           setEquipmentData(equipment);
+          
+          // Set default category to "All Categories"
+          setSelectedCategory("All Categories");
         }
 
         // Load treasure data
@@ -179,8 +151,8 @@ export function InventoryTab({
 
   const handleAddItem = () => {
     if (addMode === "equipment" && selectedEquipment) {
-      const allEquipment = equipmentData.filter(e => e.type === selectedCategory);
-      const equipment = allEquipment.find((e) => e.name === selectedEquipment);
+      // Find equipment by name across all categories (for search results)
+      const equipment = equipmentData.find((e) => e.name === selectedEquipment);
       if (equipment) {
         const existingItemIndex = inventory.findIndex(item => item.name === equipment.name);
         let updatedInventory: InventoryItem[];
@@ -286,12 +258,18 @@ export function InventoryTab({
       case "Adventuring Gear":
         return <Package className="h-4 w-4" />;
       case "Tools":
-        return <Package className="h-4 w-4" />;
+        return <Zap className="h-4 w-4" />;
       case "Arcane Focus":
-        return <Package className="h-4 w-4" />;
+        return <Zap className="h-4 w-4" />;
       case "Druidcraft Focus":
-        return <Package className="h-4 w-4" />;
+        return <Zap className="h-4 w-4" />;
       case "Holy Symbol":
+        return <Coins className="h-4 w-4" />;
+      case "Trade Goods":
+        return <Coins className="h-4 w-4" />;
+      case "Containers":
+        return <Package className="h-4 w-4" />;
+      case "Miscellaneous":
         return <Package className="h-4 w-4" />;
       default:
         return <Package className="h-4 w-4" />;
@@ -336,36 +314,111 @@ export function InventoryTab({
 
               {addMode === "equipment" ? (
                 <div className="space-y-2">
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
-                  >
-                    {EQUIPMENT_CATEGORIES.filter(cat => cat !== 'Armor').map(category => (
-                      <option key={category} value={category}>{category}</option>
-                    ))}
-                  </select>
-                  <div className="flex gap-2">
-                    <select
-                      value={selectedEquipment}
-                      onChange={(e) => setSelectedEquipment(e.target.value)}
-                      className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
-                    >
-                      <option value="">Select item...</option>
-                      {equipmentData.filter(equipment => equipment.type === selectedCategory && equipment.type !== 'Armor').map(equipment => (
-                        <option key={equipment.name} value={equipment.name}>
-                          {equipment.name} ({equipment.cost})
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      onClick={handleAddItem}
-                      disabled={!selectedEquipment}
-                      className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] p-2 rounded transition-colors"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </button>
+                  {/* Global Search */}
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Search all available equipment..."
+                      className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 pl-10 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
+                    />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--color-text-secondary)]" />
                   </div>
+
+                  {/* Global Search Results */}
+                  {searchTerm && (
+                    <div className="bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded p-3 max-h-48 overflow-y-auto">
+                      <div className="text-sm text-[var(--color-text-secondary)] mb-2">Search Results:</div>
+                      {equipmentData
+                        .filter(equipment => 
+                          equipment.type !== 'Armor' &&
+                          equipment.name.toLowerCase().includes(searchTerm.toLowerCase())
+                        )
+                        .slice(0, 10) // Limit to 10 results
+                        .map(equipment => (
+                          <div 
+                            key={equipment.name}
+                            onClick={() => {
+                              setSelectedEquipment(equipment.name);
+                              setSearchTerm("");
+                            }}
+                            className="flex justify-between items-center p-2 hover:bg-[var(--color-card-tertiary)] rounded cursor-pointer text-sm"
+                          >
+                            <span className="text-[var(--color-text-primary)]">{equipment.name}</span>
+                            <span className="text-[var(--color-text-secondary)] text-xs">{equipment.cost} - {equipment.type}</span>
+                          </div>
+                        ))}
+                      {equipmentData.filter(equipment => 
+                        equipment.type !== 'Armor' &&
+                        equipment.name.toLowerCase().includes(searchTerm.toLowerCase())
+                      ).length === 0 && (
+                        <div className="text-[var(--color-text-secondary)] text-sm p-2">No items found</div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Category Browsing (when no search) */}
+                  {!searchTerm && (
+                    <>
+                      <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
+                      >
+                        <option value="All Categories">All Categories</option>
+                        {Array.from(new Set(equipmentData.map(item => item.type))).filter(cat => cat !== 'Armor').map(category => (
+                          <option key={category} value={category}>{category}</option>
+                        ))}
+                      </select>
+                      
+                      <div className="flex gap-2">
+                        <select
+                          value={selectedEquipment}
+                          onChange={(e) => setSelectedEquipment(e.target.value)}
+                          className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
+                        >
+                          <option value="">Select item...</option>
+                          {equipmentData
+                            .filter(equipment => 
+                              (selectedCategory === "All Categories" || equipment.type === selectedCategory) && 
+                              equipment.type !== 'Armor'
+                            )
+                            .map(equipment => (
+                              <option key={equipment.name} value={equipment.name}>
+                                {equipment.name} ({equipment.cost}) - {equipment.type}
+                              </option>
+                            ))}
+                        </select>
+                        <button
+                          onClick={handleAddItem}
+                          disabled={!selectedEquipment}
+                          className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] p-2 rounded transition-colors"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Add button for search results */}
+                  {searchTerm && selectedEquipment && (
+                    <div className="flex gap-2">
+                      <select
+                        value={selectedEquipment}
+                        className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm"
+                        disabled
+                      >
+                        <option value={selectedEquipment}>{selectedEquipment}</option>
+                      </select>
+                      <button
+                        onClick={handleAddItem}
+                        className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] p-2 rounded transition-colors"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="flex gap-2">
@@ -386,6 +439,13 @@ export function InventoryTab({
                   </button>
                 </div>
               )}
+            </div>
+            
+            {/* Magical Items Notice */}
+            <div className="mt-4 p-3 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded-lg">
+              <p className="text-[var(--color-text-secondary)] text-sm">
+                💡 <strong>Looking for magical items?</strong> Check the <strong>Gear & Equipment</strong> tab to add and manage magical items like Bag of Holding, potions, scrolls, and more!
+              </p>
             </div>
           </div>
 
@@ -444,6 +504,9 @@ export function InventoryTab({
                   <Package className="h-8 w-8 text-[var(--color-text-muted)] mx-auto mb-2" />
                   <p className="text-[var(--color-text-muted)] text-sm">No items in inventory</p>
                   <p className="text-[var(--color-text-secondary)] text-xs">Add equipment or custom items above</p>
+                  <p className="text-[var(--color-text-secondary)] text-xs mt-2">
+                    💡 <strong>Magical items</strong> are managed in the <strong>Gear & Equipment</strong> tab
+                  </p>
                 </div>
               </div>
             )}
@@ -555,26 +618,92 @@ export function InventoryTab({
 
             {/* Add Treasure */}
             {treasureAddMode === "database" ? (
-              <div className="flex gap-2 mb-4">
-                <select
-                  value={selectedTreasure}
-                  onChange={(e) => setSelectedTreasure(e.target.value)}
-                  className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
-                >
-                  <option value="">Select treasure...</option>
-                  {allTreasures.map(treasure => (
-                    <option key={treasure.name} value={treasure.name}>
-                      {treasure.name} ({treasure.value} gp)
-                    </option>
-                  ))}
-                </select>
-                <button
-                  onClick={handleAddTreasure}
-                  disabled={!selectedTreasure}
-                  className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] p-2 rounded transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
+              <div className="space-y-2 mb-4">
+                {/* Global Search for Treasures */}
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={treasureSearchTerm}
+                    onChange={(e) => setTreasureSearchTerm(e.target.value)}
+                    placeholder="Search all treasures..."
+                    className="w-full bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 pl-10 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
+                  />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--color-text-secondary)]" />
+                </div>
+
+                {/* Global Search Results for Treasures */}
+                {treasureSearchTerm && (
+                  <div className="bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded p-3 max-h-48 overflow-y-auto">
+                    <div className="text-sm text-[var(--color-text-secondary)] mb-2">Search Results:</div>
+                    {allTreasures
+                      .filter(treasure => 
+                        treasure.name.toLowerCase().includes(treasureSearchTerm.toLowerCase())
+                      )
+                      .slice(0, 10) // Limit to 10 results
+                      .map(treasure => (
+                        <div 
+                          key={treasure.name}
+                          onClick={() => {
+                            setSelectedTreasure(treasure.name);
+                            setTreasureSearchTerm("");
+                          }}
+                          className="flex justify-between items-center p-2 hover:bg-[var(--color-card-tertiary)] rounded cursor-pointer text-sm"
+                        >
+                          <span className="text-[var(--color-text-primary)]">{treasure.name}</span>
+                          <span className="text-[var(--color-text-secondary)] text-xs">{treasure.value} gp</span>
+                        </div>
+                      ))}
+                    {allTreasures.filter(treasure => 
+                      treasure.name.toLowerCase().includes(treasureSearchTerm.toLowerCase())
+                    ).length === 0 && (
+                      <div className="text-[var(--color-text-secondary)] text-sm p-2">No treasures found</div>
+                    )}
+                  </div>
+                )}
+
+                {/* Category Browsing (when no search) */}
+                {!treasureSearchTerm && (
+                  <div className="flex gap-2">
+                    <select
+                      value={selectedTreasure}
+                      onChange={(e) => setSelectedTreasure(e.target.value)}
+                      className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
+                    >
+                      <option value="">Select treasure...</option>
+                      {allTreasures.map(treasure => (
+                        <option key={treasure.name} value={treasure.name}>
+                          {treasure.name} ({treasure.value} gp)
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={handleAddTreasure}
+                      disabled={!selectedTreasure}
+                      className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-button-text)] p-2 rounded transition-colors"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+
+                {/* Add button for search results */}
+                {treasureSearchTerm && selectedTreasure && (
+                  <div className="flex gap-2">
+                    <select
+                      value={selectedTreasure}
+                      className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm"
+                      disabled
+                    >
+                      <option value={selectedTreasure}>{selectedTreasure}</option>
+                    </select>
+                    <button
+                      onClick={handleAddTreasure}
+                      className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] p-2 rounded transition-colors"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="space-y-2 mb-4">
