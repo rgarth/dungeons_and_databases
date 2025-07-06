@@ -32,6 +32,7 @@ interface ActionsTabProps {
     spellSaveDC?: number;
     spellAttackBonus?: number;
     spellSlots?: Record<number, number>;
+    usedSpellSlots?: Record<number, number>;
     spellsKnown?: Spell[];
     spellsPrepared?: Spell[];
     actions?: { type: string; name: string }[];
@@ -52,6 +53,8 @@ interface ActionsTabProps {
   onUpdateDeathSaves?: (successes: number, failures: number) => void;
   onUseAmmunition?: (ammunitionName: string) => void;
   onRecoverAmmunition?: (ammunitionName: string) => void;
+  onUseSpellSlot?: (level: number) => void;
+  onRecoverSpellSlot?: (level: number) => void;
 }
 
 type InventorySpellScroll = {
@@ -76,7 +79,9 @@ export function ActionsTab({
   onUpdateConditions,
   onUpdateDeathSaves,
   onUseAmmunition,
-  onRecoverAmmunition
+  onRecoverAmmunition,
+  onUseSpellSlot,
+  onRecoverSpellSlot
 }: ActionsTabProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _unused = onUpdateDeathSaves;
@@ -522,32 +527,74 @@ export function ActionsTab({
               </div>
             )}
 
-            {/* Spell Slots */}
+            {/* Spell Slot Manager */}
             {character.spellcastingAbility && character.spellSlots && Object.keys(character.spellSlots).filter(k => k && k !== 'undefined').length > 0 && (
               <div className="mb-6">
-                <h4 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3">Spell Slots</h4>
+                <h4 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3">Spell Slot Manager</h4>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                   {Object.entries(character.spellSlots)
                     .filter(([level, total]) => level && level !== 'undefined' && total > 0)
-                    .map(([level, total]) => (
-                    <div key={level} className="bg-[var(--color-card-secondary)] rounded p-3">
-                      <div className="text-center">
-                        <div className="text-sm text-[var(--color-text-muted)] mb-1">Level {level}</div>
-                        <div className="text-lg font-bold text-[var(--color-text-primary)]">{total}</div>
-                        <div className="text-xs text-[var(--color-text-muted)]">Available</div>
-                      </div>
-                      {/* Spell slot dots for visual tracking */}
-                      <div className="flex justify-center gap-1 mt-2">
-                        {Array.from({length: total}, (_, i) => (
-                          <div 
-                            key={i} 
-                            className="w-2 h-2 rounded-full"
-                            style={{ backgroundColor: 'var(--color-accent)' }}
-                          ></div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+                    .map(([level, total]) => {
+                      const used = character.usedSpellSlots?.[parseInt(level)] || 0;
+                      const available = total - used;
+                      
+                      return (
+                        <div key={level} className="bg-[var(--color-card-secondary)] rounded p-3">
+                          <div className="text-center mb-3">
+                            <div className="text-sm text-[var(--color-text-muted)] mb-1">Level {level}</div>
+                            <div className="text-lg font-bold text-[var(--color-text-primary)]">{available}/{total}</div>
+                            <div className="text-xs text-[var(--color-text-muted)]">Available</div>
+                          </div>
+                          
+                          {/* Interactive spell slot dots */}
+                          <div className="flex justify-center gap-1 mb-3">
+                            {Array.from({length: total}, (_, i) => {
+                              const isUsed = i < used;
+                              return (
+                                <button
+                                  key={i}
+                                  onClick={() => {
+                                    if (isUsed && onRecoverSpellSlot) {
+                                      onRecoverSpellSlot(parseInt(level));
+                                    } else if (!isUsed && onUseSpellSlot) {
+                                      onUseSpellSlot(parseInt(level));
+                                    }
+                                  }}
+                                  className={`w-3 h-3 rounded-full transition-colors ${
+                                    isUsed 
+                                      ? 'bg-[var(--color-error)] hover:bg-[var(--color-error-hover)]' 
+                                      : 'bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)]'
+                                  }`}
+                                  title={isUsed ? `Recover Level ${level} spell slot` : `Use Level ${level} spell slot`}
+                                />
+                              );
+                            })}
+                          </div>
+                          
+                          {/* Quick action buttons */}
+                          <div className="flex gap-1">
+                            {onUseSpellSlot && available > 0 && (
+                              <button
+                                onClick={() => onUseSpellSlot(parseInt(level))}
+                                className="flex-1 bg-[var(--color-error)] hover:bg-[var(--color-error-hover)] text-[var(--color-error-text)] text-xs px-2 py-1 rounded transition-colors"
+                                title={`Use Level ${level} spell slot`}
+                              >
+                                Use
+                              </button>
+                            )}
+                            {onRecoverSpellSlot && used > 0 && (
+                              <button
+                                onClick={() => onRecoverSpellSlot(parseInt(level))}
+                                className="flex-1 bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] text-xs px-2 py-1 rounded transition-colors"
+                                title={`Recover Level ${level} spell slot`}
+                              >
+                                Recover
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
             )}

@@ -511,6 +511,7 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
                         Prepare Spells
                       </button>
                     )}
+
                   </div>
                 </div>
               )}

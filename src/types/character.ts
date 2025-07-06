@@ -34,6 +34,7 @@ export interface Character {
   spellsKnown: Spell[];
   spellsPrepared: Spell[];
   spellSlots: Record<number, number>;
+  usedSpellSlots?: Record<number, number>;
   spellcastingAbility: string;
   spellSaveDC: number;
   spellAttackBonus: number;
