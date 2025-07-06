@@ -116,10 +116,8 @@ const DICE = (function() {
         this.renderer.setClearColor(0xffffff, 0); //color, alpha
 
         this.reinit(container);
-        container.addEventListener('resize', function() {
-            //todo: this doesn't work :(
-            this.reinit(elem.canvas);
-        });
+        // Note: Resize handling is now done in the React component
+        // to avoid issues with multiple canvas creation
 
         this.world.gravity.set(0, 0, -9.8 * 800);
         this.world.broadphase = new CANNON.NaiveBroadphase();
