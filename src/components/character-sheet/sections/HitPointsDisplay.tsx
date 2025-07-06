@@ -130,50 +130,50 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
         <div className="flex justify-center gap-8 mb-4">
           {/* Successes */}
           <div className="text-center">
-            <div className="text-sm font-medium text-green-600 mb-2">Successes</div>
-            <div className="flex gap-2">
-              {[1, 2, 3].map(i => (
-                <button
-                  key={`success-${i}`}
-                  onClick={() => handleDeathSaveChange('success', i)}
-                  className={`w-8 h-8 rounded-full border-2 transition-colors ${
-                    (character.deathSaveSuccesses || 0) >= i
-                      ? 'bg-green-600 border-green-600'
-                      : 'border-green-600 hover:bg-green-600/20'
-                  }`}
-                  title={`Mark ${i} success${i > 1 ? 'es' : ''}`}
-                />
-              ))}
-            </div>
+                      <div className="text-sm font-medium text-[var(--color-success)] mb-2">Successes</div>
+          <div className="flex gap-2">
+            {[1, 2, 3].map(i => (
+              <button
+                key={`success-${i}`}
+                onClick={() => handleDeathSaveChange('success', i)}
+                className={`w-8 h-8 rounded-full border-2 transition-colors ${
+                  (character.deathSaveSuccesses || 0) >= i
+                    ? 'bg-[var(--color-success)] border-[var(--color-success)]'
+                    : 'border-[var(--color-success)] hover:bg-[var(--color-success)]/20'
+                }`}
+                title={`Mark ${i} success${i > 1 ? 'es' : ''}`}
+              />
+            ))}
+          </div>
           </div>
           
           {/* Failures */}
           <div className="text-center">
-            <div className="text-sm font-medium text-red-600 mb-2">Failures</div>
-            <div className="flex gap-2">
-              {[1, 2, 3].map(i => (
-                <button
-                  key={`failure-${i}`}
-                  onClick={() => handleDeathSaveChange('failure', i)}
-                  className={`w-8 h-8 rounded-full border-2 transition-colors ${
-                    (character.deathSaveFailures || 0) >= i
-                      ? 'bg-red-600 border-red-600'
-                      : 'border-red-600 hover:bg-red-600/20'
-                  }`}
-                  title={`Mark ${i} failure${i > 1 ? 's' : ''}`}
-                />
-              ))}
-            </div>
+                      <div className="text-sm font-medium text-[var(--color-error)] mb-2">Failures</div>
+          <div className="flex gap-2">
+            {[1, 2, 3].map(i => (
+              <button
+                key={`failure-${i}`}
+                onClick={() => handleDeathSaveChange('failure', i)}
+                className={`w-8 h-8 rounded-full border-2 transition-colors ${
+                  (character.deathSaveFailures || 0) >= i
+                    ? 'bg-[var(--color-error)] border-[var(--color-error)]'
+                    : 'border-[var(--color-error)] hover:bg-[var(--color-error)]/20'
+                }`}
+                title={`Mark ${i} failure${i > 1 ? 's' : ''}`}
+              />
+            ))}
+          </div>
           </div>
         </div>
         
         {/* Status */}
         <div className="text-center mb-4">
           {(character.deathSaveSuccesses || 0) >= 3 && (
-            <div className="text-green-600 font-medium">Stabilized - gaining 1 HP!</div>
+            <div className="text-[var(--color-success)] font-medium">Stabilized - gaining 1 HP!</div>
           )}
           {(character.deathSaveFailures || 0) >= 3 && (
-            <div className="text-red-600 font-medium">DEAD</div>
+            <div className="text-[var(--color-error)] font-medium">DEAD</div>
           )}
         </div>
         
@@ -181,7 +181,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
         <div className="text-center">
           <button
             onClick={() => onUpdate({ hitPoints: 1, deathSaveSuccesses: 0, deathSaveFailures: 0 })}
-            className="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded font-medium"
+            className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] text-sm px-4 py-2 rounded font-medium"
           >
             Heal to 1 HP
           </button>
@@ -194,27 +194,27 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
     <div>
       <div className="flex justify-between items-center mb-2">
         <span className="text-muted-foreground flex items-center gap-2">
-          <Heart className="h-4 w-4 text-red-600" />
+          <Heart className="h-4 w-4 text-[var(--color-error)]" />
           Hit Points
         </span>
         <div className="flex items-center gap-2">
           <button
             onClick={() => handleHitPointChange(-1)}
             disabled={character.hitPoints <= 0 && tempHp <= 0}
-            className="w-6 h-6 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed rounded text-white text-xs flex items-center justify-center"
+            className="w-6 h-6 bg-[var(--color-error)] hover:bg-[var(--color-error-hover)] disabled:opacity-50 disabled:cursor-not-allowed rounded text-[var(--color-error-text)] text-xs flex items-center justify-center"
             title={tempHp > 0 ? "Take 1 damage (removes temp HP first)" : "Take 1 damage"}
           >
             <Minus className="h-3 w-3" />
           </button>
           <span className="text-foreground font-semibold text-lg min-w-[90px] text-center">
             {character.hitPoints}
-            {tempHp > 0 && <span className="text-blue-600 font-medium">+{tempHp}</span>}
+            {tempHp > 0 && <span className="text-[var(--color-accent)] font-medium">+{tempHp}</span>}
             /{character.maxHitPoints}
           </span>
           <button
             onClick={() => handleHitPointChange(1)}
             disabled={character.hitPoints >= character.maxHitPoints}
-            className="w-6 h-6 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed rounded text-white text-xs flex items-center justify-center"
+            className="w-6 h-6 bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] disabled:opacity-50 disabled:cursor-not-allowed rounded text-[var(--color-success-text)] text-xs flex items-center justify-center"
             title="Heal 1 HP"
           >
             <Plus className="h-3 w-3" />
@@ -224,15 +224,20 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
       
       <div className="w-full bg-muted rounded-full h-4 mb-3">
         <div
-          className="bg-gradient-to-r from-red-600 to-green-600 h-4 rounded-full transition-all duration-300 relative"
-          style={{ width: `${effectiveHpPercentage}%` }}
+          className="h-4 rounded-full transition-all duration-300 relative"
+          style={{ 
+            width: `${effectiveHpPercentage}%`,
+            background: `linear-gradient(to right, var(--color-error), var(--color-success))`
+          }}
         >
           {tempHp > 0 && (
             <div 
-              className="absolute top-0 left-full h-4 bg-blue-600 rounded-r-full shadow-lg border-l border-blue-600/50"
+              className="absolute top-0 left-full h-4 rounded-r-full shadow-lg"
               style={{ 
                 width: `${Math.min(100 - effectiveHpPercentage, (tempHp / character.maxHitPoints) * 100)}%`,
-                maxWidth: `${100 - effectiveHpPercentage}%`
+                maxWidth: `${100 - effectiveHpPercentage}%`,
+                backgroundColor: 'var(--color-accent)',
+                borderLeft: '1px solid rgba(var(--color-accent), 0.5)'
               }}
               title={`${tempHp} temporary HP - absorbed first when taking damage`}
             />
@@ -243,7 +248,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
       {/* Damage Flow Explanation */}
       {tempHp > 0 && (
         <div className="text-xs text-muted-foreground mb-2 text-center">
-          💡 Damage removes <span className="text-blue-600 font-medium">{tempHp} temp HP</span> first, then regular HP
+          💡 Damage removes <span className="text-[var(--color-accent)] font-medium">{tempHp} temp HP</span> first, then regular HP
         </div>
       )}
       
@@ -252,7 +257,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
         <button
           onClick={() => handleHitPointChange(-5)}
           disabled={character.hitPoints <= 0 && tempHp <= 0}
-          className="bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs px-2 py-1 rounded"
+          className="bg-[var(--color-error)] hover:bg-[var(--color-error-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-error-text)] text-xs px-2 py-1 rounded"
           title={tempHp > 0 ? "Take 5 damage (removes temp HP first)" : "Take 5 damage"}
         >
           -5
@@ -260,7 +265,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
         <button
           onClick={() => handleHitPointChange(-10)}
           disabled={character.hitPoints <= 0 && tempHp <= 0}
-          className="bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs px-2 py-1 rounded"
+          className="bg-[var(--color-error)] hover:bg-[var(--color-error-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-error-text)] text-xs px-2 py-1 rounded"
           title={tempHp > 0 ? "Take 10 damage (removes temp HP first)" : "Take 10 damage"}
         >
           -10
@@ -268,7 +273,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
         <button
           onClick={() => handleHitPointChange(5)}
           disabled={character.hitPoints >= character.maxHitPoints}
-          className="bg-green-500 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs px-2 py-1 rounded"
+          className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-success-text)] text-xs px-2 py-1 rounded"
           title="Heal 5 HP"
         >
           +5
@@ -276,7 +281,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
         <button
           onClick={() => handleHitPointChange(10)}
           disabled={character.hitPoints >= character.maxHitPoints}
-          className="bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs px-2 py-1 rounded"
+          className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-success-text)] text-xs px-2 py-1 rounded"
           title="Heal 10 HP"
         >
           +10
@@ -301,7 +306,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
               value={customDamage}
               onChange={(e) => setCustomDamage(e.target.value)}
               placeholder="Amount"
-              className="w-16 px-2 py-1 text-xs bg-background text-foreground rounded border border-border focus:border-blue-600 focus:outline-none"
+              className="w-16 px-2 py-1 text-xs bg-background text-foreground rounded border border-border focus:border-[var(--color-accent)] focus:outline-none"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   const amount = parseInt(customDamage);
@@ -322,7 +327,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
                   setShowCustomInput(false);
                 }
               }}
-              className="bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-1 rounded"
+              className="bg-[var(--color-error)] hover:bg-[var(--color-error-hover)] text-[var(--color-error-text)] text-xs px-2 py-1 rounded"
               title="Apply as damage"
             >
               Dmg
@@ -336,7 +341,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
                   setShowCustomInput(false);
                 }
               }}
-              className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1 rounded"
+              className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] text-xs px-2 py-1 rounded"
               title="Apply as healing"
             >
               Heal
@@ -363,17 +368,17 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
             <button
               onClick={() => handleTemporaryHitPointChange(-1)}
               disabled={tempHp <= 0}
-              className="w-5 h-5 bg-blue-600/80 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed rounded text-white text-xs flex items-center justify-center"
+              className="w-5 h-5 bg-[var(--color-accent)]/80 hover:bg-[var(--color-accent)] disabled:opacity-50 disabled:cursor-not-allowed rounded text-[var(--color-accent-text)] text-xs flex items-center justify-center"
               title="Remove 1 temp HP"
             >
               <Minus className="h-2 w-2" />
             </button>
-            <span className="text-blue-600 font-medium text-sm min-w-[30px] text-center">
+            <span className="text-[var(--color-accent)] font-medium text-sm min-w-[30px] text-center">
               {tempHp}
             </span>
             <button
               onClick={() => handleTemporaryHitPointChange(1)}
-              className="w-5 h-5 bg-blue-600 hover:bg-blue-700 rounded text-white text-xs flex items-center justify-center"
+              className="w-5 h-5 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] rounded text-[var(--color-accent-text)] text-xs flex items-center justify-center"
               title="Add 1 temp HP"
             >
               <Plus className="h-2 w-2" />
@@ -384,14 +389,14 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
           <button
             onClick={() => handleTemporaryHitPointChange(-5)}
             disabled={tempHp <= 0}
-            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs px-2 py-1 rounded"
+            className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed text-[var(--color-accent-text)] text-xs px-2 py-1 rounded"
             title="Remove 5 temp HP"
           >
             -5
           </button>
           <button
             onClick={() => handleTemporaryHitPointChange(5)}
-            className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-2 py-1 rounded"
+            className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] text-xs px-2 py-1 rounded"
             title="Add 5 temp HP"
           >
             +5
@@ -420,7 +425,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
         </button>
         <button
           onClick={handleLongRest}
-          className="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-2 rounded font-medium transition-colors flex items-center justify-center gap-1"
+          className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] text-sm px-3 py-2 rounded font-medium transition-colors flex items-center justify-center gap-1"
           title="Take a long rest (8 hours) - fully restore HP and spell slots"
         >
           <Shield className="h-4 w-4" />
