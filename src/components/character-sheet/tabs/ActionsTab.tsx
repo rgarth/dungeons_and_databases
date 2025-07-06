@@ -58,6 +58,7 @@ interface ActionsTabProps {
   onRecoverSpellSlot?: (level: number) => void;
   onUpdateHitPoints?: (hitPoints: number) => void;
   onUpdateTemporaryHitPoints?: (temporaryHitPoints: number) => void;
+  onSwitchTab?: (tab: "stats" | "actions" | "gear" | "inventory" | "background" | "dice") => void;
 }
 
 type InventorySpellScroll = {
@@ -86,7 +87,8 @@ export function ActionsTab({
   onUseSpellSlot,
   onRecoverSpellSlot,
   onUpdateHitPoints,
-  onUpdateTemporaryHitPoints
+  onUpdateTemporaryHitPoints,
+  onSwitchTab
 }: ActionsTabProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _unused = onUpdateDeathSaves;
@@ -373,10 +375,21 @@ export function ActionsTab({
         {/* Weapon Attacks */}
         {equippedWeapons && equippedWeapons.length > 0 && (
           <div className="bg-[var(--color-card)] rounded-lg p-6">
-            <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-6 flex items-center gap-2">
-              <Sword className="h-6 w-6" />
-              Weapon Attacks
-            </h3>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
+                <Sword className="h-6 w-6" />
+                Weapon Attacks
+              </h3>
+              {onSwitchTab && (
+                <button
+                  onClick={() => onSwitchTab("gear")}
+                  className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] text-sm px-3 py-1 rounded font-medium transition-colors"
+                  title="Manage weapons and equipment"
+                >
+                  Manage Weapons
+                </button>
+              )}
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {equippedWeapons.filter(weapon => {
                 // Filter out ammunition items - they shouldn't appear as weapon attacks
@@ -813,18 +826,20 @@ export function ActionsTab({
                         </p>
                       </div>
                       
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-lg font-semibold text-[var(--color-text-primary)]">
-                          Prepared Spells ({(character.spellsPrepared || []).filter(s => s.level > 0).length}/{maxPrepared})
-                        </h4>
-                        <button
-                          onClick={onOpenSpellPreparation}
-                          className="bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/80 text-[var(--color-accent-text)] text-sm px-3 py-1 rounded font-medium transition-colors"
-                          title="Change prepared spells"
-                        >
-                          Prepare Spells
-                        </button>
-                      </div>
+                                              <div className="flex items-center justify-between mb-3">
+                          <h4 className="text-lg font-semibold text-[var(--color-text-primary)]">
+                            Prepared Spells ({(character.spellsPrepared || []).filter(s => s.level > 0).length}/{maxPrepared})
+                          </h4>
+                          {onSwitchTab && (
+                            <button
+                              onClick={() => onSwitchTab("gear")}
+                              className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] text-sm px-3 py-1 rounded font-medium transition-colors"
+                              title="Manage spells and equipment"
+                            >
+                              Manage Spells
+                            </button>
+                          )}
+                        </div>
                       {character.spellsPrepared && character.spellsPrepared.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {character.spellsPrepared.filter(spell => spell && spell.name && spell.level !== undefined).map((spell, index) => (
