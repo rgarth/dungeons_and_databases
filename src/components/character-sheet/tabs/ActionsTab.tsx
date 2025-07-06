@@ -27,6 +27,7 @@ interface ActionsTabProps {
     charisma: number;
     hitPoints: number;
     maxHitPoints: number;
+    temporaryHitPoints?: number;
     speed: number;
     spellcastingAbility?: string;
     spellSaveDC?: number;
@@ -55,6 +56,8 @@ interface ActionsTabProps {
   onRecoverAmmunition?: (ammunitionName: string) => void;
   onUseSpellSlot?: (level: number) => void;
   onRecoverSpellSlot?: (level: number) => void;
+  onUpdateHitPoints?: (hitPoints: number) => void;
+  onUpdateTemporaryHitPoints?: (temporaryHitPoints: number) => void;
 }
 
 type InventorySpellScroll = {
@@ -81,7 +84,9 @@ export function ActionsTab({
   onUseAmmunition,
   onRecoverAmmunition,
   onUseSpellSlot,
-  onRecoverSpellSlot
+  onRecoverSpellSlot,
+  onUpdateHitPoints,
+  onUpdateTemporaryHitPoints
 }: ActionsTabProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _unused = onUpdateDeathSaves;
@@ -183,17 +188,63 @@ export function ActionsTab({
               </div>
               
               <div className="text-center bg-[var(--color-card-secondary)] rounded p-3">
-                <div className="text-2xl font-bold text-[var(--color-danger)]">{character.hitPoints}/{character.maxHitPoints}</div>
-                <div className="text-xs text-[var(--color-text-muted)]">Hit Points</div>
-              </div>
-              
-              <div className="text-center bg-[var(--color-card-secondary)] rounded p-3">
                 <div className="text-2xl font-bold text-[var(--color-success)]">+{calc.proficiencyBonus}</div>
                 <div className="text-xs text-[var(--color-text-muted)]">Proficiency</div>
               </div>
+              
               <div className="text-center bg-[var(--color-card-secondary)] rounded p-3">
                 <div className="text-2xl font-bold text-[var(--color-warning)]">{character.speed} ft</div>
                 <div className="text-xs text-[var(--color-text-muted)]">Speed</div>
+              </div>
+              
+              <div className="text-center bg-[var(--color-card-secondary)] rounded p-3">
+                <div className="text-2xl font-bold">
+                  {character.temporaryHitPoints && character.temporaryHitPoints > 0 ? (
+                    <>
+                      <span className="text-[var(--color-accent)]">{character.hitPoints + character.temporaryHitPoints}</span>
+                      <span className="text-[var(--color-danger)]">/{character.maxHitPoints}</span>
+                    </>
+                  ) : (
+                    <span className="text-[var(--color-danger)]">{character.hitPoints}/{character.maxHitPoints}</span>
+                  )}
+                </div>
+                <div className="text-xs text-[var(--color-text-muted)]">
+                  {character.temporaryHitPoints && character.temporaryHitPoints > 0 ? `HP (+${character.temporaryHitPoints})` : 'Hit Points'}
+                </div>
+                {onUpdateHitPoints && onUpdateTemporaryHitPoints && (
+                  <div className="flex gap-1 mt-2 justify-center">
+                    <button
+                      onClick={() => {
+                        if (character.temporaryHitPoints && character.temporaryHitPoints > 0) {
+                          // Reduce temp HP first
+                          onUpdateTemporaryHitPoints(character.temporaryHitPoints - 1);
+                        } else {
+                          // Then reduce regular HP
+                          onUpdateHitPoints(Math.max(0, character.hitPoints - 1));
+                        }
+                      }}
+                      className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-white px-2 py-1 rounded text-xs transition-colors"
+                      title="Take 1 damage (temp HP first, then regular HP)"
+                    >
+                      -
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (character.hitPoints < character.maxHitPoints) {
+                          // Heal regular HP first
+                          onUpdateHitPoints(Math.min(character.maxHitPoints, character.hitPoints + 1));
+                        } else {
+                          // Then add temp HP
+                          onUpdateTemporaryHitPoints((character.temporaryHitPoints || 0) + 1);
+                        }
+                      }}
+                      className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-white px-2 py-1 rounded text-xs transition-colors"
+                      title="Heal 1 HP (regular HP first, then temp HP)"
+                    >
+                      +
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -546,7 +597,7 @@ export function ActionsTab({
                             <div className="text-xs text-[var(--color-text-muted)]">Available</div>
                           </div>
                           
-                          {/* Interactive spell slot dots */}
+                          {/* Interactive spell slot checkboxes */}
                           <div className="flex justify-center gap-1 mb-3">
                             {Array.from({length: total}, (_, i) => {
                               const isUsed = i < used;
@@ -560,13 +611,17 @@ export function ActionsTab({
                                       onUseSpellSlot(parseInt(level));
                                     }
                                   }}
-                                  className={`w-3 h-3 rounded-full transition-colors ${
+                                  className={`w-4 h-4 rounded-full border-2 transition-all duration-200 flex items-center justify-center ${
                                     isUsed 
-                                      ? 'bg-[var(--color-error)] hover:bg-[var(--color-error-hover)]' 
-                                      : 'bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)]'
+                                      ? 'border-[var(--color-text-secondary)] bg-[var(--color-text-secondary)] hover:border-[var(--color-text-primary)] hover:bg-[var(--color-text-primary)]' 
+                                      : 'border-[var(--color-text-secondary)] bg-transparent hover:border-[var(--color-text-primary)] hover:bg-[var(--color-text-primary)]/10'
                                   }`}
                                   title={isUsed ? `Recover Level ${level} spell slot` : `Use Level ${level} spell slot`}
-                                />
+                                >
+                                  {isUsed && (
+                                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-card)]" />
+                                  )}
+                                </button>
                               );
                             })}
                           </div>
@@ -576,7 +631,7 @@ export function ActionsTab({
                             {onUseSpellSlot && available > 0 && (
                               <button
                                 onClick={() => onUseSpellSlot(parseInt(level))}
-                                className="flex-1 bg-[var(--color-error)] hover:bg-[var(--color-error-hover)] text-[var(--color-error-text)] text-xs px-2 py-1 rounded transition-colors"
+                                className="flex-1 border border-[var(--color-text-secondary)] hover:border-[var(--color-text-primary)] hover:bg-[var(--color-text-primary)]/10 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] text-xs px-2 py-1 rounded transition-all duration-200"
                                 title={`Use Level ${level} spell slot`}
                               >
                                 Use
@@ -585,7 +640,7 @@ export function ActionsTab({
                             {onRecoverSpellSlot && used > 0 && (
                               <button
                                 onClick={() => onRecoverSpellSlot(parseInt(level))}
-                                className="flex-1 bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] text-xs px-2 py-1 rounded transition-colors"
+                                className="flex-1 border border-[var(--color-text-secondary)] hover:border-[var(--color-text-primary)] hover:bg-[var(--color-text-primary)]/10 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] text-xs px-2 py-1 rounded transition-all duration-200"
                                 title={`Recover Level ${level} spell slot`}
                               >
                                 Recover

@@ -663,6 +663,16 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     updateCharacter({ deathSaveSuccesses: successes, deathSaveFailures: failures });
   };
 
+  const handleUpdateHitPoints = (hitPoints: number) => {
+    setCurrentCharacter(prev => ({ ...prev, hitPoints }));
+    updateCharacter({ hitPoints });
+  };
+
+  const handleUpdateTemporaryHitPoints = (temporaryHitPoints: number) => {
+    setCurrentCharacter(prev => ({ ...prev, temporaryHitPoints }));
+    updateCharacter({ temporaryHitPoints });
+  };
+
 
   // Equipment state
 
@@ -1372,8 +1382,6 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                   setCurrentCharacter(prev => ({ ...prev, ...updates }));
                   updateCharacter(updates);
                 }}
-                onOpenSpellManagement={handleOpenSpellManagement}
-                onOpenSpellPreparation={handleOpenSpellPreparation}
               />
             )}
 
@@ -1392,6 +1400,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onRecoverAmmunition={handleRecoverAmmunition}
                 onUseSpellSlot={handleUseSpellSlot}
                 onRecoverSpellSlot={handleRecoverSpellSlot}
+                onUpdateHitPoints={handleUpdateHitPoints}
+                onUpdateTemporaryHitPoints={handleUpdateTemporaryHitPoints}
               />
             )}
 
@@ -1854,7 +1864,6 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 }
                 
                 // Separate cantrips and spells
-                const cantrips = availableSpells.filter(spell => spell.level === 0);
                 const spells = availableSpells.filter(spell => spell.level > 0);
                 
                 // Group spells by level

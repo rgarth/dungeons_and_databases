@@ -8,7 +8,7 @@ import { RacialFeaturesService, type RacialTrait } from "@/services/character/ra
 // Service layer now handles these calculations
 import type { Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
-import { getSpellcastingType } from "@/lib/dnd/level-up";
+
 
 interface StatsTabProps {
   character: {
@@ -55,12 +55,11 @@ interface StatsTabProps {
     deathSaveSuccesses?: number;
     deathSaveFailures?: number;
   }) => void;
-  onOpenSpellManagement?: () => void;
-  onOpenSpellPreparation?: () => void;
+
 
 }
 
-export function StatsTab({ character, equippedArmor, currentArmorClass: passedArmorClass, onUpdate, onOpenSpellManagement, onOpenSpellPreparation }: StatsTabProps) {
+export function StatsTab({ character, equippedArmor, currentArmorClass: passedArmorClass, onUpdate }: StatsTabProps) {
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
   const [racialTraits, setRacialTraits] = useState<RacialTrait[]>([]);
   const [classFeatures] = useState<string[]>([]);
@@ -457,83 +456,7 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
           </div>
         </div>
 
-        {/* Spell Management Section */}
-        {((character.spellsKnown && character.spellsKnown.length > 0) || (character.spellsPrepared && character.spellsPrepared.length > 0)) && (
-          <div className="bg-[var(--color-card)] rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-[var(--color-accent)]" />
-              Spell Management
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Known Spells */}
-              {character.spellsKnown && character.spellsKnown.length > 0 && (
-                <div>
-                  <h4 className="text-md font-medium text-[var(--color-accent)] mb-3">Known Spells</h4>
-                  <div className="space-y-2">
-                    <div className="text-sm text-[var(--color-text-secondary)]">
-                      Total: {getSpellcastingType(character.class) === 'prepared' ? 'All 1st-level spells' : `${character.spellsKnown?.length || 0} spells`}
-                    </div>
-                    <div className="text-sm text-[var(--color-text-secondary)]">
-                      Cantrips: {character.spellsKnown.filter(s => s.level === 0).length}
-                    </div>
-                    <div className="text-sm text-[var(--color-text-secondary)]">
-                      Spells: {character.spellsKnown.filter(s => s.level > 0).length}
-                    </div>
-                    {onOpenSpellManagement && (
-                      <button
-                        onClick={onOpenSpellManagement}
-                        className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-3 py-2 rounded text-sm transition-colors"
-                      >
-                        Manage Known Spells
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )}
 
-              {/* Prepared Spells */}
-              {character.spellsPrepared && character.spellsPrepared.length > 0 && (
-                <div>
-                  <h4 className="text-md font-medium text-[var(--color-accent)] mb-3">Prepared Spells</h4>
-                  <div className="space-y-2">
-                    <div className="text-sm text-[var(--color-text-secondary)]">
-                      Currently Prepared: {(character.spellsPrepared.filter(s => s.level > 0)).length} spells
-                    </div>
-                    <div className="text-sm text-[var(--color-text-secondary)]">
-                      Cantrips Known: {(character.spellsPrepared.filter(s => s.level === 0)).length}
-                    </div>
-                    {onOpenSpellPreparation && (
-                      <button
-                        onClick={onOpenSpellPreparation}
-                        className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-3 py-2 rounded text-sm transition-colors"
-                      >
-                        Prepare Spells
-                      </button>
-                    )}
-
-                  </div>
-                </div>
-              )}
-
-              {/* Spell Slots */}
-              {character.spellSlots && Object.keys(character.spellSlots).filter(k => k && k !== 'undefined').length > 0 && (
-                <div className="md:col-span-2">
-                  <h4 className="text-md font-medium text-[var(--color-accent)] mb-3">Spell Slots</h4>
-                  <div className="flex gap-2 flex-wrap">
-                    {Object.entries(character.spellSlots)
-                      .filter(([level, slots]) => level && level !== 'undefined' && slots > 0)
-                      .map(([level, slots]) => (
-                      <span key={level} className="bg-[var(--color-card-secondary)] px-3 py-1 rounded text-sm text-[var(--color-text-primary)]">
-                        Level {level}: {slots}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
 
         {/* Racial and Class Traits Section */}
         {(racialTraits.length > 0 || classFeatures.length > 0) && (

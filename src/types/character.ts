@@ -13,6 +13,7 @@ export interface Character {
   level: number;
   hitPoints: number;
   maxHitPoints: number;
+  temporaryHitPoints?: number;
   armorClass: number;
   background: string;
   alignment: string;
