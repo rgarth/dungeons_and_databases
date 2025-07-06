@@ -320,23 +320,19 @@ export class CharacterCreationService {
           spellsPrepared: selectedSpells
         };
         
-      case 'spellbook':
-        // Wizards - spells go in spellbook, prepare subset daily
-        // Wizards start with no prepared spells and must prepare them daily
-        return {
-          spellsKnown: selectedSpells,
-          spellsPrepared: [] // Start with no prepared spells
-        };
-        
       case 'prepared':
-        // Clerics, Druids, Paladins - have access to all class spells, prepare subset
-        // They start with no prepared spells except cantrips (which are always available)
-        // The selectedSpells array contains both cantrips (user's choice) and 1st-level spells (auto-selected)
-        // We only want to start with cantrips prepared, not the 1st-level spells
+        // Clerics, Druids, Paladins - know all class spells, only cantrips are selected during creation
         const selectedCantrips = selectedSpells.filter(spell => spell.level === 0);
         return {
-          spellsKnown: null, // They know all class spells
-          spellsPrepared: selectedCantrips // Start with only cantrips prepared
+          spellsKnown: null, // They know all class spells, not specific ones
+          spellsPrepared: selectedCantrips // Only cantrips are prepared initially
+        };
+        
+      case 'spellbook':
+        // Wizards - have a spellbook with selected spells, but prepare from it
+        return {
+          spellsKnown: selectedSpells, // These go in the spellbook
+          spellsPrepared: selectedSpells.filter(spell => spell.level === 0) // Only cantrips are prepared initially
         };
         
       default:
