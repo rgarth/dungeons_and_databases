@@ -8,6 +8,7 @@ import { RacialFeaturesService, type RacialTrait } from "@/services/character/ra
 // Service layer now handles these calculations
 import type { Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
+import { getSpellcastingType } from "@/lib/dnd/level-up";
 
 interface StatsTabProps {
   character: {
@@ -471,7 +472,7 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
                   <h4 className="text-md font-medium text-[var(--color-accent)] mb-3">Known Spells</h4>
                   <div className="space-y-2">
                     <div className="text-sm text-[var(--color-text-secondary)]">
-                      Total: {character.spellsKnown.length} spells
+                      Total: {getSpellcastingType(character.class) === 'prepared' ? 'All 1st-level spells' : `${character.spellsKnown?.length || 0} spells`}
                     </div>
                     <div className="text-sm text-[var(--color-text-secondary)]">
                       Cantrips: {character.spellsKnown.filter(s => s.level === 0).length}
@@ -497,7 +498,10 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
                   <h4 className="text-md font-medium text-[var(--color-accent)] mb-3">Prepared Spells</h4>
                   <div className="space-y-2">
                     <div className="text-sm text-[var(--color-text-secondary)]">
-                      Currently Prepared: {character.spellsPrepared.length} spells
+                      Currently Prepared: {(character.spellsPrepared.filter(s => s.level > 0)).length} spells
+                    </div>
+                    <div className="text-sm text-[var(--color-text-secondary)]">
+                      Cantrips Known: {(character.spellsPrepared.filter(s => s.level === 0)).length}
                     </div>
                     {onOpenSpellPreparation && (
                       <button

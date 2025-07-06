@@ -559,6 +559,8 @@ export function ActionsTab({
               const abilityModifier = calc.spellcasting?.abilityModifier || 0;
               const maxPrepared = canPrepareSpells(character.class) ? getSpellsPreparedCount(character.class, character.level, abilityModifier) : 0;
               
+
+              
               switch (spellcastingType) {
                 case 'known':
                   // Bards, Sorcerers, Warlocks, Rangers, EKs, ATs - their known spells are always prepared

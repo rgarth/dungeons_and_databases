@@ -325,7 +325,7 @@ export class CharacterCreationService {
         const selectedCantrips = selectedSpells.filter(spell => spell.level === 0);
         return {
           spellsKnown: null, // They know all class spells, not specific ones
-          spellsPrepared: selectedCantrips // Only cantrips are prepared initially
+          spellsPrepared: selectedCantrips // Only cantrips are prepared initially - player will choose other spells later
         };
         
       case 'spellbook':
