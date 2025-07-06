@@ -15,6 +15,7 @@ interface HitPointsDisplayProps {
     constitution: number;
     deathSaveSuccesses?: number;
     deathSaveFailures?: number;
+    spellsPrepared?: Spell[];
   };
   onUpdate: (updates: { 
     hitPoints?: number; 
@@ -87,8 +88,16 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
       hitPoints: number; 
       spellsPrepared?: Spell[]; 
     } = { hitPoints: result.newHitPoints };
+    
+    // Handle spell preparation clearing for prepared spellcasters
     if (result.spellsPrepared !== undefined) {
-      updates.spellsPrepared = result.spellsPrepared;
+      // For prepared spellcasters, we need to preserve cantrips (level 0)
+      // Only clear leveled spells (1st level and higher)
+      const currentSpellsPrepared = character.spellsPrepared || [];
+      const cantrips = currentSpellsPrepared.filter((spell: Spell) => spell.level === 0);
+      
+      // Set prepared spells to only cantrips (leveled spells are cleared)
+      updates.spellsPrepared = cantrips;
     }
     
     onUpdate(updates);
@@ -361,7 +370,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
       </div>
       
       {/* Temporary Hit Points Section */}
-      <div className="pt-3 border-t border-border">
+      <div className="pt-3 border-t border-[var(--color-border)]">
         <div className="flex justify-between items-center mb-2">
           <span className="text-muted-foreground text-sm">Temp HP</span>
           <div className="flex items-center gap-1">
@@ -417,7 +426,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
       <div className="mt-4 grid grid-cols-2 gap-2">
         <button
           onClick={handleShortRest}
-          className="bg-primary hover:bg-primary/80 text-primary-foreground text-sm px-3 py-2 rounded font-medium transition-colors flex items-center justify-center gap-1"
+          className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-button-text)] text-sm px-3 py-2 rounded font-medium transition-colors flex items-center justify-center gap-1"
           title="Take a short rest (1 hour) - recover some HP using Hit Dice"
         >
           <Heart className="h-4 w-4" />
