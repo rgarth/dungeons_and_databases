@@ -1402,6 +1402,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onRecoverSpellSlot={handleRecoverSpellSlot}
                 onUpdateHitPoints={handleUpdateHitPoints}
                 onUpdateTemporaryHitPoints={handleUpdateTemporaryHitPoints}
+                onSwitchTab={setActiveTab}
               />
             )}
 
