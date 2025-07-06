@@ -1054,19 +1054,14 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     if (characterClass && spellcasting?.availableSpells) {
       const limits = getCachedSpellLimits(characterClass, 1);
       if (limits?.spellcastingType === 'prepared' && limits.spellsKnown === 0) {
-        // For prepared spellcasters, auto-select all 1st-level spells
-        // BUT don't interfere with cantrip selection - let user choose their cantrips
-        const firstLevelSpells = spellcasting.availableSpells.filter(spell => spell.level === 1);
-        setSelectedSpells(prev => {
-          // Keep existing cantrips (user's choice), add all 1st-level spells
-          const existingCantrips = prev.filter(spell => spell.level === 0);
-          const existingSpells = prev.filter(spell => spell.level > 0);
-          // Only add 1st-level spells if we don't already have them
-          const newFirstLevelSpells = firstLevelSpells.filter(spell => 
-            !existingSpells.some(existing => existing.name === spell.name)
-          );
-          return [...existingCantrips, ...existingSpells, ...newFirstLevelSpells];
-        });
+        // For prepared spellcasters, DO NOT auto-select 1st-level spells
+        // They know all class spells and only need to select cantrips during creation
+        // The spell selection UI will be hidden for them
+        console.log('🔄 Prepared spellcaster detected - skipping 1st-level spell auto-selection');
+      } else if (limits?.spellcastingType === 'known' && limits.spellsKnown > 0) {
+        // For known spellcasters, we still need to handle spell selection
+        // This is for classes like Sorcerer, Bard, etc. that have limited known spells
+        console.log('🔄 Known spellcaster detected - handling spell selection normally');
       }
     }
   }, [characterClass, spellcasting?.availableSpells]);
@@ -1592,6 +1587,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                       const selectedSpellsCount = selectedSpells.filter(s => s.level > 0).length;
                       const maxCantrips = spellLimits?.cantripsKnown || 0;
                       const maxSpells = spellLimits?.spellsKnown || 0;
+                      const isPreparedSpellcaster = spellLimits?.spellcastingType === 'prepared';
                       
                       const cantripsNeeded = Math.max(0, maxCantrips - selectedCantrips);
                       const spellsNeeded = Math.max(0, maxSpells - selectedSpellsCount);
@@ -1608,17 +1604,27 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                             </div>
                             <div className="flex items-center gap-2" style={{ color: selectedSpellsCount >= maxSpells ? 'var(--color-success)' : 'var(--color-warning)' }}>
                               <span>
-                                {spellLimits?.spellcastingType === 'prepared' && maxSpells === 0 
-                                  ? `All Spells (${selectedSpellsCount} selected)`
+                                {isPreparedSpellcaster && maxSpells === 0 
+                                  ? `All Spells Available`
                                   : `${selectedSpellsCount}/${maxSpells} Spells`
                                 }
                               </span>
                               {selectedSpellsCount >= maxSpells && <span>✓</span>}
                             </div>
                           </div>
-                          {(cantripsNeeded > 0 || (spellsNeeded > 0 && spellLimits?.spellcastingType !== 'prepared')) && (
+                          {cantripsNeeded > 0 && (
                             <div className="mt-2 text-xs" style={{ color: 'var(--color-warning)' }}>
-                              ⚠️ Please select {cantripsNeeded} more cantrip{cantripsNeeded !== 1 ? 's' : ''} and {spellsNeeded} more spell{spellsNeeded !== 1 ? 's' : ''}
+                              ⚠️ Please select {cantripsNeeded} more cantrip{cantripsNeeded !== 1 ? 's' : ''}
+                            </div>
+                          )}
+                          {!isPreparedSpellcaster && spellsNeeded > 0 && (
+                            <div className="mt-2 text-xs" style={{ color: 'var(--color-warning)' }}>
+                              ⚠️ Please select {spellsNeeded} more spell{spellsNeeded !== 1 ? 's' : ''}
+                            </div>
+                          )}
+                          {isPreparedSpellcaster && (
+                            <div className="mt-2 text-xs" style={{ color: 'var(--color-success)' }}>
+                              ✓ As a {characterClass}, you know all spells on your class list. You only need to select cantrips.
                             </div>
                           )}
                         </div>
@@ -1626,124 +1632,176 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                     })()}
                   </div>
 
-                  {/* Tab Navigation */}
-                  <div className="flex border-b border-[var(--color-border)] mb-4">
-                    <button
-                      type="button"
-                      onClick={() => setSpellTabActive('cantrips')}
-                      className={`px-4 py-2 font-medium transition-colors ${
-                        spellTabActive === 'cantrips'
-                          ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]'
-                          : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
-                      }`}
-                    >
-                      Cantrips ({spellcasting.availableSpells.filter(s => s.level === 0).length})
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSpellTabActive('spells')}
-                      className={`px-4 py-2 font-medium transition-colors ${
-                        spellTabActive === 'spells'
-                          ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]'
-                          : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
-                      }`}
-                    >
-                      Spells ({spellcasting.availableSpells.filter(s => s.level > 0).length})
-                    </button>
-                  </div>
-
-                  {/* Tab Content */}
-                  <div className="max-h-48 overflow-y-auto">
-                    {spellTabActive === 'cantrips' && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                        {spellcasting.availableSpells
-                          .filter(spell => spell.level === 0)
-                          .map((spell) => (
-                          <label
-                            key={String(spell.name)}
-                            className={`flex items-center p-2 rounded cursor-pointer transition-colors ${
-                              selectedSpells.some(s => s.name === spell.name)
-                                ? 'text-white'
-                                : 'text-slate-300'
-                            }`}
-                            style={{ 
-                              backgroundColor: selectedSpells.some(s => s.name === spell.name)
-                                ? 'var(--color-primary)'
-                                : 'var(--color-surface-secondary)',
-                              '--tw-hover-bg': 'var(--color-surface-tertiary)'
-                            } as React.CSSProperties}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selectedSpells.some(s => s.name === spell.name)}
-                              onChange={() => handleSpellToggle(spell)}
-                              className="sr-only"
-                            />
-                            <div>
-                              <div className="font-medium text-sm" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}>{spell.name}</div>
-                              <div className="text-xs opacity-75" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)' }}>{spell.school} Cantrip</div>
-                            </div>
-                          </label>
-                        ))}
-                      </div>
-                    )}
+                  {/* Tab Navigation - Only show for non-prepared spellcasters */}
+                  {(() => {
+                    const spellLimits = getCachedSpellLimits(characterClass, 1);
+                    const isPreparedSpellcaster = spellLimits?.spellcastingType === 'prepared';
                     
-                    {spellTabActive === 'spells' && (
-                      <div className="space-y-4">
-                        {(() => {
-                          // Group spells by level
-                          const spellsByLevel: Record<number, Spell[]> = {};
-                          spellcasting.availableSpells
-                            .filter(spell => spell.level > 0)
-                            .forEach((spell: Spell) => {
-                              if (!spellsByLevel[spell.level]) {
-                                spellsByLevel[spell.level] = [];
-                              }
-                              spellsByLevel[spell.level].push(spell);
-                            });
-                          
-                          return Object.entries(spellsByLevel)
-                            .sort(([a], [b]) => parseInt(a) - parseInt(b))
-                            .map(([level, levelSpells]) => (
-                              <div key={level}>
-                                <h4 className="text-sm font-medium text-[var(--color-text-primary)] mb-2">
-                                  Level {level} Spells
-                                </h4>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                                  {levelSpells.map((spell) => (
-                                    <label
-                                      key={String(spell.name)}
-                                      className={`flex items-center p-2 rounded cursor-pointer transition-colors ${
-                                        selectedSpells.some(s => s.name === spell.name)
-                                          ? 'text-white'
-                                          : 'text-slate-300'
-                                      }`}
-                                      style={{ 
-                                        backgroundColor: selectedSpells.some(s => s.name === spell.name)
-                                          ? 'var(--color-primary)'
-                                          : 'var(--color-surface-secondary)',
-                                        '--tw-hover-bg': 'var(--color-surface-tertiary)'
-                                      } as React.CSSProperties}
-                                    >
-                                      <input
-                                        type="checkbox"
-                                        checked={selectedSpells.some(s => s.name === spell.name)}
-                                        onChange={() => handleSpellToggle(spell)}
-                                        className="sr-only"
-                                      />
-                                      <div>
-                                        <div className="font-medium text-sm" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}>{spell.name}</div>
-                                        <div className="text-xs opacity-75" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)' }}>{spell.school} Level {spell.level}</div>
-                                      </div>
-                                    </label>
-                                  ))}
-                                </div>
+                    if (isPreparedSpellcaster) {
+                      // For prepared spellcasters, only show cantrip selection
+                      return (
+                        <div className="mb-4">
+                          <h4 className="text-md font-medium text-[var(--color-accent)] mb-3">Select Cantrips</h4>
+                          <div className="max-h-48 overflow-y-auto">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                              {spellcasting.availableSpells
+                                .filter(spell => spell.level === 0)
+                                .map((spell) => (
+                                <label
+                                  key={String(spell.name)}
+                                  className={`flex items-center p-2 rounded cursor-pointer transition-colors ${
+                                    selectedSpells.some(s => s.name === spell.name)
+                                      ? 'text-white'
+                                      : 'text-slate-300'
+                                  }`}
+                                  style={{ 
+                                    backgroundColor: selectedSpells.some(s => s.name === spell.name)
+                                      ? 'var(--color-primary)'
+                                      : 'var(--color-surface-secondary)',
+                                    '--tw-hover-bg': 'var(--color-surface-tertiary)'
+                                  } as React.CSSProperties}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedSpells.some(s => s.name === spell.name)}
+                                    onChange={() => handleSpellToggle(spell)}
+                                    className="sr-only"
+                                  />
+                                  <div>
+                                    <div className="font-medium text-sm" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}>{spell.name}</div>
+                                    <div className="text-xs opacity-75" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)' }}>{spell.school} Cantrip</div>
+                                  </div>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    } else {
+                      // For known spellcasters, show the full tabbed interface
+                      return (
+                        <>
+                          <div className="flex border-b border-[var(--color-border)] mb-4">
+                            <button
+                              type="button"
+                              onClick={() => setSpellTabActive('cantrips')}
+                              className={`px-4 py-2 font-medium transition-colors ${
+                                spellTabActive === 'cantrips'
+                                  ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]'
+                                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                              }`}
+                            >
+                              Cantrips ({spellcasting.availableSpells.filter(s => s.level === 0).length})
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setSpellTabActive('spells')}
+                              className={`px-4 py-2 font-medium transition-colors ${
+                                spellTabActive === 'spells'
+                                  ? 'text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]'
+                                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                              }`}
+                            >
+                              Spells ({spellcasting.availableSpells.filter(s => s.level > 0).length})
+                            </button>
+                          </div>
+
+                          {/* Tab Content */}
+                          <div className="max-h-48 overflow-y-auto">
+                            {spellTabActive === 'cantrips' && (
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                                {spellcasting.availableSpells
+                                  .filter(spell => spell.level === 0)
+                                  .map((spell) => (
+                                  <label
+                                    key={String(spell.name)}
+                                    className={`flex items-center p-2 rounded cursor-pointer transition-colors ${
+                                      selectedSpells.some(s => s.name === spell.name)
+                                        ? 'text-white'
+                                        : 'text-slate-300'
+                                    }`}
+                                    style={{ 
+                                      backgroundColor: selectedSpells.some(s => s.name === spell.name)
+                                        ? 'var(--color-primary)'
+                                        : 'var(--color-surface-secondary)',
+                                      '--tw-hover-bg': 'var(--color-surface-tertiary)'
+                                    } as React.CSSProperties}
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={selectedSpells.some(s => s.name === spell.name)}
+                                      onChange={() => handleSpellToggle(spell)}
+                                      className="sr-only"
+                                    />
+                                    <div>
+                                      <div className="font-medium text-sm" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}>{spell.name}</div>
+                                      <div className="text-xs opacity-75" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)' }}>{spell.school} Cantrip</div>
+                                    </div>
+                                  </label>
+                                ))}
                               </div>
-                            ));
-                        })()}
-                      </div>
-                    )}
-                  </div>
+                            )}
+                            
+                            {spellTabActive === 'spells' && (
+                              <div className="space-y-4">
+                                {(() => {
+                                  // Group spells by level
+                                  const spellsByLevel: Record<number, Spell[]> = {};
+                                  spellcasting.availableSpells
+                                    .filter(spell => spell.level > 0)
+                                    .forEach((spell: Spell) => {
+                                      if (!spellsByLevel[spell.level]) {
+                                        spellsByLevel[spell.level] = [];
+                                      }
+                                      spellsByLevel[spell.level].push(spell);
+                                    });
+                                  
+                                  return Object.entries(spellsByLevel)
+                                    .sort(([a], [b]) => parseInt(a) - parseInt(b))
+                                    .map(([level, levelSpells]) => (
+                                      <div key={level}>
+                                        <h4 className="text-sm font-medium text-[var(--color-text-primary)] mb-2">
+                                          Level {level} Spells
+                                        </h4>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                                          {levelSpells.map((spell) => (
+                                            <label
+                                              key={String(spell.name)}
+                                              className={`flex items-center p-2 rounded cursor-pointer transition-colors ${
+                                                selectedSpells.some(s => s.name === spell.name)
+                                                  ? 'text-white'
+                                                  : 'text-slate-300'
+                                              }`}
+                                              style={{ 
+                                                backgroundColor: selectedSpells.some(s => s.name === spell.name)
+                                                  ? 'var(--color-primary)'
+                                                  : 'var(--color-surface-secondary)',
+                                                '--tw-hover-bg': 'var(--color-surface-tertiary)'
+                                              } as React.CSSProperties}
+                                            >
+                                              <input
+                                                type="checkbox"
+                                                checked={selectedSpells.some(s => s.name === spell.name)}
+                                                onChange={() => handleSpellToggle(spell)}
+                                                className="sr-only"
+                                              />
+                                              <div>
+                                                <div className="font-medium text-sm" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' }}>{spell.name}</div>
+                                                <div className="text-xs opacity-75" style={{ color: selectedSpells.some(s => s.name === spell.name) ? 'var(--color-text-primary)' : 'var(--color-text-tertiary)' }}>{spell.school} Level {spell.level}</div>
+                                              </div>
+                                            </label>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    ));
+                                })()}
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      );
+                    }
+                  })()}
                 </div>
               )}
 
