@@ -738,11 +738,17 @@ export function GearTab({
               <div className="space-y-3">
                 <div>
                   <span className="text-[var(--color-text-secondary)] text-sm">Prepared Spells: </span>
-                  <span className="text-[var(--color-text-primary)]">{character.spellsPrepared?.length || 0}</span>
+                  <span className="text-[var(--color-text-primary)]">{(character.spellsPrepared?.filter(spell => spell.level > 0) || []).length}</span>
+                </div>
+                <div>
+                  <span className="text-[var(--color-text-secondary)] text-sm">Cantrips Known: </span>
+                  <span className="text-[var(--color-text-primary)]">{(character.spellsPrepared?.filter(spell => spell.level === 0) || []).length}</span>
                 </div>
                 <div>
                   <span className="text-[var(--color-text-secondary)] text-sm">Known Spells: </span>
-                  <span className="text-[var(--color-text-primary)]">{character.spellsKnown?.length || 0}</span>
+                  <span className="text-[var(--color-text-primary)]">
+                    {getSpellcastingType(character.class) === 'prepared' ? 'All 1st-level spells' : (character.spellsKnown?.length || 0)}
+                  </span>
                 </div>
                 {character.spellSlots && Object.keys(character.spellSlots).filter(k => k && k !== 'undefined').length > 0 && (
                   <div>
