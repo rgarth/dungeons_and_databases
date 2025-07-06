@@ -60,6 +60,7 @@ interface CharacterSheetProps {
     spellsKnown?: Spell[]; // All spells known or in spellbook
     spellsPrepared?: Spell[]; // Currently prepared/equipped spells
     spellSlots?: Record<number, number>;
+    usedSpellSlots?: Record<number, number>;
     spellcastingAbility?: string;
     spellSaveDC?: number;
     spellAttackBonus?: number;
@@ -1114,6 +1115,42 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     updateCharacter({ ammunition: updatedAmmunition });
   };
 
+  // Spell slot management functions
+  const handleUseSpellSlot = (level: number) => {
+    const currentUsedSlots = currentCharacter.usedSpellSlots || {};
+    const currentTotalSlots = currentCharacter.spellSlots?.[level] || 0;
+    const currentUsed = currentUsedSlots[level] || 0;
+    
+    if (currentUsed >= currentTotalSlots) {
+      return; // No slots available
+    }
+
+    const updatedUsedSlots = {
+      ...currentUsedSlots,
+      [level]: currentUsed + 1
+    };
+    
+    setCurrentCharacter(prev => ({ ...prev, usedSpellSlots: updatedUsedSlots }));
+    updateCharacter({ usedSpellSlots: updatedUsedSlots });
+  };
+
+  const handleRecoverSpellSlot = (level: number) => {
+    const currentUsedSlots = currentCharacter.usedSpellSlots || {};
+    const currentUsed = currentUsedSlots[level] || 0;
+    
+    if (currentUsed <= 0) {
+      return; // No slots to recover
+    }
+
+    const updatedUsedSlots = {
+      ...currentUsedSlots,
+      [level]: currentUsed - 1
+    };
+    
+    setCurrentCharacter(prev => ({ ...prev, usedSpellSlots: updatedUsedSlots }));
+    updateCharacter({ usedSpellSlots: updatedUsedSlots });
+  };
+
   // New state for spell management (for known spell classes)
   const [showSpellManagementModal, setShowSpellManagementModal] = useState(false);
   const [tempKnownSpells, setTempKnownSpells] = useState<Spell[]>([]);
@@ -1353,6 +1390,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onUpdateDeathSaves={handleUpdateDeathSaves}
                 onUseAmmunition={handleUseAmmunition}
                 onRecoverAmmunition={handleRecoverAmmunition}
+                onUseSpellSlot={handleUseSpellSlot}
+                onRecoverSpellSlot={handleRecoverSpellSlot}
               />
             )}
 

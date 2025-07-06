@@ -419,6 +419,7 @@ export function EquipmentTab({
                     Prepare Spells
                   </button>
                 )}
+
               </div>
               
               {character.spellSaveDC && (
