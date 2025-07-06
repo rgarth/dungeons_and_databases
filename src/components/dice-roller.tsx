@@ -10,6 +10,7 @@ declare global {
         setDice: (notation: string) => void;
         start_throw: (beforeRoll?: ((notation: DiceResult) => number[] | null), afterRoll?: (notation: DiceResult) => void) => void;
         bind_swipe: (element: HTMLElement, beforeRoll?: ((notation: DiceResult) => number[] | null), afterRoll?: (notation: DiceResult) => void) => void;
+        reinit: (container: HTMLElement) => void;
       };
       vars?: {
         dice_color: string;
@@ -39,6 +40,7 @@ interface DiceBox {
   setDice: (notation: string) => void;
   start_throw: (beforeRoll?: ((notation: DiceResult) => number[] | null), afterRoll?: (notation: DiceResult) => void) => void;
   bind_swipe: (element: HTMLElement, beforeRoll?: ((notation: DiceResult) => number[] | null), afterRoll?: (notation: DiceResult) => void) => void;
+  reinit: (container: HTMLElement) => void;
 }
 
 // Custom Color Picker Component - Hexagonal Style
@@ -599,20 +601,27 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
 
     const handleResize = () => {
       if (diceBoxRef.current && diceContainerRef.current) {
-        // Reinitialize dice box on resize
+        // Use the existing dice box's reinit method instead of creating a new instance
         try {
           console.log('🎲 Reinitializing dice box on resize...');
-          diceBoxRef.current = new window.DICE.dice_box(diceContainerRef.current);
-          
-          // Set current dice color
-          if (window.DICE && window.DICE.vars) {
-            window.DICE.vars.dice_color = diceColor;
-            const isDark = isColorDark(diceColor);
-            window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
-          }
+          diceBoxRef.current.reinit(diceContainerRef.current);
         } catch (error) {
-          console.error('Failed to initialize dice box:', error);
-          setInitializationError('Failed to initialize 3D dice');
+          console.error('Failed to reinitialize dice box:', error);
+          // If reinit fails, try to create a new instance as fallback
+          try {
+            console.log('🎲 Fallback: Creating new dice box instance...');
+            diceBoxRef.current = new window.DICE.dice_box(diceContainerRef.current);
+            
+            // Set current dice color
+            if (window.DICE && window.DICE.vars) {
+              window.DICE.vars.dice_color = diceColor;
+              const isDark = isColorDark(diceColor);
+              window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
+            }
+          } catch (fallbackError) {
+            console.error('Failed to create new dice box instance:', fallbackError);
+            setInitializationError('Failed to initialize 3D dice');
+          }
         }
       }
     };
