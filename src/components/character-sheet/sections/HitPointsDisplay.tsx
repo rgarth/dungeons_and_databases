@@ -143,78 +143,130 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
   if (character.hitPoints <= 0) {
     return (
       <div>
-        <div className="text-center mb-4">
-          <div className="text-xl font-bold text-destructive mb-2">Death Saving Throws</div>
-          <div className="text-sm text-muted-foreground mb-3">
-            Roll d20: 10+ = Success, 1-9 = Failure
+        {/* Check if character is permanently dead */}
+        {countTrue(deathSaveFailures) >= 3 ? (
+          <div className="text-center mb-4">
+            <div className="text-lg font-bold text-[var(--color-text-primary)]">DEAD</div>
           </div>
-          <div className="text-xs text-muted-foreground mb-3">
-            💡 Click any circle to mark that saving throw. Click a filled circle to remove it and any after it.
-          </div>
-        </div>
-        
-        <div className="flex justify-center gap-8 mb-4">
-          {/* Successes */}
-          <div className="text-center">
-            <div className="text-sm font-medium text-[var(--color-success)] mb-2">Successes</div>
-            <div className="flex gap-2">
-              {[0, 1, 2].map(i => {
-                return (
-                  <button
-                    key={`success-${i}`}
-                    onClick={() => handleDeathSaveToggle('success', i)}
-                    className={`w-8 h-8 rounded-full border-2 transition-colors ${
-                      deathSaveSuccesses[i]
-                        ? 'bg-[var(--color-success)] border-[var(--color-success)]'
-                        : 'border-[var(--color-success)] hover:bg-[var(--color-success)]/20'
-                    }`}
-                    title={deathSaveSuccesses[i] ? `Unmark success ${i+1}` : `Mark success ${i+1}`}
-                  />
-                );
-              })}
+        ) : (
+          <>
+            <div className="text-center mb-4">
+              <div className="text-xl font-bold text-[var(--color-text-primary)] mb-2">Death Saving Throws</div>
+              <div className="text-sm text-[var(--color-text-secondary)] mb-3">
+                Roll d20: 10+ = Success, 1-9 = Failure
+              </div>
+              <div className="text-xs text-[var(--color-text-secondary)] mb-3">
+                💡 Click any circle to mark that saving throw. Click a filled circle to remove it and any after it.
+              </div>
             </div>
-          </div>
-          
-          {/* Failures */}
-          <div className="text-center">
-            <div className="text-sm font-medium text-[var(--color-error)] mb-2">Failures</div>
-            <div className="flex gap-2">
-              {[0, 1, 2].map(i => {
-                return (
-                  <button
-                    key={`failure-${i}`}
-                    onClick={() => handleDeathSaveToggle('failure', i)}
-                    className={`w-8 h-8 rounded-full border-2 transition-colors ${
-                      deathSaveFailures[i]
-                        ? 'bg-[var(--color-error)] border-[var(--color-error)]'
-                        : 'border-[var(--color-error)] hover:bg-[var(--color-error)]/20'
-                    }`}
-                    title={deathSaveFailures[i] ? `Unmark failure ${i+1}` : `Mark failure ${i+1}`}
-                  />
-                );
-              })}
+            
+            <div className="flex justify-center gap-8 mb-4">
+              {/* Successes */}
+              <div className="text-center">
+                <div className="text-sm font-medium text-[var(--color-success)] mb-2">Successes</div>
+                <div className="flex gap-2">
+                  {[0, 1, 2].map(i => {
+                    return (
+                      <button
+                        key={`success-${i}`}
+                        onClick={() => handleDeathSaveToggle('success', i)}
+                        className={`w-8 h-8 rounded-full border-2 transition-colors ${
+                          deathSaveSuccesses[i]
+                            ? 'bg-[var(--color-success)] border-[var(--color-success)]'
+                            : 'border-[var(--color-success)] hover:bg-[var(--color-success)]/20'
+                        }`}
+                        title={deathSaveSuccesses[i] ? `Unmark success ${i+1}` : `Mark success ${i+1}`}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+              
+              {/* Failures */}
+              <div className="text-center">
+                <div className="text-sm font-medium text-[var(--color-error)] mb-2">Failures</div>
+                <div className="flex gap-2">
+                  {[0, 1, 2].map(i => {
+                    return (
+                      <button
+                        key={`failure-${i}`}
+                        onClick={() => handleDeathSaveToggle('failure', i)}
+                        className={`w-8 h-8 rounded-full border-2 transition-colors ${
+                          deathSaveFailures[i]
+                            ? 'bg-[var(--color-error)] border-[var(--color-error)]'
+                            : 'border-[var(--color-error)] hover:bg-[var(--color-error)]/20'
+                        }`}
+                        title={deathSaveFailures[i] ? `Unmark failure ${i+1}` : `Mark failure ${i+1}`}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+            
+            {/* Status */}
+            <div className="text-center mb-4">
+              {(countTrue(deathSaveSuccesses) >= 3) && (
+                <div className="text-[var(--color-success)] font-medium">Stabilized - gaining 1 HP!</div>
+              )}
+            </div>
+          </>
+        )}
         
-        {/* Status */}
-        <div className="text-center mb-4">
-          {(countTrue(deathSaveSuccesses) >= 3) && (
-            <div className="text-[var(--color-success)] font-medium">Stabilized - gaining 1 HP!</div>
-          )}
-          {(countTrue(deathSaveFailures) >= 3) && (
-            <div className="text-[var(--color-error)] font-medium">DEAD</div>
-          )}
-        </div>
-        
-        {/* Emergency Healing Button */}
-        <div className="text-center">
+        {/* Emergency Healing and Roll Buttons */}
+        <div className="text-center flex justify-center gap-2">
           <button
             onClick={() => onUpdate({ hitPoints: 1, deathSaveSuccesses: [false, false, false], deathSaveFailures: [false, false, false] })}
             className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] text-sm px-4 py-2 rounded font-medium"
           >
             Heal to 1 HP
           </button>
+          {countTrue(deathSaveFailures) < 3 && (
+            <button
+              onClick={() => {
+                // Roll a d20
+                const roll = Math.floor(Math.random() * 20) + 1;
+                const isSuccess = roll >= 10;
+                
+                // Find next empty slot
+                if (isSuccess) {
+                  const nextEmptyIndex = deathSaveSuccesses.findIndex(success => !success);
+                  if (nextEmptyIndex !== -1) {
+                    const newSuccesses = [...deathSaveSuccesses];
+                    newSuccesses[nextEmptyIndex] = true;
+                    
+                    // Check if we now have 3 successes - restore to 1 HP
+                    const successCount = newSuccesses.filter(s => s).length;
+                    if (successCount === 3) {
+                      onUpdate({ 
+                        hitPoints: 1, 
+                        deathSaveSuccesses: [false, false, false], 
+                        deathSaveFailures: [false, false, false] 
+                      });
+                      alert(`Death Save: ${roll} (Success) - Character stabilized at 1 HP!`);
+                      return;
+                    }
+                    
+                    onUpdate({ deathSaveSuccesses: newSuccesses });
+                  }
+                } else {
+                  const nextEmptyIndex = deathSaveFailures.findIndex(failure => !failure);
+                  if (nextEmptyIndex !== -1) {
+                    const newFailures = [...deathSaveFailures];
+                    newFailures[nextEmptyIndex] = true;
+                    onUpdate({ deathSaveFailures: newFailures });
+                  }
+                }
+                
+                // Show roll result
+                alert(`Death Save: ${roll} (${isSuccess ? 'Success' : 'Failure'})`);
+              }}
+              className="bg-[var(--color-warning)] hover:bg-[var(--color-warning)]/80 text-[var(--color-warning-text)] text-sm px-4 py-2 rounded font-medium"
+              title="Roll a death saving throw (d20, 10+ succeeds)"
+            >
+              Roll Death Save
+            </button>
+          )}
         </div>
       </div>
     );
@@ -223,7 +275,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
-        <span className="text-muted-foreground flex items-center gap-2">
+        <span className="text-[var(--color-text-secondary)] flex items-center gap-2">
           <Heart className="h-4 w-4 text-[var(--color-error)]" />
           Hit Points
         </span>
@@ -236,7 +288,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
           >
             <Minus className="h-3 w-3" />
           </button>
-          <span className="text-foreground font-semibold text-lg min-w-[90px] text-center">
+          <span className="text-[var(--color-text-primary)] font-semibold text-lg min-w-[90px] text-center">
             {character.hitPoints}
             {tempHp > 0 && <span className="text-[var(--color-accent)] font-medium">+{tempHp}</span>}
             /{character.maxHitPoints}
@@ -281,7 +333,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
       
       {/* Damage Flow Explanation */}
       {tempHp > 0 && (
-        <div className="text-xs text-muted-foreground mb-2 text-center">
+        <div className="text-xs text-[var(--color-text-secondary)] mb-2 text-center">
           💡 Damage removes <span className="text-[var(--color-accent)] font-medium">{tempHp} temp HP</span> first, then regular HP
         </div>
       )}
@@ -340,7 +392,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
               value={customDamage}
               onChange={(e) => setCustomDamage(e.target.value)}
               placeholder="Amount"
-              className="w-16 px-2 py-1 text-xs bg-background text-foreground rounded border border-border focus:border-[var(--color-accent)] focus:outline-none"
+              className="w-16 px-2 py-1 text-xs bg-[var(--color-card)] text-[var(--color-text-primary)] rounded border border-[var(--color-border)] focus:border-[var(--color-accent)] focus:outline-none"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   const amount = parseInt(customDamage);
@@ -385,7 +437,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
                 setCustomDamage("");
                 setShowCustomInput(false);
               }}
-              className="bg-muted hover:bg-muted/80 text-foreground text-xs px-2 py-1 rounded"
+              className="bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-secondary)]/80 text-[var(--color-text-primary)] text-xs px-2 py-1 rounded"
               title="Cancel"
             >
               ✕
