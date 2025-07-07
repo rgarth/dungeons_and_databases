@@ -728,11 +728,8 @@ export function ActionsTab({
             {/* Spell Slot Manager */}
             {character.spellcastingAbility && character.spellSlots && Object.keys(character.spellSlots).filter(k => k && k !== 'undefined').length > 0 && (
               <div className="mb-6">
-                <h4 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3">Spell Slot Manager</h4>
-                <div className="mb-3 p-2 rounded text-xs text-[var(--color-text-secondary)] bg-[var(--color-card-secondary)]">
-                  💡 <strong>Note:</strong> Cantrips (0-level spells) don&apos;t use spell slots and can be cast unlimited times.
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <h4 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4">Spell Slot Manager</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {Object.entries(character.spellSlots)
                     .filter(([level, total]) => level && level !== 'undefined' && total > 0)
                     .map(([level, total]) => {
@@ -740,15 +737,15 @@ export function ActionsTab({
                       const available = total - used;
                       
                       return (
-                        <div key={level} className="bg-[var(--color-card-secondary)] rounded p-3">
-                          <div className="text-center mb-3">
-                            <div className="text-sm text-[var(--color-text-muted)] mb-1">Level {level}</div>
-                            <div className="text-lg font-bold text-[var(--color-text-primary)]">{available}/{total}</div>
-                            <div className="text-xs text-[var(--color-text-muted)]">Available</div>
+                        <div key={level} className="bg-[var(--color-card-secondary)] rounded-lg p-4 border border-[var(--color-border)]">
+                          <div className="text-center mb-4">
+                            <div className="text-lg font-bold text-[var(--color-accent)] mb-1">Level {level}</div>
+                            <div className="text-2xl font-bold text-[var(--color-text-primary)]">{available}/{total}</div>
+                            <div className="text-sm text-[var(--color-text-muted)]">Spell Slots</div>
                           </div>
                           
                           {/* Interactive spell slot checkboxes */}
-                          <div className="flex justify-center gap-1 mb-3">
+                          <div className="flex justify-center gap-2 mb-4">
                             {Array.from({length: total}, (_, i) => {
                               const isUsed = i < used;
                               return (
@@ -761,7 +758,7 @@ export function ActionsTab({
                                       onUseSpellSlot(parseInt(level));
                                     }
                                   }}
-                                  className={`w-4 h-4 rounded-full border-2 transition-all duration-200 flex items-center justify-center ${
+                                  className={`w-5 h-5 rounded-full border-2 transition-all duration-200 flex items-center justify-center ${
                                     isUsed 
                                       ? 'border-[var(--color-text-secondary)] bg-[var(--color-text-secondary)] hover:border-[var(--color-text-primary)] hover:bg-[var(--color-text-primary)]' 
                                       : 'border-[var(--color-text-secondary)] bg-transparent hover:border-[var(--color-text-primary)] hover:bg-[var(--color-text-primary)]/10'
@@ -769,7 +766,7 @@ export function ActionsTab({
                                   title={isUsed ? `Recover Level ${level} spell slot` : `Use Level ${level} spell slot`}
                                 >
                                   {isUsed && (
-                                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-card)]" />
+                                    <div className="w-2 h-2 rounded-full bg-[var(--color-card)]" />
                                   )}
                                 </button>
                               );
@@ -777,11 +774,11 @@ export function ActionsTab({
                           </div>
                           
                           {/* Quick action buttons */}
-                          <div className="flex gap-1">
+                          <div className="flex gap-2">
                             {onUseSpellSlot && available > 0 && (
                               <button
                                 onClick={() => onUseSpellSlot(parseInt(level))}
-                                className="flex-1 border border-[var(--color-text-secondary)] hover:border-[var(--color-text-primary)] hover:bg-[var(--color-text-primary)]/10 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] text-xs px-2 py-1 rounded transition-all duration-200"
+                                className="flex-1 bg-[var(--color-error)] hover:bg-[var(--color-error-hover)] text-[var(--color-error-text)] text-sm px-3 py-2 rounded font-medium transition-all duration-200"
                                 title={`Use Level ${level} spell slot`}
                               >
                                 Use
@@ -790,7 +787,7 @@ export function ActionsTab({
                             {onRecoverSpellSlot && used > 0 && (
                               <button
                                 onClick={() => onRecoverSpellSlot(parseInt(level))}
-                                className="flex-1 border border-[var(--color-text-secondary)] hover:border-[var(--color-text-primary)] hover:bg-[var(--color-text-primary)]/10 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] text-xs px-2 py-1 rounded transition-all duration-200"
+                                className="flex-1 bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] text-sm px-3 py-2 rounded font-medium transition-all duration-200"
                                 title={`Recover Level ${level} spell slot`}
                               >
                                 Recover
@@ -800,6 +797,21 @@ export function ActionsTab({
                         </div>
                       );
                     })}
+                  
+                  {/* Cantrip Info Card */}
+                  <div className="bg-[var(--color-card-secondary)] rounded-lg p-4 border border-[var(--color-border)] border-l-4 border-l-[var(--color-success)]">
+                    <div className="text-center mb-3">
+                      <div className="text-lg font-bold text-[var(--color-success)] mb-1">Cantrips</div>
+                      <div className="text-2xl font-bold text-[var(--color-text-primary)]">∞</div>
+                      <div className="text-sm text-[var(--color-text-muted)]">Unlimited Use</div>
+                    </div>
+                    
+                    <div className="text-xs text-[var(--color-text-secondary)] text-center leading-relaxed">
+                      <div className="mb-2">💡 0-level spells</div>
+                      <div>Don&apos;t use spell slots</div>
+                      <div>Can be cast at will</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
