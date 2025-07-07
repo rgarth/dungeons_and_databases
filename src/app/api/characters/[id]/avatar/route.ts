@@ -40,6 +40,7 @@ export async function POST(
 
     // Convert base64 data URL to binary data
     let binaryData: Buffer;
+    let finalMimeType = mimeType;
     try {
       // Remove the data URL prefix (e.g., "data:image/png;base64,")
       const base64Data = imageData.replace(/^data:image\/[a-z]+;base64,/, '');
@@ -54,28 +55,28 @@ export async function POST(
           .toBuffer();
         
         binaryData = compressedBuffer;
-        mimeType = 'image/jpeg'; // Always save as JPEG for consistency
+        finalMimeType = 'image/jpeg'; // Always save as JPEG for consistency
       } catch (compressionError) {
         console.warn('Image compression failed, using original:', compressionError);
         // Continue with original image if compression fails
       }
-    } catch (error) {
+    } catch {
       return NextResponse.json({ error: "Invalid image data format" }, { status: 400 });
     }
 
     // Save or update the avatar image
-    const avatarImage = await prisma.avatarImage.upsert({
+    await prisma.avatarImage.upsert({
       where: {
         characterId: characterId
       },
       update: {
-        imageData: binaryData,
-        mimeType: mimeType
+        imageData: new Uint8Array(binaryData),
+        mimeType: finalMimeType
       },
       create: {
         characterId: characterId,
-        imageData: binaryData,
-        mimeType: mimeType
+        imageData: new Uint8Array(binaryData),
+        mimeType: finalMimeType
       }
     });
 
