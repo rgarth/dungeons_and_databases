@@ -610,17 +610,17 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
           // If reinit fails, try to create a new instance as fallback
           try {
             console.log('🎲 Fallback: Creating new dice box instance...');
-            diceBoxRef.current = new window.DICE.dice_box(diceContainerRef.current);
-            
-            // Set current dice color
-            if (window.DICE && window.DICE.vars) {
-              window.DICE.vars.dice_color = diceColor;
-              const isDark = isColorDark(diceColor);
-              window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
-            }
+          diceBoxRef.current = new window.DICE.dice_box(diceContainerRef.current);
+          
+          // Set current dice color
+          if (window.DICE && window.DICE.vars) {
+            window.DICE.vars.dice_color = diceColor;
+            const isDark = isColorDark(diceColor);
+            window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
+          }
           } catch (fallbackError) {
             console.error('Failed to create new dice box instance:', fallbackError);
-            setInitializationError('Failed to initialize 3D dice');
+          setInitializationError('Failed to initialize 3D dice');
           }
         }
       }

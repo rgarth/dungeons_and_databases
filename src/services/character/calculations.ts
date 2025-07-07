@@ -21,8 +21,8 @@ interface Character {
   speed: number;
   skills?: string[];
   spellcastingAbility?: string;
-  deathSaveSuccesses?: number;
-  deathSaveFailures?: number;
+  deathSaveSuccesses?: boolean[];
+  deathSaveFailures?: boolean[];
 }
 
 // Core character calculations service
@@ -119,7 +119,7 @@ export class CharacterCalculations {
   // Check if proficient in a saving throw
   isSavingThrowProficient(abilityName: string): boolean {
     const proficiencies = getSavingThrowProficiencies(this.character.class);
-    return proficiencies.includes(abilityName);
+    return proficiencies.map(p => p.toLowerCase()).includes(abilityName.toLowerCase());
   }
 
   // Get all skills for a specific ability

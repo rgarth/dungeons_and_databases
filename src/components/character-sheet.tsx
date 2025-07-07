@@ -82,8 +82,8 @@ interface CharacterSheetProps {
     skillSources?: { [skillName: string]: 'class' | 'background' | 'racial' | 'feat' | 'other' };
     conditions?: ActiveCondition[];
     equippedWeapons?: (Weapon | MagicalWeapon)[];
-    deathSaveSuccesses?: number;
-    deathSaveFailures?: number;
+    deathSaveSuccesses?: boolean[];
+    deathSaveFailures?: boolean[];
     ammunition?: Ammunition[];
     // Background characteristics (stored as separate fields in database)
     personalityTraits?: string[];
@@ -658,7 +658,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     updateCharacter({ conditions });
   };
 
-  const handleUpdateDeathSaves = (successes: number, failures: number) => {
+  const handleUpdateDeathSaves = (successes: boolean[], failures: boolean[]) => {
     setCurrentCharacter(prev => ({ ...prev, deathSaveSuccesses: successes, deathSaveFailures: failures }));
     updateCharacter({ deathSaveSuccesses: successes, deathSaveFailures: failures });
   };

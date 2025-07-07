@@ -10,8 +10,8 @@ interface CharacterHPData {
   maxHitPoints: number;
   temporaryHitPoints?: number;
   constitution: number;
-  deathSaveSuccesses?: number;
-  deathSaveFailures?: number;
+  deathSaveSuccesses?: boolean[];
+  deathSaveFailures?: boolean[];
 }
 
 // Damage/healing result
@@ -37,12 +37,12 @@ interface RestResult {
 }
 
 interface DeathSaveResult {
-  newSuccesses: number;
-  newFailures: number;
+  newSuccesses: boolean[];
+  newFailures: boolean[];
   autoStabilize?: {
     newHitPoints: number;
-    newSuccesses: number;
-    newFailures: number;
+    newSuccesses: boolean[];
+    newFailures: boolean[];
   };
 }
 
@@ -136,24 +136,24 @@ export class CharacterDamageService {
    */
   updateDeathSaves(
     type: 'success' | 'failure',
-    count: number
+    index: number
   ): DeathSaveResult {
-    const currentSuccesses = this.character.deathSaveSuccesses || 0;
-    const currentFailures = this.character.deathSaveFailures || 0;
+    const currentSuccesses = this.character.deathSaveSuccesses || [false, false, false];
+    const currentFailures = this.character.deathSaveFailures || [false, false, false];
 
     if (type === 'success') {
-      // Toggle logic: if clicking the same number, decrement by 1
-      const newSuccesses = currentSuccesses === count ? count - 1 : count;
+      const newSuccesses = [...currentSuccesses];
+      newSuccesses[index] = !newSuccesses[index];
       
       // Auto-stabilize at 3 successes
-      if (newSuccesses >= 3) {
+      if (newSuccesses.filter(Boolean).length >= 3) {
         return {
           newSuccesses,
           newFailures: currentFailures,
           autoStabilize: {
             newHitPoints: 1,
-            newSuccesses: 0,
-            newFailures: 0,
+            newSuccesses: [false, false, false],
+            newFailures: [false, false, false],
           },
         };
       }
@@ -163,8 +163,8 @@ export class CharacterDamageService {
         newFailures: currentFailures,
       };
     } else {
-      // Toggle logic for failures
-      const newFailures = currentFailures === count ? count - 1 : count;
+      const newFailures = [...currentFailures];
+      newFailures[index] = !newFailures[index];
       
       return {
         newSuccesses: currentSuccesses,
@@ -236,14 +236,16 @@ export class CharacterDamageService {
    * Check if character is dead (3 death save failures)
    */
   get isDead(): boolean {
-    return (this.character.deathSaveFailures || 0) >= 3;
+    const failures = this.character.deathSaveFailures || [false, false, false];
+    return failures.filter(Boolean).length >= 3;
   }
 
   /**
    * Check if character is stabilized (3 death save successes)
    */
   get isStabilized(): boolean {
-    return (this.character.deathSaveSuccesses || 0) >= 3;
+    const successes = this.character.deathSaveSuccesses || [false, false, false];
+    return successes.filter(Boolean).length >= 3;
   }
 
   /**

@@ -36,8 +36,8 @@ interface StatsTabProps {
     backstory?: string;
     notes?: string;
     inspiration?: boolean;
-    deathSaveSuccesses?: number;
-    deathSaveFailures?: number;
+    deathSaveSuccesses?: boolean[];
+    deathSaveFailures?: boolean[];
     subrace?: string;
     spellsKnown?: Spell[];
     spellsPrepared?: Spell[];
@@ -52,8 +52,8 @@ interface StatsTabProps {
     temporaryHitPoints?: number; 
     spellsPrepared?: Spell[]; 
     inspiration?: boolean;
-    deathSaveSuccesses?: number;
-    deathSaveFailures?: number;
+    deathSaveSuccesses?: boolean[];
+    deathSaveFailures?: boolean[];
   }) => void;
 
 
