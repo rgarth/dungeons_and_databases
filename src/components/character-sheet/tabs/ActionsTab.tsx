@@ -13,6 +13,7 @@ import type { MagicalItem } from "@/lib/dnd/magical-items";
 import { CONDITIONS, getCondition, type ActiveCondition } from "@/lib/dnd/conditions";
 import { useEffect, useState } from "react";
 import { useConditionSeverityStyles, useOpacityStyles, useBorderLeftStyles, useInteractiveButtonStyles } from "@/hooks/use-theme";
+import KiPointManager from './KiPointManager';
 
 interface ActionsTabProps {
   character: {
@@ -43,6 +44,8 @@ interface ActionsTabProps {
     deathSaveSuccesses?: boolean[];
     deathSaveFailures?: boolean[];
     ammunition?: Ammunition[];
+    kiPoints?: number;
+    usedKiPoints?: number;
   };
   equippedWeapons: (Weapon | MagicalWeapon)[];
   equippedMagicalItems: EquippedMagicalItem[];
@@ -815,6 +818,20 @@ export function ActionsTab({
                 </div>
               </div>
             )}
+
+            {/* Ki Point Manager for Monks */}
+            <KiPointManager 
+              character={{
+                class: character.class,
+                level: character.level,
+                kiPoints: character.kiPoints,
+                usedKiPoints: character.usedKiPoints
+              }}
+              onKiPointsChange={(usedKiPoints) => {
+                // TODO: Implement ki points update
+                console.log('Ki points changed:', usedKiPoints);
+              }}
+            />
 
             {/* Spell Management Based on Class Type */}
             {character.spellcastingAbility && (() => {

@@ -23,6 +23,7 @@ import { Weapon, MagicalWeapon, Armor, Ammunition } from '@/lib/dnd/equipment';
 import { RacialFeaturesService, type RacialTrait } from './racial-features';
 import { getSubclassesForClass, choosesSubclassAtCreation } from '@/lib/dnd/subclasses';
 import { getRacialLanguages, getClassLanguages } from '@/lib/dnd/languages';
+import { KiPointService } from './ki-points';
 
 
 export type StatMethod = 'rolling-assign' | 'standard' | 'pointbuy';
@@ -111,6 +112,10 @@ export interface CharacterCreationResult {
   silverPieces: number;
   goldPieces: number;
   goldRollDetails?: string;
+
+  // Ki points (for Monks)
+  kiPoints?: number;
+  usedKiPoints?: number;
 
   // Background characteristics
   backgroundCharacteristics: {
@@ -648,6 +653,10 @@ export class CharacterCreationService {
       silverPieces: 0,
       goldPieces: startingGold,
       goldRollDetails,
+
+      // Ki points (for Monks)
+      kiPoints: characterClass === 'Monk' ? KiPointService.getTotalKiPoints(1) : 0,
+      usedKiPoints: 0,
 
       // Background characteristics
       backgroundCharacteristics: data.backgroundCharacteristics || {
