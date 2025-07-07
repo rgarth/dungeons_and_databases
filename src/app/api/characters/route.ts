@@ -301,10 +301,10 @@ export async function POST(request: NextRequest) {
         alignment,
         background,
         // Background characteristics  
-        personalityTraits: backgroundCharacteristics?.personalityTraits || [],
-        ideals: backgroundCharacteristics?.ideals || [],
-        bonds: backgroundCharacteristics?.bonds || [],
-        flaws: backgroundCharacteristics?.flaws || [],
+        personalityTraits: JSON.stringify(backgroundCharacteristics?.personalityTraits || []),
+        ideals: JSON.stringify(backgroundCharacteristics?.ideals || []),
+        bonds: JSON.stringify(backgroundCharacteristics?.bonds || []),
+        flaws: JSON.stringify(backgroundCharacteristics?.flaws || []),
         // Personal information
         gender: gender || null,
         age: age || null,
@@ -319,26 +319,26 @@ export async function POST(request: NextRequest) {
         maxHitPoints: maxHitPoints ?? 10,
         armorClass: armorClass ?? 10,
         speed: speed,
-        inventory: processedInventory, // Use processed inventory without weapons or armor
-        equipment: processedInventory, // Also set equipment field to match inventory
-        skills: skills || [],
-        skillSources: skillSources || {},
-        languageSources: languageSources || {},
-        weapons: weaponsWithEquipped,
-        inventoryWeapons: weaponsWithEquipped,
-        ammunition: ammunition || [],
-        armor: armorWithEquipped,
-        inventoryArmor: armorWithEquipped,
-        spellsKnown: spellsKnown || null,
-        spellsPrepared: spellsPrepared || null,
-        spellSlots: spellSlots || null,
+        inventory: JSON.stringify(processedInventory), // Use processed inventory without weapons or armor
+        equipment: JSON.stringify(processedInventory), // Also set equipment field to match inventory
+        skills: JSON.stringify(skills || []),
+        skillSources: JSON.stringify(skillSources || {}),
+        languageSources: JSON.stringify(languageSources || {}),
+        weapons: JSON.stringify(weaponsWithEquipped),
+        inventoryWeapons: JSON.stringify(weaponsWithEquipped),
+        ammunition: JSON.stringify(ammunition || []),
+        armor: JSON.stringify(armorWithEquipped),
+        inventoryArmor: JSON.stringify(armorWithEquipped),
+        spellsKnown: spellsKnown ? JSON.stringify(spellsKnown) : null,
+        spellsPrepared: spellsPrepared ? JSON.stringify(spellsPrepared) : null,
+        spellSlots: spellSlots ? JSON.stringify(spellSlots) : null,
         spellcastingAbility: spellcastingAbility || null,
         spellSaveDC: spellSaveDC || null,
         spellAttackBonus: spellAttackBonus || null,
-        actions: actions || [],
-        bonusActions: bonusActions || [],
-        reactions: reactions || [],
-        racialTraits: racialTraits || [],
+        actions: JSON.stringify(actions || []),
+        bonusActions: JSON.stringify(bonusActions || []),
+        reactions: JSON.stringify(reactions || []),
+        racialTraits: JSON.stringify(racialTraits || []),
         copperPieces: copperPieces || 0,
         silverPieces: silverPieces || 0,
         goldPieces: goldPieces || 0,
@@ -346,7 +346,7 @@ export async function POST(request: NextRequest) {
         deathSaveFailures: 0,
         avatar: avatar || null,
         fullBodyAvatar: fullBodyAvatar || null,
-        languages: initialLanguages, // Initialize with racial and class languages
+        languages: JSON.stringify(initialLanguages), // Initialize with racial and class languages
         userId: user.id
       },
     });

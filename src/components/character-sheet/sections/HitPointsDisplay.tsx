@@ -392,7 +392,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
               value={customDamage}
               onChange={(e) => setCustomDamage(e.target.value)}
               placeholder="Amount"
-              className="w-16 px-2 py-1 text-xs bg-[var(--color-card)] text-[var(--color-text-primary)] rounded border border-[var(--color-border)] focus:border-[var(--color-accent)] focus:outline-none"
+              className="w-16 px-2 py-1 text-xs bg-background text-foreground rounded border border-border focus:border-[var(--color-accent)] focus:outline-none"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   const amount = parseInt(customDamage);
@@ -437,7 +437,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
                 setCustomDamage("");
                 setShowCustomInput(false);
               }}
-              className="bg-[var(--color-card-secondary)] hover:bg-[var(--color-card-secondary)]/80 text-[var(--color-text-primary)] text-xs px-2 py-1 rounded"
+              className="bg-muted hover:bg-muted/80 text-foreground text-xs px-2 py-1 rounded"
               title="Cancel"
             >
               ✕
