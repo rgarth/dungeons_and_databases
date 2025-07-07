@@ -1904,7 +1904,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                                   setShowSpellPreparationModal(false);
                                   handleOpenCantripManagement();
                                 }}
-                                className="bg-[var(--color-warning)] hover:bg-[var(--color-warning-hover)] text-[var(--color-warning-text)] px-3 py-1 rounded text-sm transition-colors"
+                                className="bg-[var(--color-warning)] hover:bg-[var(--color-warning)]/80 text-[var(--color-warning-text)] px-3 py-1 rounded text-sm transition-colors"
                               >
                                 Select Cantrips
                               </button>

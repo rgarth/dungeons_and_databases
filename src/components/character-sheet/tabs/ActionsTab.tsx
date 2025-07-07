@@ -207,8 +207,128 @@ export function ActionsTab({
               
               {character.hitPoints === 0 ? (
                 <div className="text-center bg-[var(--color-card-secondary)] rounded p-3">
-                  <div className="text-lg font-bold text-[var(--color-danger)] mb-2">Unconscious</div>
-                  <div className="text-xs text-[var(--color-text-muted)]">Make death saving throws</div>
+                  <div className="text-2xl font-bold text-[var(--color-text-primary)] mb-3">0</div>
+                  
+                  {/* Check if character is permanently dead */}
+                  {(character.deathSaveFailures || [false, false, false]).filter(f => f).length >= 3 ? (
+                    <div className="text-lg font-bold text-[var(--color-text-primary)] mb-2">DEAD</div>
+                  ) : (
+                    <>
+                      {/* Successes */}
+                      <div className="flex justify-center gap-1 mb-2">
+                        <span className="text-xs text-[var(--color-text-secondary)]">Successes:</span>
+                        {[0, 1, 2].map((index) => (
+                          <button
+                            key={`success-${index}`}
+                            onClick={() => {
+                              if (onUpdateDeathSaves) {
+                                const currentSuccesses = character.deathSaveSuccesses || [false, false, false];
+                                const currentFailures = character.deathSaveFailures || [false, false, false];
+                                
+                                // Toggle this success
+                                const newSuccesses = [...currentSuccesses];
+                                newSuccesses[index] = !newSuccesses[index];
+                                
+                                // Check if we now have 3 successes - restore to 1 HP
+                                const successCount = newSuccesses.filter(s => s).length;
+                                if (successCount === 3 && onUpdateHitPoints) {
+                                  onUpdateHitPoints(1);
+                                  // Reset death saves
+                                  onUpdateDeathSaves([false, false, false], [false, false, false]);
+                                  return;
+                                }
+                                
+                                onUpdateDeathSaves(newSuccesses, currentFailures);
+                              }
+                            }}
+                            className={`w-4 h-4 rounded-full border-2 transition-colors ${
+                              (character.deathSaveSuccesses || [false, false, false])[index]
+                                ? 'bg-[var(--color-success)] border-[var(--color-success)]'
+                                : 'border-[var(--color-success)] hover:bg-[var(--color-success)] hover:bg-opacity-20'
+                            }`}
+                            title={`Toggle success ${index + 1}`}
+                          />
+                        ))}
+                      </div>
+                      
+                      {/* Failures */}
+                      <div className="flex justify-center gap-1 mb-2">
+                        <span className="text-xs text-[var(--color-text-secondary)]">Failures:</span>
+                        {[0, 1, 2].map((index) => (
+                          <button
+                            key={`failure-${index}`}
+                            onClick={() => {
+                              if (onUpdateDeathSaves) {
+                                const currentSuccesses = character.deathSaveSuccesses || [false, false, false];
+                                const currentFailures = character.deathSaveFailures || [false, false, false];
+                                
+                                // Toggle this failure
+                                const newFailures = [...currentFailures];
+                                newFailures[index] = !newFailures[index];
+                                
+                                onUpdateDeathSaves(currentSuccesses, newFailures);
+                              }
+                            }}
+                            className={`w-4 h-4 rounded-full border-2 transition-colors ${
+                              (character.deathSaveFailures || [false, false, false])[index]
+                                ? 'bg-[var(--color-danger)] border-[var(--color-danger)]'
+                                : 'border-[var(--color-danger)] hover:bg-[var(--color-danger)] hover:bg-opacity-20'
+                            }`}
+                            title={`Toggle failure ${index + 1}`}
+                          />
+                        ))}
+                      </div>
+                      
+                      {/* Quick Roll Button */}
+                      <button
+                        onClick={() => {
+                          if (onUpdateDeathSaves) {
+                            const currentSuccesses = character.deathSaveSuccesses || [false, false, false];
+                            const currentFailures = character.deathSaveFailures || [false, false, false];
+                            
+                            // Roll a d20
+                            const roll = Math.floor(Math.random() * 20) + 1;
+                            const isSuccess = roll >= 10;
+                            
+                            // Find next empty slot
+                            if (isSuccess) {
+                              const nextEmptyIndex = currentSuccesses.findIndex(success => !success);
+                              if (nextEmptyIndex !== -1) {
+                                const newSuccesses = [...currentSuccesses];
+                                newSuccesses[nextEmptyIndex] = true;
+                                
+                                // Check if we now have 3 successes - restore to 1 HP
+                                const successCount = newSuccesses.filter(s => s).length;
+                                if (successCount === 3 && onUpdateHitPoints) {
+                                  onUpdateHitPoints(1);
+                                  // Reset death saves
+                                  onUpdateDeathSaves([false, false, false], [false, false, false]);
+                                  alert(`Death Save: ${roll} (Success) - Character stabilized at 1 HP!`);
+                                  return;
+                                }
+                                
+                                onUpdateDeathSaves(newSuccesses, currentFailures);
+                              }
+                            } else {
+                              const nextEmptyIndex = currentFailures.findIndex(failure => !failure);
+                              if (nextEmptyIndex !== -1) {
+                                const newFailures = [...currentFailures];
+                                newFailures[nextEmptyIndex] = true;
+                                onUpdateDeathSaves(currentSuccesses, newFailures);
+                              }
+                            }
+                            
+                            // Show roll result
+                            alert(`Death Save: ${roll} (${isSuccess ? 'Success' : 'Failure'})`);
+                          }
+                        }}
+                        className="bg-[var(--color-warning)] hover:bg-[var(--color-warning)]/80 text-[var(--color-warning-text)] px-3 py-1 rounded text-xs transition-colors"
+                        title="Roll a death saving throw (d20, 10+ succeeds)"
+                      >
+                        Roll Death Save
+                      </button>
+                    </>
+                  )}
                 </div>
               ) : (
                 <div className="text-center bg-[var(--color-card-secondary)] rounded p-3">
