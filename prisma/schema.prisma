@@ -131,6 +131,8 @@ model Character {
   inspiration           Boolean? @default(false)
   conditions            Json?
   racialTraits          Json?
+  kiPoints              Int?     @default(0)
+  usedKiPoints          Int?     @default(0)
   avatarImage           AvatarImage?
 }
 
