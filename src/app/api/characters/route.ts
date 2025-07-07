@@ -181,10 +181,13 @@ export async function POST(request: NextRequest) {
         const weapon = weaponData.weapon;
         const quantity = weaponData.quantity || 1;
         
-        // Check if this is ammunition (has "Ammunition" property and no damage)
+        // Check if this is stackable (ammunition, darts, or other thrown weapons with quantity > 1)
         const hasAmmunitionProperty = weapon.properties?.some((prop: string) => prop.startsWith('Ammunition'));
-        if (hasAmmunitionProperty && weapon.damage === '—') {
-          // For ammunition, add once with the quantity property set
+        const isThrownWeapon = weapon.properties?.some((prop: string) => prop.startsWith('Thrown'));
+        const isStackable = hasAmmunitionProperty || (isThrownWeapon && quantity > 1);
+        
+        if (isStackable) {
+          // For stackable weapons/ammunition, add once with the quantity property set
           weaponsWithEquipped.push({
             ...weapon,
             quantity,
