@@ -68,8 +68,8 @@ export interface Character {
   avatar?: string;
   
   // Combat State
-  deathSaveSuccesses?: number;
-  deathSaveFailures?: number;
+  deathSaveSuccesses?: boolean[];
+  deathSaveFailures?: boolean[];
 }
 
 export interface CharacterCreationData {

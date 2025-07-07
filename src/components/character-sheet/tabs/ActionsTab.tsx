@@ -1,6 +1,6 @@
 "use client";
 
-import { Swords, Sword, Zap, Shield, AlertTriangle } from "lucide-react";
+import { Swords, Sword, Zap, Shield, AlertTriangle, HelpCircle } from "lucide-react";
 import { createCharacterCalculations } from "@/services/character/calculations";
 import { createCharacterEquipment } from "@/services/character/equipment";
 import { getSpellcastingType, canPrepareSpells, getSpellsPreparedCount } from "@/lib/dnd/level-up";
@@ -40,8 +40,8 @@ interface ActionsTabProps {
     bonusActions?: { type: string; name: string }[];
     reactions?: { type: string; name: string }[];
     conditions?: ActiveCondition[];
-    deathSaveSuccesses?: number;
-    deathSaveFailures?: number;
+    deathSaveSuccesses?: boolean[];
+    deathSaveFailures?: boolean[];
     ammunition?: Ammunition[];
   };
   equippedWeapons: (Weapon | MagicalWeapon)[];
@@ -51,7 +51,7 @@ interface ActionsTabProps {
   onOpenSpellPreparation: () => void;
   onUseSpellScroll?: (scrollIndex: number) => void;
   onUpdateConditions?: (conditions: ActiveCondition[]) => void;
-  onUpdateDeathSaves?: (successes: number, failures: number) => void;
+  onUpdateDeathSaves?: (successes: boolean[], failures: boolean[]) => void;
   onUseAmmunition?: (ammunitionName: string) => void;
   onRecoverAmmunition?: (ammunitionName: string) => void;
   onUseSpellSlot?: (level: number) => void;
@@ -59,6 +59,7 @@ interface ActionsTabProps {
   onUpdateHitPoints?: (hitPoints: number) => void;
   onUpdateTemporaryHitPoints?: (temporaryHitPoints: number) => void;
   onSwitchTab?: (tab: "stats" | "actions" | "gear" | "inventory" | "background" | "dice") => void;
+  onRollSavingThrow?: (ability: string, bonus: number) => void;
 }
 
 type InventorySpellScroll = {
@@ -71,6 +72,178 @@ type InventorySpellScroll = {
   requiresAttunement: boolean;
   isAttuned: boolean;
 };
+
+// Helper function to get common uses for each saving throw
+function getSavingThrowUses(abilityName: string): string {
+  const uses: Record<string, string> = {
+    'Strength': 'Grappling, shoving, breaking free, resisting forced movement',
+    'Dexterity': 'Dodging area effects, avoiding traps, resisting being knocked prone',
+    'Constitution': 'Resisting poison, disease, extreme temperatures, maintaining concentration',
+    'Intelligence': 'Resisting illusions, psychic damage, memory manipulation',
+    'Wisdom': 'Resisting charm, fear, possession, mind reading',
+    'Charisma': 'Resisting banishment, possession, magical compulsion'
+  };
+  return uses[abilityName] || 'Various magical and environmental effects';
+}
+
+// Saving Throw Component
+function SavingThrowControls({ 
+  character, 
+  calc, 
+  onRollSavingThrow 
+}: { 
+  character: ActionsTabProps['character']; 
+  calc: ReturnType<typeof createCharacterCalculations>; 
+  onRollSavingThrow?: (ability: string, bonus: number) => void;
+}) {
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+
+  const toggleTooltip = (tooltipId: string) => {
+    setActiveTooltip(activeTooltip === tooltipId ? null : tooltipId);
+  };
+
+  const abilities = [
+    { name: 'Strength', value: character.strength },
+    { name: 'Dexterity', value: character.dexterity },
+    { name: 'Constitution', value: character.constitution },
+    { name: 'Intelligence', value: character.intelligence },
+    { name: 'Wisdom', value: character.wisdom },
+    { name: 'Charisma', value: character.charisma }
+  ];
+
+  return (
+    <div className="bg-[var(--color-card)] rounded-lg p-6">
+      <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+        <Shield className="h-5 w-5 text-[var(--color-success)]" />
+        Saving Throws
+      </h3>
+      
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {abilities.map((ability) => {
+          const isProficient = calc.isSavingThrowProficient(ability.name.toLowerCase());
+          const bonus = calc.getSavingThrowBonus(ability.name.toLowerCase());
+          const modifierText = bonus >= 0 ? `+${bonus}` : `${bonus}`;
+          
+          return (
+            <div 
+              key={ability.name} 
+              className={`text-center p-3 rounded-lg border-2 transition-colors relative cursor-pointer hover:bg-[var(--color-card-secondary)] ${
+                isProficient 
+                  ? 'bg-[var(--color-success)]/20 border-[var(--color-success)]/30' 
+                  : 'bg-[var(--color-card-secondary)] border-[var(--color-border)]'
+              }`}
+              onClick={() => onRollSavingThrow?.(ability.name, bonus)}
+            >
+              <div className="text-sm text-[var(--color-text-secondary)] mb-1">{ability.name}</div>
+              <div className={`text-2xl font-bold ${isProficient ? 'text-[var(--color-success)]' : 'text-[var(--color-text-primary)]'}`}>
+                {modifierText}
+              </div>
+              {isProficient && (
+                <div className="text-xs text-[var(--color-success)] mt-1">Proficient</div>
+              )}
+              <div className="flex items-center justify-center gap-1 mt-1">
+                <span className="text-xs text-[var(--color-warning)]">
+                  {calc.getAbilityModifier(ability.name.toLowerCase())}{isProficient ? ` + ${calc.proficiencyBonus}` : ''}
+                </span>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleTooltip(`saving-throw-${ability.name.toLowerCase()}`);
+                  }}
+                  className="cursor-pointer hover:bg-[var(--color-card-secondary)] rounded p-0.5"
+                >
+                  <HelpCircle className="h-3 w-3 text-[var(--color-warning)]" />
+                </button>
+              </div>
+              
+              {/* Tooltip */}
+              {activeTooltip === `saving-throw-${ability.name.toLowerCase()}` && (
+                <div className="absolute z-50 top-full left-1/2 transform -translate-x-1/2 mt-2 p-3 bg-[var(--color-card)] rounded text-xs text-[var(--color-text-secondary)] border border-[var(--color-border)] w-64 shadow-lg">
+                  <strong className="text-[var(--color-success)]">{ability.name} Saving Throw:</strong><br/>
+                  <strong>Formula:</strong> 1d20 {modifierText}<br/>
+                  <strong>Breakdown:</strong> {ability.name} modifier ({calc.getAbilityModifier(ability.name.toLowerCase()) >= 0 ? '+' : ''}{calc.getAbilityModifier(ability.name.toLowerCase())}){isProficient ? ` + Proficiency (+${calc.proficiencyBonus})` : ''}<br/>
+                  <strong>Common uses:</strong> {getSavingThrowUses(ability.name)}<br/>
+                  <strong>Proficiency:</strong> {isProficient ? 'Yes - from your class' : 'No - only ability modifier'}<br/>
+                  <strong>Click to roll!</strong>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// Compact Saving Throw Component (for HP tile replacement)
+function CompactSavingThrowControls({ 
+  calc, 
+  onRollSavingThrow 
+}: { 
+  calc: ReturnType<typeof createCharacterCalculations>; 
+  onRollSavingThrow?: (ability: string, bonus: number) => void;
+}) {
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+
+  const toggleTooltip = (tooltipId: string) => {
+    setActiveTooltip(activeTooltip === tooltipId ? null : tooltipId);
+  };
+
+  const abilities = [
+    { name: 'STR', fullName: 'Strength' },
+    { name: 'DEX', fullName: 'Dexterity' },
+    { name: 'CON', fullName: 'Constitution' },
+    { name: 'INT', fullName: 'Intelligence' },
+    { name: 'WIS', fullName: 'Wisdom' },
+    { name: 'CHA', fullName: 'Charisma' }
+  ];
+
+  return (
+    <div className="text-center bg-[var(--color-card-secondary)] rounded p-3">
+      <div className="text-lg font-bold text-[var(--color-success)] mb-2">Saving Throws</div>
+      <div className="grid grid-cols-3 gap-2 text-xs">
+        {abilities.map((ability) => {
+          const isProficient = calc.isSavingThrowProficient(ability.fullName.toLowerCase());
+          const bonus = calc.getSavingThrowBonus(ability.fullName.toLowerCase());
+          const modifierText = bonus >= 0 ? `+${bonus}` : `${bonus}`;
+          
+          return (
+            <div 
+              key={ability.name}
+              className={`p-1 rounded cursor-pointer hover:bg-[var(--color-card)] transition-colors relative ${
+                isProficient ? 'bg-[var(--color-success)]/20' : 'bg-[var(--color-card)]'
+              }`}
+              onClick={() => onRollSavingThrow?.(ability.fullName, bonus)}
+              title={`${ability.fullName} saving throw: ${modifierText}`}
+            >
+              <div className="font-medium">{ability.name}</div>
+              <div className={`font-bold ${isProficient ? 'text-[var(--color-success)]' : 'text-[var(--color-text-primary)]'}`}>
+                {modifierText}
+              </div>
+              {isProficient && (
+                <div className="text-[var(--color-success)] text-[10px]">PROF</div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <button 
+        onClick={() => toggleTooltip('saving-throws-help')}
+        className="mt-2 text-xs text-[var(--color-warning)] hover:text-[var(--color-warning-hover)]"
+      >
+        Click to roll saving throws
+      </button>
+      
+      {activeTooltip === 'saving-throws-help' && (
+        <div className="absolute z-50 top-full left-1/2 transform -translate-x-1/2 mt-2 p-3 bg-[var(--color-card)] rounded text-xs text-[var(--color-text-secondary)] border border-[var(--color-border)] w-64 shadow-lg">
+          <strong>Saving Throws:</strong> Click any ability to roll a saving throw.<br/>
+          <strong>Proficient:</strong> Green abilities add your proficiency bonus.<br/>
+          <strong>Formula:</strong> 1d20 + ability modifier + proficiency (if proficient)
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function ActionsTab({ 
   character, 
@@ -88,10 +261,14 @@ export function ActionsTab({
   onRecoverSpellSlot,
   onUpdateHitPoints,
   onUpdateTemporaryHitPoints,
-  onSwitchTab
+  onSwitchTab,
+  onRollSavingThrow
 }: ActionsTabProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _unused = onUpdateDeathSaves;
+  
+  // State to manually show/hide saving throws
+  const [showSavingThrows, setShowSavingThrows] = useState(false);
   
   // Theme hooks
   const conditionSeverityStyles = useConditionSeverityStyles();
@@ -199,55 +376,62 @@ export function ActionsTab({
                 <div className="text-xs text-[var(--color-text-muted)]">Speed</div>
               </div>
               
-              <div className="text-center bg-[var(--color-card-secondary)] rounded p-3">
-                <div className="text-2xl font-bold">
-                  {character.temporaryHitPoints && character.temporaryHitPoints > 0 ? (
-                    <>
-                      <span className="text-[var(--color-accent)]">{character.hitPoints + character.temporaryHitPoints}</span>
-                      <span className="text-[var(--color-danger)]">/{character.maxHitPoints}</span>
-                    </>
-                  ) : (
-                    <span className="text-[var(--color-danger)]">{character.hitPoints}/{character.maxHitPoints}</span>
+              {character.hitPoints === 0 ? (
+                <CompactSavingThrowControls 
+                  calc={calc} 
+                  onRollSavingThrow={onRollSavingThrow}
+                />
+              ) : (
+                <div className="text-center bg-[var(--color-card-secondary)] rounded p-3">
+                  <div className="text-2xl font-bold">
+                    {character.temporaryHitPoints && character.temporaryHitPoints > 0 ? (
+                      <>
+                        <span className="text-[var(--color-accent)]">{character.hitPoints + character.temporaryHitPoints}</span>
+                        <span className="text-[var(--color-danger)]">/{character.maxHitPoints}</span>
+                      </>
+                    ) : (
+                      <span className="text-[var(--color-danger)]">{character.hitPoints}/{character.maxHitPoints}</span>
+                    )}
+                  </div>
+                  <div className="text-xs text-[var(--color-text-muted)]">
+                    {character.temporaryHitPoints && character.temporaryHitPoints > 0 ? `HP (+${character.temporaryHitPoints})` : 'Hit Points'}
+                  </div>
+                  {onUpdateHitPoints && onUpdateTemporaryHitPoints && (
+                    <div className="flex gap-1 mt-2 justify-center">
+                      <button
+                        onClick={() => {
+                          if (character.temporaryHitPoints && character.temporaryHitPoints > 0) {
+                            // Reduce temp HP first
+                            onUpdateTemporaryHitPoints(character.temporaryHitPoints - 1);
+                          } else {
+                            // Then reduce regular HP
+                            onUpdateHitPoints(Math.max(0, character.hitPoints - 1));
+                          }
+                        }}
+                        className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-white px-2 py-1 rounded text-xs transition-colors"
+                        title="Take 1 damage (temp HP first, then regular HP)"
+                      >
+                        -
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (character.hitPoints < character.maxHitPoints) {
+                            // Heal regular HP first
+                            onUpdateHitPoints(Math.min(character.maxHitPoints, character.hitPoints + 1));
+                          } else {
+                            // Then add temp HP
+                            onUpdateTemporaryHitPoints((character.temporaryHitPoints || 0) + 1);
+                          }
+                        }}
+                        className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-white px-2 py-1 rounded text-xs transition-colors"
+                        title="Heal 1 HP (regular HP first, then temp HP)"
+                      >
+                        +
+                      </button>
+                    </div>
                   )}
                 </div>
-                <div className="text-xs text-[var(--color-text-muted)]">
-                  {character.temporaryHitPoints && character.temporaryHitPoints > 0 ? `HP (+${character.temporaryHitPoints})` : 'Hit Points'}
-                </div>
-                {onUpdateHitPoints && onUpdateTemporaryHitPoints && (
-                  <div className="flex gap-1 mt-2 justify-center">
-                    <button
-                      onClick={() => {
-                        if (character.temporaryHitPoints && character.temporaryHitPoints > 0) {
-                          // Reduce temp HP first
-                          onUpdateTemporaryHitPoints(character.temporaryHitPoints - 1);
-                        } else {
-                          // Then reduce regular HP
-                          onUpdateHitPoints(Math.max(0, character.hitPoints - 1));
-                        }
-                      }}
-                      className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-white px-2 py-1 rounded text-xs transition-colors"
-                      title="Take 1 damage (temp HP first, then regular HP)"
-                    >
-                      -
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (character.hitPoints < character.maxHitPoints) {
-                          // Heal regular HP first
-                          onUpdateHitPoints(Math.min(character.maxHitPoints, character.hitPoints + 1));
-                        } else {
-                          // Then add temp HP
-                          onUpdateTemporaryHitPoints((character.temporaryHitPoints || 0) + 1);
-                        }
-                      }}
-                      className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-white px-2 py-1 rounded text-xs transition-colors"
-                      title="Heal 1 HP (regular HP first, then temp HP)"
-                    >
-                      +
-                    </button>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
           </div>
 
@@ -370,6 +554,27 @@ export function ActionsTab({
           </div>
         </div>
 
+        {/* Saving Throws Section - Show when HP is low (but not 0) or manually toggled */}
+        {((character.hitPoints > 0 && character.hitPoints < character.maxHitPoints * 0.25) || showSavingThrows) && (
+          <SavingThrowControls 
+            character={character} 
+            calc={calc} 
+            onRollSavingThrow={onRollSavingThrow}
+          />
+        )}
+        
+        {/* Toggle button for saving throws when not automatically shown */}
+        {character.hitPoints > 0 && character.hitPoints >= character.maxHitPoints * 0.25 && !showSavingThrows && (
+          <div className="text-center">
+            <button
+              onClick={() => setShowSavingThrows(true)}
+              className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 mx-auto"
+            >
+              <Shield className="h-4 w-4" />
+              Show Saving Throws
+            </button>
+          </div>
+        )}
 
         
         {/* Weapon Attacks */}
@@ -954,63 +1159,148 @@ export function ActionsTab({
           </div>
         )}
 
-        {/* Combat Actions Reference */}
+        {/* Enhanced Combat Actions Reference */}
         <div className="bg-[var(--color-card)] rounded-lg p-6">
           <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-6 flex items-center gap-2">
             <Swords className="h-6 w-6" />
             Combat Actions Reference
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Actions */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Standard Actions */}
             <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
-              <h4 className="font-semibold text-[var(--color-text-primary)] mb-3 text-center">Actions</h4>
-              <div className="space-y-2 max-h-32 overflow-y-auto">
-                <div className="text-[var(--color-text-secondary)] text-sm">• Attack</div>
-                <div className="text-[var(--color-text-secondary)] text-sm">• Cast a Spell</div>
-                <div className="text-[var(--color-text-secondary)] text-sm">• Dash</div>
-                <div className="text-[var(--color-text-secondary)] text-sm">• Disengage</div>
-                <div className="text-[var(--color-text-secondary)] text-sm">• Dodge</div>
-                <div className="text-[var(--color-text-secondary)] text-sm">• Help</div>
-                <div className="text-[var(--color-text-secondary)] text-sm">• Hide</div>
-                <div className="text-[var(--color-text-secondary)] text-sm">• Ready</div>
-                <div className="text-[var(--color-text-secondary)] text-sm">• Search</div>
-                <div className="text-[var(--color-text-secondary)] text-sm">• Use an Object</div>
+              <h4 className="font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+                <span className="bg-[var(--color-accent)] text-[var(--color-accent-text)] px-2 py-1 rounded text-xs font-bold">ACTION</span>
+                Standard Actions
+              </h4>
+              <div className="space-y-3 max-h-48 overflow-y-auto">
+                <div className="border-l-4 border-[var(--color-accent)] pl-3">
+                  <div className="text-[var(--color-text-primary)] font-medium text-sm">Attack</div>
+                  <div className="text-[var(--color-text-secondary)] text-xs">Make a melee or ranged attack with a weapon</div>
+                </div>
+                <div className="border-l-4 border-[var(--color-accent)] pl-3">
+                  <div className="text-[var(--color-text-primary)] font-medium text-sm">Cast a Spell</div>
+                  <div className="text-[var(--color-text-secondary)] text-xs">Cast a spell with casting time of 1 action</div>
+                </div>
+                <div className="border-l-4 border-[var(--color-accent)] pl-3">
+                  <div className="text-[var(--color-text-primary)] font-medium text-sm">Dash</div>
+                  <div className="text-[var(--color-text-secondary)] text-xs">Double your speed for this turn</div>
+                </div>
+                <div className="border-l-4 border-[var(--color-accent)] pl-3">
+                  <div className="text-[var(--color-text-primary)] font-medium text-sm">Disengage</div>
+                  <div className="text-[var(--color-text-secondary)] text-xs">Your movement doesn&apos;t provoke opportunity attacks</div>
+                </div>
+                <div className="border-l-4 border-[var(--color-accent)] pl-3">
+                  <div className="text-[var(--color-text-primary)] font-medium text-sm">Dodge</div>
+                  <div className="text-[var(--color-text-secondary)] text-xs">Attackers have disadvantage, you have advantage on Dex saves</div>
+                </div>
+                <div className="border-l-4 border-[var(--color-accent)] pl-3">
+                  <div className="text-[var(--color-text-primary)] font-medium text-sm">Help</div>
+                  <div className="text-[var(--color-text-secondary)] text-xs">Give an ally advantage on their next ability check or attack</div>
+                </div>
+                <div className="border-l-4 border-[var(--color-accent)] pl-3">
+                  <div className="text-[var(--color-text-primary)] font-medium text-sm">Hide</div>
+                  <div className="text-[var(--color-text-secondary)] text-xs">Make a Stealth check to become hidden</div>
+                </div>
+                <div className="border-l-4 border-[var(--color-accent)] pl-3">
+                  <div className="text-[var(--color-text-primary)] font-medium text-sm">Ready</div>
+                  <div className="text-[var(--color-text-secondary)] text-xs">Prepare an action to trigger on a specific condition</div>
+                </div>
+                <div className="border-l-4 border-[var(--color-accent)] pl-3">
+                  <div className="text-[var(--color-text-primary)] font-medium text-sm">Search</div>
+                  <div className="text-[var(--color-text-secondary)] text-xs">Make a Perception or Investigation check to find something</div>
+                </div>
+                <div className="border-l-4 border-[var(--color-accent)] pl-3">
+                  <div className="text-[var(--color-text-primary)] font-medium text-sm">Use an Object</div>
+                  <div className="text-[var(--color-text-secondary)] text-xs">Interact with or use an object in your environment</div>
+                </div>
                 {character.actions?.filter(a => 
                   a && a.type === 'Action' && a.name &&
                   !['Attack', 'Cast a Spell', 'Dash', 'Disengage', 'Dodge', 'Help', 'Hide', 'Ready', 'Search', 'Use an Object'].includes(a.name)
                 ).map((action, i) => (
-                  <div key={i} className="text-[var(--color-accent)] text-sm">• {action.name}</div>
+                  <div key={i} className="border-l-4 border-[var(--color-warning)] pl-3">
+                    <div className="text-[var(--color-warning)] font-medium text-sm">• {action.name}</div>
+                    <div className="text-[var(--color-text-secondary)] text-xs">Class or feature ability</div>
+                  </div>
                 ))}
               </div>
             </div>
 
-            {/* Bonus Actions */}
-            <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
-              <h4 className="font-semibold text-[var(--color-text-primary)] mb-3 text-center">Bonus Actions</h4>
-              <div className="space-y-2 max-h-32 overflow-y-auto">
-                <div className="text-[var(--color-text-secondary)] text-sm">• Off-hand Attack</div>
-                <div className="text-[var(--color-text-secondary)] text-sm">• Two-Weapon Fighting</div>
-                {character.bonusActions?.filter(action => action && action.name).map((action, i) => (
-                  <div key={i} className="text-[var(--color-warning)] text-sm">• {action.name}</div>
-                ))}
+            {/* Bonus Actions & Reactions */}
+            <div className="space-y-4">
+              {/* Bonus Actions */}
+              <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+                <h4 className="font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+                  <span className="bg-[var(--color-warning)] text-[var(--color-warning-text)] px-2 py-1 rounded text-xs font-bold">BONUS</span>
+                  Bonus Actions
+                </h4>
+                <div className="space-y-3 max-h-32 overflow-y-auto">
+                  <div className="border-l-4 border-[var(--color-warning)] pl-3">
+                    <div className="text-[var(--color-text-primary)] font-medium text-sm">Off-hand Attack</div>
+                    <div className="text-[var(--color-text-secondary)] text-xs">Attack with a light weapon in your other hand</div>
+                  </div>
+                  <div className="border-l-4 border-[var(--color-warning)] pl-3">
+                    <div className="text-[var(--color-text-primary)] font-medium text-sm">Two-Weapon Fighting</div>
+                    <div className="text-[var(--color-text-secondary)] text-xs">Add ability modifier to off-hand damage</div>
+                  </div>
+                  {character.bonusActions?.filter(action => action && action.name).map((action, i) => (
+                    <div key={i} className="border-l-4 border-[var(--color-accent)] pl-3">
+                      <div className="text-[var(--color-accent)] font-medium text-sm">• {action.name}</div>
+                      <div className="text-[var(--color-text-secondary)] text-xs">Class or feature ability</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Reactions */}
+              <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+                <h4 className="font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2">
+                  <span className="bg-[var(--color-danger)] text-[var(--color-danger-text)] px-2 py-1 rounded text-xs font-bold">REACTION</span>
+                  Reactions
+                </h4>
+                <div className="space-y-3 max-h-32 overflow-y-auto">
+                  <div className="border-l-4 border-[var(--color-danger)] pl-3">
+                    <div className="text-[var(--color-text-primary)] font-medium text-sm">Opportunity Attack</div>
+                    <div className="text-[var(--color-text-secondary)] text-xs">Attack when enemy leaves your reach</div>
+                  </div>
+                  {character.reactions?.filter(action => action && action.name).map((action, i) => (
+                    <div key={i} className="border-l-4 border-[var(--color-accent)] pl-3">
+                      <div className="text-[var(--color-accent)] font-medium text-sm">• {action.name}</div>
+                      <div className="text-[var(--color-text-secondary)] text-xs">Class or feature ability</div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
+          </div>
 
-            {/* Reactions */}
+          {/* Additional Combat Rules */}
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
-              <h4 className="font-semibold text-[var(--color-text-primary)] mb-3 text-center">Reactions</h4>
-              <div className="space-y-2 max-h-32 overflow-y-auto">
-                <div className="text-[var(--color-text-secondary)] text-sm">• Opportunity Attack</div>
-                {character.reactions?.filter(action => action && action.name).map((action, i) => (
-                  <div key={i} className="text-[var(--color-accent)] text-sm">• {action.name}</div>
-                ))}
+              <h5 className="font-semibold text-[var(--color-text-primary)] mb-2">Movement Rules</h5>
+              <div className="space-y-2 text-xs text-[var(--color-text-secondary)]">
+                <div>• <strong>Difficult Terrain:</strong> Costs 2 feet per 1 foot moved</div>
+                <div>• <strong>Climbing/Swimming:</strong> Costs 2 feet per 1 foot moved</div>
+                <div>• <strong>Standing from Prone:</strong> Costs half your speed</div>
+                <div>• <strong>Mounting/Dismounting:</strong> Costs half your speed</div>
+                <div>• <strong>Jumping:</strong> Long jump = Strength score, High jump = 3 + Strength modifier</div>
+              </div>
+            </div>
+            
+            <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+              <h5 className="font-semibold text-[var(--color-text-primary)] mb-2">Combat Modifiers</h5>
+              <div className="space-y-2 text-xs text-[var(--color-text-secondary)]">
+                <div>• <strong>Advantage:</strong> Roll 2d20, take higher</div>
+                <div>• <strong>Disadvantage:</strong> Roll 2d20, take lower</div>
+                <div>• <strong>Cover:</strong> +2 AC (1/2), +5 AC (3/4), +5 AC + Dex save (full)</div>
+                <div>• <strong>Flanking:</strong> Advantage if ally is opposite side (optional rule)</div>
+                <div>• <strong>Critical Hit:</strong> Natural 20, double damage dice</div>
               </div>
             </div>
           </div>
           
           <div className="mt-4 text-center text-[var(--color-text-muted)] text-sm">
-            Quick reference for available combat actions - no dice rolling here!
+            Comprehensive D&D 5e combat reference - all standard actions and common rules
           </div>
         </div>
 

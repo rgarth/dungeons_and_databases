@@ -16,8 +16,8 @@ interface Character {
   dexterity: number;
   armorClass: number;
   conditions?: ActiveCondition[];
-  deathSaveSuccesses?: number;
-  deathSaveFailures?: number;
+  deathSaveSuccesses?: boolean[];
+  deathSaveFailures?: boolean[];
 }
 
 // Combat state and calculations service
@@ -41,24 +41,28 @@ export class CharacterCombat {
 
   // Is character dead (3 death save failures)
   get isDead(): boolean {
-    return (this.character.deathSaveFailures || 0) >= 3;
+    const failures = this.character.deathSaveFailures || [false, false, false];
+    return failures.filter(Boolean).length >= 3;
   }
 
   // Is character stabilized (3 death save successes)
   get isStabilized(): boolean {
-    return (this.character.deathSaveSuccesses || 0) >= 3;
+    const successes = this.character.deathSaveSuccesses || [false, false, false];
+    return successes.filter(Boolean).length >= 3;
   }
 
   // Death save status when unconscious
   get deathSaveStatus(): { successes: number; failures: number; status: 'dying' | 'stabilized' | 'dead' } {
-    const successes = this.character.deathSaveSuccesses || 0;
-    const failures = this.character.deathSaveFailures || 0;
+    const successes = this.character.deathSaveSuccesses || [false, false, false];
+    const failures = this.character.deathSaveFailures || [false, false, false];
+    const successCount = successes.filter(Boolean).length;
+    const failureCount = failures.filter(Boolean).length;
     
     let status: 'dying' | 'stabilized' | 'dead' = 'dying';
-    if (failures >= 3) status = 'dead';
-    else if (successes >= 3) status = 'stabilized';
+    if (failureCount >= 3) status = 'dead';
+    else if (successCount >= 3) status = 'stabilized';
     
-    return { successes, failures, status };
+    return { successes: successCount, failures: failureCount, status };
   }
 
   // Active conditions

@@ -13,16 +13,16 @@ interface HitPointsDisplayProps {
     maxHitPoints: number;
     temporaryHitPoints?: number;
     constitution: number;
-    deathSaveSuccesses?: number;
-    deathSaveFailures?: number;
+    deathSaveSuccesses?: boolean[];
+    deathSaveFailures?: boolean[];
     spellsPrepared?: Spell[];
   };
   onUpdate: (updates: { 
     hitPoints?: number; 
     temporaryHitPoints?: number; 
     spellsPrepared?: Spell[];
-    deathSaveSuccesses?: number;
-    deathSaveFailures?: number;
+    deathSaveSuccesses?: boolean[];
+    deathSaveFailures?: boolean[];
   }) => void;
 }
 
@@ -50,14 +50,14 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
       const result = damageService.heal(change);
       const updates: { 
         hitPoints: number; 
-        deathSaveSuccesses?: number; 
-        deathSaveFailures?: number; 
+        deathSaveSuccesses?: boolean[]; 
+        deathSaveFailures?: boolean[]; 
       } = { hitPoints: result.newHitPoints };
       
       // Reset death saves if healed from 0 HP
       if (result.deathSaveResets) {
-        updates.deathSaveSuccesses = 0;
-        updates.deathSaveFailures = 0;
+        updates.deathSaveSuccesses = [false, false, false];
+        updates.deathSaveFailures = [false, false, false];
       }
       
       onUpdate(updates);
@@ -104,24 +104,38 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
     alert(result.message);
   };
 
-  const handleDeathSaveChange = (type: 'success' | 'failure', count: number) => {
-    const result = damageService.updateDeathSaves(type, count);
-    
-    // Update death saves
-    onUpdate({ 
-      deathSaveSuccesses: result.newSuccesses,
-      deathSaveFailures: result.newFailures 
+  // Helper to count true values
+  function countTrue(arr: boolean[] = []) {
+    return arr.filter(Boolean).length;
+  }
+
+  const deathSaveSuccesses = character.deathSaveSuccesses || [false, false, false];
+  const deathSaveFailures = character.deathSaveFailures || [false, false, false];
+
+  const handleDeathSaveToggle = (type: 'success' | 'failure', idx: number) => {
+    const newSuccesses = [...deathSaveSuccesses];
+    const newFailures = [...deathSaveFailures];
+    if (type === 'success') {
+      newSuccesses[idx] = !newSuccesses[idx];
+    } else {
+      newFailures[idx] = !newFailures[idx];
+    }
+    onUpdate({
+      deathSaveSuccesses: newSuccesses,
+      deathSaveFailures: newFailures,
     });
-    
-    // Auto-stabilize if needed
-    if (result.autoStabilize) {
+    // Auto-stabilize or death
+    if (countTrue(newSuccesses) >= 3) {
       setTimeout(() => {
-        onUpdate({ 
-          hitPoints: result.autoStabilize!.newHitPoints,
-          deathSaveSuccesses: result.autoStabilize!.newSuccesses,
-          deathSaveFailures: result.autoStabilize!.newFailures 
+        onUpdate({
+          hitPoints: 1,
+          deathSaveSuccesses: [false, false, false],
+          deathSaveFailures: [false, false, false],
         });
       }, 1000);
+    }
+    if (countTrue(newFailures) >= 3) {
+      // Optionally handle death
     }
   };
 
@@ -134,54 +148,61 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
           <div className="text-sm text-muted-foreground mb-3">
             Roll d20: 10+ = Success, 1-9 = Failure
           </div>
+          <div className="text-xs text-muted-foreground mb-3">
+            💡 Click any circle to mark that saving throw. Click a filled circle to remove it and any after it.
+          </div>
         </div>
         
         <div className="flex justify-center gap-8 mb-4">
           {/* Successes */}
           <div className="text-center">
-                      <div className="text-sm font-medium text-[var(--color-success)] mb-2">Successes</div>
-          <div className="flex gap-2">
-            {[1, 2, 3].map(i => (
-              <button
-                key={`success-${i}`}
-                onClick={() => handleDeathSaveChange('success', i)}
-                className={`w-8 h-8 rounded-full border-2 transition-colors ${
-                  (character.deathSaveSuccesses || 0) >= i
-                    ? 'bg-[var(--color-success)] border-[var(--color-success)]'
-                    : 'border-[var(--color-success)] hover:bg-[var(--color-success)]/20'
-                }`}
-                title={`Mark ${i} success${i > 1 ? 'es' : ''}`}
-              />
-            ))}
-          </div>
+            <div className="text-sm font-medium text-[var(--color-success)] mb-2">Successes</div>
+            <div className="flex gap-2">
+              {[0, 1, 2].map(i => {
+                return (
+                  <button
+                    key={`success-${i}`}
+                    onClick={() => handleDeathSaveToggle('success', i)}
+                    className={`w-8 h-8 rounded-full border-2 transition-colors ${
+                      deathSaveSuccesses[i]
+                        ? 'bg-[var(--color-success)] border-[var(--color-success)]'
+                        : 'border-[var(--color-success)] hover:bg-[var(--color-success)]/20'
+                    }`}
+                    title={deathSaveSuccesses[i] ? `Unmark success ${i+1}` : `Mark success ${i+1}`}
+                  />
+                );
+              })}
+            </div>
           </div>
           
           {/* Failures */}
           <div className="text-center">
-                      <div className="text-sm font-medium text-[var(--color-error)] mb-2">Failures</div>
-          <div className="flex gap-2">
-            {[1, 2, 3].map(i => (
-              <button
-                key={`failure-${i}`}
-                onClick={() => handleDeathSaveChange('failure', i)}
-                className={`w-8 h-8 rounded-full border-2 transition-colors ${
-                  (character.deathSaveFailures || 0) >= i
-                    ? 'bg-[var(--color-error)] border-[var(--color-error)]'
-                    : 'border-[var(--color-error)] hover:bg-[var(--color-error)]/20'
-                }`}
-                title={`Mark ${i} failure${i > 1 ? 's' : ''}`}
-              />
-            ))}
-          </div>
+            <div className="text-sm font-medium text-[var(--color-error)] mb-2">Failures</div>
+            <div className="flex gap-2">
+              {[0, 1, 2].map(i => {
+                return (
+                  <button
+                    key={`failure-${i}`}
+                    onClick={() => handleDeathSaveToggle('failure', i)}
+                    className={`w-8 h-8 rounded-full border-2 transition-colors ${
+                      deathSaveFailures[i]
+                        ? 'bg-[var(--color-error)] border-[var(--color-error)]'
+                        : 'border-[var(--color-error)] hover:bg-[var(--color-error)]/20'
+                    }`}
+                    title={deathSaveFailures[i] ? `Unmark failure ${i+1}` : `Mark failure ${i+1}`}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
         
         {/* Status */}
         <div className="text-center mb-4">
-          {(character.deathSaveSuccesses || 0) >= 3 && (
+          {(countTrue(deathSaveSuccesses) >= 3) && (
             <div className="text-[var(--color-success)] font-medium">Stabilized - gaining 1 HP!</div>
           )}
-          {(character.deathSaveFailures || 0) >= 3 && (
+          {(countTrue(deathSaveFailures) >= 3) && (
             <div className="text-[var(--color-error)] font-medium">DEAD</div>
           )}
         </div>
@@ -189,7 +210,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
         {/* Emergency Healing Button */}
         <div className="text-center">
           <button
-            onClick={() => onUpdate({ hitPoints: 1, deathSaveSuccesses: 0, deathSaveFailures: 0 })}
+            onClick={() => onUpdate({ hitPoints: 1, deathSaveSuccesses: [false, false, false], deathSaveFailures: [false, false, false] })}
             className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] text-sm px-4 py-2 rounded font-medium"
           >
             Heal to 1 HP
@@ -236,7 +257,11 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
           className="h-4 rounded-full transition-all duration-300 relative"
           style={{ 
             width: `${effectiveHpPercentage}%`,
-            background: `linear-gradient(to right, var(--color-error), var(--color-success))`
+            background: (
+              effectiveHpPercentage >= 80 ? 'var(--color-hp-healthy)' :
+              effectiveHpPercentage >= 25 ? 'var(--color-hp-warning)' :
+              'var(--color-hp-danger)'
+            )
           }}
         >
           {tempHp > 0 && (

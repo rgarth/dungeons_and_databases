@@ -57,8 +57,8 @@ export interface Character {
   updatedAt: string;
   userId: string;
   isOptimistic?: boolean; // Flag to indicate if this is an optimistic update
-  deathSaveSuccesses?: number;
-  deathSaveFailures?: number;
+  deathSaveSuccesses?: boolean[];
+  deathSaveFailures?: boolean[];
   equippedWeapons?: (Weapon | MagicalWeapon)[];
   inventoryWeapons?: (Weapon | MagicalWeapon)[];
   inventoryArmor?: Armor[];

@@ -97,8 +97,8 @@ model Character {
   gender                String?
   age                   Int?
   temporaryHitPoints    Int?     @default(0)
-  deathSaveSuccesses    Int?     @default(0)
-  deathSaveFailures     Int?     @default(0)
+  deathSaveSuccesses    Json?    @default("[false, false, false]")
+  deathSaveFailures     Json?    @default("[false, false, false]")
   proficiencyBonus      Int?     @default(2)
   skills                Json?
   skillSources          Json?
