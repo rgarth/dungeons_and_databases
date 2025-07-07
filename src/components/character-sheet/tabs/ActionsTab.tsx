@@ -729,6 +729,9 @@ export function ActionsTab({
             {character.spellcastingAbility && character.spellSlots && Object.keys(character.spellSlots).filter(k => k && k !== 'undefined').length > 0 && (
               <div className="mb-6">
                 <h4 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3">Spell Slot Manager</h4>
+                <div className="mb-3 p-2 rounded text-xs text-[var(--color-text-secondary)] bg-[var(--color-card-secondary)]">
+                  💡 <strong>Note:</strong> Cantrips (0-level spells) don&apos;t use spell slots and can be cast unlimited times.
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                   {Object.entries(character.spellSlots)
                     .filter(([level, total]) => level && level !== 'undefined' && total > 0)
