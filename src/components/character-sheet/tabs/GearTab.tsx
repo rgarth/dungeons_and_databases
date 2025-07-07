@@ -528,13 +528,6 @@ export function GearTab({
                             <Package className="h-4 w-4" />
                           </button>
                         )}
-                        <button
-                          onClick={() => onRemoveWeapon(index, true)}
-                          className="p-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded"
-                          title={weapon.stackable ? `Use/Remove ${weapon.name}` : `Remove ${weapon.name}`}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
                       </div>
                     </div>
                   ))}
@@ -569,12 +562,6 @@ export function GearTab({
                           className="p-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-card-tertiary)] rounded"
                         >
                           <Package className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => onRemoveArmor(index, true)}
-                          className="p-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded"
-                        >
-                          <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
@@ -631,12 +618,6 @@ export function GearTab({
                             className="p-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-card-tertiary)] rounded"
                           >
                             <Package className="h-4 w-4" />
-                          </button>
-                          <button
-                            onClick={() => onRemoveMagicalItem(index, true)}
-                            className="p-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded"
-                          >
-                            <Trash2 className="h-4 w-4" />
                           </button>
                         </div>
                       </div>
