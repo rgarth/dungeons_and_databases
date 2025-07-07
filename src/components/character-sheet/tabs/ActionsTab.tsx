@@ -1,6 +1,6 @@
 "use client";
 
-import { Swords, Sword, Zap, Shield, AlertTriangle, HelpCircle } from "lucide-react";
+import { Swords, Sword, Zap, Shield, AlertTriangle } from "lucide-react";
 import { createCharacterCalculations } from "@/services/character/calculations";
 import { createCharacterEquipment } from "@/services/character/equipment";
 import { getSpellcastingType, canPrepareSpells, getSpellsPreparedCount } from "@/lib/dnd/level-up";
@@ -59,7 +59,6 @@ interface ActionsTabProps {
   onUpdateHitPoints?: (hitPoints: number) => void;
   onUpdateTemporaryHitPoints?: (temporaryHitPoints: number) => void;
   onSwitchTab?: (tab: "stats" | "actions" | "gear" | "inventory" | "background" | "dice") => void;
-  onRollSavingThrow?: (ability: string, bonus: number) => void;
 }
 
 type InventorySpellScroll = {
@@ -73,177 +72,9 @@ type InventorySpellScroll = {
   isAttuned: boolean;
 };
 
-// Helper function to get common uses for each saving throw
-function getSavingThrowUses(abilityName: string): string {
-  const uses: Record<string, string> = {
-    'Strength': 'Grappling, shoving, breaking free, resisting forced movement',
-    'Dexterity': 'Dodging area effects, avoiding traps, resisting being knocked prone',
-    'Constitution': 'Resisting poison, disease, extreme temperatures, maintaining concentration',
-    'Intelligence': 'Resisting illusions, psychic damage, memory manipulation',
-    'Wisdom': 'Resisting charm, fear, possession, mind reading',
-    'Charisma': 'Resisting banishment, possession, magical compulsion'
-  };
-  return uses[abilityName] || 'Various magical and environmental effects';
-}
 
-// Saving Throw Component
-function SavingThrowControls({ 
-  character, 
-  calc, 
-  onRollSavingThrow 
-}: { 
-  character: ActionsTabProps['character']; 
-  calc: ReturnType<typeof createCharacterCalculations>; 
-  onRollSavingThrow?: (ability: string, bonus: number) => void;
-}) {
-  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
-  const toggleTooltip = (tooltipId: string) => {
-    setActiveTooltip(activeTooltip === tooltipId ? null : tooltipId);
-  };
 
-  const abilities = [
-    { name: 'Strength', value: character.strength },
-    { name: 'Dexterity', value: character.dexterity },
-    { name: 'Constitution', value: character.constitution },
-    { name: 'Intelligence', value: character.intelligence },
-    { name: 'Wisdom', value: character.wisdom },
-    { name: 'Charisma', value: character.charisma }
-  ];
-
-  return (
-    <div className="bg-[var(--color-card)] rounded-lg p-6">
-      <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
-        <Shield className="h-5 w-5 text-[var(--color-success)]" />
-        Saving Throws
-      </h3>
-      
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {abilities.map((ability) => {
-          const isProficient = calc.isSavingThrowProficient(ability.name.toLowerCase());
-          const bonus = calc.getSavingThrowBonus(ability.name.toLowerCase());
-          const modifierText = bonus >= 0 ? `+${bonus}` : `${bonus}`;
-          
-          return (
-            <div 
-              key={ability.name} 
-              className={`text-center p-3 rounded-lg border-2 transition-colors relative cursor-pointer hover:bg-[var(--color-card-secondary)] ${
-                isProficient 
-                  ? 'bg-[var(--color-success)]/20 border-[var(--color-success)]/30' 
-                  : 'bg-[var(--color-card-secondary)] border-[var(--color-border)]'
-              }`}
-              onClick={() => onRollSavingThrow?.(ability.name, bonus)}
-            >
-              <div className="text-sm text-[var(--color-text-secondary)] mb-1">{ability.name}</div>
-              <div className={`text-2xl font-bold ${isProficient ? 'text-[var(--color-success)]' : 'text-[var(--color-text-primary)]'}`}>
-                {modifierText}
-              </div>
-              {isProficient && (
-                <div className="text-xs text-[var(--color-success)] mt-1">Proficient</div>
-              )}
-              <div className="flex items-center justify-center gap-1 mt-1">
-                <span className="text-xs text-[var(--color-warning)]">
-                  {calc.getAbilityModifier(ability.name.toLowerCase())}{isProficient ? ` + ${calc.proficiencyBonus}` : ''}
-                </span>
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleTooltip(`saving-throw-${ability.name.toLowerCase()}`);
-                  }}
-                  className="cursor-pointer hover:bg-[var(--color-card-secondary)] rounded p-0.5"
-                >
-                  <HelpCircle className="h-3 w-3 text-[var(--color-warning)]" />
-                </button>
-              </div>
-              
-              {/* Tooltip */}
-              {activeTooltip === `saving-throw-${ability.name.toLowerCase()}` && (
-                <div className="absolute z-50 top-full left-1/2 transform -translate-x-1/2 mt-2 p-3 bg-[var(--color-card)] rounded text-xs text-[var(--color-text-secondary)] border border-[var(--color-border)] w-64 shadow-lg">
-                  <strong className="text-[var(--color-success)]">{ability.name} Saving Throw:</strong><br/>
-                  <strong>Formula:</strong> 1d20 {modifierText}<br/>
-                  <strong>Breakdown:</strong> {ability.name} modifier ({calc.getAbilityModifier(ability.name.toLowerCase()) >= 0 ? '+' : ''}{calc.getAbilityModifier(ability.name.toLowerCase())}){isProficient ? ` + Proficiency (+${calc.proficiencyBonus})` : ''}<br/>
-                  <strong>Common uses:</strong> {getSavingThrowUses(ability.name)}<br/>
-                  <strong>Proficiency:</strong> {isProficient ? 'Yes - from your class' : 'No - only ability modifier'}<br/>
-                  <strong>Click to roll!</strong>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// Compact Saving Throw Component (for HP tile replacement)
-function CompactSavingThrowControls({ 
-  calc, 
-  onRollSavingThrow 
-}: { 
-  calc: ReturnType<typeof createCharacterCalculations>; 
-  onRollSavingThrow?: (ability: string, bonus: number) => void;
-}) {
-  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
-
-  const toggleTooltip = (tooltipId: string) => {
-    setActiveTooltip(activeTooltip === tooltipId ? null : tooltipId);
-  };
-
-  const abilities = [
-    { name: 'STR', fullName: 'Strength' },
-    { name: 'DEX', fullName: 'Dexterity' },
-    { name: 'CON', fullName: 'Constitution' },
-    { name: 'INT', fullName: 'Intelligence' },
-    { name: 'WIS', fullName: 'Wisdom' },
-    { name: 'CHA', fullName: 'Charisma' }
-  ];
-
-  return (
-    <div className="text-center bg-[var(--color-card-secondary)] rounded p-3">
-      <div className="text-lg font-bold text-[var(--color-success)] mb-2">Saving Throws</div>
-      <div className="grid grid-cols-3 gap-2 text-xs">
-        {abilities.map((ability) => {
-          const isProficient = calc.isSavingThrowProficient(ability.fullName.toLowerCase());
-          const bonus = calc.getSavingThrowBonus(ability.fullName.toLowerCase());
-          const modifierText = bonus >= 0 ? `+${bonus}` : `${bonus}`;
-          
-          return (
-            <div 
-              key={ability.name}
-              className={`p-1 rounded cursor-pointer hover:bg-[var(--color-card)] transition-colors relative ${
-                isProficient ? 'bg-[var(--color-success)]/20' : 'bg-[var(--color-card)]'
-              }`}
-              onClick={() => onRollSavingThrow?.(ability.fullName, bonus)}
-              title={`${ability.fullName} saving throw: ${modifierText}`}
-            >
-              <div className="font-medium">{ability.name}</div>
-              <div className={`font-bold ${isProficient ? 'text-[var(--color-success)]' : 'text-[var(--color-text-primary)]'}`}>
-                {modifierText}
-              </div>
-              {isProficient && (
-                <div className="text-[var(--color-success)] text-[10px]">PROF</div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-      <button 
-        onClick={() => toggleTooltip('saving-throws-help')}
-        className="mt-2 text-xs text-[var(--color-warning)] hover:text-[var(--color-warning-hover)]"
-      >
-        Click to roll saving throws
-      </button>
-      
-      {activeTooltip === 'saving-throws-help' && (
-        <div className="absolute z-50 top-full left-1/2 transform -translate-x-1/2 mt-2 p-3 bg-[var(--color-card)] rounded text-xs text-[var(--color-text-secondary)] border border-[var(--color-border)] w-64 shadow-lg">
-          <strong>Saving Throws:</strong> Click any ability to roll a saving throw.<br/>
-          <strong>Proficient:</strong> Green abilities add your proficiency bonus.<br/>
-          <strong>Formula:</strong> 1d20 + ability modifier + proficiency (if proficient)
-        </div>
-      )}
-    </div>
-  );
-}
 
 export function ActionsTab({ 
   character, 
@@ -261,14 +92,12 @@ export function ActionsTab({
   onRecoverSpellSlot,
   onUpdateHitPoints,
   onUpdateTemporaryHitPoints,
-  onSwitchTab,
-  onRollSavingThrow
+  onSwitchTab
 }: ActionsTabProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _unused = onUpdateDeathSaves;
   
-  // State to manually show/hide saving throws
-  const [showSavingThrows, setShowSavingThrows] = useState(false);
+
   
   // Theme hooks
   const conditionSeverityStyles = useConditionSeverityStyles();
@@ -377,10 +206,10 @@ export function ActionsTab({
               </div>
               
               {character.hitPoints === 0 ? (
-                <CompactSavingThrowControls 
-                  calc={calc} 
-                  onRollSavingThrow={onRollSavingThrow}
-                />
+                <div className="text-center bg-[var(--color-card-secondary)] rounded p-3">
+                  <div className="text-lg font-bold text-[var(--color-danger)] mb-2">Unconscious</div>
+                  <div className="text-xs text-[var(--color-text-muted)]">Make death saving throws</div>
+                </div>
               ) : (
                 <div className="text-center bg-[var(--color-card-secondary)] rounded p-3">
                   <div className="text-2xl font-bold">
@@ -554,27 +383,7 @@ export function ActionsTab({
           </div>
         </div>
 
-        {/* Saving Throws Section - Show when HP is low (but not 0) or manually toggled */}
-        {((character.hitPoints > 0 && character.hitPoints < character.maxHitPoints * 0.25) || showSavingThrows) && (
-          <SavingThrowControls 
-            character={character} 
-            calc={calc} 
-            onRollSavingThrow={onRollSavingThrow}
-          />
-        )}
-        
-        {/* Toggle button for saving throws when not automatically shown */}
-        {character.hitPoints > 0 && character.hitPoints >= character.maxHitPoints * 0.25 && !showSavingThrows && (
-          <div className="text-center">
-            <button
-              onClick={() => setShowSavingThrows(true)}
-              className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 mx-auto"
-            >
-              <Shield className="h-4 w-4" />
-              Show Saving Throws
-            </button>
-          </div>
-        )}
+
 
         
         {/* Weapon Attacks */}

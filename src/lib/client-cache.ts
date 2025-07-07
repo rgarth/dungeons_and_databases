@@ -1,22 +1,134 @@
 // Client-side cache for D&D data
 // This cache is built on first load and persists during the session
 
+interface Race {
+  name: string;
+  size: string;
+  speed: number;
+  traits: string[];
+  abilityScoreIncrease: string;
+  languages: string[];
+  description: string;
+}
+
+interface Class {
+  name: string;
+  hitDie: number;
+  startingGoldFormula?: string;
+  description?: string;
+}
+
+interface Background {
+  name: string;
+  description: string;
+  skillProficiencies: string[];
+  startingGold?: number;
+  languages?: string[];
+}
+
+interface Alignment {
+  name: string;
+  description?: string;
+}
+
+interface EquipmentPack {
+  id: string;
+  name: string;
+  description: string;
+  cost: string;
+  items: Array<{
+    name: string;
+    quantity: number;
+    type: string;
+    cost: string;
+    weight: number;
+    description: string | null;
+  }>;
+}
+
+interface Armor {
+  name: string;
+  type: string;
+  armorClass: number;
+  cost: string;
+  weight: number;
+  description?: string;
+}
+
+interface Weapon {
+  name: string;
+  type: string;
+  damage: string;
+  cost: string;
+  weight: number;
+  description?: string;
+}
+
+interface MagicalItem {
+  id: number;
+  name: string;
+  type: string;
+  rarity: string;
+  attunement: boolean;
+  description?: string;
+  magicalProperties?: string;
+  cost?: number;
+  weight?: number;
+}
+
+interface Treasure {
+  name: string;
+  type: string;
+  description?: string;
+}
+
+interface Subrace {
+  name: string;
+  raceName: string;
+  description: string;
+  abilityScoreIncrease: string;
+  traits: string[];
+  languages?: string[] | null;
+}
+
+interface Language {
+  name: string;
+  description?: string;
+}
+
+interface Spell {
+  name: string;
+  level: number;
+  school: string;
+  castingTime: string;
+  range: string;
+  components: string[];
+  duration: string;
+  description: string;
+}
+
+interface SpellLimits {
+  maxCantrips: number;
+  maxSpells: number;
+  spellSlots: Record<number, number>;
+}
+
 interface CacheData {
-  races: any[];
-  classes: any[];
-  backgrounds: any[];
-  alignments: any[];
-  equipmentPacks: any[];
-  armor: any[];
-  weapons: any[];
-  magicalItems: any[];
-  treasures: any[];
-  subraces: any[];
-  languages: any[];
-  weaponSuggestions: Record<string, any[]>; // Class name -> weapon suggestions
-  armorSuggestions: Record<string, any[]>; // Class name -> armor suggestions
-  spells: any[]; // All spells
-  spellLimits: Record<string, any>; // Class name -> spell limits for level 1
+  races: Race[];
+  classes: Class[];
+  backgrounds: Background[];
+  alignments: Alignment[];
+  equipmentPacks: EquipmentPack[];
+  armor: Armor[];
+  weapons: Weapon[];
+  magicalItems: MagicalItem[];
+  treasures: Treasure[];
+  subraces: Subrace[];
+  languages: Language[];
+  weaponSuggestions: Record<string, Weapon[]>; // Class name -> weapon suggestions
+  armorSuggestions: Record<string, Armor[]>; // Class name -> armor suggestions
+  spells: Spell[]; // All spells
+  spellLimits: Record<string, SpellLimits>; // Class name -> spell limits for level 1
 }
 
 class ClientCache {
@@ -71,11 +183,11 @@ class ClientCache {
       ]);
 
       // Pre-load weapon and armor suggestions for all classes
-      const weaponSuggestions: Record<string, any[]> = {};
-      const armorSuggestions: Record<string, any[]> = {};
-      const spellLimits: Record<string, any> = {};
+      const weaponSuggestions: Record<string, Weapon[]> = {};
+      const armorSuggestions: Record<string, Armor[]> = {};
+      const spellLimits: Record<string, SpellLimits> = {};
       
-      const classNames = classes.map((c: any) => c.name);
+      const classNames = classes.map((c: Class) => c.name);
       
       // Fetch all weapon, armor suggestions, and spell limits in parallel
       const [weaponSuggestionPromises, armorSuggestionPromises, spellLimitPromises] = await Promise.all([
@@ -220,7 +332,7 @@ class ClientCache {
     if (!raceName) {
       return allSubraces;
     }
-    return allSubraces.filter((subrace: any) => 
+    return allSubraces.filter((subrace: Subrace) => 
       subrace.raceName?.toLowerCase() === raceName.toLowerCase()
     );
   }

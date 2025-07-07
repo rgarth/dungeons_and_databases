@@ -13,7 +13,7 @@ import { WeaponSelector } from "../../shared/WeaponSelector";
 import { CustomWeaponCreator } from "../components/CustomWeaponCreator";
 import { findSpellByName, getSpellsByClass } from "@/lib/dnd/spell-data-helper";
 import { getSpellcastingType } from "@/lib/dnd/level-up";
-import { useStatusStyles, useOpacityStyles, useBorderLeftStyles, useInteractiveButtonStyles } from "@/hooks/use-theme";
+import { useStatusStyles, useInteractiveButtonStyles } from "@/hooks/use-theme";
 import { getRarityColor } from "@/lib/theme-utils";
 
 interface DatabaseMagicalItem {
@@ -161,8 +161,6 @@ export function GearTab({
 
   // Theme hooks
   const statusStyles = useStatusStyles();
-  const opacityStyles = useOpacityStyles();
-  const borderLeftStyles = useBorderLeftStyles();
   const interactiveButtonStyles = useInteractiveButtonStyles();
 
   // Load magical items data from database
