@@ -158,8 +158,8 @@ export const weaponsData = [
     weight: 0.25,
     properties: "Finesse, Thrown (range 20/60)",
     description: "A small, pointed missile designed for throwing.",
-    ammunitionTypeName: null,
-    suggestedQuantity: null
+    ammunitionTypeName: "Darts",
+    suggestedQuantity: 10
   },
   {
     name: "Shortbow",

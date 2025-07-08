@@ -719,7 +719,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
   // Add a ref to track if ammunition has been processed for current weapons
   const processedAmmunitionRef = useRef<string>('');
 
-  // Automatically add ammunition for ranged weapons
+  // Automatically add ammunition for ranged weapons and class-specific ammunition
   useEffect(() => {
     const processAmmunition = async () => {
       // Create a hash of the current weapons to check if we've already processed them
@@ -736,17 +736,43 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
       const autoAmmunition: Ammunition[] = [];
       const processedAmmoTypes = new Set<number>();
       
-      // Process each selected weapon to find ammunition needs
+      // First, add class-specific ammunition from weapon suggestions
+      if (characterClass && creationOptions?.weaponSuggestions) {
+        try {
+          const response = await fetch(`/api/weapon-suggestions?className=${encodeURIComponent(characterClass)}`);
+          if (response.ok) {
+            const weaponSuggestions = await response.json();
+            if (weaponSuggestions.ammunition) {
+              for (const ammoSuggestion of weaponSuggestions.ammunition) {
+                const ammo: Ammunition = {
+                  name: ammoSuggestion.ammunitionName,
+                  quantity: ammoSuggestion.quantity,
+                  compatibleWeapons: [ammoSuggestion.ammunitionName], // Basic compatibility
+                  weight: 0.05, // Default weight
+                  cost: '5 cp each' // Default cost
+                };
+                
+                autoAmmunition.push(ammo);
+                console.log(`✅ Auto-added ${ammo.quantity} ${ammo.name}s from class suggestions`);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Failed to fetch weapon suggestions for ammunition:', error);
+        }
+      }
+      
+      // Then process each selected weapon to find additional ammunition needs
       for (const weaponSelection of selectedWeapons) {
         const weapon = weaponSelection.weapon;
         
         // Check if weapon needs ammunition
-        // Check if weapon needs ammunition (look for properties that start with "Ammunition")
         const hasAmmunitionProperty = weapon.properties.some(prop => prop.startsWith('Ammunition'));
+        const isDart = weapon.name === 'Dart';
         
-        console.log(`🔍 AMMO CHECK: ${weapon.name} - properties: ${JSON.stringify(weapon.properties)}, hasAmmunition: ${hasAmmunitionProperty}`);
+        console.log(`🔍 AMMO CHECK: ${weapon.name} - properties: ${JSON.stringify(weapon.properties)}, hasAmmunition: ${hasAmmunitionProperty}, isDart: ${isDart}`);
         
-        if (hasAmmunitionProperty) {
+        if (hasAmmunitionProperty || isDart) {
           // Use the weapon's ammunition data if available
           if (weapon.ammunitionTypeId && weapon.suggestedQuantity && !processedAmmoTypes.has(weapon.ammunitionTypeId)) {
             processedAmmoTypes.add(weapon.ammunitionTypeId);
@@ -774,7 +800,19 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
             } catch (error) {
               console.error('Failed to fetch ammunition data:', error);
             }
-          } else if (!weapon.ammunitionTypeId) {
+          } else if (isDart && weapon.suggestedQuantity) {
+            // Special case for darts - they don't have ammunitionTypeId but should get darts ammunition
+            const ammo: Ammunition = {
+              name: 'Darts',
+              quantity: weapon.suggestedQuantity,
+              compatibleWeapons: [weapon.name],
+              weight: 0.05, // Default weight for darts
+              cost: '5 cp each' // Default cost for darts
+            };
+            
+            autoAmmunition.push(ammo);
+            console.log(`✅ Auto-added ${ammo.quantity} Darts for ${weapon.name}`);
+          } else if (!weapon.ammunitionTypeId && !isDart) {
             // Fallback for weapons without ammunition data
             console.warn(`⚠️ Weapon ${weapon.name} has Ammunition property but no ammunitionTypeId defined`);
           }
@@ -795,7 +833,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     };
     
     processAmmunition();
-  }, [selectedWeapons, allWeapons]);
+  }, [selectedWeapons, allWeapons, characterClass, creationOptions?.weaponSuggestions]);
 
   const handleStatMethodChange = (method: StatMethod) => {
     setStatMethod(method);

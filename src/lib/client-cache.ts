@@ -58,10 +58,16 @@ interface Armor {
 interface Weapon {
   name: string;
   type: string;
+  category: string;
   damage: string;
+  damageType: string;
+  properties: string;
   cost: string;
   weight: number;
   description?: string;
+  stackable?: boolean;
+  ammunitionTypeId?: number | null;
+  suggestedQuantity?: number | null;
 }
 
 interface MagicalItem {
