@@ -18,25 +18,5 @@ export const ammunitionSuggestionsData = [
   {
     name: "Darts",
     description: "Lightweight throwing darts"
-  },
-  {
-    name: "Javelins",
-    description: "Heavy throwing spears"
-  },
-  {
-    name: "Hand Axes",
-    description: "Light throwing axes"
-  },
-  {
-    name: "Light Hammers",
-    description: "Small throwing hammers"
-  },
-  {
-    name: "Spears",
-    description: "Versatile throwing weapons"
-  },
-  {
-    name: "Tridents",
-    description: "Three-pronged throwing weapons"
   }
 ]; 

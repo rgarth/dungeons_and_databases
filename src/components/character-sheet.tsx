@@ -124,7 +124,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       languages: character.languages,
       languageSources: character.languageSources,
       skills: character.skills,
-      skillSources: character.skillSources
+      skillSources: character.skillSources,
+      ammunition: character.ammunition
     });
     setCurrentCharacter(character);
     setCopperPieces(character.copperPieces || 0);
@@ -229,8 +230,10 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   
 
   
-  // Derived state from character weapons using equipped boolean
-  const equippedWeapons = currentCharacter.weapons?.filter(weapon => weapon.equipped) || [];
+  // Derived state from character weapons using equipped boolean - include stackable weapons for Actions tab
+  const equippedWeapons = currentCharacter.weapons?.filter(weapon => 
+    weapon.equipped || (weapon.stackable && weapon.quantity && weapon.quantity > 0)
+  ) || [];
   const inventoryWeapons = currentCharacter.weapons?.filter(weapon => !weapon.equipped) || [];
   
   // Derived state from character armor using equipped boolean  
@@ -338,8 +341,15 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     weapons.forEach(weapon => {
       console.log(`🔍 WEAPON DETECTION: "${weapon.name}" - damage: "${weapon.damage}", properties: ${JSON.stringify(weapon.properties)}`);
       
+      // Convert properties to array if it's a string
+      const propertiesArray = Array.isArray(weapon.properties) 
+        ? weapon.properties 
+        : (typeof weapon.properties === 'string' && weapon.properties)
+          ? (weapon.properties as string).split(',').map((p: string) => p.trim()).filter(Boolean)
+          : [];
+      
       // Check if this is actually ammunition (has "Ammunition" property and no damage)
-      const hasAmmunitionProperty = weapon.properties.some((prop: string) => prop.startsWith('Ammunition'));
+      const hasAmmunitionProperty = propertiesArray.some((prop: string) => prop.startsWith('Ammunition'));
       if (hasAmmunitionProperty && weapon.damage === '—') {
         console.log(`✅ DETECTED AS AMMUNITION: ${weapon.name}`);
         // This is ammunition, not a weapon - use the weapon's quantity property
@@ -1111,18 +1121,65 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     const currentAmmunition = currentCharacter.ammunition || [];
     const ammoIndex = currentAmmunition.findIndex(a => a.name === ammunitionName);
     
-    if (ammoIndex === -1) {
-      return;
-    }
-
     const updatedAmmunition = [...currentAmmunition];
-    updatedAmmunition[ammoIndex] = {
-      ...updatedAmmunition[ammoIndex],
-      quantity: updatedAmmunition[ammoIndex].quantity + 1
-    };
+    
+    if (ammoIndex === -1) {
+      // Create new ammunition entry if it doesn't exist
+      const newAmmo: Ammunition = {
+        name: ammunitionName,
+        quantity: 1,
+        compatibleWeapons: [ammunitionName], // Basic compatibility
+        weight: 0.05, // Default weight
+        cost: '5 cp each' // Default cost
+      };
+      updatedAmmunition.push(newAmmo);
+    } else {
+      // Update existing ammunition
+      updatedAmmunition[ammoIndex] = {
+        ...updatedAmmunition[ammoIndex],
+        quantity: updatedAmmunition[ammoIndex].quantity + 1
+      };
+    }
     
     setCurrentCharacter(prev => ({ ...prev, ammunition: updatedAmmunition }));
     updateCharacter({ ammunition: updatedAmmunition });
+  };
+
+  const handleUseStackableWeapon = (weaponName: string) => {
+    const currentWeapons = currentCharacter.weapons || [];
+    const weaponIndex = currentWeapons.findIndex(w => w.name === weaponName && w.stackable);
+    
+    if (weaponIndex === -1 || !currentWeapons[weaponIndex].quantity || currentWeapons[weaponIndex].quantity <= 0) {
+      return;
+    }
+
+    const updatedWeapons = [...currentWeapons];
+    const currentQuantity = updatedWeapons[weaponIndex].quantity || 0;
+    updatedWeapons[weaponIndex] = {
+      ...updatedWeapons[weaponIndex],
+      quantity: currentQuantity - 1
+    };
+    
+    setCurrentCharacter(prev => ({ ...prev, weapons: updatedWeapons }));
+    updateCharacter({ weapons: updatedWeapons });
+  };
+
+  const handleRecoverStackableWeapon = (weaponName: string) => {
+    const currentWeapons = currentCharacter.weapons || [];
+    const weaponIndex = currentWeapons.findIndex(w => w.name === weaponName && w.stackable);
+    
+    if (weaponIndex === -1) {
+      return;
+    }
+
+    const updatedWeapons = [...currentWeapons];
+    updatedWeapons[weaponIndex] = {
+      ...updatedWeapons[weaponIndex],
+      quantity: (updatedWeapons[weaponIndex].quantity || 0) + 1
+    };
+    
+    setCurrentCharacter(prev => ({ ...prev, weapons: updatedWeapons }));
+    updateCharacter({ weapons: updatedWeapons });
   };
 
   // Spell slot management functions
@@ -1398,6 +1455,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onUpdateDeathSaves={handleUpdateDeathSaves}
                 onUseAmmunition={handleUseAmmunition}
                 onRecoverAmmunition={handleRecoverAmmunition}
+                onUseStackableWeapon={handleUseStackableWeapon}
+                onRecoverStackableWeapon={handleRecoverStackableWeapon}
                 onUseSpellSlot={handleUseSpellSlot}
                 onRecoverSpellSlot={handleRecoverSpellSlot}
                 onUpdateHitPoints={handleUpdateHitPoints}

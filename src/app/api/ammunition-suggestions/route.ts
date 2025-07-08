@@ -5,8 +5,15 @@ export async function GET() {
   try {
     const ammunitionSuggestions = dndDataService.getAmmunitionSuggestions();
     
+    // Add IDs to match the weapons API mapping
+    const ammunitionWithIds = ammunitionSuggestions.map((ammo, index) => ({
+      id: index + 1, // Use 1-based IDs to match weapons API
+      name: ammo.name,
+      description: ammo.description
+    }));
+    
     // Add caching headers for better performance
-    const response = NextResponse.json(ammunitionSuggestions);
+    const response = NextResponse.json(ammunitionWithIds);
     response.headers.set('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
     response.headers.set('ETag', `ammunition-${Date.now()}`); // Simple ETag for cache validation
     

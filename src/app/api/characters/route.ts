@@ -181,26 +181,12 @@ export async function POST(request: NextRequest) {
         const weapon = weaponData.weapon;
         const quantity = weaponData.quantity || 1;
         
-        // Check if this is stackable (ammunition, darts, or other thrown weapons with quantity > 1)
-        const hasAmmunitionProperty = weapon.properties?.some((prop: string) => prop.startsWith('Ammunition'));
-        const isThrownWeapon = weapon.properties?.some((prop: string) => prop.startsWith('Thrown'));
-        const isStackable = hasAmmunitionProperty || (isThrownWeapon && quantity > 1);
-        
-        if (isStackable) {
-          // For stackable weapons/ammunition, add once with the quantity property set
+        // All weapons are now added individually (ammunition is handled separately)
+        for (let i = 0; i < quantity; i++) {
           weaponsWithEquipped.push({
             ...weapon,
-            quantity,
             equipped: false
           });
-        } else {
-          // For regular weapons, add individual copies (normal weapon behavior)
-          for (let i = 0; i < quantity; i++) {
-            weaponsWithEquipped.push({
-              ...weapon,
-              equipped: false
-            });
-          }
         }
       } else if (weaponData.name && weaponData.type && weaponData.category && weaponData.damage && weaponData.damageType && weaponData.properties && weaponData.weight && weaponData.cost) {
         // Handle direct weapon structure - only if all required properties are present
