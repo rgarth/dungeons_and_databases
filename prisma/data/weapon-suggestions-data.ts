@@ -57,10 +57,11 @@ export const classWeaponSuggestionsData: ClassWeaponSuggestionsData[] = [
     suggestions: [
       { weaponName: "Longsword", quantity: 1, reason: "Versatile primary weapon" },
       { weaponName: "Shield", quantity: 1, reason: "Classic sword and board" },
-      { weaponName: "Light Crossbow", quantity: 1, reason: "Ranged backup option" }
+      { weaponName: "Light Crossbow", quantity: 1, reason: "Ranged backup option" },
+      { weaponName: "Handaxe", quantity: 2, reason: "Throwing weapons" }
     ],
     ammunition: [
-      { ammunitionName: "Crossbow Bolt", quantity: 20, reason: "For light crossbow" }
+      { ammunitionName: "Crossbow Bolts", quantity: 20, reason: "For light crossbow" }
     ],
     phbDescription: "(a) chain mail or (b) leather armor, longbow, and 20 arrows, (a) a martial weapon and a shield or (b) two martial weapons, (a) a light crossbow and 20 bolts or (b) two handaxes, (a) a dungeoneer's pack or (b) an explorer's pack"
   },
@@ -68,7 +69,7 @@ export const classWeaponSuggestionsData: ClassWeaponSuggestionsData[] = [
     className: "Monk",
     suggestions: [
       { weaponName: "Shortsword", quantity: 1, reason: "Monk weapon" },
-      { weaponName: "Dart", quantity: 10, reason: "Monk ranged weapon" }
+      { weaponName: "Dart", quantity: 10, reason: "Throwing weapons" }
     ],
     phbDescription: "(a) a shortsword or (b) any simple weapon, (a) a dungeoneer's pack or (b) an explorer's pack, 10 darts"
   },
@@ -77,7 +78,7 @@ export const classWeaponSuggestionsData: ClassWeaponSuggestionsData[] = [
     suggestions: [
       { weaponName: "Longsword", quantity: 1, reason: "Classic paladin weapon" },
       { weaponName: "Shield", quantity: 1, reason: "Divine protection" },
-      { weaponName: "Javelin", quantity: 5, reason: "Throwing weapons" }
+      { weaponName: "Javelin", quantity: 2, reason: "Throwing weapons" }
     ],
     phbDescription: "(a) a martial weapon and a shield or (b) two martial weapons, (a) five javelins or (b) any simple melee weapon, (a) a priest's pack or (b) an explorer's pack, Chain mail and a holy symbol"
   },
