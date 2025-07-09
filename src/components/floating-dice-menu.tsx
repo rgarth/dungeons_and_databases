@@ -263,6 +263,55 @@ function SimpleDiceSelector({ onRoll }: { onRoll: (notation: string, color: stri
   });
   const [diceColor, setDiceColor] = useState('#360070');
 
+  // Get initial dice color from cookie or theme default
+  const getInitialDiceColor = () => {
+    try {
+      // Check for saved color preference in cookie
+      const savedColor = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('diceColor='))
+        ?.split('=')[1];
+      
+      if (savedColor) {
+        return savedColor;
+      }
+      
+      // Get the computed value of the CSS variable for default dice color
+      const defaultColor = getComputedStyle(document.documentElement)
+        .getPropertyValue('--color-dice-default')
+        .trim();
+      
+      return defaultColor || '#dc2626'; // Fallback to red if CSS variable not found
+    } catch {
+      return '#dc2626'; // Fallback to red
+    }
+  };
+
+  // Save user's die color preference to cookie when it changes
+  const saveUserPreference = (color: string) => {
+    try {
+      // Set cookie to expire in 1 year
+      const expires = new Date();
+      expires.setFullYear(expires.getFullYear() + 1);
+      document.cookie = `diceColor=${color}; expires=${expires.toUTCString()}; path=/`;
+      document.cookie = `diceColorCustomized=true; expires=${expires.toUTCString()}; path=/`;
+    } catch {
+      // Continue even if cookie saving fails
+    }
+  };
+
+  // Initialize with cookie value or theme default
+  useEffect(() => {
+    const initialColor = getInitialDiceColor();
+    setDiceColor(initialColor);
+  }, []);
+
+  // Update dice color and save to cookie
+  const updateDiceColor = (color: string) => {
+    setDiceColor(color);
+    saveUserPreference(color);
+  };
+
   const diceTypes = [
     { key: 'd4' as const, sides: 4 },
     { key: 'd6' as const, sides: 6 },
@@ -387,7 +436,7 @@ function SimpleDiceSelector({ onRoll }: { onRoll: (notation: string, color: stri
       {/* Color Wheel */}
       <div className="flex flex-col items-center space-y-2">
         <span className="text-xs font-medium" style={{ color: 'var(--color-text-secondary)' }}>Color</span>
-        <ColorWheel currentColor={diceColor} onColorChange={setDiceColor} />
+        <ColorWheel currentColor={diceColor} onColorChange={updateDiceColor} />
       </div>
 
       {/* Roll and Clear Buttons */}
