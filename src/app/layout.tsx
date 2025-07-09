@@ -8,6 +8,7 @@ import { ClientCacheProvider } from "@/components/providers/client-cache-provide
 import { ThemeProvider } from "@/lib/theme";
 import { Providers } from "./providers";
 import { AuthGate } from "@/components/auth-gate";
+import FloatingDiceMenu from "@/components/floating-dice-menu";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -46,6 +47,7 @@ export default function RootLayout({
                   <ClientCacheProvider>
                     <main className="min-h-screen" style={{ background: 'var(--color-surface)' }}>
                       {children}
+                      <FloatingDiceMenu />
                     </main>
                   </ClientCacheProvider>
                 </DndDataProvider>
