@@ -53,7 +53,7 @@ export default function FullscreenDiceOverlay({
 }: FullscreenDiceOverlayProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const diceBoxRef = useRef<DiceBox | null>(null);
-  const [isRolling, setIsRolling] = useState(false);
+
 
 
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
@@ -128,7 +128,6 @@ export default function FullscreenDiceOverlay({
   // Reset state when overlay becomes visible
   useEffect(() => {
     if (isVisible) {
-      setIsRolling(false);
       diceBoxRef.current = null; // Clear any existing dice box
     }
   }, [isVisible]);
@@ -182,7 +181,6 @@ export default function FullscreenDiceOverlay({
         diceBoxRef.current.setDice(diceNotation);
         
         // Start the roll
-        setIsRolling(true);
         diceBoxRef.current.start_throw(
           // beforeRoll callback
           () => {
@@ -190,8 +188,6 @@ export default function FullscreenDiceOverlay({
           },
           // afterRoll callback
           (notation: DiceResult) => {
-            setIsRolling(false);
-            
             onRollComplete(notation);
             
             // Auto-close after a longer delay to show results
@@ -250,27 +246,7 @@ export default function FullscreenDiceOverlay({
         }}
       />
       
-      {/* Loading indicator - only show briefly */}
-      {isRolling && (
-        <div 
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-lg px-4 py-2 shadow-lg pointer-events-auto"
-          style={{
-            backgroundColor: 'var(--color-card)',
-            color: 'var(--color-text-primary)',
-            border: '1px solid var(--color-border)'
-          }}
-        >
-          <div className="flex items-center space-x-2">
-            <div 
-              className="animate-spin rounded-full h-4 w-4 border-b-2"
-              style={{ borderColor: 'var(--color-accent)' }}
-            ></div>
-            <span className="text-sm font-medium">
-              Rolling {diceNotation}...
-            </span>
-          </div>
-        </div>
-      )}
+
 
 
       
