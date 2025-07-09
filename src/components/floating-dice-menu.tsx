@@ -239,8 +239,7 @@ function ColorWheel({ currentColor, onColorChange }: {
                 onChange={handleBrightnessChange}
                 className="w-full h-2 rounded-lg appearance-none cursor-pointer"
                 style={{
-                  background: `linear-gradient(to right, #000, ${currentColor}, #fff)`,
-                  backgroundColor: 'var(--color-card-secondary)'
+                  background: `linear-gradient(to right, #000, ${currentColor}, #fff)`
                 }}
               />
             </div>
@@ -252,7 +251,15 @@ function ColorWheel({ currentColor, onColorChange }: {
 }
 
 // Simple dice selector component for floating menu
-function SimpleDiceSelector({ onRoll }: { onRoll: (notation: string, color: string) => void }) {
+function SimpleDiceSelector({ 
+  onRoll, 
+  diceColor, 
+  setDiceColor 
+}: { 
+  onRoll: (notation: string, color: string) => void;
+  diceColor: string;
+  setDiceColor: (color: string) => void;
+}) {
   const [diceCounts, setDiceCounts] = useState({
     d4: 0,
     d6: 0,
@@ -261,31 +268,6 @@ function SimpleDiceSelector({ onRoll }: { onRoll: (notation: string, color: stri
     d12: 0,
     d20: 0,
   });
-  const [diceColor, setDiceColor] = useState('#360070');
-
-  // Get initial dice color from cookie or theme default
-  const getInitialDiceColor = () => {
-    try {
-      // Check for saved color preference in cookie
-      const savedColor = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('diceColor='))
-        ?.split('=')[1];
-      
-      if (savedColor) {
-        return savedColor;
-      }
-      
-      // Get the computed value of the CSS variable for default dice color
-      const defaultColor = getComputedStyle(document.documentElement)
-        .getPropertyValue('--color-dice-default')
-        .trim();
-      
-      return defaultColor || '#dc2626'; // Fallback to red if CSS variable not found
-    } catch {
-      return '#dc2626'; // Fallback to red
-    }
-  };
 
   // Save user's die color preference to cookie when it changes
   const saveUserPreference = (color: string) => {
@@ -299,12 +281,6 @@ function SimpleDiceSelector({ onRoll }: { onRoll: (notation: string, color: stri
       // Continue even if cookie saving fails
     }
   };
-
-  // Initialize with cookie value or theme default
-  useEffect(() => {
-    const initialColor = getInitialDiceColor();
-    setDiceColor(initialColor);
-  }, []);
 
   // Update dice color and save to cookie
   const updateDiceColor = (color: string) => {
@@ -377,7 +353,7 @@ function SimpleDiceSelector({ onRoll }: { onRoll: (notation: string, color: stri
               <button
                 onClick={() => addDice(dice.key)}
                 disabled={totalDice >= 10}
-                className="w-12 h-12 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-110"
+                className="w-12 h-12 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-110"
                 title={`Add ${dice.key.toUpperCase()}`}
               >
                 <div 
@@ -401,8 +377,9 @@ function SimpleDiceSelector({ onRoll }: { onRoll: (notation: string, color: stri
                       height: '32px',
                       fontSize: '10px',
                       lineHeight: '1',
-                      color: '#ffffff'
+                      color: parseInt(diceColor.slice(1), 16) < 0x808080 ? '#ffffff' : '#000000'
                     }}
+                    data-dice-color={diceColor}
                   >
                     {dice.key.toUpperCase()}
                   </div>
@@ -484,8 +461,38 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
   const [isExpanded, setIsExpanded] = useState(false);
   const [showFullscreenRoll, setShowFullscreenRoll] = useState(false);
   const [fullscreenDiceNotation, setFullscreenDiceNotation] = useState('');
-  const [fullscreenDiceColor, setFullscreenDiceColor] = useState('#360070');
+  const [diceColor, setDiceColor] = useState('#360070');
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Get initial dice color from cookie or theme default
+  const getInitialDiceColor = () => {
+    try {
+      // Check for saved color preference in cookie
+      const savedColor = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('diceColor='))
+        ?.split('=')[1];
+      
+      if (savedColor) {
+        return savedColor;
+      }
+      
+      // Get the computed value of the CSS variable for default dice color
+      const defaultColor = getComputedStyle(document.documentElement)
+        .getPropertyValue('--color-dice-default')
+        .trim();
+      
+      return defaultColor || '#dc2626'; // Fallback to red if CSS variable not found
+    } catch {
+      return '#dc2626'; // Fallback to red
+    }
+  };
+
+  // Initialize with cookie value or theme default
+  useEffect(() => {
+    const initialColor = getInitialDiceColor();
+    setDiceColor(initialColor);
+  }, []);
 
   // Handle click outside to collapse
   useEffect(() => {
@@ -514,7 +521,7 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
 
   const handleRollFullscreen = (notation: string, color: string) => {
     setFullscreenDiceNotation(notation);
-    setFullscreenDiceColor(color);
+    setDiceColor(color);
     setShowFullscreenRoll(true);
   };
 
@@ -581,7 +588,11 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
                   backgroundColor: 'var(--color-card)'
                 }}
               >
-                <SimpleDiceSelector onRoll={handleRollFullscreen} />
+                <SimpleDiceSelector 
+                  onRoll={handleRollFullscreen} 
+                  diceColor={diceColor}
+                  setDiceColor={setDiceColor}
+                />
               </div>
             </div>
           </div>
@@ -592,7 +603,7 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
       <FullscreenDiceOverlay
         isVisible={showFullscreenRoll}
         diceNotation={fullscreenDiceNotation}
-        diceColor={fullscreenDiceColor}
+        diceColor={diceColor}
         onRollComplete={handleRollComplete}
         onClose={handleCloseFullscreen}
       />
