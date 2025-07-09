@@ -79,6 +79,21 @@ function ColorWheel({ currentColor, onColorChange }: {
   currentColor: string; 
   onColorChange: (color: string) => void; 
 }) {
+  // Reset dice color to theme default
+  const resetToThemeDefault = () => {
+    try {
+      // Get the computed value of the CSS variable for default dice color
+      const defaultColor = getComputedStyle(document.documentElement)
+        .getPropertyValue('--color-dice-default')
+        .trim();
+      
+      const colorToUse = defaultColor || '#dc2626'; // Fallback to red if CSS variable not found
+      onColorChange(colorToUse);
+    } catch {
+      // Fallback to red if there's any error
+      onColorChange('#dc2626');
+    }
+  };
   const [isOpen, setIsOpen] = useState(false);
   const [pickerPosition, setPickerPosition] = useState({ top: 0, left: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -185,7 +200,26 @@ function ColorWheel({ currentColor, onColorChange }: {
           </button>
           
           <div className="mb-4">
-            <h3 className="text-sm mb-3 text-center" style={{ color: 'var(--color-text-secondary)' }}>Choose Color</h3>
+            <div className="flex items-center justify-center mb-3 gap-2">
+              <button
+                onClick={resetToThemeDefault}
+                className="w-5 h-5 rounded-full flex items-center justify-center transition-colors hover:opacity-80"
+                style={{
+                  backgroundColor: 'var(--color-card-secondary)',
+                  color: 'var(--color-text-secondary)',
+                  border: '1px solid var(--color-border)'
+                }}
+                title="Reset to theme default"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                  <path d="M21 3v5h-5" />
+                  <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                  <path d="M3 21v-5h5" />
+                </svg>
+              </button>
+              <h3 className="text-sm text-center" style={{ color: 'var(--color-text-secondary)' }}>Choose Color</h3>
+            </div>
             <div className="flex justify-center">
               <div 
                 className="relative rounded-full border-2 cursor-pointer"
