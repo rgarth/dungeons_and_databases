@@ -25,6 +25,8 @@ declare global {
 
 interface DiceRollerProps {
   className?: string;
+  onFullscreenRoll?: (notation: string) => void;
+  hideCanvas?: boolean;
 }
 
 interface DiceResult {
@@ -398,7 +400,7 @@ function DicePreview({ diceType, diceColor }: {
   );
 }
 
-export default function DiceRoller({ className = "" }: DiceRollerProps) {
+export default function DiceRoller({ className = "", onFullscreenRoll, hideCanvas }: DiceRollerProps) {
   console.log('🎲 DiceRoller component rendered');
   
   const diceContainerRef = useRef<HTMLDivElement>(null);
@@ -599,6 +601,12 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
 
     console.log('🎲 Initializing 3D dice box...');
 
+    // Don't initialize if canvas is hidden
+    if (hideCanvas) {
+      console.log('🎲 Canvas hidden, skipping dice box initialization');
+      return;
+    }
+
     const handleResize = () => {
       if (diceBoxRef.current && diceContainerRef.current) {
         // Use the existing dice box's reinit method instead of creating a new instance
@@ -648,8 +656,25 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
+      // Clean up dice box reference
+      diceBoxRef.current = null;
     };
-  }, [scriptsLoaded]); // Remove diceColor dependency to prevent reinitialization
+  }, [scriptsLoaded, hideCanvas, diceColor]); // Add diceColor dependency
+
+  // Reset state when component mounts
+  useEffect(() => {
+    resetState();
+  }, []);
+
+  // Cleanup effect when component unmounts
+  useEffect(() => {
+    return () => {
+      // Reset state when component unmounts
+      setLastResult(null);
+      setIsRolling(false);
+      diceBoxRef.current = null;
+    };
+  }, []);
 
   // Update dice color without reinitializing
   useEffect(() => {
@@ -724,6 +749,22 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
       d20: 0,
     });
     setLastResult(null);
+    setIsRolling(false);
+  };
+
+  // Reset function to clear all state
+  const resetState = () => {
+    setDiceCounts({
+      d4: 0,
+      d6: 0,
+      d8: 0,
+      d10: 0,
+      d12: 0,
+      d20: 0,
+    });
+    setLastResult(null);
+    setIsRolling(false);
+    setInitializationError(null);
   };
 
   const updateDiceColor = (color: string) => {
@@ -802,7 +843,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
 
   return (
     <div className={`h-full flex ${className}`}>
-      {/* Thin Vertical Dice Selector */}
+            {/* Vertical Dice Selector */}
       <div className="w-20 flex flex-col items-center py-4 space-y-4 flex-shrink-0" style={{ backgroundColor: 'var(--color-card)', borderRight: '1px solid var(--color-border)' }}>
         {/* Dice Selector */}
         <div className="flex flex-col space-y-3">
@@ -837,7 +878,7 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
                       // Prevent the parent button from being triggered
                       e.stopPropagation();
                     }}
-                    className="absolute -top-1 -right-1 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-lg transition-colors cursor-pointer z-10"
+                    className="absolute -top-1 -right-1 text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold shadow-lg transition-colors cursor-pointer z-10"
                     style={{ 
                       backgroundColor: 'var(--color-danger)',
                       color: 'var(--color-danger-text)'
@@ -859,21 +900,21 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
           <ColorWheel currentColor={diceColor} onColorChange={updateDiceColor} />
         </div>
 
-        {/* Action Buttons */}
+        {/* Single Roll Button - Always Fullscreen */}
         <div className="flex flex-col space-y-2 mt-auto">
           <button
-            onClick={rollDice}
-            disabled={isRolling || totalDice === 0 || !diceBoxRef.current}
+            onClick={() => onFullscreenRoll ? onFullscreenRoll(notation) : rollDice()}
+            disabled={isRolling || totalDice === 0}
             className="w-12 h-12 rounded-lg font-bold text-lg transition-colors shadow-lg"
             style={{
-              backgroundColor: isRolling || totalDice === 0 || !diceBoxRef.current 
+              backgroundColor: isRolling || totalDice === 0
                 ? 'var(--color-card-secondary)' 
-                : '#000000',
-              color: isRolling || totalDice === 0 || !diceBoxRef.current 
+                : 'var(--color-accent)',
+              color: isRolling || totalDice === 0
                 ? 'var(--color-text-muted)' 
-                : '#ffffff'
+                : 'var(--color-accent-text)'
             }}
-            title="Roll dice"
+            title="Roll dice fullscreen"
           >
             {isRolling ? '...' : '🎲'}
           </button>
@@ -898,56 +939,88 @@ export default function DiceRoller({ className = "" }: DiceRollerProps) {
         </div>
       </div>
 
-      {/* 3D Dice Container */}
-      <div className="relative flex-1 min-h-0" style={{ 
-        background: 'var(--color-dice-canvas-bg)'
-      }}>
-        <div 
-          ref={diceContainerRef}
-          className="absolute inset-0 w-full h-full"
-          style={{ 
-            background: diceBoxRef.current ? 'transparent' : 'var(--color-card)'
-          }}
-        >
-          {/* Fallback content when dice box not loaded */}
-          {!diceBoxRef.current && !initializationError && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center" style={{ color: 'var(--color-text-secondary)' }}>
-                <div className="text-lg mb-2">🎲</div>
-                <div>3D Dice Initializing...</div>
-                <div className="text-xs mt-2">
-                  Dependencies: {window.THREE ? '✓' : '✗'} THREE.js, {window.CANNON ? '✓' : '✗'} Cannon.js, {window.DICE ? '✓' : '✗'} Dice.js
+      {/* 3D Dice Container - Only show if not hidden */}
+      {!hideCanvas && (
+        <div className="relative flex-1 min-h-0" style={{ 
+          background: 'var(--color-dice-canvas-bg)'
+        }}>
+          <div 
+            ref={diceContainerRef}
+            className="absolute inset-0 w-full h-full"
+            style={{ 
+              background: diceBoxRef.current ? 'transparent' : 'var(--color-card)'
+            }}
+          >
+            {/* Fallback content when dice box not loaded */}
+            {!diceBoxRef.current && !initializationError && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center" style={{ color: 'var(--color-text-secondary)' }}>
+                  <div className="text-lg mb-2">🎲</div>
+                  <div>3D Dice Initializing...</div>
+                  <div className="text-xs mt-2">
+                    Dependencies: {window.THREE ? '✓' : '✗'} THREE.js, {window.CANNON ? '✓' : '✗'} Cannon.js, {window.DICE ? '✓' : '✗'} Dice.js
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          {/* Results Display - Bottom Right Corner */}
+          {lastResult && (
+            <div className="absolute bottom-4 right-4 rounded-lg p-4 backdrop-blur-sm max-w-xs" style={{ backgroundColor: 'var(--color-card)', border: '1px solid var(--color-border)' }}>
+              <div className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>Results:</div>
+              <div style={{ color: 'var(--color-text-primary)' }}>
+                <div className="text-xl font-bold mb-1" style={{ color: 'var(--color-success)' }}>
+                  Total: {lastResult.resultTotal}
+                </div>
+                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{lastResult.resultString}</div>
+                <div className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                  Dice: {lastResult.set.join(', ')}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Notation Display - Top Left */}
+          {notation && (
+            <div className="absolute top-4 left-4 rounded-lg p-3 backdrop-blur-sm" style={{ backgroundColor: 'var(--color-card)', border: '1px solid var(--color-border)' }}>
+              <div className="text-sm font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                {notation}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Results and Notation Display when canvas is hidden */}
+      {hideCanvas && (
+        <div className="flex-1 p-4 space-y-4">
+          {/* Notation Display */}
+          {notation && (
+            <div className="rounded-lg p-3" style={{ backgroundColor: 'var(--color-card)', border: '1px solid var(--color-border)' }}>
+              <div className="text-sm font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+                {notation}
+              </div>
+            </div>
+          )}
+          
+          {/* Results Display */}
+          {lastResult && (
+            <div className="rounded-lg p-4" style={{ backgroundColor: 'var(--color-card)', border: '1px solid var(--color-border)' }}>
+              <div className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>Results:</div>
+              <div style={{ color: 'var(--color-text-primary)' }}>
+                <div className="text-xl font-bold mb-1" style={{ color: 'var(--color-success)' }}>
+                  Total: {lastResult.resultTotal}
+                </div>
+                <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{lastResult.resultString}</div>
+                <div className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                  Dice: {lastResult.set.join(', ')}
                 </div>
               </div>
             </div>
           )}
         </div>
-        
-        {/* Results Display - Bottom Right Corner */}
-        {lastResult && (
-          <div className="absolute bottom-4 right-4 rounded-lg p-4 backdrop-blur-sm max-w-xs" style={{ backgroundColor: 'var(--color-card)', border: '1px solid var(--color-border)' }}>
-            <div className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>Results:</div>
-            <div style={{ color: 'var(--color-text-primary)' }}>
-              <div className="text-xl font-bold mb-1" style={{ color: 'var(--color-success)' }}>
-                Total: {lastResult.resultTotal}
-              </div>
-              <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{lastResult.resultString}</div>
-              <div className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-                Dice: {lastResult.set.join(', ')}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Notation Display - Top Left */}
-        {notation && (
-          <div className="absolute top-4 left-4 rounded-lg p-3 backdrop-blur-sm" style={{ backgroundColor: 'var(--color-card)', border: '1px solid var(--color-border)' }}>
-            <div className="text-sm font-mono" style={{ color: 'var(--color-text-secondary)' }}>
-              {notation}
-            </div>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 } 
