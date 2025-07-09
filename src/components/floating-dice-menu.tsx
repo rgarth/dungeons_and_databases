@@ -582,17 +582,17 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
               </button>
             ) : (
               // Regular circle button when no result
-              <button
-                onClick={handleExpand}
-                className="w-16 h-16 rounded-full transition-all hover:scale-110 shadow-lg flex items-center justify-center text-2xl font-bold"
-                style={{ 
-                  backgroundColor: 'var(--color-accent)',
-                  color: 'var(--color-accent-text)'
-                }}
-                title="Open Dice Menu"
-              >
-                🎲
-              </button>
+          <button
+            onClick={handleExpand}
+            className="w-16 h-16 rounded-full transition-all hover:scale-110 shadow-lg flex items-center justify-center text-2xl font-bold"
+            style={{ 
+              backgroundColor: 'var(--color-accent)',
+              color: 'var(--color-accent-text)'
+            }}
+            title="Open Dice Menu"
+          >
+            🎲
+          </button>
             )}
           </div>
         )}

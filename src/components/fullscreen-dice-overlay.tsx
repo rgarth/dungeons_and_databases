@@ -161,7 +161,7 @@ export default function FullscreenDiceOverlay({
         // Configure for complete transparency BEFORE creating dice box
         if (window.DICE.vars) {
           window.DICE.vars.desk_opacity = 0;
-          window.DICE.vars.desk_color = 'transparent';
+          window.DICE.vars.desk_color = '#000000'; // Use black instead of 'transparent'
           
           // Use provided color or theme default
           const colorToUse = diceColor || getComputedStyle(document.documentElement)
@@ -195,6 +195,9 @@ export default function FullscreenDiceOverlay({
           // afterRoll callback
           (notation: DiceResult) => {
             setIsRolling(false);
+            
+
+            
             setRollResult(notation);
             onRollComplete(notation);
             
