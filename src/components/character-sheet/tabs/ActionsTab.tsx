@@ -13,6 +13,7 @@ import type { MagicalItem } from "@/lib/dnd/magical-items";
 import { CONDITIONS, getCondition, type ActiveCondition } from "@/lib/dnd/conditions";
 import { useEffect, useState } from "react";
 import { useConditionSeverityStyles, useOpacityStyles, useBorderLeftStyles, useInteractiveButtonStyles } from "@/hooks/use-theme";
+import { useDiceRoll } from "@/components/providers/dice-provider";
 import KiPointManager from './KiPointManager';
 
 interface ActionsTabProps {
@@ -103,6 +104,39 @@ export function ActionsTab({
 }: ActionsTabProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const _unused = onUpdateDeathSaves;
+  
+  // Dice rolling functionality
+  const { rollDice } = useDiceRoll();
+
+  // Helper function to identify attack spells
+  const isAttackSpell = (spell: Spell): boolean => {
+    const description = spell.description.toLowerCase();
+    return description.includes('make a ranged spell attack') || 
+           description.includes('make a melee spell attack') ||
+           description.includes('spell attack');
+  };
+
+  // Helper function to extract damage dice from spell description
+  const extractSpellDamage = (spell: Spell): string | null => {
+    const description = spell.description;
+    
+    // Common damage patterns in spell descriptions
+    const damagePatterns = [
+      /(\d+d\d+)\s+(fire|cold|lightning|thunder|acid|poison|necrotic|radiant|force|psychic|bludgeoning|piercing|slashing)\s+damage/gi,
+      /takes\s+(\d+d\d+)\s+(fire|cold|lightning|thunder|acid|poison|necrotic|radiant|force|psychic|bludgeoning|piercing|slashing)\s+damage/gi,
+      /deals\s+(\d+d\d+)\s+(fire|cold|lightning|thunder|acid|poison|necrotic|radiant|force|psychic|bludgeoning|piercing|slashing)\s+damage/gi,
+      /(\d+d\d+)\s+damage/gi
+    ];
+
+    for (const pattern of damagePatterns) {
+      const match = description.match(pattern);
+      if (match) {
+        return match[1]; // Return the dice notation (e.g., "1d8", "3d6")
+      }
+    }
+
+    return null;
+  };
   
 
   
@@ -588,18 +622,32 @@ export function ActionsTab({
                     
                     {/* Attack Stats */}
                     <div className="grid grid-cols-2 gap-4 mb-3">
-                      <div className="text-center bg-[var(--color-card)] rounded p-2">
-                        <div className="text-2xl font-bold text-[var(--color-success)]">
+                      <button 
+                        onClick={() => {
+                          const attackNotation = `1d20${attackBonus >= 0 ? '+' : ''}${attackBonus}`;
+                          rollDice(attackNotation);
+                        }}
+                        className="text-center bg-[var(--color-card)] rounded p-2 hover:bg-[var(--color-card-secondary)] transition-colors cursor-pointer group"
+                        title={`Roll attack: 1d20${attackBonus >= 0 ? '+' : ''}${attackBonus}`}
+                      >
+                        <div className="text-2xl font-bold text-[var(--color-success)] group-hover:scale-105 transition-transform">
                           {attackBonus >= 0 ? '+' : ''}{attackBonus}
                         </div>
                         <div className="text-xs text-[var(--color-text-muted)]">Attack Bonus</div>
-                      </div>
-                      <div className="text-center bg-[var(--color-card)] rounded p-2">
-                        <div className="text-2xl font-bold text-[var(--color-danger)]">
+                      </button>
+                      <button 
+                        onClick={() => {
+                          const damageNotation = `${weapon.damage}${damageBonus >= 0 ? '+' : ''}${damageBonus}`;
+                          rollDice(damageNotation);
+                        }}
+                        className="text-center bg-[var(--color-card)] rounded p-2 hover:bg-[var(--color-card-secondary)] transition-colors cursor-pointer group"
+                        title={`Roll damage: ${weapon.damage}${damageBonus >= 0 ? '+' : ''}${damageBonus}`}
+                      >
+                        <div className="text-2xl font-bold text-[var(--color-danger)] group-hover:scale-105 transition-transform">
                           {weapon.damage}{magicalDamageBonus > 0 && `+${magicalDamageBonus}`}
                         </div>
                         <div className="text-xs text-[var(--color-text-muted)]">{weapon.damageType} Damage</div>
-                      </div>
+                      </button>
                     </div>
 
                     {/* Attack Breakdown */}
@@ -827,10 +875,19 @@ export function ActionsTab({
                   <div className="text-xl font-bold text-[var(--color-accent)]">{calc.spellcasting.spellSaveDC}</div>
                   <div className="text-xs text-[var(--color-text-muted)]">Spell Save DC</div>
                 </div>
-                <div className="text-center bg-[var(--color-card-secondary)] rounded p-3">
-                  <div className="text-xl font-bold text-[var(--color-success)]">+{calc.spellcasting.spellAttackBonus}</div>
+                <button 
+                  onClick={() => {
+                    if (calc.spellcasting) {
+                      const spellAttackNotation = `1d20+${calc.spellcasting.spellAttackBonus}`;
+                      rollDice(spellAttackNotation);
+                    }
+                  }}
+                  className="text-center bg-[var(--color-card-secondary)] rounded p-3 hover:bg-[var(--color-card)] transition-colors cursor-pointer group"
+                  title={calc.spellcasting ? `Roll spell attack: 1d20+${calc.spellcasting.spellAttackBonus}` : 'Spell Attack'}
+                >
+                  <div className="text-xl font-bold text-[var(--color-success)] group-hover:scale-105 transition-transform">+{calc.spellcasting?.spellAttackBonus || 0}</div>
                   <div className="text-xs text-[var(--color-text-muted)]">Spell Attack</div>
-                </div>
+                </button>
                 <div className="text-center bg-[var(--color-card-secondary)] rounded p-3">
                   <div className="text-xl font-bold text-[var(--color-accent)]">{character.spellcastingAbility?.toUpperCase()}</div>
                   <div className="text-xs text-[var(--color-text-muted)]">Casting Ability</div>
@@ -967,32 +1024,76 @@ export function ActionsTab({
                       </div>
                       <h4 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3">Known Spells</h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto">
-                        {(character.spellsKnown || []).filter(spell => spell && spell.name && spell.level !== undefined).map((spell, index) => (
-                          <div 
-                            key={index} 
-                            className="bg-[var(--color-card-secondary)] p-3 rounded"
-                            style={borderLeftStyles.success}
-                          >
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-[var(--color-text-primary)] font-medium">{spell.name}</span>
-                              <span 
-                                className="text-xs px-2 py-1 rounded"
-                                style={opacityStyles.success20}
-                              >
-                                {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
-                              </span>
-                            </div>
-                            <div className="text-[var(--color-text-muted)] text-xs mb-2">
-                              {spell.school} • {spell.castingTime} • {spell.range}
-                            </div>
-                            <div className="text-[var(--color-text-secondary)] text-xs">{spell.description}</div>
-                            {spell.level === 0 && (
-                              <div className="text-[var(--color-success)] text-xs mt-1 font-medium">
-                                ✓ Unlimited Use
+                        {(character.spellsKnown || []).filter(spell => spell && spell.name && spell.level !== undefined).map((spell, index) => {
+                          const isAttack = isAttackSpell(spell);
+                          const damageDice = extractSpellDamage(spell);
+                          
+                          return (
+                            <div 
+                              key={index} 
+                              className="bg-[var(--color-card-secondary)] p-3 rounded"
+                              style={borderLeftStyles.success}
+                            >
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="text-[var(--color-text-primary)] font-medium">{spell.name}</span>
+                                <span 
+                                  className="text-xs px-2 py-1 rounded"
+                                  style={opacityStyles.success20}
+                                >
+                                  {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`}
+                                </span>
                               </div>
-                            )}
-                          </div>
-                        ))}
+                              <div className="text-[var(--color-text-muted)] text-xs mb-2">
+                                {spell.school} • {spell.castingTime} • {spell.range}
+                              </div>
+                              <div className="text-[var(--color-text-secondary)] text-xs">{spell.description}</div>
+                              
+                              {/* Attack Spell Dice Roll Buttons */}
+                              {isAttack && calc.spellcasting && (
+                                <div className="flex gap-2 mt-3">
+                                  <button
+                                    onClick={() => {
+                                      const attackNotation = `1d20+${calc.spellcasting.spellAttackBonus}`;
+                                      rollDice(attackNotation);
+                                    }}
+                                    className="px-3 py-1 text-xs rounded font-medium transition-colors hover:scale-105"
+                                    style={{
+                                      backgroundColor: 'var(--color-success)',
+                                      color: 'var(--color-success-text)'
+                                    }}
+                                    title={`Roll spell attack: 1d20+${calc.spellcasting.spellAttackBonus}`}
+                                  >
+                                    Attack: 1d20+{calc.spellcasting.spellAttackBonus}
+                                  </button>
+                                  
+                                  {damageDice && (
+                                    <button
+                                      onClick={() => {
+                                        const abilityMod = calc.spellcasting.abilityModifier;
+                                        const damageNotation = `${damageDice}${abilityMod >= 0 ? '+' : ''}${abilityMod}`;
+                                        rollDice(damageNotation);
+                                      }}
+                                      className="px-3 py-1 text-xs rounded font-medium transition-colors hover:scale-105"
+                                      style={{
+                                        backgroundColor: 'var(--color-danger)',
+                                        color: 'var(--color-danger-text)'
+                                      }}
+                                      title={`Roll damage: ${damageDice}+${calc.spellcasting.abilityModifier}`}
+                                    >
+                                      Damage: {damageDice}+{calc.spellcasting.abilityModifier}
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                              
+                              {spell.level === 0 && (
+                                <div className="text-[var(--color-success)] text-xs mt-1 font-medium">
+                                  ✓ Unlimited Use
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   );

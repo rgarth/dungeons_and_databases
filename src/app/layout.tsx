@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/lib/theme";
 import { Providers } from "./providers";
 import { AuthGate } from "@/components/auth-gate";
 import FloatingDiceMenu from "@/components/floating-dice-menu";
+import { DiceRollProvider } from "@/components/providers/dice-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -45,10 +46,12 @@ export default function RootLayout({
               <QueryProvider>
                 <DndDataProvider>
                   <ClientCacheProvider>
-                    <main className="min-h-screen" style={{ background: 'var(--color-surface)' }}>
-                      {children}
-                      <FloatingDiceMenu />
-                    </main>
+                    <DiceRollProvider>
+                      <main className="min-h-screen" style={{ background: 'var(--color-surface)' }}>
+                        {children}
+                        <FloatingDiceMenu />
+                      </main>
+                    </DiceRollProvider>
                   </ClientCacheProvider>
                 </DndDataProvider>
               </QueryProvider>

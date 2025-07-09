@@ -546,6 +546,23 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
     };
   }, [isExpanded]);
 
+  // Listen for dice roll triggers from other components
+  useEffect(() => {
+    const handleTriggerDiceRoll = (event: CustomEvent) => {
+      const { notation } = event.detail;
+      if (notation) {
+        setFullscreenDiceNotation(notation);
+        setShowFullscreenRoll(true);
+      }
+    };
+
+    window.addEventListener('triggerDiceRoll', handleTriggerDiceRoll as EventListener);
+
+    return () => {
+      window.removeEventListener('triggerDiceRoll', handleTriggerDiceRoll as EventListener);
+    };
+  }, []);
+
   const handleExpand = () => {
     setIsExpanded(true);
   };
