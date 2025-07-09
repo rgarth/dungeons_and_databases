@@ -53,8 +53,7 @@ export default function FullscreenDiceOverlay({
 }: FullscreenDiceOverlayProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const diceBoxRef = useRef<DiceBox | null>(null);
-
-
+  const [isFading, setIsFading] = useState(false);
 
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
 
@@ -129,6 +128,7 @@ export default function FullscreenDiceOverlay({
   useEffect(() => {
     if (isVisible) {
       diceBoxRef.current = null; // Clear any existing dice box
+      setIsFading(false); // Reset fade state
     }
   }, [isVisible]);
 
@@ -192,13 +192,13 @@ export default function FullscreenDiceOverlay({
             
             // Auto-close after a longer delay to show results
             setTimeout(() => {
-              onClose();
+              handleFadeOut();
             }, 4000); // 4 seconds for results visibility
           }
         );
       } catch (error) {
         console.error('Failed to initialize dice box:', error);
-        onClose();
+        handleFadeOut();
       }
     };
 
@@ -218,8 +218,8 @@ export default function FullscreenDiceOverlay({
   // Handle escape key to close
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isVisible) {
-        onClose();
+      if (event.key === 'Escape' && isVisible && !isFading) {
+        handleFadeOut();
       }
     };
 
@@ -230,12 +230,25 @@ export default function FullscreenDiceOverlay({
     return () => {
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [isVisible, onClose]);
+  }, [isVisible, isFading, onClose]);
+
+  // Handle fade out animation
+  const handleFadeOut = () => {
+    setIsFading(true);
+    setTimeout(() => {
+      onClose();
+    }, 300); // 300ms fade duration
+  };
 
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] pointer-events-none">
+    <div 
+      className="fixed inset-0 z-[100] pointer-events-none transition-opacity duration-300"
+      style={{ 
+        opacity: isFading ? 0 : 1
+      }}
+    >
       {/* Dice container - completely transparent and non-interactive */}
       <div 
         ref={containerRef}
@@ -245,12 +258,6 @@ export default function FullscreenDiceOverlay({
           zIndex: 1
         }}
       />
-      
-
-
-
-      
-
     </div>
   );
 } 
