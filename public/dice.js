@@ -171,7 +171,27 @@ const DICE = (function() {
         this.w = this.cw;
         this.h = this.ch;
         this.aspect = Math.min(this.cw / this.w, this.ch / this.h);
-        vars.scale = Math.sqrt(this.w * this.w + this.h * this.h) / 8 * 0.85;
+        // Calculate base scale using diagonal
+        var baseScale = Math.sqrt(this.w * this.w + this.h * this.h) / 8 * 0.85;
+        
+        // Better scaling for large displays
+        // Use a more reasonable scale calculation that doesn't grow as aggressively
+        var screenWidth = this.cw * 2; // Full screen width
+        
+        // For large displays, use a more conservative scale based on screen width
+        var maxScale;
+        if (screenWidth > 1200) {
+          // Large displays: cap based on screen width, not diagonal
+          maxScale = Math.min(screenWidth / 12, 80); // Much more conservative
+        } else if (screenWidth > 800) {
+          // Medium displays: moderate scaling
+          maxScale = Math.min(screenWidth / 10, 100);
+        } else {
+          // Small displays: use original calculation
+          maxScale = baseScale;
+        }
+        
+        vars.scale = Math.min(baseScale, maxScale);
         //console.log('scale = ' + vars.scale);
 
         this.renderer.setSize(this.cw * 2, this.ch * 2);
