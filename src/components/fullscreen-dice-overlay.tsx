@@ -244,9 +244,10 @@ export default function FullscreenDiceOverlay({
 
   return (
     <div 
-      className="fixed inset-0 z-[100] pointer-events-none transition-opacity duration-300"
+      className="fixed inset-0 z-[100] pointer-events-none transition-all duration-300 ease-out"
       style={{ 
-        opacity: isFading ? 0 : 1
+        opacity: isFading ? 0 : 1,
+        transform: isFading ? 'rotate(90deg)' : 'rotate(0deg)'
       }}
     >
       {/* Dice container - completely transparent and non-interactive */}
