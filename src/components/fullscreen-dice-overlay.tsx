@@ -55,7 +55,7 @@ export default function FullscreenDiceOverlay({
   const diceBoxRef = useRef<DiceBox | null>(null);
   const [isRolling, setIsRolling] = useState(false);
   const [rollResult, setRollResult] = useState<DiceResult | null>(null);
-  const [key, setKey] = useState(0); // Force re-render
+
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
 
   // Load DICE library scripts
@@ -130,7 +130,6 @@ export default function FullscreenDiceOverlay({
     if (isVisible) {
       setRollResult(null);
       setIsRolling(false);
-      setKey(prev => prev + 1); // Force fresh dice box
       diceBoxRef.current = null; // Clear any existing dice box
     }
   }, [isVisible]);
@@ -139,10 +138,8 @@ export default function FullscreenDiceOverlay({
   useEffect(() => {
     if (!isVisible || !containerRef.current || !diceNotation || !scriptsLoaded) return;
 
-    // Clear existing dice box to force recreation with new color
-    if (diceBoxRef.current) {
-      diceBoxRef.current = null;
-    }
+    // Prevent multiple initializations
+    if (diceBoxRef.current) return;
 
     const initializeDiceBox = async () => {
       try {
@@ -214,7 +211,7 @@ export default function FullscreenDiceOverlay({
     };
 
     initializeDiceBox();
-  }, [isVisible, diceNotation, diceColor, key, scriptsLoaded]);
+  }, [isVisible, diceNotation, diceColor, scriptsLoaded]);
 
   // Cleanup dice box when component unmounts or becomes invisible
   useEffect(() => {
@@ -247,10 +244,10 @@ export default function FullscreenDiceOverlay({
 
   return (
     <div className="fixed inset-0 z-[100] pointer-events-none">
-      {/* Dice container - completely transparent */}
+      {/* Dice container - completely transparent and non-interactive */}
       <div 
         ref={containerRef}
-        className="absolute inset-0 w-full h-full pointer-events-auto"
+        className="absolute inset-0 w-full h-full pointer-events-none"
         style={{ 
           background: 'transparent',
           zIndex: 1
