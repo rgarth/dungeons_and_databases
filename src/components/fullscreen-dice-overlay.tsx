@@ -139,8 +139,10 @@ export default function FullscreenDiceOverlay({
   useEffect(() => {
     if (!isVisible || !containerRef.current || !diceNotation || !scriptsLoaded) return;
 
-    // Prevent multiple initializations
-    if (diceBoxRef.current) return;
+    // Clear existing dice box to force recreation with new color
+    if (diceBoxRef.current) {
+      diceBoxRef.current = null;
+    }
 
     const initializeDiceBox = async () => {
       try {
@@ -170,6 +172,11 @@ export default function FullscreenDiceOverlay({
           // Set label color based on dice color brightness
           const isDark = parseInt(colorToUse.slice(1), 16) < 0x808080;
           window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
+        }
+        
+        // Clear material cache to ensure new color is applied
+        if (window.DICE.clearMaterialCache) {
+          window.DICE.clearMaterialCache();
         }
         
         // Create new dice box
