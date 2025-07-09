@@ -462,6 +462,7 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
   const [showFullscreenRoll, setShowFullscreenRoll] = useState(false);
   const [fullscreenDiceNotation, setFullscreenDiceNotation] = useState('');
   const [diceColor, setDiceColor] = useState('#360070');
+  const [lastRollResult, setLastRollResult] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Get initial dice color from cookie or theme default
@@ -525,7 +526,11 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
     setShowFullscreenRoll(true);
   };
 
-  const handleRollComplete = () => {
+  const handleRollComplete = (result: { resultString?: string }) => {
+    // Store the roll result if provided
+    if (result && result.resultString) {
+      setLastRollResult(result.resultString);
+    }
     // Auto-collapse the menu after a roll
     setIsExpanded(false);
   };
@@ -545,19 +550,51 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
           height: isExpanded ? 'min(600px, calc(100vh - 2rem))' : '64px'
         }}
       >
-        {/* Collapsed state - just the dice button */}
+        {/* Collapsed state - dice button with optional result pill */}
         {!isExpanded && (
-          <button
-            onClick={handleExpand}
-            className="w-16 h-16 rounded-full transition-all hover:scale-110 shadow-lg flex items-center justify-center text-2xl font-bold"
-            style={{ 
-              backgroundColor: 'var(--color-accent)',
-              color: 'var(--color-accent-text)'
-            }}
-            title="Open Dice Menu"
-          >
-            🎲
-          </button>
+          <div className="flex items-center">
+            {lastRollResult ? (
+              // Pill design with result
+              <button
+                onClick={handleExpand}
+                className="flex items-center space-x-2 px-3 py-2 rounded-full transition-all hover:scale-105 shadow-lg border-2"
+                style={{ 
+                  backgroundColor: 'var(--color-card)',
+                  borderColor: 'var(--color-border)',
+                  color: 'var(--color-text-primary)'
+                }}
+                title="Open Dice Menu"
+              >
+                {/* Dice icon in circle */}
+                <div 
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold"
+                  style={{ 
+                    backgroundColor: 'var(--color-accent)',
+                    color: 'var(--color-accent-text)'
+                  }}
+                >
+                  🎲
+                </div>
+                {/* Roll result */}
+                <span className="text-sm font-medium whitespace-nowrap">
+                  {lastRollResult}
+                </span>
+              </button>
+            ) : (
+              // Regular circle button when no result
+              <button
+                onClick={handleExpand}
+                className="w-16 h-16 rounded-full transition-all hover:scale-110 shadow-lg flex items-center justify-center text-2xl font-bold"
+                style={{ 
+                  backgroundColor: 'var(--color-accent)',
+                  color: 'var(--color-accent-text)'
+                }}
+                title="Open Dice Menu"
+              >
+                🎲
+              </button>
+            )}
+          </div>
         )}
 
         {/* Expanded state - compact dice selector */}
