@@ -1,6 +1,6 @@
 "use client";
 
-import { User, BarChart3, Swords, X, Package, Coins, FileText, Dices, ChevronDown, MoreVertical } from "lucide-react";
+import { User, BarChart3, Swords, X, Package, Coins, FileText, ChevronDown, MoreVertical } from "lucide-react";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { getModifier } from "@/lib/dnd/core";
 import { Spell } from "@/lib/dnd/spells";
@@ -16,7 +16,7 @@ import { getSpellcastingType, getSpellsPreparedCount } from "@/lib/dnd/level-up"
 import { getMaxSpellLevel, getSpellcastingAbility } from "@/lib/dnd/spells";
 import { getSpellsByClass } from "@/lib/dnd/spell-data-helper";
 import { StatsTab, ActionsTab, GearTab, InventoryTab, BackgroundTab } from "./character-sheet/";
-import DiceRoller from "./dice-roller";
+
 
 import Image from 'next/image';
 import { toast } from 'react-hot-toast';
@@ -218,7 +218,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     }
   }), [currentCharacter]);
   
-  const [activeTab, setActiveTab] = useState<"stats" | "actions" | "gear" | "inventory" | "background" | "dice">("stats");
+  const [activeTab, setActiveTab] = useState<"stats" | "actions" | "gear" | "inventory" | "background">("stats");
   const [showWeaponCreator, setShowWeaponCreator] = useState(false);
   const [selectedBaseWeapon, setSelectedBaseWeapon] = useState("");
   const [selectedMagicalTemplate, setSelectedMagicalTemplate] = useState("");
@@ -1394,17 +1394,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 <FileText className="h-4 w-4" />
                 Background / Notes
               </button>
-              <button
-                onClick={() => setActiveTab("dice")}
-                className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
-                  activeTab === "dice"
-                    ? "text-[var(--color-accent)] border-b-2 border-[var(--color-accent)]"
-                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
-                }`}
-              >
-                <Dices className="h-4 w-4" />
-                Dice Roll
-              </button>
+
             </div>
 
             {/* Mobile: Dropdown selector */}
@@ -1420,7 +1410,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                   <option value="gear">📦 Gear & Spells</option>
                   <option value="inventory">🪙 Inventory</option>
                   <option value="background">📄 Background / Notes</option>
-                  <option value="dice">🎲 Dice Roll</option>
+
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--color-text-secondary)] pointer-events-none" />
               </div>
@@ -1529,11 +1519,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
               />
             )}
 
-            {activeTab === "dice" && (
-              <div className="p-6 h-full">
-                <DiceRoller />
-              </div>
-            )}
+
           </div>
         </div>
       </div>
