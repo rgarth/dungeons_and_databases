@@ -54,7 +54,7 @@ export default function FullscreenDiceOverlay({
   const containerRef = useRef<HTMLDivElement>(null);
   const diceBoxRef = useRef<DiceBox | null>(null);
   const [isRolling, setIsRolling] = useState(false);
-  const [rollResult, setRollResult] = useState<DiceResult | null>(null);
+
 
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
 
@@ -128,7 +128,6 @@ export default function FullscreenDiceOverlay({
   // Reset state when overlay becomes visible
   useEffect(() => {
     if (isVisible) {
-      setRollResult(null);
       setIsRolling(false);
       diceBoxRef.current = null; // Clear any existing dice box
     }
@@ -193,9 +192,6 @@ export default function FullscreenDiceOverlay({
           (notation: DiceResult) => {
             setIsRolling(false);
             
-
-            
-            setRollResult(notation);
             onRollComplete(notation);
             
             // Auto-close after a longer delay to show results
@@ -276,30 +272,7 @@ export default function FullscreenDiceOverlay({
         </div>
       )}
 
-      {/* Results Display */}
-      {rollResult && !isRolling && (
-        <div 
-          className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-lg p-6 shadow-2xl pointer-events-auto text-center"
-          style={{
-            backgroundColor: 'var(--color-card)',
-            color: 'var(--color-text-primary)',
-            border: '2px solid var(--color-accent)',
-            minWidth: '250px',
-            zIndex: 1000,
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-          }}
-        >
-          <div className="text-5xl font-bold mb-3" style={{ color: 'var(--color-success)' }}>
-            {rollResult.resultTotal}
-          </div>
-          <div className="text-lg mb-2" style={{ color: 'var(--color-text-secondary)' }}>
-            {rollResult.resultString}
-          </div>
-          <div className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-            {rollResult.set.join(', ')}
-          </div>
-        </div>
-      )}
+
       
 
     </div>
