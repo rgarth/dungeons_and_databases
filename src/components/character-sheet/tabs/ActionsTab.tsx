@@ -63,7 +63,7 @@ interface ActionsTabProps {
   onRecoverSpellSlot?: (level: number) => void;
   onUpdateHitPoints?: (hitPoints: number) => void;
   onUpdateTemporaryHitPoints?: (temporaryHitPoints: number) => void;
-  onSwitchTab?: (tab: "stats" | "actions" | "gear" | "inventory" | "background" | "dice") => void;
+  onSwitchTab?: (tab: "stats" | "actions" | "gear" | "inventory" | "background") => void;
 }
 
 type InventorySpellScroll = {
