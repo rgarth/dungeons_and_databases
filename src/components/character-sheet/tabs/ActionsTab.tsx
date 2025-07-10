@@ -109,6 +109,77 @@ export function ActionsTab({
   // Dice rolling functionality
   const { rollDice } = useDiceRoll();
 
+  // Roll history tracking for critical hit detection
+  const [rollHistory, setRollHistory] = useState<Array<{notation: string, result: string, resultTotal?: number, timestamp: number}>>([]);
+
+  // Listen for dice roll completions to track history
+  useEffect(() => {
+    const handleDiceRollCompleted = (event: CustomEvent) => {
+      const { notation, result, resultTotal } = event.detail;
+      if (notation && result) {
+        setRollHistory(prev => {
+          const newHistory = [
+            { notation, result, resultTotal, timestamp: Date.now() },
+            ...prev
+          ];
+          // Keep only the last 10 rolls for critical hit detection
+          return newHistory.slice(0, 10);
+        });
+      }
+    };
+
+    window.addEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+    return () => {
+      window.removeEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+    };
+  }, []);
+
+  // Function to check if the last roll was a critical hit (natural 20 on d20)
+  const checkForCriticalHit = (): boolean => {
+    if (rollHistory.length === 0) return false;
+    
+    const lastRoll = rollHistory[0];
+    
+    // Check if it was a d20 roll (attack roll)
+    if (!lastRoll.notation.startsWith('1d20')) return false;
+    
+    // Check if the natural roll was 20 (before modifiers)
+    if (lastRoll.resultTotal === undefined) return false;
+    
+    // Extract the natural roll from the result
+    // For a roll like "1d20+5 = 25", we need to find the natural roll
+    // The natural roll would be 25 - 5 = 20
+    const notation = lastRoll.notation;
+    const total = lastRoll.resultTotal;
+    
+    // Parse the notation to find modifiers
+    const match = notation.match(/1d20([+-]\d+)?/);
+    if (!match) return false;
+    
+    const modifierStr = match[1] || '+0';
+    const modifier = parseInt(modifierStr);
+    
+    // Calculate natural roll
+    const naturalRoll = total - modifier;
+    
+    // Ensure natural roll is within valid d20 range (1-20)
+    if (naturalRoll < 1 || naturalRoll > 20) return false;
+    
+    return naturalRoll === 20;
+  };
+
+  // Function to double damage dice for critical hits
+  const getCriticalDamageNotation = (baseDamageNotation: string): string => {
+    // Parse the damage notation (e.g., "1d8+3" -> "2d8+3")
+    const match = baseDamageNotation.match(/^(\d+)d(\d+)(.*)$/);
+    if (!match) return baseDamageNotation;
+    
+    const [, diceCount, diceType, modifiers] = match;
+    const doubledDiceCount = parseInt(diceCount) * 2;
+    
+    return `${doubledDiceCount}d${diceType}${modifiers}`;
+  };
+
 
   
 
@@ -619,6 +690,37 @@ export function ActionsTab({
                         onClick={() => {
                           const attackNotation = `1d20${attackBonus >= 0 ? '+' : ''}${attackBonus}`;
                           rollDice(attackNotation);
+                          
+                          // Reduce ammunition for ranged weapons that need ammo
+                          if (weapon.category === 'Ranged' && weapon.properties.some(prop => prop.startsWith('Ammunition')) && onUseAmmunition) {
+                            // Determine ammo type
+                            let ammoType: string;
+                            if (weapon.ammunitionTypeId) {
+                              const ammoTypeMap: { [key: number]: string } = {
+                                1: 'Arrows',
+                                2: 'Crossbow Bolts', 
+                                3: 'Sling Bullets',
+                                4: 'Blowgun Needles'
+                              };
+                              ammoType = ammoTypeMap[weapon.ammunitionTypeId] || 'Ammunition';
+                            } else if (weapon.name === 'Dart') {
+                              ammoType = 'Darts';
+                            } else if (weapon.name.toLowerCase().includes('crossbow')) {
+                              ammoType = 'Crossbow Bolts';
+                            } else if (weapon.name.toLowerCase().includes('blowgun')) {
+                              ammoType = 'Blowgun Needles';
+                            } else if (weapon.name.toLowerCase().includes('sling')) {
+                              ammoType = 'Sling Bullets';
+                            } else {
+                              ammoType = 'Arrows';
+                            }
+                            
+                            // Check if character has this ammo type
+                            const ammo = character.ammunition?.find(a => a.name === ammoType);
+                            if (ammo && ammo.quantity > 0) {
+                              onUseAmmunition(ammoType);
+                            }
+                          }
                         }}
                         className="text-center bg-[var(--color-card)] rounded p-2 hover:bg-[var(--color-card-secondary)] transition-colors cursor-pointer group"
                         title={`Roll attack: 1d20${attackBonus >= 0 ? '+' : ''}${attackBonus}`}
@@ -630,23 +732,44 @@ export function ActionsTab({
                       </button>
                       <button 
                         onClick={() => {
-                          const damageNotation = `${weapon.damage}${damageBonus >= 0 ? '+' : ''}${damageBonus}`;
+                          const baseDamageNotation = `${weapon.damage}${damageBonus >= 0 ? '+' : ''}${damageBonus}`;
+                          const isCriticalHit = checkForCriticalHit();
+                          const damageNotation = isCriticalHit ? getCriticalDamageNotation(baseDamageNotation) : baseDamageNotation;
+                          
                           rollDice(damageNotation);
+                          
+                          // Show critical hit indicator if applicable
+                          if (isCriticalHit) {
+                            console.log('🎯 Critical Hit! Rolling double damage dice:', damageNotation);
+                          }
                         }}
                         className="text-center bg-[var(--color-card)] rounded p-2 hover:bg-[var(--color-card-secondary)] transition-colors cursor-pointer group"
-                        title={`Roll damage: ${weapon.damage}${damageBonus >= 0 ? '+' : ''}${damageBonus}`}
+                        title={`Roll damage: ${weapon.damage}${damageBonus >= 0 ? '+' : ''}${damageBonus}${checkForCriticalHit() ? ' (CRITICAL HIT - Double Dice!)' : ''}`}
                       >
                         <div className="text-2xl font-bold text-[var(--color-danger)] group-hover:scale-105 transition-transform">
                           {weapon.damage}{magicalDamageBonus > 0 && `+${magicalDamageBonus}`}
+                          {checkForCriticalHit() && (
+                            <span className="text-[var(--color-warning)] text-sm ml-1">⚡</span>
+                          )}
                         </div>
-                        <div className="text-xs text-[var(--color-text-muted)]">{weapon.damageType} Damage</div>
+                        <div className="text-xs text-[var(--color-text-muted)]">
+                          {weapon.damageType} Damage
+                          {checkForCriticalHit() && (
+                            <span className="text-[var(--color-warning)] font-bold"> (CRIT!)</span>
+                          )}
+                        </div>
                       </button>
                     </div>
 
                     {/* Attack Breakdown */}
                     <div className="text-xs text-[var(--color-text-secondary)] space-y-1">
                       <div>To Hit: 1d20 {abilityMod >= 0 ? '+' : ''}{abilityMod} ({abilityName}) {profBonus > 0 && `+${profBonus} (Prof)`} {magicalAttackBonus > 0 && `+${magicalAttackBonus} (Magic)`}</div>
-                      <div>Damage: {weapon.damage} + {damageBonus >= 0 ? '+' : ''}{damageBonus} ({abilityName}{magicalDamageBonus > 0 && ` + Magic`})</div>
+                      <div>
+                        Damage: {weapon.damage} + {damageBonus >= 0 ? '+' : ''}{damageBonus} ({abilityName}{magicalDamageBonus > 0 && ` + Magic`})
+                        {checkForCriticalHit() && (
+                          <span className="text-[var(--color-warning)] font-bold ml-2">⚡ CRITICAL HIT - Double Dice!</span>
+                        )}
+                      </div>
                       <div className="text-[var(--color-text-muted)]">Range: {weaponRange} • {weapon.category} {weapon.type}</div>
                       
                       {/* Stackable Weapon Quantity Tracking */}
@@ -882,7 +1005,9 @@ export function ActionsTab({
                   <div className="text-xs text-[var(--color-text-muted)]">Spell Attack</div>
                 </button>
                 <div className="text-center bg-[var(--color-card-secondary)] rounded p-3">
-                  <div className="text-xl font-bold text-[var(--color-accent)]">{character.spellcastingAbility?.toUpperCase()}</div>
+                  <div className="text-xl font-bold text-[var(--color-accent)]">
+                    {character.spellcastingAbility?.toUpperCase().substring(0, 3)}
+                  </div>
                   <div className="text-xs text-[var(--color-text-muted)]">Casting Ability</div>
                 </div>
               </div>
