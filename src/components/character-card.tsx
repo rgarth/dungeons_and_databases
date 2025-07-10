@@ -7,6 +7,7 @@ import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 import { useCharacterMutations, useAvatar } from '@/hooks/use-character-mutations';
 import { toast } from 'react-hot-toast';
 import { Character } from '@/types/character';
+import { ClassLevel } from '@/lib/dnd/progression';
 import Image from 'next/image';
 import { Card, Button } from "./ui";
 
@@ -14,6 +15,42 @@ interface CharacterCardProps {
   character: Character;
   onCharacterDeleted?: () => void;
   onCharacterUpdated?: () => void;
+}
+
+// Helper function to format multiclass information
+function formatClassInfo(character: Character): { classText: string; levelText: string } {
+  // Check if character has multiclass data
+  let classes: ClassLevel[] = [];
+  
+  if (character.classes) {
+    if (Array.isArray(character.classes)) {
+      classes = character.classes;
+    } else if (typeof character.classes === 'string') {
+      try {
+        classes = JSON.parse(character.classes);
+      } catch (e) {
+        console.warn('Failed to parse classes JSON:', e);
+      }
+    }
+  }
+  
+  if (classes.length > 0) {
+    // Multiclass character - show individual class levels
+    const classText = classes
+      .map(cls => `${cls.class} ${cls.level}`)
+      .join(', ');
+    
+    const totalLevel = character.totalLevel || classes.reduce((sum, cls) => sum + cls.level, 0);
+    const levelText = `Level ${totalLevel}`;
+    
+    return { classText, levelText };
+  } else {
+    // Single class character (legacy format)
+    return {
+      classText: character.class,
+      levelText: `Level ${character.level}`
+    };
+  }
 }
 
 export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdated }: CharacterCardProps) {
@@ -25,6 +62,8 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
   const isOptimistic = character.isOptimistic;
   const hpPercentage = (character.hitPoints / character.maxHitPoints) * 100;
 
+  // Format class information
+  const { classText, levelText } = formatClassInfo(character);
 
 
   // Clean up sheet state when character changes
@@ -87,10 +126,10 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
               <div className="min-w-0 flex-1">
                 <h3 className="text-xl font-bold text-foreground break-words">{character.name}</h3>
                 <p className="text-muted-foreground text-sm mt-1">
-                  {character.subrace || character.race} {character.class}
+                  {character.subrace || character.race} {classText}
                 </p>
                 <div className="bg-accent text-accent-text text-sm font-semibold px-2 py-0.5 rounded mt-2 inline-block">
-                  Level {character.level}
+                  {levelText}
                 </div>
               </div>
             </div>

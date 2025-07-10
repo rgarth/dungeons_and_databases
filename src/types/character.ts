@@ -2,6 +2,7 @@ import { Weapon, MagicalWeapon, Armor, InventoryItem } from '@/lib/dnd/equipment
 import { Spell } from '@/lib/dnd/spells';
 import { Action } from '@/lib/dnd/combat';
 import { Treasure } from '@/lib/dnd/data';
+import { ClassLevel, SelectedFeature } from '@/lib/dnd/progression';
 
 export interface Character {
   id: string;
@@ -11,6 +12,10 @@ export interface Character {
   class: string;
   subclass?: string;
   level: number;
+  // Multiclass fields
+  classes?: ClassLevel[];
+  totalLevel?: number;
+  selectedFeatures?: SelectedFeature[];
   hitPoints: number;
   maxHitPoints: number;
   temporaryHitPoints?: number;

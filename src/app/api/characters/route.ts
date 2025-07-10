@@ -596,6 +596,17 @@ export async function PATCH(request: NextRequest) {
       updateData.attunedItems = body.attunedItems;
     }
 
+    // Handle multiclass updates
+    if (body.classes !== undefined) {
+      updateData.classes = body.classes;
+    }
+    if (body.totalLevel !== undefined) {
+      updateData.totalLevel = body.totalLevel;
+    }
+    if (body.selectedFeatures !== undefined) {
+      updateData.selectedFeatures = body.selectedFeatures;
+    }
+
     // Handle character background/detail updates
     if (body.appearance !== undefined) {
       updateData.appearance = body.appearance;
