@@ -1184,38 +1184,66 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
 
   // Spell slot management functions
   const handleUseSpellSlot = (level: number) => {
-    const currentUsedSlots = currentCharacter.usedSpellSlots || {};
-    const currentTotalSlots = currentCharacter.spellSlots?.[level] || 0;
-    const currentUsed = currentUsedSlots[level] || 0;
-    
-    if (currentUsed >= currentTotalSlots) {
-      return; // No slots available
-    }
+    try {
+      const currentUsedSlots = currentCharacter.usedSpellSlots || {};
+      const currentTotalSlots = currentCharacter.spellSlots?.[level] || 0;
+      const currentUsed = currentUsedSlots[level] || 0;
+      
+      if (currentUsed >= currentTotalSlots) {
+        console.log(`No level ${level} spell slots available`);
+        return; // No slots available
+      }
 
-    const updatedUsedSlots = {
-      ...currentUsedSlots,
-      [level]: currentUsed + 1
-    };
-    
-    setCurrentCharacter(prev => ({ ...prev, usedSpellSlots: updatedUsedSlots }));
-    updateCharacter({ usedSpellSlots: updatedUsedSlots });
+      const updatedUsedSlots = {
+        ...currentUsedSlots,
+        [level]: currentUsed + 1
+      };
+      
+      // Update local state immediately for responsive UI
+      setCurrentCharacter(prev => ({ ...prev, usedSpellSlots: updatedUsedSlots }));
+      
+      // Try to update the database, but don't let it break the dice rolling
+      try {
+        updateCharacter({ usedSpellSlots: updatedUsedSlots });
+      } catch (error) {
+        console.error('Failed to update usedSpellSlots in database:', error);
+        // Don't throw - just log the error and continue
+      }
+    } catch (error) {
+      console.error('Error in handleUseSpellSlot:', error);
+      // Don't let this break the dice rolling
+    }
   };
 
   const handleRecoverSpellSlot = (level: number) => {
-    const currentUsedSlots = currentCharacter.usedSpellSlots || {};
-    const currentUsed = currentUsedSlots[level] || 0;
-    
-    if (currentUsed <= 0) {
-      return; // No slots to recover
-    }
+    try {
+      const currentUsedSlots = currentCharacter.usedSpellSlots || {};
+      const currentUsed = currentUsedSlots[level] || 0;
+      
+      if (currentUsed <= 0) {
+        console.log(`No level ${level} spell slots to recover`);
+        return; // No slots to recover
+      }
 
-    const updatedUsedSlots = {
-      ...currentUsedSlots,
-      [level]: currentUsed - 1
-    };
-    
-    setCurrentCharacter(prev => ({ ...prev, usedSpellSlots: updatedUsedSlots }));
-    updateCharacter({ usedSpellSlots: updatedUsedSlots });
+      const updatedUsedSlots = {
+        ...currentUsedSlots,
+        [level]: currentUsed - 1
+      };
+      
+      // Update local state immediately for responsive UI
+      setCurrentCharacter(prev => ({ ...prev, usedSpellSlots: updatedUsedSlots }));
+      
+      // Try to update the database, but don't let it break the UI
+      try {
+        updateCharacter({ usedSpellSlots: updatedUsedSlots });
+      } catch (error) {
+        console.error('Failed to update usedSpellSlots in database:', error);
+        // Don't throw - just log the error and continue
+      }
+    } catch (error) {
+      console.error('Error in handleRecoverSpellSlot:', error);
+      // Don't let this break the UI
+    }
   };
 
   // New state for spell management (for known spell classes)

@@ -651,8 +651,11 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
         {/* Expanded state - compact dice selector */}
         {isExpanded && (
           <div 
-            className="w-24 h-full rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700"
-            style={{ backgroundColor: 'var(--color-card)' }}
+            className="w-24 h-full rounded-lg shadow-2xl"
+            style={{ 
+              backgroundColor: 'var(--color-card)',
+              border: '1px solid var(--color-border)'
+            }}
           >
             {/* Close button */}
             <button

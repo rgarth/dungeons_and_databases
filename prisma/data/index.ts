@@ -7,7 +7,7 @@
 import { weaponsData } from './weapons-data'
 import { armorData } from './armor-data'
 import { equipmentData } from './equipment-data'
-import { spellsData } from './spells-data'
+import { enhancedSpellsData } from './enhanced-spells-data'
 import { treasureData } from './treasure-data'
 import { classesData, classArmorProficiencies, classWeaponProficiencies } from './classes-data'
 import { backgroundsData } from './backgrounds-data'
@@ -29,7 +29,7 @@ export {
   weaponsData,
   armorData,
   equipmentData,
-  spellsData,
+  enhancedSpellsData as spellsData,
   treasureData,
   classesData,
   classArmorProficiencies,
@@ -51,7 +51,7 @@ export {
 
 // Export counts for validation
 export const contentCounts = {
-  spells: spellsData.length,
+  spells: enhancedSpellsData.length,
   weapons: weaponsData.length,
   armor: armorData.length,
   equipment: equipmentData.length,
@@ -69,7 +69,7 @@ export const contentCounts = {
   classSpellLimits: classSpellLimitsData.length,
   subraces: subracesData.length,
   languages: languagesData.length,
-  total: spellsData.length + 
+  total: enhancedSpellsData.length + 
          weaponsData.length + 
          armorData.length + 
          equipmentData.length + 

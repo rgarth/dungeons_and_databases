@@ -9,7 +9,7 @@ import { backgroundsData } from '../../prisma/data/backgrounds-data';
 import { weaponsData } from '../../prisma/data/weapons-data';
 import { armorData } from '../../prisma/data/armor-data';
 import { equipmentData } from '../../prisma/data/equipment-data';
-import { spellsData } from '../../prisma/data/spells-data';
+import { enhancedSpellsData } from '../../prisma/data/enhanced-spells-data';
 import { traitsData } from '../../prisma/data/traits-data';
 import { languagesData } from '../../prisma/data/languages-data';
 import { treasureData } from '../../prisma/data/treasure-data';
@@ -35,7 +35,7 @@ export class DndDataService {
   private weapons = weaponsData;
   private armor = armorData;
   private equipment = equipmentData;
-  private spells = spellsData;
+  private spells = enhancedSpellsData;
   private traits = traitsData;
   private languages = languagesData;
   private treasure = treasureData;
@@ -154,8 +154,7 @@ export class DndDataService {
 
   public getSpellsByClass(className: string) {
     return this.spells.filter(spell => {
-      const classes = JSON.parse(spell.classes);
-      return classes.includes(className);
+      return spell.classes.includes(className);
     });
   }
 
