@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
@@ -50,15 +50,15 @@ model User {
 }
 
 model Character {
-  id                    String   @id @default(cuid())
+  id                    String       @id @default(cuid())
   name                  String
   race                  String
   subrace               String?
   class                 String
-  level                 Int      @default(1)
+  level                 Int          @default(1)
   background            String
   alignment             String
-  experience            Int      @default(0)
+  experience            Int          @default(0)
   strength              Int
   dexterity             Int
   constitution          Int
@@ -78,30 +78,25 @@ model Character {
   weapons               Json?
   armor                 Json?
   languages             Json?
-  languageSources       Json?
   equipment             Json?
-  gold                  Float    @default(0)
-  copper                Int      @default(0)
-  silver                Int      @default(0)
-  electrum              Int      @default(0)
-  platinum              Int      @default(0)
+  gold                  Float        @default(0)
+  copper                Int          @default(0)
+  silver                Int          @default(0)
+  electrum              Int          @default(0)
+  platinum              Int          @default(0)
   avatarUrl             String?
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
   userId                String
-  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   subclass              String?
   classes               Json?
   totalLevel            Int?
   selectedFeatures      Json?
   gender                String?
   age                   Int?
-  temporaryHitPoints    Int?     @default(0)
-  deathSaveSuccesses    Json?    @default("[false, false, false]")
-  deathSaveFailures     Json?    @default("[false, false, false]")
-  proficiencyBonus      Int?     @default(2)
+  temporaryHitPoints    Int?         @default(0)
+  proficiencyBonus      Int?         @default(2)
   skills                Json?
-  skillSources          Json?
   equippedWeapons       Json?
   inventoryWeapons      Json?
   ammunition            Json?
@@ -110,9 +105,9 @@ model Character {
   magicalItems          Json?
   inventoryMagicalItems Json?
   attunedItems          Json?
-  copperPieces          Int?     @default(0)
-  silverPieces          Int?     @default(0)
-  goldPieces            Int?     @default(0)
+  copperPieces          Int?         @default(0)
+  silverPieces          Int?         @default(0)
+  goldPieces            Int?         @default(0)
   treasures             Json?
   spellsKnown           Json?
   spellsPrepared        Json?
@@ -128,12 +123,23 @@ model Character {
   notes                 String?
   avatar                String?
   fullBodyAvatar        String?
-  inspiration           Boolean? @default(false)
+  inspiration           Boolean?     @default(false)
   conditions            Json?
   racialTraits          Json?
-  kiPoints              Int?     @default(0)
-  usedKiPoints          Int?     @default(0)
+  skillSources          Json?        @default("{}")
+  languageSources       Json?        @default("{}")
+  deathSaveSuccesses    Json         @default("[false, false, false]")
+  deathSaveFailures     Json         @default("[false, false, false]")
+  kiPoints              Int?         @default(0)
+  usedKiPoints          Int?         @default(0)
+  usedSpellSlots        Json?
   avatarImage           AvatarImage?
+  user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([kiPoints])
+  @@index([usedKiPoints])
+  @@index([languageSources], map: "idx_character_language_sources", type: Gin)
+  @@index([skillSources], map: "idx_character_skill_sources", type: Gin)
 }
 
 model CustomWeapon {
@@ -161,11 +167,13 @@ model UserPreference {
 }
 
 model AvatarImage {
-  id          String   @id @default(cuid())
-  characterId String   @unique @map("character_id")
-  imageData   Bytes    @map("image_data")
-  mimeType    String   @default("image/png") @map("mime_type")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  id          String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  characterId String    @unique @map("character_id")
+  imageData   Bytes     @map("image_data")
+  mimeType    String    @default("image/png") @map("mime_type")
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([characterId], map: "idx_avatarimage_character_id")
 }

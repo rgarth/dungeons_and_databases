@@ -182,10 +182,10 @@ const DICE = (function() {
         var maxScale;
         if (screenWidth > 1200) {
           // Large displays: cap based on screen width, not diagonal
-          maxScale = Math.min(screenWidth / 12, 80); // Much more conservative
+          maxScale = Math.min(screenWidth / 20, 50); // Much smaller dice
         } else if (screenWidth > 800) {
           // Medium displays: moderate scaling
-          maxScale = Math.min(screenWidth / 10, 100);
+          maxScale = Math.min(screenWidth / 15, 70);
         } else {
           // Small displays: use original calculation
           maxScale = baseScale;

@@ -12,6 +12,26 @@ export interface Spell {
   duration: string;
   description: string;
   classes: string[];
+  // Extended 5e SRD fields
+  ritual?: boolean;
+  concentration?: boolean;
+  material?: string | null;
+  somatic?: boolean;
+  verbal?: boolean;
+  higherLevels?: string | null;
+  damageType?: string | null;
+  saveType?: string | null;
+  attackType?: 'melee' | 'ranged' | 'none';
+  areaOfEffect?: {
+    type: 'sphere' | 'cube' | 'cylinder' | 'line' | 'cone' | 'square';
+    size: number;
+    unit: 'feet' | 'miles';
+  } | null;
+  damageAtSlotLevel?: Record<number, string> | null;
+  healAtSlotLevel?: Record<number, string> | null;
+  atHigherLevels?: string | null;
+  source?: string | null;
+  page?: number | null;
 }
 
 export const SPELL_SCHOOLS = [

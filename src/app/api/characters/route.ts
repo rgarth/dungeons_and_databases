@@ -531,6 +531,9 @@ export async function PATCH(request: NextRequest) {
     if (body.spellSlots !== undefined) {
       updateData.spellSlots = body.spellSlots;
     }
+    if (body.usedSpellSlots !== undefined) {
+      updateData.usedSpellSlots = body.usedSpellSlots;
+    }
 
     // Handle inventory updates (support both old string[] and new InventoryItem[] formats)
     if (body.inventory !== undefined) {
