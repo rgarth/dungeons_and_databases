@@ -75,61 +75,113 @@ export class LevelUpService {
   }
   
   /**
-   * Get available level-up options for a character
+   * Get available level-up options for a character (supports multiple level jumps)
    */
-  async getLevelUpOptions(character: Character, targetClass?: string): Promise<LevelUpOptions> {
+  async getLevelUpOptions(character: Character, targetClass?: string, targetLevel?: number): Promise<LevelUpOptions> {
     const classes = this.getCharacterClasses(character);
     
     // Determine which class is leveling up
     const levelingClass = targetClass || classes[0]?.class || character.class;
     const currentClassLevel = classes.find(c => c.class === levelingClass)?.level || 0;
-    const newClassLevel = currentClassLevel + 1;
+    const newClassLevel = targetLevel || currentClassLevel + 1;
     
-    // Get progression data for this class level
-    const progression = this.getClassProgression(levelingClass, newClassLevel);
-    if (!progression) {
-      throw new Error(`No progression data found for ${levelingClass} level ${newClassLevel}`);
+    // Validate target level
+    if (newClassLevel <= currentClassLevel) {
+      throw new Error(`Target level ${newClassLevel} must be greater than current level ${currentClassLevel}`);
     }
     
-    // Calculate hit point options
+    if (newClassLevel > 20) {
+      throw new Error(`Target level ${newClassLevel} cannot exceed 20`);
+    }
+    
+    // For multiple level jumps, aggregate all levels in the range
+    const levelsToProcess = [];
+    for (let level = currentClassLevel + 1; level <= newClassLevel; level++) {
+      levelsToProcess.push(level);
+    }
+    
+    // Aggregate all choices and features from each level
+    const allChoices: LevelUpChoice[] = [];
+    const allFeatures: string[] = [];
+    let totalHitPoints = 0;
+    let totalSpellsToLearn = 0;
+    let totalCantripsToLearn = 0;
+    const allAvailableSpells: string[] = [];
+    const allAvailableCantrips: string[] = [];
+    
+    for (const level of levelsToProcess) {
+      const progression = this.getClassProgression(levelingClass, level);
+      if (!progression) {
+        throw new Error(`No progression data found for ${levelingClass} level ${level}`);
+      }
+      
+      // Add features for this level
+      allFeatures.push(...progression.features.map(feature => `${feature} (Level ${level})`));
+      
+      // Add choices for this level
+      allChoices.push(...progression.choices.map(choice => ({
+        ...choice,
+        description: `${choice.description} (Level ${level})`
+      })));
+      
+      // Calculate hit points for this level
+      const constitutionModifier = Math.floor((character.constitution - 10) / 2);
+      const levelHitPoints = Math.floor(progression.hitDie / 2) + 1 + constitutionModifier;
+      totalHitPoints += levelHitPoints;
+      
+      // Get spell options for this level
+      const levelSpellOptions = await this.getSpellOptions(character, levelingClass, level, progression);
+      if (levelSpellOptions) {
+        totalSpellsToLearn += levelSpellOptions.spellsToLearn;
+        totalCantripsToLearn += levelSpellOptions.cantripsToLearn;
+        allAvailableSpells.push(...levelSpellOptions.availableSpells);
+        allAvailableCantrips.push(...levelSpellOptions.cantripsAvailable);
+      }
+    }
+    
+    // Calculate hit point options (total for all levels)
     const constitutionModifier = Math.floor((character.constitution - 10) / 2);
+    const hitDie = this.getClassProgression(levelingClass, currentClassLevel + 1)?.hitDie || 6;
     const hitPointOptions = {
-      fixed: Math.floor(progression.hitDie / 2) + 1 + constitutionModifier,
+      fixed: totalHitPoints,
       roll: { 
-        min: 1 + constitutionModifier, 
-        max: progression.hitDie + constitutionModifier 
+        min: levelsToProcess.length + constitutionModifier, 
+        max: (levelsToProcess.length * hitDie) + constitutionModifier 
       }
     };
     
-    // Get spell options if this is a spellcasting class
-    const spellOptions = await this.getSpellOptions(character, levelingClass, newClassLevel, progression);
+    // Create aggregated spell options
+    const spellOptions = allAvailableSpells.length > 0 || allAvailableCantrips.length > 0 ? {
+      availableSpells: [...new Set(allAvailableSpells)], // Remove duplicates
+      cantripsAvailable: [...new Set(allAvailableCantrips)], // Remove duplicates
+      spellsToLearn: totalSpellsToLearn,
+      cantripsToLearn: totalCantripsToLearn,
+    } : undefined;
     
     return {
-      availableChoices: progression.choices,
-      newFeatures: progression.features,
+      availableChoices: allChoices,
+      newFeatures: allFeatures,
       hitPointOptions,
       spellOptions
     };
   }
   
   /**
-   * Process a level-up with selected choices
+   * Process a level-up with selected choices (supports multiple level jumps)
    */
   async processLevelUp(
     character: Character, 
     choices: Record<string, string | string[]>,
     hitPointsGained: number,
-    targetClass?: string
+    targetClass?: string,
+    targetLevel?: number
   ): Promise<LevelUpResult> {
-    // Get level-up options to validate choices
-    const options = await this.getLevelUpOptions(character, targetClass);
-    
     // Determine which class is leveling up
     const classes = this.getCharacterClasses(character);
     const levelingClass = targetClass || classes[0]?.class || character.class;
     const currentClassLevel = classes.find(c => c.class === levelingClass)?.level || 0;
-    const newClassLevel = currentClassLevel + 1;
-    const newTotalLevel = this.getTotalLevel(character) + 1;
+    const newClassLevel = targetLevel || currentClassLevel + 1;
+    const newTotalLevel = this.getTotalLevel(character) + (newClassLevel - currentClassLevel);
     
     // Create new class level data
     const newClassLevelData: ClassLevel = {
@@ -142,84 +194,85 @@ export class LevelUpService {
     const selectedFeatures: SelectedFeature[] = [];
     let featureId = 1;
     
-    // Auto-learn spells if there were no choices to make
-    if (options.spellOptions?.autoLearnSpells && options.spellOptions.autoLearnSpells.length > 0) {
-      options.spellOptions.autoLearnSpells.forEach((spellName: string) => {
+    // For multiple level jumps, we need to process each level's choices
+    const levelsToProcess = [];
+    for (let level = currentClassLevel + 1; level <= newClassLevel; level++) {
+      levelsToProcess.push(level);
+    }
+    
+    // Process choices for each level
+    for (const level of levelsToProcess) {
+      const levelProgression = this.getClassProgression(levelingClass, level);
+      if (!levelProgression) continue;
+      
+      // Process choices specific to this level
+      levelProgression.choices.forEach(choice => {
+        const choiceKey = `${choice.type}_level_${level}`;
+        const selection = choices[choiceKey];
+        
+        if (selection) {
+          switch (choice.type) {
+            case 'fightingStyle':
+              selectedFeatures.push({
+                id: `${character.id}-${newTotalLevel}-${featureId++}`,
+                classSource: levelingClass,
+                classLevel: level,
+                characterLevel: newTotalLevel,
+                featureType: 'fightingStyle',
+                name: 'Fighting Style',
+                selection: selection as string,
+                description: FIGHTING_STYLES[selection as string]
+              });
+              break;
+              
+            case 'abilityScoreIncrease':
+              selectedFeatures.push({
+                id: `${character.id}-${newTotalLevel}-${featureId++}`,
+                classSource: levelingClass,
+                classLevel: level,
+                characterLevel: newTotalLevel,
+                featureType: 'abilityScoreIncrease',
+                name: 'Ability Score Improvement',
+                selection: selection,
+                description: 'Increase ability scores or take a feat'
+              });
+              break;
+              
+            case 'feat':
+              const feat = FEATS[selection as string];
+              if (feat) {
+                selectedFeatures.push({
+                  id: `${character.id}-${newTotalLevel}-${featureId++}`,
+                  classSource: levelingClass,
+                  classLevel: level,
+                  characterLevel: newTotalLevel,
+                  featureType: 'feat',
+                  name: feat.name,
+                  selection: selection as string,
+                  description: feat.description
+                });
+              }
+              break;
+          }
+        }
+      });
+    }
+    
+    // Process spell selections (aggregated across all levels)
+    if (choices['spell'] && Array.isArray(choices['spell'])) {
+      (choices['spell'] as string[]).forEach(spellName => {
         selectedFeatures.push({
           id: `${character.id}-${newTotalLevel}-${featureId++}`,
           classSource: levelingClass,
           classLevel: newClassLevel,
           characterLevel: newTotalLevel,
           featureType: 'spell',
-          name: 'Spell Learned (Auto)',
+          name: 'Spell Learned',
           selection: spellName,
-          description: `Automatically learned spell: ${spellName}`
+          description: `Learned spell: ${spellName}`
         });
       });
     }
-    
-    Object.entries(choices).forEach(([choiceType, selection]) => {
-      switch (choiceType) {
-        case 'fightingStyle':
-          selectedFeatures.push({
-            id: `${character.id}-${newTotalLevel}-${featureId++}`,
-            classSource: levelingClass,
-            classLevel: newClassLevel,
-            characterLevel: newTotalLevel,
-            featureType: 'fightingStyle',
-            name: 'Fighting Style',
-            selection: selection as string,
-            description: FIGHTING_STYLES[selection as string]
-          });
-          break;
-          
-        case 'abilityScoreIncrease':
-          selectedFeatures.push({
-            id: `${character.id}-${newTotalLevel}-${featureId++}`,
-            classSource: levelingClass,
-            classLevel: newClassLevel,
-            characterLevel: newTotalLevel,
-            featureType: 'abilityScoreIncrease',
-            name: 'Ability Score Improvement',
-            selection: selection,
-            description: 'Increase ability scores or take a feat'
-          });
-          break;
-          
-        case 'feat':
-          const feat = FEATS[selection as string];
-          if (feat) {
-            selectedFeatures.push({
-              id: `${character.id}-${newTotalLevel}-${featureId++}`,
-              classSource: levelingClass,
-              classLevel: newClassLevel,
-              characterLevel: newTotalLevel,
-              featureType: 'feat',
-              name: feat.name,
-              selection: selection as string,
-              description: feat.description
-            });
-          }
-          break;
-          
-        case 'spell':
-          if (Array.isArray(selection)) {
-            selection.forEach(spellName => {
-              selectedFeatures.push({
-                id: `${character.id}-${newTotalLevel}-${featureId++}`,
-                classSource: levelingClass,
-                classLevel: newClassLevel,
-                characterLevel: newTotalLevel,
-                featureType: 'spell',
-                name: 'Spell Learned',
-                selection: spellName,
-                description: `Learned spell: ${spellName}`
-              });
-            });
-          }
-          break;
-      }
-    });
     
     return {
       newClassLevel: newClassLevelData,
