@@ -16,6 +16,7 @@ import { getSpellcastingType, getSpellsPreparedCount } from "@/lib/dnd/level-up"
 import { getMaxSpellLevel, getSpellcastingAbility } from "@/lib/dnd/spells";
 import { getSpellsByClass } from "@/lib/dnd/spell-data-helper";
 import { StatsTab, ActionsTab, GearTab, InventoryTab, BackgroundTab } from "./character-sheet/";
+import { ClassLevel, SelectedFeature } from "@/lib/dnd/progression";
 
 
 import Image from 'next/image';
@@ -31,6 +32,10 @@ interface CharacterSheetProps {
     class: string;
     subclass?: string;
     level: number;
+    // Multiclass fields
+    classes?: ClassLevel[];
+    totalLevel?: number;
+    selectedFeatures?: SelectedFeature[];
     background?: string;
     alignment?: string;
     gender?: string;
@@ -1299,7 +1304,33 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 <div className="min-w-0 flex-1">
                   <h1 className="text-xl sm:text-2xl font-bold text-[var(--color-text-primary)] truncate">{displayCharacter.name}</h1>
                   <p className="text-[var(--color-text-secondary)] text-sm sm:text-base truncate">
-                    Level {displayCharacter.level} {displayCharacter.subrace || displayCharacter.race} {displayCharacter.class}
+                    {(() => {
+                      // Format class information for multiclass support
+                      let classText = displayCharacter.class;
+                      let levelText = `Level ${displayCharacter.level}`;
+                      
+                      if (displayCharacter.classes) {
+                        let classes: ClassLevel[] = [];
+                        
+                        if (Array.isArray(displayCharacter.classes)) {
+                          classes = displayCharacter.classes;
+                        } else if (typeof displayCharacter.classes === 'string') {
+                          try {
+                            classes = JSON.parse(displayCharacter.classes);
+                          } catch (e) {
+                            console.warn('Failed to parse classes JSON:', e);
+                          }
+                        }
+                        
+                        if (classes.length > 0) {
+                          classText = classes.map(cls => `${cls.class} ${cls.level}`).join(', ');
+                          const totalLevel = displayCharacter.totalLevel || classes.reduce((sum, cls) => sum + cls.level, 0);
+                          levelText = `Level ${totalLevel}`;
+                        }
+                      }
+                      
+                      return `${levelText} ${displayCharacter.subrace || displayCharacter.race} ${classText}`;
+                    })()}
                     {displayCharacter.background && (
                       <span className="hidden sm:inline"> • {displayCharacter.background}</span>
                     )}

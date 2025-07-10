@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { X, Dice6, TrendingUp, Book, Sparkles, Sword, Shield, Plus, Minus, ChevronRight, ChevronLeft } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { X, Dice6, TrendingUp, Book, Sparkles, Sword, Shield, ChevronRight, ChevronLeft } from "lucide-react";
 import { createLevelUpService, type LevelUpOptions, type Character } from "@/services/character/level-up";
 import { FIGHTING_STYLES, FEATS, type ClassLevel } from "@/lib/dnd/progression";
 
@@ -46,7 +46,7 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
   const [selectedSpells, setSelectedSpells] = useState<string[]>([]);
   const [availableClasses, setAvailableClasses] = useState<string[]>([]);
 
-  const levelUpService = createLevelUpService();
+  const levelUpService = useMemo(() => createLevelUpService(), []);
 
   // Load available classes for multiclassing
   useEffect(() => {
@@ -56,19 +56,52 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
 
   // Load level up options when target changes
   useEffect(() => {
+    console.log('🟡 Main options useEffect triggered:', { 
+      currentStep, 
+      targetClass: levelUpTarget.targetClass, 
+      targetLevel: levelUpTarget.targetLevel 
+    });
+    
     const loadOptions = async () => {
+      console.log('🟡 Loading options for:', { 
+        characterClass: character.class, 
+        targetClass: levelUpTarget.targetClass, 
+        targetLevel: levelUpTarget.targetLevel 
+      });
+      
       try {
         const options = await levelUpService.getLevelUpOptions(character, levelUpTarget.targetClass, levelUpTarget.targetLevel);
+        console.log('🟢 Options loaded in main useEffect:', options);
         setLevelUpOptions(options);
       } catch (error) {
-        console.error('Error getting level up options:', error);
+        console.error('🔴 Error getting level up options in main useEffect:', error);
       }
     };
     
     if (currentStep !== 'target') {
       loadOptions();
+    } else {
+      console.log('🟡 Skipping options load - still on target step');
     }
-  }, [character, levelUpTarget.targetClass, currentStep, levelUpService]);
+  }, [character, levelUpTarget.targetClass, levelUpTarget.targetLevel, currentStep, levelUpService]);
+
+  // Handle step transition after options are loaded
+  const [pendingStepTransition, setPendingStepTransition] = useState<WizardStep | null>(null);
+
+  useEffect(() => {
+    console.log('🟡 Step transition useEffect triggered:', { 
+      pendingStepTransition, 
+      hasLevelUpOptions: !!levelUpOptions,
+      currentStep 
+    });
+    
+    if (pendingStepTransition) {
+      console.log('🟢 Transitioning to step:', pendingStepTransition);
+      setCurrentStep(pendingStepTransition);
+      setPendingStepTransition(null);
+      console.log('🟢 Step transition completed');
+    }
+  }, [pendingStepTransition]);
 
   const getCurrentClass = () => {
     return levelUpTarget.targetClass;
@@ -235,6 +268,7 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
           subclass: character.subclass,
           hitPointsGained: result.hitPointsGained
         }]);
+        updates.totalLevel = levelUpTarget.targetLevel;
       } else {
         // Multiclass - need to merge with existing classes
         const parsedClasses = character.classes ? JSON.parse(character.classes) : null;
@@ -246,19 +280,22 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
         
         const targetClassIndex = existingClasses.findIndex((c: ClassLevel) => c.class === levelUpTarget.targetClass);
         if (targetClassIndex >= 0) {
-          existingClasses[targetClassIndex].level = levelUpTarget.targetLevel;
+          // Increment existing class level
+          existingClasses[targetClassIndex].level += 1;
         } else {
+          // Add new class at level 1
           existingClasses.push({
             class: levelUpTarget.targetClass,
-            level: levelUpTarget.targetLevel,
+            level: 1,
             hitPointsGained: result.hitPointsGained
           });
         }
         
-        updates.classes = JSON.stringify(existingClasses) as string;
+        updates.classes = JSON.stringify(existingClasses);
+        // Calculate total level from all classes
+        const totalLevel = existingClasses.reduce((sum: number, cls: ClassLevel) => sum + cls.level, 0);
+        updates.totalLevel = totalLevel;
       }
-      
-      updates.totalLevel = levelUpTarget.targetLevel;
       updates.selectedFeatures = JSON.stringify(result.selectedFeatures);
 
       // Update ability scores if allocated
@@ -357,116 +394,246 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
             <div className="space-y-6">
               <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4">
                 <TrendingUp className="h-6 w-6 inline mr-2 text-[var(--color-accent)]" />
-                Choose Your Level Up Target
+                How would you like to level up?
               </h3>
               
-              {/* Target Level Selection */}
-              <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
-                <h4 className="font-medium text-[var(--color-text-primary)] mb-3">Target Level</h4>
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => setLevelUpTarget(prev => ({ 
-                      ...prev, 
-                      targetLevel: Math.max(character.level + 1, prev.targetLevel - 1),
-                      levelsToGain: Math.max(1, prev.targetLevel - character.level - 1)
-                    }))}
-                    disabled={levelUpTarget.targetLevel <= character.level + 1}
-                    className="p-2 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 text-[var(--color-button-text)] rounded transition-colors"
-                    aria-label="Decrease level"
-                  >
-                    <Minus className="h-4 w-4" />
-                  </button>
+              {/* Level Up Choice */}
+              <div className="space-y-4">
+                {/* Option 1: Level up current class */}
+                <div className="w-full p-6 bg-[var(--color-card-secondary)] rounded-lg border-2 border-[var(--color-accent)] hover:border-[var(--color-accent-hover)] transition-colors text-left group">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h4 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">
+                        Level Up {character.class}
+                      </h4>
+                      <p className="text-[var(--color-text-secondary)]">
+                        Take your {character.class} to a higher level
+                      </p>
+                    </div>
+                  </div>
                   
-                  <span className="text-2xl font-bold text-[var(--color-text-primary)] min-w-[60px] text-center">
-                    {levelUpTarget.targetLevel}
-                  </span>
+                  {/* Level Selection */}
+                  <div className="bg-[var(--color-surface)] rounded-lg p-4 mb-4">
+                    <h5 className="font-medium text-[var(--color-text-primary)] mb-3">Target Level</h5>
+                    <div className="flex items-center gap-4 justify-center">
+                      <button
+                        onClick={() => setLevelUpTarget(prev => ({ 
+                          ...prev, 
+                          targetLevel: Math.max(character.level + 1, prev.targetLevel - 1),
+                          levelsToGain: Math.max(1, prev.targetLevel - character.level - 1)
+                        }))}
+                        disabled={levelUpTarget.targetLevel <= character.level + 1}
+                        className="p-2 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 text-[var(--color-button-text)] rounded transition-colors"
+                        aria-label="Decrease level"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </button>
+                      
+                      <span className="text-2xl font-bold text-[var(--color-text-primary)] min-w-[60px] text-center">
+                        {levelUpTarget.targetLevel}
+                      </span>
+                      
+                      <button
+                        onClick={() => setLevelUpTarget(prev => ({ 
+                          ...prev, 
+                          targetLevel: Math.min(20, prev.targetLevel + 1),
+                          levelsToGain: prev.targetLevel - character.level + 1
+                        }))}
+                        disabled={levelUpTarget.targetLevel >= 20}
+                        className="p-2 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 text-[var(--color-button-text)] rounded transition-colors"
+                        aria-label="Increase level"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <p className="text-[var(--color-text-secondary)] text-sm mt-2 text-center">
+                      Gaining {levelUpTarget.levelsToGain} level(s) (Level {character.level} → {levelUpTarget.targetLevel})
+                    </p>
+                  </div>
                   
                   <button
-                    onClick={() => setLevelUpTarget(prev => ({ 
-                      ...prev, 
-                      targetLevel: Math.min(20, prev.targetLevel + 1),
-                      levelsToGain: prev.targetLevel - character.level + 1
-                    }))}
-                    disabled={levelUpTarget.targetLevel >= 20}
-                    className="p-2 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 text-[var(--color-button-text)] rounded transition-colors"
-                    aria-label="Increase level"
+                    onClick={async () => {
+                      console.log('🔵 Button clicked - starting level up process');
+                      console.log('Current state:', { 
+                        currentStep, 
+                        targetLevel: levelUpTarget.targetLevel, 
+                        targetClass: levelUpTarget.targetClass,
+                        characterClass: character.class,
+                        characterLevel: character.level
+                      });
+                      
+                      setLevelUpTarget(prev => ({ 
+                        ...prev, 
+                        targetClass: character.class
+                      }));
+                      
+                      console.log('🔵 About to call getLevelUpOptions');
+                      
+                      // Load options before proceeding
+                      try {
+                        const options = await levelUpService.getLevelUpOptions(
+                          character, 
+                          character.class, 
+                          levelUpTarget.targetLevel
+                        );
+                        
+                        console.log('🔵 Options loaded successfully:', options);
+                        console.log('🔵 Setting levelUpOptions and pendingStepTransition');
+                        
+                        setLevelUpOptions(options);
+                        setPendingStepTransition('overview');
+                        
+                        console.log('🔵 State updates queued');
+                      } catch (error) {
+                        console.error('🔴 Error loading level up options:', error);
+                      }
+                    }}
+                    className="w-full p-3 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded-lg font-medium transition-colors"
                   >
-                    <Plus className="h-4 w-4" />
+                    Continue to Level {levelUpTarget.targetLevel}
                   </button>
                 </div>
-                <p className="text-[var(--color-text-secondary)] text-sm mt-2">
-                  Gaining {levelUpTarget.levelsToGain} level(s) (Level {character.level} → {levelUpTarget.targetLevel})
-                </p>
+
+                {/* Option 2: Multiclass */}
+                <button
+                  onClick={async () => {
+                    // Set up for multiclassing - don't load options yet, wait for class selection
+                    setLevelUpTarget(prev => ({ 
+                      ...prev, 
+                      targetClass: '', // Clear target class to show class selection
+                      targetLevel: character.level + 1,
+                      levelsToGain: 1
+                    }));
+                    
+                    // Clear any existing options and go to overview step
+                    setLevelUpOptions(null);
+                    setPendingStepTransition('overview');
+                  }}
+                  className="w-full p-6 bg-[var(--color-card-secondary)] rounded-lg border-2 border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors text-left group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">
+                        Multiclass into New Class
+                      </h4>
+                      <p className="text-[var(--color-text-secondary)]">
+                        Add a level in a different class (requires meeting prerequisites)
+                      </p>
+                    </div>
+                    <ChevronRight className="h-6 w-6 text-[var(--color-text-secondary)] group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </button>
               </div>
 
-              {/* Class Selection */}
-              <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
-                <h4 className="font-medium text-[var(--color-text-primary)] mb-3">Target Class</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  {availableClasses.map(className => {
-                    const isCurrentClass = className === character.class;
-                    const canTake = isCurrentClass || canMulticlass(className);
-                    const isSelected = levelUpTarget.targetClass === className;
-                    
-                    return (
-                      <button
-                        key={className}
-                        onClick={() => setLevelUpTarget(prev => ({ ...prev, targetClass: className }))}
-                        disabled={!canTake}
-                        className={`p-3 rounded-lg border-2 transition-colors text-left ${
-                          isSelected 
-                            ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10' 
-                            : 'border-[var(--color-border)] hover:border-[var(--color-accent)]'
-                        } ${
-                          !canTake ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-                        }`}
-                      >
-                        <div className="font-medium text-[var(--color-text-primary)]">{className}</div>
-                        <div className="text-sm text-[var(--color-text-secondary)]">
-                          {isCurrentClass ? 'Current Class' : canTake ? 'Available for Multiclass' : 'Prerequisites not met'}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+
             </div>
           )}
 
-          {currentStep === 'overview' && levelUpOptions && (
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4">
-                <TrendingUp className="h-6 w-6 inline mr-2 text-[var(--color-accent)]" />
-                Level {getNewLevel()} Features
-              </h3>
-              
-              <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
-                <h4 className="font-medium text-[var(--color-text-primary)] mb-2">New Features:</h4>
-                <ul className="space-y-1 text-[var(--color-text-secondary)]">
-                  {levelUpOptions.newFeatures.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <Sparkles className="h-4 w-4 mr-2 text-[var(--color-accent)]" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+          {currentStep === 'overview' && (() => {
+            // If we're in multiclass mode and no class is selected yet
+            if (levelUpTarget.targetClass === '') {
+              return (
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4">
+                    <TrendingUp className="h-6 w-6 inline mr-2 text-[var(--color-accent)]" />
+                    Multiclass Selection
+                  </h3>
+                  
+                  <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+                    <h4 className="font-medium text-[var(--color-text-primary)] mb-3">Choose Multiclass Class</h4>
+                    <select
+                      value={levelUpTarget.targetClass}
+                      onChange={async (e) => {
+                        const newClass = e.target.value;
+                        setLevelUpTarget(prev => ({ ...prev, targetClass: newClass }));
+                        
+                        if (newClass && newClass !== character.class) {
+                          // Load options for the selected multiclass
+                          try {
+                            const options = await levelUpService.getLevelUpOptions(
+                              character, 
+                              newClass, 
+                              character.level + 1
+                            );
+                            setLevelUpOptions(options);
+                          } catch (error) {
+                            console.error('Error loading multiclass options:', error);
+                          }
+                        }
+                      }}
+                      className="w-full p-3 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg text-[var(--color-text-primary)] focus:border-[var(--color-accent)] focus:outline-none"
+                    >
+                      <option value="">Select a class...</option>
+                      {availableClasses
+                        .filter(className => className !== character.class && canMulticlass(className))
+                        .map(className => (
+                          <option key={className} value={className}>
+                            {className}
+                          </option>
+                        ))}
+                    </select>
+                    {levelUpTarget.targetClass && levelUpTarget.targetClass !== character.class && (
+                      <p className="text-[var(--color-text-secondary)] text-sm mt-2">
+                        Adding {levelUpTarget.targetClass} level 1 to your character
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            }
 
-              {levelUpOptions.availableChoices.length > 0 && (
+            // If we have level up options, show the normal overview
+            if (levelUpOptions) {
+              console.log('🟢 Rendering overview step with options:', levelUpOptions);
+              return (
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4">
+                  <TrendingUp className="h-6 w-6 inline mr-2 text-[var(--color-accent)]" />
+                  Level {getNewLevel()} Features
+                </h3>
+                
                 <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
-                  <h4 className="font-medium text-[var(--color-text-primary)] mb-2">Choices to Make:</h4>
+                  <h4 className="font-medium text-[var(--color-text-primary)] mb-2">New Features:</h4>
                   <ul className="space-y-1 text-[var(--color-text-secondary)]">
-                    {levelUpOptions.availableChoices.map((choice, index) => (
+                    {levelUpOptions.newFeatures.map((feature, index) => (
                       <li key={index} className="flex items-center">
-                        <Shield className="h-4 w-4 mr-2 text-[var(--color-accent-secondary)]" />
-                        {choice.description}
+                        <Sparkles className="h-4 w-4 mr-2 text-[var(--color-accent)]" />
+                        {feature}
                       </li>
                     ))}
                   </ul>
                 </div>
-              )}
-            </div>
-          )}
+
+                {levelUpOptions.availableChoices.length > 0 && (
+                  <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+                    <h4 className="font-medium text-[var(--color-text-primary)] mb-2">Choices to Make:</h4>
+                    <ul className="space-y-1 text-[var(--color-text-secondary)]">
+                      {levelUpOptions.availableChoices.map((choice, index) => (
+                        <li key={index} className="flex items-center">
+                          <Shield className="h-4 w-4 mr-2 text-[var(--color-accent-secondary)]" />
+                          {choice.description}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            );
+            }
+
+            // Loading state
+            return (
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4">
+                  <TrendingUp className="h-6 w-6 inline mr-2 text-[var(--color-accent)]" />
+                  Loading...
+                </h3>
+                <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+                  <p className="text-[var(--color-text-secondary)]">Loading level up options...</p>
+                </div>
+              </div>
+            );
+          })()}
 
           {currentStep === 'hitPoints' && levelUpOptions && (
             <div className="space-y-4">
