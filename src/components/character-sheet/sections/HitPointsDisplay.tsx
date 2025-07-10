@@ -139,6 +139,66 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
     }
   };
 
+  // Death save roll handler
+  const handleDeathSaveRoll = () => {
+    // Roll a d20 using the dice system
+    const event = new CustomEvent('triggerDiceRoll', {
+      detail: { notation: '1d20' }
+    });
+    window.dispatchEvent(event);
+    
+    // Listen for the dice roll completion
+    const handleDiceRollCompleted = (event: CustomEvent) => {
+      const { notation, resultTotal } = event.detail;
+      
+      // Only process if this is our death save roll (1d20)
+      if (notation === '1d20' && resultTotal !== undefined) {
+        const roll = resultTotal;
+        const isSuccess = roll >= 10;
+        
+        // Find next empty slot
+        if (isSuccess) {
+          const nextEmptyIndex = deathSaveSuccesses.findIndex(success => !success);
+          if (nextEmptyIndex !== -1) {
+            const newSuccesses = [...deathSaveSuccesses];
+            newSuccesses[nextEmptyIndex] = true;
+            
+            // Check if we now have 3 successes - restore to 1 HP
+            const successCount = newSuccesses.filter(s => s).length;
+            if (successCount === 3) {
+              onUpdate({ 
+                hitPoints: 1, 
+                deathSaveSuccesses: [false, false, false], 
+                deathSaveFailures: [false, false, false] 
+              });
+              return;
+            }
+            
+            onUpdate({ deathSaveSuccesses: newSuccesses });
+          }
+        } else {
+          const nextEmptyIndex = deathSaveFailures.findIndex(failure => !failure);
+          if (nextEmptyIndex !== -1) {
+            const newFailures = [...deathSaveFailures];
+            newFailures[nextEmptyIndex] = true;
+            onUpdate({ deathSaveFailures: newFailures });
+          }
+        }
+        
+        // Remove the event listener
+        window.removeEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+      }
+    };
+    
+    // Add event listener for dice roll completion
+    window.addEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+    
+    // Cleanup listener after 10 seconds to prevent memory leaks
+    setTimeout(() => {
+      window.removeEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+    }, 10000);
+  };
+
   // Death Saves Mode when HP ≤ 0
   if (character.hitPoints <= 0) {
     return (
@@ -223,44 +283,7 @@ export function HitPointsDisplay({ character, onUpdate }: HitPointsDisplayProps)
           </button>
           {countTrue(deathSaveFailures) < 3 && (
             <button
-              onClick={() => {
-                // Roll a d20
-                const roll = Math.floor(Math.random() * 20) + 1;
-                const isSuccess = roll >= 10;
-                
-                // Find next empty slot
-                if (isSuccess) {
-                  const nextEmptyIndex = deathSaveSuccesses.findIndex(success => !success);
-                  if (nextEmptyIndex !== -1) {
-                    const newSuccesses = [...deathSaveSuccesses];
-                    newSuccesses[nextEmptyIndex] = true;
-                    
-                    // Check if we now have 3 successes - restore to 1 HP
-                    const successCount = newSuccesses.filter(s => s).length;
-                    if (successCount === 3) {
-                      onUpdate({ 
-                        hitPoints: 1, 
-                        deathSaveSuccesses: [false, false, false], 
-                        deathSaveFailures: [false, false, false] 
-                      });
-                      alert(`Death Save: ${roll} (Success) - Character stabilized at 1 HP!`);
-                      return;
-                    }
-                    
-                    onUpdate({ deathSaveSuccesses: newSuccesses });
-                  }
-                } else {
-                  const nextEmptyIndex = deathSaveFailures.findIndex(failure => !failure);
-                  if (nextEmptyIndex !== -1) {
-                    const newFailures = [...deathSaveFailures];
-                    newFailures[nextEmptyIndex] = true;
-                    onUpdate({ deathSaveFailures: newFailures });
-                  }
-                }
-                
-                // Show roll result
-                alert(`Death Save: ${roll} (${isSuccess ? 'Success' : 'Failure'})`);
-              }}
+              onClick={handleDeathSaveRoll}
               className="bg-[var(--color-warning)] hover:bg-[var(--color-warning)]/80 text-[var(--color-warning-text)] text-sm px-4 py-2 rounded font-medium"
               title="Roll a death saving throw (d20, 10+ succeeds)"
             >
