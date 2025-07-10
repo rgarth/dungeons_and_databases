@@ -376,7 +376,8 @@ export function InventoryTab({
                         <select
                           value={selectedEquipment}
                           onChange={(e) => setSelectedEquipment(e.target.value)}
-                          className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
+                          className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none min-w-0"
+                          style={{ textOverflow: 'ellipsis' }}
                         >
                           <option value="">Select item...</option>
                           {equipmentData
@@ -385,7 +386,7 @@ export function InventoryTab({
                               equipment.type !== 'Armor'
                             )
                             .map(equipment => (
-                              <option key={equipment.name} value={equipment.name}>
+                              <option key={equipment.name} value={equipment.name} className="truncate">
                                 {equipment.name} ({equipment.cost}) - {equipment.type}
                               </option>
                             ))}
@@ -667,11 +668,12 @@ export function InventoryTab({
                     <select
                       value={selectedTreasure}
                       onChange={(e) => setSelectedTreasure(e.target.value)}
-                      className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none"
+                      className="flex-1 bg-[var(--color-card-secondary)] border border-[var(--color-border)] rounded px-3 py-2 text-[var(--color-text-primary)] text-sm focus:border-[var(--color-accent)] focus:outline-none min-w-0"
+                      style={{ textOverflow: 'ellipsis' }}
                     >
                       <option value="">Select treasure...</option>
                       {allTreasures.map(treasure => (
-                        <option key={treasure.name} value={treasure.name}>
+                        <option key={treasure.name} value={treasure.name} className="truncate">
                           {treasure.name} ({treasure.value} gp)
                         </option>
                       ))}
