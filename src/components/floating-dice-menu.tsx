@@ -503,6 +503,10 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
   const [rollQueue, setRollQueue] = useState<Array<{notation: string, color: string}>>([]);
   const [isRolling, setIsRolling] = useState(false);
   const [rollCounter, setRollCounter] = useState(0);
+  
+  // Roll history system
+  const [rollHistory, setRollHistory] = useState<Array<{result: string, notation: string, timestamp: number}>>([]);
+  const [showHistory, setShowHistory] = useState(false);
 
   // Get initial dice color from cookie or theme default
   const getInitialDiceColor = () => {
@@ -599,6 +603,20 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
     // Store the roll result if provided
     if (result && result.resultString) {
       setLastRollResult(result.resultString);
+      
+      // Add to roll history
+      setRollHistory(prev => {
+        const newHistory = [
+          {
+            result: result.resultString!,
+            notation: fullscreenDiceNotation,
+            timestamp: Date.now()
+          },
+          ...prev
+        ];
+        // Keep only the last 5 rolls
+        return newHistory.slice(0, 5);
+      });
     }
     
     // Process next roll in queue
@@ -676,43 +694,73 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
           <div className="flex items-center">
             {lastRollResult ? (
               // Pill design with result
-              <button
-                onClick={handleExpand}
-                className="flex items-center space-x-2 px-3 py-2 rounded-full transition-all hover:scale-105 shadow-lg border-2"
-                style={{ 
-                  backgroundColor: 'var(--color-card)',
-                  borderColor: 'var(--color-border)',
-                  color: 'var(--color-text-primary)'
-                }}
-                title="Open Dice Menu"
-              >
-                {/* Dice icon in circle */}
-                <div 
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold"
+              <div className="relative">
+                <button
+                  onClick={handleExpand}
+                  onMouseEnter={() => setShowHistory(true)}
+                  onMouseLeave={() => setShowHistory(false)}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-full transition-all hover:scale-105 shadow-lg border-2"
                   style={{ 
-                    backgroundColor: 'var(--color-accent)',
-                    color: 'var(--color-accent-text)'
+                    backgroundColor: 'var(--color-card)',
+                    borderColor: 'var(--color-border)',
+                    color: 'var(--color-text-primary)'
                   }}
+                  title="Open Dice Menu"
                 >
-                  🎲
-                </div>
-                {/* Roll result */}
-                <span className="text-sm font-medium whitespace-nowrap">
-                  {lastRollResult}
-                </span>
-                {/* Queue indicator */}
-                {rollQueue.length > 0 && (
+                  {/* Dice icon in circle */}
                   <div 
-                    className="ml-2 px-2 py-1 text-xs rounded-full font-bold"
-                    style={{
-                      backgroundColor: 'var(--color-warning)',
-                      color: 'var(--color-warning-text)'
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold"
+                    style={{ 
+                      backgroundColor: 'var(--color-accent)',
+                      color: 'var(--color-accent-text)'
                     }}
                   >
-                    {rollQueue.length}
+                    🎲
+                  </div>
+                  {/* Roll result */}
+                  <span className="text-sm font-medium whitespace-nowrap">
+                    {lastRollResult}
+                  </span>
+                  {/* Queue indicator */}
+                  {rollQueue.length > 0 && (
+                    <div 
+                      className="ml-2 px-2 py-1 text-xs rounded-full font-bold"
+                      style={{
+                        backgroundColor: 'var(--color-warning)',
+                        color: 'var(--color-warning-text)'
+                      }}
+                    >
+                      {rollQueue.length}
+                    </div>
+                  )}
+                </button>
+                
+                {/* Roll History Tooltip */}
+                {showHistory && rollHistory.length > 1 && (
+                  <div 
+                    className="absolute bottom-full left-0 mb-2 p-3 rounded-lg shadow-xl border-2 z-50 min-w-[200px]"
+                    style={{
+                      backgroundColor: 'var(--color-card)',
+                      borderColor: 'var(--color-border)',
+                      color: 'var(--color-text-primary)'
+                    }}
+                  >
+                    <div className="text-xs font-semibold mb-2 text-[var(--color-text-secondary)]">
+                      Recent Rolls
+                    </div>
+                    {rollHistory.map((roll) => (
+                      <div key={roll.timestamp} className="flex justify-between items-center py-1">
+                        <span className="text-xs text-[var(--color-text-secondary)]">
+                          {roll.notation}
+                        </span>
+                        <span className="text-sm font-bold">
+                          {roll.result}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 )}
-              </button>
+              </div>
             ) : (
               // Regular circle button when no result
               <button
