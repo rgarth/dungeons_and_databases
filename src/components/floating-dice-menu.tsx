@@ -599,7 +599,7 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
     }
   };
 
-  const handleRollComplete = (result: { resultString?: string }) => {
+  const handleRollComplete = (result: { resultString?: string; resultTotal?: number }) => {
     // Store the roll result if provided
     if (result && result.resultString) {
       setLastRollResult(result.resultString);
@@ -617,6 +617,16 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
         // Keep only the last 5 rolls
         return newHistory.slice(0, 5);
       });
+      
+      // Dispatch global event for other components to listen to
+      const globalEvent = new CustomEvent('diceRollCompleted', {
+        detail: {
+          notation: fullscreenDiceNotation,
+          result: result.resultString,
+          resultTotal: result.resultTotal
+        }
+      });
+      window.dispatchEvent(globalEvent);
     }
     
     // Process next roll in queue

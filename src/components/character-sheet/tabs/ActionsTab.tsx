@@ -918,11 +918,19 @@ export function ActionsTab({
                                     if (isUsed && onRecoverSpellSlot) {
                                       onRecoverSpellSlot(parseInt(level));
                                     } else if (!isUsed && onSpellSlotUsed) {
-                                      // Find the spell for this slot level
-                                      const spell = character.spellsKnown?.find(s => s.level === parseInt(level));
-                                      if (spell) {
-                                        onSpellSlotUsed(spell, parseInt(level));
-                                      }
+                                      // Create a dummy spell object for manual slot usage
+                                      const dummySpell: Spell = {
+                                        name: `Level ${level} Spell`,
+                                        level: parseInt(level),
+                                        school: 'Manual',
+                                        castingTime: 'Manual',
+                                        range: 'Manual',
+                                        components: 'Manual',
+                                        duration: 'Manual',
+                                        description: 'Manual spell casting',
+                                        classes: []
+                                      };
+                                      onSpellSlotUsed(dummySpell, parseInt(level));
                                     }
                                   }}
                                   className={`w-5 h-5 rounded-full border-2 transition-all duration-200 flex items-center justify-center ${
@@ -945,11 +953,19 @@ export function ActionsTab({
                             {onSpellSlotUsed && available > 0 && (
                               <button
                                 onClick={() => {
-                                  // Find the spell for this slot level
-                                  const spell = character.spellsKnown?.find(s => s.level === parseInt(level));
-                                  if (spell) {
-                                    onSpellSlotUsed(spell, parseInt(level));
-                                  }
+                                  // Create a dummy spell object for manual slot usage
+                                  const dummySpell: Spell = {
+                                    name: `Level ${level} Spell`,
+                                    level: parseInt(level),
+                                    school: 'Manual',
+                                    castingTime: 'Manual',
+                                    range: 'Manual',
+                                    components: 'Manual',
+                                    duration: 'Manual',
+                                    description: 'Manual spell casting',
+                                    classes: []
+                                  };
+                                  onSpellSlotUsed(dummySpell, parseInt(level));
                                 }}
                                 className="flex-1 bg-[var(--color-error)] hover:bg-[var(--color-error-hover)] text-[var(--color-error-text)] text-sm px-3 py-2 rounded font-medium transition-all duration-200"
                                 title={`Use Level ${level} spell slot`}

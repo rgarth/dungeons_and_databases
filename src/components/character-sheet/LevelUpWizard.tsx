@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Dice6, TrendingUp, Book, Sparkles, Sword, Shield } from "lucide-react";
+import { X, Dice6, TrendingUp, Book, Sparkles, Sword, Shield, Plus, Minus, ChevronRight, ChevronLeft } from "lucide-react";
 import { createLevelUpService, type LevelUpOptions, type Character } from "@/services/character/level-up";
-import { FIGHTING_STYLES, FEATS } from "@/lib/dnd/progression";
+import { FIGHTING_STYLES, FEATS, type ClassLevel } from "@/lib/dnd/progression";
 
 interface CharacterUpdates {
   level?: number;
@@ -22,10 +22,21 @@ interface LevelUpWizardProps {
   onLevelUp: (updates: CharacterUpdates) => void;
 }
 
-type WizardStep = 'overview' | 'hitPoints' | 'choices' | 'spells' | 'review';
+type WizardStep = 'target' | 'overview' | 'hitPoints' | 'choices' | 'spells' | 'review';
+
+interface LevelUpTarget {
+  targetLevel: number;
+  targetClass: string;
+  levelsToGain: number;
+}
 
 export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardProps) {
-  const [currentStep, setCurrentStep] = useState<WizardStep>('overview');
+  const [currentStep, setCurrentStep] = useState<WizardStep>('target');
+  const [levelUpTarget, setLevelUpTarget] = useState<LevelUpTarget>({
+    targetLevel: character.level + 1,
+    targetClass: character.class,
+    levelsToGain: 1
+  });
   const [levelUpOptions, setLevelUpOptions] = useState<LevelUpOptions | null>(null);
   const [selections, setSelections] = useState<Record<string, string | string[]>>({});
   const [hitPointChoice, setHitPointChoice] = useState<'fixed' | 'roll'>('fixed');
@@ -33,28 +44,38 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
   const [abilityScoreAllocations, setAbilityScoreAllocations] = useState<Record<string, number>>({});
   const [selectedFeat, setSelectedFeat] = useState<string>('');
   const [selectedSpells, setSelectedSpells] = useState<string[]>([]);
+  const [availableClasses, setAvailableClasses] = useState<string[]>([]);
 
   const levelUpService = createLevelUpService();
 
+  // Load available classes for multiclassing
+  useEffect(() => {
+    const classes = ['Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard'];
+    setAvailableClasses(classes);
+  }, []);
+
+  // Load level up options when target changes
   useEffect(() => {
     const loadOptions = async () => {
       try {
-        const options = await levelUpService.getLevelUpOptions(character);
+        const options = await levelUpService.getLevelUpOptions(character, levelUpTarget.targetClass, levelUpTarget.targetLevel);
         setLevelUpOptions(options);
       } catch (error) {
         console.error('Error getting level up options:', error);
       }
     };
-    loadOptions();
-  }, [character, levelUpService]);
+    
+    if (currentStep !== 'target') {
+      loadOptions();
+    }
+  }, [character, levelUpTarget.targetClass, currentStep, levelUpService]);
 
   const getCurrentClass = () => {
-    // For Phase 1, we're only handling single class
-    return character.class;
+    return levelUpTarget.targetClass;
   };
 
   const getNewLevel = () => {
-    return character.level + 1;
+    return levelUpTarget.targetLevel;
   };
 
   const rollHitPoints = () => {
@@ -71,31 +92,37 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
     return rolledHitPoints || 0;
   };
 
-  const handleChoiceSelection = (choiceType: string, value: string | string[]) => {
+  const handleChoiceSelection = (choiceType: string, value: string | string[], level?: number) => {
+    const choiceKey = level ? `${choiceType}_level_${level}` : choiceType;
     setSelections(prev => ({
       ...prev,
-      [choiceType]: value
+      [choiceKey]: value
     }));
   };
 
   const canProceedToNextStep = () => {
     switch (currentStep) {
+      case 'target':
+        return levelUpTarget.targetLevel > character.level && levelUpTarget.targetLevel <= 20;
       case 'overview':
         return true;
       case 'hitPoints':
         return hitPointChoice === 'fixed' || (hitPointChoice === 'roll' && rolledHitPoints !== null);
       case 'choices':
-        // Check if all required choices are made
         if (!levelUpOptions) return false;
         return levelUpOptions.availableChoices
           .filter(choice => choice.required)
           .every(choice => {
+            // Extract level from description if it contains "(Level X)"
+            const levelMatch = choice.description.match(/\(Level (\d+)\)/);
+            const level = levelMatch ? parseInt(levelMatch[1]) : undefined;
+            const choiceKey = level ? `${choice.type}_level_${level}` : choice.type;
+            
             if (choice.type === 'abilityScoreIncrease') {
-              // Check if either ability scores are allocated or a feat is selected
               const totalAllocated = Object.values(abilityScoreAllocations).reduce((sum, val) => sum + val, 0);
               return totalAllocated === 2 || selectedFeat;
             }
-            return selections[choice.type];
+            return selections[choiceKey];
           });
       case 'spells':
         const spellOptions = levelUpOptions?.spellOptions;
@@ -108,22 +135,45 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
     }
   };
 
+  const getSteps = (): WizardStep[] => {
+    const steps: WizardStep[] = ['target', 'overview'];
+    
+    if (levelUpOptions?.hitPointOptions) {
+      steps.push('hitPoints');
+    }
+    
+    if (levelUpOptions?.availableChoices && levelUpOptions.availableChoices.length > 0) {
+      steps.push('choices');
+    }
+    
+    if (levelUpOptions?.spellOptions && levelUpOptions.spellOptions.spellsToLearn > 0) {
+      steps.push('spells');
+    }
+    
+    steps.push('review');
+    return steps;
+  };
+
   const getNextStep = (current: WizardStep): WizardStep => {
-    const steps: WizardStep[] = ['overview', 'hitPoints', 'choices', 'spells', 'review'];
+    const steps = getSteps();
     const currentIndex = steps.indexOf(current);
     
     if (currentIndex >= steps.length - 1) {
-      return current; // Already at last step
+      return current;
     }
     
-    const nextStep = steps[currentIndex + 1];
+    return steps[currentIndex + 1];
+  };
+
+  const getPrevStep = (current: WizardStep): WizardStep => {
+    const steps = getSteps();
+    const currentIndex = steps.indexOf(current);
     
-    // Skip spell step if no spells to learn
-    if (nextStep === 'spells' && (!levelUpOptions?.spellOptions || levelUpOptions.spellOptions.spellsToLearn === 0)) {
-      return getNextStep(nextStep); // Recursively get next valid step
+    if (currentIndex <= 0) {
+      return current;
     }
     
-    return nextStep;
+    return steps[currentIndex - 1];
   };
 
   const nextStep = () => {
@@ -131,24 +181,6 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
     if (next !== currentStep) {
       setCurrentStep(next);
     }
-  };
-
-  const getPrevStep = (current: WizardStep): WizardStep => {
-    const steps: WizardStep[] = ['overview', 'hitPoints', 'choices', 'spells', 'review'];
-    const currentIndex = steps.indexOf(current);
-    
-    if (currentIndex <= 0) {
-      return current; // Already at first step
-    }
-    
-    const prevStep = steps[currentIndex - 1];
-    
-    // Skip spell step if coming back and no spells
-    if (prevStep === 'spells' && (!levelUpOptions?.spellOptions || levelUpOptions.spellOptions.spellsToLearn === 0)) {
-      return getPrevStep(prevStep); // Recursively get previous valid step
-    }
-    
-    return prevStep;
   };
 
   const prevStep = () => {
@@ -162,7 +194,6 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
     if (!levelUpOptions) return;
 
     try {
-      // Process ability score improvements or feat selection
       const processedSelections = { ...selections };
       
       // Handle ability score increase vs feat choice
@@ -171,7 +202,6 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
         if (selectedFeat) {
           processedSelections['feat'] = selectedFeat;
         } else {
-          // Convert ability score allocations to a string representation
           processedSelections['abilityScoreIncrease'] = JSON.stringify(abilityScoreAllocations);
         }
       }
@@ -181,27 +211,54 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
         processedSelections['spell'] = selectedSpells;
       }
 
-      const result = await levelUpService.processLevelUp(
-        character,
-        processedSelections,
-        getSelectedHitPoints()
-      );
+              const result = await levelUpService.processLevelUp(
+          character,
+          processedSelections,
+          getSelectedHitPoints(),
+          levelUpTarget.targetClass,
+          levelUpTarget.targetLevel
+        );
 
       // Build update object for character
       const updates: CharacterUpdates = {
-        level: getNewLevel(),
+        level: levelUpTarget.targetLevel,
         hitPoints: character.hitPoints + result.hitPointsGained,
         maxHitPoints: character.maxHitPoints + result.hitPointsGained,
       };
 
-      // Add multiclass fields (JSON strings for database)
-      updates.classes = JSON.stringify([{
-        class: getCurrentClass(),
-        level: getNewLevel(),
-        subclass: character.subclass,
-        hitPointsGained: result.hitPointsGained
-      }]);
-      updates.totalLevel = getNewLevel();
+      // Handle multiclass vs single class
+      if (levelUpTarget.targetClass === character.class) {
+        // Single class level up
+        updates.classes = JSON.stringify([{
+          class: getCurrentClass(),
+          level: levelUpTarget.targetLevel,
+          subclass: character.subclass,
+          hitPointsGained: result.hitPointsGained
+        }]);
+      } else {
+        // Multiclass - need to merge with existing classes
+        const parsedClasses = character.classes ? JSON.parse(character.classes) : null;
+        const existingClasses: ClassLevel[] = parsedClasses || [{
+          class: character.class,
+          level: character.level,
+          subclass: character.subclass
+        }];
+        
+        const targetClassIndex = existingClasses.findIndex((c: ClassLevel) => c.class === levelUpTarget.targetClass);
+        if (targetClassIndex >= 0) {
+          existingClasses[targetClassIndex].level = levelUpTarget.targetLevel;
+        } else {
+          existingClasses.push({
+            class: levelUpTarget.targetClass,
+            level: levelUpTarget.targetLevel,
+            hitPointsGained: result.hitPointsGained
+          });
+        }
+        
+        updates.classes = JSON.stringify(existingClasses) as string;
+      }
+      
+      updates.totalLevel = levelUpTarget.targetLevel;
       updates.selectedFeatures = JSON.stringify(result.selectedFeatures);
 
       // Update ability scores if allocated
@@ -223,30 +280,36 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
     }
   };
 
-  if (!levelUpOptions) {
+  const canMulticlass = (targetClass: string) => {
+    return levelUpService.canMulticlass(character, targetClass);
+  };
+
+  if (!levelUpOptions && currentStep !== 'target') {
     return (
       <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
-        <div className="bg-slate-800 rounded-lg p-6">
-          <div className="text-white">Loading level up options...</div>
+        <div className="bg-[var(--color-card)] rounded-lg p-6">
+          <div className="text-[var(--color-text-primary)]">Loading level up options...</div>
         </div>
       </div>
     );
   }
 
+  const steps = getSteps();
+
   return (
     <div className="fixed inset-0 flex items-center justify-center p-4 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
-      <div className="bg-slate-800 rounded-lg w-full max-w-2xl p-6 max-h-[80vh] overflow-y-auto">
+      <div className="bg-[var(--color-card)] rounded-lg w-full max-w-4xl p-6 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-white">Level Up!</h2>
-            <p className="text-slate-300">
-              {character.name} • {getCurrentClass()} {character.level} → {getNewLevel()}
+            <h2 className="text-2xl font-bold text-[var(--color-text-primary)]">Level Up!</h2>
+            <p className="text-[var(--color-text-secondary)]">
+              {character.name} • {character.class} {character.level} → {getNewLevel()}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white"
+            className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
           >
             <X className="h-6 w-6" />
           </button>
@@ -255,20 +318,33 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
         {/* Progress Steps */}
         <div className="mb-6">
           <div className="flex justify-between text-sm">
-            {['Overview', 'Hit Points', 'Choices', 'Spells', 'Review'].map((step, index) => {
-              const stepKey = step.toLowerCase().replace(' ', '') as WizardStep;
-              const isActive = currentStep === stepKey;
-              const isCompleted = ['overview', 'hitPoints', 'choices', 'spells', 'review'].indexOf(currentStep) > index;
+            {steps.map((step, index) => {
+              const stepNames = {
+                target: 'Target',
+                overview: 'Overview', 
+                hitPoints: 'Hit Points',
+                choices: 'Choices',
+                spells: 'Spells',
+                review: 'Review'
+              };
+              
+              const isActive = currentStep === step;
+              const isCompleted = steps.indexOf(currentStep) > index;
               
               return (
                 <div key={step} className={`flex-1 text-center ${
-                  isActive ? 'text-purple-400' : isCompleted ? 'text-blue-400' : 'text-slate-500'
+                  isActive ? 'text-[var(--color-accent)]' : 
+                  isCompleted ? 'text-[var(--color-accent-secondary)]' : 
+                  'text-[var(--color-text-tertiary)]'
                 }`}>
-                  <div className={`w-8 h-8 mx-auto rounded-full border-2 mb-1 ${
-                    isActive ? 'border-purple-400 bg-purple-400' : 
-                    isCompleted ? 'border-blue-400 bg-blue-400' : 'border-slate-500'
-                  }`} />
-                  {step}
+                  <div className={`w-8 h-8 mx-auto rounded-full border-2 mb-1 flex items-center justify-center ${
+                    isActive ? 'border-[var(--color-accent)] bg-[var(--color-accent)]' : 
+                    isCompleted ? 'border-[var(--color-accent-secondary)] bg-[var(--color-accent-secondary)]' : 
+                    'border-[var(--color-text-tertiary)]'
+                  }`}>
+                    {isCompleted && <ChevronRight className="h-4 w-4 text-[var(--color-card)]" />}
+                  </div>
+                  {stepNames[step]}
                 </div>
               );
             })}
@@ -276,20 +352,100 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
         </div>
 
         {/* Step Content */}
-        <div className="min-h-[300px]">
-          {currentStep === 'overview' && (
+        <div className="min-h-[400px]">
+          {currentStep === 'target' && (
+            <div className="space-y-6">
+              <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4">
+                <TrendingUp className="h-6 w-6 inline mr-2 text-[var(--color-accent)]" />
+                Choose Your Level Up Target
+              </h3>
+              
+              {/* Target Level Selection */}
+              <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+                <h4 className="font-medium text-[var(--color-text-primary)] mb-3">Target Level</h4>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => setLevelUpTarget(prev => ({ 
+                      ...prev, 
+                      targetLevel: Math.max(character.level + 1, prev.targetLevel - 1),
+                      levelsToGain: Math.max(1, prev.targetLevel - character.level - 1)
+                    }))}
+                    disabled={levelUpTarget.targetLevel <= character.level + 1}
+                    className="p-2 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 text-[var(--color-button-text)] rounded transition-colors"
+                    aria-label="Decrease level"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  
+                  <span className="text-2xl font-bold text-[var(--color-text-primary)] min-w-[60px] text-center">
+                    {levelUpTarget.targetLevel}
+                  </span>
+                  
+                  <button
+                    onClick={() => setLevelUpTarget(prev => ({ 
+                      ...prev, 
+                      targetLevel: Math.min(20, prev.targetLevel + 1),
+                      levelsToGain: prev.targetLevel - character.level + 1
+                    }))}
+                    disabled={levelUpTarget.targetLevel >= 20}
+                    className="p-2 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 text-[var(--color-button-text)] rounded transition-colors"
+                    aria-label="Increase level"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+                <p className="text-[var(--color-text-secondary)] text-sm mt-2">
+                  Gaining {levelUpTarget.levelsToGain} level(s) (Level {character.level} → {levelUpTarget.targetLevel})
+                </p>
+              </div>
+
+              {/* Class Selection */}
+              <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+                <h4 className="font-medium text-[var(--color-text-primary)] mb-3">Target Class</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {availableClasses.map(className => {
+                    const isCurrentClass = className === character.class;
+                    const canTake = isCurrentClass || canMulticlass(className);
+                    const isSelected = levelUpTarget.targetClass === className;
+                    
+                    return (
+                      <button
+                        key={className}
+                        onClick={() => setLevelUpTarget(prev => ({ ...prev, targetClass: className }))}
+                        disabled={!canTake}
+                        className={`p-3 rounded-lg border-2 transition-colors text-left ${
+                          isSelected 
+                            ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10' 
+                            : 'border-[var(--color-border)] hover:border-[var(--color-accent)]'
+                        } ${
+                          !canTake ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                        }`}
+                      >
+                        <div className="font-medium text-[var(--color-text-primary)]">{className}</div>
+                        <div className="text-sm text-[var(--color-text-secondary)]">
+                          {isCurrentClass ? 'Current Class' : canTake ? 'Available for Multiclass' : 'Prerequisites not met'}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {currentStep === 'overview' && levelUpOptions && (
             <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-white mb-4">
-                <TrendingUp className="h-6 w-6 inline mr-2 text-green-400" />
+              <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4">
+                <TrendingUp className="h-6 w-6 inline mr-2 text-[var(--color-accent)]" />
                 Level {getNewLevel()} Features
               </h3>
               
-              <div className="bg-slate-700 rounded-lg p-4">
-                <h4 className="font-medium text-white mb-2">New Features:</h4>
-                <ul className="space-y-1 text-slate-300">
+              <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+                <h4 className="font-medium text-[var(--color-text-primary)] mb-2">New Features:</h4>
+                <ul className="space-y-1 text-[var(--color-text-secondary)]">
                   {levelUpOptions.newFeatures.map((feature, index) => (
                     <li key={index} className="flex items-center">
-                      <Sparkles className="h-4 w-4 mr-2 text-purple-400" />
+                      <Sparkles className="h-4 w-4 mr-2 text-[var(--color-accent)]" />
                       {feature}
                     </li>
                   ))}
@@ -297,12 +453,12 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
               </div>
 
               {levelUpOptions.availableChoices.length > 0 && (
-                <div className="bg-slate-700 rounded-lg p-4">
-                  <h4 className="font-medium text-white mb-2">Choices to Make:</h4>
-                  <ul className="space-y-1 text-slate-300">
+                <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+                  <h4 className="font-medium text-[var(--color-text-primary)] mb-2">Choices to Make:</h4>
+                  <ul className="space-y-1 text-[var(--color-text-secondary)]">
                     {levelUpOptions.availableChoices.map((choice, index) => (
                       <li key={index} className="flex items-center">
-                        <Shield className="h-4 w-4 mr-2 text-blue-400" />
+                        <Shield className="h-4 w-4 mr-2 text-[var(--color-accent-secondary)]" />
                         {choice.description}
                       </li>
                     ))}
@@ -312,15 +468,15 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
             </div>
           )}
 
-          {currentStep === 'hitPoints' && (
+          {currentStep === 'hitPoints' && levelUpOptions && (
             <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-white mb-4">
-                <Dice6 className="h-6 w-6 inline mr-2 text-red-400" />
+              <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4">
+                <Dice6 className="h-6 w-6 inline mr-2 text-[var(--color-accent)]" />
                 Hit Points
               </h3>
               
               <div className="space-y-4">
-                <div className="bg-slate-700 rounded-lg p-4">
+                <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
                   <label className="flex items-center space-x-3">
                     <input
                       type="radio"
@@ -328,15 +484,15 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
                       value="fixed"
                       checked={hitPointChoice === 'fixed'}
                       onChange={() => setHitPointChoice('fixed')}
-                      className="text-purple-600"
+                      className="text-[var(--color-accent)]"
                     />
-                    <span className="text-white">
+                    <span className="text-[var(--color-text-primary)]">
                       Take Average: <strong>+{levelUpOptions.hitPointOptions.fixed} HP</strong>
                     </span>
                   </label>
                 </div>
 
-                <div className="bg-slate-700 rounded-lg p-4">
+                <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
                   <label className="flex items-center space-x-3 mb-3">
                     <input
                       type="radio"
@@ -344,9 +500,9 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
                       value="roll"
                       checked={hitPointChoice === 'roll'}
                       onChange={() => setHitPointChoice('roll')}
-                      className="text-purple-600"
+                      className="text-[var(--color-accent)]"
                     />
-                    <span className="text-white">
+                    <span className="text-[var(--color-text-primary)]">
                       Roll for HP: {levelUpOptions.hitPointOptions.roll.min} - {levelUpOptions.hitPointOptions.roll.max}
                     </span>
                   </label>
@@ -355,12 +511,12 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
                     <div className="ml-6">
                       <button
                         onClick={rollHitPoints}
-                        className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded mr-3"
+                        className="bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] px-4 py-2 rounded mr-3 transition-colors"
                       >
                         Roll Dice
                       </button>
                       {rolledHitPoints !== null && (
-                        <span className="text-green-400 font-bold text-lg">
+                        <span className="text-[var(--color-accent)] font-bold text-lg">
                           Rolled: +{rolledHitPoints} HP
                         </span>
                       )}
@@ -371,16 +527,22 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
             </div>
           )}
 
-          {currentStep === 'choices' && (
+          {currentStep === 'choices' && levelUpOptions && (
             <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-white mb-4">
-                <Sword className="h-6 w-6 inline mr-2 text-yellow-400" />
+              <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4">
+                <Sword className="h-6 w-6 inline mr-2 text-[var(--color-accent)]" />
                 Feature Choices
               </h3>
               
-              {levelUpOptions.availableChoices.map((choice, index) => (
-                <div key={index} className="bg-slate-700 rounded-lg p-4">
-                  <h4 className="font-medium text-white mb-3">{choice.description}</h4>
+              {levelUpOptions.availableChoices.map((choice, index) => {
+                // Extract level from description if it contains "(Level X)"
+                const levelMatch = choice.description.match(/\(Level (\d+)\)/);
+                const level = levelMatch ? parseInt(levelMatch[1]) : undefined;
+                const choiceKey = level ? `${choice.type}_level_${level}` : choice.type;
+                
+                return (
+                  <div key={index} className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+                    <h4 className="font-medium text-[var(--color-text-primary)] mb-3">{choice.description}</h4>
                   
                   {choice.type === 'fightingStyle' && choice.options && (
                     <div className="space-y-2">
@@ -388,15 +550,15 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
                         <label key={option} className="flex items-start space-x-3">
                           <input
                             type="radio"
-                            name={choice.type}
+                            name={choiceKey}
                             value={option}
-                            checked={selections[choice.type] === option}
-                            onChange={(e) => handleChoiceSelection(choice.type, e.target.value)}
-                            className="mt-1 text-purple-600"
+                            checked={selections[choiceKey] === option}
+                            onChange={(e) => handleChoiceSelection(choice.type, e.target.value, level)}
+                            className="mt-1 text-[var(--color-accent)]"
                           />
                           <div>
-                            <div className="text-white font-medium">{option}</div>
-                            <div className="text-slate-300 text-sm">{FIGHTING_STYLES[option]}</div>
+                            <div className="text-[var(--color-text-primary)] font-medium">{option}</div>
+                            <div className="text-[var(--color-text-secondary)] text-sm">{FIGHTING_STYLES[option]}</div>
                           </div>
                         </label>
                       ))}
@@ -405,14 +567,14 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
 
                   {choice.type === 'abilityScoreIncrease' && (
                     <div className="space-y-4">
-                      <div className="border border-slate-600 rounded p-3">
-                        <h5 className="text-white font-medium mb-2">Ability Score Increase</h5>
-                        <p className="text-slate-300 text-sm mb-3">Allocate 2 points among your abilities (max 1 per ability)</p>
+                      <div className="border border-[var(--color-border)] rounded p-3">
+                        <h5 className="text-[var(--color-text-primary)] font-medium mb-2">Ability Score Increase</h5>
+                        <p className="text-[var(--color-text-secondary)] text-sm mb-3">Allocate 2 points among your abilities (max 1 per ability)</p>
                         
                         <div className="grid grid-cols-3 gap-2">
                           {['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].map(ability => (
                             <div key={ability} className="flex items-center space-x-2">
-                              <span className="text-white text-sm capitalize w-16">{ability.slice(0, 3)}</span>
+                              <span className="text-[var(--color-text-primary)] text-sm capitalize w-16">{ability.slice(0, 3)}</span>
                               <select
                                 value={abilityScoreAllocations[ability] || 0}
                                 onChange={(e) => {
@@ -423,14 +585,13 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
                                   } else {
                                     newAllocations[ability] = value;
                                   }
-                                  // Ensure total doesn't exceed 2
                                   const total = Object.values(newAllocations).reduce((sum, val) => sum + val, 0);
                                   if (total <= 2) {
                                     setAbilityScoreAllocations(newAllocations);
-                                    setSelectedFeat(''); // Clear feat if ability scores are selected
+                                    setSelectedFeat('');
                                   }
                                 }}
-                                className="bg-slate-600 text-white rounded px-2 py-1 text-sm"
+                                className="bg-[var(--color-input)] text-[var(--color-text-primary)] rounded px-2 py-1 text-sm"
                               >
                                 <option value={0}>+0</option>
                                 <option value={1}>+1</option>
@@ -440,19 +601,19 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
                         </div>
                       </div>
 
-                      <div className="text-center text-slate-400">— OR —</div>
+                      <div className="text-center text-[var(--color-text-secondary)]">— OR —</div>
 
-                      <div className="border border-slate-600 rounded p-3">
-                        <h5 className="text-white font-medium mb-2">Take a Feat</h5>
+                      <div className="border border-[var(--color-border)] rounded p-3">
+                        <h5 className="text-[var(--color-text-primary)] font-medium mb-2">Take a Feat</h5>
                         <select
                           value={selectedFeat}
                           onChange={(e) => {
                             setSelectedFeat(e.target.value);
                             if (e.target.value) {
-                              setAbilityScoreAllocations({}); // Clear ability scores if feat is selected
+                              setAbilityScoreAllocations({});
                             }
                           }}
-                          className="w-full bg-slate-600 text-white rounded px-3 py-2 mb-2"
+                          className="w-full bg-[var(--color-input)] text-[var(--color-text-primary)] rounded px-3 py-2 mb-2"
                         >
                           <option value="">Choose a feat...</option>
                           {Object.keys(FEATS).map(featName => (
@@ -460,7 +621,7 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
                           ))}
                         </select>
                         {selectedFeat && (
-                          <div className="text-slate-300 text-sm">
+                          <div className="text-[var(--color-text-secondary)] text-sm">
                             {FEATS[selectedFeat]?.description}
                           </div>
                         )}
@@ -468,19 +629,20 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
                     </div>
                   )}
                 </div>
-              ))}
+              );
+            })}
             </div>
           )}
 
-          {currentStep === 'spells' && levelUpOptions.spellOptions && (
+          {currentStep === 'spells' && levelUpOptions?.spellOptions && (
             <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-white mb-4">
-                <Book className="h-6 w-6 inline mr-2 text-blue-400" />
+              <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4">
+                <Book className="h-6 w-6 inline mr-2 text-[var(--color-accent)]" />
                 Spell Selection
               </h3>
               
-              <div className="bg-slate-700 rounded-lg p-4">
-                <p className="text-white mb-3">
+              <div className="bg-[var(--color-card-secondary)] rounded-lg p-4">
+                <p className="text-[var(--color-text-primary)] mb-3">
                   Choose {levelUpOptions.spellOptions.spellsToLearn} spell(s):
                 </p>
                 
@@ -500,9 +662,9 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
                           }
                         }}
                         disabled={!selectedSpells.includes(spell) && selectedSpells.length >= (levelUpOptions.spellOptions?.spellsToLearn || 0)}
-                        className="text-purple-600"
+                        className="text-[var(--color-accent)]"
                       />
-                      <span className="text-white">{spell}</span>
+                      <span className="text-[var(--color-text-primary)]">{spell}</span>
                     </label>
                   ))}
                 </div>
@@ -512,35 +674,35 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
 
           {currentStep === 'review' && (
             <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-white mb-4">Review Changes</h3>
+              <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4">Review Changes</h3>
               
               <div className="space-y-3">
-                <div className="bg-slate-700 rounded-lg p-3">
-                  <span className="text-slate-300">Hit Points: </span>
-                  <span className="text-green-400 font-medium">+{getSelectedHitPoints()}</span>
+                <div className="bg-[var(--color-card-secondary)] rounded-lg p-3">
+                  <span className="text-[var(--color-text-secondary)]">Hit Points: </span>
+                  <span className="text-[var(--color-accent)] font-medium">+{getSelectedHitPoints()}</span>
                 </div>
 
                 {Object.entries(abilityScoreAllocations).map(([ability, increase]) => (
                   increase > 0 && (
-                    <div key={ability} className="bg-slate-700 rounded-lg p-3">
-                      <span className="text-slate-300 capitalize">{ability}: </span>
-                      <span className="text-blue-400 font-medium">+{increase}</span>
+                    <div key={ability} className="bg-[var(--color-card-secondary)] rounded-lg p-3">
+                      <span className="text-[var(--color-text-secondary)] capitalize">{ability}: </span>
+                      <span className="text-[var(--color-accent-secondary)] font-medium">+{increase}</span>
                     </div>
                   )
                 ))}
 
                 {selectedFeat && (
-                  <div className="bg-slate-700 rounded-lg p-3">
-                    <span className="text-slate-300">Feat: </span>
-                    <span className="text-purple-400 font-medium">{selectedFeat}</span>
+                  <div className="bg-[var(--color-card-secondary)] rounded-lg p-3">
+                    <span className="text-[var(--color-text-secondary)]">Feat: </span>
+                    <span className="text-[var(--color-accent)] font-medium">{selectedFeat}</span>
                   </div>
                 )}
 
                 {Object.entries(selections).map(([type, selection]) => (
                   type !== 'abilityScoreIncrease' && (
-                    <div key={type} className="bg-slate-700 rounded-lg p-3">
-                      <span className="text-slate-300 capitalize">{type.replace(/([A-Z])/g, ' $1')}: </span>
-                      <span className="text-yellow-400 font-medium">
+                    <div key={type} className="bg-[var(--color-card-secondary)] rounded-lg p-3">
+                      <span className="text-[var(--color-text-secondary)] capitalize">{type.replace(/([A-Z])/g, ' $1')}: </span>
+                      <span className="text-[var(--color-accent-secondary)] font-medium">
                         {Array.isArray(selection) ? selection.join(', ') : selection}
                       </span>
                     </div>
@@ -548,9 +710,9 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
                 ))}
 
                 {selectedSpells.length > 0 && (
-                  <div className="bg-slate-700 rounded-lg p-3">
-                    <span className="text-slate-300">New Spells: </span>
-                    <span className="text-blue-400 font-medium">{selectedSpells.join(', ')}</span>
+                  <div className="bg-[var(--color-card-secondary)] rounded-lg p-3">
+                    <span className="text-[var(--color-text-secondary)]">New Spells: </span>
+                    <span className="text-[var(--color-accent-secondary)] font-medium">{selectedSpells.join(', ')}</span>
                   </div>
                 )}
               </div>
@@ -562,16 +724,17 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
         <div className="flex justify-between mt-6">
           <button
             onClick={prevStep}
-            disabled={currentStep === 'overview'}
-            className="px-4 py-2 bg-slate-600 hover:bg-slate-500 disabled:opacity-50 text-white rounded"
+            disabled={currentStep === steps[0]}
+            className="px-4 py-2 bg-[var(--color-button-secondary)] hover:bg-[var(--color-button-secondary-hover)] disabled:opacity-50 text-[var(--color-button-text)] rounded transition-colors"
           >
+            <ChevronLeft className="h-4 w-4 inline mr-2" />
             Previous
           </button>
           
           {currentStep === 'review' ? (
             <button
               onClick={completeLevelUp}
-              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded font-medium"
+              className="px-6 py-2 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] rounded font-medium transition-colors"
             >
               Level Up!
             </button>
@@ -579,9 +742,10 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
             <button
               onClick={nextStep}
               disabled={!canProceedToNextStep()}
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded"
+              className="px-4 py-2 bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] disabled:opacity-50 text-[var(--color-button-text)] rounded transition-colors"
             >
               Next
+              <ChevronRight className="h-4 w-4 inline ml-2" />
             </button>
           )}
         </div>
