@@ -297,43 +297,63 @@ export function ActionsTab({
                       <button
                         onClick={() => {
                           if (onUpdateDeathSaves) {
-                            const currentSuccesses = character.deathSaveSuccesses || [false, false, false];
-                            const currentFailures = character.deathSaveFailures || [false, false, false];
+                            // Roll a d20 using the dice system
+                            const event = new CustomEvent('triggerDiceRoll', {
+                              detail: { notation: '1d20' }
+                            });
+                            window.dispatchEvent(event);
                             
-                            // Roll a d20
-                            const roll = Math.floor(Math.random() * 20) + 1;
-                            const isSuccess = roll >= 10;
-                            
-                            // Find next empty slot
-                            if (isSuccess) {
-                              const nextEmptyIndex = currentSuccesses.findIndex(success => !success);
-                              if (nextEmptyIndex !== -1) {
-                                const newSuccesses = [...currentSuccesses];
-                                newSuccesses[nextEmptyIndex] = true;
+                            // Listen for the dice roll completion
+                            const handleDiceRollCompleted = (event: CustomEvent) => {
+                              const { notation, resultTotal } = event.detail;
+                              
+                              // Only process if this is our death save roll (1d20)
+                              if (notation === '1d20' && resultTotal !== undefined) {
+                                const currentSuccesses = character.deathSaveSuccesses || [false, false, false];
+                                const currentFailures = character.deathSaveFailures || [false, false, false];
                                 
-                                // Check if we now have 3 successes - restore to 1 HP
-                                const successCount = newSuccesses.filter(s => s).length;
-                                if (successCount === 3 && onUpdateHitPoints) {
-                                  onUpdateHitPoints(1);
-                                  // Reset death saves
-                                  onUpdateDeathSaves([false, false, false], [false, false, false]);
-                                  alert(`Death Save: ${roll} (Success) - Character stabilized at 1 HP!`);
-                                  return;
+                                const roll = resultTotal;
+                                const isSuccess = roll >= 10;
+                                
+                                // Find next empty slot
+                                if (isSuccess) {
+                                  const nextEmptyIndex = currentSuccesses.findIndex(success => !success);
+                                  if (nextEmptyIndex !== -1) {
+                                    const newSuccesses = [...currentSuccesses];
+                                    newSuccesses[nextEmptyIndex] = true;
+                                    
+                                    // Check if we now have 3 successes - restore to 1 HP
+                                    const successCount = newSuccesses.filter(s => s).length;
+                                    if (successCount === 3 && onUpdateHitPoints) {
+                                      onUpdateHitPoints(1);
+                                      // Reset death saves
+                                      onUpdateDeathSaves([false, false, false], [false, false, false]);
+                                      return;
+                                    }
+                                    
+                                    onUpdateDeathSaves(newSuccesses, currentFailures);
+                                  }
+                                } else {
+                                  const nextEmptyIndex = currentFailures.findIndex(failure => !failure);
+                                  if (nextEmptyIndex !== -1) {
+                                    const newFailures = [...currentFailures];
+                                    newFailures[nextEmptyIndex] = true;
+                                    onUpdateDeathSaves(currentSuccesses, newFailures);
+                                  }
                                 }
                                 
-                                onUpdateDeathSaves(newSuccesses, currentFailures);
+                                // Remove the event listener
+                                window.removeEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
                               }
-                            } else {
-                              const nextEmptyIndex = currentFailures.findIndex(failure => !failure);
-                              if (nextEmptyIndex !== -1) {
-                                const newFailures = [...currentFailures];
-                                newFailures[nextEmptyIndex] = true;
-                                onUpdateDeathSaves(currentSuccesses, newFailures);
-                              }
-                            }
+                            };
                             
-                            // Show roll result
-                            alert(`Death Save: ${roll} (${isSuccess ? 'Success' : 'Failure'})`);
+                            // Add event listener for dice roll completion
+                            window.addEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+                            
+                            // Cleanup listener after 10 seconds to prevent memory leaks
+                            setTimeout(() => {
+                              window.removeEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+                            }, 10000);
                           }
                         }}
                         className="bg-[var(--color-warning)] hover:bg-[var(--color-warning)]/80 text-[var(--color-warning-text)] px-3 py-1 rounded text-xs transition-colors"
