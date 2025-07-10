@@ -1215,6 +1215,11 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     }
   };
 
+  const handleSpellSlotUsed = (spell: Spell, slotLevel: number) => {
+    // This is the new handler that matches the SpellDiceRoller interface
+    handleUseSpellSlot(slotLevel);
+  };
+
   const handleRecoverSpellSlot = (level: number) => {
     try {
       const currentUsedSlots = currentCharacter.usedSpellSlots || {};
@@ -1475,7 +1480,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
                 onRecoverAmmunition={handleRecoverAmmunition}
                 onUseStackableWeapon={handleUseStackableWeapon}
                 onRecoverStackableWeapon={handleRecoverStackableWeapon}
-                onUseSpellSlot={handleUseSpellSlot}
+                onSpellSlotUsed={handleSpellSlotUsed}
                 onRecoverSpellSlot={handleRecoverSpellSlot}
                 onUpdateHitPoints={handleUpdateHitPoints}
                 onUpdateTemporaryHitPoints={handleUpdateTemporaryHitPoints}

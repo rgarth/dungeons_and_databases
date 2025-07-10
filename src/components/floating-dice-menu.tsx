@@ -493,11 +493,16 @@ function SimpleDiceSelector({
 
 export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [diceColor, setDiceColor] = useState('#dc2626');
+  const [lastRollResult, setLastRollResult] = useState<string | null>(null);
   const [showFullscreenRoll, setShowFullscreenRoll] = useState(false);
   const [fullscreenDiceNotation, setFullscreenDiceNotation] = useState('');
-  const [diceColor, setDiceColor] = useState('#360070');
-  const [lastRollResult, setLastRollResult] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  
+  // Roll queue system
+  const [rollQueue, setRollQueue] = useState<Array<{notation: string, color: string}>>([]);
+  const [isRolling, setIsRolling] = useState(false);
+  const [rollCounter, setRollCounter] = useState(0);
 
   // Get initial dice color from cookie or theme default
   const getInitialDiceColor = () => {
@@ -551,8 +556,15 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
     const handleTriggerDiceRoll = (event: CustomEvent) => {
       const { notation } = event.detail;
       if (notation) {
-        setFullscreenDiceNotation(notation);
-        setShowFullscreenRoll(true);
+        // Add to queue if already rolling, otherwise start immediately
+        if (isRolling) {
+          setRollQueue(prev => [...prev, { notation, color: diceColor }]);
+        } else {
+          setFullscreenDiceNotation(notation);
+          setShowFullscreenRoll(true);
+          setIsRolling(true);
+          setRollCounter(prev => prev + 1);
+        }
       }
     };
 
@@ -561,7 +573,7 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
     return () => {
       window.removeEventListener('triggerDiceRoll', handleTriggerDiceRoll as EventListener);
     };
-  }, []);
+  }, [isRolling, diceColor]);
 
   const handleExpand = () => {
     setIsExpanded(true);
@@ -572,9 +584,15 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
   };
 
   const handleRollFullscreen = (notation: string, color: string) => {
-    setFullscreenDiceNotation(notation);
-    setDiceColor(color);
-    setShowFullscreenRoll(true);
+    // Add to queue if already rolling, otherwise start immediately
+    if (isRolling) {
+      setRollQueue(prev => [...prev, { notation, color }]);
+    } else {
+      setFullscreenDiceNotation(notation);
+      setDiceColor(color);
+      setShowFullscreenRoll(true);
+      setIsRolling(true);
+    }
   };
 
   const handleRollComplete = (result: { resultString?: string }) => {
@@ -582,12 +600,64 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
     if (result && result.resultString) {
       setLastRollResult(result.resultString);
     }
+    
+    // Process next roll in queue
+    setRollQueue(prev => {
+      console.log(`🎲 Queue processing - current queue:`, prev);
+      if (prev.length > 0) {
+        const nextRoll = prev[0];
+        const remainingQueue = prev.slice(1);
+        
+        console.log(`🎲 Starting next roll in queue:`, nextRoll);
+        
+        // Start the next roll after a short delay
+        setTimeout(() => {
+          setFullscreenDiceNotation(nextRoll.notation);
+          setDiceColor(nextRoll.color);
+          setShowFullscreenRoll(true);
+          setIsRolling(true);
+          setRollCounter(prev => prev + 1);
+        }, 500); // 500ms delay between rolls
+        
+        return remainingQueue;
+      } else {
+        // No more rolls in queue
+        console.log(`🎲 Queue empty, stopping rolling state`);
+        setIsRolling(false);
+        return [];
+      }
+    });
+    
     // Auto-collapse the menu after a roll
     setIsExpanded(false);
   };
 
   const handleCloseFullscreen = () => {
     setShowFullscreenRoll(false);
+    
+    // If there are rolls in queue, start the next one
+    setRollQueue(prev => {
+      if (prev.length > 0) {
+        const nextRoll = prev[0];
+        const remainingQueue = prev.slice(1);
+        
+        // Start the next roll after a short delay
+        setTimeout(() => {
+          setFullscreenDiceNotation(nextRoll.notation);
+          setDiceColor(nextRoll.color);
+          setShowFullscreenRoll(true);
+          setIsRolling(true);
+          setRollCounter(prev => prev + 1);
+        }, 500); // 500ms delay between rolls
+        
+        return remainingQueue;
+      } else {
+        // No more rolls in queue
+        setIsRolling(false);
+        return [];
+      }
+    });
+    
     // Auto-collapse the menu when closing fullscreen
     setIsExpanded(false);
   };
@@ -630,20 +700,44 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
                 <span className="text-sm font-medium whitespace-nowrap">
                   {lastRollResult}
                 </span>
+                {/* Queue indicator */}
+                {rollQueue.length > 0 && (
+                  <div 
+                    className="ml-2 px-2 py-1 text-xs rounded-full font-bold"
+                    style={{
+                      backgroundColor: 'var(--color-warning)',
+                      color: 'var(--color-warning-text)'
+                    }}
+                  >
+                    {rollQueue.length}
+                  </div>
+                )}
               </button>
             ) : (
               // Regular circle button when no result
-          <button
-            onClick={handleExpand}
-            className="w-16 h-16 rounded-full transition-all hover:scale-110 shadow-lg flex items-center justify-center text-2xl font-bold"
-            style={{ 
-              backgroundColor: 'var(--color-accent)',
-              color: 'var(--color-accent-text)'
-            }}
-            title="Open Dice Menu"
-          >
-            🎲
-          </button>
+              <button
+                onClick={handleExpand}
+                className="w-16 h-16 rounded-full transition-all hover:scale-110 shadow-lg flex items-center justify-center text-2xl font-bold relative"
+                style={{ 
+                  backgroundColor: 'var(--color-accent)',
+                  color: 'var(--color-accent-text)'
+                }}
+                title="Open Dice Menu"
+              >
+                🎲
+                {/* Queue indicator */}
+                {rollQueue.length > 0 && (
+                  <div 
+                    className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                    style={{
+                      backgroundColor: 'var(--color-warning)',
+                      color: 'var(--color-warning-text)'
+                    }}
+                  >
+                    {rollQueue.length}
+                  </div>
+                )}
+              </button>
             )}
           </div>
         )}
@@ -679,6 +773,19 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
                   backgroundColor: 'var(--color-card)'
                 }}
               >
+                {/* Queue indicator in expanded state */}
+                {rollQueue.length > 0 && (
+                  <div 
+                    className="px-3 py-2 rounded-lg text-xs font-medium"
+                    style={{
+                      backgroundColor: 'var(--color-warning)',
+                      color: 'var(--color-warning-text)'
+                    }}
+                  >
+                    {rollQueue.length} roll{rollQueue.length > 1 ? 's' : ''} queued
+                  </div>
+                )}
+                
                 <SimpleDiceSelector 
                   onRoll={handleRollFullscreen} 
                   diceColor={diceColor}
@@ -692,6 +799,7 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
 
       {/* Fullscreen Dice Overlay */}
       <FullscreenDiceOverlay
+        key={`dice-roll-${rollCounter}`}
         isVisible={showFullscreenRoll}
         diceNotation={fullscreenDiceNotation}
         diceColor={diceColor}

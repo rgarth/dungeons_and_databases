@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { useConditionSeverityStyles, useOpacityStyles, useBorderLeftStyles, useInteractiveButtonStyles } from "@/hooks/use-theme";
 import { useDiceRoll } from "@/components/providers/dice-provider";
 import KiPointManager from './KiPointManager';
-import { SpellDiceRoller } from '@/components/character-sheet/components/SpellDiceRoller';
+import SpellDiceRoller from '@/components/character-sheet/components/SpellDiceRoller';
 
 interface ActionsTabProps {
   character: {
@@ -61,7 +61,7 @@ interface ActionsTabProps {
   onRecoverAmmunition?: (ammunitionName: string) => void;
   onUseStackableWeapon?: (weaponName: string) => void;
   onRecoverStackableWeapon?: (weaponName: string) => void;
-  onUseSpellSlot?: (level: number) => void;
+  onSpellSlotUsed?: (spell: Spell, slotLevel: number) => void;
   onRecoverSpellSlot?: (level: number) => void;
   onUpdateHitPoints?: (hitPoints: number) => void;
   onUpdateTemporaryHitPoints?: (temporaryHitPoints: number) => void;
@@ -97,7 +97,7 @@ export function ActionsTab({
   onRecoverAmmunition,
   onUseStackableWeapon,
   onRecoverStackableWeapon,
-  onUseSpellSlot,
+  onSpellSlotUsed,
   onRecoverSpellSlot,
   onUpdateHitPoints,
   onUpdateTemporaryHitPoints,
@@ -897,8 +897,12 @@ export function ActionsTab({
                                   onClick={() => {
                                     if (isUsed && onRecoverSpellSlot) {
                                       onRecoverSpellSlot(parseInt(level));
-                                    } else if (!isUsed && onUseSpellSlot) {
-                                      onUseSpellSlot(parseInt(level));
+                                    } else if (!isUsed && onSpellSlotUsed) {
+                                      // Find the spell for this slot level
+                                      const spell = character.spellsKnown?.find(s => s.level === parseInt(level));
+                                      if (spell) {
+                                        onSpellSlotUsed(spell, parseInt(level));
+                                      }
                                     }
                                   }}
                                   className={`w-5 h-5 rounded-full border-2 transition-all duration-200 flex items-center justify-center ${
@@ -918,9 +922,15 @@ export function ActionsTab({
                           
                           {/* Quick action buttons */}
                           <div className="flex gap-2">
-                            {onUseSpellSlot && available > 0 && (
+                            {onSpellSlotUsed && available > 0 && (
                               <button
-                                onClick={() => onUseSpellSlot(parseInt(level))}
+                                onClick={() => {
+                                  // Find the spell for this slot level
+                                  const spell = character.spellsKnown?.find(s => s.level === parseInt(level));
+                                  if (spell) {
+                                    onSpellSlotUsed(spell, parseInt(level));
+                                  }
+                                }}
                                 className="flex-1 bg-[var(--color-error)] hover:bg-[var(--color-error-hover)] text-[var(--color-error-text)] text-sm px-3 py-2 rounded font-medium transition-all duration-200"
                                 title={`Use Level ${level} spell slot`}
                               >
@@ -1023,7 +1033,7 @@ export function ActionsTab({
                               <SpellDiceRoller
                                 spell={spell}
                                 character={character}
-                                onUseSpellSlot={onUseSpellSlot}
+                                onSpellSlotUsed={onSpellSlotUsed}
                                 className="mt-3"
                               />
                               
@@ -1129,7 +1139,7 @@ export function ActionsTab({
                               <SpellDiceRoller
                                 spell={spell}
                                 character={character}
-                                onUseSpellSlot={onUseSpellSlot}
+                                onSpellSlotUsed={onSpellSlotUsed}
                                 className="mt-2"
                               />
                             </div>
@@ -1192,7 +1202,7 @@ export function ActionsTab({
                               <SpellDiceRoller
                                 spell={spell}
                                 character={character}
-                                onUseSpellSlot={onUseSpellSlot}
+                                onSpellSlotUsed={onSpellSlotUsed}
                                 className="mt-2"
                               />
                               

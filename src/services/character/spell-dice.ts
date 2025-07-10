@@ -121,10 +121,6 @@ export class SpellDiceService {
    * Get damage dice for a spell at a specific slot level
    */
   getSpellDamage(spell: Spell, slotLevel: number): string | null {
-    console.log(`🎲 Debug - getSpellDamage called for ${spell.name} at slot level ${slotLevel}`);
-    console.log(`🎲 Debug - Spell has damageAtSlotLevel:`, 'damageAtSlotLevel' in spell && spell.damageAtSlotLevel);
-    console.log(`🎲 Debug - Spell damageAtSlotLevel data:`, spell.damageAtSlotLevel);
-    
     // Use enhanced spell data if available
     if ('damageAtSlotLevel' in spell && spell.damageAtSlotLevel) {
       const damageAtSlotLevel = spell.damageAtSlotLevel as Record<number, string>;
@@ -136,13 +132,11 @@ export class SpellDiceService {
         }
       }
       const result = damageAtSlotLevel[bestSlot] || null;
-      console.log(`🎲 Debug - Using damageAtSlotLevel for ${spell.name}: "${result}"`);
       
       // Validate that the result is actually a valid dice notation
       if (result) {
         const dicePattern = /^\d+d\d+(\+\d+)?$/;
         if (!dicePattern.test(result)) {
-          console.error(`🎲 Error - Invalid dice notation in damageAtSlotLevel: "${result}"`);
           return null;
         }
       }
@@ -152,47 +146,47 @@ export class SpellDiceService {
 
     // Fallback to description parsing for basic damage
     const description = spell.description;
-    console.log(`🎲 Debug - Parsing description for ${spell.name}: "${description}"`);
     
     // Simple pattern to find dice notation followed by damage type
     const damagePattern = /(\d+d\d+)\s+(fire|cold|lightning|thunder|acid|poison|necrotic|radiant|force|psychic|bludgeoning|piercing|slashing)\s+damage/gi;
     let match;
     
     while ((match = damagePattern.exec(description)) !== null) {
-      console.log(`🎲 Debug - Found damage match:`, match);
       if (match[1]) {
         const diceNotation = match[1].trim();
-        console.log(`🎲 Debug - Dice notation: "${diceNotation}"`);
         
         // Validate that the dice notation is actually a valid dice notation
         const dicePattern = /^\d+d\d+(\+\d+)?$/;
-        if (dicePattern.test(diceNotation)) {
-          return diceNotation;
-        } else {
-          console.error(`🎲 Error - Invalid dice notation: "${diceNotation}"`);
+        if (!dicePattern.test(diceNotation)) {
+          continue; // Try the next pattern
         }
+        
+        return diceNotation;
       }
     }
     
-    // Try simpler pattern for just "XdY damage"
-    const simplePattern = /(\d+d\d+)\s+damage/gi;
-    while ((match = simplePattern.exec(description)) !== null) {
-      console.log(`🎲 Debug - Found simple damage match:`, match);
-      if (match[1]) {
+    // Try simpler patterns for different damage descriptions
+    const simplePatterns = [
+      /takes\s+(\d+d\d+)\s+(fire|cold|lightning|thunder|acid|poison|necrotic|radiant|force|psychic|bludgeoning|piercing|slashing)\s+damage/gi,
+      /deals\s+(\d+d\d+)\s+(fire|cold|lightning|thunder|acid|poison|necrotic|radiant|force|psychic|bludgeoning|piercing|slashing)\s+damage/gi,
+      /(\d+d\d+)\s+damage/gi
+    ];
+    
+    for (const pattern of simplePatterns) {
+      const match = description.match(pattern);
+      if (match && match[1]) {
         const diceNotation = match[1].trim();
-        console.log(`🎲 Debug - Simple dice notation: "${diceNotation}"`);
         
         // Validate that the dice notation is actually a valid dice notation
         const dicePattern = /^\d+d\d+(\+\d+)?$/;
-        if (dicePattern.test(diceNotation)) {
-          return diceNotation;
-        } else {
-          console.error(`🎲 Error - Invalid simple dice notation: "${diceNotation}"`);
+        if (!dicePattern.test(diceNotation)) {
+          continue;
         }
+        
+        return diceNotation;
       }
     }
-
-    console.log(`🎲 Debug - No damage pattern found for ${spell.name}`);
+    
     return null;
   }
 
@@ -279,16 +273,11 @@ export class SpellDiceService {
     // Damage rolls
     const damageDice = this.getSpellDamage(spell, slotLevel);
     if (damageDice) {
-      console.log(`🎲 Debug - Raw damageDice for ${spell.name}: "${damageDice}"`);
-      console.log(`🎲 Debug - Ability modifier: ${abilityMod}`);
-      
       // Check if the damage includes ability modifier
       if (damageDice.includes('+')) {
         result.damageRoll = damageDice; // Already includes modifier
-        console.log(`🎲 Debug - Damage already includes modifier: "${result.damageRoll}"`);
       } else {
         result.damageRoll = `${damageDice}${abilityMod >= 0 ? '+' : ''}${abilityMod}`;
-        console.log(`🎲 Debug - Added ability modifier: "${result.damageRoll}"`);
       }
       result.damageType = 'damageType' in spell ? spell.damageType : null;
     }

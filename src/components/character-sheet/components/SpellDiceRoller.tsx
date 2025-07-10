@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Spell } from '@/lib/dnd/spells';
 import { createSpellDiceService } from '@/services/character/spell-dice';
-import { useDiceRoll } from '@/components/providers/dice-provider';
 
 interface SpellDiceRollerProps {
   spell: Spell;
@@ -19,18 +18,17 @@ interface SpellDiceRollerProps {
     wisdom: number;
     charisma: number;
   };
-  onUseSpellSlot?: (level: number) => void;
+  onSpellSlotUsed?: (spell: Spell, slotLevel: number) => void;
   className?: string;
 }
 
-export function SpellDiceRoller({ 
+export default function SpellDiceRoller({ 
   spell, 
   character, 
-  onUseSpellSlot,
+  onSpellSlotUsed,
   className = "" 
 }: SpellDiceRollerProps) {
   const [selectedSlotLevel, setSelectedSlotLevel] = useState(spell.level);
-  const { rollDice } = useDiceRoll();
   
   const spellDiceService = createSpellDiceService(character);
   const availableSlots = spellDiceService.getAvailableSlotLevels(spell);
@@ -58,33 +56,17 @@ export function SpellDiceRoller({
     }
     
     if (notation) {
-      // Debug logging to see the exact notation
-      console.log(`🎲 Debug - ${rollType} notation: "${notation}"`);
-      console.log(`🎲 Debug - spellRolls:`, spellRolls);
+      // Always roll dice first
+      const event = new CustomEvent('triggerDiceRoll', {
+        detail: { notation }
+      });
+      window.dispatchEvent(event);
       
-      // Always roll dice first - this should never fail
-      try {
-        rollDice(notation);
-        console.log(`🎲 Rolling ${rollType}: ${notation}`);
-      } catch (error) {
-        console.error('Dice rolling failed:', error);
-        // Even if dice rolling fails, don't break the component
-      }
-      
-      // Use spell slot for attack rolls and healing rolls (casting the spell)
-      // This follows D&D 5e rules: spell slots are consumed when casting the spell,
-      // not when rolling damage for an already-cast spell
-      // Cantrips (level 0) don't consume spell slots
-      if ((rollType === 'attack' || rollType === 'healing') && spell.level > 0 && onUseSpellSlot) {
-        // Use setTimeout to ensure dice rolling completes first
+      // For attack and healing rolls, trigger spell slot usage after a delay
+      if (rollType === 'attack' || rollType === 'healing') {
         setTimeout(() => {
-          try {
-            onUseSpellSlot(selectedSlotLevel);
-          } catch (error) {
-            console.error('Failed to use spell slot:', error);
-            // Don't let spell slot errors break the dice rolling
-          }
-        }, 100);
+          onSpellSlotUsed?.(spell, selectedSlotLevel);
+        }, 1000);
       }
     }
   };
