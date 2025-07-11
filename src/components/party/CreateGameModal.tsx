@@ -99,14 +99,14 @@ export default function CreateGameModal({ isOpen, onClose, onGameCreated }: Crea
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
       <Card className="w-full max-w-md mx-4">
         <div className="p-6">
-          <h2 className="text-xl font-bold mb-4">Create New Game</h2>
+          <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>Create New Game</h2>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-1">
+              <label htmlFor="name" className="block text-sm font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>
                 Game Name *
               </label>
               <input
@@ -114,21 +114,33 @@ export default function CreateGameModal({ isOpen, onClose, onGameCreated }: Crea
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: 'var(--color-card-secondary)',
+                  border: '1px solid var(--color-border)',
+                  color: 'var(--color-text-primary)',
+                  '--tw-focus-ring-color': 'var(--color-accent)'
+                } as React.CSSProperties}
                 placeholder="Enter game name"
                 disabled={loading}
               />
             </div>
 
             <div>
-              <label htmlFor="description" className="block text-sm font-medium mb-1">
+              <label htmlFor="description" className="block text-sm font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>
                 Description
               </label>
               <textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: 'var(--color-card-secondary)',
+                  border: '1px solid var(--color-border)',
+                  color: 'var(--color-text-primary)',
+                  '--tw-focus-ring-color': 'var(--color-accent)'
+                } as React.CSSProperties}
                 placeholder="Optional game description"
                 rows={3}
                 disabled={loading}
@@ -136,25 +148,25 @@ export default function CreateGameModal({ isOpen, onClose, onGameCreated }: Crea
             </div>
 
             {error && (
-              <div className="text-red-600 text-sm">{error}</div>
+              <div className="text-sm" style={{ color: 'var(--color-error)' }}>{error}</div>
             )}
 
             <div className="flex justify-end space-x-3 pt-4">
-                              <Button
-                  type="button"
-                  onClick={handleClose}
-                  disabled={loading}
-                  className="bg-[var(--color-muted)] hover:bg-[var(--color-muted-hover)]"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
-                >
-                  {loading ? 'Creating...' : 'Create Game'}
-                </Button>
+              <Button
+                type="button"
+                onClick={handleClose}
+                disabled={loading}
+                className="bg-[var(--color-muted)] hover:bg-[var(--color-muted-hover)]"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
+              >
+                {loading ? 'Creating...' : 'Create Game'}
+              </Button>
             </div>
           </form>
         </div>
