@@ -175,6 +175,16 @@ export function ActionsTab({
         return newHistory.slice(0, 10);
       });
       
+      // Dispatch global event to update FloatingDiceMenu roll history
+      const globalEvent = new CustomEvent('diceRollCompleted', {
+        detail: {
+          notation: notation,
+          result: result,
+          resultTotal: total
+        }
+      });
+      window.dispatchEvent(globalEvent);
+      
       console.log(`🎲 Simulated dice roll: ${notation} = ${total} (natural ${naturalRoll})`);
       return `Dice roll simulated! ${notation} = ${total} (natural ${naturalRoll})`;
     };
