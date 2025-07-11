@@ -134,6 +134,55 @@ export function ActionsTab({
     };
   }, []);
 
+  // Debug function to simulate a natural 20 roll for testing critical hits
+  useEffect(() => {
+    // Add global function for testing critical hits
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).simulateCriticalHit = (modifier = 0) => {
+      const notation = `1d20${modifier >= 0 ? '+' : ''}${modifier}`;
+      const naturalRoll = 20;
+      const total = naturalRoll + modifier;
+      const result = `${notation} = ${total}`;
+      
+      // Add to roll history
+      setRollHistory(prev => {
+        const newHistory = [
+          { notation, result, resultTotal: total, timestamp: Date.now() },
+          ...prev
+        ];
+        return newHistory.slice(0, 10);
+      });
+      
+      console.log(`🎯 Simulated critical hit: ${notation} = ${total} (natural 20)`);
+      return `Critical hit simulated! Last roll: ${notation} = ${total}`;
+    };
+
+    // Add global function to check current roll history
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).checkRollHistory = () => {
+      console.log('📊 Current roll history:', rollHistory);
+      return rollHistory;
+    };
+
+    // Add global function to clear roll history
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).clearRollHistory = () => {
+      setRollHistory([]);
+      console.log('🗑️ Roll history cleared');
+      return 'Roll history cleared';
+    };
+
+    // Cleanup on unmount
+    return () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).simulateCriticalHit;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).checkRollHistory;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).clearRollHistory;
+    };
+  }, [rollHistory]);
+
   // Function to check if the last roll was a critical hit (natural 20 on d20)
   const checkForCriticalHit = (): boolean => {
     if (rollHistory.length === 0) return false;
