@@ -42,9 +42,10 @@ interface Game {
 interface GamesListProps {
   onGameSelect: (game: Game) => void;
   onCreateGame: () => void;
+  refreshTrigger?: number; // Add this to trigger refreshes
 }
 
-export default function GamesList({ onGameSelect, onCreateGame }: GamesListProps) {
+export default function GamesList({ onGameSelect, onCreateGame, refreshTrigger }: GamesListProps) {
   const { data: session } = useSession();
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,7 +55,7 @@ export default function GamesList({ onGameSelect, onCreateGame }: GamesListProps
     if (session) {
       fetchGames();
     }
-  }, [session]);
+  }, [session, refreshTrigger]); // Add refreshTrigger to dependencies
 
   const fetchGames = async () => {
     try {
