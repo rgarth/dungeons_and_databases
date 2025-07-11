@@ -1,22 +1,23 @@
 "use client";
 
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { useState } from "react";
-import { Plus, LogOut, Menu, X } from "lucide-react";
-import Image from "next/image";
+import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import MainLayout from "@/components/layout/MainLayout";
 import { CharacterCard } from "../components/character-card";
 import { CreateCharacterModal } from "../components/create-character-modal";
 import { LoadingModal } from "../components/loading-modal";
-import { ThemeSelector } from "../components/ThemeSelector";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Character } from "@/types/character";
 import { Button } from "../components/ui";
+import { useLoading } from "@/components/providers/loading-provider";
 
 export default function Home() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
-  const [assetsLoaded, setAssetsLoaded] = useState(false);
+  const { assetsLoaded, setAssetsLoaded } = useLoading();
   const queryClient = useQueryClient();
 
   // Fetch characters using React Query
@@ -79,83 +80,44 @@ export default function Home() {
     );
   }
 
+  const handleTabChange = (tab: 'characters' | 'party') => {
+    switch (tab) {
+      case 'characters':
+        router.push('/');
+        break;
+      case 'party':
+        router.push('/party');
+        break;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[var(--color-surface)]">
-      {/* Header */}
-      <header className="bg-[var(--color-card)] border-b border-[var(--color-border)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Image
-                src="/favicon.svg"
-                alt="Dungeons & Databases Logo"
-                width={32}
-                height={32}
-                className="w-8 h-8"
-              />
-              <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Dungeons & Databases</h1>
-            </div>
-            
-            {/* Hamburger menu for all screen sizes */}
-            <div className="relative">
-              <Button
-                variant="ghost"
-                onClick={() => setShowMenu(!showMenu)}
-                className="p-2"
-              >
-                {showMenu ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </Button>
+    <MainLayout activeTab="characters" onTabChange={handleTabChange}>
+      {/* New Character Button */}
+      <div className="mb-8">
+        <Button
+          onClick={() => setShowCreateModal(true)}
+          className="flex items-center gap-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-6 py-3 text-lg font-semibold"
+        >
+          <Plus className="h-6 w-6" />
+          New Character
+        </Button>
+      </div>
 
-              {/* Menu dropdown positioned under the button */}
-              {showMenu && (
-                <div className="absolute right-0 top-full mt-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg shadow-lg z-10 min-w-[200px]">
-                  <div className="p-2 space-y-1">
-                    <ThemeSelector />
-                    <button
-                      onClick={() => signOut()}
-                      className="hamburger-menu-item"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      <span>Sign Out</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* New Character Button */}
-        <div className="mb-8">
-          <Button
-            onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] px-6 py-3 text-lg font-semibold"
-          >
-            <Plus className="h-6 w-6" />
-            New Character
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {characters.map((character) => (
-            <CharacterCard
-              key={character.id}
-              character={character}
-              onCharacterDeleted={() => {
-                // Invalidate the characters query to refetch the updated list
-                queryClient.invalidateQueries({ queryKey: ['characters'] });
-              }}
-              onCharacterUpdated={() => {
-                // Invalidate the characters query to refetch the updated list
-                queryClient.invalidateQueries({ queryKey: ['characters'] });
-              }}
-            />
-          ))}
-        </div>
-      </main>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {characters.map((character) => (
+          <CharacterCard
+            key={character.id}
+            character={character}
+            onCharacterDeleted={() => {
+              queryClient.invalidateQueries({ queryKey: ['characters'] });
+            }}
+            onCharacterUpdated={() => {
+              queryClient.invalidateQueries({ queryKey: ['characters'] });
+            }}
+          />
+        ))}
+      </div>
 
       {/* Create Character Modal */}
       {showCreateModal && (
@@ -164,6 +126,6 @@ export default function Home() {
           onCharacterCreated={handleCharacterCreated}
         />
       )}
-    </div>
+    </MainLayout>
   );
 }
