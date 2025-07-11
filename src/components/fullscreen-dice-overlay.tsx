@@ -164,8 +164,16 @@ export default function FullscreenDiceOverlay({
             .trim();
             
           window.DICE.vars.dice_color = colorToUse;
-          // Set label color based on dice color brightness
-          const isDark = parseInt(colorToUse.slice(1), 16) < 0x808080;
+          // Set label color based on dice color lightness (HSL)
+          const hex = colorToUse.replace('#', '');
+          const r = parseInt(hex.substr(0, 2), 16) / 255;
+          const g = parseInt(hex.substr(2, 2), 16) / 255;
+          const b = parseInt(hex.substr(4, 2), 16) / 255;
+          const max = Math.max(r, g, b);
+          const min = Math.min(r, g, b);
+          const lightness = (max + min) / 2;
+          // Switch to white text when lightness is below 50%
+          const isDark = lightness < 0.5;
           window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
         }
         

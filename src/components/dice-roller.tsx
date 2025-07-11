@@ -356,14 +356,19 @@ function DicePreview({ diceType, diceColor }: {
   diceType: string; 
   diceColor: string; 
 }) {
-  // Determine text color based on dice color brightness
+  // Determine text color based on dice color lightness (HSL)
   const isColorDark = (color: string): boolean => {
     const hex = color.replace('#', '');
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-    return brightness < 128;
+    const r = parseInt(hex.substr(0, 2), 16) / 255;
+    const g = parseInt(hex.substr(2, 2), 16) / 255;
+    const b = parseInt(hex.substr(4, 2), 16) / 255;
+    
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const lightness = (max + min) / 2;
+    
+    // Switch to white text when lightness is below 50%
+    return lightness < 0.5;
   };
 
   const textColor = isColorDark(diceColor) ? '#ffffff' : '#000000';
@@ -789,11 +794,16 @@ export default function DiceRoller({ className = "", onFullscreenRoll, hideCanva
   // Helper function to determine if a color is dark
   const isColorDark = (color: string): boolean => {
     const hex = color.replace('#', '');
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-    return brightness < 128;
+    const r = parseInt(hex.substr(0, 2), 16) / 255;
+    const g = parseInt(hex.substr(2, 2), 16) / 255;
+    const b = parseInt(hex.substr(4, 2), 16) / 255;
+    
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const lightness = (max + min) / 2;
+    
+    // Switch to white text when lightness is below 50%
+    return lightness < 0.5;
   };
 
   const diceTypes = [

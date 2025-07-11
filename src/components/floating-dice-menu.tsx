@@ -411,7 +411,16 @@ function SimpleDiceSelector({
                       height: '32px',
                       fontSize: '10px',
                       lineHeight: '1',
-                      color: parseInt(diceColor.slice(1), 16) < 0x808080 ? '#ffffff' : '#000000'
+                      color: (() => {
+                        const hex = diceColor.replace('#', '');
+                        const r = parseInt(hex.substr(0, 2), 16) / 255;
+                        const g = parseInt(hex.substr(2, 2), 16) / 255;
+                        const b = parseInt(hex.substr(4, 2), 16) / 255;
+                        const max = Math.max(r, g, b);
+                        const min = Math.min(r, g, b);
+                        const lightness = (max + min) / 2;
+                        return lightness < 0.5 ? '#ffffff' : '#000000';
+                      })()
                     }}
                     data-dice-color={diceColor}
                   >
