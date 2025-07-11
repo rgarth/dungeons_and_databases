@@ -636,12 +636,7 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
       return `Dice roll triggered! ${notation} will result in ${resultsStr}`;
     };
 
-    // Add global function for testing critical hits (convenience function)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).simulateCriticalHit = (modifier = 0) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (window as any).simulateDiceRoll("1d20", 20, modifier);
-    };
+
 
     // Add global function to check current roll history
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -662,8 +657,6 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
     return () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       delete (window as any).simulateDiceRoll;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (window as any).simulateCriticalHit;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       delete (window as any).checkRollHistory;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
