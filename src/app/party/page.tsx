@@ -8,6 +8,7 @@ import GamesList from '@/components/party/GamesList';
 import CreateGameModal from '@/components/party/CreateGameModal';
 import JoinGameModal from '@/components/party/JoinGameModal';
 import { Button } from '@/components/ui/Button';
+import GameDetailsModal from '@/components/party/GameDetailsModal';
 
 interface Game {
   id: string;
@@ -48,11 +49,13 @@ export default function PartyPage() {
   const router = useRouter();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
+  const [showGameDetails, setShowGameDetails] = useState(false);
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0); // Add refresh trigger
 
   const handleGameSelect = (game: Game) => {
-    // TODO: Navigate to game room or show game interface
-    console.log('Selected game:', game);
+    setSelectedGame(game);
+    setShowGameDetails(true);
   };
 
   const handleGameCreated = (game: Game) => {
@@ -137,6 +140,15 @@ export default function PartyPage() {
         isOpen={showJoinModal}
         onClose={() => setShowJoinModal(false)}
         onGameJoined={handleGameJoined}
+      />
+
+      <GameDetailsModal
+        game={selectedGame}
+        isOpen={showGameDetails}
+        onClose={() => {
+          setShowGameDetails(false);
+          setSelectedGame(null);
+        }}
       />
     </MainLayout>
   );
