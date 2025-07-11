@@ -578,6 +578,85 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
     };
   }, [isRolling]);
 
+  // Debug functions for testing dice rolls globally
+  useEffect(() => {
+    // Add global function for simulating any dice roll
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).simulateDiceRoll = (diceResults: number, modifier?: number) => {
+      // Determine dice notation based on the results
+      let diceNotation = '';
+      let naturalRoll = diceResults;
+      
+      if (diceResults >= 1 && diceResults <= 20) {
+        diceNotation = '1d20';
+      } else if (diceResults >= 1 && diceResults <= 12) {
+        diceNotation = '1d12';
+      } else if (diceResults >= 1 && diceResults <= 10) {
+        diceNotation = '1d10';
+      } else if (diceResults >= 1 && diceResults <= 8) {
+        diceNotation = '1d8';
+      } else if (diceResults >= 1 && diceResults <= 6) {
+        diceNotation = '1d6';
+      } else if (diceResults >= 1 && diceResults <= 4) {
+        diceNotation = '1d4';
+      } else {
+        // For other values, assume it's a d20 roll
+        diceNotation = '1d20';
+        naturalRoll = Math.min(Math.max(diceResults, 1), 20);
+      }
+      
+      const modifierStr = modifier !== undefined && modifier !== null ? (modifier >= 0 ? '+' : '') + modifier : '';
+      const notation = `${diceNotation}${modifierStr}`;
+      
+      // Instead of manually updating history, trigger a real dice roll with specific results
+      // This will use the complete flow and update both histories properly
+      const event = new CustomEvent('triggerDiceRoll', { 
+        detail: { 
+          notation: notation,
+          requestResults: [naturalRoll] // Set the specific dice result
+        } 
+      });
+      window.dispatchEvent(event);
+      
+      console.log(`🎲 Triggering dice roll: ${notation} with result ${naturalRoll}`);
+      return `Dice roll triggered! ${notation} will result in ${naturalRoll}`;
+    };
+
+    // Add global function for testing critical hits (convenience function)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).simulateCriticalHit = (modifier = 0) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return (window as any).simulateDiceRoll(20, modifier);
+    };
+
+    // Add global function to check current roll history
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).checkRollHistory = () => {
+      console.log('📊 Current roll history:', rollHistory);
+      return rollHistory;
+    };
+
+    // Add global function to clear roll history
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).clearRollHistory = () => {
+      setRollHistory([]);
+      console.log('🗑️ Roll history cleared');
+      return 'Roll history cleared';
+    };
+
+    // Cleanup on unmount
+    return () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).simulateDiceRoll;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).simulateCriticalHit;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).checkRollHistory;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).clearRollHistory;
+    };
+  }, [rollHistory]);
+
   const handleExpand = () => {
     setIsExpanded(true);
   };
