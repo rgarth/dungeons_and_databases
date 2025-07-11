@@ -94,14 +94,14 @@ export default function JoinGameModal({ isOpen, onClose, onGameJoined }: JoinGam
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
       <Card className="w-full max-w-md mx-4">
         <div className="p-6">
-          <h2 className="text-xl font-bold mb-4">Join Game</h2>
+          <h2 className="text-xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>Join Game</h2>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="inviteCode" className="block text-sm font-medium mb-1">
+              <label htmlFor="inviteCode" className="block text-sm font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>
                 Invite Code *
               </label>
               <input
@@ -109,21 +109,33 @@ export default function JoinGameModal({ isOpen, onClose, onGameJoined }: JoinGam
                 id="inviteCode"
                 value={inviteCode}
                 onChange={(e) => setInviteCode(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: 'var(--color-card-secondary)',
+                  border: '1px solid var(--color-border)',
+                  color: 'var(--color-text-primary)',
+                  '--tw-focus-ring-color': 'var(--color-accent)'
+                } as React.CSSProperties}
                 placeholder="Enter invite code"
                 disabled={loading}
               />
             </div>
 
             <div>
-              <label htmlFor="character" className="block text-sm font-medium mb-1">
+              <label htmlFor="character" className="block text-sm font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>
                 Character (Optional)
               </label>
               <select
                 id="character"
                 value={characterId}
                 onChange={(e) => setCharacterId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: 'var(--color-card-secondary)',
+                  border: '1px solid var(--color-border)',
+                  color: 'var(--color-text-primary)',
+                  '--tw-focus-ring-color': 'var(--color-accent)'
+                } as React.CSSProperties}
                 disabled={loading}
               >
                 <option value="">No character (join as spectator)</option>
@@ -133,31 +145,31 @@ export default function JoinGameModal({ isOpen, onClose, onGameJoined }: JoinGam
                   </option>
                 ))}
               </select>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
                 You can add a character later or join as a spectator first.
               </p>
             </div>
 
             {error && (
-              <div className="text-red-600 text-sm">{error}</div>
+              <div className="text-sm" style={{ color: 'var(--color-error)' }}>{error}</div>
             )}
 
             <div className="flex justify-end space-x-3 pt-4">
-                              <Button
-                  type="button"
-                  onClick={handleClose}
-                  disabled={loading}
-                  className="bg-[var(--color-muted)] hover:bg-[var(--color-muted-hover)]"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]"
-                >
-                  {loading ? 'Joining...' : 'Join Game'}
-                </Button>
+              <Button
+                type="button"
+                onClick={handleClose}
+                disabled={loading}
+                className="bg-[var(--color-muted)] hover:bg-[var(--color-muted-hover)]"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]"
+              >
+                {loading ? 'Joining...' : 'Join Game'}
+              </Button>
             </div>
           </form>
         </div>
