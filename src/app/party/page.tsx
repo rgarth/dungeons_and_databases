@@ -48,6 +48,7 @@ export default function PartyPage() {
   const router = useRouter();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0); // Add refresh trigger
 
   const handleGameSelect = (game: Game) => {
     // TODO: Navigate to game room or show game interface
@@ -57,11 +58,15 @@ export default function PartyPage() {
   const handleGameCreated = (game: Game) => {
     // TODO: Navigate to game room or show game interface
     console.log('Created game:', game);
+    // Trigger a refresh of the games list
+    setRefreshTrigger(prev => prev + 1);
   };
 
   const handleGameJoined = () => {
-    // TODO: Refresh games list and navigate to game room
+    // TODO: Navigate to game room
     console.log('Joined game');
+    // Trigger a refresh of the games list
+    setRefreshTrigger(prev => prev + 1);
   };
 
   const handleTabChange = (tab: 'characters' | 'party') => {
@@ -119,6 +124,7 @@ export default function PartyPage() {
       <GamesList 
         onGameSelect={handleGameSelect}
         onCreateGame={() => setShowCreateModal(true)}
+        refreshTrigger={refreshTrigger}
       />
 
       <CreateGameModal
