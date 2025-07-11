@@ -159,14 +159,14 @@ export default function JoinGameModal({ isOpen, onClose, onGameJoined }: JoinGam
                 type="button"
                 onClick={handleClose}
                 disabled={loading}
-                className="bg-[var(--color-muted)] hover:bg-[var(--color-muted-hover)]"
+                variant="secondary"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]"
+                variant="primary"
               >
                 {loading ? 'Joining...' : 'Join Game'}
               </Button>
