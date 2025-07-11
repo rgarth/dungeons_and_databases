@@ -55,6 +55,8 @@ export default function GameDetailsModal({ game, isOpen, onClose }: GameDetailsM
   const isDM = game.dm.email === session?.user?.email;
   const inviteCode = game.id.slice(0, 8).toUpperCase(); // Simple invite code for now
 
+  const inviteUrl = `${window.location.origin}/invite/${inviteCode}`;
+
   const copyInviteCode = async () => {
     try {
       await navigator.clipboard.writeText(inviteCode);
@@ -62,6 +64,16 @@ export default function GameDetailsModal({ game, isOpen, onClose }: GameDetailsM
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy invite code:', err);
+    }
+  };
+
+  const copyInviteUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy invite URL:', err);
     }
   };
 
@@ -137,24 +149,49 @@ export default function GameDetailsModal({ game, isOpen, onClose }: GameDetailsM
             <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
               Invite Players
             </h3>
-            <div className="flex items-center gap-3">
-              <div className="flex-1">
-                <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Invite Code</div>
-                <div className="font-mono text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                  {inviteCode}
+            
+            {/* Invite Code */}
+            <div className="mb-4">
+              <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Invite Code</div>
+              <div className="flex items-center gap-3">
+                <div className="flex-1">
+                  <div className="font-mono text-lg font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                    {inviteCode}
+                  </div>
                 </div>
+                <Button
+                  onClick={copyInviteCode}
+                  variant="secondary"
+                  className="flex items-center gap-2"
+                >
+                  <Copy className="h-4 w-4" />
+                  {copied ? 'Copied!' : 'Copy'}
+                </Button>
               </div>
-              <Button
-                onClick={copyInviteCode}
-                variant="secondary"
-                className="flex items-center gap-2"
-              >
-                <Copy className="h-4 w-4" />
-                {copied ? 'Copied!' : 'Copy'}
-              </Button>
             </div>
+
+            {/* Invite URL */}
+            <div>
+              <div className="text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Invite URL</div>
+              <div className="flex items-center gap-3">
+                <div className="flex-1">
+                  <div className="font-mono text-sm truncate" style={{ color: 'var(--color-text-primary)' }}>
+                    {inviteUrl}
+                  </div>
+                </div>
+                <Button
+                  onClick={copyInviteUrl}
+                  variant="secondary"
+                  className="flex items-center gap-2"
+                >
+                  <Copy className="h-4 w-4" />
+                  {copied ? 'Copied!' : 'Copy'}
+                </Button>
+              </div>
+            </div>
+            
             <p className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
-              Share this code with players to invite them to your game.
+              Share either the code or URL with players to invite them to your game.
             </p>
           </div>
 
