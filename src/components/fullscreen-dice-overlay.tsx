@@ -193,7 +193,7 @@ export default function FullscreenDiceOverlay({
             // Auto-close after a longer delay to show results
             setTimeout(() => {
               handleFadeOut();
-            }, 4000); // 4 seconds for results visibility
+            }, 2000); // 2 seconds for results visibility
           }
         );
       } catch (error) {

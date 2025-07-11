@@ -134,14 +134,36 @@ export function ActionsTab({
     };
   }, []);
 
-  // Debug function to simulate a natural 20 roll for testing critical hits
+  // Debug function to simulate dice rolls for testing
   useEffect(() => {
-    // Add global function for testing critical hits
+    // Add global function for simulating any dice roll
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).simulateCriticalHit = (modifier = 0) => {
-      const notation = `1d20${modifier >= 0 ? '+' : ''}${modifier}`;
-      const naturalRoll = 20;
-      const total = naturalRoll + modifier;
+    (window as any).simulateDiceRoll = (diceResults: number, modifier?: number) => {
+      // Determine dice notation based on the results
+      let diceNotation = '';
+      let naturalRoll = diceResults;
+      
+      if (diceResults >= 1 && diceResults <= 20) {
+        diceNotation = '1d20';
+      } else if (diceResults >= 1 && diceResults <= 12) {
+        diceNotation = '1d12';
+      } else if (diceResults >= 1 && diceResults <= 10) {
+        diceNotation = '1d10';
+      } else if (diceResults >= 1 && diceResults <= 8) {
+        diceNotation = '1d8';
+      } else if (diceResults >= 1 && diceResults <= 6) {
+        diceNotation = '1d6';
+      } else if (diceResults >= 1 && diceResults <= 4) {
+        diceNotation = '1d4';
+      } else {
+        // For other values, assume it's a d20 roll
+        diceNotation = '1d20';
+        naturalRoll = Math.min(Math.max(diceResults, 1), 20);
+      }
+      
+      const modifierStr = modifier !== undefined && modifier !== null ? (modifier >= 0 ? '+' : '') + modifier : '';
+      const notation = `${diceNotation}${modifierStr}`;
+      const total = naturalRoll + (modifier || 0);
       const result = `${notation} = ${total}`;
       
       // Add to roll history
@@ -153,8 +175,15 @@ export function ActionsTab({
         return newHistory.slice(0, 10);
       });
       
-      console.log(`🎯 Simulated critical hit: ${notation} = ${total} (natural 20)`);
-      return `Critical hit simulated! Last roll: ${notation} = ${total}`;
+      console.log(`🎲 Simulated dice roll: ${notation} = ${total} (natural ${naturalRoll})`);
+      return `Dice roll simulated! ${notation} = ${total} (natural ${naturalRoll})`;
+    };
+
+    // Add global function for testing critical hits (convenience function)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).simulateCriticalHit = (modifier = 0) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return (window as any).simulateDiceRoll(20, modifier);
     };
 
     // Add global function to check current roll history
@@ -174,6 +203,8 @@ export function ActionsTab({
 
     // Cleanup on unmount
     return () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).simulateDiceRoll;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       delete (window as any).simulateCriticalHit;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
