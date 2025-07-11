@@ -184,7 +184,16 @@ export default function FullscreenDiceOverlay({
         diceBoxRef.current.start_throw(
           // beforeRoll callback
           () => {
-            return null; // Let the library handle the roll
+            // Check if we have requested results from simulateDiceRoll
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const requestedResults = (window as any).requestedDiceResults;
+            if (requestedResults) {
+              // Clear the requested results so they don't affect future rolls
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              delete (window as any).requestedDiceResults;
+              return requestedResults;
+            }
+            return null; // Let the library handle the roll normally
           },
           // afterRoll callback
           (notation: DiceResult) => {

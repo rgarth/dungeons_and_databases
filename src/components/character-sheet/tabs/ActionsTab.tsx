@@ -163,30 +163,19 @@ export function ActionsTab({
       
       const modifierStr = modifier !== undefined && modifier !== null ? (modifier >= 0 ? '+' : '') + modifier : '';
       const notation = `${diceNotation}${modifierStr}`;
-      const total = naturalRoll + (modifier || 0);
-      const result = `${notation} = ${total}`;
       
-      // Add to roll history
-      setRollHistory(prev => {
-        const newHistory = [
-          { notation, result, resultTotal: total, timestamp: Date.now() },
-          ...prev
-        ];
-        return newHistory.slice(0, 10);
-      });
-      
-      // Dispatch global event to update FloatingDiceMenu roll history
-      const globalEvent = new CustomEvent('diceRollCompleted', {
-        detail: {
+      // Instead of manually updating history, trigger a real dice roll with specific results
+      // This will use the complete flow and update both histories properly
+      const event = new CustomEvent('triggerDiceRoll', { 
+        detail: { 
           notation: notation,
-          result: result,
-          resultTotal: total
-        }
+          requestResults: [naturalRoll] // Set the specific dice result
+        } 
       });
-      window.dispatchEvent(globalEvent);
+      window.dispatchEvent(event);
       
-      console.log(`🎲 Simulated dice roll: ${notation} = ${total} (natural ${naturalRoll})`);
-      return `Dice roll simulated! ${notation} = ${total} (natural ${naturalRoll})`;
+      console.log(`🎲 Triggering dice roll: ${notation} with result ${naturalRoll}`);
+      return `Dice roll triggered! ${notation} will result in ${naturalRoll}`;
     };
 
     // Add global function for testing critical hits (convenience function)

@@ -556,12 +556,18 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
   // Listen for dice roll triggers from other components
   useEffect(() => {
     const handleTriggerDiceRoll = (event: CustomEvent) => {
-      const { notation } = event.detail;
+      const { notation, requestResults } = event.detail;
       if (notation && !isRolling) {
         // Only start a new roll if not currently rolling
         setFullscreenDiceNotation(notation);
         setShowFullscreenRoll(true);
         setIsRolling(true);
+        
+        // Store requestResults for use in the dice roll
+        if (requestResults) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (window as any).requestedDiceResults = requestResults;
+        }
       }
     };
 
