@@ -156,14 +156,14 @@ export default function CreateGameModal({ isOpen, onClose, onGameCreated }: Crea
                 type="button"
                 onClick={handleClose}
                 disabled={loading}
-                className="bg-[var(--color-muted)] hover:bg-[var(--color-muted-hover)]"
+                variant="secondary"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
+                variant="primary"
               >
                 {loading ? 'Creating...' : 'Create Game'}
               </Button>
