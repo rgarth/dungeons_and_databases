@@ -43,6 +43,8 @@ export interface Game {
   id: string;
   name: string;
   description?: string;
+  gameNotes?: string;
+  dmNotes?: string;
   dm: {
     id: string;
     name?: string;

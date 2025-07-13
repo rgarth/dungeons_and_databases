@@ -49,27 +49,23 @@ export async function GET(
 
     const isDM = !!game;
 
-    // If DM, get all notes. If player, get only public notes
-    const notes = await prisma.gameNote.findMany({
-      where: {
-        gameId: gameId,
-        ...(isDM ? {} : { isPublic: true })
-      },
-      include: {
-        dm: {
-          select: {
-            id: true,
-            name: true,
-            email: true
-          }
-        }
-      },
-      orderBy: {
-        updatedAt: 'desc'
+    // Get the game with notes
+    const gameWithNotes = await prisma.game.findUnique({
+      where: { id: gameId },
+      select: {
+        gameNotes: true,
+        dmNotes: isDM ? true : false, // Only include dmNotes if user is DM
       }
     });
 
-    return NextResponse.json(notes);
+    if (!gameWithNotes) {
+      return NextResponse.json({ error: 'Game not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      gameNotes: gameWithNotes.gameNotes || '',
+      dmNotes: isDM ? (gameWithNotes.dmNotes || '') : undefined
+    });
   } catch (error) {
     console.error('Error fetching game notes:', error);
     return NextResponse.json(
@@ -79,8 +75,8 @@ export async function GET(
   }
 }
 
-// POST /api/games/[gameId]/notes - Create a new note
-export async function POST(
+// PUT /api/games/[gameId]/notes - Update notes for a game
+export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ gameId: string }> }
 ) {
@@ -110,47 +106,42 @@ export async function POST(
     });
 
     if (!game) {
-      return NextResponse.json({ error: 'Only the DM can create notes' }, { status: 403 });
+      return NextResponse.json({ error: 'Only the DM can update notes' }, { status: 403 });
     }
 
-    const { title, content, isPublic = false } = await request.json();
+    const { gameNotes, dmNotes } = await request.json();
 
-    if (!title || typeof title !== 'string' || title.trim().length === 0) {
+    // Validate input
+    if (gameNotes !== undefined && typeof gameNotes !== 'string') {
       return NextResponse.json(
-        { error: 'Title is required' },
+        { error: 'gameNotes must be a string' },
         { status: 400 }
       );
     }
 
-    if (title.trim().length > 255) {
+    if (dmNotes !== undefined && typeof dmNotes !== 'string') {
       return NextResponse.json(
-        { error: 'Title too long (max 255 characters)' },
+        { error: 'dmNotes must be a string' },
         { status: 400 }
       );
     }
 
-    const note = await prisma.gameNote.create({
+    // Update the game notes
+    const updatedGame = await prisma.game.update({
+      where: { id: gameId },
       data: {
-        gameId: gameId,
-        dmId: user.id,
-        title: title.trim(),
-        content: content?.trim() || null,
-        isPublic
+        gameNotes: gameNotes !== undefined ? gameNotes : undefined,
+        dmNotes: dmNotes !== undefined ? dmNotes : undefined,
       },
-      include: {
-        dm: {
-          select: {
-            id: true,
-            name: true,
-            email: true
-          }
-        }
+      select: {
+        gameNotes: true,
+        dmNotes: true,
       }
     });
 
-    return NextResponse.json(note, { status: 201 });
+    return NextResponse.json(updatedGame);
   } catch (error) {
-    console.error('Error creating game note:', error);
+    console.error('Error updating game notes:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

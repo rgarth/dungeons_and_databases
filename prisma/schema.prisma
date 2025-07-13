@@ -187,6 +187,8 @@ model Game {
   id           String            @id @default(dbgenerated("(gen_random_uuid())::text"))
   name         String
   description  String?
+  gameNotes    String?           @map("gameNotes")
+  dmNotes      String?           @map("dmNotes")
   dmId         String            @map("dm_id")
   createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt    DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)

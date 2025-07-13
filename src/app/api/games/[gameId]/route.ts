@@ -100,7 +100,10 @@ export async function GET(
 
     const gameWithCharacters = {
       ...game,
-      participants: participantsWithCharacters
+      participants: participantsWithCharacters,
+      // Include notes based on user permissions
+      gameNotes: (game as typeof game & { gameNotes?: string }).gameNotes || '',
+      dmNotes: isDm ? ((game as typeof game & { dmNotes?: string }).dmNotes || '') : undefined
     };
 
     return NextResponse.json(gameWithCharacters);

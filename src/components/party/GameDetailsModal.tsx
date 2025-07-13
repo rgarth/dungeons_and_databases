@@ -120,6 +120,12 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  // Notes state
+  const [gameNotes, setGameNotes] = useState('');
+  const [dmNotes, setDmNotes] = useState('');
+  const [isSavingNotes, setIsSavingNotes] = useState(false);
+  const [notesError, setNotesError] = useState<string | null>(null);
 
   const isDM = currentGame?.dm.id === (session?.user as { id?: string })?.id;
 
@@ -142,6 +148,13 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
             // Only update if the data has actually changed
             if (JSON.stringify(updatedGame) !== JSON.stringify(currentGame)) {
               setCurrentGame(updatedGame);
+              // Update notes from the game data
+              if (updatedGame.gameNotes !== undefined) {
+                setGameNotes(updatedGame.gameNotes || '');
+              }
+              if (isDM && updatedGame.dmNotes !== undefined) {
+                setDmNotes(updatedGame.dmNotes || '');
+              }
             }
           }
         } catch (error) {
@@ -170,7 +183,82 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
       if (pollInterval) clearInterval(pollInterval);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [isOpen, currentGame?.id]);
+  }, [isOpen, currentGame?.id, isDM]);
+
+  // Load notes when notes tab is active
+  useEffect(() => {
+    if (activeTab === 'notes' && currentGame) {
+      loadNotes();
+    }
+  }, [activeTab, currentGame?.id]);
+
+  const loadNotes = async () => {
+    if (!currentGame) return;
+
+    // If we already have notes from the game data, use those
+    if (currentGame.gameNotes !== undefined) {
+      setGameNotes(currentGame.gameNotes || '');
+      if (isDM && currentGame.dmNotes !== undefined) {
+        setDmNotes(currentGame.dmNotes || '');
+      }
+      return;
+    }
+
+    // Otherwise, fetch from the notes API
+    try {
+      const response = await fetch(`/api/games/${currentGame.id}/notes`);
+      if (response.ok) {
+        const notes = await response.json();
+        setGameNotes(notes.gameNotes || '');
+        if (isDM) {
+          setDmNotes(notes.dmNotes || '');
+        }
+      }
+    } catch (error) {
+      console.error('Error loading notes:', error);
+      setNotesError('Failed to load notes');
+    }
+  };
+
+  const saveNotes = async (type: 'game' | 'dm') => {
+    if (!currentGame || !isDM) return;
+
+    try {
+      setIsSavingNotes(true);
+      setNotesError(null);
+
+      const updateData = type === 'game' 
+        ? { gameNotes } 
+        : { dmNotes };
+
+      const response = await fetch(`/api/games/${currentGame.id}/notes`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save notes');
+      }
+
+      // Update the current game with new notes
+      const updatedNotes = await response.json();
+      setCurrentGame(prev => prev ? {
+        ...prev,
+        gameNotes: updatedNotes.gameNotes,
+        dmNotes: updatedNotes.dmNotes,
+      } : null);
+
+    } catch (error) {
+      console.error('Error saving notes:', error);
+      setNotesError(error instanceof Error ? error.message : 'Failed to save notes');
+    } finally {
+      setIsSavingNotes(false);
+    }
+  };
 
   // Fetch characters when add character modal opens
   useEffect(() => {
@@ -245,6 +333,13 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
       if (response.ok) {
         const updatedGame = await response.json();
         setCurrentGame(updatedGame);
+        // Update notes from the game data
+        if (updatedGame.gameNotes !== undefined) {
+          setGameNotes(updatedGame.gameNotes || '');
+        }
+        if (isDM && updatedGame.dmNotes !== undefined) {
+          setDmNotes(updatedGame.dmNotes || '');
+        }
       }
     } catch (error) {
       console.error('Error refreshing game data:', error);
@@ -757,11 +852,111 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                 <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
                   Game Notes
                 </h3>
-                <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                  <p className="text-[var(--color-text-secondary)] italic">
-                    Notes feature coming soon...
-                  </p>
+                
+                {/* Game Notes - Visible to all players */}
+                <div className="mb-6">
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="text-md font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                      Game Notes
+                    </h4>
+                    {isDM && (
+                      <button
+                        onClick={() => saveNotes('game')}
+                        disabled={isSavingNotes}
+                        className="px-3 py-1 text-sm bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors disabled:opacity-50 flex items-center gap-2"
+                        title="Save Game Notes"
+                      >
+                        {isSavingNotes ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                            </svg>
+                            Save
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                    {isDM ? (
+                      <textarea
+                        value={gameNotes}
+                        onChange={(e) => setGameNotes(e.target.value)}
+                        className="w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 resize-vertical"
+                        style={{
+                          backgroundColor: 'var(--color-card)',
+                          color: 'var(--color-text-primary)',
+                          borderColor: 'var(--color-border)',
+                          outlineColor: 'var(--color-accent)'
+                        }}
+                        rows={8}
+                        placeholder="Enter game notes here... (visible to all players)"
+                      />
+                    ) : (
+                      <div className="whitespace-pre-wrap text-[var(--color-text-primary)] min-h-[200px]">
+                        {gameNotes || 'No game notes yet.'}
+                      </div>
+                    )}
+                  </div>
                 </div>
+
+                {/* DM Notes - Only visible to DM */}
+                {isDM && (
+                  <div className="mb-6">
+                    <div className="flex justify-between items-center mb-3">
+                      <h4 className="text-md font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                        DM Notes
+                      </h4>
+                      <button
+                        onClick={() => saveNotes('dm')}
+                        disabled={isSavingNotes}
+                        className="px-3 py-1 text-sm bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors disabled:opacity-50 flex items-center gap-2"
+                        title="Save DM Notes"
+                      >
+                        {isSavingNotes ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                            </svg>
+                            Save
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                      <textarea
+                        value={dmNotes}
+                        onChange={(e) => setDmNotes(e.target.value)}
+                        className="w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-2 resize-vertical"
+                        style={{
+                          backgroundColor: 'var(--color-card)',
+                          color: 'var(--color-text-primary)',
+                          borderColor: 'var(--color-border)',
+                          outlineColor: 'var(--color-accent)'
+                        }}
+                        rows={8}
+                        placeholder="Enter DM notes here... (only visible to you)"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Error Display */}
+                {notesError && (
+                  <div className="p-3 rounded-lg text-sm" style={{ backgroundColor: 'var(--color-danger-bg)', color: 'var(--color-danger)' }}>
+                    {notesError}
+                  </div>
+                )}
               </div>
             )}
 
