@@ -10,7 +10,7 @@ import { Character } from '@/types/character';
 import { useAvatar } from '@/hooks/use-character-mutations';
 import Image from 'next/image';
 import { CharacterSheet } from '@/components/character-sheet';
-import { ReadOnlyCharacterSheet } from '@/components/character-sheet/ReadOnlyCharacterSheet';
+import ReadOnlyCharacterSheet from '@/components/character-sheet/ReadOnlyCharacterSheet';
 
 // Character Avatar Component
 function CharacterAvatar({ characterId, characterName }: { characterId: string; characterName: string }) {
@@ -339,8 +339,22 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
 
   const handleCharacterClick = async (characterId: string, participantId: string) => {
     try {
-      // Fetch the full character data
-      const response = await fetch(`/api/characters/${characterId}`);
+      // Determine if this is the user's own character
+      const isOwnCharacter = currentGame?.participants.find(p => p.id === participantId)?.user.email === session?.user?.email;
+      
+      // Choose the appropriate API endpoint
+      let response;
+      if (isOwnCharacter) {
+        // User's own character - use regular character API
+        response = await fetch(`/api/characters/${characterId}`);
+      } else if (isDM) {
+        // DM viewing other player's character - use game-specific read-only API
+        response = await fetch(`/api/games/${currentGame?.id}/characters/${characterId}`);
+      } else {
+        // Other player viewing another player's character - use public API
+        response = await fetch(`/api/games/${currentGame?.id}/characters/${characterId}/public`);
+      }
+      
       if (!response.ok) {
         throw new Error('Failed to fetch character data');
       }
@@ -348,11 +362,8 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
       const character: Character = await response.json();
       setSelectedCharacter(character);
       
-      // Determine if this is the user's own character
-      const isOwnCharacter = currentGame?.participants.find(p => p.id === participantId)?.user.email === session?.user?.email;
-      
-      // Set read-only mode: true if not own character and not DM, false if own character or DM
-      setIsReadOnly(!isOwnCharacter && !isDM);
+      // Set read-only mode: true if not own character (DM or non-DM viewing others), false if own character
+      setIsReadOnly(!isOwnCharacter);
       
       setShowCharacterSheet(true);
     } catch (error) {
@@ -648,7 +659,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                 </div>
 
                 {/* Game Info */}
-                <div className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                <div className="text-xs mt-6" style={{ color: 'var(--color-text-muted)' }}>
                   <div className="flex items-center gap-2 mb-1">
                     <Calendar className="h-3 w-3" />
                     Created: {new Date(currentGame.createdAt).toLocaleDateString()}
@@ -898,11 +909,12 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
           isDestructive={true}
         />
 
-        {/* Character Sheet Modals */}
+        {/* Character Sheet Modal */}
         {showCharacterSheet && selectedCharacter && (
           isReadOnly ? (
             <ReadOnlyCharacterSheet
               character={selectedCharacter}
+              isDM={isDM}
               onClose={handleCloseCharacterSheet}
             />
           ) : (
