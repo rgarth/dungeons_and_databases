@@ -1,261 +1,273 @@
-"use client";
-
-import { User, X, Shield, Heart, BarChart3 } from "lucide-react";
-import { useState, useMemo } from "react";
-import { getModifier } from "@/lib/dnd/core";
-import { useAvatar } from "@/hooks/use-character-mutations";
+import React from 'react';
+import { Character } from '@/types/character';
+import { Card } from '@/components/ui';
+import { useAvatar } from '@/hooks/use-character-mutations';
 import Image from 'next/image';
-import { Character } from "@/types/character";
+import { getProficiencyBonus } from '@/lib/dnd/core';
 
 interface ReadOnlyCharacterSheetProps {
   character: Character;
+  isDM?: boolean; // If true, show full details. If false, show limited details for other players
   onClose: () => void;
-  isDM?: boolean;
 }
 
-export function ReadOnlyCharacterSheet({ character, onClose }: ReadOnlyCharacterSheetProps) {
+export default function ReadOnlyCharacterSheet({ 
+  character, 
+  isDM = false, 
+  onClose 
+}: ReadOnlyCharacterSheetProps) {
+  const showFullDetails = isDM;
   const { data: avatarUrl } = useAvatar(character.id);
-  const [activeTab, setActiveTab] = useState<"stats" | "actions" | "gear" | "inventory" | "background">("stats");
-
-  // Calculate stats
-  const stats = useMemo(() => ({
-    strength: character.strength,
-    dexterity: character.dexterity,
-    constitution: character.constitution,
-    intelligence: character.intelligence,
-    wisdom: character.wisdom,
-    charisma: character.charisma,
-  }), [character]);
-
-  // Format class information
-  const formatClassInfo = () => {
-    if (character.classes && Array.isArray(character.classes) && character.classes.length > 0) {
-      return character.classes.map(cls => `${cls.class} ${cls.level}`).join(', ');
-    }
-    return `${character.class} ${character.level}`;
-  };
-
+  
   return (
-    <div className="fixed inset-0 flex items-start justify-center p-4 pt-8 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
-      <div className="bg-[var(--color-card)] rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="p-4 border-b border-[var(--color-border)]">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 min-w-0 flex-1">
+    <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
+      <Card className="w-full max-w-4xl mx-4 h-[90vh] flex flex-col">
+        <div className="p-6 flex-1 overflow-y-auto">
+          {/* Header */}
+          <div className="flex justify-between items-start mb-6">
+            <div className="flex items-center gap-4">
               {/* Avatar */}
               {avatarUrl ? (
-                <div className="w-24 h-24 rounded-full overflow-hidden">
+                <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0">
                   <Image 
                     src={avatarUrl} 
                     alt={`${character.name}'s avatar`}
-                    width={96}
-                    height={96}
+                    width={80}
+                    height={80}
                     className="w-full h-full object-cover object-top scale-150 translate-y-1/4"
                   />
                 </div>
               ) : (
-                <User className="h-6 w-6 sm:h-7 sm:w-7 text-[var(--color-accent)] flex-shrink-0" />
+                <div className="w-20 h-20 rounded-full flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                  <span className="text-2xl">👤</span>
+                </div>
               )}
               
-              {/* Character info */}
-              <div className="min-w-0 flex-1">
-                <h2 className="text-xl sm:text-2xl font-bold truncate" style={{ color: 'var(--color-text-primary)' }}>
+              <div>
+                <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--color-text-primary)' }}>
                   {character.name}
                 </h2>
-                <p className="text-sm sm:text-base truncate" style={{ color: 'var(--color-text-secondary)' }}>
-                  {character.subrace || character.race} • {formatClassInfo()}
-                </p>
-                {character.background && (
-                  <p className="text-xs sm:text-sm truncate" style={{ color: 'var(--color-text-muted)' }}>
-                    {character.background}
-                  </p>
+                <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                  <span>{character.race}</span>
+                  {character.subrace && <span>({character.subrace})</span>}
+                  <span>•</span>
+                  <span>{character.class}</span>
+                  <span>•</span>
+                  <span>Level {character.level}</span>
+                  {showFullDetails && (
+                    <>
+                      <span>•</span>
+                      <span>{character.background}</span>
+                      <span>•</span>
+                      <span>{character.alignment}</span>
+                    </>
+                  )}
+                </div>
+                {!showFullDetails && (
+                  <div className="mt-2 p-2 rounded text-sm" style={{ backgroundColor: 'var(--color-info-bg)', color: 'var(--color-info)' }}>
+                    <strong>Read-only view:</strong> You can view this character&apos;s basic information.
+                  </div>
                 )}
               </div>
             </div>
-            
-            {/* Close button */}
             <button
               onClick={onClose}
-              className="p-2 hover:bg-[var(--color-card-secondary)] rounded-lg transition-colors"
-              style={{ color: 'var(--color-text-secondary)' }}
+              className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors p-2 rounded hover:bg-[var(--color-card-secondary)]"
             >
-              <X className="h-5 w-5" />
+              ✕
             </button>
           </div>
-        </div>
 
-        {/* Tab Navigation */}
-        <div className="flex border-b border-[var(--color-border)]">
-          {[
-            { id: "stats", label: "Stats", icon: BarChart3 },
-            { id: "actions", label: "Actions", icon: Shield },
-            { id: "gear", label: "Gear", icon: Shield },
-            { id: "inventory", label: "Inventory", icon: Shield },
-            { id: "background", label: "Background", icon: Shield },
-          ].map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                                 onClick={() => setActiveTab(tab.id as "stats" | "actions" | "gear" | "inventory" | "background")}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
-                  activeTab === tab.id
-                    ? 'border-b-2 border-[var(--color-accent)] text-[var(--color-accent)]'
-                    : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
-          {activeTab === "stats" && (
-            <div className="space-y-6">
-              {/* Basic Info */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                  <Heart className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
-                  <div>
-                    <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Hit Points</div>
-                    <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                      {character.hitPoints}/{character.maxHitPoints}
-                    </div>
-                  </div>
+          {/* Basic Information */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+            {/* Core Stats */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                Core Stats
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 rounded" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                  <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Hit Points</div>
+                  <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{character.hitPoints}/{character.maxHitPoints}</div>
                 </div>
-                <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                  <Shield className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
-                  <div>
-                    <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Armor Class</div>
-                    <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{character.armorClass}</div>
-                  </div>
+                <div className="p-3 rounded" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                  <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Armor Class</div>
+                  <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{character.armorClass}</div>
                 </div>
-                <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                  <BarChart3 className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
-                  <div>
-                    <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Speed</div>
-                    <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{character.speed} ft</div>
-                  </div>
+                <div className="p-3 rounded" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                  <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Speed</div>
+                  <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{character.speed} ft.</div>
+                </div>
+                <div className="p-3 rounded" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                  <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Proficiency Bonus</div>
+                  <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>+{getProficiencyBonus(character.level)}</div>
                 </div>
               </div>
+            </div>
 
-              {/* Ability Scores */}
-              <div>
-                <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
-                  Ability Scores
+            {/* Ability Scores */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                Ability Scores
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { name: 'STR', value: character.strength },
+                  { name: 'DEX', value: character.dexterity },
+                  { name: 'CON', value: character.constitution },
+                  { name: 'INT', value: character.intelligence },
+                  { name: 'WIS', value: character.wisdom },
+                  { name: 'CHA', value: character.charisma },
+                ].map((ability) => (
+                  <div key={ability.name} className="p-3 rounded text-center" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                    <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{ability.name}</div>
+                    <div className="font-medium text-lg" style={{ color: 'var(--color-text-primary)' }}>{ability.value}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Character Details */}
+            {showFullDetails && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                  Details
                 </h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                  {Object.entries(stats).map(([ability, score]) => (
-                    <div
-                      key={ability}
-                      className="p-3 rounded-lg text-center"
-                      style={{ backgroundColor: 'var(--color-card-secondary)' }}
-                    >
-                      <div className="text-sm font-medium capitalize" style={{ color: 'var(--color-text-secondary)' }}>
-                        {ability}
-                      </div>
-                      <div className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
-                        {score}
-                      </div>
-                      <div className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                        {getModifier(score) >= 0 ? '+' : ''}{getModifier(score)}
-                      </div>
-                    </div>
-                  ))}
+                <div className="space-y-3">
+                  <div className="p-3 rounded" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                    <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Background</div>
+                    <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{character.background}</div>
+                  </div>
+                  <div className="p-3 rounded" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                    <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Alignment</div>
+                    <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{character.alignment}</div>
+                  </div>
                 </div>
               </div>
+            )}
+          </div>
 
-              {/* Skills */}
-              {character.skills && character.skills.length > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
-                    Skills
+          {/* Equipment and Combat */}
+          {showFullDetails && (
+            <>
+              {/* Weapons */}
+              {character.weapons && character.weapons.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                    Weapons
                   </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-                    {character.skills.map((skill) => (
-                      <div
-                        key={skill}
-                        className="px-3 py-2 rounded text-sm"
-                        style={{ backgroundColor: 'var(--color-card-secondary)', color: 'var(--color-text-primary)' }}
-                      >
-                        {skill}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {character.weapons.map((weapon, index) => (
+                      <div key={index} className="p-3 rounded border" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-card-secondary)' }}>
+                        <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{weapon.name}</div>
+                        <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                          {weapon.damage} {weapon.damageType}
+                        </div>
+                        {weapon.properties && weapon.properties.length > 0 && (
+                          <div className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>
+                            {weapon.properties.join(', ')}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
                 </div>
               )}
 
-
-            </div>
-          )}
-
-          {activeTab === "actions" && (
-            <div className="text-center py-8">
-              <p className="text-[var(--color-text-secondary)]">
-                Actions view coming soon...
-              </p>
-            </div>
-          )}
-
-          {activeTab === "gear" && (
-            <div className="text-center py-8">
-              <p className="text-[var(--color-text-secondary)]">
-                Gear view coming soon...
-              </p>
-            </div>
-          )}
-
-          {activeTab === "inventory" && (
-            <div className="text-center py-8">
-              <p className="text-[var(--color-text-secondary)]">
-                Inventory view coming soon...
-              </p>
-            </div>
-          )}
-
-          {activeTab === "background" && (
-            <div className="space-y-6">
-              {character.appearance && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
-                    Appearance
+              {/* Armor */}
+              {character.armor && character.armor.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                    Armor
                   </h3>
-                  <p className="text-[var(--color-text-secondary)]">{character.appearance}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {character.armor.map((armor, index) => (
+                      <div key={index} className="p-3 rounded border" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-card-secondary)' }}>
+                        <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{armor.name}</div>
+                        <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                          AC {armor.baseAC}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 
-              {character.personality && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
-                    Personality
+              {/* Money */}
+              {((character.copperPieces && character.copperPieces > 0) || 
+                (character.silverPieces && character.silverPieces > 0) || 
+                (character.goldPieces && character.goldPieces > 0)) && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                    Money
                   </h3>
-                  <p className="text-[var(--color-text-secondary)]">{character.personality}</p>
+                  <div className="flex gap-4">
+                    {character.copperPieces && character.copperPieces > 0 && (
+                      <div className="p-3 rounded" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                        <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Copper</div>
+                        <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{character.copperPieces} cp</div>
+                      </div>
+                    )}
+                    {character.silverPieces && character.silverPieces > 0 && (
+                      <div className="p-3 rounded" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                        <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Silver</div>
+                        <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{character.silverPieces} sp</div>
+                      </div>
+                    )}
+                    {character.goldPieces && character.goldPieces > 0 && (
+                      <div className="p-3 rounded" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                        <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Gold</div>
+                        <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{character.goldPieces} gp</div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 
-              {character.backstory && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
-                    Backstory
+              {/* Character Background */}
+              {(character.personality || character.backstory || character.appearance) && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                    Character Background
                   </h3>
-                  <p className="text-[var(--color-text-secondary)]">{character.backstory}</p>
+                  <div className="space-y-4">
+                    {character.appearance && (
+                      <div>
+                        <div className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>
+                          Appearance
+                        </div>
+                        <div className="p-3 rounded" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                          <div style={{ color: 'var(--color-text-primary)' }}>{character.appearance}</div>
+                        </div>
+                      </div>
+                    )}
+                    {character.personality && (
+                      <div>
+                        <div className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>
+                          Personality
+                        </div>
+                        <div className="p-3 rounded" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                          <div style={{ color: 'var(--color-text-primary)' }}>{character.personality}</div>
+                        </div>
+                      </div>
+                    )}
+                    {character.backstory && (
+                      <div>
+                        <div className="text-sm font-medium mb-1" style={{ color: 'var(--color-text-secondary)' }}>
+                          Backstory
+                        </div>
+                        <div className="p-3 rounded" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                          <div style={{ color: 'var(--color-text-primary)' }}>{character.backstory}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
-
-              {!character.appearance && !character.personality && !character.backstory && (
-                <div className="text-center py-8">
-                  <p className="text-[var(--color-text-secondary)]">
-                    No background information available.
-                  </p>
-                </div>
-              )}
-            </div>
+            </>
           )}
         </div>
-      </div>
+      </Card>
     </div>
   );
 } 

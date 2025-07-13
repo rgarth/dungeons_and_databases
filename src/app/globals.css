@@ -71,6 +71,22 @@
   --color-hp-healthy: #059669; /* emerald green for healthy (80-100%) */
   --color-hp-warning: #fbbf24; /* amber/orange for warning (25-79%) */
   --color-hp-danger: #dc2626; /* red for danger (0-24%) */
+
+  /* Stat colors - vibrant colors for different ability scores */
+  --color-stat-strength: #ef4444; /* red for strength */
+  --color-stat-dexterity: #10b981; /* emerald for dexterity */
+  --color-stat-constitution: #f59e0b; /* amber for constitution */
+  --color-stat-intelligence: #3b82f6; /* blue for intelligence */
+  --color-stat-wisdom: #8b5cf6; /* purple for wisdom */
+  --color-stat-charisma: #ec4899; /* pink for charisma */
+
+  /* Stat background colors - darker variants for backgrounds */
+  --color-stat-strength-bg: rgba(239, 68, 68, 0.2); /* red background */
+  --color-stat-dexterity-bg: rgba(16, 185, 129, 0.2); /* emerald background */
+  --color-stat-constitution-bg: rgba(245, 158, 11, 0.2); /* amber background */
+  --color-stat-intelligence-bg: rgba(59, 130, 246, 0.2); /* blue background */
+  --color-stat-wisdom-bg: rgba(139, 92, 246, 0.2); /* purple background */
+  --color-stat-charisma-bg: rgba(236, 72, 153, 0.2); /* pink background */
   
   /* Language colors - DNDB Dark Theme */
   --color-language-racial-bg: rgba(59, 130, 246, 0.3); /* blue-900/30 */
@@ -179,6 +195,22 @@
   --color-hp-healthy: #059669; /* emerald green for healthy (80-100%) */
   --color-hp-warning: #fbbf24; /* amber/orange for warning (25-79%) */
   --color-hp-danger: #dc2626; /* red for danger (0-24%) */
+
+  /* Stat colors - vibrant colors for different ability scores */
+  --color-stat-strength: #ef4444; /* red for strength */
+  --color-stat-dexterity: #10b981; /* emerald for dexterity */
+  --color-stat-constitution: #f59e0b; /* amber for constitution */
+  --color-stat-intelligence: #3b82f6; /* blue for intelligence */
+  --color-stat-wisdom: #8b5cf6; /* purple for wisdom */
+  --color-stat-charisma: #ec4899; /* pink for charisma */
+
+  /* Stat background colors - darker variants for backgrounds */
+  --color-stat-strength-bg: rgba(239, 68, 68, 0.2); /* red background */
+  --color-stat-dexterity-bg: rgba(16, 185, 129, 0.2); /* emerald background */
+  --color-stat-constitution-bg: rgba(245, 158, 11, 0.2); /* amber background */
+  --color-stat-intelligence-bg: rgba(59, 130, 246, 0.2); /* blue background */
+  --color-stat-wisdom-bg: rgba(139, 92, 246, 0.2); /* purple background */
+  --color-stat-charisma-bg: rgba(236, 72, 153, 0.2); /* pink background */
   
   /* Language colors - DNDB Dark Theme */
   --color-language-racial-bg: rgba(59, 130, 246, 0.3); /* blue-900/30 */
@@ -285,6 +317,22 @@
   --color-hp-healthy: #059669; /* emerald green for healthy (80-100%) */
   --color-hp-warning: #d97706; /* darker gold for warning (25-79%) */
   --color-hp-danger: #dc2626; /* red for danger (0-24%) */
+
+  /* Stat colors - vibrant colors for different ability scores */
+  --color-stat-strength: #ef4444; /* red for strength */
+  --color-stat-dexterity: #10b981; /* emerald for dexterity */
+  --color-stat-constitution: #f59e0b; /* amber for constitution */
+  --color-stat-intelligence: #3b82f6; /* blue for intelligence */
+  --color-stat-wisdom: #8b5cf6; /* purple for wisdom */
+  --color-stat-charisma: #ec4899; /* pink for charisma */
+
+  /* Stat background colors - darker variants for backgrounds */
+  --color-stat-strength-bg: rgba(239, 68, 68, 0.2); /* red background */
+  --color-stat-dexterity-bg: rgba(16, 185, 129, 0.2); /* emerald background */
+  --color-stat-constitution-bg: rgba(245, 158, 11, 0.2); /* amber background */
+  --color-stat-intelligence-bg: rgba(59, 130, 246, 0.2); /* blue background */
+  --color-stat-wisdom-bg: rgba(139, 92, 246, 0.2); /* purple background */
+  --color-stat-charisma-bg: rgba(236, 72, 153, 0.2); /* pink background */
   
   /* Language colors - Light Theme */
   --color-language-racial-bg: rgba(59, 130, 246, 0.2); /* blue-900/20 - lighter for light theme */
@@ -519,6 +567,22 @@ body {
   --color-hp-healthy: #16a34a; /* vibrant green for healthy (80-100%) */
   --color-hp-warning: #92400e; /* oaken wood for warning (25-79%) */
   --color-hp-danger: #dc2626; /* red for danger (0-24%) */
+
+  /* Stat colors - vibrant colors for different ability scores */
+  --color-stat-strength: #ef4444; /* red for strength */
+  --color-stat-dexterity: #10b981; /* emerald for dexterity */
+  --color-stat-constitution: #f59e0b; /* amber for constitution */
+  --color-stat-intelligence: #3b82f6; /* blue for intelligence */
+  --color-stat-wisdom: #8b5cf6; /* purple for wisdom */
+  --color-stat-charisma: #ec4899; /* pink for charisma */
+
+  /* Stat background colors - darker variants for backgrounds */
+  --color-stat-strength-bg: rgba(239, 68, 68, 0.2); /* red background */
+  --color-stat-dexterity-bg: rgba(16, 185, 129, 0.2); /* emerald background */
+  --color-stat-constitution-bg: rgba(245, 158, 11, 0.2); /* amber background */
+  --color-stat-intelligence-bg: rgba(59, 130, 246, 0.2); /* blue background */
+  --color-stat-wisdom-bg: rgba(139, 92, 246, 0.2); /* purple background */
+  --color-stat-charisma-bg: rgba(236, 72, 153, 0.2); /* pink background */
   
   /* Language colors */
   --color-language-common: #6b7280; /* gray for common */
@@ -610,6 +674,22 @@ body {
   --color-hp-healthy: #6b7280; /* steel gray for healthy (80-100%) */
   --color-hp-warning: #9ca3af; /* light gray for warning (25-79%) */
   --color-hp-danger: #ef4444; /* bright red for danger (0-24%) */
+
+  /* Stat colors - vibrant colors for different ability scores */
+  --color-stat-strength: #ef4444; /* red for strength */
+  --color-stat-dexterity: #10b981; /* emerald for dexterity */
+  --color-stat-constitution: #f59e0b; /* amber for constitution */
+  --color-stat-intelligence: #3b82f6; /* blue for intelligence */
+  --color-stat-wisdom: #8b5cf6; /* purple for wisdom */
+  --color-stat-charisma: #ec4899; /* pink for charisma */
+
+  /* Stat background colors - darker variants for backgrounds */
+  --color-stat-strength-bg: rgba(239, 68, 68, 0.2); /* red background */
+  --color-stat-dexterity-bg: rgba(16, 185, 129, 0.2); /* emerald background */
+  --color-stat-constitution-bg: rgba(245, 158, 11, 0.2); /* amber background */
+  --color-stat-intelligence-bg: rgba(59, 130, 246, 0.2); /* blue background */
+  --color-stat-wisdom-bg: rgba(139, 92, 246, 0.2); /* purple background */
+  --color-stat-charisma-bg: rgba(236, 72, 153, 0.2); /* pink background */
   
   /* Language colors */
   --color-language-common: #6b7280; /* gray for common */
@@ -769,6 +849,22 @@ body {
   --color-hp-healthy: #10b981; /* emerald for healthy (80-100%) */
   --color-hp-warning: #fbbf24; /* gold for warning (25-79%) */
   --color-hp-danger: #ef4444; /* bright red for danger (0-24%) */
+
+  /* Stat colors - vibrant colors for different ability scores */
+  --color-stat-strength: #ef4444; /* red for strength */
+  --color-stat-dexterity: #10b981; /* emerald for dexterity */
+  --color-stat-constitution: #f59e0b; /* amber for constitution */
+  --color-stat-intelligence: #3b82f6; /* blue for intelligence */
+  --color-stat-wisdom: #8b5cf6; /* purple for wisdom */
+  --color-stat-charisma: #ec4899; /* pink for charisma */
+
+  /* Stat background colors - darker variants for backgrounds */
+  --color-stat-strength-bg: rgba(239, 68, 68, 0.2); /* red background */
+  --color-stat-dexterity-bg: rgba(16, 185, 129, 0.2); /* emerald background */
+  --color-stat-constitution-bg: rgba(245, 158, 11, 0.2); /* amber background */
+  --color-stat-intelligence-bg: rgba(59, 130, 246, 0.2); /* blue background */
+  --color-stat-wisdom-bg: rgba(139, 92, 246, 0.2); /* purple background */
+  --color-stat-charisma-bg: rgba(236, 72, 153, 0.2); /* pink background */
   
   /* Language colors */
   --color-language-common: #6b7280; /* gray for common */
