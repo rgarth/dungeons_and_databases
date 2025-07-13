@@ -25,21 +25,31 @@ export default function ReadOnlyCharacterSheet({
         <div className="p-6 flex-1 overflow-y-auto">
           {/* Header */}
           <div className="flex justify-between items-start mb-6">
-            <div className="flex items-center gap-4">
-              {/* Avatar */}
-              {avatarUrl ? (
-                <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0">
+            <div className="flex items-start gap-4">
+              {/* Full Body Avatar */}
+              {character.fullBodyAvatar ? (
+                <div className="w-32 h-44 rounded-lg overflow-hidden flex-shrink-0 border" style={{ borderColor: 'var(--color-border)' }}>
+                  <Image 
+                    src={character.fullBodyAvatar} 
+                    alt={`${character.name}'s full body portrait`}
+                    width={128}
+                    height={176}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : avatarUrl ? (
+                <div className="w-32 h-44 rounded-lg overflow-hidden flex-shrink-0 border flex items-center justify-center" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-card-secondary)' }}>
                   <Image 
                     src={avatarUrl} 
                     alt={`${character.name}'s avatar`}
-                    width={80}
-                    height={80}
+                    width={128}
+                    height={176}
                     className="w-full h-full object-cover object-top scale-150 translate-y-1/4"
                   />
                 </div>
               ) : (
-                <div className="w-20 h-20 rounded-full flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                  <span className="text-2xl">👤</span>
+                <div className="w-32 h-44 rounded-lg flex-shrink-0 flex items-center justify-center border" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-card-secondary)' }}>
+                  <span className="text-4xl">👤</span>
                 </div>
               )}
               
