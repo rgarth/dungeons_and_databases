@@ -1,57 +1,49 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import MainLayout from '@/components/layout/MainLayout';
 import GamesList from '@/components/party/GamesList';
 import CreateGameModal from '@/components/party/CreateGameModal';
 import JoinGameModal from '@/components/party/JoinGameModal';
 import { Button } from '@/components/ui/Button';
 import GameDetailsModal from '@/components/party/GameDetailsModal';
-
-interface Game {
-  id: string;
-  name: string;
-  description?: string;
-  dm: {
-    id: string;
-    name?: string;
-    email: string;
-  };
-  participants: Array<{
-    id: string;
-    user: {
-      id: string;
-      name?: string;
-      email: string;
-    };
-    character?: {
-      id: string;
-      name: string;
-      class: string;
-      level: number;
-      race: string;
-      avatarUrl?: string;
-    };
-    isDm: boolean;
-  }>;
-  _count: {
-    participants: number;
-    chatMessages: number;
-  };
-  createdAt: string;
-  updatedAt: string;
-}
+import { Game } from '@/types/game';
 
 export default function PartyPage() {
   const { data: session } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [showGameDetails, setShowGameDetails] = useState(false);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0); // Add refresh trigger
+
+  // Check for openGame query parameter and automatically open the game modal
+  useEffect(() => {
+    const openGameId = searchParams?.get('openGame');
+    if (openGameId) {
+      // Fetch the game details and open the modal
+      fetchGameDetails(openGameId);
+      // Clear the query parameter
+      router.replace('/party');
+    }
+  }, [searchParams, router]);
+
+  const fetchGameDetails = async (gameId: string) => {
+    try {
+      const response = await fetch(`/api/games/${gameId}`);
+      if (response.ok) {
+        const game = await response.json();
+        setSelectedGame(game);
+        setShowGameDetails(true);
+      }
+    } catch (error) {
+      console.error('Failed to fetch game details:', error);
+    }
+  };
 
   const handleGameSelect = (game: Game) => {
     setSelectedGame(game);
@@ -148,6 +140,10 @@ export default function PartyPage() {
         onClose={() => {
           setShowGameDetails(false);
           setSelectedGame(null);
+        }}
+        onGameUpdated={() => {
+          // Trigger a refresh of the games list
+          setRefreshTrigger(prev => prev + 1);
         }}
       />
     </MainLayout>

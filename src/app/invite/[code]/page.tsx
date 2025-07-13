@@ -1,45 +1,13 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Users, MessageSquare, Calendar, User } from 'lucide-react';
 
-interface Game {
-  id: string;
-  name: string;
-  description?: string;
-  dm: {
-    id: string;
-    name?: string;
-    email: string;
-  };
-  participants: Array<{
-    id: string;
-    user: {
-      id: string;
-      name?: string;
-      email: string;
-    };
-    character?: {
-      id: string;
-      name: string;
-      class: string;
-      level: number;
-      race: string;
-      avatarUrl?: string;
-    };
-    isDm: boolean;
-  }>;
-  _count: {
-    participants: number;
-    chatMessages: number;
-  };
-  createdAt: string;
-  updatedAt: string;
-}
+import { Game } from '@/types/game';
 
 interface Character {
   id: string;
@@ -51,9 +19,9 @@ interface Character {
 }
 
 interface InvitePageProps {
-  params: {
+  params: Promise<{
     code: string;
-  };
+  }>;
 }
 
 export default function InvitePage({ params }: InvitePageProps) {
@@ -66,6 +34,10 @@ export default function InvitePage({ params }: InvitePageProps) {
   const [joining, setJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Unwrap params for Next.js 15 compatibility
+  const unwrappedParams = use(params);
+  const inviteCode = unwrappedParams.code;
+
   useEffect(() => {
     if (status === 'loading') return;
     
@@ -77,12 +49,12 @@ export default function InvitePage({ params }: InvitePageProps) {
 
     fetchGameDetails();
     fetchCharacters();
-  }, [session, status, params.code]);
+  }, [session, status, inviteCode]);
 
   const fetchGameDetails = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/games/invite/${params.code}`);
+      const response = await fetch(`/api/games/invite/${inviteCode}`);
       
       if (!response.ok) {
         if (response.status === 404) {
@@ -95,7 +67,7 @@ export default function InvitePage({ params }: InvitePageProps) {
       
       const gameData = await response.json();
       setGame(gameData);
-    } catch (err) {
+    } catch {
       setError('Failed to load game details.');
     } finally {
       setLoading(false);
@@ -127,7 +99,7 @@ export default function InvitePage({ params }: InvitePageProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          inviteCode: params.code.toUpperCase(),
+          inviteCode: inviteCode.toUpperCase(),
           characterId: selectedCharacterId || null,
         }),
       });
@@ -137,8 +109,8 @@ export default function InvitePage({ params }: InvitePageProps) {
         throw new Error(errorData.error || 'Failed to join game');
       }
 
-      // Redirect to the game or party page
-      router.push('/party');
+      // Redirect to the party page and open the game modal
+      router.push(`/party?openGame=${game.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -156,7 +128,7 @@ export default function InvitePage({ params }: InvitePageProps) {
   };
 
   const getCharacterCount = () => {
-    return game?.participants.filter(p => p.character).length || 0;
+    return game?.participants.reduce((total, p) => total + p.characters.length, 0) || 0;
   };
 
   if (status === 'loading') {
@@ -208,7 +180,7 @@ export default function InvitePage({ params }: InvitePageProps) {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--color-text-primary)' }}>
-            You're invited to join
+            You&apos;re invited to join
           </h1>
           <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--color-accent)' }}>
             {game.name}
@@ -286,7 +258,7 @@ export default function InvitePage({ params }: InvitePageProps) {
               <div className="text-center py-8">
                 <div className="text-lg mb-4" style={{ color: 'var(--color-success)' }}>✅</div>
                 <h4 className="text-lg font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
-                  You're already in this game!
+                  You&apos;re already in this game!
                 </h4>
                 <p className="mb-4" style={{ color: 'var(--color-text-secondary)' }}>
                   You can access this game from your party page.

@@ -4,40 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-
-interface Game {
-  id: string;
-  name: string;
-  description?: string;
-  dm: {
-    id: string;
-    name?: string;
-    email: string;
-  };
-  participants: Array<{
-    id: string;
-    user: {
-      id: string;
-      name?: string;
-      email: string;
-    };
-    character?: {
-      id: string;
-      name: string;
-      class: string;
-      level: number;
-      race: string;
-      avatarUrl?: string;
-    };
-    isDm: boolean;
-  }>;
-  _count: {
-    participants: number;
-    chatMessages: number;
-  };
-  createdAt: string;
-  updatedAt: string;
-}
+import { Game } from '@/types/game';
 
 interface GamesListProps {
   onGameSelect: (game: Game) => void;
@@ -84,7 +51,7 @@ export default function GamesList({ onGameSelect, onCreateGame, refreshTrigger }
   };
 
   const getCharacterCount = (game: Game) => {
-    return game.participants.filter(p => p.character).length;
+    return game.participants.reduce((total, p) => total + p.characters.length, 0);
   };
 
   if (loading) {

@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 // GET /api/games/invite/[code] - Get game details by invite code
 export async function GET(
   request: NextRequest,
-  { params }: { params: { code: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -17,38 +17,70 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { code } = params;
+    const { code } = await params;
 
     if (!code || typeof code !== 'string') {
       return NextResponse.json({ error: 'Invalid invite code' }, { status: 400 });
     }
 
-    // Find game by the first 8 characters of the ID (case insensitive)
-    const game = await prisma.game.findFirst({
-      where: {
-        id: {
-          startsWith: code.toUpperCase(),
-          mode: 'insensitive'
-        }
-      },
+    // Find the invite and get the associated game
+    const invite = await prisma.gameInvite.findUnique({
+      where: { inviteCode: code.toUpperCase() },
       include: {
-        dm: {
-          select: {
-            id: true,
-            name: true,
-            email: true
-          }
-        },
-        participants: {
+        game: {
           include: {
-            user: {
+            dm: {
               select: {
                 id: true,
                 name: true,
                 email: true
               }
             },
-            character: {
+            participants: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true
+                  }
+                }
+              }
+            },
+            _count: {
+              select: {
+                participants: true,
+                chatMessages: true
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!invite) {
+      return NextResponse.json({ error: 'Invalid invite code' }, { status: 404 });
+    }
+
+    if (!invite.isActive) {
+      return NextResponse.json({ error: 'This invite is no longer active' }, { status: 400 });
+    }
+
+    if (invite.expiresAt && invite.expiresAt < new Date()) {
+      return NextResponse.json({ error: 'This invite has expired' }, { status: 400 });
+    }
+
+    if (invite.maxUses && invite.usedCount >= invite.maxUses) {
+      return NextResponse.json({ error: 'This invite has reached its maximum uses' }, { status: 400 });
+    }
+
+    // Fetch characters for each participant
+    const participantsWithCharacters = await Promise.all(
+      invite.game.participants.map(async (participant) => {
+        const characterIds = participant.characterIds as string[] || [];
+        const characters = characterIds.length > 0 
+          ? await prisma.character.findMany({
+              where: { id: { in: characterIds } },
               select: {
                 id: true,
                 name: true,
@@ -57,23 +89,22 @@ export async function GET(
                 race: true,
                 avatarUrl: true
               }
-            }
-          }
-        },
-        _count: {
-          select: {
-            participants: true,
-            chatMessages: true
-          }
-        }
-      }
-    });
+            })
+          : [];
+        
+        return {
+          ...participant,
+          characters
+        };
+      })
+    );
 
-    if (!game) {
-      return NextResponse.json({ error: 'Game not found' }, { status: 404 });
-    }
+    const gameWithCharacters = {
+      ...invite.game,
+      participants: participantsWithCharacters
+    };
 
-    return NextResponse.json(game);
+    return NextResponse.json(gameWithCharacters);
   } catch (error) {
     console.error('Error fetching game by invite code:', error);
     return NextResponse.json(
