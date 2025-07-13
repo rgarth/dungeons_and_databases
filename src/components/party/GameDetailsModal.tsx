@@ -2,7 +2,7 @@
 
 
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Copy, Users, MessageSquare, Calendar, User, BookOpen, MessageCircle } from 'lucide-react';
@@ -51,6 +51,68 @@ export default function GameDetailsModal({ game, isOpen, onClose }: GameDetailsM
   const { data: session } = useSession();
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'lobby' | 'characters' | 'notes' | 'chat'>('lobby');
+  const [showAddCharacterModal, setShowAddCharacterModal] = useState(false);
+  const [selectedParticipant, setSelectedParticipant] = useState<Game['participants'][0] | null>(null);
+  const [characters, setCharacters] = useState<Array<{id: string; name: string; level: number; race: string; class: string}>>([]);
+  const [selectedCharacterId, setSelectedCharacterId] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch characters when modal opens
+  useEffect(() => {
+    if (showAddCharacterModal && session) {
+      fetchCharacters();
+    }
+  }, [showAddCharacterModal, session]);
+
+  const fetchCharacters = async () => {
+    try {
+      const response = await fetch('/api/characters');
+      if (response.ok) {
+        const data = await response.json();
+        setCharacters(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch characters:', err);
+    }
+  };
+
+  const handleAddCharacter = async () => {
+    if (!selectedCharacterId || !selectedParticipant || !game) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch(`/api/games/${game.id}/participants/${selectedParticipant.id}/character`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          characterId: selectedCharacterId,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to add character');
+      }
+
+      // Close modal and refresh
+      setShowAddCharacterModal(false);
+      setSelectedParticipant(null);
+      setSelectedCharacterId('');
+      setError(null);
+      
+      // Trigger a refresh of the game data
+      window.location.reload();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!isOpen || !game) return null;
 
@@ -330,9 +392,18 @@ export default function GameDetailsModal({ game, isOpen, onClose }: GameDetailsM
 
           {activeTab === 'characters' && (
             <div>
-              <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
-                Characters ({getCharacterCount()})
-              </h3>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                  Characters ({getCharacterCount()})
+                </h3>
+                <button
+                  onClick={() => setShowAddCharacterModal(true)}
+                  className="px-3 py-1 text-sm bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors"
+                >
+                  Add Character
+                </button>
+              </div>
+              
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {game.participants
                   .filter(p => p.character)
@@ -343,7 +414,7 @@ export default function GameDetailsModal({ game, isOpen, onClose }: GameDetailsM
                       style={{ backgroundColor: 'var(--color-card-secondary)' }}
                     >
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-primary-text)' }}>
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-accent-text)' }}>
                           {participant.character!.name[0]}
                         </div>
                         <div>
@@ -358,6 +429,42 @@ export default function GameDetailsModal({ game, isOpen, onClose }: GameDetailsM
                       <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                         Player: {participant.user.name || participant.user.email}
                       </div>
+                    </div>
+                  ))}
+                
+                {/* Show participants without characters */}
+                {game.participants
+                  .filter(p => !p.character)
+                  .map((participant) => (
+                    <div
+                      key={participant.id}
+                      className="p-4 rounded-lg border-2 border-dashed"
+                      style={{ backgroundColor: 'var(--color-card-secondary)', borderColor: 'var(--color-border)' }}
+                    >
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" style={{ backgroundColor: 'var(--color-surface-secondary)', color: 'var(--color-text-secondary)', border: '2px solid var(--color-border)' }}>
+                          {participant.user.name?.[0] || participant.user.email[0].toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                            {participant.user.name || participant.user.email}
+                          </div>
+                          <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                            No character assigned
+                          </div>
+                        </div>
+                      </div>
+                      {participant.user.email === session?.user?.email && (
+                        <button
+                          onClick={() => {
+                            setSelectedParticipant(participant);
+                            setShowAddCharacterModal(true);
+                          }}
+                          className="text-sm text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors"
+                        >
+                          Add your character
+                        </button>
+                      )}
                     </div>
                   ))}
               </div>
@@ -393,6 +500,87 @@ export default function GameDetailsModal({ game, isOpen, onClose }: GameDetailsM
 
         </div>
       </Card>
+
+      {/* Add Character Modal */}
+      {showAddCharacterModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
+          <div className="bg-[var(--color-card)] rounded-lg w-full max-w-md mx-4 p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                Add Character to Game
+              </h3>
+              <button
+                onClick={() => {
+                  setShowAddCharacterModal(false);
+                  setSelectedParticipant(null);
+                  setSelectedCharacterId('');
+                  setError(null);
+                }}
+                className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
+                  Select Character
+                </label>
+                <select
+                  value={selectedCharacterId}
+                  onChange={(e) => setSelectedCharacterId(e.target.value)}
+                  className="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2"
+                  style={{
+                    backgroundColor: 'var(--color-card-secondary)',
+                    border: '1px solid var(--color-border)',
+                    color: 'var(--color-text-primary)',
+                    '--tw-focus-ring-color': 'var(--color-accent)'
+                  } as React.CSSProperties}
+                  disabled={loading}
+                >
+                  <option value="">Choose a character...</option>
+                  {characters.map((character) => (
+                    <option key={character.id} value={character.id}>
+                      {character.name} - Level {character.level} {character.race} {character.class}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {error && (
+                <div className="text-sm p-3 rounded-lg" style={{ backgroundColor: 'var(--color-error-bg)', color: 'var(--color-error)' }}>
+                  {error}
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={() => {
+                    setShowAddCharacterModal(false);
+                    setSelectedParticipant(null);
+                    setSelectedCharacterId('');
+                    setError(null);
+                  }}
+                  className="flex-1 px-4 py-2 rounded transition-colors"
+                  style={{ backgroundColor: 'var(--color-card-secondary)', color: 'var(--color-text-primary)' }}
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAddCharacter}
+                  disabled={!selectedCharacterId || loading}
+                  className="flex-1 px-4 py-2 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-accent-text)' }}
+                >
+                  {loading ? 'Adding...' : 'Add Character'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
