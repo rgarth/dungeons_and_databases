@@ -107,15 +107,10 @@ export async function GET(
 
     const { id: characterId } = await params;
     
-    // Verify the character belongs to the current user and get the avatar image
+    // Get the avatar image - avatars are public character information
     const avatarImage = await prisma.avatarImage.findFirst({
       where: {
-        characterId: characterId,
-        character: {
-          user: {
-            email: session.user.email
-          }
-        }
+        characterId: characterId
       }
     });
 
