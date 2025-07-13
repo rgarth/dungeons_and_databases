@@ -123,8 +123,17 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
   useEffect(() => {
     if (showAddCharacterModal) {
       fetchCharacters();
+      // Set the current user's participant ID
+      if (currentGame && session?.user?.email) {
+        const currentParticipant = currentGame.participants.find(
+          p => p.user.email === session.user?.email
+        );
+        if (currentParticipant) {
+          setSelectedParticipant(currentParticipant.id);
+        }
+      }
     }
-  }, [showAddCharacterModal]);
+  }, [showAddCharacterModal, currentGame, session?.user?.email]);
 
   const fetchCharacters = async () => {
     try {
@@ -139,7 +148,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
   };
 
   const handleAddCharacter = async () => {
-    if (!selectedCharacterId || !currentGame) return;
+    if (!selectedCharacterId || !currentGame || !selectedParticipant) return;
 
     try {
       setError(null);
@@ -644,11 +653,29 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                     }}
                   >
                     <option value="">Choose a character...</option>
-                    {characters.map((character) => (
-                      <option key={character.id} value={character.id}>
-                        {character.name} - Level {character.level} {character.race} {character.class}
+                    {characters
+                      .filter(character => {
+                        // Filter out characters that are already in the game
+                        const isAlreadyInGame = currentGame.participants.some(participant =>
+                          participant.characters.some(gameCharacter => gameCharacter.id === character.id)
+                        );
+                        return !isAlreadyInGame;
+                      })
+                      .map((character) => (
+                        <option key={character.id} value={character.id}>
+                          {character.name} - Level {character.level} {character.race} {character.class}
+                        </option>
+                      ))}
+                    {characters.filter(character => {
+                      const isAlreadyInGame = currentGame.participants.some(participant =>
+                        participant.characters.some(gameCharacter => gameCharacter.id === character.id)
+                      );
+                      return !isAlreadyInGame;
+                    }).length === 0 && (
+                      <option value="" disabled>
+                        No available characters to add
                       </option>
-                    ))}
+                    )}
                   </select>
                 </div>
 
@@ -672,7 +699,12 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                   </button>
                   <button
                     onClick={handleAddCharacter}
-                    disabled={!selectedCharacterId}
+                    disabled={!selectedCharacterId || characters.filter(character => {
+                      const isAlreadyInGame = currentGame.participants.some(participant =>
+                        participant.characters.some(gameCharacter => gameCharacter.id === character.id)
+                      );
+                      return !isAlreadyInGame;
+                    }).length === 0}
                     className="px-4 py-2 text-sm bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors disabled:opacity-50"
                   >
                     Add Character
