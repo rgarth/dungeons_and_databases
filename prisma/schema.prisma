@@ -35,25 +35,23 @@ model Session {
 }
 
 model User {
-  id            String          @id @default(cuid())
-  name          String?
-  email         String          @unique
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  accounts      Account[]
-  characters    Character[]
-  customWeapons CustomWeapon[]
-  sessions      Session[]
-  preferences   UserPreference?
-  
-  // Party Management Relations
-  gamesAsDM     Game[]          @relation("GameDM")
-  gameInvites   GameInvite[]    @relation("GameInviteCreator")
-  gameParticipants GameParticipant[] @relation("GameParticipant")
+  id               String            @id @default(cuid())
+  name             String?
+  email            String            @unique
+  emailVerified    DateTime?
+  image            String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  accounts         Account[]
+  characters       Character[]
+  customWeapons    CustomWeapon[]
+  gamesAsDM        Game[]            @relation("GameDM")
   gameChatMessages GameChatMessage[] @relation("GameChatMessage")
-  gameNotes     GameNote[]      @relation("GameNoteDM")
+  gameInvites      GameInvite[]      @relation("GameInviteCreator")
+  gameNotes        GameNote[]        @relation("GameNoteDM")
+  gameParticipants GameParticipant[] @relation("GameParticipant")
+  sessions         Session[]
+  preferences      UserPreference?
 }
 
 model Character {
@@ -142,9 +140,6 @@ model Character {
   usedSpellSlots        Json?
   avatarImage           AvatarImage?
   user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  // Party Management Relations
-  gameParticipants      GameParticipant[]
 
   @@index([kiPoints])
   @@index([usedKiPoints])
@@ -188,22 +183,19 @@ model AvatarImage {
   @@index([characterId], map: "idx_avatarimage_character_id")
 }
 
-// Party Management Models
 model Game {
-  id          String   @id @default(dbgenerated("(gen_random_uuid())::text"))
-  name        String
-  description String?
-  dmId        String   @map("dm_id")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-  isActive    Boolean  @default(true) @map("is_active")
-  
-  // Relations
-  dm          User     @relation("GameDM", fields: [dmId], references: [id], onDelete: Cascade)
-  invites     GameInvite[]
-  participants GameParticipant[]
+  id           String            @id @default(dbgenerated("(gen_random_uuid())::text"))
+  name         String
+  description  String?
+  dmId         String            @map("dm_id")
+  createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+  isActive     Boolean           @default(true) @map("is_active")
+  dm           User              @relation("GameDM", fields: [dmId], references: [id], onDelete: Cascade)
   chatMessages GameChatMessage[]
-  notes       GameNote[]
+  invites      GameInvite[]
+  notes        GameNote[]
+  participants GameParticipant[]
 
   @@index([dmId], map: "idx_games_dm_id")
   @@index([createdAt], map: "idx_games_created_at")
@@ -219,32 +211,27 @@ model GameInvite {
   maxUses    Int?      @map("max_uses")
   usedCount  Int       @default(0) @map("used_count")
   isActive   Boolean   @default(true) @map("is_active")
-  
-  // Relations
-  game       Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
   creator    User      @relation("GameInviteCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  game       Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
 
   @@index([gameId], map: "idx_game_invites_game_id")
   @@index([inviteCode], map: "idx_game_invites_invite_code")
 }
 
 model GameParticipant {
-  id          String    @id @default(dbgenerated("(gen_random_uuid())::text"))
-  gameId      String    @map("game_id")
-  userId      String    @map("user_id")
-  characterId String?   @map("character_id")
-  joinedAt    DateTime  @default(now()) @map("joined_at") @db.Timestamptz(6)
-  isDm        Boolean   @default(false) @map("is_dm")
-  
-  // Relations
-  game        Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  user        User      @relation("GameParticipant", fields: [userId], references: [id], onDelete: Cascade)
-  character   Character? @relation(fields: [characterId], references: [id], onDelete: SetNull)
+  id           String   @id @default(dbgenerated("(gen_random_uuid())::text"))
+  gameId       String   @map("game_id")
+  userId       String   @map("user_id")
+  characterIds Json     @default("[]") @map("character_ids")
+  joinedAt     DateTime @default(now()) @map("joined_at") @db.Timestamptz(6)
+  isDm         Boolean  @default(false) @map("is_dm")
+  game         Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  user         User     @relation("GameParticipant", fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([gameId, userId, characterId])
+  @@unique([gameId, userId])
   @@index([gameId], map: "idx_game_participants_game_id")
   @@index([userId], map: "idx_game_participants_user_id")
-  @@index([characterId], map: "idx_game_participants_character_id")
+  @@index([characterIds], map: "idx_game_participants_character_ids", type: Gin)
 }
 
 model GameChatMessage {
@@ -254,8 +241,6 @@ model GameChatMessage {
   message     String
   messageType String   @default("text") @map("message_type")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  
-  // Relations
   game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
   user        User     @relation("GameChatMessage", fields: [userId], references: [id], onDelete: Cascade)
 
@@ -272,10 +257,8 @@ model GameNote {
   isPublic  Boolean  @default(false) @map("is_public")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
-  // Relations
-  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
   dm        User     @relation("GameNoteDM", fields: [dmId], references: [id], onDelete: Cascade)
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
 
   @@index([gameId], map: "idx_game_notes_game_id")
   @@index([dmId], map: "idx_game_notes_dm_id")

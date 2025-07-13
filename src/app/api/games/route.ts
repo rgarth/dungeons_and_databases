@@ -53,16 +53,6 @@ export async function GET() {
                 name: true,
                 email: true
               }
-            },
-            character: {
-              select: {
-                id: true,
-                name: true,
-                class: true,
-                level: true,
-                race: true,
-                avatarUrl: true
-              }
             }
           }
         },
@@ -78,7 +68,41 @@ export async function GET() {
       }
     });
 
-    return NextResponse.json(games);
+    // Fetch character data for each participant
+    const gamesWithCharacters = await Promise.all(
+      games.map(async (game) => {
+        const participantsWithCharacters = await Promise.all(
+          game.participants.map(async (participant) => {
+            const characterIds = (participant.characterIds as string[]) || [];
+            const characters = characterIds.length > 0 
+              ? await prisma.character.findMany({
+                  where: { id: { in: characterIds } },
+                  select: {
+                    id: true,
+                    name: true,
+                    class: true,
+                    level: true,
+                    race: true,
+                    avatarUrl: true
+                  }
+                })
+              : [];
+            
+            return {
+              ...participant,
+              characters
+            };
+          })
+        );
+
+        return {
+          ...game,
+          participants: participantsWithCharacters
+        };
+      })
+    );
+
+    return NextResponse.json(gamesWithCharacters);
   } catch (error) {
     console.error('Error fetching games:', error);
     return NextResponse.json(
@@ -114,48 +138,54 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const game = await prisma.game.create({
-      data: {
-        name: name.trim(),
-        description: description?.trim() || null,
-        dmId: user.id,
-        participants: {
-          create: {
-            userId: user.id,
-            isDm: true
-          }
-        }
-      },
-      include: {
-        dm: {
-          select: {
-            id: true,
-            name: true,
-            email: true
+    const game = await prisma.$transaction(async (tx) => {
+      // Create the game
+      const createdGame = await tx.game.create({
+        data: {
+          name: name.trim(),
+          description: description?.trim() || null,
+          dmId: user.id,
+          participants: {
+            create: {
+              userId: user.id,
+              isDm: true
+            }
           }
         },
-        participants: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true
-              }
-            },
-            character: {
-              select: {
-                id: true,
-                name: true,
-                class: true,
-                level: true,
-                race: true,
-                avatarUrl: true
+        include: {
+          dm: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          },
+          participants: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
               }
             }
           }
         }
-      }
+      });
+
+      // Create a default invite using the first 8 characters of the game ID
+      const inviteCode = createdGame.id.slice(0, 8).toUpperCase();
+      await tx.gameInvite.create({
+        data: {
+          gameId: createdGame.id,
+          inviteCode: inviteCode,
+          createdBy: user.id,
+          isActive: true
+        }
+      });
+
+      return createdGame;
     });
 
     return NextResponse.json(game, { status: 201 });

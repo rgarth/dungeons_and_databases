@@ -98,14 +98,21 @@ export async function POST(request: NextRequest) {
       }
 
       // Check if this character is already in the game
-      const existingCharacter = await prisma.gameParticipant.findFirst({
+      const existingParticipants = await prisma.gameParticipant.findMany({
         where: {
-          gameId: invite.gameId,
-          characterId: characterId
+          gameId: invite.gameId
+        },
+        select: {
+          characterIds: true
         }
       });
 
-      if (existingCharacter) {
+      const isCharacterAlreadyInGame = existingParticipants.some(participant => {
+        const characterIds = participant.characterIds as string[] || [];
+        return characterIds.includes(characterId);
+      });
+
+      if (isCharacterAlreadyInGame) {
         return NextResponse.json(
           { error: 'This character is already in the game' },
           { status: 400 }
@@ -120,7 +127,7 @@ export async function POST(request: NextRequest) {
         data: {
           gameId: invite.gameId,
           userId: user.id,
-          characterId: characterId || null
+          characterIds: characterId ? [characterId] : []
         },
         include: {
           user: {
@@ -128,16 +135,6 @@ export async function POST(request: NextRequest) {
               id: true,
               name: true,
               email: true
-            }
-          },
-          character: {
-            select: {
-              id: true,
-              name: true,
-              class: true,
-              level: true,
-              race: true,
-              avatarUrl: true
             }
           }
         }
