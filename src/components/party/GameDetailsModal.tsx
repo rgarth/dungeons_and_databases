@@ -98,7 +98,7 @@ export default function GameDetailsModal({ game, isOpen, onClose }: GameDetailsM
                 {game.name}
               </h2>
               {isDM && (
-                <span className="inline-block bg-[var(--color-accent)] text-[var(--color-accent-text)] px-3 py-1 rounded-full text-sm font-medium">
+                <span className="inline-block bg-[var(--color-success)] text-[var(--color-success-text)] px-3 py-1 rounded-full text-sm font-medium">
                   You are the DM
                 </span>
               )}
@@ -214,7 +214,7 @@ export default function GameDetailsModal({ game, isOpen, onClose }: GameDetailsM
               </div>
 
               {/* Invite Section */}
-              <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+              <div className="p-4 rounded-lg mb-6" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
                 <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-accent)' }}>
                   Invite Players
                 </h3>
@@ -289,14 +289,14 @@ export default function GameDetailsModal({ game, isOpen, onClose }: GameDetailsM
                         style={{ backgroundColor }}
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0" style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-primary-text)' }}>
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0" style={{ backgroundColor: 'var(--color-surface-secondary)', color: 'var(--color-text-primary)', border: '2px solid var(--color-border)' }}>
                             {participant.user.name?.[0] || participant.user.email[0].toUpperCase()}
                           </div>
                           <div className="min-w-0">
                             <div className="font-medium truncate" style={{ color: 'var(--color-text-primary)' }}>
                               {participant.user.name || participant.user.email}
                               {participant.isDm && (
-                                <span className="ml-2 text-xs bg-[var(--color-primary)] text-[var(--color-primary-text)] px-2 py-1 rounded">
+                                <span className="ml-2 text-xs bg-[var(--color-success)] text-[var(--color-success-text)] px-2 py-1 rounded">
                                   DM
                                 </span>
                               )}
