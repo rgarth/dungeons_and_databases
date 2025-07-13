@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { signOut } from 'next-auth/react';
 import { LogOut, Menu, X, Users, User } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import { ThemeSelector } from '@/components/ThemeSelector';
+import { useUserPreferences } from '@/components/providers/user-preferences-provider';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -15,13 +16,23 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children, activeTab, onTabChange }: MainLayoutProps) {
   const [showMenu, setShowMenu] = useState(false);
+  const { updateLastUsedTab } = useUserPreferences();
+  const lastActiveTab = useRef(activeTab);
+
+  // Update last used tab when activeTab changes (but only if it actually changed)
+  useEffect(() => {
+    if (activeTab !== lastActiveTab.current) {
+      lastActiveTab.current = activeTab;
+      updateLastUsedTab(activeTab);
+    }
+  }, [activeTab, updateLastUsedTab]);
 
   const tabs = [
     {
       id: 'characters' as const,
       label: 'Characters',
       icon: User,
-      href: '/'
+      href: '/characters'
     },
     {
       id: 'party' as const,
@@ -32,7 +43,9 @@ export default function MainLayout({ children, activeTab, onTabChange }: MainLay
   ];
 
   const handleTabClick = (tab: typeof tabs[0]) => {
-    onTabChange(tab.id);
+    if (tab.id !== activeTab) {
+      onTabChange(tab.id);
+    }
     setShowMenu(false);
   };
 

@@ -4,6 +4,8 @@ import "./globals.css";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { DndDataProvider } from "@/components/providers/dnd-data-provider";
+import { GamesDataProvider } from "@/components/providers/games-data-provider";
+import { UserPreferencesProvider } from "@/components/providers/user-preferences-provider";
 import { ClientCacheProvider } from "@/components/providers/client-cache-provider";
 import { LoadingProvider } from "@/components/providers/loading-provider";
 import { ThemeProvider } from "@/lib/theme";
@@ -46,16 +48,20 @@ export default function RootLayout({
             <AuthGate>
               <QueryProvider>
                 <DndDataProvider>
-                  <ClientCacheProvider>
-                    <LoadingProvider>
-                      <DiceRollProvider>
-                        <main className="min-h-screen" style={{ background: 'var(--color-surface)' }}>
-                          {children}
-                          <FloatingDiceMenu />
-                        </main>
-                      </DiceRollProvider>
-                    </LoadingProvider>
-                  </ClientCacheProvider>
+                  <GamesDataProvider>
+                    <UserPreferencesProvider>
+                      <ClientCacheProvider>
+                        <LoadingProvider>
+                          <DiceRollProvider>
+                            <main className="min-h-screen" style={{ background: 'var(--color-surface)' }}>
+                              {children}
+                              <FloatingDiceMenu />
+                            </main>
+                          </DiceRollProvider>
+                        </LoadingProvider>
+                      </ClientCacheProvider>
+                    </UserPreferencesProvider>
+                  </GamesDataProvider>
                 </DndDataProvider>
               </QueryProvider>
             </AuthGate>

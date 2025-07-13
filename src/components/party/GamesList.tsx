@@ -1,46 +1,19 @@
 "use client";
 
-import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Game } from '@/types/game';
+import { useGamesData } from '@/components/providers/games-data-provider';
 
 interface GamesListProps {
   onGameSelect: (game: Game) => void;
   onCreateGame: () => void;
-  refreshTrigger?: number; // Add this to trigger refreshes
 }
 
-export default function GamesList({ onGameSelect, onCreateGame, refreshTrigger }: GamesListProps) {
+export default function GamesList({ onGameSelect, onCreateGame }: GamesListProps) {
   const { data: session } = useSession();
-  const [games, setGames] = useState<Game[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (session) {
-      fetchGames();
-    }
-  }, [session, refreshTrigger]); // Add refreshTrigger to dependencies
-
-  const fetchGames = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/games');
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch games');
-      }
-      
-      const data = await response.json();
-      setGames(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { games, isLoading, error, refetch } = useGamesData();
 
   const isDM = (game: Game) => {
     return game.dm.email === session?.user?.email;
@@ -54,19 +27,35 @@ export default function GamesList({ onGameSelect, onCreateGame, refreshTrigger }
     return game.participants.reduce((total, p) => total + p.characters.length, 0);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-lg">Loading games...</div>
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-[var(--color-text-primary)]">Your Games</h2>
+        </div>
+        <Card className="p-8 text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="w-6 h-6 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin" />
+            <span className="text-lg text-[var(--color-text-secondary)]">Loading your games...</span>
+          </div>
+          <p className="text-sm text-[var(--color-text-muted)]">
+            Fetching your game data from the server
+          </p>
+        </Card>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4">
-        <div className="text-red-600 mb-4">Error: {error}</div>
-        <Button onClick={fetchGames}>Retry</Button>
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-[var(--color-text-primary)]">Your Games</h2>
+        </div>
+        <Card className="p-4">
+          <div className="text-[var(--color-danger)] mb-4">Error: {error.message}</div>
+          <Button onClick={() => refetch()}>Retry</Button>
+        </Card>
       </div>
     );
   }

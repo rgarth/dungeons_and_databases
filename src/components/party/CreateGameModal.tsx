@@ -3,40 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-
-interface Game {
-  id: string;
-  name: string;
-  description?: string;
-  dm: {
-    id: string;
-    name?: string;
-    email: string;
-  };
-  participants: Array<{
-    id: string;
-    user: {
-      id: string;
-      name?: string;
-      email: string;
-    };
-    character?: {
-      id: string;
-      name: string;
-      class: string;
-      level: number;
-      race: string;
-      avatarUrl?: string;
-    };
-    isDm: boolean;
-  }>;
-  _count: {
-    participants: number;
-    chatMessages: number;
-  };
-  createdAt: string;
-  updatedAt: string;
-}
+import { Game } from '@/types/game';
 
 interface CreateGameModalProps {
   isOpen: boolean;

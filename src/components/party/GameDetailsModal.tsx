@@ -229,7 +229,12 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
             if (messages.length > 0) {
               const latestMessageId = messages[messages.length - 1].id;
               if (latestMessageId !== lastMessageId) {
-                setChatMessages(messages);
+                // Merge new messages with existing ones, preserving optimistic messages
+                setChatMessages(prev => {
+                  const optimisticMessages = prev.filter(msg => msg.id.startsWith('temp-'));
+                  const realMessages = messages.filter(msg => !msg.id.startsWith('temp-'));
+                  return [...realMessages, ...optimisticMessages];
+                });
                 setLastMessageId(latestMessageId);
               }
             }
@@ -340,12 +345,15 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
       setIsSendingMessage(true);
       setChatError(null);
 
+      const messageText = newMessage.trim();
+      setNewMessage('');
+
       // Optimistic update - add message immediately
       const optimisticMessage: ChatMessage = {
         id: `temp-${Date.now()}`,
         gameId: currentGame.id,
         userId: (session?.user as { id?: string })?.id || '',
-        message: newMessage.trim(),
+        message: messageText,
         messageType: 'text',
         createdAt: new Date().toISOString(),
         user: {
@@ -356,7 +364,6 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
       };
 
       setChatMessages(prev => [...prev, optimisticMessage]);
-      setNewMessage('');
 
       const response = await fetch(`/api/games/${currentGame.id}/chat`, {
         method: 'POST',
@@ -364,7 +371,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: newMessage.trim(),
+          message: messageText,
           messageType: 'text'
         }),
       });
@@ -374,8 +381,15 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
         throw new Error(errorData.error || 'Failed to send message');
       }
 
-      // Remove optimistic message and let polling update with real message
-      setChatMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
+      const realMessage: ChatMessage = await response.json();
+      
+      // Replace optimistic message with real message
+      setChatMessages(prev => prev.map(msg => 
+        msg.id === optimisticMessage.id ? realMessage : msg
+      ));
+      
+      // Update last message ID to prevent polling from interfering
+      setLastMessageId(realMessage.id);
 
     } catch (error) {
       console.error('Error sending message:', error);
@@ -1107,7 +1121,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                         {chatMessages.map((message) => (
                           <div
                             key={message.id}
-                            className={`flex items-start gap-3 p-3 rounded-lg ${
+                            className={`p-3 rounded-lg ${
                               message.user.id === (session?.user as { id?: string })?.id
                                 ? 'ml-8'
                                 : 'mr-8'
@@ -1118,21 +1132,19 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                                 : 'var(--color-card)'
                             }}
                           >
-                            <div className="flex-shrink-0">
-                              <CharacterAvatar characterId={message.user.id} characterName={message.user.name || message.user.email} />
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>
+                                {message.user.id === (session?.user as { id?: string })?.id 
+                                  ? 'You' 
+                                  : (message.user.name || message.user.email)
+                                }
+                              </span>
+                              <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                                {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </span>
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>
-                                  {message.user.name || message.user.email}
-                                </span>
-                                <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
-                                  {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </span>
-                              </div>
-                              <div className="text-sm whitespace-pre-wrap" style={{ color: 'var(--color-text-secondary)' }}>
-                                {message.message}
-                              </div>
+                            <div className="text-sm whitespace-pre-wrap" style={{ color: 'var(--color-text-secondary)' }}>
+                              {message.message}
                             </div>
                           </div>
                         ))}
@@ -1165,7 +1177,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                     <button
                       onClick={sendMessage}
                       disabled={!newMessage.trim() || isSendingMessage}
-                      className="px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors disabled:opacity-50 flex items-center gap-2"
+                      className="px-4 py-2 bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] rounded transition-colors disabled:opacity-50 flex items-center gap-2"
                     >
                       {isSendingMessage ? (
                         <>

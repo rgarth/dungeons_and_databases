@@ -19,7 +19,6 @@ export default function PartyPage() {
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [showGameDetails, setShowGameDetails] = useState(false);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const [refreshTrigger, setRefreshTrigger] = useState(0); // Add refresh trigger
 
   // Check for openGame query parameter and automatically open the game modal
   useEffect(() => {
@@ -53,21 +52,19 @@ export default function PartyPage() {
   const handleGameCreated = (game: Game) => {
     // TODO: Navigate to game room or show game interface
     console.log('Created game:', game);
-    // Trigger a refresh of the games list
-    setRefreshTrigger(prev => prev + 1);
+    // The games data will be automatically refreshed by the provider
   };
 
   const handleGameJoined = () => {
     // TODO: Navigate to game room
     console.log('Joined game');
-    // Trigger a refresh of the games list
-    setRefreshTrigger(prev => prev + 1);
+    // The games data will be automatically refreshed by the provider
   };
 
   const handleTabChange = (tab: 'characters' | 'party') => {
     switch (tab) {
       case 'characters':
-        router.push('/');
+        router.push('/characters');
         break;
       case 'party':
         router.push('/party');
@@ -119,7 +116,6 @@ export default function PartyPage() {
       <GamesList 
         onGameSelect={handleGameSelect}
         onCreateGame={() => setShowCreateModal(true)}
-        refreshTrigger={refreshTrigger}
       />
 
       <CreateGameModal
@@ -142,8 +138,7 @@ export default function PartyPage() {
           setSelectedGame(null);
         }}
         onGameUpdated={() => {
-          // Trigger a refresh of the games list
-          setRefreshTrigger(prev => prev + 1);
+          // The games data will be automatically refreshed by the provider
         }}
       />
     </MainLayout>
