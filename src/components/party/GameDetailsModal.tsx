@@ -115,15 +115,62 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
   const [error, setError] = useState<string | null>(null);
   const [removingCharacter, setRemovingCharacter] = useState<string | null>(null);
   const [showRemoveParticipantConfirm, setShowRemoveParticipantConfirm] = useState<string | null>(null);
+  const [showDeleteGameConfirm, setShowDeleteGameConfirm] = useState(false);
   const [showCharacterSheet, setShowCharacterSheet] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [isReadOnly, setIsReadOnly] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const isDM = currentGame?.dm.id === (session?.user as { id?: string })?.id;
 
   useEffect(() => {
     setCurrentGame(game);
   }, [game]);
+
+  // Polling mechanism for real-time updates
+  useEffect(() => {
+    if (!isOpen || !currentGame) return;
+
+    let pollInterval: NodeJS.Timeout;
+
+    const startPolling = () => {
+      pollInterval = setInterval(async () => {
+        try {
+          const response = await fetch(`/api/games/${currentGame.id}`);
+          if (response.ok) {
+            const updatedGame = await response.json();
+            // Only update if the data has actually changed
+            if (JSON.stringify(updatedGame) !== JSON.stringify(currentGame)) {
+              setCurrentGame(updatedGame);
+            }
+          }
+        } catch (error) {
+          console.error('Error polling game data:', error);
+        }
+      }, 5000); // Poll every 5 seconds
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Stop polling when tab is not visible
+        if (pollInterval) clearInterval(pollInterval);
+      } else {
+        // Resume polling when tab becomes visible
+        startPolling();
+      }
+    };
+
+    // Start polling
+    startPolling();
+
+    // Listen for visibility changes
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      if (pollInterval) clearInterval(pollInterval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isOpen, currentGame?.id]);
 
   // Fetch characters when add character modal opens
   useEffect(() => {
@@ -193,6 +240,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
     if (!currentGame) return;
 
     try {
+      setIsRefreshing(true);
       const response = await fetch(`/api/games/${currentGame.id}`);
       if (response.ok) {
         const updatedGame = await response.json();
@@ -200,6 +248,8 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
       }
     } catch (error) {
       console.error('Error refreshing game data:', error);
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -238,11 +288,19 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
         throw new Error(errorData.error || 'Failed to remove participant');
       }
 
+      // Check if the user is removing themselves
+      const isRemovingSelf = currentGame.participants.find(p => p.id === participantId)?.user.email === session?.user?.email;
+
       // Refresh the game data immediately
       await refreshGameData();
       
       // Also trigger parent refresh
       onGameUpdated?.();
+
+      // If the user removed themselves, close the modal
+      if (isRemovingSelf) {
+        onClose();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -252,6 +310,31 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
 
   const confirmRemoveParticipant = (participantId: string) => {
     setShowRemoveParticipantConfirm(participantId);
+  };
+
+  const handleDeleteGame = async () => {
+    if (!currentGame) return;
+
+    try {
+      setError(null);
+
+      const response = await fetch(`/api/games/${currentGame.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete game');
+      }
+
+      // Close the modal and trigger parent refresh
+      onClose();
+      onGameUpdated?.();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setShowDeleteGameConfirm(false);
+    }
   };
 
   const handleCharacterClick = async (characterId: string, participantId: string) => {
@@ -342,12 +425,43 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                   </span>
                 )}
               </div>
-              <button
-                onClick={onClose}
-                className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
-              >
-                ✕
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={refreshGameData}
+                  disabled={isRefreshing}
+                  className={`px-3 py-1 text-sm bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2`}
+                  title="Refresh game data"
+                >
+                  {isRefreshing ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      Refreshing...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      Refresh
+                    </>
+                  )}
+                </button>
+                {isDM && (
+                  <button
+                    onClick={() => setShowDeleteGameConfirm(true)}
+                    className="text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] p-2 rounded transition-colors"
+                    title="Delete game"
+                  >
+                    🗑️
+                  </button>
+                )}
+                <button
+                  onClick={onClose}
+                  className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
 
             {/* Tabs */}
@@ -492,8 +606,10 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {currentGame.participants.map((participant) => {
-                      const canRemove = isDM || participant.user.email === session?.user?.email;
                       const isSelf = participant.user.email === session?.user?.email;
+                      const isSelfDM = isSelf && participant.isDm;
+                      // DMs cannot leave, only delete the game. Non-DMs can leave themselves, DMs can remove others
+                      const canRemove = (isDM && !isSelfDM) || (isSelf && !isSelfDM);
                       
                       return (
                         <div
@@ -767,6 +883,18 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
           cancelText="Cancel"
           onConfirm={() => showRemoveParticipantConfirm && handleRemoveParticipant(showRemoveParticipantConfirm)}
           onCancel={() => setShowRemoveParticipantConfirm(null)}
+          isDestructive={true}
+        />
+
+        {/* Delete Game Confirmation Dialog */}
+        <ConfirmationDialog
+          isOpen={showDeleteGameConfirm}
+          title="Delete Game"
+          message="Are you sure you want to delete this game? This action cannot be undone and will remove all game data including participants, characters, and chat messages."
+          confirmText="Delete Game"
+          cancelText="Cancel"
+          onConfirm={handleDeleteGame}
+          onCancel={() => setShowDeleteGameConfirm(false)}
           isDestructive={true}
         />
 

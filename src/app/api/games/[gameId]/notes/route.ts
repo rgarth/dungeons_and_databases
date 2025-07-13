@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 // GET /api/games/[gameId]/notes - Get notes for a game
 export async function GET(
   request: NextRequest,
-  { params }: { params: { gameId: string } }
+  { params }: { params: Promise<{ gameId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -25,10 +25,12 @@ export async function GET(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    const { gameId } = await params;
+
     // Check if user is a participant in this game
     const participant = await prisma.gameParticipant.findFirst({
       where: {
-        gameId: params.gameId,
+        gameId: gameId,
         userId: user.id
       }
     });
@@ -40,7 +42,7 @@ export async function GET(
     // Check if user is DM of this game
     const game = await prisma.game.findFirst({
       where: {
-        id: params.gameId,
+        id: gameId,
         dmId: user.id
       }
     });
@@ -50,7 +52,7 @@ export async function GET(
     // If DM, get all notes. If player, get only public notes
     const notes = await prisma.gameNote.findMany({
       where: {
-        gameId: params.gameId,
+        gameId: gameId,
         ...(isDM ? {} : { isPublic: true })
       },
       include: {
@@ -80,7 +82,7 @@ export async function GET(
 // POST /api/games/[gameId]/notes - Create a new note
 export async function POST(
   request: NextRequest,
-  { params }: { params: { gameId: string } }
+  { params }: { params: Promise<{ gameId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -97,10 +99,12 @@ export async function POST(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    const { gameId } = await params;
+
     // Check if user is DM of this game
     const game = await prisma.game.findFirst({
       where: {
-        id: params.gameId,
+        id: gameId,
         dmId: user.id
       }
     });
@@ -127,7 +131,7 @@ export async function POST(
 
     const note = await prisma.gameNote.create({
       data: {
-        gameId: params.gameId,
+        gameId: gameId,
         dmId: user.id,
         title: title.trim(),
         content: content?.trim() || null,

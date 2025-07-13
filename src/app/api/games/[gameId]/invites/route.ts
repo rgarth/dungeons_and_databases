@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 // GET /api/games/[gameId]/invites - Get invites for a game
 export async function GET(
   request: NextRequest,
-  { params }: { params: { gameId: string } }
+  { params }: { params: Promise<{ gameId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -25,10 +25,12 @@ export async function GET(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    const { gameId } = await params;
+
     // Check if user is DM of this game
     const game = await prisma.game.findFirst({
       where: {
-        id: params.gameId,
+        id: gameId,
         dmId: user.id
       }
     });
@@ -39,7 +41,7 @@ export async function GET(
 
     const invites = await prisma.gameInvite.findMany({
       where: {
-        gameId: params.gameId,
+        gameId: gameId,
         isActive: true
       },
       orderBy: {
@@ -60,7 +62,7 @@ export async function GET(
 // POST /api/games/[gameId]/invites - Create a new invite
 export async function POST(
   request: NextRequest,
-  { params }: { params: { gameId: string } }
+  { params }: { params: Promise<{ gameId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -77,10 +79,12 @@ export async function POST(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    const { gameId } = await params;
+
     // Check if user is DM of this game
     const game = await prisma.game.findFirst({
       where: {
-        id: params.gameId,
+        id: gameId,
         dmId: user.id
       }
     });
@@ -120,7 +124,7 @@ export async function POST(
 
     const invite = await prisma.gameInvite.create({
       data: {
-        gameId: params.gameId,
+        gameId: gameId,
         inviteCode: inviteCode!,
         createdBy: user.id,
         maxUses: maxUses || null,
