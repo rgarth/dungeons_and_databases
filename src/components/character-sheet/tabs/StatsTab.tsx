@@ -8,6 +8,7 @@ import { RacialFeaturesService, type RacialTrait } from "@/services/character/ra
 // Service layer now handles these calculations
 import type { Armor } from "@/lib/dnd/equipment";
 import type { Spell } from "@/lib/dnd/spells";
+import { useDiceRoll } from "@/components/providers/dice-provider";
 
 
 interface StatsTabProps {
@@ -63,6 +64,7 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
   const [racialTraits, setRacialTraits] = useState<RacialTrait[]>([]);
   const [classFeatures] = useState<string[]>([]);
+  const { rollDice } = useDiceRoll();
 
   // Load racial traits when character changes
   useEffect(() => {
@@ -415,11 +417,16 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
               return (
                 <div 
                   key={ability.name} 
-                  className={`text-center p-3 rounded-lg border-2 transition-colors relative ${
+                  className={`text-center p-3 rounded-lg border-2 transition-colors relative cursor-pointer hover:scale-105 ${
                     isProficient 
                       ? 'bg-[var(--color-success)]/20 border-[var(--color-success)]/30' 
                       : 'bg-[var(--color-card-secondary)] border-[var(--color-border)]'
                   }`}
+                  onClick={() => {
+                    const savingThrowNotation = `1d20${bonus >= 0 ? '+' : ''}${bonus}`;
+                    rollDice(savingThrowNotation);
+                  }}
+                  title={`Roll ${ability.name} saving throw: 1d20${bonus >= 0 ? '+' : ''}${bonus}`}
                 >
                   <div className="text-sm text-[var(--color-text-secondary)] mb-1">{ability.name}</div>
                   <div className={`text-2xl font-bold ${isProficient ? 'text-[var(--color-success)]' : 'text-[var(--color-text-primary)]'}`}>
@@ -433,7 +440,10 @@ export function StatsTab({ character, equippedArmor, currentArmorClass: passedAr
                       {calc.getAbilityModifier(ability.name.toLowerCase())}{isProficient ? ` + ${calc.proficiencyBonus}` : ''}
                     </span>
                     <button 
-                      onClick={() => toggleTooltip(`saving-throw-${ability.name.toLowerCase()}`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleTooltip(`saving-throw-${ability.name.toLowerCase()}`);
+                      }}
                       className="cursor-pointer hover:bg-[var(--color-card-secondary)] rounded p-0.5"
                     >
                       <HelpCircle className="h-3 w-3 text-[var(--color-warning)]" />

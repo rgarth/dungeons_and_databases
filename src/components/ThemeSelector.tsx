@@ -4,7 +4,11 @@ import { useTheme } from '@/lib/theme';
 import { Moon, Sun, Palette, TreePine, Mountain, Crown } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 
-export function ThemeSelector() {
+interface ThemeSelectorProps {
+  onThemeChange?: () => void;
+}
+
+export function ThemeSelector({ onThemeChange }: ThemeSelectorProps) {
   const { theme, setTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -59,6 +63,7 @@ export function ThemeSelector() {
                 onClick={() => {
                   setTheme(themeOption.id);
                   setIsOpen(false);
+                  onThemeChange?.();
                 }}
                 className={`theme-option ${isActive ? 'theme-option-active' : ''}`}
                 aria-label={`Switch to ${themeOption.name} theme`}

@@ -37,4 +37,38 @@ export interface Action {
   name: string;
   description: string;
   type: 'action' | 'bonus' | 'reaction';
+}
+
+export interface Game {
+  id: string;
+  name: string;
+  description?: string;
+  dm: {
+    id: string;
+    name?: string;
+    email: string;
+  };
+  participants: Array<{
+    id: string;
+    user: {
+      id: string;
+      name?: string;
+      email: string;
+    };
+    characters: Array<{
+      id: string;
+      name: string;
+      class: string;
+      level: number;
+      race: string;
+      avatarUrl?: string;
+    }>;
+    isDm: boolean;
+  }>;
+  _count: {
+    participants: number;
+    chatMessages: number;
+  };
+  createdAt: string;
+  updatedAt: string;
 } 
