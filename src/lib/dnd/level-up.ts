@@ -1,6 +1,7 @@
 // Level up system for D&D 5e
 import { Spell, getClassSpells } from './spells';
 import { ClassFeature, getClassFeatures } from './class-features';
+import { getProficiencyBonus } from './core';
 
 // Experience point thresholds for each level
 export const EXPERIENCE_THRESHOLDS = [
@@ -27,13 +28,7 @@ export const EXPERIENCE_THRESHOLDS = [
 ];
 
 // Proficiency bonus progression
-export function getProficiencyBonusForLevel(level: number): number {
-  if (level >= 17) return 6;
-  if (level >= 13) return 5;
-  if (level >= 9) return 4;
-  if (level >= 5) return 3;
-  return 2;
-}
+// REMOVE getProficiencyBonusForLevel
 
 // Check if level grants an Ability Score Improvement
 export function hasAbilityScoreImprovement(characterClass: string, level: number): boolean {
@@ -480,7 +475,7 @@ export function levelUpCharacter(
   const newMaxHitPoints = character.maxHitPoints + choices.hitPointGain;
   
   // Calculate new proficiency bonus
-  const newProficiencyBonus = getProficiencyBonusForLevel(newLevel);
+  const newProficiencyBonus = getProficiencyBonus(newLevel);
   
   // Get new class features for this level
   const newFeatures = getClassFeatures(character.class, newLevel);

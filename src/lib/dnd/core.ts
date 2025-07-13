@@ -47,9 +47,13 @@ export function getModifier(score: number): number {
   return Math.floor((score - 10) / 2);
 }
 
-// Calculate proficiency bonus based on level
+// Calculate proficiency bonus based on level (D&D 5e formula)
 export function getProficiencyBonus(level: number): number {
-  return Math.ceil(level / 4) + 1;
+  if (level >= 17) return 6;
+  if (level >= 13) return 5;
+  if (level >= 9) return 4;
+  if (level >= 5) return 3;
+  return 2;
 }
 
 // Generate random ability scores using 4d6 drop lowest
