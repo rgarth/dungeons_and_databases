@@ -73,4 +73,18 @@ export interface Game {
   };
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  gameId: string;
+  userId: string;
+  message: string;
+  messageType: string;
+  createdAt: string;
+  user: {
+    id: string;
+    name?: string;
+    email: string;
+  };
 } 

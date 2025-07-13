@@ -11,6 +11,7 @@ import { useAvatar } from '@/hooks/use-character-mutations';
 import Image from 'next/image';
 import { CharacterSheet } from '@/components/character-sheet';
 import ReadOnlyCharacterSheet from '@/components/character-sheet/ReadOnlyCharacterSheet';
+import { ChatMessage } from '@/types/game';
 
 // Character Avatar Component
 function CharacterAvatar({ characterId, characterName }: { characterId: string; characterName: string }) {
@@ -127,6 +128,13 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
   const [isSavingNotes, setIsSavingNotes] = useState(false);
   const [notesError, setNotesError] = useState<string | null>(null);
 
+  // Chat state
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
+  const [lastMessageId, setLastMessageId] = useState<string | null>(null);
+
   const isDM = currentGame?.dm.id === (session?.user as { id?: string })?.id;
 
   useEffect(() => {
@@ -197,6 +205,48 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
     }
   }, [activeTab, currentGame?.id]);
 
+  // Load chat messages when chat tab is active
+  useEffect(() => {
+    if (activeTab === 'chat' && currentGame) {
+      loadChatMessages();
+    }
+  }, [activeTab, currentGame?.id]);
+
+  // Chat polling when chat tab is active
+  useEffect(() => {
+    if (activeTab !== 'chat' || !currentGame) return;
+
+    let chatPollInterval: NodeJS.Timeout;
+
+    const startChatPolling = () => {
+      chatPollInterval = setInterval(async () => {
+        try {
+          const response = await fetch(`/api/games/${currentGame.id}/chat`);
+          if (response.ok) {
+            const messages: ChatMessage[] = await response.json();
+            
+            // Check if we have new messages
+            if (messages.length > 0) {
+              const latestMessageId = messages[messages.length - 1].id;
+              if (latestMessageId !== lastMessageId) {
+                setChatMessages(messages);
+                setLastMessageId(latestMessageId);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error polling chat messages:', error);
+        }
+      }, 3000); // Poll every 3 seconds for chat
+    };
+
+    startChatPolling();
+
+    return () => {
+      if (chatPollInterval) clearInterval(chatPollInterval);
+    };
+  }, [activeTab, currentGame?.id, lastMessageId]);
+
   const loadNotes = async () => {
     if (!currentGame) return;
 
@@ -262,6 +312,78 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
       setNotesError(error instanceof Error ? error.message : 'Failed to save notes');
     } finally {
       setIsSavingNotes(false);
+    }
+  };
+
+  const loadChatMessages = async () => {
+    if (!currentGame) return;
+
+    try {
+      const response = await fetch(`/api/games/${currentGame.id}/chat`);
+      if (response.ok) {
+        const messages: ChatMessage[] = await response.json();
+        setChatMessages(messages);
+        if (messages.length > 0) {
+          setLastMessageId(messages[messages.length - 1].id);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading chat messages:', error);
+      setChatError('Failed to load chat messages');
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!currentGame || !newMessage.trim()) return;
+
+    try {
+      setIsSendingMessage(true);
+      setChatError(null);
+
+      // Optimistic update - add message immediately
+      const optimisticMessage: ChatMessage = {
+        id: `temp-${Date.now()}`,
+        gameId: currentGame.id,
+        userId: (session?.user as { id?: string })?.id || '',
+        message: newMessage.trim(),
+        messageType: 'text',
+        createdAt: new Date().toISOString(),
+        user: {
+          id: (session?.user as { id?: string })?.id || '',
+          name: session?.user?.name || '',
+          email: session?.user?.email || ''
+        }
+      };
+
+      setChatMessages(prev => [...prev, optimisticMessage]);
+      setNewMessage('');
+
+      const response = await fetch(`/api/games/${currentGame.id}/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: newMessage.trim(),
+          messageType: 'text'
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to send message');
+      }
+
+      // Remove optimistic message and let polling update with real message
+      setChatMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
+
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setChatError(error instanceof Error ? error.message : 'Failed to send message');
+      // Remove optimistic message on error
+      setChatMessages(prev => prev.filter(msg => !msg.id.startsWith('temp-')));
+    } finally {
+      setIsSendingMessage(false);
     }
   };
 
@@ -970,10 +1092,103 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                 <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
                   Game Chat
                 </h3>
-                <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                  <p className="text-[var(--color-text-secondary)] italic">
-                    Chat feature coming soon...
-                  </p>
+                
+                {/* Chat Messages */}
+                <div className="mb-4 p-4 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                  <div className="max-h-96 overflow-y-auto mb-4">
+                    {chatMessages.length === 0 ? (
+                      <div className="text-center py-8">
+                        <p className="text-[var(--color-text-secondary)] italic">
+                          No messages yet. Start the conversation!
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {chatMessages.map((message) => (
+                          <div
+                            key={message.id}
+                            className={`flex items-start gap-3 p-3 rounded-lg ${
+                              message.user.id === (session?.user as { id?: string })?.id
+                                ? 'ml-8'
+                                : 'mr-8'
+                            }`}
+                            style={{
+                              backgroundColor: message.user.id === (session?.user as { id?: string })?.id
+                                ? 'var(--color-accent-bg)'
+                                : 'var(--color-card)'
+                            }}
+                          >
+                            <div className="flex-shrink-0">
+                              <CharacterAvatar characterId={message.user.id} characterName={message.user.name || message.user.email} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>
+                                  {message.user.name || message.user.email}
+                                </span>
+                                <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                                  {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </div>
+                              <div className="text-sm whitespace-pre-wrap" style={{ color: 'var(--color-text-secondary)' }}>
+                                {message.message}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Message Input */}
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          sendMessage();
+                        }
+                      }}
+                      className="flex-1 px-3 py-2 rounded-md border focus:outline-none focus:ring-2"
+                      style={{
+                        backgroundColor: 'var(--color-card)',
+                        color: 'var(--color-text-primary)',
+                        borderColor: 'var(--color-border)',
+                        outlineColor: 'var(--color-accent)'
+                      }}
+                      placeholder="Type a message... (Press Enter to send)"
+                      disabled={isSendingMessage}
+                    />
+                    <button
+                      onClick={sendMessage}
+                      disabled={!newMessage.trim() || isSendingMessage}
+                      className="px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors disabled:opacity-50 flex items-center gap-2"
+                    >
+                      {isSendingMessage ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                          </svg>
+                          Send
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  
+                  {/* Error Display */}
+                  {chatError && (
+                    <div className="mt-3 p-3 rounded-lg text-sm" style={{ backgroundColor: 'var(--color-danger-bg)', color: 'var(--color-danger)' }}>
+                      {chatError}
+                    </div>
+                  )}
                 </div>
               </div>
             )}

@@ -141,6 +141,37 @@ export async function POST(
       }
     });
 
+    // Trigger cleanup to keep message count under 100
+    try {
+      const messageCount = await prisma.gameChatMessage.count({
+        where: { gameId: gameId }
+      });
+
+      if (messageCount > 100) {
+        const messagesToDelete = messageCount - 100;
+        
+        // Get the IDs of the oldest messages to delete
+        const oldestMessages = await prisma.gameChatMessage.findMany({
+          where: { gameId: gameId },
+          select: { id: true },
+          orderBy: { createdAt: 'asc' },
+          take: messagesToDelete
+        });
+
+        const messageIdsToDelete = oldestMessages.map(msg => msg.id);
+
+        // Delete the oldest messages
+        await prisma.gameChatMessage.deleteMany({
+          where: {
+            id: { in: messageIdsToDelete }
+          }
+        });
+      }
+    } catch (cleanupError) {
+      console.error('Error during chat cleanup:', cleanupError);
+      // Don't fail the message send if cleanup fails
+    }
+
     return NextResponse.json(chatMessage, { status: 201 });
   } catch (error) {
     console.error('Error sending chat message:', error);
