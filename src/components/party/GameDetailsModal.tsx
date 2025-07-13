@@ -6,8 +6,11 @@ import { useSession } from 'next-auth/react';
 import { Card } from '@/components/ui';
 import { Users, User, BookOpen, MessageCircle, MessageSquare, Calendar } from 'lucide-react';
 import { Game } from '@/types/game';
+import { Character } from '@/types/character';
 import { useAvatar } from '@/hooks/use-character-mutations';
 import Image from 'next/image';
+import { CharacterSheet } from '@/components/character-sheet';
+import { ReadOnlyCharacterSheet } from '@/components/character-sheet/ReadOnlyCharacterSheet';
 
 // Character Avatar Component
 function CharacterAvatar({ characterId, characterName }: { characterId: string; characterName: string }) {
@@ -112,6 +115,9 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
   const [error, setError] = useState<string | null>(null);
   const [removingCharacter, setRemovingCharacter] = useState<string | null>(null);
   const [showRemoveParticipantConfirm, setShowRemoveParticipantConfirm] = useState<string | null>(null);
+  const [showCharacterSheet, setShowCharacterSheet] = useState(false);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+  const [isReadOnly, setIsReadOnly] = useState(false);
 
   const isDM = currentGame?.dm.id === (session?.user as { id?: string })?.id;
 
@@ -246,6 +252,35 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
 
   const confirmRemoveParticipant = (participantId: string) => {
     setShowRemoveParticipantConfirm(participantId);
+  };
+
+  const handleCharacterClick = async (characterId: string, participantId: string) => {
+    try {
+      // Fetch the full character data
+      const response = await fetch(`/api/characters/${characterId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch character data');
+      }
+      
+      const character: Character = await response.json();
+      setSelectedCharacter(character);
+      
+      // Determine if this is the user's own character
+      const isOwnCharacter = currentGame?.participants.find(p => p.id === participantId)?.user.email === session?.user?.email;
+      
+      // Set read-only mode: true if not own character and not DM, false if own character or DM
+      setIsReadOnly(!isOwnCharacter && !isDM);
+      
+      setShowCharacterSheet(true);
+    } catch (error) {
+      console.error('Error fetching character:', error);
+    }
+  };
+
+  const handleCloseCharacterSheet = () => {
+    setShowCharacterSheet(false);
+    setSelectedCharacter(null);
+    setIsReadOnly(false);
   };
 
   const handleRemoveCharacter = async (participantId: string, characterId: string) => {
@@ -535,8 +570,9 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                   ).map((character) => (
                     <div
                       key={`${character.participantId}-${character.id}`}
-                      className="p-4 rounded-lg relative"
+                      className="p-4 rounded-lg relative cursor-pointer hover:bg-[var(--color-card)] transition-colors"
                       style={{ backgroundColor: 'var(--color-card-secondary)' }}
+                      onClick={() => handleCharacterClick(character.id, character.participantId)}
                     >
                       <div className="flex items-center gap-3 mb-3">
                         <CharacterAvatar characterId={character.id} characterName={character.name} />
@@ -554,7 +590,10 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                           Player: {session?.user?.email === currentGame.participants.find(p => p.id === character.participantId)?.user.email ? 'You' : character.playerName}
                         </div>
                         <button
-                          onClick={() => handleRemoveCharacter(character.participantId, character.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveCharacter(character.participantId, character.id);
+                          }}
                           disabled={removingCharacter === character.participantId}
                           className="text-xs px-2 py-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded transition-colors disabled:opacity-50"
                           title="Remove character from game"
@@ -730,6 +769,27 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
           onCancel={() => setShowRemoveParticipantConfirm(null)}
           isDestructive={true}
         />
+
+        {/* Character Sheet Modals */}
+        {showCharacterSheet && selectedCharacter && (
+          isReadOnly ? (
+            <ReadOnlyCharacterSheet
+              character={selectedCharacter}
+              onClose={handleCloseCharacterSheet}
+            />
+          ) : (
+            <CharacterSheet
+              character={selectedCharacter}
+              onClose={handleCloseCharacterSheet}
+              onCharacterDeleted={handleCloseCharacterSheet}
+              onCharacterUpdated={() => {
+                // Refresh game data when character is updated
+                refreshGameData();
+                onGameUpdated?.();
+              }}
+            />
+          )
+        )}
       </div>
     </>
   );
