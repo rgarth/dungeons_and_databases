@@ -145,16 +145,21 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
           const response = await fetch(`/api/games/${currentGame.id}`);
           if (response.ok) {
             const updatedGame = await response.json();
-            // Only update if the data has actually changed
-            if (JSON.stringify(updatedGame) !== JSON.stringify(currentGame)) {
+            
+            // Always update notes if they're present in the response
+            let notesChanged = false;
+            if (updatedGame.gameNotes !== undefined && updatedGame.gameNotes !== gameNotes) {
+              setGameNotes(updatedGame.gameNotes || '');
+              notesChanged = true;
+            }
+            if (isDM && updatedGame.dmNotes !== undefined && updatedGame.dmNotes !== dmNotes) {
+              setDmNotes(updatedGame.dmNotes || '');
+              notesChanged = true;
+            }
+            
+            // Update game data if it has changed or if notes changed
+            if (JSON.stringify(updatedGame) !== JSON.stringify(currentGame) || notesChanged) {
               setCurrentGame(updatedGame);
-              // Update notes from the game data
-              if (updatedGame.gameNotes !== undefined) {
-                setGameNotes(updatedGame.gameNotes || '');
-              }
-              if (isDM && updatedGame.dmNotes !== undefined) {
-                setDmNotes(updatedGame.dmNotes || '');
-              }
             }
           }
         } catch (error) {
@@ -183,7 +188,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
       if (pollInterval) clearInterval(pollInterval);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [isOpen, currentGame?.id, isDM]);
+  }, [isOpen, currentGame?.id, isDM, gameNotes, dmNotes]);
 
   // Load notes when notes tab is active
   useEffect(() => {
@@ -857,14 +862,14 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-3">
                     <h4 className="text-md font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                      Game Notes
+                      Player Viewable Notes
                     </h4>
                     {isDM && (
                       <button
                         onClick={() => saveNotes('game')}
                         disabled={isSavingNotes}
                         className="px-3 py-1 text-sm bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors disabled:opacity-50 flex items-center gap-2"
-                        title="Save Game Notes"
+                        title="Save Player Viewable Notes"
                       >
                         {isSavingNotes ? (
                           <>
@@ -895,11 +900,11 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                           outlineColor: 'var(--color-accent)'
                         }}
                         rows={8}
-                        placeholder="Enter game notes here... (visible to all players)"
+                        placeholder="Enter notes here... (visible to all players)"
                       />
                     ) : (
                       <div className="whitespace-pre-wrap text-[var(--color-text-primary)] min-h-[200px]">
-                        {gameNotes || 'No game notes yet.'}
+                        {gameNotes || 'No player viewable notes yet.'}
                       </div>
                     )}
                   </div>
@@ -910,13 +915,13 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                   <div className="mb-6">
                     <div className="flex justify-between items-center mb-3">
                       <h4 className="text-md font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                        DM Notes
+                        DM Only Notes
                       </h4>
                       <button
                         onClick={() => saveNotes('dm')}
                         disabled={isSavingNotes}
                         className="px-3 py-1 text-sm bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors disabled:opacity-50 flex items-center gap-2"
-                        title="Save DM Notes"
+                        title="Save DM Only Notes"
                       >
                         {isSavingNotes ? (
                           <>
@@ -945,7 +950,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                           outlineColor: 'var(--color-accent)'
                         }}
                         rows={8}
-                        placeholder="Enter DM notes here... (only visible to you)"
+                        placeholder="Enter notes here... (only visible to you)"
                       />
                     </div>
                   </div>
