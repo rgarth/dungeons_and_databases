@@ -514,6 +514,11 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
   // Roll history system
   const [rollHistory, setRollHistory] = useState<Array<{result: string, notation: string, timestamp: number}>>([]);
   const [showHistory, setShowHistory] = useState(false);
+  
+  // Mobile detection and mobile-specific state
+  const [isMobile, setIsMobile] = useState(false);
+  const [showHistoryOnMobile, setShowHistoryOnMobile] = useState(false);
+  const autoHideTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Get initial dice color from cookie or theme default
   const getInitialDiceColor = () => {
@@ -544,6 +549,42 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
     const initialColor = getInitialDiceColor();
     setDiceColor(initialColor);
   }, []);
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isSmallScreen = window.innerWidth < 768;
+      setIsMobile(isTouchDevice || isSmallScreen);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Auto-hide timer for roll history only (not the last result)
+  useEffect(() => {
+    if (rollHistory.length > 1 && (showHistory || showHistoryOnMobile)) {
+      // Clear any existing timer
+      if (autoHideTimerRef.current) {
+        clearTimeout(autoHideTimerRef.current);
+      }
+      
+      // Set new timer to hide roll history after 3 seconds
+      autoHideTimerRef.current = setTimeout(() => {
+        setShowHistory(false);
+        setShowHistoryOnMobile(false);
+      }, 3000);
+    }
+
+    return () => {
+      if (autoHideTimerRef.current) {
+        clearTimeout(autoHideTimerRef.current);
+      }
+    };
+  }, [rollHistory.length, showHistory, showHistoryOnMobile]);
 
   // Handle click outside to collapse
   useEffect(() => {
@@ -728,6 +769,25 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
     setIsExpanded(false);
   };
 
+  // Mobile interaction handlers
+  const handleDiceClick = () => {
+    if (isMobile) {
+      // On mobile, clicking the dice opens the dice menu
+      handleExpand();
+    } else {
+      // On desktop, clicking the dice opens the dice menu
+      handleExpand();
+    }
+  };
+
+  const handleResultsClick = () => {
+    if (isMobile) {
+      // On mobile, clicking the results area shows history
+      setShowHistoryOnMobile(!showHistoryOnMobile);
+      setShowHistory(false); // Hide desktop hover history
+    }
+  };
+
   const handleCloseFullscreen = () => {
     setShowFullscreenRoll(false);
     setIsRolling(false);
@@ -751,37 +811,95 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
             {lastRollResult ? (
               // Pill design with result
               <div className="relative">
-                <button
-                  onClick={handleExpand}
-                  onMouseEnter={() => setShowHistory(true)}
-                  onMouseLeave={() => setShowHistory(false)}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-full transition-all hover:scale-105 shadow-lg border-2"
-                  style={{ 
-                    backgroundColor: 'var(--color-card)',
-                    borderColor: 'var(--color-border)',
-                    color: 'var(--color-text-primary)'
-                  }}
-                  title="Open Dice Menu"
-                >
-                  {/* Dice icon in circle */}
-                  <div 
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold"
+                {isMobile ? (
+                  // Mobile: Separate clickable areas
+                  <div className="flex items-center space-x-2 px-3 py-2 rounded-full transition-all shadow-lg border-2"
                     style={{ 
-                      backgroundColor: 'var(--color-accent)',
-                      color: 'var(--color-accent-text)'
+                      backgroundColor: 'var(--color-card)',
+                      borderColor: 'var(--color-border)',
+                      color: 'var(--color-text-primary)'
                     }}
                   >
-                    🎲
+                    {/* Dice icon in circle - clickable for dice menu */}
+                    <button
+                      onClick={handleDiceClick}
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold transition-all hover:scale-105"
+                      style={{ 
+                        backgroundColor: 'var(--color-accent)',
+                        color: 'var(--color-accent-text)'
+                      }}
+                      title="Open Dice Menu"
+                    >
+                      🎲
+                    </button>
+                    {/* Roll result - clickable for history */}
+                    <button
+                      onClick={handleResultsClick}
+                      className="text-sm font-medium whitespace-nowrap transition-all hover:scale-105"
+                      title="View Roll History"
+                    >
+                      {lastRollResult}
+                    </button>
                   </div>
-                  {/* Roll result */}
-                  <span className="text-sm font-medium whitespace-nowrap">
-                    {lastRollResult}
-                  </span>
-
-                </button>
+                ) : (
+                  // Desktop: Hover behavior
+                  <button
+                    onClick={handleExpand}
+                    onMouseEnter={() => setShowHistory(true)}
+                    onMouseLeave={() => setShowHistory(false)}
+                    className="flex items-center space-x-2 px-3 py-2 rounded-full transition-all hover:scale-105 shadow-lg border-2"
+                    style={{ 
+                      backgroundColor: 'var(--color-card)',
+                      borderColor: 'var(--color-border)',
+                      color: 'var(--color-text-primary)'
+                    }}
+                    title="Open Dice Menu"
+                  >
+                    {/* Dice icon in circle */}
+                    <div 
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold"
+                      style={{ 
+                        backgroundColor: 'var(--color-accent)',
+                        color: 'var(--color-accent-text)'
+                      }}
+                    >
+                      🎲
+                    </div>
+                    {/* Roll result */}
+                    <span className="text-sm font-medium whitespace-nowrap">
+                      {lastRollResult}
+                    </span>
+                  </button>
+                )}
                 
-                {/* Roll History Tooltip */}
-                {showHistory && rollHistory.length > 1 && (
+                {/* Desktop Roll History Tooltip */}
+                {showHistory && !isMobile && rollHistory.length > 1 && (
+                  <div 
+                    className="absolute bottom-full left-0 mb-2 p-3 rounded-lg shadow-xl border-2 z-50 min-w-[200px]"
+                    style={{
+                      backgroundColor: 'var(--color-card)',
+                      borderColor: 'var(--color-border)',
+                      color: 'var(--color-text-primary)'
+                    }}
+                  >
+                    <div className="text-xs font-semibold mb-2 text-[var(--color-text-secondary)]">
+                      Recent Rolls
+                    </div>
+                    {rollHistory.map((roll) => (
+                      <div key={roll.timestamp} className="flex justify-between items-center py-1">
+                        <span className="text-xs text-[var(--color-text-secondary)]">
+                          {roll.notation}
+                        </span>
+                        <span className="text-sm font-bold">
+                          {roll.result}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Mobile Roll History Popup */}
+                {showHistoryOnMobile && isMobile && rollHistory.length > 1 && (
                   <div 
                     className="absolute bottom-full left-0 mb-2 p-3 rounded-lg shadow-xl border-2 z-50 min-w-[200px]"
                     style={{
@@ -818,7 +936,6 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
                 title="Open Dice Menu"
               >
                 🎲
-
               </button>
             )}
           </div>
