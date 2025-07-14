@@ -59,7 +59,7 @@ export class WebRTCChat {
     // Start polling for signaling messages
     this.signalingInterval = setInterval(async () => {
       await this.pollSignalingMessages();
-    }, 1000); // Poll every second
+    }, 3000); // Poll every 3 seconds to reduce database load
   }
 
   private async registerPeer(): Promise<void> {

@@ -85,7 +85,7 @@ export function useWebRTCChat({ gameId, enabled = true }: UseWebRTCChatOptions):
           console.log(`🔄 Updating peer count: ${count}`);
           setPeerCount(count);
         }
-      }, 5000); // Update every 5 seconds
+      }, 10000); // Update every 10 seconds to reduce database load
       
       // Store interval for cleanup
       webrtcRef.current = webrtc;
