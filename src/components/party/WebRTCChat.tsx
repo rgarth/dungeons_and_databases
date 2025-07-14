@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useSession } from 'next-auth/react';
 import { useWebRTCChat } from '@/hooks/use-webrtc-chat';
 import { ChatMessage } from '@/lib/webrtc-chat';
 
@@ -10,6 +11,7 @@ interface WebRTCChatProps {
 }
 
 export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) {
+  const { data: session } = useSession();
   const [message, setMessage] = useState('');
   const [isConnecting, setIsConnecting] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -122,7 +124,7 @@ export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) 
             <div key={msg.id} className="flex flex-col">
               <div className="flex items-center space-x-2">
                 <span className="font-medium text-foreground">
-                  {msg.userName}
+                  {session?.user?.id === msg.userId ? 'You' : msg.userName}
                 </span>
                 <span className="text-xs text-muted-foreground">
                   {formatTimestamp(msg.timestamp)}
