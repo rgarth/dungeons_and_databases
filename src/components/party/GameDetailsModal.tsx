@@ -146,32 +146,70 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
     if (!isOpen || !currentGame) return;
 
     let pollInterval: NodeJS.Timeout;
+    let retryCount = 0;
+    const maxRetries = 3;
 
     const startPolling = () => {
+      console.log('🔄 Starting game polling for game:', currentGame.id);
       pollInterval = setInterval(async () => {
         try {
-          const response = await fetch(`/api/games/${currentGame.id}`);
+          console.log('📡 Game poll attempt:', new Date().toISOString());
+          const response = await fetch(`/api/games/${currentGame.id}`, {
+            // Add cache: 'no-cache' to prevent stale responses
+            cache: 'no-cache',
+            // Add timeout
+            signal: AbortSignal.timeout(5000)
+          });
+          
+          console.log('📡 Game response status:', response.status, response.statusText);
+          
           if (response.ok) {
+            retryCount = 0; // Reset retry count on success
             const updatedGame = await response.json();
+            console.log('📡 Game data received, participants:', updatedGame.participants?.length || 0);
             
             // Always update notes if they're present in the response
             let notesChanged = false;
             if (updatedGame.gameNotes !== undefined && updatedGame.gameNotes !== gameNotes) {
+              console.log('📡 Game notes updated');
               setGameNotes(updatedGame.gameNotes || '');
               notesChanged = true;
             }
             if (isDM && updatedGame.dmNotes !== undefined && updatedGame.dmNotes !== dmNotes) {
+              console.log('📡 DM notes updated');
               setDmNotes(updatedGame.dmNotes || '');
               notesChanged = true;
             }
             
             // Update game data if it has changed or if notes changed
             if (JSON.stringify(updatedGame) !== JSON.stringify(currentGame) || notesChanged) {
+              console.log('📡 Game data updated');
               setCurrentGame(updatedGame);
+            } else {
+              console.log('📡 No game data changes');
             }
+          } else if (response.status === 401 || response.status === 403) {
+            // Auth errors - stop polling and let user know
+            console.error('❌ Authentication error in game polling:', response.status);
+            clearInterval(pollInterval);
+          } else if (response.status >= 500) {
+            // Server errors - retry with exponential backoff
+            retryCount++;
+            console.error('❌ Server error in game polling:', response.status, 'Retry:', retryCount);
+            if (retryCount >= maxRetries) {
+              console.error('❌ Max retries reached for game polling');
+              clearInterval(pollInterval);
+            }
+          } else {
+            console.error('❌ Unexpected response in game polling:', response.status);
           }
         } catch (error) {
-          console.error('Error polling game data:', error);
+          console.error('❌ Error polling game data:', error);
+          retryCount++;
+          if (retryCount >= maxRetries) {
+            console.error('❌ Max retries reached for game polling');
+            clearInterval(pollInterval);
+          }
         }
       }, 5000); // Poll every 5 seconds
     };
@@ -179,9 +217,11 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
     const handleVisibilityChange = () => {
       if (document.hidden) {
         // Stop polling when tab is not visible
+        console.log('👁️ Tab hidden, stopping game polling');
         if (pollInterval) clearInterval(pollInterval);
       } else {
         // Resume polling when tab becomes visible
+        console.log('👁️ Tab visible, resuming game polling');
         startPolling();
       }
     };
@@ -193,7 +233,10 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      if (pollInterval) clearInterval(pollInterval);
+      if (pollInterval) {
+        console.log('🛑 Stopping game polling');
+        clearInterval(pollInterval);
+      }
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [isOpen, currentGame?.id, isDM, gameNotes, dmNotes]);
@@ -217,18 +260,34 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
     if (activeTab !== 'chat' || !currentGame) return;
 
     let chatPollInterval: NodeJS.Timeout;
+    let retryCount = 0;
+    const maxRetries = 3;
 
     const startChatPolling = () => {
+      console.log('🔄 Starting chat polling for game:', currentGame.id);
       chatPollInterval = setInterval(async () => {
         try {
-          const response = await fetch(`/api/games/${currentGame.id}/chat`);
+          console.log('📡 Chat poll attempt:', new Date().toISOString());
+          const response = await fetch(`/api/games/${currentGame.id}/chat`, {
+            // Add cache: 'no-cache' to prevent stale responses
+            cache: 'no-cache',
+            // Add timeout
+            signal: AbortSignal.timeout(5000)
+          });
+          
+          console.log('📡 Chat response status:', response.status, response.statusText);
+          
           if (response.ok) {
+            retryCount = 0; // Reset retry count on success
             const messages: ChatMessage[] = await response.json();
+            console.log('📡 Chat messages received:', messages.length, 'messages');
             
             // Check if we have new messages
             if (messages.length > 0) {
               const latestMessageId = messages[messages.length - 1].id;
+              console.log('📡 Latest message ID:', latestMessageId, 'vs current:', lastMessageId);
               if (latestMessageId !== lastMessageId) {
+                console.log('📡 New messages detected, updating chat');
                 // Merge new messages with existing ones, preserving optimistic messages
                 setChatMessages(prev => {
                   const optimisticMessages = prev.filter(msg => msg.id.startsWith('temp-'));
@@ -236,11 +295,34 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                   return [...realMessages, ...optimisticMessages];
                 });
                 setLastMessageId(latestMessageId);
+              } else {
+                console.log('📡 No new messages');
               }
+            } else {
+              console.log('📡 No messages in response');
             }
+          } else if (response.status === 401 || response.status === 403) {
+            // Auth errors - stop polling and let user know
+            console.error('❌ Authentication error in chat polling:', response.status);
+            clearInterval(chatPollInterval);
+          } else if (response.status >= 500) {
+            // Server errors - retry with exponential backoff
+            retryCount++;
+            console.error('❌ Server error in chat polling:', response.status, 'Retry:', retryCount);
+            if (retryCount >= maxRetries) {
+              console.error('❌ Max retries reached for chat polling');
+              clearInterval(chatPollInterval);
+            }
+          } else {
+            console.error('❌ Unexpected response in chat polling:', response.status);
           }
         } catch (error) {
-          console.error('Error polling chat messages:', error);
+          console.error('❌ Error polling chat messages:', error);
+          retryCount++;
+          if (retryCount >= maxRetries) {
+            console.error('❌ Max retries reached for chat polling');
+            clearInterval(chatPollInterval);
+          }
         }
       }, 3000); // Poll every 3 seconds for chat
     };
@@ -248,7 +330,10 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
     startChatPolling();
 
     return () => {
-      if (chatPollInterval) clearInterval(chatPollInterval);
+      if (chatPollInterval) {
+        console.log('🛑 Stopping chat polling');
+        clearInterval(chatPollInterval);
+      }
     };
   }, [activeTab, currentGame?.id, lastMessageId]);
 
