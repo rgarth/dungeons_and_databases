@@ -137,25 +137,15 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
     setCurrentGame(game);
   }, [game]);
 
-  // SSE-based real-time updates instead of polling
+  // SSE-based real-time updates for game state changes
   useGameEvents({
     gameId: currentGame?.id || '',
     enabled: isOpen && !!currentGame,
-    onGameUpdate: (updatedGame: Game) => {
-      // Always update notes if they're present in the response
-      let notesChanged = false;
-      if (updatedGame.gameNotes !== undefined && updatedGame.gameNotes !== gameNotes) {
-        setGameNotes(updatedGame.gameNotes || '');
-        notesChanged = true;
-      }
-      if (isDM && updatedGame.dmNotes !== undefined && updatedGame.dmNotes !== dmNotes) {
-        setDmNotes(updatedGame.dmNotes || '');
-        notesChanged = true;
-      }
-      
-      // Update game data if it has changed or if notes changed
-      if (JSON.stringify(updatedGame) !== JSON.stringify(currentGame) || notesChanged) {
-        setCurrentGame(updatedGame);
+    onGameUpdate: (gameUpdate) => {
+      // Only refresh if there are actual changes
+      if (gameUpdate.hasChanges) {
+        console.log('🔄 Game state changed, refreshing data...');
+        refreshGameData();
       }
     },
     onError: (error: Error) => {
@@ -383,10 +373,6 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
     } finally {
       setShowRemoveParticipantConfirm(null);
     }
-  };
-
-  const confirmRemoveParticipant = (participantId: string) => {
-    setShowRemoveParticipantConfirm(participantId);
   };
 
   const handleDeleteGame = async () => {
@@ -795,11 +781,11 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                 
                 {/* Game Notes - Visible to all players */}
                 <div className="mb-6">
-                  <div className="flex justify-between items-center mb-3">
-                    <h4 className="text-md font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                      Player Viewable Notes
-                    </h4>
-                    {isDM && (
+                  {isDM && (
+                    <div className="flex justify-between items-center mb-3">
+                      <h4 className="text-md font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                        Player Viewable Notes
+                      </h4>
                       <button
                         onClick={() => saveNotes('game')}
                         disabled={isSavingNotes}
@@ -820,9 +806,9 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                           </>
                         )}
                       </button>
-                    )}
-                  </div>
-                  <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                    </div>
+                  )}
+                  <div className={`p-4 rounded-lg ${!isDM ? 'mt-3' : ''}`} style={{ backgroundColor: 'var(--color-card-secondary)' }}>
                     {isDM ? (
                       <textarea
                         value={gameNotes}

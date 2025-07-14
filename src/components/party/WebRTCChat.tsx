@@ -14,11 +14,12 @@ export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) 
   
   const {
     messages,
-    connectedPeers,
+    peerCount,
     isConnected,
     error,
     sendMessage,
-    connect
+    connect,
+    clearMessages
   } = useWebRTCChat({ gameId, enabled });
 
   // Auto-scroll to bottom when new messages arrive
@@ -80,8 +81,18 @@ export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) 
         </div>
         <div className="flex items-center space-x-2">
           <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-            {connectedPeers.length} peer{connectedPeers.length !== 1 ? 's' : ''} connected
+            {peerCount} peer{peerCount !== 1 ? 's' : ''} connected
           </span>
+          {messages.length > 0 && (
+            <button
+              onClick={clearMessages}
+              className="px-2 py-1 text-xs rounded hover:opacity-80"
+              style={{ backgroundColor: 'var(--color-danger)', color: 'var(--color-danger-text)' }}
+              title="Clear chat history"
+            >
+              Clear
+            </button>
+          )}
           {!isConnected && (
             <button
               onClick={connect}
@@ -112,26 +123,28 @@ export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) 
             <div key={message.id} className="flex items-start space-x-2">
               <span className="text-lg">{getMessageIcon(message)}</span>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center space-x-2">
-                  <span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>
-                    {message.userName}
-                  </span>
-                  <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2 min-w-0 flex-1">
+                    <span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                      {message.userName}:
+                    </span>
+                    <span 
+                      className={`${getMessageStyle(message)} truncate`}
+                      style={{ 
+                        color: message.type === 'system' 
+                          ? 'var(--color-text-muted)' 
+                          : message.type === 'dice_roll'
+                          ? 'var(--color-accent)'
+                          : 'var(--color-text-primary)'
+                      }}
+                    >
+                      {message.message}
+                    </span>
+                  </div>
+                  <span className="text-xs ml-2 flex-shrink-0" style={{ color: 'var(--color-text-muted)' }}>
                     {formatTimestamp(message.timestamp)}
                   </span>
                 </div>
-                <p 
-                  className={`mt-1 ${getMessageStyle(message)}`}
-                  style={{ 
-                    color: message.type === 'system' 
-                      ? 'var(--color-text-muted)' 
-                      : message.type === 'dice_roll'
-                      ? 'var(--color-accent)'
-                      : 'var(--color-text-primary)'
-                  }}
-                >
-                  {message.message}
-                </p>
               </div>
             </div>
           ))

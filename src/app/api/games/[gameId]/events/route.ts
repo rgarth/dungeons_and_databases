@@ -3,6 +3,13 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
+// In-memory tracking of game state changes
+const gameStateChanges = new Map<string, {
+  lastUpdate: number;
+  participants: Set<string>;
+  characters: Set<string>;
+}>();
+
 // SSE endpoint for real-time game updates
 export async function GET(
   request: NextRequest,
@@ -49,6 +56,7 @@ export async function GET(
     const stream = new ReadableStream({
       start(controller) {
         let isClosed = false;
+        let updateInterval: NodeJS.Timeout | null = null;
         
         const sendEvent = (event: string, data: unknown) => {
           if (isClosed) return;
@@ -63,99 +71,115 @@ export async function GET(
 
         // Send initial game state
         const sendGameUpdate = async () => {
+          if (isClosed) return;
+          
           try {
-            // Optimized single query with all includes
+            // Only fetch basic game info, not full details
             const game = await prisma.game.findUnique({
               where: { id: gameId },
-              include: {
-                dm: {
+              select: {
+                id: true,
+                name: true,
+                updatedAt: true,
+                participants: {
                   select: {
                     id: true,
-                    name: true,
-                    email: true
-                  }
-                },
-                participants: {
-                  include: {
-                    user: {
-                      select: {
-                        id: true,
-                        name: true,
-                        email: true
-                      }
-                    }
-                  }
-                },
-                _count: {
-                  select: {
-                    participants: true
+                    userId: true,
+                    characterIds: true
                   }
                 }
               }
             });
 
-            if (game) {
-              // Get all character IDs from all participants
-              const allCharacterIds = game.participants.flatMap(
-                participant => (participant.characterIds as string[]) || []
+            if (game && !isClosed) {
+              // Check for state changes
+              const currentParticipants = new Set(game.participants.map(p => p.userId));
+              const currentCharacters = new Set(
+                game.participants.flatMap(p => (p.characterIds as string[]) || [])
               );
 
-              // Single query for all characters
-              const allCharacters = allCharacterIds.length > 0 ? await prisma.character.findMany({
-                where: {
-                  id: { in: allCharacterIds }
-                },
-                select: {
-                  id: true,
-                  name: true,
-                  class: true,
-                  level: true,
-                  race: true,
-                  avatarUrl: true
+              const previousState = gameStateChanges.get(gameId);
+              let hasChanges = false;
+
+              if (!previousState) {
+                // First time, initialize state
+                gameStateChanges.set(gameId, {
+                  lastUpdate: Date.now(),
+                  participants: currentParticipants,
+                  characters: currentCharacters
+                });
+                hasChanges = true;
+              } else {
+                // Check for changes
+                const participantChanged = 
+                  previousState.participants.size !== currentParticipants.size ||
+                  [...previousState.participants].some(p => !currentParticipants.has(p)) ||
+                  [...currentParticipants].some(p => !previousState.participants.has(p));
+
+                const characterChanged = 
+                  previousState.characters.size !== currentCharacters.size ||
+                  [...previousState.characters].some(c => !currentCharacters.has(c)) ||
+                  [...currentCharacters].some(c => !previousState.characters.has(c));
+
+                if (participantChanged || characterChanged) {
+                  hasChanges = true;
+                  // Update state
+                  gameStateChanges.set(gameId, {
+                    lastUpdate: Date.now(),
+                    participants: currentParticipants,
+                    characters: currentCharacters
+                  });
                 }
-              }) : [];
+              }
 
-              // Create a map for quick lookup
-              const characterMap = new Map(allCharacters.map(char => [char.id, char]));
-
-              // Attach characters to participants
-              const participantsWithCharacters = game.participants.map(participant => {
-                const characterIds = (participant.characterIds as string[]) || [];
-                const characters = characterIds.map(id => characterMap.get(id)).filter(Boolean);
-                
-                return {
-                  ...participant,
-                  characters
-                };
-              });
-
-              const gameWithCharacters = {
-                ...game,
-                participants: participantsWithCharacters
-              };
-
-              sendEvent('game-update', gameWithCharacters);
+              // Only send update if there are changes or it's been more than 5 minutes
+              const timeSinceLastUpdate = Date.now() - (previousState?.lastUpdate || 0);
+              if (hasChanges || timeSinceLastUpdate > 5 * 60 * 1000) {
+                sendEvent('game-update', {
+                  id: game.id,
+                  name: game.name,
+                  updatedAt: game.updatedAt,
+                  participantCount: currentParticipants.size,
+                  characterCount: currentCharacters.size,
+                  hasChanges
+                });
+              }
             }
           } catch (error) {
             console.error('Error sending game update:', error);
+            // Don't close the connection on error, just log it
           }
         };
 
         // Send initial state
         sendGameUpdate();
 
-        // Set up periodic updates (much less frequent than polling)
-        const interval = setInterval(sendGameUpdate, 60000); // Every 60 seconds
+        // Set up periodic updates (much less frequent to reduce database load)
+        updateInterval = setInterval(sendGameUpdate, 30000); // Every 30 seconds instead of 5 minutes
 
         // Clean up on disconnect
-        request.signal.addEventListener('abort', () => {
+        const cleanup = () => {
           isClosed = true;
-          clearInterval(interval);
+          if (updateInterval) {
+            clearInterval(updateInterval);
+            updateInterval = null;
+          }
           try {
             controller.close();
           } catch (error) {
             console.error('Error closing SSE controller:', error);
           }
+        };
+
+        // Listen for client disconnect
+        request.signal.addEventListener('abort', cleanup);
+        
+        // Also set up a timeout to close the connection after 30 minutes to prevent hanging connections
+        const timeoutId = setTimeout(cleanup, 30 * 60 * 1000); // 30 minutes
+        
+        // Clear timeout if connection is closed early
+        request.signal.addEventListener('abort', () => {
+          clearTimeout(timeoutId);
         });
       }
     });

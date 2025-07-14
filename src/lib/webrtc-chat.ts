@@ -225,7 +225,13 @@ export class WebRTCChat {
     };
 
     dataChannel.onerror = (error) => {
-      console.error(`Data channel error with ${peerId}:`, error);
+      // Only log errors that aren't user-initiated aborts (which are normal when closing)
+      const rtcError = error.error as { reason?: string };
+      if (rtcError && rtcError.reason !== 'Close called') {
+        console.error(`Data channel error with ${peerId}:`, error);
+      } else {
+        console.log(`Data channel closed normally with ${peerId}`);
+      }
     };
   }
 
@@ -246,8 +252,33 @@ export class WebRTCChat {
       }
     });
 
-    // Also trigger local message callback
-    this.config.onMessage(chatMessage);
+    // Store message in server history
+    this.socket?.emit('store-chat-message', {
+      gameId: this.config.gameId,
+      message: chatMessage
+    });
+
+    // Also trigger local message callback with "You" as username for local messages
+    const localMessage = {
+      ...chatMessage,
+      userName: 'You'
+    };
+    this.config.onMessage(localMessage);
+  }
+
+  // Load chat history from server
+  async loadChatHistory(): Promise<ChatMessage[]> {
+    return new Promise((resolve) => {
+      if (this.socket) {
+        this.socket.emit('get-chat-history', { gameId: this.config.gameId }, (history: ChatMessage[]) => {
+          console.log(`📜 Loaded ${history.length} messages from history`);
+          resolve(history);
+        });
+      } else {
+        console.log('❌ No socket connection for chat history request');
+        resolve([]);
+      }
+    });
   }
 
   disconnect(): void {
@@ -266,5 +297,21 @@ export class WebRTCChat {
 
   getConnectedPeers(): string[] {
     return Array.from(this.peerConnections.keys());
+  }
+
+  // Get the actual number of peers in the room (including self)
+  getRoomPeerCount(): Promise<number> {
+    return new Promise((resolve) => {
+      if (this.socket) {
+        console.log(`🔍 Requesting peer count for game: ${this.config.gameId}`);
+        this.socket.emit('get-room-peer-count', { gameId: this.config.gameId }, (count: number) => {
+          console.log(`📊 Received peer count: ${count} for game: ${this.config.gameId}`);
+          resolve(count);
+        });
+      } else {
+        console.log('❌ No socket connection for peer count request');
+        resolve(0);
+      }
+    });
   }
 } 

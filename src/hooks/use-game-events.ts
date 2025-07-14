@@ -1,11 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
-import { Game } from '@/types/game';
 
 interface UseGameEventsOptions {
   gameId: string;
   enabled?: boolean;
-  onGameUpdate?: (game: Game) => void;
+  onGameUpdate?: (gameUpdate: GameUpdate) => void;
   onError?: (error: Error) => void;
+}
+
+interface GameUpdate {
+  id: string;
+  name: string;
+  updatedAt: string;
+  participantCount: number;
+  characterCount: number;
+  hasChanges: boolean;
 }
 
 export function useGameEvents({ 
@@ -40,22 +48,11 @@ export function useGameEvents({
           setError(null);
         };
 
-        eventSource.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data);
-            if (data.type === 'game-update' && onGameUpdate) {
-              onGameUpdate(data.game);
-            }
-          } catch (parseError) {
-            console.error('Error parsing SSE message:', parseError);
-          }
-        };
-
         eventSource.addEventListener('game-update', (event) => {
           try {
-            const game = JSON.parse(event.data);
+            const gameUpdate: GameUpdate = JSON.parse(event.data);
             if (onGameUpdate) {
-              onGameUpdate(game);
+              onGameUpdate(gameUpdate);
             }
           } catch (parseError) {
             console.error('Error parsing game update:', parseError);
