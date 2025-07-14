@@ -19,7 +19,7 @@ const signalingMessages = new Map<string, Array<{
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { gameId: string } }
+  { params }: { params: Promise<{ gameId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -27,7 +27,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { gameId } = params;
+    const { gameId } = await params;
     const { type, targetUserId, signal, signalType, fromUserId, timestamp } = await request.json();
 
     // Get the user by email to get their ID

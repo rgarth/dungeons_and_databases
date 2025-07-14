@@ -19,7 +19,7 @@ const signalingMessages = new Map<string, Array<{
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { gameId: string } }
+  { params }: { params: Promise<{ gameId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -27,7 +27,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { gameId } = params;
+    const { gameId } = await params;
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
     const since = parseInt(searchParams.get('since') || '0');
