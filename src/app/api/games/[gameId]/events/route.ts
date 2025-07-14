@@ -64,6 +64,7 @@ export async function GET(
         // Send initial game state
         const sendGameUpdate = async () => {
           try {
+            // Optimized single query with all includes
             const game = await prisma.game.findUnique({
               where: { id: gameId },
               include: {
@@ -87,38 +88,46 @@ export async function GET(
                 },
                 _count: {
                   select: {
-                    participants: true,
-                    chatMessages: true
+                    participants: true
                   }
                 }
               }
             });
 
-            // Fetch characters for each participant
             if (game) {
-              const participantsWithCharacters = await Promise.all(
-                game.participants.map(async (participant) => {
-                  const characterIds = participant.characterIds as string[] || [];
-                  const characters = await prisma.character.findMany({
-                    where: {
-                      id: { in: characterIds }
-                    },
-                    select: {
-                      id: true,
-                      name: true,
-                      class: true,
-                      level: true,
-                      race: true,
-                      avatarUrl: true
-                    }
-                  });
-                  
-                  return {
-                    ...participant,
-                    characters
-                  };
-                })
+              // Get all character IDs from all participants
+              const allCharacterIds = game.participants.flatMap(
+                participant => (participant.characterIds as string[]) || []
               );
+
+              // Single query for all characters
+              const allCharacters = allCharacterIds.length > 0 ? await prisma.character.findMany({
+                where: {
+                  id: { in: allCharacterIds }
+                },
+                select: {
+                  id: true,
+                  name: true,
+                  class: true,
+                  level: true,
+                  race: true,
+                  avatarUrl: true
+                }
+              }) : [];
+
+              // Create a map for quick lookup
+              const characterMap = new Map(allCharacters.map(char => [char.id, char]));
+
+              // Attach characters to participants
+              const participantsWithCharacters = game.participants.map(participant => {
+                const characterIds = (participant.characterIds as string[]) || [];
+                const characters = characterIds.map(id => characterMap.get(id)).filter(Boolean);
+                
+                return {
+                  ...participant,
+                  characters
+                };
+              });
 
               const gameWithCharacters = {
                 ...game,

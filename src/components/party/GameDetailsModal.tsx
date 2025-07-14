@@ -11,9 +11,8 @@ import { useAvatar } from '@/hooks/use-character-mutations';
 import Image from 'next/image';
 import { CharacterSheet } from '@/components/character-sheet';
 import ReadOnlyCharacterSheet from '@/components/character-sheet/ReadOnlyCharacterSheet';
-import { ChatMessage } from '@/types/game';
 import { useGameEvents } from '@/hooks/use-game-events';
-import { useChatEvents } from '@/hooks/use-chat-events';
+import WebRTCChat from './WebRTCChat';
 
 // Character Avatar Component
 function CharacterAvatar({ characterId, characterName }: { characterId: string; characterName: string }) {
@@ -130,12 +129,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
   const [isSavingNotes, setIsSavingNotes] = useState(false);
   const [notesError, setNotesError] = useState<string | null>(null);
 
-  // Chat state
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [isSendingMessage, setIsSendingMessage] = useState(false);
-  const [chatError, setChatError] = useState<string | null>(null);
-  const [lastMessageId, setLastMessageId] = useState<string | null>(null);
+
 
   const isDM = currentGame?.dm.id === (session?.user as { id?: string })?.id;
 
@@ -176,38 +170,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
     }
   }, [activeTab, currentGame?.id]);
 
-  // Load chat messages when chat tab is active
-  useEffect(() => {
-    if (activeTab === 'chat' && currentGame) {
-      loadChatMessages();
-    }
-  }, [activeTab, currentGame?.id]);
 
-  // SSE-based chat updates instead of polling
-  useChatEvents({
-    gameId: currentGame?.id || '',
-    enabled: isOpen && activeTab === 'chat' && !!currentGame,
-    onChatUpdate: (messages: ChatMessage[]) => {
-      console.log('📡 Chat update received via SSE:', messages.length, 'messages');
-      
-      if (messages.length > 0) {
-        const latestMessageId = messages[messages.length - 1].id;
-        if (latestMessageId !== lastMessageId) {
-          console.log('📡 New messages detected, updating chat');
-          // Merge new messages with existing ones, preserving optimistic messages
-          setChatMessages(prev => {
-            const optimisticMessages = prev.filter(msg => msg.id.startsWith('temp-'));
-            const realMessages = messages.filter(msg => !msg.id.startsWith('temp-'));
-            return [...realMessages, ...optimisticMessages];
-          });
-          setLastMessageId(latestMessageId);
-        }
-      }
-    },
-    onError: (error: Error) => {
-      console.error('❌ Chat SSE error:', error);
-    }
-  });
 
   const loadNotes = async () => {
     if (!currentGame) return;
@@ -277,86 +240,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
     }
   };
 
-  const loadChatMessages = async () => {
-    if (!currentGame) return;
 
-    try {
-      const response = await fetch(`/api/games/${currentGame.id}/chat`);
-      if (response.ok) {
-        const messages: ChatMessage[] = await response.json();
-        setChatMessages(messages);
-        if (messages.length > 0) {
-          setLastMessageId(messages[messages.length - 1].id);
-        }
-      }
-    } catch (error) {
-      console.error('Error loading chat messages:', error);
-      setChatError('Failed to load chat messages');
-    }
-  };
-
-  const sendMessage = async () => {
-    if (!currentGame || !newMessage.trim()) return;
-
-    try {
-      setIsSendingMessage(true);
-      setChatError(null);
-
-      const messageText = newMessage.trim();
-      setNewMessage('');
-
-      // Optimistic update - add message immediately
-      const optimisticMessage: ChatMessage = {
-        id: `temp-${Date.now()}`,
-        gameId: currentGame.id,
-        userId: (session?.user as { id?: string })?.id || '',
-        message: messageText,
-        messageType: 'text',
-        createdAt: new Date().toISOString(),
-        user: {
-          id: (session?.user as { id?: string })?.id || '',
-          name: session?.user?.name || '',
-          email: session?.user?.email || ''
-        }
-      };
-
-      setChatMessages(prev => [...prev, optimisticMessage]);
-
-      const response = await fetch(`/api/games/${currentGame.id}/chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: messageText,
-          messageType: 'text'
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to send message');
-      }
-
-      const realMessage: ChatMessage = await response.json();
-      
-      // Replace optimistic message with real message
-      setChatMessages(prev => prev.map(msg => 
-        msg.id === optimisticMessage.id ? realMessage : msg
-      ));
-      
-      // Update last message ID to prevent polling from interfering
-      setLastMessageId(realMessage.id);
-
-    } catch (error) {
-      console.error('Error sending message:', error);
-      setChatError(error instanceof Error ? error.message : 'Failed to send message');
-      // Remove optimistic message on error
-      setChatMessages(prev => prev.filter(msg => !msg.id.startsWith('temp-')));
-    } finally {
-      setIsSendingMessage(false);
-    }
-  };
 
   // Fetch characters when add character modal opens
   useEffect(() => {
@@ -764,7 +648,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                       <MessageSquare className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
                       <div className="text-center">
                         <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Messages</div>
-                        <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{currentGame._count.chatMessages}</div>
+                        <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>0</div>
                       </div>
                     </div>
                   </div>
@@ -1017,106 +901,11 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
             )}
 
             {activeTab === 'chat' && (
-              <div>
-                <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
-                  Game Chat
-                </h3>
-                
-                {/* Chat Messages */}
-                <div className="mb-4 p-4 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                  <div className="max-h-96 overflow-y-auto mb-4">
-                    {chatMessages.length === 0 ? (
-                      <div className="text-center py-8">
-                        <p className="text-[var(--color-text-secondary)] italic">
-                          No messages yet. Start the conversation!
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {chatMessages.map((message) => (
-                          <div
-                            key={message.id}
-                            className={`p-3 rounded-lg ${
-                              message.user.id === (session?.user as { id?: string })?.id
-                                ? 'ml-8'
-                                : 'mr-8'
-                            }`}
-                            style={{
-                              backgroundColor: message.user.id === (session?.user as { id?: string })?.id
-                                ? 'var(--color-accent-bg)'
-                                : 'var(--color-card)'
-                            }}
-                          >
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="font-semibold text-sm" style={{ color: 'var(--color-text-primary)' }}>
-                                {message.user.id === (session?.user as { id?: string })?.id 
-                                  ? 'You' 
-                                  : (message.user.name || message.user.email)
-                                }
-                              </span>
-                              <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
-                                {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                              </span>
-                            </div>
-                            <div className="text-sm whitespace-pre-wrap" style={{ color: 'var(--color-text-secondary)' }}>
-                              {message.message}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Message Input */}
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          sendMessage();
-                        }
-                      }}
-                      className="flex-1 px-3 py-2 rounded-md border focus:outline-none focus:ring-2"
-                      style={{
-                        backgroundColor: 'var(--color-card)',
-                        color: 'var(--color-text-primary)',
-                        borderColor: 'var(--color-border)',
-                        outlineColor: 'var(--color-accent)'
-                      }}
-                      placeholder="Type a message... (Press Enter to send)"
-                      disabled={isSendingMessage}
-                    />
-                    <button
-                      onClick={sendMessage}
-                      disabled={!newMessage.trim() || isSendingMessage}
-                      className="px-4 py-2 bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] rounded transition-colors disabled:opacity-50 flex items-center gap-2"
-                    >
-                      {isSendingMessage ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                          </svg>
-                          Send
-                        </>
-                      )}
-                    </button>
-                  </div>
-                  
-                  {/* Error Display */}
-                  {chatError && (
-                    <div className="mt-3 p-3 rounded-lg text-sm" style={{ backgroundColor: 'var(--color-danger-bg)', color: 'var(--color-danger)' }}>
-                      {chatError}
-                    </div>
-                  )}
-                </div>
+              <div className="h-96">
+                <WebRTCChat 
+                  gameId={currentGame?.id || ''} 
+                  enabled={activeTab === 'chat' && !!currentGame} 
+                />
               </div>
             )}
 

@@ -110,7 +110,7 @@ export default function GamesList({ onGameSelect, onCreateGame }: GamesListProps
                 </div>
                 <div className="flex justify-between">
                   <span>Messages:</span>
-                  <span>{game._count.chatMessages}</span>
+                  <span>0</span>
                 </div>
               </div>
               

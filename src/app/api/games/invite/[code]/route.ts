@@ -45,12 +45,11 @@ export async function GET(
                 }
               }
             },
-            _count: {
-              select: {
-                participants: true,
-                chatMessages: true
-              }
-            }
+                    _count: {
+          select: {
+            participants: true
+          }
+        }
           }
         }
       }

@@ -69,22 +69,9 @@ export interface Game {
   }>;
   _count: {
     participants: number;
-    chatMessages: number;
   };
   createdAt: string;
   updatedAt: string;
 }
 
-export interface ChatMessage {
-  id: string;
-  gameId: string;
-  userId: string;
-  message: string;
-  messageType: string;
-  createdAt: string;
-  user: {
-    id: string;
-    name?: string;
-    email: string;
-  };
-} 
+ 

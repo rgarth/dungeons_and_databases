@@ -219,7 +219,7 @@ export default function InvitePage({ params }: InvitePageProps) {
                 <MessageSquare className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
                 <div>
                   <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Messages</div>
-                  <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{game._count.chatMessages}</div>
+                  <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>0</div>
                 </div>
               </div>
             </div>
