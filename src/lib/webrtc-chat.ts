@@ -1,5 +1,3 @@
-import { io, Socket } from 'socket.io-client';
-
 export interface ChatMessage {
   id: string;
   userId: string;
@@ -30,8 +28,10 @@ export class WebRTCChat {
   private config: WebRTCChatConfig;
   private peerConnections: Map<string, PeerConnection> = new Map();
   private localPeerId: string;
-  private socket: Socket | null = null;
   private isHost: boolean = false;
+  private signalingInterval: NodeJS.Timeout | null = null;
+  private lastSignalingCheck: number = 0;
+  private connectedPeers: Set<string> = new Set();
 
   constructor(config: WebRTCChatConfig) {
     this.config = config;
@@ -40,8 +40,8 @@ export class WebRTCChat {
 
   async connect(): Promise<void> {
     try {
-      // Connect to Socket.IO server
-      await this.connectToSignalingServer();
+      // Start HTTP-based signaling
+      await this.startSignaling();
       
       // If no other peers exist, become the host
       if (this.peerConnections.size === 0) {
@@ -52,46 +52,84 @@ export class WebRTCChat {
     }
   }
 
-  private async connectToSignalingServer(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      // Connect to Socket.IO server
-      this.socket = io();
-      
-      this.socket.on('connect', () => {
-        console.log('🔗 Connected to Socket.IO server');
-        
-        // Join the game room
-        this.socket?.emit('join-game', {
-          gameId: this.config.gameId,
+  private async startSignaling(): Promise<void> {
+    // Register this peer with the signaling server
+    await this.registerPeer();
+    
+    // Start polling for signaling messages
+    this.signalingInterval = setInterval(async () => {
+      await this.pollSignalingMessages();
+    }, 1000); // Poll every second
+  }
+
+  private async registerPeer(): Promise<void> {
+    try {
+      const response = await fetch(`/api/games/${this.config.gameId}/signaling/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           userId: this.config.userId,
-          userName: this.config.userName
-        });
-        
-        resolve();
+          userName: this.config.userName,
+          timestamp: Date.now()
+        })
       });
 
-      this.socket.on('peer-joined', (data: { peerId: string; userName: string; socketId: string }) => {
-        this.handlePeerJoined(data.peerId, data.userName, data.socketId);
-      });
+      if (!response.ok) {
+        throw new Error('Failed to register peer');
+      }
+    } catch (error) {
+      console.error('Failed to register peer:', error);
+      throw error;
+    }
+  }
 
-      this.socket.on('peer-left', (data: { socketId: string }) => {
-        this.handlePeerLeft(data.socketId);
-      });
+  private async pollSignalingMessages(): Promise<void> {
+    try {
+      const response = await fetch(`/api/games/${this.config.gameId}/signaling/messages?userId=${this.config.userId}&since=${this.lastSignalingCheck}`);
+      
+      if (!response.ok) {
+        return;
+      }
 
-      this.socket.on('webrtc-signal', (data: { fromSocketId: string; signal: RTCSessionDescriptionInit | RTCIceCandidateInit; type: string }) => {
-        this.handleWebRTCSignal(data.fromSocketId, data.signal, data.type);
-      });
+      const messages = await response.json();
+      
+      for (const message of messages) {
+        await this.handleSignalingMessage(message);
+        this.lastSignalingCheck = Math.max(this.lastSignalingCheck, message.timestamp);
+      }
+    } catch (error) {
+      console.error('Failed to poll signaling messages:', error);
+    }
+  }
 
-      this.socket.on('connect_error', (error) => {
-        console.error('Socket.IO connection error:', error);
-        reject(error);
-      });
-
-      this.socket.on('disconnect', () => {
-        console.log('Socket.IO connection closed');
-        this.config.onError('Lost connection to signaling server');
-      });
-    });
+  private async handleSignalingMessage(message: {
+    type: string;
+    peerId?: string;
+    userName?: string;
+    socketId?: string;
+    fromSocketId?: string;
+    signal?: RTCSessionDescriptionInit | RTCIceCandidateInit;
+    signalType?: string;
+  }): Promise<void> {
+          switch (message.type) {
+        case 'peer-joined':
+          if (message.peerId && message.userName && message.socketId) {
+            await this.handlePeerJoined(message.peerId, message.userName, message.socketId);
+          }
+          break;
+        case 'peer-left':
+          if (message.socketId) {
+            this.handlePeerLeft(message.socketId);
+          }
+          break;
+        case 'webrtc-signal':
+          if (message.fromSocketId && message.signal && message.signalType) {
+            await this.handleWebRTCSignal(message.fromSocketId, message.signal, message.signalType);
+          }
+          break;
+      }
   }
 
   private async handlePeerJoined(peerId: string, userName: string, socketId: string): Promise<void> {
@@ -101,15 +139,17 @@ export class WebRTCChat {
 
     const peerConnection = await this.createPeerConnection(peerId, socketId);
     this.peerConnections.set(peerId, peerConnection);
+    this.connectedPeers.add(peerId);
 
     if (this.isHost) {
       // Host creates and sends offer
       const offer = await peerConnection.connection.createOffer();
       await peerConnection.connection.setLocalDescription(offer);
-      this.socket?.emit('webrtc-signal', {
-        targetSocketId: socketId,
+      await this.sendSignalingMessage({
+        type: 'webrtc-signal',
+        targetUserId: peerId,
         signal: offer,
-        type: 'offer'
+        signalType: 'offer'
       });
     }
 
@@ -123,6 +163,7 @@ export class WebRTCChat {
       if (peerConnection.socketId === socketId) {
         peerConnection.connection.close();
         this.peerConnections.delete(peerId);
+        this.connectedPeers.delete(peerId);
         this.config.onPeerDisconnected(peerId);
         break;
       }
@@ -144,6 +185,7 @@ export class WebRTCChat {
       const peerId = `peer-${fromSocketId}`;
       targetPeerConnection = await this.createPeerConnection(peerId, fromSocketId);
       this.peerConnections.set(peerId, targetPeerConnection);
+      this.connectedPeers.add(peerId);
     }
 
     switch (type) {
@@ -151,10 +193,11 @@ export class WebRTCChat {
         await targetPeerConnection.connection.setRemoteDescription(signal as RTCSessionDescriptionInit);
         const answer = await targetPeerConnection.connection.createAnswer();
         await targetPeerConnection.connection.setLocalDescription(answer);
-        this.socket?.emit('webrtc-signal', {
-          targetSocketId: fromSocketId,
+        await this.sendSignalingMessage({
+          type: 'webrtc-signal',
+          targetUserId: targetPeerConnection.peerId,
           signal: answer,
-          type: 'answer'
+          signalType: 'answer'
         });
         break;
       case 'answer':
@@ -163,6 +206,29 @@ export class WebRTCChat {
       case 'ice-candidate':
         await targetPeerConnection.connection.addIceCandidate(signal as RTCIceCandidateInit);
         break;
+    }
+  }
+
+  private async sendSignalingMessage(message: {
+    type: string;
+    targetUserId?: string;
+    signal?: RTCSessionDescriptionInit | RTCIceCandidateInit;
+    signalType?: string;
+  }): Promise<void> {
+    try {
+      await fetch(`/api/games/${this.config.gameId}/signaling/send`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...message,
+          fromUserId: this.config.userId,
+          timestamp: Date.now()
+        })
+      });
+    } catch (error) {
+      console.error('Failed to send signaling message:', error);
     }
   }
 
@@ -177,12 +243,13 @@ export class WebRTCChat {
     const connection = new RTCPeerConnection(configuration);
 
     // Handle ICE candidates
-    connection.onicecandidate = (event) => {
+    connection.onicecandidate = async (event) => {
       if (event.candidate) {
-        this.socket?.emit('webrtc-signal', {
-          targetSocketId: socketId,
+        await this.sendSignalingMessage({
+          type: 'webrtc-signal',
+          targetUserId: peerId,
           signal: event.candidate,
-          type: 'ice-candidate'
+          signalType: 'ice-candidate'
         });
       }
     };
@@ -198,41 +265,50 @@ export class WebRTCChat {
       this.setupDataChannel(dataChannel, peerId);
     }
 
-    return { peerId, connection, socketId };
+    return {
+      peerId,
+      connection,
+      socketId
+    };
   }
 
   private setupDataChannel(dataChannel: RTCDataChannel, peerId: string): void {
-    const peerConnection = this.peerConnections.get(peerId);
-    if (peerConnection) {
-      peerConnection.dataChannel = dataChannel;
-    }
-
     dataChannel.onopen = () => {
-      console.log(`Data channel opened with ${peerId}`);
+      console.log(`Data channel opened with peer: ${peerId}`);
     };
 
     dataChannel.onmessage = (event) => {
       try {
-        const message: ChatMessage = JSON.parse(event.data);
-        this.config.onMessage(message);
+        const data = JSON.parse(event.data);
+        if (data.type === 'chat-message') {
+          const message: ChatMessage = {
+            id: data.id,
+            userId: data.userId,
+            userName: data.userName,
+            message: data.message,
+            timestamp: data.timestamp,
+            type: data.messageType
+          };
+          this.config.onMessage(message);
+        }
       } catch (error) {
-        console.error('Error parsing chat message:', error);
+        console.error('Failed to parse data channel message:', error);
       }
     };
 
     dataChannel.onclose = () => {
-      console.log(`Data channel closed with ${peerId}`);
+      console.log(`Data channel closed with peer: ${peerId}`);
     };
 
     dataChannel.onerror = (error) => {
-      // Only log errors that aren't user-initiated aborts (which are normal when closing)
-      const rtcError = error.error as { reason?: string };
-      if (rtcError && rtcError.reason !== 'Close called') {
-        console.error(`Data channel error with ${peerId}:`, error);
-      } else {
-        console.log(`Data channel closed normally with ${peerId}`);
-      }
+      console.error(`Data channel error with peer ${peerId}:`, error);
     };
+
+    // Store the data channel in the peer connection
+    const peerConnection = this.peerConnections.get(peerId);
+    if (peerConnection) {
+      peerConnection.dataChannel = dataChannel;
+    }
   }
 
   sendMessage(message: string, type: 'text' | 'system' | 'dice_roll' = 'text'): void {
@@ -245,73 +321,61 @@ export class WebRTCChat {
       type
     };
 
-    // Send to all peers
-    this.peerConnections.forEach((peerConnection) => {
-      if (peerConnection.dataChannel?.readyState === 'open') {
-        peerConnection.dataChannel.send(JSON.stringify(chatMessage));
+    // Send to all connected peers via data channels
+    for (const peerConnection of this.peerConnections.values()) {
+      if (peerConnection.dataChannel && peerConnection.dataChannel.readyState === 'open') {
+        peerConnection.dataChannel.send(JSON.stringify({
+          messageType: 'chat-message',
+          ...chatMessage
+        }));
       }
-    });
+    }
 
-    // Store message in server history
-    this.socket?.emit('store-chat-message', {
-      gameId: this.config.gameId,
-      message: chatMessage
-    });
-
-    // Also trigger local message callback with "You" as username for local messages
-    const localMessage = {
-      ...chatMessage,
-      userName: 'You'
-    };
-    this.config.onMessage(localMessage);
+    // Also send to self for immediate display
+    this.config.onMessage(chatMessage);
   }
 
-  // Load chat history from server
   async loadChatHistory(): Promise<ChatMessage[]> {
-    return new Promise((resolve) => {
-      if (this.socket) {
-        this.socket.emit('get-chat-history', { gameId: this.config.gameId }, (history: ChatMessage[]) => {
-          console.log(`📜 Loaded ${history.length} messages from history`);
-          resolve(history);
-        });
-      } else {
-        console.log('❌ No socket connection for chat history request');
-        resolve([]);
+    try {
+      const response = await fetch(`/api/games/${this.config.gameId}/chat/history`);
+      if (response.ok) {
+        return await response.json();
       }
-    });
+    } catch (error) {
+      console.error('Failed to load chat history:', error);
+    }
+    return [];
   }
 
   disconnect(): void {
-    // Close all peer connections
-    this.peerConnections.forEach((peerConnection) => {
-      peerConnection.connection.close();
-    });
-    this.peerConnections.clear();
-
-    // Close Socket.IO connection
-    if (this.socket) {
-      this.socket.close();
-      this.socket = null;
+    // Clear signaling interval
+    if (this.signalingInterval) {
+      clearInterval(this.signalingInterval);
+      this.signalingInterval = null;
     }
+
+    // Close all peer connections
+    for (const peerConnection of this.peerConnections.values()) {
+      peerConnection.connection.close();
+    }
+    this.peerConnections.clear();
+    this.connectedPeers.clear();
   }
 
   getConnectedPeers(): string[] {
-    return Array.from(this.peerConnections.keys());
+    return Array.from(this.connectedPeers);
   }
 
-  // Get the actual number of peers in the room (including self)
-  getRoomPeerCount(): Promise<number> {
-    return new Promise((resolve) => {
-      if (this.socket) {
-        console.log(`🔍 Requesting peer count for game: ${this.config.gameId}`);
-        this.socket.emit('get-room-peer-count', { gameId: this.config.gameId }, (count: number) => {
-          console.log(`📊 Received peer count: ${count} for game: ${this.config.gameId}`);
-          resolve(count);
-        });
-      } else {
-        console.log('❌ No socket connection for peer count request');
-        resolve(0);
+  async getRoomPeerCount(): Promise<number> {
+    try {
+      const response = await fetch(`/api/games/${this.config.gameId}/signaling/peers`);
+      if (response.ok) {
+        const data = await response.json();
+        return data.count || 0;
       }
-    });
+    } catch (error) {
+      console.error('Failed to get peer count:', error);
+    }
+    return this.connectedPeers.size;
   }
 } 

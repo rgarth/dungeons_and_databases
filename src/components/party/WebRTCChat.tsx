@@ -1,4 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
 import { useWebRTCChat } from '@/hooks/use-webrtc-chat';
 import { ChatMessage } from '@/lib/webrtc-chat';
 
@@ -8,10 +10,10 @@ interface WebRTCChatProps {
 }
 
 export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) {
-  const [newMessage, setNewMessage] = useState('');
-  const [isSending, setIsSending] = useState(false);
+  const [message, setMessage] = useState('');
+  const [isConnecting, setIsConnecting] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
+
   const {
     messages,
     peerCount,
@@ -19,26 +21,39 @@ export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) 
     error,
     sendMessage,
     connect,
-    clearMessages
+    disconnect
   } = useWebRTCChat({ gameId, enabled });
 
-  // Auto-scroll to bottom when new messages arrive
-  useEffect(() => {
+  const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMessage.trim() || isSending) return;
+  const handleSendMessage = () => {
+    if (message.trim() && isConnected) {
+      sendMessage(message.trim());
+      setMessage('');
+    }
+  };
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const handleConnect = async () => {
+    setIsConnecting(true);
     try {
-      setIsSending(true);
-      sendMessage(newMessage.trim());
-      setNewMessage('');
+      await connect();
     } catch (error) {
-      console.error('Failed to send message:', error);
+      console.error('Failed to connect:', error);
     } finally {
-      setIsSending(false);
+      setIsConnecting(false);
     }
   };
 
@@ -49,57 +64,41 @@ export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) 
     });
   };
 
-  const getMessageStyle = (message: ChatMessage) => {
-    switch (message.type) {
-      case 'system':
-        return 'italic text-sm';
-      case 'dice_roll':
-        return 'font-mono';
-      default:
-        return '';
-    }
-  };
-
-  const getMessageIcon = (message: ChatMessage) => {
-    switch (message.type) {
-      case 'system':
-        return '🔔';
-      case 'dice_roll':
-        return '🎲';
-      default:
-        return '💬';
-    }
-  };
+  if (!enabled) {
+    return null;
+  }
 
   return (
-    <div className="flex flex-col h-full rounded-lg border" style={{ backgroundColor: 'var(--color-card)', borderColor: 'var(--color-border)' }}>
+    <div className="flex flex-col h-full bg-gray-50 rounded-lg border">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
+      <div className="flex items-center justify-between p-4 border-b bg-white rounded-t-lg">
         <div className="flex items-center space-x-2">
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Peer-to-Peer Chat</h3>
-          <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+          <h3 className="text-lg font-semibold text-gray-900">Party Chat</h3>
+          <div className="flex items-center space-x-1">
+            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+            <span className="text-sm text-gray-600">
+              {isConnected ? `${peerCount} online` : 'Disconnected'}
+            </span>
+          </div>
         </div>
         <div className="flex items-center space-x-2">
-          <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
-            {peerCount} peer{peerCount !== 1 ? 's' : ''} connected
-          </span>
-          {messages.length > 0 && (
+          {!isConnected && !isConnecting && (
             <button
-              onClick={clearMessages}
-              className="px-2 py-1 text-xs rounded hover:opacity-80"
-              style={{ backgroundColor: 'var(--color-danger)', color: 'var(--color-danger-text)' }}
-              title="Clear chat history"
-            >
-              Clear
-            </button>
-          )}
-          {!isConnected && (
-            <button
-              onClick={connect}
-              className="px-3 py-1 text-sm rounded hover:opacity-80"
-              style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-accent-text)' }}
+              onClick={handleConnect}
+              className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
             >
               Connect
+            </button>
+          )}
+          {isConnecting && (
+            <span className="text-sm text-gray-500">Connecting...</span>
+          )}
+          {isConnected && (
+            <button
+              onClick={disconnect}
+              className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+            >
+              Disconnect
             </button>
           )}
         </div>
@@ -107,44 +106,35 @@ export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) 
 
       {/* Error Display */}
       {error && (
-        <div className="p-3 border-b" style={{ backgroundColor: 'var(--color-danger-bg)', borderColor: 'var(--color-danger)', color: 'var(--color-danger)' }}>
-          <p className="text-sm">{error}</p>
+        <div className="p-3 bg-red-50 border-b border-red-200">
+          <p className="text-sm text-red-700">{error}</p>
         </div>
       )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.length === 0 ? (
-          <div className="text-center py-8" style={{ color: 'var(--color-text-muted)' }}>
-            <p>No messages yet. Start the conversation!</p>
+          <div className="text-center text-gray-500 py-8">
+            {isConnected ? 'No messages yet. Start the conversation!' : 'Connect to start chatting'}
           </div>
         ) : (
-          messages.map((message) => (
-            <div key={message.id} className="flex items-start space-x-2">
-              <span className="text-lg">{getMessageIcon(message)}</span>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2 min-w-0 flex-1">
-                    <span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>
-                      {message.userName}:
-                    </span>
-                    <span 
-                      className={`${getMessageStyle(message)} truncate`}
-                      style={{ 
-                        color: message.type === 'system' 
-                          ? 'var(--color-text-muted)' 
-                          : message.type === 'dice_roll'
-                          ? 'var(--color-accent)'
-                          : 'var(--color-text-primary)'
-                      }}
-                    >
-                      {message.message}
-                    </span>
-                  </div>
-                  <span className="text-xs ml-2 flex-shrink-0" style={{ color: 'var(--color-text-muted)' }}>
-                    {formatTimestamp(message.timestamp)}
+          messages.map((msg: ChatMessage) => (
+            <div key={msg.id} className="flex flex-col">
+              <div className="flex items-center space-x-2">
+                <span className="font-medium text-gray-900">
+                  {msg.userName}
+                </span>
+                <span className="text-xs text-gray-500">
+                  {formatTimestamp(msg.timestamp)}
+                </span>
+                {msg.type !== 'text' && (
+                  <span className="text-xs px-2 py-1 bg-gray-200 rounded">
+                    {msg.type}
                   </span>
-                </div>
+                )}
+              </div>
+              <div className="mt-1">
+                <p className="text-gray-700 break-words">{msg.message}</p>
               </div>
             </div>
           ))
@@ -153,32 +143,28 @@ export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) 
       </div>
 
       {/* Message Input */}
-      <form onSubmit={handleSendMessage} className="p-4 border-t" style={{ borderColor: 'var(--color-border)' }}>
-        <div className="flex space-x-2">
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder={isConnected ? "Type your message..." : "Connect to start chatting..."}
-            disabled={!isConnected || isSending}
-            className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50"
-            style={{
-              backgroundColor: 'var(--color-card)',
-              color: 'var(--color-text-primary)',
-              borderColor: 'var(--color-border)',
-              outlineColor: 'var(--color-accent)'
-            }}
-          />
-          <button
-            type="submit"
-            disabled={!isConnected || isSending || !newMessage.trim()}
-            className="px-4 py-2 rounded-md hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-accent-text)' }}
-          >
-            {isSending ? 'Sending...' : 'Send'}
-          </button>
+      {isConnected && (
+        <div className="p-4 border-t bg-white rounded-b-lg">
+          <div className="flex space-x-2">
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Type your message..."
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              disabled={!isConnected}
+            />
+            <button
+              onClick={handleSendMessage}
+              disabled={!message.trim() || !isConnected}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            >
+              Send
+            </button>
+          </div>
         </div>
-      </form>
+      )}
     </div>
   );
 } 
