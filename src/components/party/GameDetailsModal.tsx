@@ -741,125 +741,83 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
 
             {/* Tab Content */}
             {activeTab === 'lobby' && (
-              <div>
-                {/* Description */}
-                {currentGame.description && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
-                      Description
-                    </h3>
-                    <p className="text-[var(--color-text-secondary)]">{currentGame.description}</p>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Left Column - Stats */}
+                <div className="space-y-6">
+                  {/* Game Stats */}
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                      <Users className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
+                      <div className="text-center">
+                        <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Players</div>
+                        <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{getPlayerCount()}</div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                      <User className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
+                      <div className="text-center">
+                        <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Characters</div>
+                        <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{getCharacterCount()}</div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                      <MessageSquare className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
+                      <div className="text-center">
+                        <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Messages</div>
+                        <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{currentGame._count.chatMessages}</div>
+                      </div>
+                    </div>
                   </div>
-                )}
 
-                {/* Game Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                    <Users className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
+                  {/* Description */}
+                  {currentGame.description && (
                     <div>
-                      <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Players</div>
-                      <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{getPlayerCount()}</div>
+                      <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
+                        Description
+                      </h3>
+                      <p className="text-[var(--color-text-secondary)]">{currentGame.description}</p>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                    <User className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
-                    <div>
-                      <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Characters</div>
-                      <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{getCharacterCount()}</div>
+                  )}
+
+                  {/* Game Info */}
+                  <div className="text-xs p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)', color: 'var(--color-text-muted)' }}>
+                    <div className="flex items-center gap-2 mb-1">
+                      <Calendar className="h-3 w-3" />
+                      Created: {new Date(currentGame.createdAt).toLocaleDateString()}
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                    <MessageSquare className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
-                    <div>
-                      <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Messages</div>
-                      <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{currentGame._count.chatMessages}</div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-3 w-3" />
+                      Last updated: {new Date(currentGame.updatedAt).toLocaleDateString()}
                     </div>
                   </div>
                 </div>
 
-                {/* Invite Section */}
-                <div className="p-4 rounded-lg mb-6" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-accent)' }}>
-                    Invite Players
-                  </h3>
-                  <div className="flex flex-col items-center">
-                    <div className="w-full max-w-xs px-4 py-3 font-mono text-xl font-bold rounded-lg text-center mb-3 border-2" style={{ backgroundColor: 'var(--color-card)', color: 'var(--color-accent)', borderColor: 'var(--color-accent)' }}>
-                      {currentGame.id.slice(0, 8).toUpperCase()}
-                    </div>
-                    <div className="flex gap-2 w-full max-w-xs">
-                      <button
-                        onClick={copyInviteCode}
-                        className="flex-1 px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors font-medium"
-                      >
-                        Copy Code
-                      </button>
-                      <button
-                        onClick={copyInviteUrl}
-                        className="flex-1 px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors font-medium"
-                      >
-                        Copy URL
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Participants */}
+                {/* Right Column - Invite Players */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
-                    Players ({getPlayerCount()})
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {currentGame.participants.map((participant) => {
-                      const isSelf = participant.user.email === session?.user?.email;
-                      const isSelfDM = isSelf && participant.isDm;
-                      // DMs cannot leave, only delete the game. Non-DMs can leave themselves, DMs can remove others
-                      const canRemove = (isDM && !isSelfDM) || (isSelf && !isSelfDM);
-                      
-                      return (
-                        <div
-                          key={participant.id}
-                          className="flex items-center justify-between p-3 rounded-lg"
-                          style={{ backgroundColor: 'var(--color-card-secondary)' }}
+                  {/* Invite Section */}
+                  <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                    <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-accent)' }}>
+                      Invite Players
+                    </h3>
+                    <div className="flex flex-col items-center">
+                      <div className="w-full max-w-xs px-4 py-3 font-mono text-xl font-bold rounded-lg text-center mb-3 border-2" style={{ backgroundColor: 'var(--color-card)', color: 'var(--color-accent)', borderColor: 'var(--color-accent)' }}>
+                        {currentGame.id.slice(0, 8).toUpperCase()}
+                      </div>
+                      <div className="flex gap-2 w-full max-w-xs">
+                        <button
+                          onClick={copyInviteCode}
+                          className="flex-1 px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors font-medium"
                         >
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full flex items-center justify-center text-lg font-semibold" style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-accent-text)' }}>
-                              {(participant.user.name || participant.user.email).charAt(0).toUpperCase()}
-                            </div>
-                            <div>
-                              <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>
-                                {participant.user.name || participant.user.email}
-                                {participant.isDm && (
-                                  <span className="ml-2 text-xs bg-[var(--color-success)] text-[var(--color-success-text)] px-2 py-1 rounded">
-                                    DM
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                          {canRemove && (
-                            <button
-                              onClick={() => confirmRemoveParticipant(participant.id)}
-                              className="text-sm px-3 py-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded transition-colors"
-                              title={isSelf ? "Leave game" : "Remove player"}
-                            >
-                              {isSelf ? "Leave" : "Remove"}
-                            </button>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Game Info */}
-                <div className="text-xs mt-6" style={{ color: 'var(--color-text-muted)' }}>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Calendar className="h-3 w-3" />
-                    Created: {new Date(currentGame.createdAt).toLocaleDateString()}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-3 w-3" />
-                    Last updated: {new Date(currentGame.updatedAt).toLocaleDateString()}
+                          Copy Code
+                        </button>
+                        <button
+                          onClick={copyInviteUrl}
+                          className="flex-1 px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors font-medium"
+                        >
+                          Copy URL
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

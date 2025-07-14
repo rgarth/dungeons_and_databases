@@ -23,6 +23,12 @@ export function useChatEvents({
       return;
     }
 
+    // Prevent multiple connections
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
+    }
+
     const connect = () => {
       try {
         const eventSource = new EventSource(`/api/games/${gameId}/chat/events`);
@@ -82,6 +88,7 @@ export function useChatEvents({
     return () => {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
+        eventSourceRef.current = null;
         setIsConnected(false);
       }
     };
@@ -93,6 +100,7 @@ export function useChatEvents({
     disconnect: () => {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
+        eventSourceRef.current = null;
         setIsConnected(false);
       }
     }

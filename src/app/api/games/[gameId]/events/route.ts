@@ -136,7 +136,7 @@ export async function GET(
         sendGameUpdate();
 
         // Set up periodic updates (much less frequent than polling)
-        const interval = setInterval(sendGameUpdate, 30000); // Every 30 seconds
+        const interval = setInterval(sendGameUpdate, 60000); // Every 60 seconds
 
         // Clean up on disconnect
         request.signal.addEventListener('abort', () => {

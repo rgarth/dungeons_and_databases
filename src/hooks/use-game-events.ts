@@ -23,6 +23,12 @@ export function useGameEvents({
       return;
     }
 
+    // Prevent multiple connections
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
+    }
+
     const connect = () => {
       try {
         const eventSource = new EventSource(`/api/games/${gameId}/events`);
@@ -93,6 +99,7 @@ export function useGameEvents({
     return () => {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
+        eventSourceRef.current = null;
         setIsConnected(false);
       }
     };
@@ -104,6 +111,7 @@ export function useGameEvents({
     disconnect: () => {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
+        eventSourceRef.current = null;
         setIsConnected(false);
       }
     }

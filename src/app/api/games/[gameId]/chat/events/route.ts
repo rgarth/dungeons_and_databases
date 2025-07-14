@@ -97,7 +97,7 @@ export async function GET(
         sendChatUpdate();
 
         // Set up periodic updates (much less frequent than polling)
-        const interval = setInterval(sendChatUpdate, 10000); // Every 10 seconds
+        const interval = setInterval(sendChatUpdate, 30000); // Every 30 seconds
 
         // Clean up on disconnect
         request.signal.addEventListener('abort', () => {
