@@ -61,13 +61,16 @@ export default function PartyPage() {
     // The games data will be automatically refreshed by the provider
   };
 
-  const handleTabChange = (tab: 'characters' | 'party') => {
+  const handleTabChange = (tab: 'characters' | 'party' | 'monsters') => {
     switch (tab) {
       case 'characters':
         router.push('/characters');
         break;
       case 'party':
         router.push('/party');
+        break;
+      case 'monsters':
+        router.push('/monsters');
         break;
     }
   };

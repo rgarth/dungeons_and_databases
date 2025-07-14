@@ -88,6 +88,56 @@
   --color-stat-wisdom-bg: rgba(139, 92, 246, 0.2); /* purple background */
   --color-stat-charisma-bg: rgba(236, 72, 153, 0.2); /* pink background */
   
+  /* Monster category colors - for card borders */
+  --color-monster-humanoid: #3b82f6; /* blue for humanoids */
+  --color-monster-beast: #10b981; /* emerald for beasts */
+  --color-monster-dragon: #dc2626; /* red for dragons */
+  --color-monster-undead: #374151; /* gray for undead */
+  --color-monster-fiend: #991b1b; /* dark red for fiends */
+  --color-monster-celestial: #fbbf24; /* gold for celestials */
+  --color-monster-construct: #9ca3af; /* light gray for constructs */
+  --color-monster-elemental: #60a5fa; /* light blue for elementals */
+  --color-monster-fey: #a78bfa; /* purple for fey */
+  --color-monster-giant: #f97316; /* orange for giants */
+  --color-monster-monstrosity: #9333ea; /* purple for monstrosities */
+  --color-monster-ooze: #059669; /* green for oozes */
+  --color-monster-plant: #047857; /* dark green for plants */
+  --color-monster-aberration: #4f46e5; /* indigo for aberrations */
+  --color-monster-swarm: #ca8a04; /* yellow for swarms */
+  --color-monster-default: #6b7280; /* gray for unknown types */
+  
+  /* Monster category colors - for card borders */
+  --color-monster-humanoid: #3b82f6; /* blue for humanoids */
+  --color-monster-beast: #10b981; /* emerald for beasts */
+  --color-monster-dragon: #dc2626; /* red for dragons */
+  --color-monster-undead: #374151; /* gray for undead */
+  --color-monster-fiend: #991b1b; /* dark red for fiends */
+  --color-monster-celestial: #fbbf24; /* gold for celestials */
+  --color-monster-construct: #9ca3af; /* light gray for constructs */
+  --color-monster-elemental: #60a5fa; /* light blue for elementals */
+  --color-monster-fey: #a78bfa; /* purple for fey */
+  --color-monster-giant: #f97316; /* orange for giants */
+  --color-monster-monstrosity: #9333ea; /* purple for monstrosities */
+  --color-monster-ooze: #059669; /* green for oozes */
+  --color-monster-plant: #047857; /* dark green for plants */
+  --color-monster-aberration: #4f46e5; /* indigo for aberrations */
+  --color-monster-swarm: #ca8a04; /* yellow for swarms */
+  --color-monster-default: #6b7280; /* gray for unknown types */
+  
+  /* Environment colors - natural, intuitive colors */
+  --color-env-underground: #374151; /* dark grey for underground/caves */
+  --color-env-underground-text: #ffffff; /* white text on dark grey */
+  --color-env-underwater: #1e40af; /* deep blue for underwater/aquatic */
+  --color-env-underwater-text: #ffffff; /* white text on deep blue */
+  --color-env-forest: #059669; /* emerald green for forest/jungle */
+  --color-env-forest-text: #ffffff; /* white text on emerald */
+  --color-env-underdark: #1f2937; /* very dark grey for underdark */
+  --color-env-underdark-text: #ffffff; /* white text on very dark grey */
+  --color-env-desert: #d97706; /* amber for desert/arctic */
+  --color-env-desert-text: #000000; /* black text on amber */
+  --color-env-urban: #6b7280; /* neutral grey for urban/city */
+  --color-env-urban-text: #ffffff; /* white text on neutral grey */
+  
   /* Language colors - DNDB Dark Theme */
   --color-language-racial-bg: rgba(59, 130, 246, 0.3); /* blue-900/30 */
   --color-language-racial-text: #93c5fd; /* blue-300 */
@@ -382,6 +432,38 @@
   --color-language-primordial: #0891b2; /* cyan for primordial */
   --color-language-sylvan: #059669; /* green for sylvan */
   --color-language-undercommon: #6b7280; /* gray for undercommon */
+
+  /* Monster category colors - for card borders */
+  --color-monster-humanoid: #2563eb; /* blue for humanoids */
+  --color-monster-beast: #22c55e; /* green for beasts */
+  --color-monster-dragon: #166534; /* deep green for dragons */
+  --color-monster-undead: #4a5a4a; /* forest border for undead */
+  --color-monster-fiend: #78350f; /* oaken wood for fiends */
+  --color-monster-celestial: #fbbf24; /* gold for celestials */
+  --color-monster-construct: #5a6a5a; /* lighter forest border for constructs */
+  --color-monster-elemental: #38bdf8; /* blue for elementals */
+  --color-monster-fey: #a78bfa; /* purple for fey */
+  --color-monster-giant: #f59e42; /* orange for giants */
+  --color-monster-monstrosity: #a21caf; /* purple for monstrosities */
+  --color-monster-ooze: #059669; /* green for oozes */
+  --color-monster-plant: #166534; /* dark green for plants */
+  --color-monster-aberration: #6366f1; /* indigo for aberrations */
+  --color-monster-swarm: #ca8a04; /* yellow for swarms */
+  --color-monster-default: #4a5a4a; /* forest border for unknown types */
+  
+  /* Environment colors - natural, intuitive colors (light theme) */
+  --color-env-underground: #6b7280; /* medium grey for underground/caves */
+  --color-env-underground-text: #ffffff; /* white text on medium grey */
+  --color-env-underwater: #2563eb; /* blue for underwater/aquatic */
+  --color-env-underwater-text: #ffffff; /* white text on blue */
+  --color-env-forest: #16a34a; /* green for forest/jungle */
+  --color-env-forest-text: #ffffff; /* white text on green */
+  --color-env-underdark: #374151; /* dark grey for underdark */
+  --color-env-underdark-text: #ffffff; /* white text on dark grey */
+  --color-env-desert: #ea580c; /* orange for desert/arctic */
+  --color-env-desert-text: #ffffff; /* white text on orange */
+  --color-env-urban: #9ca3af; /* light grey for urban/city */
+  --color-env-urban-text: #000000; /* black text on light grey */
 }
 
 @theme inline {
@@ -601,6 +683,24 @@ body {
   --color-language-primordial: #0891b2; /* cyan for primordial */
   --color-language-sylvan: #059669; /* green for sylvan */
   --color-language-undercommon: #6b7280; /* gray for undercommon */
+
+  /* Monster category colors - for card borders */
+  --color-monster-humanoid: #60a5fa; /* blue for humanoids */
+  --color-monster-beast: #22c55e; /* green for beasts */
+  --color-monster-dragon: #166534; /* deep green for dragons */
+  --color-monster-undead: #4a5a4a; /* forest border for undead */
+  --color-monster-fiend: #78350f; /* oaken wood for fiends */
+  --color-monster-celestial: #fbbf24; /* gold for celestials */
+  --color-monster-construct: #5a6a5a; /* lighter forest border for constructs */
+  --color-monster-elemental: #38bdf8; /* blue for elementals */
+  --color-monster-fey: #a78bfa; /* purple for fey */
+  --color-monster-giant: #f59e42; /* orange for giants */
+  --color-monster-monstrosity: #a21caf; /* purple for monstrosities */
+  --color-monster-ooze: #059669; /* green for oozes */
+  --color-monster-plant: #166534; /* dark green for plants */
+  --color-monster-aberration: #6366f1; /* indigo for aberrations */
+  --color-monster-swarm: #ca8a04; /* yellow for swarms */
+  --color-monster-default: #4a5a4a; /* forest border for unknown types */
 }
 
 /* Dungeon Theme - Heavy grays, no coppers or yellows */
@@ -708,6 +808,24 @@ body {
   --color-language-primordial: #0891b2; /* cyan for primordial */
   --color-language-sylvan: #059669; /* green for sylvan */
   --color-language-undercommon: #6b7280; /* gray for undercommon */
+
+  /* Monster category colors - for card borders */
+  --color-monster-humanoid: #6b7280; /* steel gray for humanoids */
+  --color-monster-beast: #10b981; /* emerald for beasts */
+  --color-monster-dragon: #ef4444; /* bright red for dragons */
+  --color-monster-undead: #4a4a4a; /* gray for undead */
+  --color-monster-fiend: #dc2626; /* red for fiends */
+  --color-monster-celestial: #fbbf24; /* yellow for celestials */
+  --color-monster-construct: #9ca3af; /* light gray for constructs */
+  --color-monster-elemental: #38bdf8; /* blue for elementals */
+  --color-monster-fey: #a78bfa; /* purple for fey */
+  --color-monster-giant: #f59e42; /* orange for giants */
+  --color-monster-monstrosity: #a21caf; /* purple for monstrosities */
+  --color-monster-ooze: #059669; /* green for oozes */
+  --color-monster-plant: #166534; /* dark green for plants */
+  --color-monster-aberration: #6366f1; /* indigo for aberrations */
+  --color-monster-swarm: #ca8a04; /* yellow for swarms */
+  --color-monster-default: #4a4a4a; /* gray for unknown types */
 }
 
 /* Theme utility classes - all colors in CSS */
@@ -883,4 +1001,22 @@ body {
   --color-language-primordial: #0891b2; /* cyan for primordial */
   --color-language-sylvan: #059669; /* green for sylvan */
   --color-language-undercommon: #6b7280; /* gray for undercommon */
+  
+  /* Monster category colors - for card borders */
+  --color-monster-humanoid: #3b82f6; /* blue for humanoids */
+  --color-monster-beast: #10b981; /* emerald for beasts */
+  --color-monster-dragon: #ef4444; /* bright red for dragons */
+  --color-monster-undead: #64748b; /* slate-500 for undead */
+  --color-monster-fiend: #dc2626; /* red for fiends */
+  --color-monster-celestial: #fbbf24; /* gold for celestials */
+  --color-monster-construct: #94a3b8; /* slate-400 for constructs */
+  --color-monster-elemental: #38bdf8; /* blue for elementals */
+  --color-monster-fey: #a78bfa; /* purple for fey */
+  --color-monster-giant: #f59e42; /* orange for giants */
+  --color-monster-monstrosity: #9333ea; /* purple for monstrosities */
+  --color-monster-ooze: #059669; /* green for oozes */
+  --color-monster-plant: #166534; /* dark green for plants */
+  --color-monster-aberration: #6366f1; /* indigo for aberrations */
+  --color-monster-swarm: #ca8a04; /* yellow for swarms */
+  --color-monster-default: #64748b; /* slate-500 for unknown types */
 }

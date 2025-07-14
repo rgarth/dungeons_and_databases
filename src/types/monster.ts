@@ -45,7 +45,7 @@ export interface MonsterTrait {
 
 export interface MonsterLegendaryAction {
   name: string;
-  cost: number; // 1, 2, or 3
+  cost?: number; // 1, 2, or 3 (optional since API doesn't provide it)
   description: string;
 }
 
@@ -135,8 +135,6 @@ export interface Monster {
   // Description and Lore
   description?: string;
   background?: string;
-  environment?: string[];
-  organization?: string;
   
   // Image Generation
   imagePrompt?: string; // For AI image generation
@@ -153,6 +151,5 @@ export interface MonsterFilter {
   type?: string;
   size?: string;
   challengeRating?: string;
-  environment?: string;
   tags?: string[];
 } 

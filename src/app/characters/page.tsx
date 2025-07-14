@@ -80,13 +80,16 @@ export default function CharactersPage() {
     );
   }
 
-  const handleTabChange = (tab: 'characters' | 'party') => {
+  const handleTabChange = (tab: 'characters' | 'party' | 'monsters') => {
     switch (tab) {
       case 'characters':
         router.push('/characters');
         break;
       case 'party':
         router.push('/party');
+        break;
+      case 'monsters':
+        router.push('/monsters');
         break;
     }
   };

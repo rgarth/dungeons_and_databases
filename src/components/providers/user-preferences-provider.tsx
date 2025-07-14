@@ -3,12 +3,12 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
 interface UserPreferences {
-  lastUsedTab: 'characters' | 'party';
+  lastUsedTab: 'characters' | 'party' | 'monsters';
 }
 
 interface UserPreferencesContextType {
   preferences: UserPreferences;
-  updateLastUsedTab: (tab: 'characters' | 'party') => void;
+  updateLastUsedTab: (tab: 'characters' | 'party' | 'monsters') => void;
 }
 
 const UserPreferencesContext = createContext<UserPreferencesContextType | null>(null);
@@ -33,7 +33,7 @@ export function UserPreferencesProvider({ children }: { children: React.ReactNod
     }
   }, []);
 
-  const updateLastUsedTab = (tab: 'characters' | 'party') => {
+  const updateLastUsedTab = (tab: 'characters' | 'party' | 'monsters') => {
     const newPreferences = { ...preferences, lastUsedTab: tab };
     setPreferences(newPreferences);
     

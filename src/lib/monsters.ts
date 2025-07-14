@@ -50,7 +50,6 @@ export const filterMonsters = (monsters: Monster[], filters: {
   type?: string;
   size?: string;
   challengeRating?: string;
-  environment?: string;
   tags?: string[];
 }): Monster[] => {
   return monsters.filter(monster => {
@@ -61,11 +60,6 @@ export const filterMonsters = (monsters: Monster[], filters: {
       return false;
     }
     if (filters.challengeRating && monster.challengeRating !== filters.challengeRating) {
-      return false;
-    }
-    if (filters.environment && !monster.environment?.some(env => 
-      env.toLowerCase() === filters.environment!.toLowerCase()
-    )) {
       return false;
     }
     if (filters.tags && filters.tags.length > 0 && !filters.tags.some(tag => 
@@ -107,10 +101,7 @@ export const getUniqueChallengeRatings = (monsters: Monster[]): string[] => {
   });
 };
 
-export const getUniqueEnvironments = (monsters: Monster[]): string[] => {
-  const environments = monsters.flatMap(m => m.environment || []);
-  return [...new Set(environments)].sort();
-};
+
 
 export const getUniqueTags = (monsters: Monster[]): string[] => {
   const tags = monsters.flatMap(m => m.tags || []);

@@ -1,0 +1,21 @@
+{
+  "totalMonsters": 334,
+  "shardedFiles": 15,
+  "byType": {
+    "aberration": 5,
+    "humanoid": 50,
+    "dragon": 43,
+    "elemental": 16,
+    "monstrosity": 39,
+    "construct": 9,
+    "beast": 87,
+    "plant": 6,
+    "fiend": 23,
+    "ooze": 4,
+    "fey": 6,
+    "giant": 10,
+    "celestial": 6,
+    "undead": 20,
+    "swarm of Tiny beasts": 10
+  }
+}

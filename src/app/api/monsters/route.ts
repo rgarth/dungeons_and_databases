@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const size = searchParams.get('size');
     const challengeRating = searchParams.get('challengeRating');
     const search = searchParams.get('search');
-    const limit = parseInt(searchParams.get('limit') || '50');
+    const limit = parseInt(searchParams.get('limit') || '1000'); // Return all monsters by default
     const offset = parseInt(searchParams.get('offset') || '0');
     
     let filteredMonsters = [...monstersData];
@@ -50,13 +50,8 @@ export async function GET(request: NextRequest) {
     // Apply pagination
     const paginatedMonsters = filteredMonsters.slice(offset, offset + limit);
     
-    return NextResponse.json({
-      monsters: paginatedMonsters,
-      total: filteredMonsters.length,
-      limit,
-      offset,
-      hasMore: offset + limit < filteredMonsters.length
-    });
+    // Return just the array for now to match frontend expectations
+    return NextResponse.json(paginatedMonsters);
     
   } catch (error) {
     console.error('Error fetching monsters:', error);

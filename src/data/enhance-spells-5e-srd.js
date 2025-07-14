@@ -13,7 +13,7 @@
  * Source: https://dnd.wizards.com/resources/systems-reference-document
  */
 
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 // Enhanced spell data with complete 5e SRD fields

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { signOut } from 'next-auth/react';
-import { LogOut, Menu, X, Users, User } from 'lucide-react';
+import { LogOut, Menu, X, Users, User, Skull } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import { ThemeSelector } from '@/components/ThemeSelector';
@@ -10,8 +10,8 @@ import { useUserPreferences } from '@/components/providers/user-preferences-prov
 
 interface MainLayoutProps {
   children: React.ReactNode;
-  activeTab: 'characters' | 'party';
-  onTabChange: (tab: 'characters' | 'party') => void;
+  activeTab: 'characters' | 'party' | 'monsters';
+  onTabChange: (tab: 'characters' | 'party' | 'monsters') => void;
 }
 
 export default function MainLayout({ children, activeTab, onTabChange }: MainLayoutProps) {
@@ -39,6 +39,12 @@ export default function MainLayout({ children, activeTab, onTabChange }: MainLay
       label: 'Party',
       icon: Users,
       href: '/party'
+    },
+    {
+      id: 'monsters' as const,
+      label: 'Monsters',
+      icon: Skull,
+      href: '/monsters'
     }
   ];
 
