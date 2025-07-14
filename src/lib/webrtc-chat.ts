@@ -311,7 +311,7 @@ export class WebRTCChat {
     }
   }
 
-  async sendMessage(message: string, type: 'text' | 'system' | 'dice_roll' = 'text'): Promise<void> {
+  sendMessage(message: string, type: 'text' | 'system' | 'dice_roll' = 'text'): void {
     const chatMessage: ChatMessage = {
       id: `${Date.now()}-${Math.random()}`,
       userId: this.config.userId,
@@ -321,18 +321,8 @@ export class WebRTCChat {
       type
     };
 
-    // Store message in history
-    try {
-      await fetch(`/api/games/${this.config.gameId}/chat/history`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(chatMessage)
-      });
-    } catch (error) {
-      console.error('Failed to store message in history:', error);
-    }
+    // Store message in local storage
+    this.storeMessageLocally(chatMessage);
 
     // Send to all connected peers via data channels
     for (const peerConnection of this.peerConnections.values()) {
@@ -348,16 +338,52 @@ export class WebRTCChat {
     this.config.onMessage(chatMessage);
   }
 
-  async loadChatHistory(): Promise<ChatMessage[]> {
+  private storeMessageLocally(message: ChatMessage): void {
     try {
-      const response = await fetch(`/api/games/${this.config.gameId}/chat/history`);
-      if (response.ok) {
-        return await response.json();
-      }
+      const storageKey = `chat-history-${this.config.gameId}`;
+      const existingData = localStorage.getItem(storageKey);
+      const messages = existingData ? JSON.parse(existingData) : [];
+      
+      // Add new message
+      messages.push(message);
+      
+      // Clean up old messages (older than 7 days)
+      const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+      const filteredMessages = messages.filter((msg: ChatMessage) => msg.timestamp > sevenDaysAgo);
+      
+      // Keep only last 200 messages if we have too many
+      const trimmedMessages = filteredMessages.slice(-200);
+      
+      localStorage.setItem(storageKey, JSON.stringify(trimmedMessages));
     } catch (error) {
-      console.error('Failed to load chat history:', error);
+      console.error('Failed to store message locally:', error);
     }
-    return [];
+  }
+
+  private loadLocalHistory(): ChatMessage[] {
+    try {
+      const storageKey = `chat-history-${this.config.gameId}`;
+      const existingData = localStorage.getItem(storageKey);
+      if (!existingData) return [];
+      
+      const messages = JSON.parse(existingData);
+      
+      // Clean up old messages (older than 7 days)
+      const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+      const filteredMessages = messages.filter((msg: ChatMessage) => msg.timestamp > sevenDaysAgo);
+      
+      // Update storage with cleaned messages
+      localStorage.setItem(storageKey, JSON.stringify(filteredMessages));
+      
+      return filteredMessages;
+    } catch (error) {
+      console.error('Failed to load local history:', error);
+      return [];
+    }
+  }
+
+  async loadChatHistory(): Promise<ChatMessage[]> {
+    return this.loadLocalHistory();
   }
 
   disconnect(): void {

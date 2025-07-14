@@ -34,9 +34,9 @@ export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) 
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = () => {
     if (message.trim() && isConnected) {
-      await sendMessage(message.trim());
+      sendMessage(message.trim());
       setMessage('');
     }
   };
