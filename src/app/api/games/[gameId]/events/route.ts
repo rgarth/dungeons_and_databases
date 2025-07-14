@@ -48,12 +48,16 @@ export async function GET(
 
     const stream = new ReadableStream({
       start(controller) {
+        let isClosed = false;
+        
         const sendEvent = (event: string, data: unknown) => {
+          if (isClosed) return;
           try {
             const message = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
             controller.enqueue(new TextEncoder().encode(message));
           } catch (error) {
             console.error('Error sending SSE event:', error);
+            isClosed = true;
           }
         };
 
@@ -136,6 +140,7 @@ export async function GET(
 
         // Clean up on disconnect
         request.signal.addEventListener('abort', () => {
+          isClosed = true;
           clearInterval(interval);
           try {
             controller.close();
