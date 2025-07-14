@@ -5,10 +5,10 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import MainLayout from "@/components/layout/MainLayout";
 import { LoadingModal } from "@/components/loading-modal";
-import { useQuery } from "@tanstack/react-query";
 import { Monster } from "@/types/monster";
 import { Button } from "@/components/ui";
 import { useLoading } from "@/components/providers/loading-provider";
+import { useMonstersData } from "@/components/providers/monsters-data-provider";
 import { Search, Filter, Zap, Shield, Skull, Flame, Leaf, Droplets, Mountain, Sparkles, Users, Eye, Crown } from "lucide-react";
 import MonsterDetailModal from "@/components/monster-detail-modal";
 
@@ -86,18 +86,8 @@ export default function MonstersPage() {
   const [selectedMonster, setSelectedMonster] = useState<Monster | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch monsters using React Query
-  const { data: monsters = [], isLoading } = useQuery<Monster[]>({
-    queryKey: ['monsters'],
-    queryFn: async () => {
-      const response = await fetch("/api/monsters");
-      if (!response.ok) {
-        throw new Error('Failed to fetch monsters');
-      }
-      return response.json();
-    },
-    enabled: !!session,
-  });
+  // Use cached monsters data instead of React Query
+  const { monsters, isLoading } = useMonstersData();
 
   // Helper function to get CR as number for range filtering
   const getCRAsNumber = (cr: string): number => {
