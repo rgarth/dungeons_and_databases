@@ -36,11 +36,20 @@ export async function GET(
       return NextResponse.json({ error: 'Missing userId parameter' }, { status: 400 });
     }
 
+    // Get the user by email to get their ID
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
     // Verify the user is a participant in this game
     const participant = await prisma.gameParticipant.findFirst({
       where: {
         gameId,
-        userId: session.user.email
+        userId: user.id
       }
     });
 

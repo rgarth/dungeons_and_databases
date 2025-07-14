@@ -69,14 +69,14 @@ export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) 
   }
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 rounded-lg border">
+    <div className="flex flex-col h-full bg-card rounded-lg border border-border">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b bg-white rounded-t-lg">
+      <div className="flex items-center justify-between p-4 border-b border-border bg-card rounded-t-lg">
         <div className="flex items-center space-x-2">
-          <h3 className="text-lg font-semibold text-gray-900">Party Chat</h3>
+          <h3 className="text-lg font-semibold text-foreground">Party Chat</h3>
           <div className="flex items-center space-x-1">
-            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-            <span className="text-sm text-gray-600">
+            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-destructive'}`} />
+            <span className="text-sm text-muted-foreground">
               {isConnected ? `${peerCount} online` : 'Disconnected'}
             </span>
           </div>
@@ -85,18 +85,18 @@ export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) 
           {!isConnected && !isConnecting && (
             <button
               onClick={handleConnect}
-              className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+              className="px-3 py-1 text-sm bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
             >
               Connect
             </button>
           )}
           {isConnecting && (
-            <span className="text-sm text-gray-500">Connecting...</span>
+            <span className="text-sm text-muted-foreground">Connecting...</span>
           )}
           {isConnected && (
             <button
               onClick={disconnect}
-              className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+              className="px-3 py-1 text-sm bg-destructive text-destructive-foreground rounded hover:bg-destructive/90 transition-colors"
             >
               Disconnect
             </button>
@@ -106,35 +106,35 @@ export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) 
 
       {/* Error Display */}
       {error && (
-        <div className="p-3 bg-red-50 border-b border-red-200">
-          <p className="text-sm text-red-700">{error}</p>
+        <div className="p-3 bg-destructive/10 border-b border-destructive/20">
+          <p className="text-sm text-destructive">{error}</p>
         </div>
       )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.length === 0 ? (
-          <div className="text-center text-gray-500 py-8">
+          <div className="text-center text-muted-foreground py-8">
             {isConnected ? 'No messages yet. Start the conversation!' : 'Connect to start chatting'}
           </div>
         ) : (
           messages.map((msg: ChatMessage) => (
             <div key={msg.id} className="flex flex-col">
               <div className="flex items-center space-x-2">
-                <span className="font-medium text-gray-900">
+                <span className="font-medium text-foreground">
                   {msg.userName}
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted-foreground">
                   {formatTimestamp(msg.timestamp)}
                 </span>
                 {msg.type !== 'text' && (
-                  <span className="text-xs px-2 py-1 bg-gray-200 rounded">
+                  <span className="text-xs px-2 py-1 bg-muted rounded">
                     {msg.type}
                   </span>
                 )}
               </div>
               <div className="mt-1">
-                <p className="text-gray-700 break-words">{msg.message}</p>
+                <p className="text-foreground break-words">{msg.message}</p>
               </div>
             </div>
           ))
@@ -144,7 +144,7 @@ export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) 
 
       {/* Message Input */}
       {isConnected && (
-        <div className="p-4 border-t bg-white rounded-b-lg">
+        <div className="p-4 border-t border-border bg-card rounded-b-lg">
           <div className="flex space-x-2">
             <input
               type="text"
@@ -152,13 +152,13 @@ export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) 
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message..."
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent bg-background text-foreground"
               disabled={!isConnected}
             />
             <button
               onClick={handleSendMessage}
               disabled={!message.trim() || !isConnected}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:bg-muted disabled:cursor-not-allowed transition-colors"
             >
               Send
             </button>

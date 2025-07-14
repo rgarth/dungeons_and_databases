@@ -50,9 +50,12 @@ export function useWebRTCChat({ gameId, enabled = true }: UseWebRTCChatOptions):
     try {
       setError(null);
       
+      // Get user ID from session
+      const userId = session.user.id;
+      
       const config: WebRTCChatConfig = {
         gameId,
-        userId: session.user.email,
+        userId,
         userName: session.user.name || session.user.email,
         onMessage: handleMessage,
         onPeerConnected: handlePeerConnected,

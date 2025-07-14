@@ -19,11 +19,20 @@ export async function POST(
     const { gameId } = params;
     const { userId, userName, timestamp } = await request.json();
 
+    // Get the user by email to get their ID
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
     // Verify the user is a participant in this game
     const participant = await prisma.gameParticipant.findFirst({
       where: {
         gameId,
-        userId: session.user.email
+        userId: user.id
       }
     });
 
