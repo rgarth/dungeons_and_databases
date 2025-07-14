@@ -311,7 +311,7 @@ export class WebRTCChat {
     }
   }
 
-  sendMessage(message: string, type: 'text' | 'system' | 'dice_roll' = 'text'): void {
+  async sendMessage(message: string, type: 'text' | 'system' | 'dice_roll' = 'text'): Promise<void> {
     const chatMessage: ChatMessage = {
       id: `${Date.now()}-${Math.random()}`,
       userId: this.config.userId,
@@ -320,6 +320,19 @@ export class WebRTCChat {
       timestamp: Date.now(),
       type
     };
+
+    // Store message in history
+    try {
+      await fetch(`/api/games/${this.config.gameId}/chat/history`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(chatMessage)
+      });
+    } catch (error) {
+      console.error('Failed to store message in history:', error);
+    }
 
     // Send to all connected peers via data channels
     for (const peerConnection of this.peerConnections.values()) {

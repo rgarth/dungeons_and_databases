@@ -111,9 +111,9 @@ export function useWebRTCChat({ gameId, enabled = true }: UseWebRTCChatOptions):
     setPeerCount(0);
   }, []);
 
-  const sendMessage = useCallback((message: string, type: 'text' | 'system' | 'dice_roll' = 'text') => {
+  const sendMessage = useCallback(async (message: string, type: 'text' | 'system' | 'dice_roll' = 'text') => {
     if (webrtcRef.current && isConnected) {
-      webrtcRef.current.sendMessage(message, type);
+      await webrtcRef.current.sendMessage(message, type);
     }
   }, [isConnected]);
 
