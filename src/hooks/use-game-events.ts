@@ -25,6 +25,9 @@ export function useGameEvents({
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const reconnectAttemptsRef = useRef(0);
+  const maxReconnectAttempts = 5;
 
   useEffect(() => {
     if (!enabled || !gameId) {
@@ -37,6 +40,12 @@ export function useGameEvents({
       eventSourceRef.current = null;
     }
 
+    // Clear any existing reconnect timeout
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
+    }
+
     const connect = () => {
       try {
         const eventSource = new EventSource(`/api/games/${gameId}/events`);
@@ -46,6 +55,7 @@ export function useGameEvents({
           console.log('🔗 SSE connected for game:', gameId);
           setIsConnected(true);
           setError(null);
+          reconnectAttemptsRef.current = 0; // Reset reconnect attempts on successful connection
         };
 
         eventSource.addEventListener('game-update', (event) => {
@@ -61,11 +71,23 @@ export function useGameEvents({
 
         eventSource.onerror = (event) => {
           console.error('SSE error:', event);
-          const error = new Error('SSE connection failed');
-          setError(error);
           setIsConnected(false);
-          if (onError) {
-            onError(error);
+          
+          // Only attempt reconnection if we haven't exceeded max attempts
+          if (reconnectAttemptsRef.current < maxReconnectAttempts) {
+            const backoffDelay = Math.min(1000 * Math.pow(2, reconnectAttemptsRef.current), 30000); // Max 30 seconds
+            console.log(`🔄 SSE reconnecting in ${backoffDelay}ms (attempt ${reconnectAttemptsRef.current + 1}/${maxReconnectAttempts})`);
+            
+            reconnectTimeoutRef.current = setTimeout(() => {
+              reconnectAttemptsRef.current++;
+              connect();
+            }, backoffDelay);
+          } else {
+            const error = new Error('SSE connection failed after maximum retry attempts');
+            setError(error);
+            if (onError) {
+              onError(error);
+            }
           }
         };
 
@@ -99,6 +121,10 @@ export function useGameEvents({
         eventSourceRef.current = null;
         setIsConnected(false);
       }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
+      }
     };
   }, []);
 
@@ -111,6 +137,11 @@ export function useGameEvents({
         eventSourceRef.current = null;
         setIsConnected(false);
       }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
+      }
+      reconnectAttemptsRef.current = 0;
     }
   };
 } 

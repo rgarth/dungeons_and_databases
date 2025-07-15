@@ -46,7 +46,7 @@ model User {
   characters       Character[]
   customWeapons    CustomWeapon[]
   gamesAsDM        Game[]            @relation("GameDM")
-
+  gameChatMessages GameChatMessage[] @relation("GameChatMessage")
   gameInvites      GameInvite[]      @relation("GameInviteCreator")
   gameNotes        GameNote[]        @relation("GameNoteDM")
   gameParticipants GameParticipant[] @relation("GameParticipant")
@@ -194,7 +194,7 @@ model Game {
   updatedAt    DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
   isActive     Boolean           @default(true) @map("is_active")
   dm           User              @relation("GameDM", fields: [dmId], references: [id], onDelete: Cascade)
-
+  chatMessages GameChatMessage[]
   invites      GameInvite[]
   notes        GameNote[]
   participants GameParticipant[]
@@ -236,8 +236,6 @@ model GameParticipant {
   @@index([characterIds], map: "idx_game_participants_character_ids", type: Gin)
 }
 
-
-
 model GameNote {
   id        String   @id @default(dbgenerated("(gen_random_uuid())::text"))
   gameId    String   @map("game_id")
@@ -254,15 +252,18 @@ model GameNote {
   @@index([dmId], map: "idx_game_notes_dm_id")
 }
 
-model PeerRegistration {
+model GameChatMessage {
   id        String   @id @default(dbgenerated("(gen_random_uuid())::text"))
   gameId    String   @map("game_id")
   userId    String   @map("user_id")
   userName  String   @map("user_name")
-  lastSeen  DateTime @default(now()) @map("last_seen") @db.Timestamptz(6)
+  message   String
+  type      String   @default("text")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  user      User     @relation("GameChatMessage", fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([gameId, userId])
-  @@index([gameId], map: "idx_peer_registrations_game_id")
-  @@index([lastSeen], map: "idx_peer_registrations_last_seen")
+  @@index([gameId], map: "idx_game_chat_messages_game_id")
+  @@index([userId], map: "idx_game_chat_messages_user_id")
+  @@index([createdAt], map: "idx_game_chat_messages_created_at")
 }

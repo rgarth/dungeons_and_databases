@@ -51,18 +51,18 @@ export default function RootLayout({
                 <DndDataProvider>
                   <GamesDataProvider>
                     <MonstersDataProvider>
-                      <UserPreferencesProvider>
-                        <ClientCacheProvider>
-                          <LoadingProvider>
-                            <DiceRollProvider>
-                              <main className="min-h-screen" style={{ background: 'var(--color-surface)' }}>
-                                {children}
-                                <FloatingDiceMenu />
-                              </main>
-                            </DiceRollProvider>
-                          </LoadingProvider>
-                        </ClientCacheProvider>
-                      </UserPreferencesProvider>
+                    <UserPreferencesProvider>
+                      <ClientCacheProvider>
+                        <LoadingProvider>
+                          <DiceRollProvider>
+                            <main className="min-h-screen" style={{ background: 'var(--color-surface)' }}>
+                              {children}
+                              <FloatingDiceMenu />
+                            </main>
+                          </DiceRollProvider>
+                        </LoadingProvider>
+                      </ClientCacheProvider>
+                    </UserPreferencesProvider>
                     </MonstersDataProvider>
                   </GamesDataProvider>
                 </DndDataProvider>

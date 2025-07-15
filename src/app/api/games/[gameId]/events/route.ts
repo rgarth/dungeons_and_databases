@@ -6,8 +6,9 @@ import { prisma } from '@/lib/prisma';
 // In-memory tracking of game state changes
 const gameStateChanges = new Map<string, {
   lastUpdate: number;
-  participants: Set<string>;
-  characters: Set<string>;
+  participantCount: number;
+  characterCount: number;
+  lastGameUpdate: string; // ISO string of game.updatedAt
 }>();
 
 // SSE endpoint for real-time game updates
@@ -74,76 +75,83 @@ export async function GET(
           if (isClosed) return;
           
           try {
-            // Only fetch basic game info, not full details
+            // Simplified query - only fetch essential data
             const game = await prisma.game.findUnique({
               where: { id: gameId },
               select: {
                 id: true,
                 name: true,
                 updatedAt: true,
-                participants: {
+                _count: {
                   select: {
-                    id: true,
-                    userId: true,
-                    characterIds: true
+                    participants: true
                   }
                 }
               }
             });
 
-            if (game && !isClosed) {
-              // Check for state changes
-              const currentParticipants = new Set(game.participants.map(p => p.userId));
-              const currentCharacters = new Set(
-                game.participants.flatMap(p => (p.characterIds as string[]) || [])
-              );
+            if (!game || isClosed) return;
 
-              const previousState = gameStateChanges.get(gameId);
-              let hasChanges = false;
+            // Get participant count and character count in a separate, optimized query
+            const participantStats = await prisma.gameParticipant.aggregate({
+              where: { gameId },
+              _count: {
+                id: true
+              }
+            });
 
-              if (!previousState) {
-                // First time, initialize state
+            // Get character count using a more efficient approach
+            const characterCountResult = await prisma.$queryRaw<[{ count: bigint }]>`
+              SELECT COALESCE(SUM(jsonb_array_length(character_ids::jsonb)), 0) as count
+              FROM "GameParticipant"
+              WHERE game_id = ${gameId}
+            `;
+            
+            const characterCount = Number(characterCountResult[0]?.count || 0);
+            const participantCount = participantStats._count.id;
+
+            // Check for state changes
+            const previousState = gameStateChanges.get(gameId);
+            let hasChanges = false;
+
+            if (!previousState) {
+              // First time, initialize state
+              gameStateChanges.set(gameId, {
+                lastUpdate: Date.now(),
+                participantCount,
+                characterCount,
+                lastGameUpdate: game.updatedAt.toISOString()
+              });
+              hasChanges = true;
+            } else {
+              // Check for changes
+              const participantChanged = previousState.participantCount !== participantCount;
+              const characterChanged = previousState.characterCount !== characterCount;
+              const gameUpdated = previousState.lastGameUpdate !== game.updatedAt.toISOString();
+
+              if (participantChanged || characterChanged || gameUpdated) {
+                hasChanges = true;
+                // Update state
                 gameStateChanges.set(gameId, {
                   lastUpdate: Date.now(),
-                  participants: currentParticipants,
-                  characters: currentCharacters
-                });
-                hasChanges = true;
-              } else {
-                // Check for changes
-                const participantChanged = 
-                  previousState.participants.size !== currentParticipants.size ||
-                  [...previousState.participants].some(p => !currentParticipants.has(p)) ||
-                  [...currentParticipants].some(p => !previousState.participants.has(p));
-
-                const characterChanged = 
-                  previousState.characters.size !== currentCharacters.size ||
-                  [...previousState.characters].some(c => !currentCharacters.has(c)) ||
-                  [...currentCharacters].some(c => !previousState.characters.has(c));
-
-                if (participantChanged || characterChanged) {
-                  hasChanges = true;
-                  // Update state
-                  gameStateChanges.set(gameId, {
-                    lastUpdate: Date.now(),
-                    participants: currentParticipants,
-                    characters: currentCharacters
-                  });
-                }
-              }
-
-              // Only send update if there are changes or it's been more than 5 minutes
-              const timeSinceLastUpdate = Date.now() - (previousState?.lastUpdate || 0);
-              if (hasChanges || timeSinceLastUpdate > 5 * 60 * 1000) {
-                sendEvent('game-update', {
-                  id: game.id,
-                  name: game.name,
-                  updatedAt: game.updatedAt,
-                  participantCount: currentParticipants.size,
-                  characterCount: currentCharacters.size,
-                  hasChanges
+                  participantCount,
+                  characterCount,
+                  lastGameUpdate: game.updatedAt.toISOString()
                 });
               }
+            }
+
+            // Only send update if there are changes or it's been more than 2 minutes
+            const timeSinceLastUpdate = Date.now() - (previousState?.lastUpdate || 0);
+            if (hasChanges || timeSinceLastUpdate > 2 * 60 * 1000) {
+              sendEvent('game-update', {
+                id: game.id,
+                name: game.name,
+                updatedAt: game.updatedAt,
+                participantCount,
+                characterCount,
+                hasChanges
+              });
             }
           } catch (error) {
             console.error('Error sending game update:', error);
@@ -154,8 +162,8 @@ export async function GET(
         // Send initial state
         sendGameUpdate();
 
-        // Set up periodic updates (much less frequent to reduce database load)
-        updateInterval = setInterval(sendGameUpdate, 30000); // Every 30 seconds instead of 5 minutes
+        // Set up periodic updates - reduced frequency to 2 minutes
+        updateInterval = setInterval(sendGameUpdate, 2 * 60 * 1000); // Every 2 minutes
 
         // Clean up on disconnect
         const cleanup = () => {

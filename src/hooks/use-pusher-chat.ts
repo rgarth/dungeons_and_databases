@@ -1,42 +1,42 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
-import { WebRTCChat, ChatMessage, WebRTCChatConfig } from '@/lib/webrtc-chat';
+import { PusherChat, PusherChatConfig, ChatMessage } from '@/lib/pusher-chat';
 
-export interface UseWebRTCChatOptions {
+interface UsePusherChatOptions {
   gameId: string;
   enabled?: boolean;
 }
 
-export interface UseWebRTCChatReturn {
+interface UsePusherChatReturn {
   messages: ChatMessage[];
   peerCount: number;
   isConnected: boolean;
   error: string | null;
-  sendMessage: (message: string, type?: 'text' | 'system' | 'dice_roll') => void;
+  sendMessage: (message: string, type?: 'text' | 'system' | 'dice_roll') => Promise<void>;
   connect: () => Promise<void>;
   disconnect: () => void;
   clearMessages: () => void;
 }
 
-export function useWebRTCChat({ gameId, enabled = true }: UseWebRTCChatOptions): UseWebRTCChatReturn {
+export function usePusherChat({ gameId, enabled = true }: UsePusherChatOptions): UsePusherChatReturn {
   const { data: session } = useSession();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [peerCount, setPeerCount] = useState<number>(0);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const webrtcRef = useRef<WebRTCChat | null>(null);
+  const pusherRef = useRef<PusherChat | null>(null);
 
   const handleMessage = useCallback((message: ChatMessage) => {
     setMessages(prev => [...prev, message]);
   }, []);
 
   const handlePeerConnected = useCallback(() => {
-    // Peer count will be updated via periodic polling
+    // Peer count will be updated via presence events
   }, []);
 
   const handlePeerDisconnected = useCallback(() => {
-    // Peer count will be updated via periodic polling
+    // Peer count will be updated via presence events
   }, []);
 
   const handleError = useCallback((errorMessage: string) => {
@@ -53,7 +53,7 @@ export function useWebRTCChat({ gameId, enabled = true }: UseWebRTCChatOptions):
       // Get user ID from session
       const userId = session.user.id;
       
-      const config: WebRTCChatConfig = {
+      const config: PusherChatConfig = {
         gameId,
         userId,
         userName: session.user.name || session.user.email,
@@ -63,33 +63,45 @@ export function useWebRTCChat({ gameId, enabled = true }: UseWebRTCChatOptions):
         onError: handleError
       };
 
-      const webrtc = new WebRTCChat(config);
-      webrtcRef.current = webrtc;
+      const pusher = new PusherChat(config);
+      pusherRef.current = pusher;
       
-      await webrtc.connect();
+      await pusher.connect();
       setIsConnected(true);
       
-      // Load chat history
-      const history = await webrtc.loadChatHistory();
-      setMessages(history);
+      // Load chat history from server
+      try {
+        const response = await fetch(`/api/games/${gameId}/chat`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.messages && Array.isArray(data.messages)) {
+            console.log(`📚 Loaded ${data.messages.length} chat messages from history`);
+            setMessages(data.messages);
+          }
+        } else {
+          console.warn('Failed to load chat history:', response.statusText);
+        }
+      } catch (historyError) {
+        console.warn('Error loading chat history:', historyError);
+        // Don't fail the connection if history loading fails
+      }
       
       // Get initial peer count
-      const count = await webrtc.getRoomPeerCount();
+      const count = await pusher.getRoomPeerCount();
       console.log(`🎯 Setting initial peer count: ${count}`);
       setPeerCount(count);
       
       // Set up periodic peer count updates
       const interval = setInterval(async () => {
-        if (webrtcRef.current) {
-          const count = await webrtcRef.current.getRoomPeerCount();
+        if (pusherRef.current) {
+          const count = await pusherRef.current.getRoomPeerCount();
           console.log(`🔄 Updating peer count: ${count}`);
           setPeerCount(count);
         }
-      }, 10000); // Update every 10 seconds to reduce database load
+      }, 10000); // Update every 10 seconds
       
       // Store interval for cleanup
-      webrtcRef.current = webrtc;
-      (webrtcRef.current as WebRTCChat & { peerCountInterval?: NodeJS.Timeout }).peerCountInterval = interval;
+      (pusherRef.current as PusherChat & { peerCountInterval?: NodeJS.Timeout }).peerCountInterval = interval;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to connect';
       setError(errorMessage);
@@ -98,22 +110,22 @@ export function useWebRTCChat({ gameId, enabled = true }: UseWebRTCChatOptions):
   }, [gameId, session?.user, enabled, handleMessage, handlePeerConnected, handlePeerDisconnected, handleError]);
 
   const disconnect = useCallback(() => {
-    if (webrtcRef.current) {
+    if (pusherRef.current) {
       // Clear peer count interval
-      const webrtc = webrtcRef.current as WebRTCChat & { peerCountInterval?: NodeJS.Timeout };
-      if (webrtc.peerCountInterval) {
-        clearInterval(webrtc.peerCountInterval);
+      const pusher = pusherRef.current as PusherChat & { peerCountInterval?: NodeJS.Timeout };
+      if (pusher.peerCountInterval) {
+        clearInterval(pusher.peerCountInterval);
       }
-      webrtcRef.current.disconnect();
-      webrtcRef.current = null;
+      pusherRef.current.disconnect();
+      pusherRef.current = null;
     }
     setIsConnected(false);
     setPeerCount(0);
   }, []);
 
-  const sendMessage = useCallback((message: string, type: 'text' | 'system' | 'dice_roll' = 'text') => {
-    if (webrtcRef.current && isConnected) {
-      webrtcRef.current.sendMessage(message, type);
+  const sendMessage = useCallback(async (message: string, type: 'text' | 'system' | 'dice_roll' = 'text') => {
+    if (pusherRef.current && isConnected) {
+      await pusherRef.current.sendMessage(message, type);
     }
   }, [isConnected]);
 
@@ -123,7 +135,7 @@ export function useWebRTCChat({ gameId, enabled = true }: UseWebRTCChatOptions):
 
   // Auto-connect when enabled and session is available
   useEffect(() => {
-    if (enabled && session?.user?.email && !isConnected && !webrtcRef.current) {
+    if (enabled && session?.user?.email && !isConnected && !pusherRef.current) {
       connect();
     }
   }, [enabled, session?.user?.email, isConnected, connect]);

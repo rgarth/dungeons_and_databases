@@ -24,7 +24,7 @@ export default function GamesList({ onGameSelect, onCreateGame }: GamesListProps
   };
 
   const getCharacterCount = (game: Game) => {
-    return game.participants.reduce((total, p) => total + p.characters.length, 0);
+    return game.participants.reduce((total, p) => total + (p.characters?.length || 0), 0);
   };
 
   if (isLoading) {

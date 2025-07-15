@@ -10,11 +10,13 @@ import JoinGameModal from '@/components/party/JoinGameModal';
 import { Button } from '@/components/ui/Button';
 import GameDetailsModal from '@/components/party/GameDetailsModal';
 import { Game } from '@/types/game';
+import { useGamesData } from '@/components/providers/games-data-provider';
 
 export default function PartyPage() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { addGame, refetch, removeGame } = useGamesData();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [showGameDetails, setShowGameDetails] = useState(false);
@@ -50,15 +52,18 @@ export default function PartyPage() {
   };
 
   const handleGameCreated = (game: Game) => {
-    // TODO: Navigate to game room or show game interface
+    // Add the new game to the cache immediately
+    addGame(game);
     console.log('Created game:', game);
-    // The games data will be automatically refreshed by the provider
+    // Optionally open the game details modal
+    setSelectedGame(game);
+    setShowGameDetails(true);
   };
 
   const handleGameJoined = () => {
-    // TODO: Navigate to game room
+    // Refresh the games list to show the newly joined game
+    refetch();
     console.log('Joined game');
-    // The games data will be automatically refreshed by the provider
   };
 
   const handleTabChange = (tab: 'characters' | 'party' | 'monsters') => {
@@ -140,8 +145,16 @@ export default function PartyPage() {
           setShowGameDetails(false);
           setSelectedGame(null);
         }}
-        onGameUpdated={() => {
-          // The games data will be automatically refreshed by the provider
+        onGameUpdated={(deletedGameId?: string) => {
+          // If a game was deleted, remove it from the cache and close the modal
+          if (deletedGameId) {
+            removeGame(deletedGameId);
+            setSelectedGame(null);
+            setShowGameDetails(false);
+          } else {
+            // Otherwise, refresh the games list
+            refetch();
+          }
         }}
       />
     </MainLayout>

@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Card } from '@/components/ui';
-import { Users, User, BookOpen, MessageCircle, MessageSquare, Calendar } from 'lucide-react';
+import { Users, User, BookOpen, MessageSquare, Calendar } from 'lucide-react';
 import { Game } from '@/types/game';
 import { Character } from '@/types/character';
 import { useAvatar } from '@/hooks/use-character-mutations';
@@ -12,7 +12,7 @@ import Image from 'next/image';
 import { CharacterSheet } from '@/components/character-sheet';
 import ReadOnlyCharacterSheet from '@/components/character-sheet/ReadOnlyCharacterSheet';
 import { useGameEvents } from '@/hooks/use-game-events';
-import WebRTCChat from './WebRTCChat';
+import GameChat from './GameChat';
 
 // Character Avatar Component
 function CharacterAvatar({ characterId, characterName }: { characterId: string; characterName: string }) {
@@ -103,7 +103,7 @@ interface GameDetailsModalProps {
   game: Game | null;
   isOpen: boolean;
   onClose: () => void;
-  onGameUpdated?: () => void;
+  onGameUpdated?: (deletedGameId?: string) => void;
 }
 
 export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated }: GameDetailsModalProps) {
@@ -146,11 +146,11 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
       if (gameUpdate.hasChanges) {
         console.log('🔄 Game state changed, refreshing data...');
         refreshGameData();
-      }
+            }
     },
     onError: (error: Error) => {
       console.error('❌ Game SSE error:', error);
-    }
+      }
   });
 
   // Load notes when notes tab is active
@@ -390,9 +390,9 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
         throw new Error(errorData.error || 'Failed to delete game');
       }
 
-      // Close the modal and trigger parent refresh
+      // Close the modal and trigger parent refresh with the deleted game ID
       onClose();
-      onGameUpdated?.();
+      onGameUpdated?.(currentGame.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -597,9 +597,10 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                   color: activeTab === 'chat' ? 'var(--color-accent)' : undefined
                 }}
               >
-                <MessageCircle className="h-4 w-4 inline mr-2" />
+                <MessageSquare className="h-4 w-4 inline mr-2" />
                 Chat
               </button>
+
             </div>
 
             {/* Error Display */}
@@ -614,24 +615,24 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Left Column - Stats */}
                 <div className="space-y-6">
-                  {/* Game Stats */}
+                {/* Game Stats */}
                   <div className="grid grid-cols-3 gap-3">
                     <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                      <Users className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
+                    <Users className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
                       <div className="text-center">
                         <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Players</div>
-                        <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{getPlayerCount()}</div>
-                      </div>
+                      <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{getPlayerCount()}</div>
                     </div>
+                  </div>
                     <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                      <User className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
+                    <User className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
                       <div className="text-center">
                         <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Characters</div>
-                        <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{getCharacterCount()}</div>
-                      </div>
+                      <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{getCharacterCount()}</div>
                     </div>
+                  </div>
                     <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                      <MessageSquare className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
+                    <MessageSquare className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
                       <div className="text-center">
                         <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Messages</div>
                         <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>0</div>
@@ -664,33 +665,33 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
 
                 {/* Right Column - Invite Players */}
                 <div>
-                  {/* Invite Section */}
+                {/* Invite Section */}
                   <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                    <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-accent)' }}>
-                      Invite Players
-                    </h3>
-                    <div className="flex flex-col items-center">
-                      <div className="w-full max-w-xs px-4 py-3 font-mono text-xl font-bold rounded-lg text-center mb-3 border-2" style={{ backgroundColor: 'var(--color-card)', color: 'var(--color-accent)', borderColor: 'var(--color-accent)' }}>
-                        {currentGame.id.slice(0, 8).toUpperCase()}
-                      </div>
-                      <div className="flex gap-2 w-full max-w-xs">
-                        <button
-                          onClick={copyInviteCode}
-                          className="flex-1 px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors font-medium"
-                        >
-                          Copy Code
-                        </button>
-                        <button
-                          onClick={copyInviteUrl}
-                          className="flex-1 px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors font-medium"
-                        >
-                          Copy URL
-                        </button>
-                      </div>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-accent)' }}>
+                    Invite Players
+                  </h3>
+                  <div className="flex flex-col items-center">
+                    <div className="w-full max-w-xs px-4 py-3 font-mono text-xl font-bold rounded-lg text-center mb-3 border-2" style={{ backgroundColor: 'var(--color-card)', color: 'var(--color-accent)', borderColor: 'var(--color-accent)' }}>
+                      {currentGame.id.slice(0, 8).toUpperCase()}
+                    </div>
+                    <div className="flex gap-2 w-full max-w-xs">
+                      <button
+                        onClick={copyInviteCode}
+                        className="flex-1 px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors font-medium"
+                      >
+                        Copy Code
+                      </button>
+                      <button
+                        onClick={copyInviteUrl}
+                        className="flex-1 px-4 py-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors font-medium"
+                      >
+                        Copy URL
+                      </button>
                     </div>
                   </div>
                 </div>
-              </div>
+                            </div>
+                              </div>
             )}
 
             {activeTab === 'characters' && (
@@ -782,10 +783,10 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                 {/* Game Notes - Visible to all players */}
                 <div className="mb-6">
                   {isDM && (
-                    <div className="flex justify-between items-center mb-3">
-                      <h4 className="text-md font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                        Player Viewable Notes
-                      </h4>
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="text-md font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                      Player Viewable Notes
+                    </h4>
                       <button
                         onClick={() => saveNotes('game')}
                         disabled={isSavingNotes}
@@ -806,7 +807,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                           </>
                         )}
                       </button>
-                    </div>
+                  </div>
                   )}
                   <div className={`p-4 rounded-lg ${!isDM ? 'mt-3' : ''}`} style={{ backgroundColor: 'var(--color-card-secondary)' }}>
                     {isDM ? (
@@ -888,7 +889,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
 
             {activeTab === 'chat' && (
               <div className="h-96">
-                <WebRTCChat 
+                <GameChat 
                   gameId={currentGame?.id || ''} 
                   enabled={activeTab === 'chat' && !!currentGame} 
                 />
