@@ -29,7 +29,7 @@ export async function GET(
     const participant = await prisma.gameParticipant.findUnique({
       where: {
         gameId_userId: {
-          gameId: gameId,
+          gameId,
           userId: session.user.id
         }
       }
@@ -43,7 +43,7 @@ export async function GET(
     if (!chatMessages) {
       // Fetch from DB
       const messages = await prisma.gameChatMessage.findMany({
-        where: { gameId: gameId },
+        where: { gameId },
         orderBy: { createdAt: 'desc' },
         take: 100,
       });
@@ -80,7 +80,7 @@ export async function POST(
     const participant = await prisma.gameParticipant.findUnique({
       where: {
         gameId_userId: {
-          gameId: gameId,
+          gameId,
           userId: session.user.id
         }
       }
@@ -95,7 +95,7 @@ export async function POST(
     // Store message in database
     const dbMessage = await prisma.gameChatMessage.create({
       data: {
-        gameId: gameId,
+        gameId,
         userId: session.user.id,
         userName: session.user.name || session.user.email,
         message,

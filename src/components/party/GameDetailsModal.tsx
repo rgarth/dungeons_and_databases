@@ -891,7 +891,8 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
               <div className="h-96">
                 <GameChat 
                   gameId={currentGame?.id || ''} 
-                  enabled={activeTab === 'chat' && !!currentGame} 
+                  enabled={activeTab === 'chat' && !!currentGame}
+                  isDM={isDM}
                 />
               </div>
             )}

@@ -8,12 +8,14 @@ import { ChatMessage } from '@/lib/pusher-chat';
 interface GameChatProps {
   gameId: string;
   enabled?: boolean;
+  isDM?: boolean;
 }
 
-export default function GameChat({ gameId, enabled = true }: GameChatProps) {
+export default function GameChat({ gameId, enabled = true, isDM = false }: GameChatProps) {
   const { data: session } = useSession();
   const [message, setMessage] = useState('');
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -23,7 +25,8 @@ export default function GameChat({ gameId, enabled = true }: GameChatProps) {
     error,
     sendMessage,
     connect,
-    disconnect
+    disconnect,
+    clearMessages
   } = usePusherChat({ gameId, enabled });
 
   const scrollToBottom = () => {
@@ -56,6 +59,32 @@ export default function GameChat({ gameId, enabled = true }: GameChatProps) {
       console.error('Failed to connect:', error);
     } finally {
       setIsConnecting(false);
+    }
+  };
+
+  const handleClearChat = async () => {
+    if (isDM) {
+      // DM can clear chat history from server
+      setIsClearing(true);
+      try {
+        const response = await fetch(`/api/games/${gameId}/chat`, {
+          method: 'DELETE',
+        });
+        
+        if (response.ok) {
+          // Clear local messages immediately
+          clearMessages();
+        } else {
+          console.error('Failed to clear chat history');
+        }
+      } catch (error) {
+        console.error('Error clearing chat history:', error);
+      } finally {
+        setIsClearing(false);
+      }
+    } else {
+      // Regular users can only clear their local view
+      clearMessages();
     }
   };
 
@@ -100,16 +129,33 @@ export default function GameChat({ gameId, enabled = true }: GameChatProps) {
             <span className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Connecting...</span>
           )}
           {isConnected && (
-            <button
-              onClick={disconnect}
-              className="px-3 py-1 text-sm rounded transition-colors hover:opacity-80"
-              style={{ 
-                backgroundColor: 'var(--color-danger)', 
-                color: 'var(--color-danger-text)'
-              }}
-            >
-              Disconnect
-            </button>
+            <>
+              {/* Clear Button - only show if there are messages */}
+              {messages.length > 0 && (
+                <button
+                  onClick={handleClearChat}
+                  disabled={isClearing}
+                  className="px-3 py-1 text-sm rounded transition-colors hover:opacity-80"
+                  style={{
+                    backgroundColor: 'var(--color-warning)',
+                    color: 'var(--color-warning-text)'
+                  }}
+                  title={isDM ? 'Clear chat history for everyone' : 'Clear your view'}
+                >
+                  {isClearing ? 'Clearing...' : 'Clear'}
+                </button>
+              )}
+              <button
+                onClick={disconnect}
+                className="px-3 py-1 text-sm rounded transition-colors hover:opacity-80"
+                style={{ 
+                  backgroundColor: 'var(--color-danger)', 
+                  color: 'var(--color-danger-text)'
+                }}
+              >
+                Disconnect
+              </button>
+            </>
           )}
         </div>
       </div>

@@ -92,23 +92,17 @@ export async function GET(
 
             if (!game || isClosed) return;
 
-            // Get participant count and character count in a separate, optimized query
-            const participantStats = await prisma.gameParticipant.aggregate({
-              where: { gameId },
-              _count: {
-                id: true
-              }
-            });
-
-            // Get character count using a more efficient approach
-            const characterCountResult = await prisma.$queryRaw<[{ count: bigint }]>`
-              SELECT COALESCE(SUM(jsonb_array_length(character_ids::jsonb)), 0) as count
+            // Get participant count and character count using raw SQL for better performance
+            const statsResult = await prisma.$queryRaw<[{ participant_count: bigint; character_count: bigint }]>`
+              SELECT 
+                COUNT(*) as participant_count,
+                COALESCE(SUM(jsonb_array_length(character_ids::jsonb)), 0) as character_count
               FROM "GameParticipant"
               WHERE game_id = ${gameId}
             `;
             
-            const characterCount = Number(characterCountResult[0]?.count || 0);
-            const participantCount = participantStats._count.id;
+            const participantCount = Number(statsResult[0]?.participant_count || 0);
+            const characterCount = Number(statsResult[0]?.character_count || 0);
 
             // Check for state changes
             const previousState = gameStateChanges.get(gameId);
