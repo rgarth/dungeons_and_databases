@@ -121,23 +121,14 @@ export default function WebRTCChat({ gameId, enabled = true }: WebRTCChatProps) 
           </div>
         ) : (
           messages.map((msg: ChatMessage) => (
-            <div key={msg.id} className="flex flex-col">
-              <div className="flex items-center space-x-2">
-                <span className="font-medium text-foreground">
-                  {session?.user?.id === msg.userId ? 'You' : msg.userName}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {formatTimestamp(msg.timestamp)}
-                </span>
-                {msg.type !== 'text' && (
-                  <span className="text-xs px-2 py-1 bg-muted rounded">
-                    {msg.type}
-                  </span>
-                )}
-              </div>
-              <div className="mt-1">
-                <p className="text-foreground break-words">{msg.message}</p>
-              </div>
+            <div key={msg.id} className="flex items-start space-x-2">
+              <span className="font-medium text-foreground">
+                {session?.user?.id === msg.userId ? 'You' : msg.userName}:
+              </span>
+              <span className="text-foreground break-words flex-1">{msg.message}</span>
+              <span className="text-xs text-muted-foreground whitespace-nowrap">
+                {formatTimestamp(msg.timestamp)}
+              </span>
             </div>
           ))
         )}

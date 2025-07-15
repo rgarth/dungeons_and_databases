@@ -90,12 +90,18 @@ export class WebRTCChat {
       const response = await fetch(`/api/games/${this.config.gameId}/signaling/messages?userId=${this.config.userId}&since=${this.lastSignalingCheck}`);
       
       if (!response.ok) {
+        console.warn('Signaling messages response not ok:', response.status);
         return;
       }
 
       const messages = await response.json();
       
+      if (messages.length > 0) {
+        console.log(`📨 Received ${messages.length} signaling messages`);
+      }
+      
       for (const message of messages) {
+        console.log('🔗 Processing signaling message:', message.type);
         await this.handleSignalingMessage(message);
         this.lastSignalingCheck = Math.max(this.lastSignalingCheck, message.timestamp);
       }
@@ -280,14 +286,14 @@ export class WebRTCChat {
     dataChannel.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data.type === 'chat-message') {
+        if (data.messageType === 'chat-message') {
           const message: ChatMessage = {
             id: data.id,
             userId: data.userId,
             userName: data.userName,
             message: data.message,
             timestamp: data.timestamp,
-            type: data.messageType
+            type: data.type
           };
           this.config.onMessage(message);
         }
