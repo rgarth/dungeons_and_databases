@@ -3,8 +3,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
-// In-memory storage for signaling (in production, use Redis or similar)
-const peerRegistrations = new Map<string, { userId: string; userName: string; timestamp: number }>();
+// Use database for peer registrations with in-memory cache
+const peerCache = new Map<string, { userId: string; userName: string; lastSeen: number }>();
 
 export async function POST(
   request: NextRequest,
@@ -40,20 +40,42 @@ export async function POST(
       return NextResponse.json({ error: 'Not a participant in this game' }, { status: 403 });
     }
 
-    // Register the peer
-    peerRegistrations.set(`${gameId}:${userId}`, {
-      userId,
+    // Register the peer in database
+    await prisma.peerRegistration.upsert({
+      where: {
+        gameId_userId: {
+          gameId,
+          userId: user.id
+        }
+      },
+      update: {
+        userName,
+        lastSeen: new Date()
+      },
+      create: {
+        gameId,
+        userId: user.id,
+        userName
+      }
+    });
+
+    // Update cache
+    peerCache.set(`${gameId}:${user.id}`, {
+      userId: user.id,
       userName,
-      timestamp
+      lastSeen: Date.now()
     });
 
     // Clean up old registrations (older than 5 minutes)
-    const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
-    for (const [key, registration] of peerRegistrations.entries()) {
-      if (registration.timestamp < fiveMinutesAgo) {
-        peerRegistrations.delete(key);
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    await prisma.peerRegistration.deleteMany({
+      where: {
+        gameId,
+        lastSeen: {
+          lt: fiveMinutesAgo
+        }
       }
-    }
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

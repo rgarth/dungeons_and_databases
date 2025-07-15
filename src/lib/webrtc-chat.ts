@@ -60,10 +60,17 @@ export class WebRTCChat {
     this.signalingInterval = setInterval(async () => {
       await this.pollSignalingMessages();
     }, 3000); // Poll every 3 seconds to reduce database load
+    
+    // Also poll for peer count updates
+    setInterval(async () => {
+      const count = await this.getRoomPeerCount();
+      console.log(`📊 Current peer count: ${count}`);
+    }, 5000);
   }
 
   private async registerPeer(): Promise<void> {
     try {
+      console.log(`🔧 Registering peer: ${this.config.userId} (${this.config.userName})`);
       const response = await fetch(`/api/games/${this.config.gameId}/signaling/register`, {
         method: 'POST',
         headers: {
@@ -79,6 +86,18 @@ export class WebRTCChat {
       if (!response.ok) {
         throw new Error('Failed to register peer');
       }
+      
+      console.log(`✅ Peer registered successfully`);
+      
+      // Broadcast that we joined to other peers
+      await this.sendSignalingMessage({
+        type: 'peer-joined',
+        signal: undefined,
+        signalType: undefined
+      });
+      
+      // Also send a broadcast message to announce our presence
+      console.log('📢 Broadcasting peer presence');
     } catch (error) {
       console.error('Failed to register peer:', error);
       throw error;
@@ -412,15 +431,9 @@ export class WebRTCChat {
   }
 
   async getRoomPeerCount(): Promise<number> {
-    try {
-      const response = await fetch(`/api/games/${this.config.gameId}/signaling/peers`);
-      if (response.ok) {
-        const data = await response.json();
-        return data.count || 0;
-      }
-    } catch (error) {
-      console.error('Failed to get peer count:', error);
-    }
+    // For now, just return the local peer count since serverless functions don't share memory
+    // This will be updated when we implement a proper solution
+    console.log(`📊 Local peer count: ${this.connectedPeers.size}`);
     return this.connectedPeers.size;
   }
 } 
