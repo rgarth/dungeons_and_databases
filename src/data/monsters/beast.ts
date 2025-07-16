@@ -3010,7 +3010,7 @@ export const beastMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A large scorpion with segmented body, two large pincers, curved stinger tail, armored exoskeleton.",
     "background": "This giant scorpion is a deadly desert predator with venomous stinger.",
-    "imagePrompt": "A large scorpion with segmented body, two large pincers, long segmented tail curled over back with venomous stinger at tip, armored exoskeleton, desert environment",
+    "imagePrompt": "A large scorpion with curved tail and stinger in desert environment",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5403,9 +5403,9 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny beast with challenge rating 0.",
-    "background": "This beast is a formidable opponent.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A tiny scorpion with segmented body, two small pincers, curved stinger tail, armored exoskeleton.",
+    "background": "This tiny scorpion is a venomous desert creature with deadly stinger.",
+    "imagePrompt": "A tiny scorpion with curved tail and stinger in desert environment",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

@@ -516,7 +516,16 @@ function generateMonsterPrompt(monster) {
   
   // If replace prompt is provided, use it instead of the generated prompt
   if (options.replacePrompt) {
+    // Skip fantasy prefix for scorpions - they should look realistic
+    if (monster.name.toLowerCase().includes('scorpion')) {
+      return options.replacePrompt;
+    }
     return `${PROMPT_PREFIX}${options.replacePrompt}`;
+  }
+  
+  // Skip fantasy prefix for scorpions - they should look realistic
+  if (monster.name.toLowerCase().includes('scorpion')) {
+    return description;
   }
   
   return `${PROMPT_PREFIX}${description}`;
@@ -756,7 +765,7 @@ async function generateMonsterImages() {
   if (options.monster) {
     const monsterName = options.monster.toLowerCase();
     monsters = monsters.filter(monster => 
-      monster.name.toLowerCase().includes(monsterName)
+      monster.name.toLowerCase() === monsterName
     );
     if (monsters.length === 0) {
       console.log(`❌ No monsters found matching "${options.monster}"`);
