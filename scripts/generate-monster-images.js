@@ -179,14 +179,19 @@ if (!fs.existsSync(OUTPUT_DIR)) {
 
 // Function to generate contextual background for monster type
 function generateContextualBackground(monsterType, monsterName) {
-  // Special handling for Dragon Turtle - aquatic backgrounds
-  if (monsterName.toLowerCase().includes('dragon turtle')) {
+  // Special handling for aquatic creatures - ocean backgrounds
+  if (monsterName.toLowerCase().includes('dragon turtle') || 
+      monsterName.toLowerCase().includes('shark') || 
+      monsterName.toLowerCase().includes('sea horse') ||
+      monsterName.toLowerCase().includes('seahorse')) {
     const aquaticBackgrounds = [
       'deep ocean depths with coral reefs and ancient shipwrecks',
       'underwater cavern with bioluminescent creatures and flowing currents',
       'coastal waters with crashing waves and rocky formations',
       'submerged temple ruins with seaweed and marine life',
-      'abyssal trench with mysterious deep-sea creatures'
+      'abyssal trench with mysterious deep-sea creatures',
+      'crystal clear ocean waters with sunlight filtering through',
+      'underwater kelp forest with swaying seaweed and marine life'
     ];
     return getRandomItem(aquaticBackgrounds);
   }
@@ -219,7 +224,10 @@ function generateContextualBackground(monsterType, monsterName) {
       'desert dunes with scorching sun and wind-swept sand',
       'arctic tundra with snow and ice formations',
       'cave system with stalactites and underground streams',
-      'grassland plains with tall grass and scattered rocks'
+      'grassland plains with tall grass and scattered rocks',
+      'deep ocean depths with coral reefs and ancient shipwrecks',
+      'underwater cavern with bioluminescent creatures and flowing currents',
+      'coastal waters with crashing waves and rocky formations'
     ],
     'undead': [
       'ancient cemetery with crumbling tombstones and fog',
@@ -353,7 +361,14 @@ function generateMonsterPrompt(monster) {
       description += `. Single humanoid character, ${ethnicity} with ${skinTone}, ${bodyType}, detailed facial features, realistic proportions, medieval fantasy clothing and armor, weathered skin, expressive face, respectful character design, practical armor, realistic medieval attire`;
       break;
     case 'beast':
-      description += `. Single animal creature, natural fur or scales, realistic anatomy, wild eyes, natural pose, detailed textures`;
+      // Special handling for aquatic beasts
+      if (monster.name.toLowerCase().includes('shark')) {
+        description += `. Single predatory shark, sleek streamlined body, sharp triangular teeth, powerful jaws, dark eyes, swimming in ocean waters, photorealistic marine predator`;
+      } else if (monster.name.toLowerCase().includes('sea horse') || monster.name.toLowerCase().includes('seahorse')) {
+        description += `. Single seahorse fish, elongated body with curled tail, colorful scales, horse-like head, swimming in ocean waters, photorealistic marine creature`;
+      } else {
+        description += `. Single animal creature, natural fur or scales, realistic anatomy, wild eyes, natural pose, detailed textures`;
+      }
       break;
     case 'undead':
       description += `. Single undead creature, pale or decayed skin, hollow eyes, tattered clothing, supernatural aura, eerie atmosphere`;
@@ -419,6 +434,12 @@ function generateMonsterPrompt(monster) {
     } else {
       description += `. Perched majestically in the scene, dominating the environment`;
     }
+  } 
+  // Special handling for aquatic creatures
+  else if (monster.name.toLowerCase().includes('shark') || 
+           monster.name.toLowerCase().includes('sea horse') || 
+           monster.name.toLowerCase().includes('seahorse')) {
+    description += `. Swimming gracefully in the scene, surrounded by ocean environment`;
   } else {
     description += `. Standing in the scene`;
   }

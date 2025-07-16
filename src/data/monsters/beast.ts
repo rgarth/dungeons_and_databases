@@ -3078,7 +3078,7 @@ export const beastMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "Like their smaller kin, giant sea horses are shy, colorful fish with elongated bodies and curled tails. Aquatic elves train them as mounts.",
     "background": "Like their smaller kin, giant sea horses are shy, colorful fish with elongated bodies and curled tails. Aquatic elves train them as mounts.",
-    "imagePrompt": "A large beast creature with animal-like features",
+    "imagePrompt": "A large aquatic fish with elongated body, curled tail, colorful scales, seahorse-like appearance, swimming in ocean waters",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3148,7 +3148,7 @@ export const beastMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A giant shark is 30 feet long and normally found in deep oceans. Utterly fearless, it preys on anything that crosses its path, including whales and ships.",
     "background": "A giant shark is 30 feet long and normally found in deep oceans. Utterly fearless, it preys on anything that crosses its path, including whales and ships.",
-    "imagePrompt": "A huge beast creature with animal-like features",
+    "imagePrompt": "A huge predatory shark with sleek body, sharp teeth, powerful jaws, swimming in deep ocean waters",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5455,9 +5455,9 @@ export const beastMonsters: Monster[] = [
     ],
     "actions": [],
     "legendaryActions": [],
-    "description": "A tiny beast with challenge rating 0.",
-    "background": "This beast is a formidable opponent.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A tiny aquatic fish with elongated body, curled tail, colorful scales, seahorse-like appearance.",
+    "background": "This tiny seahorse is a shy, colorful fish found in ocean waters.",
+    "imagePrompt": "A tiny aquatic fish with elongated body, curled tail, colorful scales, seahorse-like appearance, swimming in ocean waters",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
