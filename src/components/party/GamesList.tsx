@@ -4,16 +4,15 @@ import { useSession } from 'next-auth/react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Game } from '@/types/game';
-import { useGamesData } from '@/components/providers/games-data-provider';
-
 interface GamesListProps {
+  games: Game[];
+  isLoading: boolean;
   onGameSelect: (game: Game) => void;
   onCreateGame: () => void;
 }
 
-export default function GamesList({ onGameSelect, onCreateGame }: GamesListProps) {
+export default function GamesList({ games, isLoading, onGameSelect, onCreateGame }: GamesListProps) {
   const { data: session } = useSession();
-  const { games, isLoading, error, refetch } = useGamesData();
 
   const isDM = (game: Game) => {
     return game.dm.email === session?.user?.email;
@@ -46,19 +45,7 @@ export default function GamesList({ onGameSelect, onCreateGame }: GamesListProps
     );
   }
 
-  if (error) {
-    return (
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-[var(--color-text-primary)]">Your Games</h2>
-        </div>
-        <Card className="p-4">
-          <div className="text-[var(--color-danger)] mb-4">Error: {error.message}</div>
-          <Button onClick={() => refetch()}>Retry</Button>
-        </Card>
-      </div>
-    );
-  }
+
 
   return (
     <div className="space-y-4">

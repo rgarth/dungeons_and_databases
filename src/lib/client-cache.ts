@@ -119,6 +119,177 @@ interface SpellLimits {
   spellSlots: Record<number, number>;
 }
 
+interface Game {
+  id: string;
+  name: string;
+  description?: string;
+  gameNotes?: string;
+  dmNotes?: string;
+  dm: {
+    id: string;
+    name?: string;
+    email: string;
+  };
+  participants: Array<{
+    id: string;
+    user: {
+      id: string;
+      name?: string;
+      email: string;
+    };
+    characters: Array<{
+      id: string;
+      name: string;
+      class: string;
+      level: number;
+      race: string;
+      avatarUrl?: string;
+    }>;
+    isDm: boolean;
+  }>;
+  _count: {
+    participants: number;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Monster {
+  // Basic Information
+  name: string;
+  size: 'Tiny' | 'Small' | 'Medium' | 'Large' | 'Huge' | 'Gargantuan';
+  type: string;
+  subtype?: string;
+  alignment: string;
+  challengeRating: string;
+  xp: number;
+  
+  // Ability Scores
+  strength: number;
+  dexterity: number;
+  constitution: number;
+  intelligence: number;
+  wisdom: number;
+  charisma: number;
+  
+  // Combat Stats
+  armorClass: number;
+  armorType?: string;
+  hitPoints: number;
+  hitDice: string;
+  speed: {
+    walk?: number;
+    fly?: number;
+    swim?: number;
+    climb?: number;
+    burrow?: number;
+    hover?: boolean;
+  };
+  
+  // Proficiencies
+  savingThrows?: {
+    strength?: number;
+    dexterity?: number;
+    constitution?: number;
+    intelligence?: number;
+    wisdom?: number;
+    charisma?: number;
+  };
+  skills?: Record<string, number>;
+  damageResistances?: string[];
+  damageImmunities?: string[];
+  conditionImmunities?: string[];
+  damageVulnerabilities?: string[];
+  
+  // Senses
+  senses: {
+    darkvision?: number;
+    blindsight?: number;
+    tremorsense?: number;
+    truesight?: number;
+    passivePerception: number;
+  };
+  
+  // Languages
+  languages: string[];
+  telepathy?: number;
+  
+  // Challenge Rating Details
+  proficiencyBonus: number;
+  
+  // Actions and Abilities
+  traits?: Array<{
+    name: string;
+    description: string;
+  }>;
+  actions?: Array<{
+    name: string;
+    description: string;
+    attackBonus?: number;
+    damage?: {
+      type: string;
+      roll: string;
+      average?: number;
+    };
+    reach?: string;
+    target?: string;
+    savingThrow?: {
+      ability: string;
+      dc: number;
+      effect: string;
+    };
+    recharge?: string;
+    legendary?: boolean;
+    lair?: boolean;
+  }>;
+  legendaryActions?: Array<{
+    name: string;
+    cost?: number;
+    description: string;
+  }>;
+  lairActions?: Array<{
+    name: string;
+    description: string;
+    initiative?: number;
+  }>;
+  regionalEffects?: Array<{
+    description: string;
+  }>;
+  
+  // Spellcasting
+  spellcasting?: {
+    level: number;
+    spellcastingAbility: string;
+    spellSaveDc: number;
+    spellAttackBonus: number;
+    spells: {
+      cantrips?: string[];
+      1?: string[];
+      2?: string[];
+      3?: string[];
+      4?: string[];
+      5?: string[];
+      6?: string[];
+      7?: string[];
+      8?: string[];
+      9?: string[];
+    };
+  };
+  
+  // Description and Lore
+  description?: string;
+  background?: string;
+  
+  // Image Generation
+  imagePrompt?: string;
+  imageStyle?: string;
+  
+  // Metadata
+  source: string;
+  page?: number;
+  tags?: string[];
+}
+
 interface CacheData {
   races: Race[];
   classes: Class[];
@@ -135,6 +306,8 @@ interface CacheData {
   armorSuggestions: Record<string, Armor[]>; // Class name -> armor suggestions
   spells: Spell[]; // All spells
   spellLimits: Record<string, SpellLimits>; // Class name -> spell limits for level 1
+  games: Game[]; // User's games
+  monsters: Monster[]; // All monsters
 }
 
 class ClientCache {
@@ -172,7 +345,9 @@ class ClientCache {
         treasures,
         subraces,
         languages,
-        spells
+        spells,
+        games,
+        monsters
       ] = await Promise.all([
         fetch('/api/races').then(res => res.json()),
         fetch('/api/classes').then(res => res.json()),
@@ -185,7 +360,9 @@ class ClientCache {
         fetch('/api/treasures').then(res => res.json()),
         fetch('/api/subraces').then(res => res.json()),
         fetch('/api/languages').then(res => res.json()),
-        fetch('/api/spells').then(res => res.json())
+        fetch('/api/spells').then(res => res.json()),
+        fetch('/api/games').then(res => res.json()).catch(() => []), // Games might fail if not authenticated
+        fetch('/api/monsters').then(res => res.json())
       ]);
 
       // Pre-load weapon and armor suggestions for all classes
@@ -263,7 +440,9 @@ class ClientCache {
         weaponSuggestions,
         armorSuggestions,
         spells,
-        spellLimits
+        spellLimits,
+        games,
+        monsters
       };
 
       console.log('✅ Client cache initialized:', {
@@ -281,7 +460,9 @@ class ClientCache {
         spells: spells.length,
         weaponSuggestions: Object.keys(weaponSuggestions).length,
         armorSuggestions: Object.keys(armorSuggestions).length,
-        spellLimits: Object.keys(spellLimits).length
+        spellLimits: Object.keys(spellLimits).length,
+        games: games.length,
+        monsters: monsters.length
       });
     } catch (error) {
       console.error('❌ Failed to initialize client cache:', error);
@@ -353,6 +534,14 @@ class ClientCache {
 
   getSpellLimits(className: string) {
     return this.cache.spellLimits?.[className] || null;
+  }
+
+  getGames() {
+    return this.cache.games || [];
+  }
+
+  getMonsters() {
+    return this.cache.monsters || [];
   }
 
   isInitialized() {

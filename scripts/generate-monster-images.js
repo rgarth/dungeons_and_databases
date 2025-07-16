@@ -182,8 +182,13 @@ function generateContextualBackground(monsterType, monsterName) {
   // Special handling for aquatic creatures - ocean backgrounds
   if (monsterName.toLowerCase().includes('dragon turtle') || 
       monsterName.toLowerCase().includes('shark') || 
+      monsterName.toLowerCase().includes('killer whale') ||
+      monsterName.toLowerCase().includes('orca') ||
       monsterName.toLowerCase().includes('sea horse') ||
-      monsterName.toLowerCase().includes('seahorse')) {
+      monsterName.toLowerCase().includes('seahorse') ||
+      monsterName.toLowerCase().includes('octopus') ||
+      monsterName.toLowerCase().includes('quipper') ||
+      monsterName.toLowerCase().includes('fish')) {
     const aquaticBackgrounds = [
       'deep ocean depths with coral reefs and ancient shipwrecks',
       'underwater cavern with bioluminescent creatures and flowing currents',
@@ -194,6 +199,35 @@ function generateContextualBackground(monsterType, monsterName) {
       'underwater kelp forest with swaying seaweed and marine life'
     ];
     return getRandomItem(aquaticBackgrounds);
+  }
+  
+  // Special handling for scorpions - desert backgrounds
+  if (monsterName.toLowerCase().includes('scorpion')) {
+    const desertBackgrounds = [
+      'desert dunes with scorching sun and wind-swept sand',
+      'rocky desert landscape with cacti and sparse vegetation',
+      'desert oasis with palm trees and water',
+      'arid wasteland with cracked earth and heat waves',
+      'desert canyon with red rock formations and shadows'
+    ];
+    return getRandomItem(desertBackgrounds);
+  }
+  
+  // Special handling for arctic creatures - tundra backgrounds
+  if (monsterName.toLowerCase().includes('polar bear') ||
+      monsterName.toLowerCase().includes('mammoth') ||
+      monsterName.toLowerCase().includes('yeti') ||
+      monsterName.toLowerCase().includes('frost') ||
+      monsterName.toLowerCase().includes('winter wolf') ||
+      monsterName.toLowerCase().includes('ice')) {
+    const arcticBackgrounds = [
+      'arctic tundra with snow and ice formations',
+      'frozen wasteland with blowing snow and icy rocks',
+      'glacier with deep crevasses and blue ice',
+      'snow-covered forest with frosted trees and mist',
+      'ice cave with icicles and shimmering walls'
+    ];
+    return getRandomItem(arcticBackgrounds);
   }
   const backgrounds = {
     'dragon': [
@@ -224,10 +258,7 @@ function generateContextualBackground(monsterType, monsterName) {
       'desert dunes with scorching sun and wind-swept sand',
       'arctic tundra with snow and ice formations',
       'cave system with stalactites and underground streams',
-      'grassland plains with tall grass and scattered rocks',
-      'deep ocean depths with coral reefs and ancient shipwrecks',
-      'underwater cavern with bioluminescent creatures and flowing currents',
-      'coastal waters with crashing waves and rocky formations'
+      'grassland plains with tall grass and scattered rocks'
     ],
     'undead': [
       'ancient cemetery with crumbling tombstones and fog',
@@ -364,8 +395,26 @@ function generateMonsterPrompt(monster) {
       // Special handling for aquatic beasts
       if (monster.name.toLowerCase().includes('shark')) {
         description += `. Single predatory shark, sleek streamlined body, sharp triangular teeth, powerful jaws, dark eyes, swimming in ocean waters, photorealistic marine predator`;
+      } else if (monster.name.toLowerCase().includes('killer whale') || monster.name.toLowerCase().includes('orca')) {
+        description += `. Single killer whale, black and white coloring, powerful streamlined body, swimming in ocean waters, photorealistic marine mammal`;
       } else if (monster.name.toLowerCase().includes('sea horse') || monster.name.toLowerCase().includes('seahorse')) {
-        description += `. Single seahorse fish, elongated body with curled tail, colorful scales, horse-like head, swimming in ocean waters, photorealistic marine creature`;
+        description += `. Single seahorse fish, elongated body with curled tail, colorful scales, seahorse head with tubular snout, underwater in ocean depths, photorealistic marine creature`;
+      } else if (monster.name.toLowerCase().includes('scorpion')) {
+        description += `. Single scorpion, segmented body, two large pincers, long segmented tail curled over back with venomous stinger at tip, armored exoskeleton, desert environment, photorealistic arachnid, anatomically correct scorpion`;
+      } else if (monster.name.toLowerCase().includes('mammoth')) {
+        description += `. Single mammoth, hairy elephant with thick fur, long curved tusks, four legs, trunk, mammoth anatomy, prehistoric elephant, photorealistic, anatomically correct`;
+      } else if (monster.name.toLowerCase().includes('polar bear')) {
+        description += `. Single polar bear, massive white bear with thick fur, powerful build, four legs, arctic predator, photorealistic, anatomically correct`;
+      } else if (monster.name.toLowerCase().includes('mule')) {
+        description += `. Single mule, donkey-like animal with long ears, gray or brown fur, four legs, sturdy build, pack animal, realistic equine anatomy, photorealistic`;
+      } else if (monster.name.toLowerCase().includes('octopus')) {
+        description += `. Single octopus, eight tentacles, bulbous head, large intelligent eyes, soft body, marine creature, underwater environment, photorealistic cephalopod`;
+      } else if (monster.name.toLowerCase().includes('quipper')) {
+        description += `. Single quipper fish, carnivorous piranha-like fish with sharp teeth, streamlined body, aggressive predatory fish, underwater environment, photorealistic freshwater fish`;
+      } else if (monster.name.toLowerCase().includes('stirge')) {
+        description += `. Single stirge, bat-mosquito hybrid with leathery wings, sharp pincers on legs, long needle-like proboscis, flying vampire creature, photorealistic flying monster`;
+      } else if (monster.name.toLowerCase().includes('fish') || monster.speed?.swim) {
+        description += `. Single fish, streamlined body, gills, fins, underwater creature, marine environment, photorealistic aquatic animal`;
       } else {
         description += `. Single animal creature, natural fur or scales, realistic anatomy, wild eyes, natural pose, detailed textures`;
       }
@@ -407,8 +456,8 @@ function generateMonsterPrompt(monster) {
       description += `. Single fantasy creature, unique characteristics, detailed features, realistic appearance`;
   }
   
-  // Add any existing image prompt if available (with special handling for Dragon Turtle)
-  if (monster.imagePrompt) {
+  // Add any existing image prompt if available (but only if it's specific, not generic)
+  if (monster.imagePrompt && !monster.imagePrompt.includes('beast creature with animal-like features')) {
     // Special handling for Dragon Turtle - remove wings reference
     if (monster.name.toLowerCase().includes('dragon turtle')) {
       const correctedPrompt = monster.imagePrompt.replace(/wings?/gi, 'shell');
@@ -418,7 +467,7 @@ function generateMonsterPrompt(monster) {
     }
   }
   
-  // Add contextual background EARLY and make it prominent
+  // Add contextual background based on specific creature type
   const background = generateContextualBackground(monster.type, monster.name);
   description += `. Located in: ${background}`;
   
@@ -437,9 +486,22 @@ function generateMonsterPrompt(monster) {
   } 
   // Special handling for aquatic creatures
   else if (monster.name.toLowerCase().includes('shark') || 
+           monster.name.toLowerCase().includes('killer whale') ||
+           monster.name.toLowerCase().includes('orca') ||
            monster.name.toLowerCase().includes('sea horse') || 
-           monster.name.toLowerCase().includes('seahorse')) {
+           monster.name.toLowerCase().includes('seahorse') ||
+           monster.name.toLowerCase().includes('octopus') ||
+           monster.name.toLowerCase().includes('quipper') ||
+           monster.name.toLowerCase().includes('fish')) {
     description += `. Swimming gracefully in the scene, surrounded by ocean environment`;
+  } 
+  // Special handling for scorpions
+  else if (monster.name.toLowerCase().includes('scorpion')) {
+    description += `. Crawling menacingly in the scene, surrounded by desert environment`;
+  } 
+  // Special handling for flying creatures
+  else if (monster.speed?.fly || monster.name.toLowerCase().includes('stirge')) {
+    description += `. Flying menacingly in the scene, wings spread`;
   } else {
     description += `. Standing in the scene`;
   }

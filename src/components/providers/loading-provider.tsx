@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { clientCache } from '@/lib/client-cache';
 
 interface LoadingContextType {
   assetsLoaded: boolean;
@@ -14,12 +15,24 @@ export function LoadingProvider({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
   const [assetsLoaded, setAssetsLoaded] = useState(false);
 
-  // Reset assets loaded state when session changes (user logs out/in)
+  // Initialize client cache when user is authenticated
   useEffect(() => {
-    if (!session) {
+    if (session && !assetsLoaded) {
+      console.log('🔄 Initializing client cache for authenticated user...');
+      clientCache.initialize()
+        .then(() => {
+          console.log('✅ Client cache initialized successfully');
+          setAssetsLoaded(true);
+        })
+        .catch((error) => {
+          console.error('❌ Failed to initialize client cache:', error);
+          // Still set assets as loaded to prevent infinite loading
+          setAssetsLoaded(true);
+        });
+    } else if (!session) {
       setAssetsLoaded(false);
     }
-  }, [session]);
+  }, [session, assetsLoaded]);
 
   return (
     <LoadingContext.Provider value={{ assetsLoaded, setAssetsLoaded }}>

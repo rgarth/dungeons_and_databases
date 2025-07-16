@@ -10,17 +10,42 @@ import JoinGameModal from '@/components/party/JoinGameModal';
 import { Button } from '@/components/ui/Button';
 import GameDetailsModal from '@/components/party/GameDetailsModal';
 import { Game } from '@/types/game';
-import { useGamesData } from '@/components/providers/games-data-provider';
+import { useClientCache } from '@/hooks/use-client-cache';
+import { clientCache } from '@/lib/client-cache';
+import { LoadingModal } from '@/components/loading-modal';
+import { useLoading } from '@/components/providers/loading-provider';
 
 export default function PartyPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { addGame, refetch, removeGame } = useGamesData();
+  const { games, isInitialized } = useClientCache();
+  const { assetsLoaded, setAssetsLoaded } = useLoading();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [showGameDetails, setShowGameDetails] = useState(false);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+
+  const addGame = () => {
+    // Note: This would need to be handled by updating the client cache
+    // For now, we'll just refetch to get the updated data
+    refetch();
+  };
+
+  const removeGame = () => {
+    // Note: This would need to be handled by updating the client cache
+    // For now, we'll just refetch to get the updated data
+    refetch();
+  };
+
+  const refetch = async () => {
+    try {
+      // Re-initialize the client cache to get fresh data
+      await clientCache.initialize();
+    } catch (error) {
+      console.error('Failed to refetch games:', error);
+    }
+  };
 
   // Check for openGame query parameter and automatically open the game modal
   useEffect(() => {
@@ -53,7 +78,7 @@ export default function PartyPage() {
 
   const handleGameCreated = (game: Game) => {
     // Add the new game to the cache immediately
-    addGame(game);
+    addGame();
     console.log('Created game:', game);
     // Optionally open the game details modal
     setSelectedGame(game);
@@ -79,6 +104,13 @@ export default function PartyPage() {
         break;
     }
   };
+
+  // Show loading modal while auth is loading OR while we have a session but haven't loaded all assets yet
+  if (status === "loading" || (session && !assetsLoaded)) {
+    return (
+      <LoadingModal onComplete={() => setAssetsLoaded(true)} />
+    );
+  }
 
   if (!session) {
     return (
@@ -122,6 +154,8 @@ export default function PartyPage() {
       </div>
 
       <GamesList 
+        games={games}
+        isLoading={!isInitialized}
         onGameSelect={handleGameSelect}
         onCreateGame={() => setShowCreateModal(true)}
       />
@@ -148,7 +182,7 @@ export default function PartyPage() {
         onGameUpdated={(deletedGameId?: string) => {
           // If a game was deleted, remove it from the cache and close the modal
           if (deletedGameId) {
-            removeGame(deletedGameId);
+            removeGame();
             setSelectedGame(null);
             setShowGameDetails(false);
           } else {

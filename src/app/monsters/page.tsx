@@ -8,7 +8,7 @@ import { LoadingModal } from "@/components/loading-modal";
 import { Monster } from "@/types/monster";
 import { Button } from "@/components/ui";
 import { useLoading } from "@/components/providers/loading-provider";
-import { useMonstersData } from "@/components/providers/monsters-data-provider";
+import { useClientCache } from "@/hooks/use-client-cache";
 import { Search, Filter, Zap, Shield, Skull, Flame, Leaf, Droplets, Mountain, Sparkles, Users, Eye, Crown } from "lucide-react";
 import MonsterDetailModal from "@/components/monster-detail-modal";
 
@@ -86,8 +86,9 @@ export default function MonstersPage() {
   const [selectedMonster, setSelectedMonster] = useState<Monster | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Use cached monsters data instead of React Query
-  const { monsters, isLoading } = useMonstersData();
+  // Use cached monsters data from client cache
+  const { monsters, isInitialized } = useClientCache();
+  const isLoading = !isInitialized;
 
   // Helper function to get CR as number for range filtering
   const getCRAsNumber = (cr: string): number => {

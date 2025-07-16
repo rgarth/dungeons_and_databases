@@ -3008,9 +3008,9 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 3.",
-    "background": "This beast is a formidable opponent.",
-    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A large scorpion with segmented body, two large pincers, curved stinger tail, armored exoskeleton.",
+    "background": "This giant scorpion is a deadly desert predator with venomous stinger.",
+    "imagePrompt": "A large scorpion with segmented body, two large pincers, long segmented tail curled over back with venomous stinger at tip, armored exoskeleton, desert environment",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3078,7 +3078,7 @@ export const beastMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "Like their smaller kin, giant sea horses are shy, colorful fish with elongated bodies and curled tails. Aquatic elves train them as mounts.",
     "background": "Like their smaller kin, giant sea horses are shy, colorful fish with elongated bodies and curled tails. Aquatic elves train them as mounts.",
-    "imagePrompt": "A large aquatic fish with elongated body, curled tail, colorful scales, seahorse-like appearance, swimming in ocean waters",
+    "imagePrompt": "A large seahorse fish with elongated body, curled tail, colorful scales, seahorse head with tubular snout, underwater in ocean depths",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3810,7 +3810,7 @@ export const beastMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "Smaller than a giant shark but larger and fiercer than a reef shark, a hunter shark haunts deep waters. It usually hunts alone, but multiple hunter sharks might feed in the same area. A fully grown hunter shark is 15 to 20 feet long.",
     "background": "Smaller than a giant shark but larger and fiercer than a reef shark, a hunter shark haunts deep waters. It usually hunts alone, but multiple hunter sharks might feed in the same area. A fully grown hunter shark is 15 to 20 feet long.",
-    "imagePrompt": "A large beast creature with animal-like features",
+    "imagePrompt": "A large predatory shark with sleek body, sharp teeth, powerful jaws, swimming in deep ocean waters",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4016,9 +4016,9 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge beast with challenge rating 3.",
-    "background": "This beast is a formidable opponent.",
-    "imagePrompt": "A huge beast creature with animal-like features",
+    "description": "A huge killer whale with black and white coloring, powerful body, swimming in deep ocean waters.",
+    "background": "This killer whale is a powerful marine predator found in ocean waters.",
+    "imagePrompt": "A huge killer whale with black and white coloring, powerful body, swimming in deep ocean waters",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4238,7 +4238,7 @@ export const beastMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A mammoth is an elephantine creature with thick fur and long tusks. Stockier and fiercer than normal elephants, mammoths inhabit a wide range of climes, from subarctic to subtropical.",
     "background": "A mammoth is an elephantine creature with thick fur and long tusks. Stockier and fiercer than normal elephants, mammoths inhabit a wide range of climes, from subarctic to subtropical.",
-    "imagePrompt": "A huge beast creature with animal-like features",
+    "imagePrompt": "A huge hairy elephant with thick fur, long curved tusks, four legs, trunk, mammoth anatomy, prehistoric elephant",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5457,7 +5457,7 @@ export const beastMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A tiny aquatic fish with elongated body, curled tail, colorful scales, seahorse-like appearance.",
     "background": "This tiny seahorse is a shy, colorful fish found in ocean waters.",
-    "imagePrompt": "A tiny aquatic fish with elongated body, curled tail, colorful scales, seahorse-like appearance, swimming in ocean waters",
+    "imagePrompt": "A tiny seahorse fish with elongated body, curled tail, colorful scales, seahorse head with tubular snout, underwater in ocean depths",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
