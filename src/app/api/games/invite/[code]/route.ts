@@ -45,11 +45,11 @@ export async function GET(
                 }
               }
             },
-                    _count: {
-          select: {
+            _count: {
+              select: {
             participants: true
-          }
-        }
+              }
+            }
           }
         }
       }

@@ -107,13 +107,26 @@ export class PusherChat {
       console.log(`🔗 Pusher connected`);
     });
 
+    this.pusher.connection.bind('connecting', () => {
+      console.log(`🔄 Pusher connecting...`);
+    });
+
     this.pusher.connection.bind('disconnected', () => {
       console.log(`🔌 Pusher disconnected`);
       this.config.onError('Connection lost. Trying to reconnect...');
     });
 
+    this.pusher.connection.bind('state_change', (states: { previous: string; current: string }) => {
+      console.log(`🔄 Pusher state change:`, states);
+    });
+
     this.pusher.connection.bind('error', (error: Error) => {
       console.error(`❌ Pusher connection error:`, error);
+      console.error(`🔍 Pusher config:`, {
+        key: process.env.NEXT_PUBLIC_PUSHER_KEY ? 'SET' : 'MISSING',
+        cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || 'NOT_SET',
+        authEndpoint: `/api/pusher/auth`
+      });
       this.config.onError(`Connection error: ${error.message}`);
     });
   }

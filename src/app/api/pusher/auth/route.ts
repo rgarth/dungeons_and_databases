@@ -13,10 +13,15 @@ const pusher = new Pusher({
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('🔐 Pusher auth request received');
+    
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
+      console.log('❌ No session found for Pusher auth');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    
+    console.log(`✅ Session found for user: ${session.user.email}`);
 
     // Pusher sends form data by default
     const formData = await request.formData();

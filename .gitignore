@@ -52,3 +52,5 @@ next-env.d.ts
 /scripts/avatar-progress*.json
 .env.backup
 .env*
+/public/monster-images
+

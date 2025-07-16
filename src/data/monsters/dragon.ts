@@ -3889,9 +3889,9 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large dragon with challenge rating 6.",
-    "background": "This dragon is a formidable opponent.",
-    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A large wyvern with challenge rating 6.",
+    "background": "This wyvern is a formidable opponent.",
+    "imagePrompt": "A large wyvern creature with leathery wings, hind legs, and a venomous stinger tail",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

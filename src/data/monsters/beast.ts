@@ -71,7 +71,7 @@ export const beastMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A medium beast with challenge rating 0.5.",
     "background": "This beast is a formidable opponent.",
-    "imagePrompt": "A medium beast creature with animal-like features",
+    "imagePrompt": "A medium-sized gorilla-like ape with dark fur, muscular arms, and intelligent eyes",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -326,7 +326,7 @@ export const beastMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A tiny beast with challenge rating 0.",
     "background": "This beast is a formidable opponent.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
+    "imagePrompt": "A small brown bat with leathery wings, pointed ears, and tiny claws hanging upside down",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1421,7 +1421,7 @@ export const beastMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A flying snake is a brightly colored, winged serpent found in remote jungles. Tribespeople and cultists sometimes domesticate flying snakes to serve as messengers that deliver scrolls wrapped in their coils.",
     "background": "A flying snake is a brightly colored, winged serpent found in remote jungles. Tribespeople and cultists sometimes domesticate flying snakes to serve as messengers that deliver scrolls wrapped in their coils.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
+    "imagePrompt": "A small colorful snake with feathered wings on its back, flying through the air with wings spread wide, snake body extended straight, head pointing forward",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1480,8 +1480,8 @@ export const beastMonsters: Monster[] = [
     ],
     "actions": [],
     "legendaryActions": [],
-    "description": "A frog has no effective attacks. It feeds on small insects and typically dwells near water, in trees, or underground. The frog’s statistics can also be used to represent a toad.",
-    "background": "A frog has no effective attacks. It feeds on small insects and typically dwells near water, in trees, or underground. The frog’s statistics can also be used to represent a toad.",
+    "description": "A frog has no effective attacks. It feeds on small insects and typically dwells near water, in trees, or underground. The frog's statistics can also be used to represent a toad.",
+    "background": "A frog has no effective attacks. It feeds on small insects and typically dwells near water, in trees, or underground. The frog's statistics can also be used to represent a toad.",
     "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
@@ -1563,7 +1563,7 @@ export const beastMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A huge beast with challenge rating 7.",
     "background": "This beast is a formidable opponent.",
-    "imagePrompt": "A huge beast creature with animal-like features",
+    "imagePrompt": "A massive gorilla-like ape with enormous muscles, dark fur, and intimidating presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1843,7 +1843,7 @@ export const beastMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A small beast with challenge rating 0.25.",
     "background": "This beast is a formidable opponent.",
-    "imagePrompt": "A small beast creature with animal-like features",
+    "imagePrompt": "A long segmented arthropod with one pair of legs per body segment, flat body, antennae on head, venomous fangs, reddish-brown color, crawling on ground",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2297,8 +2297,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A giant fire beetle is a nocturnal creature that takes its name from a pair of glowing glands that give off light. Miners and adventurers prize these creatures, for a giant fire beetle’s glands continue to shed light for 1d6 days after the beetle dies. Giant fire beetles are most commonly found underground and in dark forests.",
-    "background": "A giant fire beetle is a nocturnal creature that takes its name from a pair of glowing glands that give off light. Miners and adventurers prize these creatures, for a giant fire beetle’s glands continue to shed light for 1d6 days after the beetle dies. Giant fire beetles are most commonly found underground and in dark forests.",
+    "description": "A giant fire beetle is a nocturnal creature that takes its name from a pair of glowing glands that give off light. Miners and adventurers prize these creatures, for a giant fire beetle's glands continue to shed light for 1d6 days after the beetle dies. Giant fire beetles are most commonly found underground and in dark forests.",
+    "background": "A giant fire beetle is a nocturnal creature that takes its name from a pair of glowing glands that give off light. Miners and adventurers prize these creatures, for a giant fire beetle's glands continue to shed light for 1d6 days after the beetle dies. Giant fire beetles are most commonly found underground and in dark forests.",
     "imagePrompt": "A small beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
@@ -2932,7 +2932,7 @@ export const beastMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A small beast with challenge rating 0.125.",
     "background": "This beast is a formidable opponent.",
-    "imagePrompt": "A small beast creature with animal-like features",
+    "imagePrompt": "A large diseased rat with matted fur, open sores, yellowed teeth, red eyes, and aggressive stance, clearly sick and dangerous",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

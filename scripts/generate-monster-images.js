@@ -1,73 +1,442 @@
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
-// Monster data structure for image generation
-const MONSTER_DATA = [
-  {
-    name: "Aboleth",
-    description: "A massive, tentacled aquatic creature with slimy skin and psychic abilities. It has a bulbous head with large, lidless eyes and multiple tentacles extending from its body.",
-    type: "aberration"
-  },
-  {
-    name: "Acolyte",
-    description: "A humanoid in religious vestments, carrying holy symbols and sacred texts. They appear devout and focused on their divine mission.",
-    type: "humanoid"
-  },
-  {
-    name: "Adult Black Dragon",
-    description: "A massive black dragon with obsidian-like scales, acid dripping from its jaws, and malevolent red eyes. It has large wings and a long, serpentine neck.",
-    type: "dragon"
-  },
-  {
-    name: "Adult Blue Dragon",
-    description: "A large blue dragon with azure scales that shimmer like sapphires, lightning crackling around its body, and piercing blue eyes. It has a proud, regal bearing.",
-    type: "dragon"
-  },
-  {
-    name: "Adult Brass Dragon",
-    description: "A brass dragon with metallic golden-brass scales, a long snout, and warm, intelligent eyes. It has a friendly, talkative appearance.",
-    type: "dragon"
-  },
-  {
-    name: "Adult Bronze Dragon",
-    description: "A bronze dragon with metallic bronze scales, webbed wings, and sea-green eyes. It has an aquatic, sea-dwelling appearance.",
-    type: "dragon"
-  },
-  {
-    name: "Adult Copper Dragon",
-    description: "A copper dragon with metallic copper scales, a mischievous expression, and amber eyes. It has a playful, trickster-like appearance.",
-    type: "dragon"
-  },
-  {
-    name: "Adult Gold Dragon",
-    description: "A majestic gold dragon with brilliant golden scales, a noble bearing, and wise, ancient eyes. It radiates power and wisdom.",
-    type: "dragon"
-  },
-  {
-    name: "Adult Green Dragon",
-    description: "A green dragon with emerald scales, toxic green eyes, and a cunning, predatory expression. It blends into forest environments.",
-    type: "dragon"
-  },
-  {
-    name: "Adult Red Dragon",
-    description: "A massive red dragon with crimson scales, fire and smoke billowing from its nostrils, and fierce orange eyes. It embodies raw power and destruction.",
-    type: "dragon"
+// Load environment variables
+require('dotenv').config({ path: path.join(__dirname, '../.env.local') });
+
+// Parse command line arguments
+const args = process.argv.slice(2);
+const options = {
+  batch: 1, // default batch size (testing)
+  start: 0,  // start from this index
+  list: false, // just list missing images
+  help: false,
+  type: null, // filter by monster type
+  force: false, // force overwrite existing images
+  customPrompt: null, // custom prompt to append
+  replacePrompt: null, // custom prompt to replace entire prompt
+  customNegativePrompt: null, // custom negative prompt to append
+  monster: null // specific monster name
+};
+
+// Parse command line arguments
+for (let i = 0; i < args.length; i++) {
+  switch (args[i]) {
+    case '--batch':
+    case '-b':
+      options.batch = parseInt(args[++i]) || 1;
+      break;
+    case '--start':
+    case '-s':
+      options.start = parseInt(args[++i]) || 0;
+      break;
+    case '--list':
+    case '-l':
+      options.list = true;
+      break;
+    case '--type':
+    case '-t':
+      options.type = args[++i];
+      break;
+    case '--help':
+    case '-h':
+      options.help = true;
+      break;
+    case '--force':
+    case '-f':
+      options.force = true;
+      break;
+    case '--prompt':
+    case '-p':
+      options.customPrompt = args[++i];
+      break;
+    case '--replace-prompt':
+    case '-P':
+      options.replacePrompt = args[++i];
+      break;
+    case '--negative-prompt':
+    case '-n':
+      options.customNegativePrompt = args[++i];
+      break;
+    case '--monster':
+    case '-m':
+      options.monster = args[++i];
+      break;
   }
-];
+}
+
+// Show help
+if (options.help) {
+  console.log(`
+🐉 Monster Image Generator
+
+Usage: node generate-monster-images.js [options]
+
+Options:
+  -b, --batch <number>  Number of monsters to process (default: 1)
+  -s, --start <number>  Start from this monster index (default: 0)
+  -t, --type <type>     Filter by monster type (e.g., dragon, humanoid, beast)
+  -m, --monster <name>  Generate image for specific monster by name
+  -p, --prompt <text>   Add custom prompt text to the generation
+  -P, --replace-prompt <text>  Replace entire prompt with custom text
+  -n, --negative-prompt <text>  Add custom negative prompt text
+  -f, --force          Force overwrite existing images
+  -l, --list           Just list missing images without generating
+  -h, --help           Show this help message
+
+Examples:
+  node generate-monster-images.js                    # Process first monster
+  node generate-monster-images.js -b 5               # Process 5 monsters
+  node generate-monster-images.js -s 10 -b 5         # Process monsters 10-14
+  node generate-monster-images.js -t dragon          # Process only dragons
+  node generate-monster-images.js -m "Ghost"         # Generate specific monster
+  node generate-monster-images.js -m "Ghost" -f      # Force regenerate Ghost
+  node generate-monster-images.js -m "Ghost" -p "ethereal, translucent, floating" # Add to prompt
+  node generate-monster-images.js -m "Ghost" -P "A beautiful ethereal ghost floating in a misty forest" # Replace prompt
+  node generate-monster-images.js -m "Ghost" -n "blood, gore, scary" # Custom negative prompt
+  node generate-monster-images.js -l                 # List missing images
+`);
+  process.exit(0);
+}
+
+// Load monster data from TypeScript files using tsx
+function loadMonsterData() {
+  try {
+    console.log('📚 Loading monster data from TypeScript files...');
+    
+    // Create a temporary script to export monster data as JSON
+    const tempScript = `
+import { monstersData } from '../src/data/monsters/index';
+console.log(JSON.stringify(monstersData));
+`;
+    
+    const tempScriptPath = path.join(__dirname, 'temp-monster-loader.ts');
+    fs.writeFileSync(tempScriptPath, tempScript);
+    
+    // Run the TypeScript script with tsx
+    const output = execSync(`npx tsx ${tempScriptPath}`, { 
+      cwd: __dirname,
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe']
+    });
+    
+    // Clean up temp file
+    fs.unlinkSync(tempScriptPath);
+    
+    // Parse the JSON output
+    const monsters = JSON.parse(output.trim());
+    
+    console.log(`✅ Loaded ${monsters.length} monsters from TypeScript files`);
+    
+    // Filter by type if specified
+    if (options.type) {
+      const filteredMonsters = monsters.filter(monster => 
+        monster.type.toLowerCase() === options.type.toLowerCase()
+      );
+      console.log(`🔍 Filtered to ${filteredMonsters.length} ${options.type} monsters`);
+      return filteredMonsters;
+    }
+    
+    return monsters;
+  } catch (error) {
+    console.error('❌ Error loading monster data:', error.message);
+    console.error('💡 Make sure TypeScript files are properly formatted and tsx is available');
+    process.exit(1);
+  }
+}
 
 // Configuration
-const BATCH_SIZE = 10;
 const OUTPUT_DIR = path.join(__dirname, '../public/monster-images');
-const PROMPT_PREFIX = "FANTASY DUNGEONS & DRAGONS DND PHOTOREALISM 5E SRD ";
+const PROMPT_PREFIX = "DND, FANTASY, PHOTO REALISTIC, MONSTER, 5e, SRD, DUNGEON AND DRAGONS ";
+
+// Anti-bias and diversity constants (from avatar generation)
+const SKIN_TONES = [
+  'black skin', 'dark brown skin', 'brown skin', 'light brown skin', 
+  'olive skin', 'tan skin'
+];
+
+const ETHNICITIES = [
+  'African', 'African American', 'Asian', 'Chinese', 'Japanese', 'Korean', 
+  'Indian', 'Middle Eastern', 'Indigenous', 'Native American', 'Pacific Islander',
+  'Hispanic', 'Latino', 'Caribbean', 'Mediterranean'
+];
+
+const BODY_TYPES = [
+  'average build', 'slender frame', 'compact frame',
+  'average stature', 'lean build', 'average physique'
+];
+
+// Utility function to get random item from array
+function getRandomItem(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
 
 // Ensure output directory exists
 if (!fs.existsSync(OUTPUT_DIR)) {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 }
 
+// Function to generate contextual background for monster type
+function generateContextualBackground(monsterType, monsterName) {
+  // Special handling for Dragon Turtle - aquatic backgrounds
+  if (monsterName.toLowerCase().includes('dragon turtle')) {
+    const aquaticBackgrounds = [
+      'deep ocean depths with coral reefs and ancient shipwrecks',
+      'underwater cavern with bioluminescent creatures and flowing currents',
+      'coastal waters with crashing waves and rocky formations',
+      'submerged temple ruins with seaweed and marine life',
+      'abyssal trench with mysterious deep-sea creatures'
+    ];
+    return getRandomItem(aquaticBackgrounds);
+  }
+  const backgrounds = {
+    'dragon': [
+      'ancient dragon lair with massive treasure hoard, golden coins, and scattered bones',
+      'towering mountain peak with storm clouds, lightning, and jagged rocks',
+      'volcanic cavern with flowing lava rivers, obsidian formations, and fire',
+      'ruined castle tower with broken stone walls, shattered windows, and ancient banners',
+      'dark cave with massive stalactites, glowing crystals, and underground streams',
+      'cliffside perch overlooking a vast valley with mist and distant mountains',
+      'ancient temple ruins with crumbling pillars and mystical energy',
+      'deep ocean depths with coral reefs and ancient shipwrecks',
+      'underwater cavern with bioluminescent creatures and flowing currents',
+      'coastal waters with crashing waves and rocky formations'
+    ],
+    'humanoid': [
+      'medieval tavern with wooden tables and firelight',
+      'stone dungeon corridor with torch lighting',
+      'forest clearing with ancient trees and dappled sunlight',
+      'abandoned village with thatched roofs and cobblestone streets',
+      'castle courtyard with stone walls and banners',
+      'sewer tunnel with dripping water and moss-covered walls',
+      'underground crypt with stone sarcophagi and flickering candles'
+    ],
+    'beast': [
+      'dense forest with towering trees and undergrowth',
+      'rocky mountainside with sparse vegetation',
+      'swamp with murky water and twisted trees',
+      'desert dunes with scorching sun and wind-swept sand',
+      'arctic tundra with snow and ice formations',
+      'cave system with stalactites and underground streams',
+      'grassland plains with tall grass and scattered rocks'
+    ],
+    'undead': [
+      'ancient cemetery with crumbling tombstones and fog',
+      'underground crypt with stone coffins and cobwebs',
+      'abandoned castle with rotting tapestries and dust',
+      'dark catacombs with bone-lined walls and eerie silence',
+      'forgotten temple with ancient runes and decay',
+      'shadowy graveyard with twisted trees and moonlight'
+    ],
+    'fiend': [
+      'hellish landscape with fire and brimstone',
+      'infernal fortress with obsidian walls and lava flows',
+      'corrupted temple with demonic symbols and dark energy',
+      'abyssal plane with swirling chaos and nightmare creatures',
+      'burning battlefield with smoke and destruction',
+      'dark ritual chamber with pentagrams and candles'
+    ],
+    'celestial': [
+      'heavenly realm with golden light and floating islands',
+      'divine temple with marble columns and holy radiance',
+      'cloudy sky with angelic choirs and divine light',
+      'sacred grove with pure white flowers and healing energy',
+      'celestial palace with crystal spires and golden gates'
+    ],
+    'construct': [
+      'ancient workshop with magical tools and glowing runes',
+      'underground laboratory with mechanical devices',
+      'wizard\'s tower with arcane equipment and spell books',
+      'dwarven forge with anvils and magical fires',
+      'abandoned factory with rusted machinery and steam'
+    ],
+    'elemental': [
+      'elemental plane with pure elemental energy',
+      'volcanic landscape with fire and molten rock',
+      'stormy sky with lightning and thunder clouds',
+      'crystal cave with prismatic light and gem formations',
+      'ocean depths with swirling currents and coral reefs',
+      'wind-swept mountain peak with howling gales'
+    ],
+    'fey': [
+      'enchanted forest with glowing mushrooms and fairy lights',
+      'fey realm with impossible geometry and magical flora',
+      'moonlit grove with silver trees and ethereal mist',
+      'whimsical garden with talking flowers and floating islands',
+      'ancient circle of standing stones with mystical energy'
+    ],
+    'giant': [
+      'mountain peak with storm clouds and lightning',
+      'giant stronghold with massive stone walls',
+      'frozen wasteland with ice and snow',
+      'volcanic landscape with fire and destruction',
+      'ancient battlefield with massive weapons and ruins'
+    ],
+    'monstrosity': [
+      'dark forest with twisted trees and shadows',
+      'abandoned laboratory with failed experiments',
+      'ancient ruins with forbidden knowledge',
+      'corrupted landscape with unnatural features',
+      'nightmare realm with impossible creatures'
+    ],
+    'ooze': [
+      'underground cavern with dripping water and slime',
+      'sewer system with flowing waste and moisture',
+      'abandoned laboratory with chemical spills',
+      'cave system with underground pools and algae',
+      'corrupted area with unnatural growths and decay'
+    ],
+    'plant': [
+      'dense jungle with massive trees and vines',
+      'enchanted forest with sentient plants',
+      'overgrown ruins with nature reclaiming stone',
+      'swamp with carnivorous plants and murky water',
+      'ancient grove with massive trees and magical flora'
+    ],
+    'aberration': [
+      'alien landscape with impossible geometry',
+      'cosmic void with stars and swirling energy',
+      'corrupted reality with warped space and time',
+      'eldritch temple with otherworldly architecture',
+      'nightmare dimension with impossible creatures'
+    ]
+  };
+
+  const typeBackgrounds = backgrounds[monsterType.toLowerCase()] || backgrounds['humanoid'];
+  return getRandomItem(typeBackgrounds);
+}
+
 // Function to generate prompt for a monster
 function generateMonsterPrompt(monster) {
-  return `${PROMPT_PREFIX}${monster.name}: ${monster.description}. Square format, high quality, detailed, realistic, 8k resolution, professional photography, centered composition, clear visibility of the monster, dramatic lighting, fantasy art style.`;
+  // Create a detailed description based on monster data
+  let description = monster.name;
+  
+  // Add size and type information (special handling for Wyvern)
+  if (monster.name.toLowerCase().includes('wyvern')) {
+    description += `, a ${monster.size.toLowerCase()} wyvern`;
+  } else {
+    description += `, a ${monster.size.toLowerCase()} ${monster.type}`;
+  }
+  
+  // Add alignment if not unaligned
+  if (monster.alignment && monster.alignment !== 'unaligned') {
+    description += `, ${monster.alignment}`;
+  }
+  
+  // Add challenge rating
+  description += `, challenge rating ${monster.challengeRating}`;
+  
+  // Special handling for Wyvern - MUST be processed BEFORE dragon type
+  if (monster.name.toLowerCase().includes('wyvern')) {
+    description += `. WYVERN: Giant bat-like creature with leathery wings as front limbs, two hind legs only, long venomous stinger tail. Bat anatomy: wings replace front legs, hind legs for walking. NO front legs, NO four legs. Aggressive, bestial, dangerous, photorealistic, detailed textures`;
+  }
+  // Add detailed physical characteristics based on type
+  else switch (monster.type.toLowerCase()) {
+    case 'dragon':
+      // Special handling for wyrmlings
+      if (monster.name.toLowerCase().includes('wyrmling')) {
+        description += `. Young dragon wyrmling, just hatched, about the size of a large wolf. Small, round features, big bright eyes, soft scales, playful and curious, gentle expression, almost cute, not yet fully grown, innocent and harmless appearance, hatchling dragon, adorable, baby dragon, photorealistic, fantasy, D&D`;
+      }
+      // Special handling for Dragon Turtle - no wings
+      else if (monster.name.toLowerCase().includes('dragon turtle')) {
+        description += `. Majestic dragon turtle with detailed scales, massive shell, sharp claws, and powerful presence. Single dragon turtle in frame, photorealistic, detailed textures, imposing figure`;
+      } else {
+        description += `. Majestic dragon with detailed scales, large wings, sharp claws, and powerful presence. Single dragon in frame, photorealistic, detailed textures, imposing figure`;
+      }
+      break;
+    case 'humanoid':
+      // Add ethnic diversity and anti-trope language for humanoids
+      const skinTone = getRandomItem(SKIN_TONES);
+      const ethnicity = getRandomItem(ETHNICITIES);
+      const bodyType = getRandomItem(BODY_TYPES);
+      description += `. Single humanoid character, ${ethnicity} with ${skinTone}, ${bodyType}, detailed facial features, realistic proportions, medieval fantasy clothing and armor, weathered skin, expressive face, respectful character design, practical armor, realistic medieval attire`;
+      break;
+    case 'beast':
+      description += `. Single animal creature, natural fur or scales, realistic anatomy, wild eyes, natural pose, detailed textures`;
+      break;
+    case 'undead':
+      description += `. Single undead creature, pale or decayed skin, hollow eyes, tattered clothing, supernatural aura, eerie atmosphere`;
+      break;
+    case 'fiend':
+      description += `. Single demonic creature, infernal features, horns, dark skin, glowing eyes, menacing expression, hellish aura`;
+      break;
+    case 'celestial':
+      description += `. Single angelic being, divine radiance, ethereal beauty, holy aura, wings, pure white or golden features`;
+      break;
+    case 'construct':
+      description += `. Single mechanical construct, metallic surfaces, magical runes, artificial joints, glowing eyes, imposing structure`;
+      break;
+    case 'elemental':
+      description += `. Single elemental being, composed of pure elements, flowing forms, natural energy, ethereal appearance`;
+      break;
+    case 'fey':
+      description += `. Single fey creature, ethereal beauty, magical aura, pointed features, otherworldly appearance, mystical energy`;
+      break;
+    case 'giant':
+      description += `. Single massive giant, imposing stature, muscular build, primitive clothing, weathered features, towering presence`;
+      break;
+    case 'monstrosity':
+      description += `. Single monstrous creature, terrifying features, unnatural anatomy, menacing expression, dark aura`;
+      break;
+    case 'ooze':
+      description += `. Single amorphous ooze, gelatinous form, translucent body, fluid movement, alien appearance`;
+      break;
+    case 'plant':
+      description += `. Single plant creature, organic features, bark-like skin, leafy appendages, natural colors, living vegetation`;
+      break;
+    case 'aberration':
+      description += `. Single alien aberration, otherworldly features, unnatural anatomy, cosmic horror, eldritch appearance`;
+      break;
+    default:
+      description += `. Single fantasy creature, unique characteristics, detailed features, realistic appearance`;
+  }
+  
+  // Add any existing image prompt if available (with special handling for Dragon Turtle)
+  if (monster.imagePrompt) {
+    // Special handling for Dragon Turtle - remove wings reference
+    if (monster.name.toLowerCase().includes('dragon turtle')) {
+      const correctedPrompt = monster.imagePrompt.replace(/wings?/gi, 'shell');
+      description += `. ${correctedPrompt}`;
+    } else {
+      description += `. ${monster.imagePrompt}`;
+    }
+  }
+  
+  // Add contextual background EARLY and make it prominent
+  const background = generateContextualBackground(monster.type, monster.name);
+  description += `. Located in: ${background}`;
+  
+  // Special handling for Wyvern background
+  if (monster.name.toLowerCase().includes('wyvern')) {
+    description += `. Perched menacingly in the scene, hunting for prey`;
+  }
+  // Special handling for dragons to emphasize the background more
+  else if (monster.type.toLowerCase() === 'dragon') {
+    // Special handling for Dragon Turtle - they don't perch
+    if (monster.name.toLowerCase().includes('dragon turtle')) {
+      description += `. Swimming majestically in the scene, dominating the environment`;
+    } else {
+      description += `. Perched majestically in the scene, dominating the environment`;
+    }
+  } else {
+    description += `. Standing in the scene`;
+  }
+  
+  // Add professional photography styling
+  description += `. Professional photography, single subject, centered composition, dramatic lighting, high contrast, sharp focus, 8k resolution, photorealistic, cinematic lighting, detailed textures, realistic materials`;
+  
+  // Append custom prompt if provided
+  if (options.customPrompt) {
+    description += `. ${options.customPrompt}`;
+  }
+  
+  // If replace prompt is provided, use it instead of the generated prompt
+  if (options.replacePrompt) {
+    return `${PROMPT_PREFIX}${options.replacePrompt}`;
+  }
+  
+  return `${PROMPT_PREFIX}${description}`;
 }
 
 // Function to save image data to file
@@ -86,50 +455,175 @@ function imageExists(filename) {
   return fs.existsSync(filePath);
 }
 
+// Function to call Replicate API directly
+async function callReplicateAPI(prompt) {
+  const REPLICATE_API_TOKEN = process.env.REPLICATE_API_KEY;
+  
+  if (!REPLICATE_API_TOKEN) {
+    throw new Error('REPLICATE_API_KEY not found in environment variables');
+  }
+  
+  // Using Flux Pro XL model for high quality images
+  const response = await fetch('https://api.replicate.com/v1/predictions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Token ${REPLICATE_API_TOKEN}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      version: "c221b2b8ef527988fb59bf24a8b97c4561f1c671f73bd389f866bfb27c061316",
+      input: {
+        prompt: prompt,
+        width: 1024,
+        height: 1024, // Square format
+        num_outputs: 1,
+        scheduler: "K_EULER",
+        num_inference_steps: 20,
+        guidance_scale: 7.5,
+        seed: Math.floor(Math.random() * 1000000), // Random seed for variety
+        negative_prompt: (() => {
+          const baseNegative = "blurry, low quality, distorted, deformed, ugly, bad anatomy, watermark, signature, text, logo, multiple characters, multiple people, crowd, group, background, landscape, scenery, cartoon, anime, illustration, painting, drawing, digital art, fantasy art, multiple subjects, people, humans, characters, crowd scene, busy background, cluttered, messy, low resolution, pixelated, grainy, noise, artifacts, multiple monsters, multiple creatures, offensive stereotypes, inappropriate content, revealing clothing, impractical armor, sexualized appearance, exaggerated features, caricature, racist depictions, cultural appropriation, disrespectful portrayal, overly muscular, unrealistic proportions, objectification, fetishization, harmful tropes, problematic imagery";
+          
+          // Special negative prompt for Wyverns to prevent 4-legged dragons
+          if (options.monster && options.monster.toLowerCase().includes('wyvern')) {
+            return `${baseNegative}, four legs, four-legged, dragon with four legs, four-legged dragon, quadrupedal dragon, traditional dragon, classic dragon, four limbs, four-legged creature, dragon anatomy, four-legged monster, quadrupedal monster, four-legged beast, four-legged winged creature, four-legged flying creature, four-legged reptile, four-legged scaled creature, four-legged mythical creature, four-legged fantasy creature, four-legged monster, four-legged beast, four-legged animal, four-legged winged beast, four-legged flying beast, four-legged reptile, four-legged scaled beast, four-legged mythical beast, four-legged fantasy beast`;
+          }
+          
+          // Append custom negative prompt if provided
+          if (options.customNegativePrompt) {
+            return `${baseNegative}, ${options.customNegativePrompt}`;
+          }
+          
+          return baseNegative;
+        })()
+      }
+    })
+  });
+  
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Replicate API error: ${response.status} - ${errorText}`);
+  }
+  
+  const prediction = await response.json();
+  return prediction.id;
+}
+
+// Function to poll for completion
+async function pollForCompletion(predictionId) {
+  const REPLICATE_API_TOKEN = process.env.REPLICATE_API_KEY;
+  
+  while (true) {
+    const response = await fetch(`https://api.replicate.com/v1/predictions/${predictionId}`, {
+      headers: {
+        'Authorization': `Token ${REPLICATE_API_TOKEN}`,
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to check prediction status: ${response.status}`);
+    }
+    
+    const prediction = await response.json();
+    
+    if (prediction.status === 'succeeded') {
+      return prediction.output[0]; // Return the first image URL
+    } else if (prediction.status === 'failed') {
+      throw new Error(`Prediction failed: ${prediction.error}`);
+    }
+    
+    // Wait 2 seconds before polling again
+    await new Promise(resolve => setTimeout(resolve, 2000));
+  }
+}
+
+// Function to download image from URL
+async function downloadImage(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to download image: ${response.status}`);
+  }
+  
+  const buffer = await response.arrayBuffer();
+  return Buffer.from(buffer);
+}
+
+// Function to list missing images
+function listMissingImages(monsters) {
+  console.log('🔍 Checking for missing monster images...\n');
+  
+  const missing = [];
+  const existing = [];
+  
+  monsters.forEach((monster, index) => {
+    const filename = `${monster.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}.png`;
+    if (imageExists(filename)) {
+      existing.push({ index, name: monster.name, filename, type: monster.type });
+    } else {
+      missing.push({ index, name: monster.name, filename, type: monster.type });
+    }
+  });
+  
+  console.log(`📊 Status Summary:`);
+  console.log(`✅ Existing: ${existing.length}/${monsters.length}`);
+  console.log(`❌ Missing: ${missing.length}/${monsters.length}`);
+  
+  if (existing.length > 0) {
+    console.log(`\n✅ Existing images:`);
+    existing.forEach(item => {
+      console.log(`   ${item.index + 1}. ${item.name} (${item.type})`);
+    });
+  }
+  
+  if (missing.length > 0) {
+    console.log(`\n❌ Missing images:`);
+    missing.forEach(item => {
+      console.log(`   ${item.index + 1}. ${item.name} (${item.type})`);
+    });
+    
+    console.log(`\n💡 To generate missing images:`);
+    console.log(`   node generate-monster-images.js -b ${Math.min(10, missing.length)}`);
+    console.log(`   node generate-monster-images.js -s ${missing[0].index} -b ${Math.min(10, missing.length)}`);
+  }
+  
+  return missing;
+}
+
 // Function to generate a single monster image
 async function generateMonsterImage(monster) {
   const filename = `${monster.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}.png`;
   
-  // Check if image already exists
-  if (imageExists(filename)) {
+  // Check if image already exists (unless force flag is set)
+  if (imageExists(filename) && !options.force) {
     console.log(`⏭️  Skipping ${monster.name} - image already exists`);
     return { success: true, skipped: true };
   }
+  
+  if (imageExists(filename) && options.force) {
+    console.log(`🔄 Force regenerating ${monster.name} - overwriting existing image`);
+  }
 
   try {
-    console.log(`🎨 Generating image for: ${monster.name}`);
+    console.log(`🎨 Generating image for: ${monster.name} (${monster.type})`);
     
     const prompt = generateMonsterPrompt(monster);
-    console.log(`📝 Prompt: ${prompt.substring(0, 100)}...`);
+    console.log(`📝 Full Prompt: ${prompt}`);
     
-    // Call the existing avatar generation API
-    const response = await fetch('http://localhost:3000/api/generate-avatar', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        // We'll need to adapt this for monster generation
-        // For now, using a placeholder structure
-        monsterName: monster.name,
-        monsterDescription: monster.description,
-        monsterType: monster.type,
-        prompt: prompt
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result = await response.json();
+    // Call Replicate API
+    console.log(`🚀 Submitting to Replicate...`);
+    const predictionId = await callReplicateAPI(prompt);
     
-    if (result.success && result.fullBodyImage) {
-      await saveImage(result.fullBodyImage, filename);
-      return { success: true, filename };
-    } else {
-      throw new Error(result.error || 'Failed to generate image');
-    }
+    // Poll for completion
+    console.log(`⏳ Waiting for generation to complete...`);
+    const imageUrl = await pollForCompletion(predictionId);
+    
+    // Download and save the image
+    console.log(`📥 Downloading image...`);
+    const imageBuffer = await downloadImage(imageUrl);
+    fs.writeFileSync(path.join(OUTPUT_DIR, filename), imageBuffer);
+    
+    console.log(`✅ Saved: ${filename}`);
+    return { success: true, filename };
     
   } catch (error) {
     console.error(`❌ Error generating ${monster.name}:`, error.message);
@@ -146,10 +640,10 @@ async function processBatch(monsters, batchNumber) {
   
   for (const monster of monsters) {
     const result = await generateMonsterImage(monster);
-    results.push({ monster: monster.name, ...result });
+    results.push({ monster: monster.name, type: monster.type, ...result });
     
     // Add a small delay between requests to be respectful to the API
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 3000));
   }
   
   // Log batch results
@@ -165,60 +659,91 @@ async function processBatch(monsters, batchNumber) {
   return results;
 }
 
-// Main function to process all monsters in batches
-async function generateAllMonsterImages() {
-  console.log('🐉 Starting monster image generation');
+// Main function to process monsters based on options
+async function generateMonsterImages() {
+  console.log('🐉 Monster Image Generator');
   console.log(`📁 Output directory: ${OUTPUT_DIR}`);
-  console.log(`📦 Total monsters: ${MONSTER_DATA.length}`);
-  console.log(`🔢 Batch size: ${BATCH_SIZE}`);
+  console.log(`🔢 Batch size: ${options.batch}`);
+  console.log(`📍 Starting from index: ${options.start}`);
   
-  const allResults = [];
+  // Load monster data
+  let monsters = loadMonsterData();
   
-  // Process monsters in batches
-  for (let i = 0; i < MONSTER_DATA.length; i += BATCH_SIZE) {
-    const batch = MONSTER_DATA.slice(i, i + BATCH_SIZE);
-    const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
-    
-    const batchResults = await processBatch(batch, batchNumber);
-    allResults.push(...batchResults);
-    
-    // Add delay between batches
-    if (i + BATCH_SIZE < MONSTER_DATA.length) {
-      console.log('\n⏳ Waiting 5 seconds before next batch...');
-      await new Promise(resolve => setTimeout(resolve, 5000));
+  // Filter by specific monster name if specified
+  if (options.monster) {
+    const monsterName = options.monster.toLowerCase();
+    monsters = monsters.filter(monster => 
+      monster.name.toLowerCase().includes(monsterName)
+    );
+    if (monsters.length === 0) {
+      console.log(`❌ No monsters found matching "${options.monster}"`);
+      return;
     }
+    console.log(`🎯 Found ${monsters.length} monster(s) matching "${options.monster}"`);
+  }
+  // Filter by type if specified (and no specific monster)
+  else if (options.type) {
+    monsters = monsters.filter(monster => 
+      monster.type.toLowerCase() === options.type.toLowerCase()
+    );
+    console.log(`🎯 Filtered to ${monsters.length} ${options.type} monsters`);
   }
   
-  // Final summary
-  console.log('\n🎉 Monster image generation complete!');
+  if (options.list) {
+    listMissingImages(monsters);
+    return;
+  }
+  
+  // Get the subset of monsters to process
+  const monstersToProcess = monsters.slice(options.start, options.start + options.batch);
+  
+  if (monstersToProcess.length === 0) {
+    console.log('❌ No monsters to process with current options');
+    return;
+  }
+  
+  console.log(`📦 Processing ${monstersToProcess.length} monsters (${options.start + 1}-${options.start + monstersToProcess.length})`);
+  
+  const results = await processBatch(monstersToProcess, 1);
+  
+  // Summary
+  console.log('\n🎉 Batch processing complete!');
   console.log('='.repeat(50));
   
-  const totalSuccessful = allResults.filter(r => r.success).length;
-  const totalSkipped = allResults.filter(r => r.skipped).length;
-  const totalFailed = allResults.filter(r => !r.success && !r.skipped).length;
+  const successful = results.filter(r => r.success).length;
+  const skipped = results.filter(r => r.skipped).length;
+  const failed = results.filter(r => !r.success && !r.skipped).length;
   
-  console.log(`📊 Final Results:`);
-  console.log(`✅ Total Successful: ${totalSuccessful}`);
-  console.log(`⏭️  Total Skipped: ${totalSkipped}`);
-  console.log(`❌ Total Failed: ${totalFailed}`);
+  console.log(`📊 Results:`);
+  console.log(`✅ Successful: ${successful}`);
+  console.log(`⏭️  Skipped: ${skipped}`);
+  console.log(`❌ Failed: ${failed}`);
   
-  if (totalFailed > 0) {
+  if (failed > 0) {
     console.log('\n❌ Failed monsters:');
-    allResults
+    results
       .filter(r => !r.success && !r.skipped)
-      .forEach(r => console.log(`   - ${r.monster}: ${r.error}`));
+      .forEach(r => console.log(`   - ${r.monster} (${r.type}): ${r.error}`));
   }
   
   console.log(`\n📁 Images saved to: ${OUTPUT_DIR}`);
+  
+  // Show next batch suggestion
+  const nextStart = options.start + options.batch;
+  if (nextStart < monsters.length) {
+    console.log(`\n💡 To process next batch:`);
+    console.log(`   node generate-monster-images.js -s ${nextStart} -b ${options.batch}`);
+  }
 }
 
 // Run the script
 if (require.main === module) {
-  generateAllMonsterImages().catch(console.error);
+  generateMonsterImages().catch(console.error);
 }
 
 module.exports = {
   generateMonsterImage,
   processBatch,
-  generateAllMonsterImages
+  generateMonsterImages,
+  listMissingImages
 }; 
