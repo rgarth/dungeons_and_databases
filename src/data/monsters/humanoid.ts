@@ -530,8 +530,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large, hairy goblinoid with long arms, hunched posture, and bestial features.",
-    "background": "This bugbear is a large, hairy goblinoid with long arms, hunched posture, and bestial features.",
+    "description": "Bugbears are large, hairy goblinoids with long arms and a hunched posture. They are stealthy despite their size and prefer to ambush their prey. Bugbears are more intelligent than their goblin cousins and often serve as leaders or enforcers in goblinoid communities. They are cruel and sadistic, taking pleasure in the suffering of others.",
     "imagePrompt": "A large hairy goblinoid with long arms, hunched posture, bestial features, fangs, pointed ears, and animal-like appearance",
     "imageStyle": "fantasy",
     "source": "SRD",
@@ -830,8 +829,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small fey humanoid with pointed ears, intelligent eyes, prominent nose, earth-toned skin, mature features.",
-    "background": "This deep gnome is a small fey humanoid with pointed ears, intelligent eyes, prominent nose, earth-toned skin, mature features.",
+    "description": "Deep gnomes, also known as svirfneblin, are small, reclusive fey humanoids that dwell in the deepest reaches of the Underdark. They are known for their exceptional stealth abilities, innate magical talents, and their ability to blend seamlessly with stone. Deep gnomes are highly intelligent and resourceful, using their natural camouflage and magical abilities to survive in the harsh underground environment. They are generally neutral and prefer to avoid conflict, but they are fierce defenders of their hidden communities.",
     "imagePrompt": "A small fey humanoid with pointed ears, intelligent eyes, prominent nose, earth-toned skin, mature features",
     "imageStyle": "fantasy",
     "source": "SRD",
@@ -918,7 +916,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A fierce, warlike humanoid with greenish-gray skin and prominent tusks. Orcs are known for their strength, aggression, and tribal society based on might and conquest.",    "imagePrompt": "A drow dark elf with PITCH BLACK SKIN, DEEP BLACK SKIN, COAL BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, RED EYES, BLOOD RED EYES, pointed ears, graceful features, underdark heritage, drow appearance, NOT ASIAN, NOT OLIVE SKIN, NOT HUMAN, PURE BLACK SKIN ONLY, clearly dark elf features",
+    "description": "Drow are dark elves who dwell in the vast underground cities of the Underdark. They are ruled by powerful matriarchs and are known for their cruelty, ambition, and mastery of dark magic. Drow society is built on intrigue and betrayal, with each house constantly scheming against the others. They are excellent warriors and spellcasters, but their greatest weapon is their ability to manipulate and deceive.",    "imagePrompt": "A drow dark elf with PITCH BLACK SKIN, DEEP BLACK SKIN, COAL BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, RED EYES, BLOOD RED EYES, pointed ears, graceful features, underdark heritage, drow appearance, NOT ASIAN, NOT OLIVE SKIN, NOT HUMAN, PURE BLACK SKIN ONLY, clearly dark elf features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1086,7 +1084,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A gray dwarf duergar with GRAY SKIN, ASHEN SKIN, DEEP GRAY SKIN, BIG BUSHY BEARD, traditional dwarven features, stocky build, broad shoulders, underdark heritage, gray dwarf, underdark dwarf, wearing armor and wielding weapons",
+    "description": "Duergar are gray dwarves who have been corrupted by the influence of the Underdark. They are larger and stronger than their surface-dwelling cousins, but their souls have been twisted by centuries of slavery and exposure to dark magic. Duergar are excellent craftsmen and warriors, but they are also paranoid and cruel. They often serve as mercenaries or slavers, using their innate magical abilities to dominate others.",    "imagePrompt": "A gray dwarf duergar with GRAY SKIN, ASHEN SKIN, DEEP GRAY SKIN, BIG BUSHY BEARD, traditional dwarven features, stocky build, broad shoulders, underdark heritage, gray dwarf, underdark dwarf, wearing armor and wielding weapons",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1261,8 +1259,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with hyena-like head, brown fur, muscular torso, and thin legs.",
-    "background": "This gnoll is a medium humanoid with hyena-like head, brown fur, muscular torso, and thin legs.",
+    "description": "Gnolls are hyena-headed humanoids who are driven by an insatiable hunger for flesh. They are savage and cruel, forming packs that hunt and raid settlements for food and slaves. Gnolls are led by powerful spellcasters called flinds, who can control their pack through magical means. They are excellent trackers and can follow prey for days without rest.",
     "imagePrompt": "A gnoll with HYENA HEAD, long hyena snout, pointed hyena ears, yellow hyena eyes, brown fur covering body, muscular torso, thin legs, bestial hyena features, NOT human with hyena makeup, clearly hyena-headed humanoid",
     "imageStyle": "fantasy",
     "source": "SRD",
@@ -1340,7 +1337,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small, green-skinned humanoid with pointed ears and a mischievous grin. Goblins prefer to live in dark, cramped spaces and are excellent at setting traps and ambushes.",    "imagePrompt": "A small humanoid creature with humanoid features",
+    "description": "Goblins are small, green-skinned humanoids with a penchant for mischief and cruelty. They are cowardly when alone but dangerous in groups, especially when led by stronger creatures like hobgoblins or bugbears. Goblins prefer to live in dark, cramped spaces and are excellent at setting traps and ambushes. They are also skilled riders and often use wolves or other beasts as mounts.",    "imagePrompt": "A small humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1418,8 +1415,8 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A grey-skinned, perverted primitive human with leathery skin, living in the Underdark caves.",
-    "background": "This grimlock is a grey-skinned, perverted primitive human with leathery skin, living in the Underdark caves.",
+    "description": "Grimlocks are sightless humanoids that have adapted to life in the deepest reaches of the Underdark. They have pale, hairless skin that ranges from chalky white to ashen grey, with leathery, calloused flesh that has toughened from generations of living in harsh underground environments. Their faces are featureless except for gaping mouths filled with sharp teeth and small, vestigial eye sockets that are completely sealed over. Grimlocks rely entirely on their heightened senses of hearing and smell to navigate their dark world. They are incredibly strong and resilient, having evolved to survive in the unforgiving depths where other creatures would perish. Grimlocks live in primitive tribal societies, often serving more powerful Underdark denizens like mind flayers or drow as slaves or hunting parties. They are known for their ferocity in combat and their ability to move silently through rocky terrain, making them dangerous ambush predators. Despite their primitive nature, grimlocks are intelligent enough to use tools and weapons, typically crafting crude implements from bone, stone, and scavenged materials.",
+    "background": "Grimlocks are sightless humanoids that have adapted to life in the deepest reaches of the Underdark. They have pale, hairless skin that ranges from chalky white to ashen grey, with leathery, calloused flesh that has toughened from generations of living in harsh underground environments. Their faces are featureless except for gaping mouths filled with sharp teeth and small, vestigial eye sockets that are completely sealed over. Grimlocks rely entirely on their heightened senses of hearing and smell to navigate their dark world. They are incredibly strong and resilient, having evolved to survive in the unforgiving depths where other creatures would perish. Grimlocks live in primitive tribal societies, often serving more powerful Underdark denizens like mind flayers or drow as slaves or hunting parties. They are known for their ferocity in combat and their ability to move silently through rocky terrain, making them dangerous ambush predators. Despite their primitive nature, grimlocks are intelligent enough to use tools and weapons, typically crafting crude implements from bone, stone, and scavenged materials.",
     "imagePrompt": "A grey-skinned, perverted primitive human with leathery skin, caveman-like features, living in dark underground caves of the Underdark, no horns or monster features",
     "imageStyle": "fantasy",
     "source": "SRD",
@@ -1583,7 +1580,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Half-red dragon veterans are experienced warriors who have been transformed by draconic blood, either through heritage or magical means. They combine the tactical expertise of a seasoned fighter with the destructive power of red dragon ancestry. These warriors are immune to fire damage and can breathe devastating cones of flame, making them formidable opponents on the battlefield. Many serve as elite guards for powerful individuals or lead mercenary companies.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1658,7 +1655,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A larger, more disciplined goblinoid with reddish-brown skin and military bearing. Hobgoblins build fortified settlements and maintain strict military discipline.",    "imagePrompt": "A hobgoblin with REDDISH-BROWN SKIN, GRAY SKIN, BRIGHT RED-ORANGE FACE, prominent BLUE NOSE or RED NOSE, yellowish to dark brown eyes, yellowed teeth, dark reddish-brown to gray hair, burly muscular build, 5-6 feet tall, goblinoid features, military appearance, NOT beautiful lady, NOT human, clearly goblinoid monster",
+    "description": "Hobgoblins are disciplined, militaristic humanoids that value order and hierarchy. They are larger and more organized than goblins, with a strong martial tradition and sophisticated tactics. Hobgoblins build fortified settlements and maintain strict military discipline. They are excellent engineers and often construct elaborate fortifications and war machines. Hobgoblins respect strength and skill, and they often serve as mercenaries or military advisors.",    "imagePrompt": "A hobgoblin with REDDISH-BROWN SKIN, GRAY SKIN, BRIGHT RED-ORANGE FACE, prominent BLUE NOSE or RED NOSE, yellowish to dark brown eyes, yellowed teeth, dark reddish-brown to gray hair, burly muscular build, 5-6 feet tall, goblinoid features, military appearance, NOT beautiful lady, NOT human, clearly goblinoid monster",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1830,8 +1827,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small reptilian humanoid with scaly skin, crocodile-like jaw, small horns, and rat-like tail.",
-    "background": "This kobold is a small reptilian humanoid with scaly skin ranging from reddish-brown to black, burnt orange to red eyes, double-jointed legs, long clawed fingers, crocodile-like jaw, small horns, and rat-like tail.",
+    "description": "Kobolds are small, reptilian humanoids who are often underestimated due to their size. They are excellent miners and trapmakers, and they often live in complex tunnel systems beneath the earth. Kobolds are highly social and work together in large groups, using their numbers and cunning to overcome stronger opponents. They are also skilled at domesticating and training various creatures, particularly giant rats and other small beasts.",
     "imagePrompt": "A small reptilian humanoid with scaly reddish-brown to black skin, burnt orange to red eyes, double-jointed legs, long clawed fingers, crocodile-like jaw, small horns, rat-like tail, wearing red or orange tattered clothing",
     "imageStyle": "fantasy",
     "source": "SRD",
@@ -1939,8 +1935,8 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium reptilian humanoid that looks like a walking lizard with scales and reptilian features.",
-    "background": "This lizardfolk is a medium reptilian humanoid that looks like a walking lizard with scales, reptilian head, and lizard-like features.",
+    "description": "Lizardfolk are primitive, reptilian humanoids that dwell in swamps and marshes. They have scaly, greenish-brown skin, long snouts with sharp teeth, and yellow eyes with vertical pupils. Their bodies are lean and muscular, with long tails that help them balance and swim. Lizardfolk are excellent swimmers and can hold their breath for extended periods, making them formidable in aquatic environments. They are known for their stoic nature, practical mindset, and strong tribal bonds. Lizardfolk communities are typically led by shamans or chieftains, and they value strength, survival skills, and loyalty to their tribe above all else. They are skilled hunters and crafters, creating weapons and tools from bone, stone, and other natural materials. Despite their primitive appearance, lizardfolk are intelligent and adaptable, though they often prefer to avoid contact with other races unless necessary for trade or defense.",
+    "background": "Lizardfolk are primitive, reptilian humanoids that dwell in swamps and marshes. They have scaly, greenish-brown skin, long snouts with sharp teeth, and yellow eyes with vertical pupils. Their bodies are lean and muscular, with long tails that help them balance and swim. Lizardfolk are excellent swimmers and can hold their breath for extended periods, making them formidable in aquatic environments. They are known for their stoic nature, practical mindset, and strong tribal bonds. Lizardfolk communities are typically led by shamans or chieftains, and they value strength, survival skills, and loyalty to their tribe above all else. They are skilled hunters and crafters, creating weapons and tools from bone, stone, and other natural materials. Despite their primitive appearance, lizardfolk are intelligent and adaptable, though they often prefer to avoid contact with other races unless necessary for trade or defense.",
     "imagePrompt": "A lizardfolk with LIZARD HEAD, long lizard snout, forked tongue, slit lizard eyes, green scales covering entire body, lizard tail, clawed hands and feet, anthropomorphic lizard, NOT human with lizard features, clearly lizard-headed humanoid",
     "imageStyle": "fantasy",
     "source": "SRD",
@@ -2219,8 +2215,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium orc with greenish-gray skin, tusks, and brutish features.",
-    "background": "This orc is a medium humanoid with greenish-gray skin, prominent tusks, brutish features, and muscular build.",
+    "description": "Orcs are fierce, warlike humanoids with greenish-gray skin and prominent tusks. They are known for their strength, aggression, and tribal society based on might and conquest. Orcs typically dwell in harsh environments such as mountains, caves, or wastelands, organizing themselves into tribes led by the strongest warriors. They are constantly seeking to expand their territory and often raid nearby settlements for food, slaves, and treasure.",
     "imagePrompt": "A medium orc with greenish-gray skin, prominent tusks, brutish features, muscular build, and aggressive appearance",
     "imageStyle": "fantasy",
     "source": "SRD",
@@ -2398,8 +2393,8 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium aquatic humanoid with shark-like features, fins, and webbed hands.",
-    "background": "This sahuagin is a medium aquatic humanoid with shark-like head, fins, webbed hands, and predatory features.",
+    "description": "Sahuagin are vicious, shark-like humanoids that rule the depths of the ocean with an iron fist. They have sleek, muscular bodies covered in dark green or blue scales, with distinctive shark-like heads featuring rows of razor-sharp teeth and cold, predatory eyes. Their limbs end in webbed hands and feet, and they sport dorsal fins and gill slits along their necks. Sahuagin are perfectly adapted to aquatic life, able to breathe both air and water, though they must return to the sea every few hours to avoid suffocation. These creatures are known for their bloodthirsty nature and their ability to enter a terrifying blood frenzy when their prey is wounded. Sahuagin possess a unique telepathic connection with sharks, allowing them to command these apex predators to do their bidding. They live in hierarchical societies ruled by powerful barons and priestesses, often serving as the enforcers of underwater kingdoms. Sahuagin are excellent swimmers and fierce combatants, using their natural weapons and crude spears to hunt both sea creatures and surface dwellers who venture into their domain.",
+    "background": "Sahuagin are vicious, shark-like humanoids that rule the depths of the ocean with an iron fist. They have sleek, muscular bodies covered in dark green or blue scales, with distinctive shark-like heads featuring rows of razor-sharp teeth and cold, predatory eyes. Their limbs end in webbed hands and feet, and they sport dorsal fins and gill slits along their necks. Sahuagin are perfectly adapted to aquatic life, able to breathe both air and water, though they must return to the sea every few hours to avoid suffocation. These creatures are known for their bloodthirsty nature and their ability to enter a terrifying blood frenzy when their prey is wounded. Sahuagin possess a unique telepathic connection with sharks, allowing them to command these apex predators to do their bidding. They live in hierarchical societies ruled by powerful barons and priestesses, often serving as the enforcers of underwater kingdoms. Sahuagin are excellent swimmers and fierce combatants, using their natural weapons and crude spears to hunt both sea creatures and surface dwellers who venture into their domain.",
     "imagePrompt": "A medium aquatic humanoid with shark-like head, fins, webbed hands, predatory features, swimming underwater in ocean environment",
     "imageStyle": "fantasy",
     "source": "SRD",
@@ -2916,7 +2911,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Werebears are lycanthropes who can transform into bears or hybrid forms. They are generally good-natured and protective, often serving as guardians of forests and wilderness areas. Werebears are incredibly strong and resilient, and they can heal rapidly from injuries. They are also skilled at tracking and survival, making them excellent rangers and protectors.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2996,7 +2991,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Werebears are lycanthropes who can transform into bears or hybrid forms. They are generally good-natured and protective, often serving as guardians of forests and wilderness areas. Werebears are incredibly strong and resilient, and they can heal rapidly from injuries. They are also skilled at tracking and survival, making them excellent rangers and protectors.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3097,7 +3092,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Werebears are lycanthropes who can transform into bears or hybrid forms. They are generally good-natured and protective, often serving as guardians of forests and wilderness areas. Werebears are incredibly strong and resilient, and they can heal rapidly from injuries. They are also skilled at tracking and survival, making them excellent rangers and protectors.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3170,7 +3165,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Wereboars are savage lycanthropes who transform into boars or hybrid forms. They are known for their incredible toughness and relentless nature, often continuing to fight even when severely wounded. Wereboars are typically solitary creatures who prefer to live in remote wilderness areas, though some form small packs or serve as enforcers for more powerful evil beings. They are incredibly strong and durable, with a natural resistance to damage that makes them difficult to defeat. Wereboars are known for their charging attacks and their ability to knock opponents prone with their powerful tusks. Despite their bestial nature, they retain their human intelligence and can be cunning opponents.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3250,7 +3245,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Wereboars are savage lycanthropes who transform into boars or hybrid forms. They are known for their incredible toughness and relentless nature, often continuing to fight even when severely wounded. Wereboars are typically solitary creatures who prefer to live in remote wilderness areas, though some form small packs or serve as enforcers for more powerful evil beings. They are incredibly strong and durable, with a natural resistance to damage that makes them difficult to defeat. Wereboars are known for their charging attacks and their ability to knock opponents prone with their powerful tusks. Despite their bestial nature, they retain their human intelligence and can be cunning opponents.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3344,7 +3339,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Wereboars are savage lycanthropes who transform into boars or hybrid forms. They are known for their incredible toughness and relentless nature, often continuing to fight even when severely wounded. Wereboars are typically solitary creatures who prefer to live in remote wilderness areas, though some form small packs or serve as enforcers for more powerful evil beings. They are incredibly strong and durable, with a natural resistance to damage that makes them difficult to defeat. Wereboars are known for their charging attacks and their ability to knock opponents prone with their powerful tusks. Despite their bestial nature, they retain their human intelligence and can be cunning opponents.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3435,7 +3430,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Wererats are stealthy lycanthropes who can transform into rats or hybrid forms. They are known for their cunning and adaptability, often operating in urban environments where they can blend in with the local rat population. Wererats typically form organized groups or guilds, using their ability to communicate with rats to gather information and spy on their enemies. They are excellent at stealth and infiltration, making them dangerous assassins and thieves. Wererats are particularly feared for their ability to spread disease and their tendency to work in coordinated groups. Despite their small size, they are dangerous opponents who prefer to strike from the shadows and use their numbers to overwhelm their prey.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3536,7 +3531,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Wererats are stealthy lycanthropes who can transform into rats or hybrid forms. They are known for their cunning and adaptability, often operating in urban environments where they can blend in with the local rat population. Wererats typically form organized groups or guilds, using their ability to communicate with rats to gather information and spy on their enemies. They are excellent at stealth and infiltration, making them dangerous assassins and thieves. Wererats are particularly feared for their ability to spread disease and their tendency to work in coordinated groups. Despite their small size, they are dangerous opponents who prefer to strike from the shadows and use their numbers to overwhelm their prey.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3607,7 +3602,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Wererats are stealthy lycanthropes who can transform into rats or hybrid forms. They are known for their cunning and adaptability, often operating in urban environments where they can blend in with the local rat population. Wererats typically form organized groups or guilds, using their ability to communicate with rats to gather information and spy on their enemies. They are excellent at stealth and infiltration, making them dangerous assassins and thieves. Wererats are particularly feared for their ability to spread disease and their tendency to work in coordinated groups. Despite their small size, they are dangerous opponents who prefer to strike from the shadows and use their numbers to overwhelm their prey.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3699,7 +3694,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Weretigers are powerful lycanthropes who can transform into tigers or hybrid forms. They are known for their grace, speed, and deadly hunting prowess. Weretigers are typically solitary hunters who prefer to stalk their prey from the shadows, using their enhanced senses and stealth abilities to get close before striking. They are incredibly agile and can move with remarkable speed, making them difficult to escape from once they've chosen their target. Weretigers are known for their pounce ability, which allows them to knock opponents prone and then deliver devastating follow-up attacks. They are often found in jungle or forest environments where they can use their natural camouflage and hunting skills to their advantage.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3815,7 +3810,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Weretigers are powerful lycanthropes who can transform into tigers or hybrid forms. They are known for their grace, speed, and deadly hunting prowess. Weretigers are typically solitary hunters who prefer to stalk their prey from the shadows, using their enhanced senses and stealth abilities to get close before striking. They are incredibly agile and can move with remarkable speed, making them difficult to escape from once they've chosen their target. Weretigers are known for their pounce ability, which allows them to knock opponents prone and then deliver devastating follow-up attacks. They are often found in jungle or forest environments where they can use their natural camouflage and hunting skills to their advantage.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3900,7 +3895,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Weretigers are powerful lycanthropes who can transform into tigers or hybrid forms. They are known for their grace, speed, and deadly hunting prowess. Weretigers are typically solitary hunters who prefer to stalk their prey from the shadows, using their enhanced senses and stealth abilities to get close before striking. They are incredibly agile and can move with remarkable speed, making them difficult to escape from once they've chosen their target. Weretigers are known for their pounce ability, which allows them to knock opponents prone and then deliver devastating follow-up attacks. They are often found in jungle or forest environments where they can use their natural camouflage and hunting skills to their advantage.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3980,7 +3975,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Werewolves are the most infamous of all lycanthropes, able to transform into wolves or hybrid forms. They are known for their pack mentality and their ability to coordinate attacks with other werewolves. Werewolves are incredibly dangerous in groups, using their enhanced senses and communication abilities to hunt as a coordinated unit. They are particularly feared for their ability to spread lycanthropy through their bites, which can curse victims to become werewolves themselves. Werewolves are often associated with the full moon, though they can transform at will. They are known for their relentless pursuit of prey and their ability to track targets over great distances using their keen sense of smell. Despite their bestial nature, they retain their human intelligence and can be cunning strategists.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4070,7 +4065,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Werewolves are the most infamous of all lycanthropes, able to transform into wolves or hybrid forms. They are known for their pack mentality and their ability to coordinate attacks with other werewolves. Werewolves are incredibly dangerous in groups, using their enhanced senses and communication abilities to hunt as a coordinated unit. They are particularly feared for their ability to spread lycanthropy through their bites, which can curse victims to become werewolves themselves. Werewolves are often associated with the full moon, though they can transform at will. They are known for their relentless pursuit of prey and their ability to track targets over great distances using their keen sense of smell. Despite their bestial nature, they retain their human intelligence and can be cunning strategists.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4139,7 +4134,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "Werewolves are the most infamous of all lycanthropes, able to transform into wolves or hybrid forms. They are known for their pack mentality and their ability to coordinate attacks with other werewolves. Werewolves are incredibly dangerous in groups, using their enhanced senses and communication abilities to hunt as a coordinated unit. They are particularly feared for their ability to spread lycanthropy through their bites, which can curse victims to become werewolves themselves. Werewolves are often associated with the full moon, though they can transform at will. They are known for their relentless pursuit of prey and their ability to track targets over great distances using their keen sense of smell. Despite their bestial nature, they retain their human intelligence and can be cunning strategists.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
