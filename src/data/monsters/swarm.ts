@@ -74,9 +74,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.25.",
-    "background": "This swarm of Tiny beasts is a formidable opponent.",
-    "imagePrompt": "Multiple bats flying together in a dark cloud formation, swarm of flying creatures, no single portrait focus",
+    "description": "A medium swarm of Tiny beasts with challenge rating 0.25.",    "imagePrompt": "Multiple bats flying together in a dark cloud formation, swarm of flying creatures, no single portrait focus",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -151,9 +149,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.5.",
-    "background": "This swarm of Tiny beasts is a formidable opponent.",
-    "imagePrompt": "Multiple beetles crawling together in a mass formation, swarm of insects, no single portrait focus",
+    "description": "A medium swarm of Tiny beasts with challenge rating 0.5.",    "imagePrompt": "Multiple beetles crawling together in a mass formation, swarm of insects, no single portrait focus",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -227,9 +223,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.5.",
-    "background": "This swarm of Tiny beasts is a formidable opponent.",
-    "imagePrompt": "Multiple centipedes writhing together in a mass formation, swarm of poisonous insects, no single portrait focus",
+    "description": "A medium swarm of Tiny beasts with challenge rating 0.5.",    "imagePrompt": "Multiple centipedes writhing together in a mass formation, swarm of poisonous insects, no single portrait focus",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -303,9 +297,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.5.",
-    "background": "This swarm of Tiny beasts is a formidable opponent.",
-    "imagePrompt": "A medium swarm of Tiny beasts creature",
+    "description": "A medium swarm of Tiny beasts with challenge rating 0.5.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -379,9 +371,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 2.",
-    "background": "This swarm of Tiny beasts is a formidable opponent.",
-    "imagePrompt": "A medium swarm of Tiny beasts creature",
+    "description": "A medium swarm of Tiny beasts with challenge rating 2.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -463,9 +453,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 1.",
-    "background": "This swarm of Tiny beasts is a formidable opponent.",
-    "imagePrompt": "A medium swarm of Tiny beasts creature",
+    "description": "A medium swarm of Tiny beasts with challenge rating 1.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -542,9 +530,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.25.",
-    "background": "This swarm of Tiny beasts is a formidable opponent.",
-    "imagePrompt": "A medium swarm of Tiny beasts creature",
+    "description": "A medium swarm of Tiny beasts with challenge rating 0.25.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -617,9 +603,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.25.",
-    "background": "This swarm of Tiny beasts is a formidable opponent.",
-    "imagePrompt": "A medium swarm of Tiny beasts creature",
+    "description": "A medium swarm of Tiny beasts with challenge rating 0.25.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -704,9 +688,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.5.",
-    "background": "This swarm of Tiny beasts is a formidable opponent.",
-    "imagePrompt": "A MASSIVE SWARM of HUNDREDS of spiders, thousands of tiny spiders crawling over each other, dense cloud of spiders, spider swarm covering area, NOT just a few spiders, clearly hundreds of individual spiders moving together",
+    "description": "A medium swarm of Tiny beasts with challenge rating 0.5.",    "imagePrompt": "A MASSIVE SWARM of HUNDREDS of spiders, thousands of tiny spiders crawling over each other, dense cloud of spiders, spider swarm covering area, NOT just a few spiders, clearly hundreds of individual spiders moving together",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -780,9 +762,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.5.",
-    "background": "This swarm of Tiny beasts is a formidable opponent.",
-    "imagePrompt": "A MASSIVE SWARM of HUNDREDS of wasps, thousands of angry wasps flying together, dense cloud of wasps, wasp swarm covering area, NOT just a single wasp, clearly hundreds of individual wasps flying in formation",
+    "description": "A medium swarm of Tiny beasts with challenge rating 0.5.",    "imagePrompt": "A MASSIVE SWARM of HUNDREDS of wasps, thousands of angry wasps flying together, dense cloud of wasps, wasp swarm covering area, NOT just a single wasp, clearly hundreds of individual wasps flying in formation",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

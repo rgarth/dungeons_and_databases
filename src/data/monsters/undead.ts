@@ -76,9 +76,7 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium undead with challenge rating 2.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 2.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -195,9 +193,7 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium undead with challenge rating 4.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 4.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -272,9 +268,7 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium undead with challenge rating 1.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 1.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -385,9 +379,7 @@ export const undeadMonsters: Monster[] = [
         "description": "Each living creature within 20 feet of the lich must make a DC 18 Constitution saving throw against this magic, taking 21 (6d6) necrotic damage on a failed save, or half as much damage on a successful one."
       }
     ],
-    "description": "A medium undead with challenge rating 21.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 21.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -468,9 +460,7 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large undead with challenge rating 2.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A large undead creature with deathly and spectral features",
+    "description": "A large undead with challenge rating 2.",    "imagePrompt": "A large undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -560,9 +550,7 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium undead with challenge rating 3.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 3.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -688,9 +676,7 @@ export const undeadMonsters: Monster[] = [
         "description": "The mummy lord magically transforms into a whirlwind of sand, moves up to 60 feet, and reverts to its normal form. While in whirlwind form, the mummy lord is immune to all damage, and it can't be grappled, petrified, knocked prone, restrained, or stunned. Equipment worn or carried by the mummy lord remain in its possession."
       }
     ],
-    "description": "A medium undead with challenge rating 15.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 15.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -758,9 +744,7 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large undead with challenge rating 2.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A large undead creature with deathly and spectral features",
+    "description": "A large undead with challenge rating 2.",    "imagePrompt": "A large undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -853,9 +837,7 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium undead with challenge rating 0.5.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 0.5.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -931,9 +913,7 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium undead with challenge rating 0.25.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 0.25.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1023,9 +1003,7 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium undead with challenge rating 1.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 1.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1148,9 +1126,7 @@ export const undeadMonsters: Monster[] = [
         "description": "The vampire makes one bite attack."
       }
     ],
-    "description": "A medium undead with challenge rating 13.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 13.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1243,9 +1219,7 @@ export const undeadMonsters: Monster[] = [
         "description": "The vampire makes one bite attack."
       }
     ],
-    "description": "A medium undead with challenge rating 13.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 13.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1342,9 +1316,7 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium undead with challenge rating 5.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 5.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1485,9 +1457,7 @@ export const undeadMonsters: Monster[] = [
         "description": "The vampire makes one bite attack."
       }
     ],
-    "description": "A medium undead with challenge rating 13.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 13.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1551,9 +1521,7 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large undead with challenge rating 0.5.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A large undead creature with deathly and spectral features",
+    "description": "A large undead with challenge rating 0.5.",    "imagePrompt": "A large undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1657,9 +1625,7 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium undead with challenge rating 3.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 3.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1764,9 +1730,7 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny undead with challenge rating 2.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A tiny undead creature with deathly and spectral features",
+    "description": "A tiny undead with challenge rating 2.",    "imagePrompt": "A tiny undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1864,9 +1828,7 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium undead with challenge rating 5.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 5.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1934,9 +1896,7 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium undead with challenge rating 0.25.",
-    "background": "This undead is a formidable opponent.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A medium undead with challenge rating 0.25.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

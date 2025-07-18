@@ -72,9 +72,7 @@ export const oozeMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large ooze with challenge rating 4.",
-    "background": "This ooze is a formidable opponent.",
-    "imagePrompt": "A large ooze creature with amorphous and fluid form",
+    "description": "A large ooze with challenge rating 4.",    "imagePrompt": "A large ooze creature with amorphous and fluid form",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -156,9 +154,7 @@ export const oozeMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large ooze with challenge rating 2.",
-    "background": "This ooze is a formidable opponent.",
-    "imagePrompt": "A large ooze creature with amorphous and fluid form",
+    "description": "A large ooze with challenge rating 2.",    "imagePrompt": "A large ooze creature with amorphous and fluid form",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -242,9 +238,7 @@ export const oozeMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium ooze with challenge rating 0.5.",
-    "background": "This ooze is a formidable opponent.",
-    "imagePrompt": "A medium ooze creature with amorphous and fluid form",
+    "description": "A medium ooze with challenge rating 0.5.",    "imagePrompt": "A medium ooze creature with amorphous and fluid form",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -323,9 +317,7 @@ export const oozeMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large ooze with challenge rating 2.",
-    "background": "This ooze is a formidable opponent.",
-    "imagePrompt": "A large ooze creature with amorphous and fluid form",
+    "description": "A large ooze with challenge rating 2.",    "imagePrompt": "A large ooze creature with amorphous and fluid form",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

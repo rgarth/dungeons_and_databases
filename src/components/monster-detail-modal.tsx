@@ -634,7 +634,7 @@ export default function MonsterDetailModal({ monster, isOpen, onClose }: Monster
                 </div>
               )}
 
-              {monster.background && (
+              {monster.background && !monster.background.toLowerCase().includes('formidable opponent') && (
                 <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-4">
                   <h4 className="font-semibold text-[var(--color-text-primary)] mb-2">Background</h4>
                   <p className="text-[var(--color-text-secondary)] text-sm whitespace-pre-wrap">{stripMarkdown(monster.background)}</p>

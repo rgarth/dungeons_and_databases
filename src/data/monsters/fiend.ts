@@ -106,9 +106,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge fiend with challenge rating 19.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A huge fiend creature with demonic or devilish features",
+    "description": "A huge fiend with challenge rating 19.",    "imagePrompt": "A huge fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -223,9 +221,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fiend with challenge rating 5.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A medium fiend with challenge rating 5.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -326,9 +322,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fiend with challenge rating 3.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A medium fiend with challenge rating 3.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -429,9 +423,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large fiend with challenge rating 9.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A large skeletal devil with a bony, emaciated appearance. The creature has exposed bones and a skeletal structure, with sharp claws and a long, bony tail ending in a stinger. It has a skull-like head with horns and glowing eyes, embodying the essence of a devil made of bone rather than flesh and muscle.",
+    "description": "A large fiend with challenge rating 9.",    "imagePrompt": "A large skeletal devil with a bony, emaciated appearance. The creature has exposed bones and a skeletal structure, with sharp claws and a long, bony tail ending in a stinger. It has a skull-like head with horns and glowing eyes, embodying the essence of a devil made of bone rather than flesh and muscle.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -527,9 +519,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fiend with challenge rating 8.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A medium fiend with challenge rating 8.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -626,9 +616,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small fiend with challenge rating 0.25.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A small, squat demon about 4 feet tall with a rounded body that heavily contrasts its gaunt, emaciated limbs. The creature has ape-like features with pale, rubbery skin ranging from white to beige and blue, sparsely covered by bristly hairs and pulsing, varicose veins. It has a grotesque, misshapen appearance typical of the lowest form of demon.",
+    "description": "A small fiend with challenge rating 0.25.",    "imagePrompt": "A small, squat demon about 4 feet tall with a rounded body that heavily contrasts its gaunt, emaciated limbs. The creature has ape-like features with pale, rubbery skin ranging from white to beige and blue, sparsely covered by bristly hairs and pulsing, varicose veins. It has a grotesque, misshapen appearance typical of the lowest form of demon.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -909,9 +897,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fiend with challenge rating 3.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A medium fiend with challenge rating 3.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1119,9 +1105,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large fiend with challenge rating 11.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A large fiend creature with demonic or devilish features",
+    "description": "A large fiend with challenge rating 11.",    "imagePrompt": "A large fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1336,9 +1320,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny fiend with challenge rating 1.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A tiny fiend creature with demonic or devilish features",
+    "description": "A tiny fiend with challenge rating 1.",    "imagePrompt": "A tiny fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1970,9 +1952,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large fiend with challenge rating 20.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A large fiend creature with demonic or devilish features",
+    "description": "A large fiend with challenge rating 20.",    "imagePrompt": "A large fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2071,9 +2051,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny fiend with challenge rating 1.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A tiny fiend creature with demonic or devilish features",
+    "description": "A tiny fiend with challenge rating 1.",    "imagePrompt": "A tiny fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

@@ -80,9 +80,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge giant with challenge rating 9.",
-    "background": "This giant is a formidable opponent.",
-    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A huge giant with challenge rating 9.",    "imagePrompt": "A huge giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -256,9 +254,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge giant with challenge rating 9.",
-    "background": "This giant is a formidable opponent.",
-    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A huge giant with challenge rating 9.",    "imagePrompt": "A huge giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -340,9 +336,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge giant with challenge rating 8.",
-    "background": "This giant is a formidable opponent.",
-    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A huge giant with challenge rating 8.",    "imagePrompt": "A huge giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -421,9 +415,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge giant with challenge rating 5.",
-    "background": "This giant is a formidable opponent.",
-    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A huge giant with challenge rating 5.",    "imagePrompt": "A huge giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -493,9 +485,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large giant with challenge rating 2.",
-    "background": "This giant is a formidable opponent.",
-    "imagePrompt": "A large giant creature with massive size and strength",
+    "description": "A large giant with challenge rating 2.",    "imagePrompt": "A large giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -688,9 +678,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge giant with challenge rating 7.",
-    "background": "This giant is a formidable opponent.",
-    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A huge giant with challenge rating 7.",    "imagePrompt": "A huge giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -797,9 +785,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge giant with challenge rating 13.",
-    "background": "This giant is a formidable opponent.",
-    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A huge giant with challenge rating 13.",    "imagePrompt": "A huge giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -888,9 +874,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large giant with challenge rating 5.",
-    "background": "This giant is a formidable opponent.",
-    "imagePrompt": "A large giant creature with massive size and strength",
+    "description": "A large giant with challenge rating 5.",    "imagePrompt": "A large giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

@@ -157,9 +157,7 @@ export const feyMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fey with challenge rating 1.",
-    "background": "This fey is a formidable opponent.",
-    "imagePrompt": "A medium fey creature with magical and ethereal features",
+    "description": "A medium fey with challenge rating 1.",    "imagePrompt": "A medium fey creature with magical and ethereal features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -532,9 +530,7 @@ export const feyMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny fey with challenge rating 0.25.",
-    "background": "This fey is a formidable opponent.",
-    "imagePrompt": "A tiny fey creature with magical and ethereal features",
+    "description": "A tiny fey with challenge rating 0.25.",    "imagePrompt": "A tiny fey creature with magical and ethereal features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

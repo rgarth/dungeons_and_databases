@@ -219,9 +219,7 @@ export const plantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large plant with challenge rating 5.",
-    "background": "This plant is a formidable opponent.",
-    "imagePrompt": "A large plant creature with plant-like features",
+    "description": "A large plant with challenge rating 5.",    "imagePrompt": "A large plant creature with plant-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -275,9 +273,7 @@ export const plantMonsters: Monster[] = [
     ],
     "actions": [],
     "legendaryActions": [],
-    "description": "A medium plant with challenge rating 0.",
-    "background": "This plant is a formidable opponent.",
-    "imagePrompt": "A medium plant creature with plant-like features",
+    "description": "A medium plant with challenge rating 0.",    "imagePrompt": "A medium plant creature with plant-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -379,9 +375,7 @@ export const plantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge plant with challenge rating 9.",
-    "background": "This plant is a formidable opponent.",
-    "imagePrompt": "A huge plant creature with plant-like features",
+    "description": "A huge plant with challenge rating 9.",    "imagePrompt": "A huge plant creature with plant-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -455,9 +449,7 @@ export const plantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium plant with challenge rating 0.25.",
-    "background": "This plant is a formidable opponent.",
-    "imagePrompt": "A medium plant creature with plant-like features",
+    "description": "A medium plant with challenge rating 0.25.",    "imagePrompt": "A medium plant creature with plant-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

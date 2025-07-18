@@ -108,9 +108,7 @@ export const aberrationMonsters: Monster[] = [
         "description": "One creature charmed by the aboleth takes 10 (3d6) psychic damage, and the aboleth regains hit points equal to the damage the creature takes."
       }
     ],
-    "description": "A large aberration with challenge rating 10.",
-    "background": "This aberration is a formidable opponent.",
-    "imagePrompt": "A large aberration creature with otherworldly and alien appearance",
+    "description": "A large aberration with challenge rating 10.",    "imagePrompt": "A large aberration creature with otherworldly and alien appearance",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -203,9 +201,7 @@ export const aberrationMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large aberration with challenge rating 4.",
-    "background": "This aberration is a formidable opponent.",
-    "imagePrompt": "A large aberration creature with otherworldly and alien appearance",
+    "description": "A large aberration with challenge rating 4.",    "imagePrompt": "A large aberration creature with otherworldly and alien appearance",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -318,9 +314,7 @@ export const aberrationMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large aberration with challenge rating 8.",
-    "background": "This aberration is a formidable opponent.",
-    "imagePrompt": "A large aberration creature with otherworldly and alien appearance",
+    "description": "A large aberration with challenge rating 8.",    "imagePrompt": "A large aberration creature with otherworldly and alien appearance",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -407,9 +401,7 @@ export const aberrationMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium aberration with challenge rating 2.",
-    "background": "This aberration is a formidable opponent.",
-    "imagePrompt": "A roughly three-foot across and three to four-foot high creature composed of liquefied flesh, eyes, and mouths. The body has a color similar to human flesh but with a consistency like viscous ooze or slime. The surface constantly shifts with new eyes and mouths forming and dissolving as it moves. Multiple mouths babble incoherently while numerous eyes of various sizes dot the amorphous surface.",
+    "description": "A medium aberration with challenge rating 2.",    "imagePrompt": "A roughly three-foot across and three to four-foot high creature composed of liquefied flesh, eyes, and mouths. The body has a color similar to human flesh but with a consistency like viscous ooze or slime. The surface constantly shifts with new eyes and mouths forming and dissolving as it moves. Multiple mouths babble incoherently while numerous eyes of various sizes dot the amorphous surface.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -501,9 +493,7 @@ export const aberrationMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large aberration with challenge rating 5.",
-    "background": "This aberration is a formidable opponent.",
-    "imagePrompt": "A large, bloated, oval-shaped aberration about 8 feet in diameter, standing on three sturdy, elephantine legs. Its rough, rock-like hide is caked in filth and emits a foul odor of rot and decay. The creature has two prehensile tentacles covered in thorny growths ending in leaf-like pads with sharp spikes, and a third tentacle rising from its body, topped with a stalk bearing three eyes and an olfactory organ. Its massive mouth is filled with sharp teeth, and the entire creature is covered in refuse and carrion, giving it a grotesque, scavenger appearance.",
+    "description": "A large aberration with challenge rating 5.",    "imagePrompt": "A large, bloated, oval-shaped aberration about 8 feet in diameter, standing on three sturdy, elephantine legs. Its rough, rock-like hide is caked in filth and emits a foul odor of rot and decay. The creature has two prehensile tentacles covered in thorny growths ending in leaf-like pads with sharp spikes, and a third tentacle rising from its body, topped with a stalk bearing three eyes and an olfactory organ. Its massive mouth is filled with sharp teeth, and the entire creature is covered in refuse and carrion, giving it a grotesque, scavenger appearance.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
