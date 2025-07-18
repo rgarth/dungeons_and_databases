@@ -72,7 +72,7 @@ export const oozeMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large ooze with challenge rating 4.",    "imagePrompt": "A large ooze creature with amorphous and fluid form",
+    "description": "A massive, amorphous blob of acidic jelly that can dissolve almost anything it touches. Black puddings are among the most dangerous oozes, capable of splitting into multiple smaller creatures when damaged.",    "imagePrompt": "A large ooze creature with amorphous and fluid form",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -154,7 +154,7 @@ export const oozeMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large ooze with challenge rating 2.",    "imagePrompt": "A large ooze creature with amorphous and fluid form",
+    "description": "A large, acidic ooze that can dissolve flesh and bone. Ochre jellies are dangerous predators that can split into multiple smaller creatures when damaged.",    "imagePrompt": "A large ooze creature with amorphous and fluid form",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -238,7 +238,7 @@ export const oozeMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium ooze with challenge rating 0.5.",    "imagePrompt": "A medium ooze creature with amorphous and fluid form",
+    "description": "A small, acidic ooze that can dissolve metal and other materials. Gray oozes are often found in dungeons and ruins where they feed on rusted metal and other debris.",    "imagePrompt": "A medium ooze creature with amorphous and fluid form",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -317,7 +317,7 @@ export const oozeMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large ooze with challenge rating 2.",    "imagePrompt": "A large ooze creature with amorphous and fluid form",
+    "description": "A large, acidic ooze that can dissolve flesh and bone. Ochre jellies are dangerous predators that can split into multiple smaller creatures when damaged by lightning or slashing attacks, making them particularly difficult to destroy.",    "imagePrompt": "A large ooze creature with amorphous and fluid form",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

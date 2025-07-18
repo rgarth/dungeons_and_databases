@@ -88,7 +88,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large elemental with challenge rating 5.",    "imagePrompt": "A large elemental creature with elemental energy",
+    "description": "A massive being of pure elemental energy, often taking the form of a humanoid made of its respective element. Elementals are powerful creatures that can be summoned or created through magic.",    "imagePrompt": "A large elemental creature with elemental energy",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -343,7 +343,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small elemental with challenge rating 0.5.",    "imagePrompt": "A small elemental creature with elemental energy",
+    "description": "A small being of pure elemental energy, often taking the form of a tiny humanoid made of its respective element. Elementals are powerful creatures that can be summoned or created through magic.",    "imagePrompt": "A small elemental creature with elemental energy",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -433,7 +433,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large elemental with challenge rating 5.",    "imagePrompt": "A large elemental creature with elemental energy",
+    "description": "A formidable elemental being with distinctive features and abilities.",    "imagePrompt": "A large elemental creature with elemental energy",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -618,7 +618,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large elemental with challenge rating 5.",    "imagePrompt": "A large elemental creature with elemental energy",
+    "description": "A formidable elemental being with distinctive features and abilities.",    "imagePrompt": "A large elemental creature with elemental energy",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -709,7 +709,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium elemental with challenge rating 2.",    "imagePrompt": "A medium elemental creature with elemental energy",
+    "description": "A medium-sized being of pure elemental energy, often taking the form of a humanoid made of its respective element. Elementals are powerful creatures that can be summoned or created through magic.",    "imagePrompt": "A medium elemental creature with elemental energy",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -802,7 +802,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small elemental with challenge rating 0.5.",    "imagePrompt": "A small elemental creature with elemental energy",
+    "description": "A common elemental being with distinctive features and abilities.",    "imagePrompt": "A small elemental creature with elemental energy",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -897,7 +897,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium elemental with challenge rating 6.",    "imagePrompt": "A medium elemental creature with elemental energy",
+    "description": "A medium-sized being of pure elemental energy, often taking the form of a humanoid made of its respective element. Elementals are powerful creatures that can be summoned or created through magic.",    "imagePrompt": "A medium elemental creature with elemental energy",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -988,7 +988,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small elemental with challenge rating 0.5.",    "imagePrompt": "A small elemental creature with elemental energy",
+    "description": "A common elemental being with distinctive features and abilities.",    "imagePrompt": "A small elemental creature with elemental energy",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1059,7 +1059,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small elemental with challenge rating 0.5.",    "imagePrompt": "A small elemental creature with elemental energy",
+    "description": "A common elemental being with distinctive features and abilities.",    "imagePrompt": "A small elemental creature with elemental energy",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1151,7 +1151,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large elemental with challenge rating 5.",    "imagePrompt": "A large elemental creature with elemental energy",
+    "description": "A formidable elemental being with distinctive features and abilities.",    "imagePrompt": "A large elemental creature with elemental energy",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1234,7 +1234,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small elemental with challenge rating 0.25.",    "imagePrompt": "A small elemental creature with elemental energy",
+    "description": "A common elemental being with distinctive features and abilities.",    "imagePrompt": "A small elemental creature with elemental energy",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1334,7 +1334,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large elemental with challenge rating 5.",    "imagePrompt": "A large elemental creature with elemental energy",
+    "description": "A formidable elemental being with distinctive features and abilities.",    "imagePrompt": "A large elemental creature with elemental energy",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1431,7 +1431,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium elemental with challenge rating 5.",    "imagePrompt": "A medium-sized elemental creature with a distinctive rocky appearance, wide body, and a large mouth at the top. It has three arms and three legs, with three eyes. The creature's coloration resembles stone and earth, making it blend into rocky terrain. It has a neutral, docile appearance unless provoked or hungry.",
+    "description": "A formidable elemental being with distinctive features and abilities.",    "imagePrompt": "A medium-sized elemental creature with a distinctive rocky appearance, wide body, and a large mouth at the top. It has three arms and three legs, with three eyes. The creature's coloration resembles stone and earth, making it blend into rocky terrain. It has a neutral, docile appearance unless provoked or hungry.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

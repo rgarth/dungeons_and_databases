@@ -12,9 +12,7 @@ const BLOB_STORAGE_URL = process.env.NEXT_PUBLIC_BLOB_STORAGE_URL || 'https://9j
 export function getMonsterImageFilename(monsterName: string): string {
   return monsterName
     .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, '') // Remove special characters
-    .replace(/\s+/g, '_') // Replace spaces with underscores
-    .replace(/__+/g, '_') // Replace multiple underscores with single
+    .replace(/[^a-z0-9]/g, '_') // Replace all non-alphanumeric characters with underscores
     .trim() + '.png';
 }
 

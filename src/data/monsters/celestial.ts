@@ -88,7 +88,7 @@ export const celestialMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium celestial with challenge rating 4.",    "imagePrompt": "A medium-sized winged serpent about 12 feet long with a 15-foot wingspan. The creature has a serpentine body that can coil even in flight, with rainbow-colored or silvery-white feathers on its wings. It has a beautiful, wise appearance with celestial features, embodying lawful good alignment and divine protection.",
+    "description": "A divine celestial being with angelic features and holy power. Celestials are beings of pure good and law, often serving the gods or embodying concepts of justice and protection.",    "imagePrompt": "A medium-sized winged serpent about 12 feet long with a 15-foot wingspan. The creature has a serpentine body that can coil even in flight, with rainbow-colored or silvery-white feathers on its wings. It has a beautiful, wise appearance with celestial features, embodying lawful good alignment and divine protection.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -199,7 +199,7 @@ export const celestialMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium celestial with challenge rating 10.",    "imagePrompt": "A medium celestial creature with divine and angelic features",
+    "description": "A powerful celestial being with divine authority and holy power. Celestials are beings of pure good and law, often serving the gods or embodying concepts of justice and protection.",    "imagePrompt": "A medium celestial creature with divine and angelic features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -263,7 +263,7 @@ export const celestialMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large celestial with challenge rating 2.",    "imagePrompt": "A large celestial creature with divine and angelic features",
+    "description": "A large celestial being with divine features and holy power. Celestials are beings of pure good and law, often serving the gods or embodying concepts of justice and protection.",    "imagePrompt": "A large celestial creature with divine and angelic features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -368,7 +368,7 @@ export const celestialMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large celestial with challenge rating 16.",    "imagePrompt": "A large celestial creature with divine and angelic features",
+    "description": "A massive celestial being with divine authority and holy power. Celestials are beings of pure good and law, often serving the gods or embodying concepts of justice and protection.",    "imagePrompt": "A large celestial creature with divine and angelic features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -509,7 +509,7 @@ export const celestialMonsters: Monster[] = [
         "description": "The solar targets one creature it can see within 30 ft. of it. If the target can see it, the target must succeed on a DC 15 Constitution saving throw or be blinded until magic such as the lesser restoration spell removes the blindness."
       }
     ],
-    "description": "A large celestial with challenge rating 21.",    "imagePrompt": "A large celestial creature with divine and angelic features",
+    "description": "A gargantuan celestial being with divine authority and holy power. Celestials are beings of pure good and law, often serving the gods or embodying concepts of justice and protection.",    "imagePrompt": "A large celestial creature with divine and angelic features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

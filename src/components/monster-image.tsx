@@ -79,15 +79,17 @@ export function MonsterImage({
 
   console.log(`🖼️ Rendering Image component for ${monsterName} with URL: ${imageUrl}`);
   return (
-    <Image
-      src={imageUrl}
-      alt={alt || `${monsterName} image`}
-      width={width}
-      height={height}
-      className={`rounded-lg object-cover ${className}`}
-      onError={handleImageError}
-      onLoad={handleImageLoad}
-      priority={priority}
-    />
+    <div className="bg-gradient-to-br from-[var(--color-card)] to-[var(--color-surface)] p-4 rounded-lg shadow-lg border border-[var(--color-border)]">
+      <Image
+        src={imageUrl}
+        alt={alt || `${monsterName} image`}
+        width={width}
+        height={height}
+        className={`rounded-lg object-cover ${className}`}
+        onError={handleImageError}
+        onLoad={handleImageLoad}
+        priority={priority}
+      />
+    </div>
   );
 } 

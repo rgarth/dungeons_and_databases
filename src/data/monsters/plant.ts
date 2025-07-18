@@ -219,7 +219,7 @@ export const plantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large plant with challenge rating 5.",    "imagePrompt": "A large plant creature with plant-like features",
+    "description": "A massive, sentient tree with gnarled branches and a face formed in its bark. Awakened trees are often guardians of ancient forests and can communicate with other plants and animals.",    "imagePrompt": "A large plant creature with plant-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -273,7 +273,7 @@ export const plantMonsters: Monster[] = [
     ],
     "actions": [],
     "legendaryActions": [],
-    "description": "A medium plant with challenge rating 0.",    "imagePrompt": "A medium plant creature with plant-like features",
+    "description": "A small shrub that has been given sentience and mobility through magic. Awakened shrubs are often used as guards or companions by druids and other nature-loving spellcasters.",    "imagePrompt": "A medium plant creature with plant-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -375,7 +375,7 @@ export const plantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge plant with challenge rating 9.",    "imagePrompt": "A huge plant creature with plant-like features",
+    "description": "A massive, carnivorous plant with enormous petals and a gaping maw filled with sharp teeth. Shambling mounds are created when lightning strikes a dead tree, animating it with elemental energy.",    "imagePrompt": "A huge plant creature with plant-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -449,7 +449,7 @@ export const plantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium plant with challenge rating 0.25.",    "imagePrompt": "A medium plant creature with plant-like features",
+    "description": "A small, animated plant that can move and attack. Awakened shrubs are often used as guards or companions by druids and other nature-loving spellcasters.",    "imagePrompt": "A medium plant creature with plant-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

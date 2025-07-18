@@ -69,7 +69,9 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.5.",    "imagePrompt": "A medium-sized gorilla-like ape with dark fur, muscular arms, and intelligent eyes",
+    "description": "A powerful primate with muscular arms and intelligent eyes. Apes are highly intelligent creatures that can use tools and communicate through gestures and vocalizations. They are excellent climbers and can swing through trees with remarkable agility.",
+    "background": "Apes inhabit dense forests and jungles where they live in social groups led by dominant males. They are omnivorous, feeding on fruits, leaves, insects, and occasionally small animals. Apes are known for their problem-solving abilities and have been observed using sticks as tools to extract insects from tree bark.",
+    "imagePrompt": "A medium-sized gorilla-like ape with dark fur, muscular arms, and intelligent eyes",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -189,7 +191,9 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small beast with challenge rating 0.",    "imagePrompt": "A small beast creature with animal-like features",
+    "description": "A small, intelligent primate with distinctive facial features and a long tail. Baboons are highly social animals that live in large troops with complex hierarchies. They are excellent climbers and can be quite aggressive when defending their territory.",
+    "background": "Baboons inhabit savannas, grasslands, and rocky areas where they forage for food in large groups. They are omnivorous, eating fruits, seeds, insects, and small animals. Baboons are known for their complex social behavior and communication through vocalizations and body language.",
+    "imagePrompt": "A small beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -252,7 +256,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny beast with challenge rating 0.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A small, harmless animal that poses no threat to adventurers. Tiny beasts are often found in natural environments and serve as prey for larger creatures.",    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -318,7 +322,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny beast with challenge rating 0.",    "imagePrompt": "A small brown bat with leathery wings, pointed ears, and tiny claws hanging upside down",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A small brown bat with leathery wings, pointed ears, and tiny claws hanging upside down",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -399,7 +403,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.5.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -534,7 +538,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.25.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -617,7 +621,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 1.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -673,7 +677,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 0.125.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -737,7 +741,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny beast with challenge rating 0.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -805,7 +809,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 0.25.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -869,7 +873,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny beast with challenge rating 0.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -933,7 +937,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 0.5.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -989,7 +993,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1057,7 +1061,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 1.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1113,7 +1117,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 0.25.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1177,7 +1181,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small beast with challenge rating 0.",    "imagePrompt": "A small beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A small beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1248,7 +1252,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge beast with challenge rating 4.",    "imagePrompt": "A huge beast creature with animal-like features",
+    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A huge beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1319,7 +1323,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 0.25.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1525,7 +1529,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge beast with challenge rating 7.",    "imagePrompt": "A massive gorilla-like ape with enormous muscles, dark fur, and intimidating presence",
+    "description": "A formidable wild beast with distinctive features and abilities.",    "imagePrompt": "A massive gorilla-like ape with enormous muscles, dark fur, and intimidating presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1607,7 +1611,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.25.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1674,7 +1678,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 0.25.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1739,7 +1743,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 2.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1797,7 +1801,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small beast with challenge rating 0.25.",    "imagePrompt": "A long segmented arthropod with one pair of legs per body segment, flat body, antennae on head, venomous fangs, reddish-brown color, crawling on ground",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A long segmented arthropod with one pair of legs per body segment, flat body, antennae on head, venomous fangs, reddish-brown color, crawling on ground",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1867,7 +1871,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge beast with challenge rating 2.",    "imagePrompt": "A huge beast creature with animal-like features",
+    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A huge beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1932,7 +1936,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.125.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2015,7 +2019,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge beast with challenge rating 5.",    "imagePrompt": "A huge beast creature with animal-like features",
+    "description": "A formidable wild beast with distinctive features and abilities.",    "imagePrompt": "A huge beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2326,7 +2330,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.25.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2391,7 +2395,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 0.5.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2454,7 +2458,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 1.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2597,7 +2601,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 1.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2672,7 +2676,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 0.25.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2732,7 +2736,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.25.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2798,7 +2802,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small beast with challenge rating 0.125.",    "imagePrompt": "A small beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A small beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2864,7 +2868,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small beast with challenge rating 0.125.",    "imagePrompt": "A large diseased rat with matted fur, open sores, yellowed teeth, red eyes, and aggressive stance, clearly sick and dangerous",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large diseased rat with matted fur, open sores, yellowed teeth, red eyes, and aggressive stance, clearly sick and dangerous",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3242,7 +3246,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 1.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3391,7 +3395,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.5.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3456,7 +3460,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.125.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3598,7 +3602,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3662,7 +3666,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny beast with challenge rating 0.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3795,7 +3799,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3862,7 +3866,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small beast with challenge rating 0.",    "imagePrompt": "A small beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A small beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4022,7 +4026,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 1.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4079,7 +4083,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny beast with challenge rating 0.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4282,7 +4286,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.125.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4365,7 +4369,9 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small beast with challenge rating 0.",    "imagePrompt": "A small beast creature with animal-like features",
+    "description": "A small, intelligent cephalopod with eight flexible tentacles and a bulbous head. Octopuses are masters of camouflage and can change their skin color and texture to blend seamlessly with their surroundings. They are excellent swimmers and can squeeze through incredibly small spaces.",
+    "background": "Octopuses inhabit coastal waters and coral reefs, where they hunt for crabs, fish, and other small marine creatures. They are highly intelligent for invertebrates and have been known to solve complex puzzles and use tools. When threatened, they release a cloud of dark ink to confuse predators and escape.",
+    "imagePrompt": "A small beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4435,7 +4441,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny beast with challenge rating 0.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4514,7 +4520,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.25.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4579,7 +4585,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 2.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4637,7 +4643,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny beast with challenge rating 0.125.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4720,7 +4726,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 2.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4776,7 +4782,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.125.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4905,7 +4911,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny beast with challenge rating 0.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4969,7 +4975,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny beast with challenge rating 0.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5100,7 +5106,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 2.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5156,7 +5162,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 0.25.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5234,7 +5240,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 2.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5418,7 +5424,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny beast with challenge rating 0.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5476,7 +5482,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny beast with challenge rating 0.125.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5555,7 +5561,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 1.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5626,7 +5632,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge beast with challenge rating 5.",    "imagePrompt": "A huge beast creature with animal-like features",
+    "description": "A formidable wild beast with distinctive features and abilities.",    "imagePrompt": "A huge beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5703,7 +5709,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge beast with challenge rating 8.",    "imagePrompt": "A huge beast creature with animal-like features",
+    "description": "A formidable wild beast with distinctive features and abilities.",    "imagePrompt": "A huge beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5771,7 +5777,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5898,7 +5904,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny beast with challenge rating 0.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5966,7 +5972,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium beast with challenge rating 0.25.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

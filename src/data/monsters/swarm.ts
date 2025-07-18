@@ -74,7 +74,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.25.",    "imagePrompt": "Multiple bats flying together in a dark cloud formation, swarm of flying creatures, no single portrait focus",
+    "description": "A cloud of hundreds of bats flying together in perfect coordination. The swarm creates a terrifying sound of flapping wings and high-pitched squeaks as it moves through the darkness.",    "imagePrompt": "Multiple bats flying together in a dark cloud formation, swarm of flying creatures, no single portrait focus",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -149,7 +149,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.5.",    "imagePrompt": "Multiple beetles crawling together in a mass formation, swarm of insects, no single portrait focus",
+    "description": "A dense mass of hundreds of beetles crawling together in perfect coordination. The swarm creates a rustling sound as the insects move over each other, overwhelming prey through sheer numbers.",    "imagePrompt": "Multiple beetles crawling together in a mass formation, swarm of insects, no single portrait focus",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -223,7 +223,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.5.",    "imagePrompt": "Multiple centipedes writhing together in a mass formation, swarm of poisonous insects, no single portrait focus",
+    "description": "A writhing mass of hundreds of poisonous centipedes moving as one entity. The swarm creates a terrifying sight as the creatures crawl over each other, overwhelming prey through sheer numbers and venom.",    "imagePrompt": "Multiple centipedes writhing together in a mass formation, swarm of poisonous insects, no single portrait focus",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -297,7 +297,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.5.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
+    "description": "A dense cloud of thousands of insects moving as one entity. The swarm creates a loud buzzing sound and can quickly overwhelm prey through sheer numbers and their ability to crawl into any opening.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -371,7 +371,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 2.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
+    "description": "A horrifying mass of hundreds of venomous snakes writhing together in a coordinated swarm. The snakes work together to trap and overwhelm prey, using their venom to deadly effect.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -453,7 +453,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 1.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
+    "description": "A school of hundreds of vicious, carnivorous fish swimming together in perfect coordination. The swarm creates a terrifying sight as the fish dart and weave through the water, overwhelming prey through sheer numbers.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -530,7 +530,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.25.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
+    "description": "A writhing mass of hundreds of rats moving as one entity. The swarm creates a terrifying cacophony of squeaks and rustling as it moves, overwhelming prey through sheer numbers.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -603,7 +603,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.25.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
+    "description": "A cloud of hundreds of ravens flying together in perfect coordination. The swarm creates a terrifying sound of flapping wings and harsh caws as it moves through the air.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -688,7 +688,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.5.",    "imagePrompt": "A MASSIVE SWARM of HUNDREDS of spiders, thousands of tiny spiders crawling over each other, dense cloud of spiders, spider swarm covering area, NOT just a few spiders, clearly hundreds of individual spiders moving together",
+    "description": "A horrifying mass of hundreds of spiders crawling over each other in a coordinated swarm. The spiders work together to trap and overwhelm prey, using their webs and venom to deadly effect.",    "imagePrompt": "A MASSIVE SWARM of HUNDREDS of spiders, thousands of tiny spiders crawling over each other, dense cloud of spiders, spider swarm covering area, NOT just a few spiders, clearly hundreds of individual spiders moving together",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -762,7 +762,7 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium swarm of Tiny beasts with challenge rating 0.5.",    "imagePrompt": "A MASSIVE SWARM of HUNDREDS of wasps, thousands of angry wasps flying together, dense cloud of wasps, wasp swarm covering area, NOT just a single wasp, clearly hundreds of individual wasps flying in formation",
+    "description": "A dense cloud of hundreds of angry wasps flying together in perfect coordination. The swarm creates a terrifying buzzing sound and can quickly overwhelm prey through sheer numbers and their painful stings.",    "imagePrompt": "A MASSIVE SWARM of HUNDREDS of wasps, thousands of angry wasps flying together, dense cloud of wasps, wasp swarm covering area, NOT just a single wasp, clearly hundreds of individual wasps flying in formation",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

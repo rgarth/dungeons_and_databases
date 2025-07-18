@@ -448,7 +448,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 2.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A dark elf with obsidian-black skin, white hair, and red eyes. Drow live in vast underground cities in the Underdark and are ruled by powerful matriarchs.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -918,7 +918,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 0.25.",    "imagePrompt": "A drow dark elf with PITCH BLACK SKIN, DEEP BLACK SKIN, COAL BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, RED EYES, BLOOD RED EYES, pointed ears, graceful features, underdark heritage, drow appearance, NOT ASIAN, NOT OLIVE SKIN, NOT HUMAN, PURE BLACK SKIN ONLY, clearly dark elf features",
+    "description": "A fierce, warlike humanoid with greenish-gray skin and prominent tusks. Orcs are known for their strength, aggression, and tribal society based on might and conquest.",    "imagePrompt": "A drow dark elf with PITCH BLACK SKIN, DEEP BLACK SKIN, COAL BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, RED EYES, BLOOD RED EYES, pointed ears, graceful features, underdark heritage, drow appearance, NOT ASIAN, NOT OLIVE SKIN, NOT HUMAN, PURE BLACK SKIN ONLY, clearly dark elf features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1086,7 +1086,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 1.",    "imagePrompt": "A gray dwarf duergar with GRAY SKIN, ASHEN SKIN, DEEP GRAY SKIN, BIG BUSHY BEARD, traditional dwarven features, stocky build, broad shoulders, underdark heritage, gray dwarf, underdark dwarf, wearing armor and wielding weapons",
+    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A gray dwarf duergar with GRAY SKIN, ASHEN SKIN, DEEP GRAY SKIN, BIG BUSHY BEARD, traditional dwarven features, stocky build, broad shoulders, underdark heritage, gray dwarf, underdark dwarf, wearing armor and wielding weapons",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1340,7 +1340,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small humanoid with challenge rating 0.25.",    "imagePrompt": "A small humanoid creature with humanoid features",
+    "description": "A small, green-skinned humanoid with pointed ears and a mischievous grin. Goblins prefer to live in dark, cramped spaces and are excellent at setting traps and ambushes.",    "imagePrompt": "A small humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1583,7 +1583,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 5.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A formidable humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1658,7 +1658,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 0.5.",    "imagePrompt": "A hobgoblin with REDDISH-BROWN SKIN, GRAY SKIN, BRIGHT RED-ORANGE FACE, prominent BLUE NOSE or RED NOSE, yellowish to dark brown eyes, yellowed teeth, dark reddish-brown to gray hair, burly muscular build, 5-6 feet tall, goblinoid features, military appearance, NOT beautiful lady, NOT human, clearly goblinoid monster",
+    "description": "A larger, more disciplined goblinoid with reddish-brown skin and military bearing. Hobgoblins build fortified settlements and maintain strict military discipline.",    "imagePrompt": "A hobgoblin with REDDISH-BROWN SKIN, GRAY SKIN, BRIGHT RED-ORANGE FACE, prominent BLUE NOSE or RED NOSE, yellowish to dark brown eyes, yellowed teeth, dark reddish-brown to gray hair, burly muscular build, 5-6 feet tall, goblinoid features, military appearance, NOT beautiful lady, NOT human, clearly goblinoid monster",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2916,7 +2916,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 5.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A formidable humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2996,7 +2996,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 5.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A formidable humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3097,7 +3097,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 5.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A formidable humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3170,7 +3170,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 4.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3250,7 +3250,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 4.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3344,7 +3344,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 4.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3435,7 +3435,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 2.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3536,7 +3536,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 2.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3607,7 +3607,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 2.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3699,7 +3699,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 4.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3815,7 +3815,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 4.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3900,7 +3900,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 4.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3980,7 +3980,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 3.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4070,7 +4070,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 3.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4139,7 +4139,7 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 3.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A dangerous humanoid creature with distinctive features and abilities.",    "imagePrompt": "A medium humanoid creature with humanoid features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

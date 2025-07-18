@@ -77,7 +77,7 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium construct with challenge rating 1.",    "imagePrompt": "A medium construct creature with mechanical or magical construction",
+    "description": "A dangerous magical construct with distinctive features and abilities.",    "imagePrompt": "A medium construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -187,7 +187,7 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large construct with challenge rating 9.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "description": "A formidable magical construct with distinctive features and abilities.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -291,7 +291,7 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium construct with challenge rating 5.",    "imagePrompt": "A medium construct creature with mechanical or magical construction",
+    "description": "A formidable magical construct with distinctive features and abilities.",    "imagePrompt": "A medium construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -560,7 +560,7 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large construct with challenge rating 16.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "description": "A powerful magical construct with distinctive features and abilities.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -733,7 +733,7 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large construct with challenge rating 7.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "description": "A formidable magical construct with distinctive features and abilities.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -834,7 +834,7 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large construct with challenge rating 10.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "description": "A powerful magical construct with distinctive features and abilities.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

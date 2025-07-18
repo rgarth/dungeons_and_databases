@@ -603,15 +603,13 @@ export default function MonsterDetailModal({ monster, isOpen, onClose }: Monster
 
                                 {/* Right Column: Monster Image (Mobile: top, Desktop: right side) */}
                 <div className="flex justify-center items-start order-1 lg:order-2">
-                  <div className="bg-gradient-to-br from-[var(--color-card)] to-[var(--color-surface)] p-4 rounded-lg shadow-lg border border-[var(--color-border)]">
-                    <MonsterImage 
-                      monsterName={monster.name}
-                      width={400}
-                      height={400}
-                      className="max-w-full h-auto rounded-lg"
-                      priority={true}
-                    />
-                  </div>
+                  <MonsterImage 
+                    monsterName={monster.name}
+                    width={400}
+                    height={400}
+                    className="max-w-full h-auto rounded-lg"
+                    priority={true}
+                  />
                 </div>
               </div>
 
@@ -634,7 +632,9 @@ export default function MonsterDetailModal({ monster, isOpen, onClose }: Monster
                 </div>
               )}
 
-              {monster.background && !monster.background.toLowerCase().includes('formidable opponent') && (
+              {monster.background && 
+               !monster.background.toLowerCase().includes('formidable opponent') && 
+               monster.background !== monster.description && (
                 <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-4">
                   <h4 className="font-semibold text-[var(--color-text-primary)] mb-2">Background</h4>
                   <p className="text-[var(--color-text-secondary)] text-sm whitespace-pre-wrap">{stripMarkdown(monster.background)}</p>

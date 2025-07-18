@@ -106,7 +106,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge fiend with challenge rating 19.",    "imagePrompt": "A huge fiend creature with demonic or devilish features",
+    "description": "A massive demon with burning wings, a whip of lightning, and a flaming sword. Balors are among the most powerful demons in the Abyss, often serving as generals in the Blood War against the devils.",    "imagePrompt": "A huge fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -221,7 +221,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fiend with challenge rating 5.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A massive devil with bat-like wings, a long tail, and burning red eyes. Pit fiends are the highest-ranking devils in the Nine Hells, serving as generals and administrators.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -322,7 +322,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fiend with challenge rating 3.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A beautiful but malevolent fiend with bat-like wings and a seductive appearance. Succubi often work alone, infiltrating mortal societies to corrupt individuals and spread evil.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -423,7 +423,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large fiend with challenge rating 9.",    "imagePrompt": "A large skeletal devil with a bony, emaciated appearance. The creature has exposed bones and a skeletal structure, with sharp claws and a long, bony tail ending in a stinger. It has a skull-like head with horns and glowing eyes, embodying the essence of a devil made of bone rather than flesh and muscle.",
+    "description": "A formidable demonic fiend with distinctive features and abilities.",    "imagePrompt": "A large skeletal devil with a bony, emaciated appearance. The creature has exposed bones and a skeletal structure, with sharp claws and a long, bony tail ending in a stinger. It has a skull-like head with horns and glowing eyes, embodying the essence of a devil made of bone rather than flesh and muscle.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -519,7 +519,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fiend with challenge rating 8.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A formidable demonic fiend with distinctive features and abilities.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -616,7 +616,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small fiend with challenge rating 0.25.",    "imagePrompt": "A small, squat demon about 4 feet tall with a rounded body that heavily contrasts its gaunt, emaciated limbs. The creature has ape-like features with pale, rubbery skin ranging from white to beige and blue, sparsely covered by bristly hairs and pulsing, varicose veins. It has a grotesque, misshapen appearance typical of the lowest form of demon.",
+    "description": "A small, mischievous devil with bat-like wings and a pointed tail. Imps are native to the Nine Hells and are often bound to serve evil masters as spies and messengers.",    "imagePrompt": "A small, squat demon about 4 feet tall with a rounded body that heavily contrasts its gaunt, emaciated limbs. The creature has ape-like features with pale, rubbery skin ranging from white to beige and blue, sparsely covered by bristly hairs and pulsing, varicose veins. It has a grotesque, misshapen appearance typical of the lowest form of demon.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -897,7 +897,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fiend with challenge rating 3.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A dangerous demonic fiend with distinctive features and abilities.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1105,7 +1105,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large fiend with challenge rating 11.",    "imagePrompt": "A large fiend creature with demonic or devilish features",
+    "description": "A powerful demonic fiend with distinctive features and abilities.",    "imagePrompt": "A large fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1320,7 +1320,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny fiend with challenge rating 1.",    "imagePrompt": "A tiny fiend creature with demonic or devilish features",
+    "description": "A dangerous demonic fiend with distinctive features and abilities.",    "imagePrompt": "A tiny fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1952,7 +1952,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large fiend with challenge rating 20.",    "imagePrompt": "A large fiend creature with demonic or devilish features",
+    "description": "A legendary demonic fiend with distinctive features and abilities.",    "imagePrompt": "A large fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2051,7 +2051,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny fiend with challenge rating 1.",    "imagePrompt": "A tiny fiend creature with demonic or devilish features",
+    "description": "A dangerous demonic fiend with distinctive features and abilities.",    "imagePrompt": "A tiny fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

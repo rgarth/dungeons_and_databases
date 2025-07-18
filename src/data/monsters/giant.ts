@@ -80,7 +80,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge giant with challenge rating 9.",    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A massive giant with skin that ranges from pearly white to sky blue, often with hair that resembles clouds. Cloud giants are among the most intelligent and cultured of the giant races, dwelling in floating castles and valuing art and music.",    "imagePrompt": "A huge giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -254,7 +254,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge giant with challenge rating 9.",    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A formidable massive giant with distinctive features and abilities.",    "imagePrompt": "A huge giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -336,7 +336,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge giant with challenge rating 8.",    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A massive giant with skin the color of molten iron and hair that flickers like flame. Fire giants dwell in volcanic regions and are master smiths, creating powerful weapons and armor in their forges.",    "imagePrompt": "A huge giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -415,7 +415,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge giant with challenge rating 5.",    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A massive giant with pale blue skin and hair as white as snow. Frost giants are native to cold regions and are well-adapted to freezing temperatures, often keeping giant animals as pets and mounts.",    "imagePrompt": "A huge giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -485,7 +485,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large giant with challenge rating 2.",    "imagePrompt": "A large giant creature with massive size and strength",
+    "description": "A large, brutish giant with dirty, unkempt hair and simple clothing made of animal hides. Hill giants are the most common and least intelligent of the giant races, living in simple communities.",    "imagePrompt": "A large giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -678,7 +678,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge giant with challenge rating 7.",    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A large giant with skin that resembles weathered stone and a stoic, contemplative demeanor. Stone giants prefer to live in mountainous regions and are deeply connected to the earth.",    "imagePrompt": "A huge giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -785,7 +785,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge giant with challenge rating 13.",    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A powerful massive giant with distinctive features and abilities.",    "imagePrompt": "A huge giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -874,7 +874,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large giant with challenge rating 5.",    "imagePrompt": "A large giant creature with massive size and strength",
+    "description": "A formidable massive giant with distinctive features and abilities.",    "imagePrompt": "A large giant creature with massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

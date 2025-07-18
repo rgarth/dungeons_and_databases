@@ -127,7 +127,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A huge dragon with challenge rating 14.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A massive, ancient dragon with scales the color of molten lava and eyes that burn with malevolent intelligence. Ancient red dragons are the most covetous of the true dragons, driven by their insatiable thirst for wealth and power.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -260,7 +260,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 20 Dexterity saving throw or take 14 (2d6 + 7) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A huge dragon with challenge rating 16.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A large, cunning dragon with scales the color of desert sky and eyes that crackle with lightning. Adult blue dragons are territorial and prefer to dwell in arid regions, using their lightning breath and love of riddles to dominate their domain.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -395,7 +395,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A huge dragon with challenge rating 13.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A large, cunning dragon with scales the color of polished brass and eyes that gleam with intelligence. Adult brass dragons are known for their love of conversation and their tendency to collect interesting objects and stories.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -533,7 +533,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 20 Dexterity saving throw or take 14 (2d6 + 7) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A huge dragon with challenge rating 15.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A large, malevolent dragon with scales as dark as midnight and eyes that gleam with cruel intelligence. Adult black dragons prefer to dwell in swamps and marshes, using their acidic breath and ambush tactics to terrorize their prey.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -667,7 +667,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A huge dragon with challenge rating 14.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -806,7 +806,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A huge dragon with challenge rating 17.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A large, cunning dragon with scales the color of forest canopy and eyes that gleam with deceptive intelligence. Adult green dragons make their homes in dense forests and jungles, using their poisonous breath and mastery of deception.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -948,7 +948,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A huge dragon with challenge rating 15.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1081,7 +1081,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A huge dragon with challenge rating 17.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1215,7 +1215,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A huge dragon with challenge rating 16.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1353,7 +1353,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A huge dragon with challenge rating 13.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1490,7 +1490,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 23 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A gargantuan dragon with challenge rating 21.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A massive, ancient dragon with scales that gleam like polished gold and eyes that radiate wisdom and benevolence. Ancient gold dragons are the most powerful and majestic of the metallic dragons, dedicated to protecting the innocent.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1623,7 +1623,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 24 Dexterity saving throw or take 16 (2d6 + 9) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A gargantuan dragon with challenge rating 23.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A massive, ancient dragon with scales the color of molten lava and eyes that burn with malevolent intelligence. Ancient red dragons are the most covetous of the true dragons, driven by their insatiable thirst for wealth and power.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1767,7 +1767,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A gargantuan dragon with challenge rating 20.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A legendary powerful dragon with distinctive features and abilities.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1914,7 +1914,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 24 Dexterity saving throw or take 16 (2d6 + 9) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A gargantuan dragon with challenge rating 22.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A massive, ancient dragon with scales as dark as midnight and eyes that gleam with cruel intelligence. Ancient black dragons prefer to dwell in swamps and marshes, using their acidic breath and ambush tactics to terrorize their prey.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2057,7 +2057,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 23 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A gargantuan dragon with challenge rating 21.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A legendary powerful dragon with distinctive features and abilities.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2205,7 +2205,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 25 Dexterity saving throw or take 17 (2d6 + 10) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A gargantuan dragon with challenge rating 24.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A massive, ancient dragon with scales the color of desert sky and eyes that crackle with lightning. Ancient blue dragons are cunning and territorial, preferring to dwell in arid regions and using their lightning breath to dominate their domain.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2347,7 +2347,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 23 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A gargantuan dragon with challenge rating 22.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A legendary powerful dragon with distinctive features and abilities.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2480,7 +2480,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 25 Dexterity saving throw or take 17 (2d6 + 10) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A gargantuan dragon with challenge rating 24.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A legendary powerful dragon with distinctive features and abilities.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2623,7 +2623,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 25 Dexterity saving throw or take 17 (2d6 + 10) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A gargantuan dragon with challenge rating 23.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A legendary powerful dragon with distinctive features and abilities.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2761,7 +2761,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A gargantuan dragon with challenge rating 20.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A legendary powerful dragon with distinctive features and abilities.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2842,7 +2842,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium dragon with challenge rating 2.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2918,7 +2918,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium dragon with challenge rating 3.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2994,7 +2994,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium dragon with challenge rating 1.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3075,7 +3075,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium dragon with challenge rating 2.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3151,7 +3151,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium dragon with challenge rating 1.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3257,7 +3257,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A gargantuan dragon with challenge rating 17.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3338,7 +3338,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium dragon with challenge rating 3.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3421,7 +3421,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium dragon with challenge rating 2.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3508,7 +3508,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny dragon with challenge rating 0.25.",    "imagePrompt": "A tiny dragon creature with scales, wings, and a powerful presence",
+    "description": "A common powerful dragon with distinctive features and abilities.",    "imagePrompt": "A tiny dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3584,7 +3584,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium dragon with challenge rating 4.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3659,7 +3659,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium dragon with challenge rating 2.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3736,7 +3736,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium dragon with challenge rating 2.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3825,7 +3825,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large wyvern with challenge rating 6.",    "imagePrompt": "A large wyvern creature with leathery wings, hind legs, and a venomous stinger tail",
+    "description": "A formidable creature with distinctive features and abilities.",    "imagePrompt": "A large wyvern creature with leathery wings, hind legs, and a venomous stinger tail",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3926,7 +3926,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large dragon with challenge rating 7.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4022,7 +4022,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large dragon with challenge rating 9.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4119,7 +4119,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large dragon with challenge rating 6.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4221,7 +4221,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large dragon with challenge rating 8.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4318,7 +4318,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large dragon with challenge rating 7.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4421,7 +4421,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large dragon with challenge rating 10.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4525,7 +4525,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large dragon with challenge rating 8.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4621,7 +4621,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large dragon with challenge rating 10.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4718,7 +4718,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large dragon with challenge rating 9.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4820,7 +4820,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large dragon with challenge rating 6.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

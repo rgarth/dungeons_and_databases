@@ -108,7 +108,9 @@ export const aberrationMonsters: Monster[] = [
         "description": "One creature charmed by the aboleth takes 10 (3d6) psychic damage, and the aboleth regains hit points equal to the damage the creature takes."
       }
     ],
-    "description": "A large aberration with challenge rating 10.",    "imagePrompt": "A large aberration creature with otherworldly and alien appearance",
+    "description": "A massive, ancient aberration with a bulbous, fish-like body and four writhing tentacles. The aboleth's skin is covered in a slimy, translucent mucus that transforms creatures it touches. Its three eyes glow with malevolent intelligence, and it possesses memories that span millennia, making it one of the oldest and most knowledgeable creatures in existence.",
+    "background": "Aboleths are among the oldest creatures in the multiverse, predating even the gods themselves. They dwell in vast underwater caverns and ancient ruins, where they rule over enslaved minions and plot to expand their influence. Aboleths possess perfect memories that stretch back to the dawn of time, and they use their telepathic abilities to probe the minds of lesser creatures, learning their deepest desires and using this knowledge to manipulate and enslave them. They are master manipulators who prefer to work through proxies rather than confront enemies directly.",
+    "imagePrompt": "A large aberration creature with otherworldly and alien appearance",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -201,7 +203,9 @@ export const aberrationMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large aberration with challenge rating 4.",    "imagePrompt": "A large aberration creature with otherworldly and alien appearance",
+    "description": "A massive, lobster-like aberration with chitinous armor and powerful pincers. The chuul's body is covered in dark, segmented plates, and it has numerous writhing tentacles around its mouth. Its eyes glow with a malevolent intelligence, and it can sense magical auras from great distances.",
+    "background": "Chuuls are ancient aberrations that serve as guardians and enforcers for more powerful creatures like aboleths and mind flayers. They are often found in underground lakes, ancient ruins, or near magical sites where they can detect and hunt spellcasters. Chuuls are highly territorial and will attack any creature that enters their domain, especially those carrying magical items or displaying magical abilities.",
+    "imagePrompt": "A large aberration creature with otherworldly and alien appearance",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -314,7 +318,9 @@ export const aberrationMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large aberration with challenge rating 8.",    "imagePrompt": "A large aberration creature with otherworldly and alien appearance",
+    "description": "A large, leathery aberration that resembles a living cloak or manta ray. The cloaker's body is covered in dark, rubbery skin that can blend seamlessly with shadows. When motionless, it appears to be nothing more than a discarded piece of clothing, but when it attacks, it reveals rows of sharp teeth and a long, whip-like tail.",
+    "background": "Cloakers are stealthy aberrations that lurk in dark places, particularly in the Underdark and abandoned ruins. They are ambush predators that use their ability to create illusory duplicates to confuse and overwhelm their prey. Cloakers are highly intelligent and often work together in small groups, using their moaning abilities to disorient victims before swooping in for the kill.",
+    "imagePrompt": "A large aberration creature with otherworldly and alien appearance",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -401,7 +407,9 @@ export const aberrationMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium aberration with challenge rating 2.",    "imagePrompt": "A roughly three-foot across and three to four-foot high creature composed of liquefied flesh, eyes, and mouths. The body has a color similar to human flesh but with a consistency like viscous ooze or slime. The surface constantly shifts with new eyes and mouths forming and dissolving as it moves. Multiple mouths babble incoherently while numerous eyes of various sizes dot the amorphous surface.",
+    "description": "A writhing mass of liquefied flesh covered in dozens of eyes and mouths that constantly babble and gibber. The gibbering mouther's amorphous body shifts and flows like quicksand, and the ground around it becomes soft and unstable. Its many mouths speak in different voices, creating a maddening cacophony that can drive creatures to insanity.",
+    "background": "Gibbering mouthers are the result of failed magical experiments or the corruption of living creatures by aberrant magic. They are often found in areas where reality has been warped by powerful magic, such as near ancient spell circles or in regions affected by planar rifts. The creature's constant babbling contains fragments of forgotten languages and forbidden knowledge, making it both fascinating and dangerous to study.",
+    "imagePrompt": "A roughly three-foot across and three to four-foot high creature composed of liquefied flesh, eyes, and mouths. The body has a color similar to human flesh but with a consistency like viscous ooze or slime. The surface constantly shifts with new eyes and mouths forming and dissolving as it moves. Multiple mouths babble incoherently while numerous eyes of various sizes dot the amorphous surface.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -493,7 +501,9 @@ export const aberrationMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large aberration with challenge rating 5.",    "imagePrompt": "A large, bloated, oval-shaped aberration about 8 feet in diameter, standing on three sturdy, elephantine legs. Its rough, rock-like hide is caked in filth and emits a foul odor of rot and decay. The creature has two prehensile tentacles covered in thorny growths ending in leaf-like pads with sharp spikes, and a third tentacle rising from its body, topped with a stalk bearing three eyes and an olfactory organ. Its massive mouth is filled with sharp teeth, and the entire creature is covered in refuse and carrion, giving it a grotesque, scavenger appearance.",
+    "description": "A massive, bloated aberration with a roughly spherical body supported by three thick, elephantine legs. The otyugh's rough, rock-like hide is covered in filth and emits a foul stench of decay. It has two prehensile tentacles ending in leaf-like pads with sharp spikes, and a third tentacle topped with three eyes and an olfactory organ. Its massive mouth is filled with sharp teeth, and the entire creature is often covered in refuse and carrion.",
+    "background": "Otyughs are scavenger aberrations that dwell in sewers, dungeons, and other filthy environments where they can feed on waste and carrion. They are often found near settlements where they can scavenge from garbage dumps or sewage systems. Despite their grotesque appearance, otyughs are intelligent enough to communicate telepathically and can sometimes be bargained with, though they prefer to eat rather than talk.",
+    "imagePrompt": "A large, bloated, oval-shaped aberration about 8 feet in diameter, standing on three sturdy, elephantine legs. Its rough, rock-like hide is caked in filth and emits a foul odor of rot and decay. The creature has two prehensile tentacles covered in thorny growths ending in leaf-like pads with sharp spikes, and a third tentacle rising from its body, topped with a stalk bearing three eyes and an olfactory organ. Its massive mouth is filled with sharp teeth, and the entire creature is covered in refuse and carrion, giving it a grotesque, scavenger appearance.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
