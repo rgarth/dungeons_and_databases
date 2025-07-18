@@ -54,7 +54,7 @@ export const elementalMonsters: Monster[] = [
     "traits": [
       {
         "name": "Air Form",
-        "description": "The elemental can enter a hostile creature's space and stop there. It can move through a space as narrow as 1 inch wide without squeezing."
+        "description": "A massive being composed entirely of swirling wind and air currents. It appears as a humanoid form made of constantly moving air, with features that shift and change like clouds. It can move through the smallest openings and creates powerful gusts as it moves."
       }
     ],
     "actions": [
@@ -88,7 +88,8 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A massive being of pure elemental energy, often taking the form of a humanoid made of its respective element. Elementals are powerful creatures that can be summoned or created through magic.",    "imagePrompt": "A large elemental creature with elemental energy",
+    "description": "A massive being composed entirely of swirling wind and air currents. It appears as a humanoid form made of constantly moving air, with features that shift and change like clouds. It can move through the smallest openings and creates powerful gusts as it moves.",
+    "imagePrompt": "A massive being composed of swirling wind and air currents, humanoid form made of constantly moving air, shifting cloud-like features, ethereal appearance, air elemental nature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -254,9 +255,9 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large genie with a humanoid form made of swirling air and mist. It has a muscular build, flowing robes that seem to be made of wind, and a noble appearance with Middle Eastern features. Its lower body trails off into a whirlwind of air, and it carries a scimitar that crackles with lightning.",
+    "description": "A large genie with a humanoid form made of swirling air and mist. It has a muscular build, flowing robes that seem to be made of wind, and a noble, otherworldly appearance. Its lower body trails off into a whirlwind of air, and it carries a scimitar that crackles with lightning.",
     "background": "Djinn are powerful genies from the Elemental Plane of Air. They are typically chaotic good and serve as protectors and benefactors to mortals. They can grant wishes and are known for their magical abilities, including the power to create whirlwinds and control the wind. They are often bound to magical items like rings and lamps.",
-    "imagePrompt": "A large genie with humanoid form made of swirling air and mist, muscular build, flowing wind-like robes, noble Middle Eastern features, lower body trailing into whirlwind of air, scimitar crackling with lightning. Traditional genie appearance with air elemental nature.",
+    "imagePrompt": "A large genie with humanoid form made of swirling air and mist, muscular build, flowing wind-like robes, noble otherworldly features, lower body trailing into whirlwind of air, scimitar crackling with lightning. Traditional genie appearance with air elemental nature.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -314,7 +315,7 @@ export const elementalMonsters: Monster[] = [
     "traits": [
       {
         "name": "Death Burst",
-        "description": "When the mephit dies, it explodes in a burst of dust. Each creature within 5 ft. of it must then succeed on a DC 10 Constitution saving throw or be blinded for 1 minute. A blinded creature can repeat the saving throw on each of its turns, ending the effect on itself on a success."
+        "description": "A small being made of swirling dust and sand particles, taking the form of a tiny humanoid. Its body constantly shifts and changes as the dust particles move around it, and it can create blinding clouds of dust when threatened."
       },
       {
         "name": "Innate Spellcasting",
@@ -343,7 +344,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small being of pure elemental energy, often taking the form of a tiny humanoid made of its respective element. Elementals are powerful creatures that can be summoned or created through magic.",    "imagePrompt": "A small elemental creature with elemental energy",
+    "description": "A small being of pure elemental energy, often taking the form of a tiny humanoid made of its respective element. Elementals are powerful creatures that can be summoned or created through magic.",    "imagePrompt": "A small being made of swirling dust and sand particles, tiny humanoid form, constantly shifting dust particles, blinding dust clouds, dust mephit nature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -404,7 +405,7 @@ export const elementalMonsters: Monster[] = [
     "traits": [
       {
         "name": "Earth Glide",
-        "description": "The elemental can burrow through nonmagical, unworked earth and stone. While doing so, the elemental doesn't disturb the material it moves through."
+        "description": "A massive being made of solid stone and earth, with a humanoid form that appears to be carved from living rock. Its body is covered in moss, crystals, and other natural elements, and it moves with the slow, deliberate motion of shifting earth."
       },
       {
         "name": "Siege Monster",
@@ -433,7 +434,8 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable elemental being with distinctive features and abilities.",    "imagePrompt": "A large elemental creature with elemental energy",
+    "description": "A massive being made of solid stone and earth, with a humanoid form that appears to be carved from living rock. Its body is covered in moss, crystals, and other natural elements, and it moves with the slow, deliberate motion of shifting earth.",
+    "imagePrompt": "A massive being made of solid stone and earth, humanoid form carved from living rock, moss and crystals covering body, slow deliberate motion, earth elemental nature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -618,7 +620,8 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable elemental being with distinctive features and abilities.",    "imagePrompt": "A large elemental creature with elemental energy",
+    "description": "A massive being of pure flame and heat, taking the form of a humanoid made entirely of fire. Its body constantly flickers and dances with orange, red, and yellow flames. It radiates intense heat and can set anything it touches ablaze.",
+    "imagePrompt": "A massive being of pure flame and heat, humanoid form made entirely of fire, constantly flickering orange red yellow flames, intense heat radiation, fire elemental nature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -674,7 +677,7 @@ export const elementalMonsters: Monster[] = [
     "traits": [
       {
         "name": "False Appearance",
-        "description": "While the gargoyle remains motion less, it is indistinguishable from an inanimate statue."
+        "description": "A stone creature with a grotesque, demonic appearance, often taking the form of a winged humanoid with horns, claws, and a hideous face. Its body is made of living stone that can blend seamlessly with architecture."
       }
     ],
     "actions": [
@@ -709,7 +712,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium-sized being of pure elemental energy, often taking the form of a humanoid made of its respective element. Elementals are powerful creatures that can be summoned or created through magic.",    "imagePrompt": "A medium elemental creature with elemental energy",
+    "description": "A medium-sized being of pure elemental energy, often taking the form of a humanoid made of its respective element. Elementals are powerful creatures that can be summoned or created through magic.",    "imagePrompt": "A stone creature with grotesque demonic appearance, winged humanoid with horns claws hideous face, living stone body, architectural camouflage, gargoyle nature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -769,7 +772,7 @@ export const elementalMonsters: Monster[] = [
     "traits": [
       {
         "name": "Death Burst",
-        "description": "When the mephit dies, it explodes in a burst of jagged ice. Each creature within 5 ft. of it must make a DC 10 Dexterity saving throw, taking 4 (1d8) slashing damage on a failed save, or half as much damage on a successful one."
+        "description": "A small being made of crystalline ice and frost, taking the form of a tiny humanoid. Its body glistens with frozen crystals and it radiates cold, leaving trails of frost wherever it moves."
       },
       {
         "name": "False Appearance",
@@ -802,7 +805,8 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common elemental being with distinctive features and abilities.",    "imagePrompt": "A small elemental creature with elemental energy",
+    "description": "A small being made of crystalline ice and frost, taking the form of a tiny humanoid. Its body glistens with frozen crystals and it radiates cold, leaving trails of frost wherever it moves.",
+    "imagePrompt": "A small being made of crystalline ice and frost, tiny humanoid form, glistening frozen crystals, cold radiation, frost trails, ice mephit nature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -955,7 +959,7 @@ export const elementalMonsters: Monster[] = [
     "traits": [
       {
         "name": "Death Burst",
-        "description": "When the mephit dies, it explodes in a burst of lava. Each creature within 5 ft. of it must make a DC 11 Dexterity saving throw, taking 7 (2d6) fire damage on a failed save, or half as much damage on a successful one."
+        "description": "When the mephit dies, it explodes in a burst of lava. Each creature within 5 ft. of it must then succeed on a DC 11 Dexterity saving throw or be blinded until the end of the creature's next turn."
       },
       {
         "name": "False Appearance",
@@ -988,7 +992,8 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common elemental being with distinctive features and abilities.",    "imagePrompt": "A small elemental creature with elemental energy",
+    "description": "A small being made of molten rock and flowing lava, taking the form of a tiny humanoid. Its body glows with intense heat and constantly drips molten material, leaving scorched trails in its wake.",
+    "imagePrompt": "A small being made of molten rock and flowing lava, tiny humanoid form, glowing intense heat, dripping molten material, scorched trails, magma mephit nature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1059,7 +1064,8 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common elemental being with distinctive features and abilities.",    "imagePrompt": "A small elemental creature with elemental energy",
+    "description": "A small being made of living flame and molten rock, taking the form of a tiny humanoid. Its body constantly flickers with fire and drips molten material, leaving scorched trails wherever it moves.",
+    "imagePrompt": "A small being made of living flame and molten rock, tiny humanoid form, constantly flickering fire, dripping molten material, scorched trails, magmin elemental nature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1151,7 +1157,8 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable elemental being with distinctive features and abilities.",    "imagePrompt": "A large elemental creature with elemental energy",
+    "description": "A large serpentine creature with a humanoid upper body and a long, coiling tail. Its body is covered in scales that glow with inner fire, and it radiates intense heat. It has a reptilian head with burning eyes and wields a spear that burns with magical fire.",
+    "imagePrompt": "A large serpentine creature with humanoid upper body and long coiling tail, scales glowing with inner fire, intense heat radiation, reptilian head with burning eyes, spear burning with magical fire, salamander elemental nature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1205,7 +1212,7 @@ export const elementalMonsters: Monster[] = [
     "traits": [
       {
         "name": "Death Burst",
-        "description": "When the mephit dies, it explodes in a cloud of steam. Each creature within 5 ft. of the mephit must succeed on a DC 10 Dexterity saving throw or take 4 (1d8) fire damage."
+        "description": "When the mephit dies, it explodes in a burst of steam. Each creature within 5 ft. of it must then succeed on a DC 10 Constitution saving throw or take 4 (1d8) fire damage."
       },
       {
         "name": "Innate Spellcasting",
@@ -1234,7 +1241,8 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common elemental being with distinctive features and abilities.",    "imagePrompt": "A small elemental creature with elemental energy",
+    "description": "A small being made of hot steam and vapor, taking the form of a tiny humanoid. Its body constantly releases billowing steam and it can create scalding clouds of hot vapor when threatened.",
+    "imagePrompt": "A small being made of hot steam and vapor, tiny humanoid form, constantly releasing billowing steam, scalding hot vapor clouds, steam mephit nature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1334,7 +1342,8 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable elemental being with distinctive features and abilities.",    "imagePrompt": "A large elemental creature with elemental energy",
+    "description": "A massive being composed entirely of flowing water, taking the form of a humanoid made of constantly moving liquid. Its body ripples and flows like a living stream, and it can change shape to flow through any opening or around obstacles.",
+    "imagePrompt": "A massive being composed of flowing water, humanoid form made of constantly moving liquid, rippling flowing body like living stream, water elemental nature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1431,7 +1440,8 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable elemental being with distinctive features and abilities.",    "imagePrompt": "A medium-sized elemental creature with a distinctive rocky appearance, wide body, and a large mouth at the top. It has three arms and three legs, with three eyes. The creature's coloration resembles stone and earth, making it blend into rocky terrain. It has a neutral, docile appearance unless provoked or hungry.",
+    "description": "A medium-sized elemental creature with a distinctive rocky appearance, wide body, and a large mouth at the top. It has three arms and three legs, with three eyes. The creature's coloration resembles stone and earth, making it blend into rocky terrain. It has a neutral, docile appearance unless provoked or hungry.",
+    "imagePrompt": "A medium-sized elemental creature with a distinctive rocky appearance, wide body, and a large mouth at the top. It has three arms and three legs, with three eyes. The creature's coloration resembles stone and earth, making it blend into rocky terrain. It has a neutral, docile appearance unless provoked or hungry.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

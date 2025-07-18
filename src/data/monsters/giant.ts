@@ -41,7 +41,7 @@ export const giantMonsters: Monster[] = [
     "traits": [
       {
         "name": "Keen Smell",
-        "description": "The giant has advantage on Wisdom (Perception) checks that rely on smell."
+        "description": "A massive giant with skin that ranges from pearly white to sky blue, often with hair that resembles clouds. Cloud giants are among the most intelligent and cultured of the giant races, dwelling in floating castles and valuing art and music."
       },
       {
         "name": "Innate Spellcasting",
@@ -80,7 +80,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A massive giant with skin that ranges from pearly white to sky blue, often with hair that resembles clouds. Cloud giants are among the most intelligent and cultured of the giant races, dwelling in floating castles and valuing art and music.",    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A massive giant with skin that ranges from pearly white to sky blue, often with hair that resembles clouds. Cloud giants are among the most intelligent and cultured of the giant races, dwelling in floating castles and valuing art and music.",    "imagePrompt": "A huge giant with pearly white to sky blue skin, cloud-like hair, floating castle dweller, cultured and intelligent appearance, massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -131,7 +131,7 @@ export const giantMonsters: Monster[] = [
     "traits": [
       {
         "name": "Two Heads",
-        "description": "The ettin has advantage on Wisdom (Perception) checks and on saving throws against being blinded, charmed, deafened, frightened, stunned, and knocked unconscious."
+        "description": "A large two-headed giant-like humanoid with filthy, unkempt hair and dirty skin. Each head has its own personality and desires, often arguing with itself. Ettins are brutish, solitary creatures that prefer to live alone in remote areas."
       },
       {
         "name": "Wakeful",
@@ -172,7 +172,7 @@ export const giantMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A large two-headed giant-like humanoid with filthy, unkempt hair and dirty skin. Each head has its own personality and desires.",
     "background": "Ettins are two-headed, giant-like humanoids known for their brute strength and brutish nature. They are typically solitary, chaotic evil creatures that prefer to live alone in remote areas.",
-    "imagePrompt": "A large two-headed giant-like humanoid with filthy unkempt hair, dirty skin, two heads each with its own personality, brutish appearance, solitary demonic giant. Carnivorous and violent.",
+    "imagePrompt": "A large two-headed giant-like humanoid with filthy unkempt hair, dirty skin, two heads each with its own personality, brutish appearance, solitary demonic giant",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -225,7 +225,7 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The giant makes two greatsword attacks.",
+        "description": "A massive giant with skin the color of molten iron and hair that flickers like flame. Fire giants dwell in volcanic regions and are master smiths, creating powerful weapons and armor in their forges. They are lawful evil and highly organized.",
         "damage": {
           "type": "bludgeoning",
           "roll": "1d4",
@@ -254,7 +254,8 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable massive giant with distinctive features and abilities.",    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A massive giant with skin the color of molten iron and hair that flickers like flame. Fire giants dwell in volcanic regions and are master smiths, creating powerful weapons and armor in their forges. They are lawful evil and highly organized.",
+    "imagePrompt": "A huge giant with molten iron-colored skin, flame-like hair, volcanic dweller, master smith appearance, massive size and strength, lawful evil demeanor",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -336,7 +337,8 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A massive giant with skin the color of molten iron and hair that flickers like flame. Fire giants dwell in volcanic regions and are master smiths, creating powerful weapons and armor in their forges.",    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A massive giant with pale blue skin and hair as white as snow. Frost giants are native to cold regions and are well-adapted to freezing temperatures, often keeping giant animals as pets and mounts. They are neutral evil and value strength above all.",
+    "imagePrompt": "A huge giant with pale blue skin, snow-white hair, cold region dweller, frost-adapted appearance, massive size and strength, neutral evil demeanor",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -415,7 +417,8 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A massive giant with pale blue skin and hair as white as snow. Frost giants are native to cold regions and are well-adapted to freezing temperatures, often keeping giant animals as pets and mounts.",    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A large, brutish giant with dirty, unkempt hair and simple clothing made of animal hides. Hill giants are the most common and least intelligent of the giant races, living in simple communities. They are chaotic evil and often raid human settlements for food.",
+    "imagePrompt": "A large brutish giant with dirty unkempt hair, animal hide clothing, simple community dweller, least intelligent appearance, chaotic evil demeanor",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -465,7 +468,7 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Greatclub",
-        "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
+        "description": "A large, brutish giant with dirty, unkempt hair and simple clothing made of animal hides. Ogres are among the most common and least intelligent of the giant races, living in simple communities and often serving as muscle for more powerful creatures.",
         "attackBonus": 6,
         "damage": {
           "type": "Bludgeoning",
@@ -485,7 +488,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large, brutish giant with dirty, unkempt hair and simple clothing made of animal hides. Hill giants are the most common and least intelligent of the giant races, living in simple communities.",    "imagePrompt": "A large giant creature with massive size and strength",
+    "description": "A large, brutish giant with dirty, unkempt hair and simple clothing made of animal hides. Hill giants are the most common and least intelligent of the giant races, living in simple communities.",    "imagePrompt": "A large brutish giant with dirty unkempt hair, animal hide clothing, simple community dweller, least intelligent appearance, chaotic evil demeanor",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -538,7 +541,7 @@ export const giantMonsters: Monster[] = [
     "traits": [
       {
         "name": "Innate Spellcasting",
-        "description": "The oni's innate spellcasting ability is Charisma (spell save DC 13). The oni can innately cast the following spells, requiring no material components:\n\nAt will: darkness, invisibility\n1/day each: charm person, cone of cold, gaseous form, sleep"
+        "description": "A large 8-14 foot tall monstrous humanoid with blue or green skin, dark hair, horns, and sharp teeth. Some have red faces like kabuki masks. Oni are intelligent and cunning, known for their cruelty and love of causing suffering. They can shapeshift to deceive and manipulate their prey."
       },
       {
         "name": "Magic Weapons",
@@ -592,7 +595,7 @@ export const giantMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A large 8-14 foot tall monstrous humanoid with blue or green skin, dark hair, horns, and sharp teeth. Some have red faces like kabuki masks.",
     "background": "Oni are intelligent and cunning monstrous humanoids known for their cruelty and love of causing suffering. They can shapeshift to deceive and manipulate their prey.",
-    "imagePrompt": "A large 8-14 foot tall monstrous humanoid with blue or green skin, dark hair, horns, sharp teeth, some with red faces like kabuki masks, fearsome demonic ogre appearance. Intelligent and cruel shapeshifting giant.",
+    "imagePrompt": "A large 8-14 foot tall monstrous humanoid with blue or green skin, dark hair, horns, sharp teeth, some with red faces like kabuki masks, fearsome demonic ogre appearance",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -643,7 +646,7 @@ export const giantMonsters: Monster[] = [
     "traits": [
       {
         "name": "Stone Camouflage",
-        "description": "The giant has advantage on Dexterity (Stealth) checks made to hide in rocky terrain."
+        "description": "A massive giant with skin that resembles weathered stone and a stoic, contemplative demeanor. Stone giants prefer to live in mountainous regions and are deeply connected to the earth. They are neutral in alignment and value solitude and meditation."
       }
     ],
     "actions": [
@@ -678,7 +681,7 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large giant with skin that resembles weathered stone and a stoic, contemplative demeanor. Stone giants prefer to live in mountainous regions and are deeply connected to the earth.",    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A large giant with skin that resembles weathered stone and a stoic, contemplative demeanor. Stone giants prefer to live in mountainous regions and are deeply connected to the earth.",    "imagePrompt": "A huge giant with weathered stone-like skin, stoic contemplative demeanor, mountainous dweller, earth-connected appearance, massive size and strength, neutral alignment",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -785,7 +788,8 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A powerful massive giant with distinctive features and abilities.",    "imagePrompt": "A huge giant creature with massive size and strength",
+    "description": "A massive giant with skin that ranges from deep blue to purple, with hair that crackles with lightning. Storm giants are the most powerful and noble of the giant races, dwelling in cloud castles and commanding the weather. They are chaotic good and protect the natural world.",
+    "imagePrompt": "A huge giant with deep blue to purple skin, lightning-crackling hair, cloud castle dweller, noble powerful appearance, massive size and strength, chaotic good demeanor",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -874,7 +878,8 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable massive giant with distinctive features and abilities.",    "imagePrompt": "A large giant creature with massive size and strength",
+    "description": "A large, gangly humanoid with rubbery, warty skin that ranges from green to gray. Trolls have long arms, sharp claws, and a hideous face with a prominent nose. They are incredibly resilient and can regenerate from almost any wound, making them fearsome opponents.",
+    "imagePrompt": "A large gangly humanoid with rubbery warty green to gray skin, long arms, sharp claws, hideous face with prominent nose, regenerative appearance, chaotic evil demeanor",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

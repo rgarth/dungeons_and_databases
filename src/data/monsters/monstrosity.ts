@@ -107,7 +107,7 @@ export const monstrosityMonsters: Monster[] = [
     ],
     "description": "A majestic androsphinx with the powerful body of a lion, magnificent falcon wings, and the noble head of a bearded human male. Its golden mane flows like a king's crown, and its eyes hold ancient wisdom. Human hands with opposable thumbs instead of lion paws allow it to manipulate objects and cast spells with precision.",
     "background": "Androsphinxes are the male counterparts to gynosphinxes, embodying strength, wisdom, and divine authority. They serve as guardians of ancient knowledge and sacred places, often testing those who seek their wisdom with riddles and quests. Their magical roars can instill fear, paralysis, or devastating thunder damage, and they possess powerful clerical magic.",
-    "imagePrompt": "A majestic androsphinx with powerful lion body, magnificent falcon wings, noble bearded human male head, golden flowing mane like a crown, ancient wise eyes, human hands with opposable thumbs, regal Egyptian-inspired appearance, divine magical guardian. Noble and powerful sphinx guardian.",
+    "imagePrompt": "A majestic androsphinx with powerful lion body, magnificent falcon wings, noble bearded human male head, golden flowing mane like a crown, ancient wise eyes, human hands with opposable thumbs, regal ancient appearance, divine magical guardian. Noble and powerful sphinx guardian.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2377,9 +2377,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A savage merrow with a massive humanoid torso and a fish-like lower body covered in rigid, sharp scales. Its face features sharp serrated teeth and dark predatory eyes, while its hands end in large claws. Its fins are torn and rough, reflecting its brutal nature.",
-    "background": "Merrow are monstrous aquatic humanoids, twisted and corrupted versions of merfolk influenced by the Abyss. They are larger than merfolk with brute strength and savage nature, dwelling in deep ocean caves among treasures and trophies. They are known for tying rotting corpses of victims to kelp to mark their territory.",
-    "imagePrompt": "A savage merrow with massive humanoid torso, fish-like lower body with rigid sharp scales, sharp serrated teeth, dark predatory eyes, large claws, torn rough fins, deep ocean dwelling, abyssal corruption. Twisted corrupted merfolk monster.",
+    "description": "A monstrous aquatic humanoid with a massive humanoid torso and a fish-like lower body covered in rigid, sharp scales. Its face features sharp serrated teeth and dark predatory eyes, while its hands end in large claws. Its fins are torn and rough, reflecting its corrupted nature.",
+    "background": "Merrow are monstrous aquatic humanoids, twisted and corrupted versions of merfolk influenced by the Abyss. They are larger than merfolk with enhanced strength and aggressive nature, dwelling in deep ocean caves among treasures and trophies. They are known for marking their territory with distinctive underwater markers.",
+    "imagePrompt": "A monstrous aquatic humanoid with massive humanoid torso, fish-like lower body with rigid sharp scales, sharp serrated teeth, dark predatory eyes, large claws, torn rough fins, deep ocean dwelling, abyssal corruption. Twisted corrupted merfolk monster.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
