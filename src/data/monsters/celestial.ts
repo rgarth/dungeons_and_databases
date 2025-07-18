@@ -90,7 +90,7 @@ export const celestialMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A medium celestial with challenge rating 4.",
     "background": "This celestial is a formidable opponent.",
-    "imagePrompt": "A medium celestial creature with divine and angelic features",
+    "imagePrompt": "A medium-sized winged serpent about 12 feet long with a 15-foot wingspan. The creature has a serpentine body that can coil even in flight, with rainbow-colored or silvery-white feathers on its wings. It has a beautiful, wise appearance with celestial features, embodying lawful good alignment and divine protection.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -654,9 +654,9 @@ export const celestialMonsters: Monster[] = [
         "description": "The unicorn magically regains 11 (2d8 + 2) hit points."
       }
     ],
-    "description": "A large celestial with challenge rating 5.",
-    "background": "This celestial is a formidable opponent.",
-    "imagePrompt": "A large celestial creature with divine and angelic features",
+    "description": "A majestic white horse with a single spiraled horn growing from its forehead. It has a pure white coat that seems to shimmer with magical light, intelligent eyes, and a graceful, noble bearing. It moves with supernatural grace and its horn glows with healing magic.",
+    "background": "Unicorns are celestial creatures that appear as pure white horses with a single magical horn. They are symbols of purity and goodness, known for their healing abilities and their ability to detect evil. They are often found in enchanted forests and serve as protectors of nature and the innocent.",
+    "imagePrompt": "A majestic white horse with single spiraled horn growing from forehead, pure white coat shimmering with magical light, intelligent eyes, graceful noble bearing, supernatural grace, horn glowing with healing magic. Celestial horse with magical horn. NO WINGS, NO FEATHERS, NOT A PEGASUS, JUST A HORSE WITH A HORN, PURE WHITE HORSE WITH HORN ONLY.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

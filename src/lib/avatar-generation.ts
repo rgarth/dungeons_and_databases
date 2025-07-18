@@ -1,4 +1,5 @@
 import { CharacterAvatarData } from '@/types/character';
+import { getDiverseAgeDescription } from './dnd/age-system';
 
 interface AvatarResult {
   success: boolean;
@@ -127,14 +128,40 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
       raceDescription = 'small humanoid with curly hair and hobbit features';
       break;
     case 'Dwarf':
-      raceDescription = 'stout humanoid with broad features and thick hair';
+      // Check if this is a Duergar subrace
+      if (subrace === 'Duergar') {
+        // Use the age system for duergar to get the correct appearance features
+        const duergarAgeDescription = getDiverseAgeDescription('Duergar', gender);
+        raceDescription = 'gray dwarf with gray skin, big bushy beard, traditional dwarven features, stocky build, broad shoulders, underdark heritage, duergar appearance';
+        // Use the age system description for duergar
+        appearanceDescription = `, A ${ageDesc} ${raceDescription} with ${duergarAgeDescription}`;
+        
+        // Add body type diversity for duergar
+        const bodyType = getRandomItem(BODY_TYPES);
+        appearanceDescription += `, ${bodyType}`;
+        
+        // Add custom appearance if provided
+        if (appearance && appearance.trim()) {
+          appearanceDescription += `, ${appearance.trim()}`;
+        }
+        
+        // Create the full prompt for duergar
+        const clothing = CLASS_CLOTHING[characterClass as keyof typeof CLASS_CLOTHING] || 'appropriate clothing';
+        const fullBodyPrompt = `A professional full-body photograph of a ${gender || 'Person'} ${characterClass}${appearanceDescription} in ${clothing}, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping${cameraAngle || ''}`;
+        
+        return fullBodyPrompt;
+      } else {
+        raceDescription = 'stout humanoid with broad features and thick hair';
+      }
       break;
     case 'Elf':
       // Check if this is a Drow subrace
       if (subrace === 'Drow') {
+        // Use the age system for drow to get the correct appearance features
+        const drowAgeDescription = getDiverseAgeDescription('Elf', gender, 'Drow');
         raceDescription = 'dark elf with black skin, white hair, red eyes, pointed ears, graceful features, underdark heritage, drow appearance';
-        // Skip skin tone and ethnicity diversity for drow - they have specific appearance
-        appearanceDescription = `, A ${ageDesc} ${raceDescription} with age-appropriate features`;
+        // Use the age system description for drow
+        appearanceDescription = `, A ${ageDesc} ${raceDescription} with ${drowAgeDescription}`;
         
         // Add body type diversity for drow
         const bodyType = getRandomItem(BODY_TYPES);

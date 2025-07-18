@@ -5956,9 +5956,9 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large beast with challenge rating 0.5.",
-    "background": "This beast is a formidable opponent.",
-    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A great big horse bred for war, with a muscular build and powerful legs. It wears a war bridle and saddle designed for combat, with sturdy leather straps and metal fittings. Its coat is typically dark and well-groomed, and it has a strong, confident bearing suitable for carrying armored riders into battle.",
+    "background": "Warhorses are specially bred and trained horses designed for combat. They are larger and stronger than regular horses, with the stamina and courage needed for battle. They are equipped with war bridles and saddles that allow riders to fight effectively while mounted.",
+    "imagePrompt": "A great big horse bred for war, muscular build and powerful legs, war bridle and saddle designed for combat, sturdy leather straps and metal fittings, dark well-groomed coat, strong confident bearing for carrying armored riders into battle.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

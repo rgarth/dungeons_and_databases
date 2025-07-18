@@ -165,9 +165,9 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium elemental with challenge rating 2.",
-    "background": "This elemental is a formidable opponent.",
-    "imagePrompt": "A medium elemental creature with elemental energy",
+    "description": "A bronze dwarf with a flaming head, standing about 4 feet tall with a stocky, muscular build. Its body is made of living bronze metal, and its head is wreathed in magical flames that never go out. It wears simple clothing and wields a warhammer that glows with heat. The flames on its head provide light and make it impossible to miss in the darkness.",
+    "background": "Azers are fire elementals that take the form of dwarves made of living bronze. They dwell in the Elemental Plane of Fire and are known for their craftsmanship and love of metalwork. Their flaming heads provide both light and heat, and they are immune to fire damage. They are often found in forges and workshops where they create magical items and weapons.",
+    "imagePrompt": "A bronze dwarf with flaming head, 4 feet tall stocky muscular build, body made of living bronze metal, head wreathed in magical flames that never go out, simple clothing, warhammer glowing with heat, flames providing light. Fire elemental in dwarf form with bronze body and flaming head.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -256,9 +256,9 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large elemental with challenge rating 11.",
-    "background": "This elemental is a formidable opponent.",
-    "imagePrompt": "A large elemental creature with elemental energy",
+    "description": "A large genie with a humanoid form made of swirling air and mist. It has a muscular build, flowing robes that seem to be made of wind, and a noble appearance with Middle Eastern features. Its lower body trails off into a whirlwind of air, and it carries a scimitar that crackles with lightning.",
+    "background": "Djinn are powerful genies from the Elemental Plane of Air. They are typically chaotic good and serve as protectors and benefactors to mortals. They can grant wishes and are known for their magical abilities, including the power to create whirlwinds and control the wind. They are often bound to magical items like rings and lamps.",
+    "imagePrompt": "A large genie with humanoid form made of swirling air and mist, muscular build, flowing wind-like robes, noble Middle Eastern features, lower body trailing into whirlwind of air, scimitar crackling with lightning. Traditional genie appearance with air elemental nature.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -528,9 +528,9 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large elemental with challenge rating 11.",
-    "background": "This elemental is a formidable opponent.",
-    "imagePrompt": "A large elemental creature with elemental energy",
+    "description": "A large red genie with a muscular humanoid form made of living flame and smoke. It has dark red skin, burning orange eyes, and flowing robes that seem to be made of fire. It wields a scimitar that burns with magical fire, and its body radiates intense heat. It has a proud, arrogant bearing typical of fire genies.",
+    "background": "Efreeti are powerful fire genies from the Elemental Plane of Fire. They are typically lawful evil and are known for their arrogance and love of wealth and power. They can grant wishes but often twist them to cause harm. They are often bound to magical items like rings and lamps, and they serve as powerful allies or dangerous enemies.",
+    "imagePrompt": "A large red genie with muscular humanoid form made of living flame and smoke, dark red skin, burning orange eyes, flowing fire-like robes, scimitar burning with magical fire, body radiating intense heat, proud arrogant bearing. Traditional fire genie with sword.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1457,7 +1457,7 @@ export const elementalMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A medium elemental with challenge rating 5.",
     "background": "This elemental is a formidable opponent.",
-    "imagePrompt": "A medium elemental creature with elemental energy",
+    "imagePrompt": "A medium-sized elemental creature with a distinctive rocky appearance, wide body, and a large mouth at the top. It has three arms and three legs, with three eyes. The creature's coloration resembles stone and earth, making it blend into rocky terrain. It has a neutral, docile appearance unless provoked or hungry.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

@@ -56,6 +56,14 @@ export const subracesData: SubraceData[] = [
     traits: ["Dwarven Armor Training"],
     languages: null
   },
+  {
+    name: "Duergar",
+    raceName: "Dwarf",
+    description: "Duergar are gray dwarves who live in the Underdark. They are known for their magical abilities and their ability to enlarge themselves.",
+    abilityScoreIncrease: "Strength +1",
+    traits: ["Duergar Magic", "Duergar Resilience", "Sunlight Sensitivity"],
+    languages: null
+  },
 
   // Halfling subraces
   {

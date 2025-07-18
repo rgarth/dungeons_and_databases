@@ -376,9 +376,9 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small construct with challenge rating 0.25.",
-    "background": "This construct is a formidable opponent.",
-    "imagePrompt": "A small construct creature with mechanical or magical construction",
+    "description": "A regular sword flying through the air like it has been thrown, coming toward the camera with the blade pointing forward. It appears as a normal longsword but moves independently through the air with no visible thrower or magical apparatus. When motionless, it looks like an ordinary sword until it suddenly springs to life.",
+    "background": "Flying swords are magical constructs created by enchanters to guard their lairs. They appear as normal swords until they detect intruders, at which point they animate and attack. They are often placed in areas where they can surprise unsuspecting visitors.",
+    "imagePrompt": "A REGULAR SWORD flying through the air, just a normal longsword hovering and moving independently, NO WINGS, NO TECHNOLOGY, NO MAGICAL APPARATUS, NO THROWER, just a sword floating and flying through the air, plain sword appearance",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -448,9 +448,9 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny construct with challenge rating 0.",
-    "background": "This construct is a formidable opponent.",
-    "imagePrompt": "A tiny construct creature with mechanical or magical construction",
+    "description": "A tiny magical construct resembling a small humanoid figure, often made of clay, wax, or other materials. It has bat-like wings and serves as a familiar to its creator, capable of flying and communicating telepathically with its master.",
+    "background": "Homunculi are tiny magical constructs created by wizards and alchemists to serve as familiars and assistants. They are bound to their creator through a telepathic link and can relay information, scout areas, and perform simple tasks. They are often made from clay, wax, or other materials and given life through magical rituals.",
+    "imagePrompt": "A tiny humanoid construct with bat-like wings, made of clay or wax, magical familiar appearance, small size, flying ability. Magical assistant construct that serves as a familiar, organic-looking not robotic.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -649,9 +649,9 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large construct with challenge rating 2.",
-    "background": "This construct is a formidable opponent.",
-    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "description": "A large magical rug that appears to be a normal decorative floor covering until it suddenly animates and attempts to smother creatures. It can wrap itself around victims and constrict them, appearing as an ornate carpet or tapestry when motionless.",
+    "background": "Rugs of smothering are magical constructs created by enchanters to protect their lairs. They appear as normal decorative rugs until they detect prey, at which point they animate and attempt to wrap around and suffocate intruders. They are often placed in areas where they can surprise unsuspecting visitors.",
+    "imagePrompt": "A decorative rug with ornate patterns lying on a dungeon floor, just a normal floor rug, NO MECHANICAL PARTS, NO METAL, NO JOINTS, NO EYES, NO HUMANOID FEATURES, PURELY A RUG, floor covering",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

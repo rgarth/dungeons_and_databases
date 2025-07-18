@@ -144,6 +144,7 @@ export interface Monster {
   source: string; // "SRD", "MM", etc.
   page?: number;
   tags?: string[]; // For filtering/searching
+  environment?: string[]; // e.g., ["ocean", "underwater"], ["forest", "mountain"], ["urban", "underground"]
 }
 
 export interface MonsterFilter {

@@ -256,9 +256,9 @@ export const feyMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fey with challenge rating 3.",
-    "background": "This fey is a formidable opponent.",
-    "imagePrompt": "A medium fey creature with magical and ethereal features",
+    "description": "A hideously ugly old witch with warty green skin, stringy gray hair, crooked yellow teeth, and gnarled hands with long claws. Her face is wrinkled and twisted with malice, and she has a hunched, bent posture. She wears tattered robes and carries herself with an air of malevolent cunning.",
+    "background": "Green Hags are ancient, evil fey creatures that dwell in swamps and marshes. They are physically repulsive with grotesque features and use their magical abilities to deceive and torment mortals. They are known for their cruelty and their ability to create illusions to disguise their true hideous appearance.",
+    "imagePrompt": "A hideously ugly old witch with warty green skin, stringy gray hair, crooked yellow teeth, gnarled hands with long claws, wrinkled twisted face with malice, hunched bent posture, tattered robes. Ancient evil fey creature with grotesque features.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -347,9 +347,9 @@ export const feyMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fey with challenge rating 0.5.",
-    "background": "This fey is a formidable opponent.",
-    "imagePrompt": "A medium fey creature with magical and ethereal features",
+    "description": "A medium fey with the upper body of a humanoid male and the lower body and legs of a goat, including cloven hooves and a short tail. The satyr has curly hair, small horns on its head, and a mischievous, playful expression. It is known for its love of revelry, music, and trickery.",
+    "background": "Satyrs are fey creatures of the wild, known for their love of music, dance, and celebration. They are playful and mischievous, often leading travelers astray for their own amusement. Their goat-like lower bodies and horns set them apart from other fey.",
+    "imagePrompt": "A medium fey with the upper body of a humanoid male and the lower body and legs of a goat, including cloven hooves and a short tail. Curly hair, small horns on head, mischievous playful expression, often holding a pan flute or musical instrument. Goat-legged fey reveler.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -438,9 +438,9 @@ export const feyMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fey with challenge rating 2.",
-    "background": "This fey is a formidable opponent.",
-    "imagePrompt": "A medium fey creature with magical and ethereal features",
+    "description": "A horrifically ugly sea witch with seaweed-like hair, fishy scales covering parts of her skin, webbed hands with sharp claws, and a face so hideous it can frighten creatures to death. Her eyes are bulging and fish-like, her teeth are sharp and jagged, and her skin is covered in barnacles and sea growths. She has a hunched, twisted form that suggests centuries of evil.",
+    "background": "Sea Hags are the most hideous of all hags, dwelling in coastal caves and underwater lairs. Their appearance is so terrifying that it can cause creatures to die of fright. They are known for their horrific appearance trait and their ability to create illusions to disguise their true monstrous form. They are ancient, evil creatures that feed on fear and despair.",
+    "imagePrompt": "A horrifically ugly sea witch with seaweed-like hair, fishy scales, webbed hands with sharp claws, hideous face that can frighten creatures to death, bulging fish-like eyes, sharp jagged teeth, skin covered in barnacles and sea growths, hunched twisted form. Most hideous of all hags with death-inducing appearance.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

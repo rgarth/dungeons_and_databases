@@ -105,9 +105,9 @@ export const monstrosityMonsters: Monster[] = [
         "description": "The sphinx casts a spell from its list of prepared spells, using a spell slot as normal."
       }
     ],
-    "description": "A large monstrosity with challenge rating 17.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A majestic androsphinx with the powerful body of a lion, magnificent falcon wings, and the noble head of a bearded human male. Its golden mane flows like a king's crown, and its eyes hold ancient wisdom. Human hands with opposable thumbs instead of lion paws allow it to manipulate objects and cast spells with precision.",
+    "background": "Androsphinxes are the male counterparts to gynosphinxes, embodying strength, wisdom, and divine authority. They serve as guardians of ancient knowledge and sacred places, often testing those who seek their wisdom with riddles and quests. Their magical roars can instill fear, paralysis, or devastating thunder damage, and they possess powerful clerical magic.",
+    "imagePrompt": "A majestic androsphinx with powerful lion body, magnificent falcon wings, noble bearded human male head, golden flowing mane like a crown, ancient wise eyes, human hands with opposable thumbs, regal Egyptian-inspired appearance, divine magical guardian. Noble and powerful sphinx guardian.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -174,9 +174,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 2.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A large 10-foot long insectoid predator with segmented chitinous exoskeleton, six legs, powerful mandibles, black compound eyes, and long antennae. Brown or orange and dark yellow coloring.",
+    "background": "Ankhegs are large insectoid predators known for their burrowing and ambush tactics. They are a menace to farmers due to their destructive burrowing and attacks on livestock.",
+    "imagePrompt": "A large 10-foot long insectoid predator with segmented chitinous exoskeleton, six legs with front pair adapted for burrowing, powerful mandibles, black compound eyes, long antennae, brown or orange and dark yellow coloring. Burrowing ambush predator.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -237,9 +237,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium monstrosity with challenge rating 3.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A medium monstrosity creature with monstrous and terrifying features",
+    "description": "A deadly basilisk with a reptilian body covered in dark scales and a crown-like crest on its head. Its eyes glow with malevolent power, capable of turning creatures to stone with a single glance. It has sharp fangs and a forked tongue.",
+    "background": "Basilisks are deadly reptiles known for their petrifying gaze. They are found in dark places like caves and ruins, where they use their stone-turning eyes to hunt prey. Even their reflection can petrify them, making them vulnerable to mirrors and polished surfaces.",
+    "imagePrompt": "A medium reptilian creature with dark scales, crown-like crest on head, glowing malevolent eyes, sharp fangs, forked tongue, petrifying gaze. Deadly stone-turning reptile with magical eyes.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -340,9 +340,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge monstrosity with challenge rating 11.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A huge monstrosity creature with monstrous and terrifying features",
+    "description": "A huge serpentine monstrosity with a long blue-scaled body, twelve legs with three clawed toes each, crocodile-like head with curved black horns, and sharp multi-colored teeth. Centipede-dragon hybrid appearance.",
+    "background": "Behirs are huge serpentine monstrosities known for their lightning breath and hatred for dragons. They can slither like snakes and use their twelve legs to climb with surprising speed.",
+    "imagePrompt": "A huge serpentine monstrosity with long blue-scaled body, thick armored scales from deep blue to ultramarine, twelve legs with three clawed toes each, crocodile-like head with curved black horns, sharp multi-colored teeth, centipede-dragon hybrid. Lightning-breathing dragon hunter.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -416,9 +416,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 5.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A large heavily armored monstrosity with a pointed shark-like head, carapace that forms a fin-like crest, and powerful claws. Known as the 'landshark' for its burrowing and hunting tactics.",
+    "background": "Bulettes are massive solitary burrowing predators feared for their ferocity and relentless hunting. They prefer certain types of humanoid flesh, particularly halflings, and use tremor sense to ambush prey from below.",
+    "imagePrompt": "A large heavily armored monstrosity with pointed shark-like head, carapace forming fin-like crest, powerful claws, armored hide, burrowing predator appearance. Landshark that hunts from underground.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -514,9 +514,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 2.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A large humanoid with the upper body of a human and the lower body of a horse. Noble and graceful in appearance.",
+    "background": "Centaurs are noble creatures with the upper body of a human and the lower body of a horse. They are typically peaceful and live in harmony with nature.",
+    "imagePrompt": "5e Fantasy Centaur",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -615,9 +615,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 6.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A large creature with a lion's head and body, a goat's head emerging from its back, and a dragon's head at the end of its tail. Wings and fire breath from the dragon head.",
+    "background": "Chimeras are fearsome creatures with three heads: a lion's head, a goat's head on their back, and a dragon's head on their tail. They can breathe fire and are known for their ferocity.",
+    "imagePrompt": "A large creature with lion head and body, goat head emerging from back, dragon head on tail, wings, fire breath capability. Classic chimera with three distinct heads.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -674,9 +674,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small monstrosity with challenge rating 0.5.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A small monstrosity creature with monstrous and terrifying features",
+    "description": "A small cockatrice with the body of a rooster and the tail of a lizard. Its feathers are colorful but its eyes hold deadly power, and its beak and claws can turn creatures to stone with their touch.",
+    "background": "Cockatrices are small but deadly creatures that combine the features of a rooster and a lizard. They are known for their ability to turn creatures to stone with their touch, making them dangerous despite their small size. They are often found in rural areas and can be aggressive when threatened.",
+    "imagePrompt": "A small creature with rooster body and lizard tail, colorful feathers, deadly eyes, sharp beak and claws, petrifying touch. Small but deadly stone-turning hybrid creature.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -753,9 +753,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small monstrosity with challenge rating 0.5.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A small monstrosity creature with monstrous and terrifying features",
+    "description": "A small 4-foot long squid-like monstrosity with a soft, rubbery body and multiple tentacles. It can camouflage itself to appear as stalactites or cave formations. Creates magical darkness and uses echolocation to hunt.",
+    "background": "Darkmantles are small squid-like monstrosities found in caves and the Underdark. They use camouflage to appear as stalactites and create magical darkness to ambush prey. They are more like flying squids than bats.",
+    "imagePrompt": "A small 4-foot long squid-like monstrosity with soft rubbery body, multiple tentacles, hovering in air like a squid in water, camouflage ability to mimic stalactites or cave formations, magical darkness aura, echolocation, crushing attack style. Cave-dwelling hovering squid ambush predator, no wings.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -925,9 +925,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium monstrosity with challenge rating 3.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A medium monstrosity creature with monstrous and terrifying features",
+    "description": "A medium humanoid with pale, featureless skin and large, colorless eyes. In its true form, it appears as a blank slate, but it can shapeshift to perfectly mimic any humanoid it has seen, with its form blurring and morphing between shapes.",
+    "background": "Doppelgangers are shapechanging creatures that can perfectly mimic any humanoid they have observed. They use their ability to read thoughts and shapeshift to infiltrate and deceive. Their true form is featureless, but they can take on any humanoid appearance.",
+    "imagePrompt": "A normal-looking human with opaque black eyes, form blurring and shifting like it's in mid-transformation, shapeshifting infiltrator and deceiver with morphing abilities. Human appearance but with shifting blurry form and opaque black eyes.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1040,9 +1040,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 6.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A large creature with the upper body of a drow elf and the lower body of a giant spider. Eight spider legs, dark skin, and white hair typical of drow.",
+    "background": "Driders are drow elves who have been transformed into spider-like creatures as punishment. They have the upper body of a drow and the lower body of a giant spider.",
+    "imagePrompt": "A large creature with upper body of drow elf (dark skin, white hair) and lower body of giant spider with eight legs, spider-like abdomen, drow features. Transformed drow spider hybrid.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1145,9 +1145,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium monstrosity with challenge rating 2.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A medium monstrosity creature with monstrous and terrifying features",
+    "description": "A hunched, grey-purplish humanoid with a spider-like face featuring fangs and multiple eyes. Sharp black chitinous claws instead of hands and feet, distended white belly, covered in coarse black hair.",
+    "background": "Ettercaps are monstrous spider-like humanoids known for their cruelty and affinity for spiders. They create webs to trap prey and are cowardly but cruel, preferring ambush tactics.",
+    "imagePrompt": "A hunched grey-purplish humanoid with spider-like face, fangs, multiple eyes, sharp black chitinous claws instead of hands and feet, distended white belly, coarse black hair covering body. Spider-affinity creature.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1231,9 +1231,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 5.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A large bull-like creature with metallic scales covering its body. Horns, hooves, and the ability to exhale petrifying gas that turns creatures to stone.",
+    "background": "Gorgons are large bull-like monstrosities covered in metallic scales. They can exhale petrifying gas that turns creatures to stone and are known for their trampling charge attacks.",
+    "imagePrompt": "A large bull-like creature with metallic scales covering its body, horns, hooves, petrifying gas breath, armored appearance. Metallic-scaled bull with stone-turning breath.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1316,9 +1316,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium monstrosity with challenge rating 2.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A medium monstrosity creature with monstrous and terrifying features",
+    "description": "A medium worm-like creature with a beak and tentacles. Covered in stone-like skin that allows it to camouflage in rocky terrain.",
+    "background": "Gricks are worm-like monstrosities that dwell in caves and underground areas. They use their stone camouflage to ambush prey and have tentacles and a beak for attacking.",
+    "imagePrompt": "A medium worm-like creature with beak, tentacles, stone-like skin for camouflage, cave-dwelling appearance. Worm-like monstrosity with stone camouflage ability.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1401,9 +1401,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 2.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A majestic griffon with the body of a powerful lion and the head, wings, and talons of a giant eagle. Its golden-brown fur and white feathers create a striking appearance, and its keen eyes can spot prey from great distances.",
+    "background": "Griffons are noble creatures that combine the strength of lions with the aerial prowess of eagles. They are known for their loyalty and are often used as mounts by knights and other warriors. They build their nests in high places and are fiercely protective of their territory.",
+    "imagePrompt": "A large majestic creature with lion body and eagle head, golden-brown fur, white feathers, powerful wings, sharp talons, keen eyes. Noble lion-eagle hybrid with aerial hunting abilities.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1486,9 +1486,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 10.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A large serpentine creature with a humanoid head, covered in golden scales that shimmer with divine light. Its eyes glow with ancient wisdom and benevolent power, and it moves with graceful, sinuous movements.",
+    "background": "Guardian nagas are benevolent serpentine creatures dedicated to protecting sacred places and ancient knowledge. They are lawful good by nature and serve as divine guardians, often found in temples, libraries, or other places of great importance. They possess powerful clerical magic and can rejuvenate themselves if slain, making them nearly immortal protectors.",
+    "imagePrompt": "A large serpentine creature with humanoid head, golden shimmering scales, divine light aura, ancient wise eyes, benevolent expression, graceful sinuous movements. Divine guardian serpent with holy presence.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1595,9 +1595,9 @@ export const monstrosityMonsters: Monster[] = [
         "description": "The sphinx casts a spell from its list of prepared spells, using a spell slot as normal."
       }
     ],
-    "description": "A large monstrosity with challenge rating 11.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A graceful gynosphinx with the elegant body of a lioness, beautiful falcon wings, and the refined head of a human woman. Her features are regal and wise, with flowing hair that cascades like a queen's mantle. Human hands with opposable thumbs instead of lion paws enable her to cast arcane magic and manipulate objects with precision.",
+    "background": "Gynosphinxes are the female counterparts to androsphinxes, embodying wisdom, knowledge, and arcane power. They are guardians of ancient libraries, magical sites, and places of learning. Unlike androsphinxes, they focus on arcane magic rather than divine spells, and they are known for their vast knowledge of history, magic, and ancient lore. They test seekers with riddles and puzzles rather than physical challenges.",
+    "imagePrompt": "A graceful gynosphinx with elegant lioness body, beautiful falcon wings, refined human female head, regal wise features, flowing hair like queen's mantle, human hands with opposable thumbs, arcane magical guardian, ancient knowledge keeper. Wise and elegant sphinx scholar.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1683,9 +1683,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium monstrosity with challenge rating 1.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A medium monstrosity creature with monstrous and terrifying features",
+    "description": "A beautiful but dangerous harpy with the upper body of a stunning human woman and the lower body, wings, and talons of a vulture. Her face is alluring but her eyes hold malice, and her voice carries an enchanting but deadly song that can lure victims to their doom.",
+    "background": "Harpies are beautiful but malevolent creatures that combine the allure of human women with the predatory nature of birds of prey. They use their enchanting songs to lure travelers and sailors to their deaths, then feast on their remains. They are known for their cruelty and their ability to charm victims with their magical luring song before attacking with their sharp talons.",
+    "imagePrompt": "A beautiful dangerous harpy with upper body of stunning human woman, lower body wings and talons of vulture, alluring face with malicious eyes, enchanting deadly song, predatory bird-woman hybrid. Seductive but deadly siren creature.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1767,9 +1767,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 1.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A majestic hippogriff with the front half of an eagle (head, wings, front legs with talons) and the back half of a horse (hindquarters, tail, back legs with hooves). It has a powerful eagle's beak and sharp talons on its front legs, while its rear legs end in horse hooves.",
+    "background": "Hippogriffs are noble flying creatures that combine the best features of eagles and horses. They have the head, wings, and front legs of an eagle with the body and hind legs of a horse. They are often used as mounts by knights and are known for their loyalty and courage.",
+    "imagePrompt": "A hippogriff with EAGLE HEAD and EAGLE WINGS, EAGLE FRONT LEGS with TALONS, HORSE BACK HALF with HORSE HIND LEGS and HORSE HOOVES, HORSE TAIL, eagle beak, sharp talons on front legs, horse body and hindquarters, flying eagle-horse hybrid, NOT a griffon, clearly eagle front and horse back",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1854,9 +1854,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge monstrosity with challenge rating 8.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A huge monstrosity creature with monstrous and terrifying features",
+    "description": "A huge hydra with a massive reptilian body and five writhing serpentine heads, each with sharp fangs and malevolent eyes. Its scales are dark and tough, and when one head is severed, two more grow in its place unless the wound is cauterized with fire.",
+    "background": "Hydras are fearsome multi-headed reptiles known for their regenerative abilities. Each head can attack independently, and when a head is severed, two new heads grow in its place unless the wound is sealed with fire. They are found in swamps and marshes, where they are apex predators.",
+    "imagePrompt": "A huge hydra with massive reptilian body, five writhing serpentine heads with sharp fangs and malevolent eyes, dark tough scales, regenerative heads that grow back when severed, swamp-dwelling apex predator. Multi-headed dragon-like monster.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1989,11 +1989,12 @@ export const monstrosityMonsters: Monster[] = [
         "description": "While underwater, the kraken expels an ink cloud in a 60-foot radius. The cloud spreads around corners, and that area is heavily obscured to creatures other than the kraken. Each creature other than the kraken that ends its turn there must succeed on a DC 23 Constitution saving throw, taking 16 (3d10) poison damage on a failed save, or half as much damage on a successful one. A strong current disperses the cloud, which otherwise disappears at the end of the kraken's next turn."
       }
     ],
-    "description": "A gargantuan monstrosity with challenge rating 23.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A gargantuan monstrosity creature with monstrous and terrifying features",
+    "description": "A gargantuan kraken with a massive squid-like body covered in dark, leathery skin. Its enormous head features a massive beak and intelligent eyes, while ten massive tentacles extend from its body, each capable of crushing ships and dragging them beneath the waves. It dwells in the deepest ocean depths.",
+    "background": "Krakens are the most feared creatures of the deep ocean, massive cephalopods of incredible intelligence and power. They dwell in the deepest trenches and can control storms and lightning. They are known for dragging entire ships beneath the waves and are considered among the most dangerous creatures in the world.",
+    "imagePrompt": "A gargantuan kraken with massive squid-like body, dark leathery skin, enormous head with massive beak and intelligent eyes, ten massive tentacles extending from body, deep ocean dwelling, storm and lightning control, ship-destroying sea monster. Ancient deep sea titan.",
     "imageStyle": "fantasy",
     "source": "SRD",
+    "environment": ["ocean", "underwater", "deep-sea"],
     "tags": [
       "monstrosity",
       "gargantuan",
@@ -2088,9 +2089,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 4.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A beautiful lamia with the upper body of a stunning human woman and the lower body of a massive serpent. Her face is alluring and seductive, with long flowing hair and enchanting eyes. Her serpentine tail is covered in colorful scales and can coil around prey with deadly strength.",
+    "background": "Lamia are beautiful but malevolent creatures that combine the allure of human women with the predatory nature of serpents. They use their beauty and magical abilities to seduce and deceive victims, often appearing as beautiful women to lure travelers into their lairs. They are known for their cruelty and their ability to cast illusions and charm spells.",
+    "imagePrompt": "A beautiful lamia with upper body of stunning human woman, lower body of massive serpent, alluring seductive face, long flowing hair, enchanting eyes, colorful serpentine scales, coiling tail, seductive but deadly snake-woman. Beautiful serpent goddess demon.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2181,9 +2182,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 3.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A fearsome manticore with the body of a powerful lion, the face of a human male with sharp teeth, and a scorpion-like tail covered in deadly spikes. Its wings allow it to fly, and it can launch its tail spikes as deadly projectiles.",
+    "background": "Manticores are dangerous predators that combine the strength of a lion with the intelligence of a human and the deadly weaponry of a scorpion. They are known for their ability to launch tail spikes as projectiles and their preference for human flesh. They are found in mountainous regions and are feared for their hunting prowess.",
+    "imagePrompt": "A fearsome manticore with powerful lion body, human male face with sharp teeth, scorpion-like tail with deadly spikes, wings for flight, projectile tail spikes, mountainous predator. Lion-bodied human-faced scorpion-tailed monster.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2280,9 +2281,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium monstrosity with challenge rating 6.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A medium monstrosity creature with monstrous and terrifying features",
+    "description": "A beautiful but cursed medusa with the body of a human woman and a head covered in writhing, venomous snakes instead of hair. Her eyes can turn creatures to stone with a single glance, and her face is both alluring and terrifying.",
+    "background": "Medusas are cursed women whose hair has been transformed into venomous snakes. They are known for their petrifying gaze that can turn creatures to stone, and their snake hair that can bite and poison enemies. They are often found in ancient ruins and dungeons, where they guard treasures or serve as cursed guardians.",
+    "imagePrompt": "A beautiful cursed medusa with human woman body, head covered in writhing venomous snakes instead of hair, petrifying gaze, alluring but terrifying face, snake hair that can bite, ancient ruin guardian. Beautiful but deadly snake-haired woman.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2376,9 +2377,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 2.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A savage merrow with a massive humanoid torso and a fish-like lower body covered in rigid, sharp scales. Its face features sharp serrated teeth and dark predatory eyes, while its hands end in large claws. Its fins are torn and rough, reflecting its brutal nature.",
+    "background": "Merrow are monstrous aquatic humanoids, twisted and corrupted versions of merfolk influenced by the Abyss. They are larger than merfolk with brute strength and savage nature, dwelling in deep ocean caves among treasures and trophies. They are known for tying rotting corpses of victims to kelp to mark their territory.",
+    "imagePrompt": "A savage merrow with massive humanoid torso, fish-like lower body with rigid sharp scales, sharp serrated teeth, dark predatory eyes, large claws, torn rough fins, deep ocean dwelling, abyssal corruption. Twisted corrupted merfolk monster.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2468,9 +2469,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium monstrosity with challenge rating 2.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A medium monstrosity creature with monstrous and terrifying features",
+    "description": "A shapeshifting mimic that can transform into any object, most commonly appearing as a treasure chest, door, or piece of furniture. In its true form, it appears as an amorphous blob of grayish-brown flesh with pseudopods and a large mouth filled with sharp teeth.",
+    "background": "Mimics are shapeshifting creatures that can perfectly mimic the appearance of objects to ambush prey. They are commonly found in dungeons and ruins where they pose as treasure chests, doors, or other objects to lure unsuspecting adventurers. They can transform between their amorphous true form and any object they choose.",
+    "imagePrompt": "A monstrous mimic chest with teeth in the lid, long tongue, sharp teeth, treasure chest with mouth, classic mimic chest, NOT a monster holding a chest, clearly a chest with teeth and tongue",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2553,9 +2554,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 3.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A fearsome manticore with the body of a powerful lion, the face of a human male with sharp teeth, and a scorpion-like tail covered in deadly spikes. Its wings allow it to fly, and it can launch its tail spikes as deadly projectiles.",
+    "background": "Manticores are dangerous predators that combine the strength of a lion with the intelligence of a human and the deadly weaponry of a scorpion. They are known for their ability to launch tail spikes as projectiles and their insatiable hunger for human flesh. They are often found in remote wilderness areas where they can hunt without interference.",
+    "imagePrompt": "A fearsome manticore with lion body, human male face with sharp teeth, scorpion-like tail with deadly spikes, wings for flight, projectile tail spikes. Lion-bodied human-faced scorpion-tailed monster with projectile attacks.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2637,9 +2638,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 3.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A fierce owlbear with the body of a massive bear and the head of a giant owl. Its fur is thick and shaggy, and its owl-like face features large, intelligent eyes and a sharp beak. Its powerful claws and beak make it a deadly predator.",
+    "background": "Owlbears are dangerous predators that combine the strength and ferocity of bears with the keen senses and hunting instincts of owls. They are known for their aggressive nature and their ability to hunt both day and night. They are often found in forests and wilderness areas where they can ambush prey.",
+    "imagePrompt": "A fierce owlbear with massive bear body, giant owl head, thick shaggy fur, large intelligent eyes, sharp beak, powerful claws. Bear-owl hybrid with deadly hunting abilities.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2713,7 +2714,7 @@ export const monstrosityMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A phase spider possesses the magical ability to phase in and out of the Ethereal Plane. It seems to appear out of nowhere and quickly vanishes after attacking. Its movement on the Ethereal Plane before coming back to the Material Plane makes it seem like it can teleport.",
     "background": "A phase spider possesses the magical ability to phase in and out of the Ethereal Plane. It seems to appear out of nowhere and quickly vanishes after attacking. Its movement on the Ethereal Plane before coming back to the Material Plane makes it seem like it can teleport.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "imagePrompt": "A large phase spider with ethereal shifting abilities, appearing and disappearing between planes, spider-like body with magical phase abilities, ethereal jaunt movement. Magical spider that can shift between Material and Ethereal planes.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2795,9 +2796,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A gargantuan monstrosity with challenge rating 15.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A gargantuan monstrosity creature with monstrous and terrifying features",
+    "description": "A gargantuan purple worm with a massive, segmented body covered in thick purple chitin. Its enormous maw is ringed with sharp teeth, and its tail ends in a deadly stinger. It can burrow through solid rock and leave massive tunnels in its wake.",
+    "background": "Purple worms are massive burrowing predators that dwell deep beneath the surface. They are known for their ability to tunnel through solid rock and their voracious appetite. They are apex predators in the Underdark and are feared by all creatures that dwell there.",
+    "imagePrompt": "A gargantuan purple worm with massive segmented body, thick purple chitin, enormous maw with sharp teeth, deadly tail stinger, burrowing through rock. Massive underground predator with tunneling abilities.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2872,9 +2873,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge monstrosity with challenge rating 11.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A huge monstrosity creature with monstrous and terrifying features",
+    "description": "A huge remorhaz with a massive, centipede-like body covered in heated armor plates that glow with intense heat. Its head features massive mandibles and its body radiates heat that can burn those who touch it. It is adapted to extreme cold environments.",
+    "background": "Remorhazes are massive heat-generating predators that dwell in arctic and subarctic regions. They are known for their ability to generate intense heat and their resistance to cold. They are apex predators in frozen environments and are feared for their ability to swallow prey whole.",
+    "imagePrompt": "A huge remorhaz with SEGMENTED CENTIPEDE BODY, MANY LEGS along each segment, heated armor plates glowing with heat, massive insect mandibles, heat-radiating body, arctic predator, giant centipede-like insect, NOT a worm, clearly segmented body with multiple legs",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2956,9 +2957,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A gargantuan monstrosity with challenge rating 11.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A gargantuan monstrosity creature with monstrous and terrifying features",
+    "description": "A gargantuan roc with massive wings that span hundreds of feet and a body the size of a small castle. Its feathers are dark and its beak and talons are massive and deadly. It is one of the largest flying creatures in existence.",
+    "background": "Rocs are massive birds of prey that are among the largest flying creatures in the world. They are known for their ability to carry off large prey, including elephants and other massive creatures. They build their nests on the highest peaks and are rarely seen by humanoids.",
+    "imagePrompt": "A gargantuan roc with massive wings spanning hundreds of feet, castle-sized body, dark feathers, massive deadly beak and talons. Enormous bird of prey capable of carrying massive prey.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3059,9 +3060,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 5.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A large monstrous creature that resembles a rocky outcropping, typically a stalagmite or stalactite, with yellowish-gray hide that can change color to blend with surroundings. It has a single yellow eye and a maw filled with sharp teeth. Six nubs extrude sticky, barbed tendril-like limbs that can grapple and weaken prey. It moves slowly using cilia-like appendages and can climb walls and ceilings.",
+    "background": "Ropers are ambush predators that dwell in caves and the Underdark. They use their rocky camouflage to blend into cave formations, appearing as natural stalagmites or stalactites until they strike. They use ultrasonic pulses for echolocation and can digest almost anything except platinum, gemstones, and magic items. Their tendrils can penetrate flesh and weaken prey before dragging them to the central maw for consumption.",
+    "imagePrompt": "A large monstrous creature resembling a rocky outcropping or stalagmite, yellowish-gray hide that changes color to blend with surroundings, single yellow eye, maw filled with sharp teeth, six nubs extruding sticky barbed tendril-like limbs, cilia-like appendages for movement. Cave-dwelling ambush predator with echolocation and flesh-weakening tendrils.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3135,9 +3136,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium monstrosity with challenge rating 0.5.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A medium monstrosity creature with monstrous and terrifying features",
+    "description": "A medium rust monster with a segmented body covered in metallic-looking plates and four long antennae. Its head features a pair of large mandibles and its body has a metallic sheen. It is drawn to metal and can corrode it with its touch.",
+    "background": "Rust monsters are creatures that feed on metal and are drawn to ferrous materials. They are known for their ability to corrode and destroy metal objects, including weapons and armor. They are often found in dungeons and ruins where they can find metal to consume.",
+    "imagePrompt": "A medium rust monster with segmented body, metallic-looking plates, four long antennae, large mandibles, metallic sheen, metal-corrosive touch. Metal-eating creature that destroys ferrous materials.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3210,9 +3211,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large monstrosity with challenge rating 8.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A malevolent spirit naga with a massive serpentine body covered in dark, iridescent scales. Its head features a humanoid face with sharp features and malevolent eyes. It possesses powerful arcane magic and can cast spells to control and destroy its enemies.",
+    "background": "Spirit nagas are evil serpentine creatures that possess powerful arcane magic. They are known for their malevolence and their ability to cast powerful spells. They are often found in ancient ruins and dungeons where they serve as guardians or pursue their own dark agendas.",
+    "imagePrompt": "A malevolent spirit naga with massive serpentine body, dark iridescent scales, humanoid face with sharp features, malevolent eyes, arcane magic abilities. Evil serpent with powerful spellcasting abilities.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3365,9 +3366,9 @@ export const monstrosityMonsters: Monster[] = [
         "description": "The tarrasque makes one bite attack or uses its Swallow."
       }
     ],
-    "description": "A gargantuan monstrosity with challenge rating 30.",
-    "background": "This monstrosity is a formidable opponent.",
-    "imagePrompt": "A gargantuan monstrosity creature with monstrous and terrifying features",
+    "description": "A gargantuan, massive creature like a giant T-Rex, standing over 50 feet tall and 70 feet long. Its body is covered in thick, armored scales and spikes, with a massive head featuring multiple horns, razor-sharp teeth, and malevolent eyes. Its powerful tail can smash buildings, and its massive claws can tear through stone. It is the most feared creature in existence, capable of destroying entire cities with its sheer size and power.",
+    "background": "The tarrasque is the most powerful and feared creature in the world, a gargantuan monster like a giant T-Rex that can level entire cities and armies. It is nearly indestructible and possesses incredible regenerative abilities. It is said to be the last of its kind and sleeps for centuries before awakening to wreak havoc. Its massive size makes it tower over buildings and its destructive power is unmatched.",
+    "imagePrompt": "A gargantuan massive creature like a giant T-Rex, over 50 feet tall and 70 feet long, thick armored scales and spikes, massive head with multiple horns and razor-sharp teeth, malevolent eyes, powerful tail that can smash buildings, massive claws that tear through stone. City-destroying monster that towers over buildings with unmatched destructive power.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3521,9 +3522,9 @@ export const monstrosityMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A worg is an evil predator that delights in hunting and devouring creatures weaker than itself. Cunning and malevolent, worgs roam across the remote wilderness or are raised by goblins and hobgoblins. Those creatures use worgs as mounts, but a worg will turn on its rider if it feels mistreated or malnourished. Worgs speak in their own language and Goblin, and a few learn to speak Common as well.",
-    "background": "A worg is an evil predator that delights in hunting and devouring creatures weaker than itself. Cunning and malevolent, worgs roam across the remote wilderness or are raised by goblins and hobgoblins. Those creatures use worgs as mounts, but a worg will turn on its rider if it feels mistreated or malnourished. Worgs speak in their own language and Goblin, and a few learn to speak Common as well.",
-    "imagePrompt": "A large monstrosity creature with monstrous and terrifying features",
+    "description": "A large, intelligent wolf with shaggy gray or black fur, sharp yellow eyes, and powerful jaws. It has a wolf-like appearance but is larger and more cunning than ordinary wolves. Its body is muscular and built for hunting, with keen senses and a malevolent intelligence that sets it apart from regular wolves.",
+    "background": "A worg is an evil, intelligent wolf that delights in hunting and devouring creatures weaker than itself. Cunning and malevolent, worgs roam across the remote wilderness or are raised by goblins and hobgoblins. Those creatures use worgs as mounts, but a worg will turn on its rider if it feels mistreated or malnourished. Worgs speak in their own language and Goblin, and a few learn to speak Common as well.",
+    "imagePrompt": "A large intelligent wolf with shaggy gray or black fur, sharp yellow eyes, powerful jaws, muscular wolf-like body built for hunting, keen senses, malevolent intelligence. Large wolf-like creature that is more cunning than ordinary wolves.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

@@ -172,9 +172,9 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large giant with challenge rating 4.",
-    "background": "This giant is a formidable opponent.",
-    "imagePrompt": "A large giant creature with massive size and strength",
+    "description": "A large two-headed giant-like humanoid with filthy, unkempt hair and dirty skin. Each head has its own personality and desires.",
+    "background": "Ettins are two-headed, giant-like humanoids known for their brute strength and brutish nature. They are typically solitary, chaotic evil creatures that prefer to live alone in remote areas.",
+    "imagePrompt": "A large two-headed giant-like humanoid with filthy unkempt hair, dirty skin, two heads each with its own personality, brutish appearance, solitary demonic giant. Carnivorous and violent.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -524,8 +524,7 @@ export const giantMonsters: Monster[] = [
     "hitPoints": 110,
     "hitDice": "13d10+39",
     "speed": {
-      "walk": 30,
-      "fly": 30
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -601,9 +600,9 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large giant with challenge rating 7.",
-    "background": "This giant is a formidable opponent.",
-    "imagePrompt": "A large giant creature with massive size and strength",
+    "description": "A large 8-14 foot tall monstrous humanoid with blue or green skin, dark hair, horns, and sharp teeth. Some have red faces like kabuki masks.",
+    "background": "Oni are intelligent and cunning monstrous humanoids known for their cruelty and love of causing suffering. They can shapeshift to deceive and manipulate their prey.",
+    "imagePrompt": "A large 8-14 foot tall monstrous humanoid with blue or green skin, dark hair, horns, sharp teeth, some with red faces like kabuki masks, fearsome demonic ogre appearance. Intelligent and cruel shapeshifting giant.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

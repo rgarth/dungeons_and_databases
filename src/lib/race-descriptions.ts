@@ -8,7 +8,9 @@ import {
 export const raceDescriptions: Record<string, string> = {
   'Human': getDiverseHumanAgeDescription(),
   'Elf': getDiverseElfAgeDescription(),
+  'Drow': 'drow dark elf with DARK SKIN, BLACK SKIN, DEEP BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, PURE WHITE HAIR, RED EYES, BLOOD RED EYES, CRIMSON RED EYES, pointed ears, graceful features, underdark heritage, drow appearance, dark elf features, underdark elf',
   'Dwarf': getDiverseDwarfAgeDescription(),
+  'Duergar': 'duergar gray dwarf with GRAY SKIN, ASHEN SKIN, DEEP GRAY SKIN, BIG BUSHY BEARD, traditional dwarven features, stocky build, broad shoulders, underdark heritage, gray dwarf, underdark dwarf',
   'Halfling': 'halfling hobbit character, small adult stature, mature adult face, adult proportions, NOT child, NOT young, adult halfling person',
   'Dragonborn': 'reptilian beings, DRAGONBORN RACE with scaled skin covering face and body, draconic heritage, reptilian eyes, pronounced snout, slender build, reptilian features, NOT human, clearly reptilian appearance',
   'Gnome': 'small ADULT humanoid adventurer, mature adult person 3-4 feet tall, ADULT FACE with wrinkles and age lines, pointy ears like elf, intelligent sparkling eyes, high cheekbones, prominent nose, earth-toned skin, clean-shaven ADULT face, NO BEARD, ADULT proportions not child, weathered mature features, fantasy adventurer clothing, small ADULT person with elf-like features, humanoid ADULT not lawn ornament, NOT CHILD, NOT YOUNG FACE, mature adult character',
@@ -25,6 +27,7 @@ export const extendedRaceDescriptions: Record<string, string> = {
   'Aasimar': 'AASIMAR RACE with celestial heritage, glowing eyes, radiant features, divine markings',
   'Dragonborn': 'DRAGONBORN RACE with scaled skin covering face and body, draconic heritage, reptilian eyes, pronounced snout, slender build, thin frame, delicate reptilian features, NOT human, clearly reptilian appearance',
   'Dwarf': 'DWARF RACE with short stature, broad build, thick beard, sturdy frame',
+  'Duergar': 'DUERGAR GRAY DWARF RACE with GRAY SKIN, ASHEN SKIN, DEEP GRAY SKIN, BIG BUSHY BEARD, traditional dwarven features, stocky build, broad shoulders, underdark heritage, gray dwarf, underdark dwarf',
   'Elf': 'ELF RACE with pointed ears, graceful features, ethereal beauty, tall and slender',
   'Gnome': 'small ADULT humanoid adventurer, mature adult person 3-4 feet tall, ADULT FACE with wrinkles and age lines, pointy ears like elf, intelligent sparkling eyes, high cheekbones, prominent nose, earth-toned skin, clean-shaven ADULT face, NO BEARD, ADULT proportions not child, weathered mature features, fantasy adventurer clothing, small ADULT person with elf-like features, humanoid ADULT not lawn ornament, NOT CHILD, NOT YOUNG FACE, mature adult character',
   'Goliath': 'GOLIATH RACE with stone-like skin markings, massive build, giant heritage, bald head, gray or brown skin with darker stone patterns, towering height of 7-8 feet',
@@ -33,5 +36,6 @@ export const extendedRaceDescriptions: Record<string, string> = {
   'Half-Orc': 'HALF-ORC RACE with greenish skin, prominent tusks, muscular build, orcish features',
   'Human': 'HUMAN RACE single character, one person only, individual human warrior, solo character with varied skin tones, normal human proportions',
   'Tabaxi': 'TABAXI RACE with cat-like features, feline face, fur covering body, cat ears and tail',
-  'Tiefling': 'TIEFLING RACE with horns, tail, infernal heritage, unusual skin color, demonic features'
+  'Tiefling': 'TIEFLING RACE with horns, tail, infernal heritage, unusual skin color, demonic features',
+  'Drow': 'DROW DARK ELF RACE with DARK SKIN, BLACK SKIN, DEEP BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, PURE WHITE HAIR, RED EYES, BLOOD RED EYES, CRIMSON RED EYES, pointed ears, graceful features, underdark heritage, drow appearance, dark elf features, underdark elf'
 }; 

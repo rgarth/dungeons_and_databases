@@ -431,7 +431,7 @@ export const fiendMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A large fiend with challenge rating 9.",
     "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A large fiend creature with demonic or devilish features",
+    "imagePrompt": "A large skeletal devil with a bony, emaciated appearance. The creature has exposed bones and a skeletal structure, with sharp claws and a long, bony tail ending in a stinger. It has a skull-like head with horns and glowing eyes, embodying the essence of a devil made of bone rather than flesh and muscle.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -628,7 +628,7 @@ export const fiendMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A small fiend with challenge rating 0.25.",
     "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A small fiend creature with demonic or devilish features",
+    "imagePrompt": "A small, squat demon about 4 feet tall with a rounded body that heavily contrasts its gaunt, emaciated limbs. The creature has ape-like features with pale, rubbery skin ranging from white to beige and blue, sparsely covered by bristly hairs and pulsing, varicose veins. It has a grotesque, misshapen appearance typical of the lowest form of demon.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -726,9 +726,9 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fiend with challenge rating 12.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A beautiful, winged humanoid devil with striking features that belie their evil nature. Often mistaken for celestials due to their appearance.",
+    "background": "Erinyes are greater devils, often called 'furies', known for their deceptive beauty and fierce combat prowess. They serve as elite enforcers in the Nine Hells.",
+    "imagePrompt": "A beautiful winged humanoid devil with large feathery wings, well-toned build, clad in fiendish armor with horned helm. Striking features that could be mistaken for celestial, wielding a longsword or longbow. Female or male form with devilish beauty.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -826,9 +826,9 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large fiend with challenge rating 9.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A large fiend creature with demonic or devilish features",
+    "description": "A massive 15-foot tall demon with a canine-like head, four arms, and imposing muscular build. Two large pincer-tipped arms and two smaller clawed arms.",
+    "background": "Glabrezu are powerful demons known for their intelligence and deceptive nature. They often disguise themselves to manipulate mortals before revealing their true terrifying form.",
+    "imagePrompt": "A massive 15-foot tall demon with broad muscular build, canine-like head with horned muzzle and sharp teeth, violet eyes, four arms (two large pincer-tipped arms and two smaller clawed arms), skin ranging from russet to black, thick hide and scales covering shoulders and back. Imposing demonic presence.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1009,9 +1009,9 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large fiend with challenge rating 8.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A large fiend creature with demonic or devilish features",
+    "description": "A massive 7-8 foot tall toad-like demon with slimy, scaly skin covered in warts and bony spikes. Wide mouth filled with rows of sharp teeth and long spines running down its back.",
+    "background": "Hezrou are powerful demons known for their foul stench and the noxious fluid they constantly exude. They are bipedal but can move on all fours, resembling massive armored toads.",
+    "imagePrompt": "A massive 7-8 foot tall toad-like demon with bulky muscular build, slimy scaly skin covered in warts and bony spikes, frog-like face with large gaping mouth filled with rows of sharp teeth, long spines running down its back, constantly leaking noxious fluid. Bipedal demonic toad creature.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1237,9 +1237,9 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large fiend with challenge rating 14.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A large fiend creature with demonic or devilish features",
+    "description": "A giant blue-tinged insect-like devil with segmented body, large multifaceted eyes, antennae, powerful mandibles, and a long spiky tail. Cold and calculating in appearance.",
+    "background": "Ice Devils (Gelugon) are powerful commanders of infernal armies, found in the frozen layers of the Nine Hells. They are feared for their strength, strategic thinking, and ability to create walls of ice.",
+    "imagePrompt": "A giant blue-tinged insect-like devil with segmented body, large multifaceted eyes, antennae, powerful mandibles, long spiky tail covered in razor-sharp spikes, bipedal stance, cold calculating appearance. Monstrous devil commander.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1416,9 +1416,9 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fiend with challenge rating 0.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A 5-foot tall blob of molten, stinking flesh that oozes across the ground. Formless and shivering, these are the lowest form of devil.",
+    "background": "Lemures are the most basic form of devil, created from the souls of evil mortals. They are mindless, formless blobs of flesh that serve as cannon fodder in the Nine Hells.",
+    "imagePrompt": "A 5-foot tall blob of molten stinking flesh, formless and shivering, oozing across the ground as it moves. Hideous amorphous devil creature with no distinct features, just a mass of writhing flesh.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1529,9 +1529,9 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large fiend with challenge rating 16.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A large fiend creature with demonic or devilish features",
+    "description": "A female humanoid demon with six arms and a serpentine lower body. Attractive upper body with demonic features, wielding multiple weapons including swords.",
+    "background": "Mariliths are powerful serpentine demons with the upper body of an attractive female humanoid and the lower body of a snake. They are intelligent commanders of demon hordes, excelling at strategy and tactics.",
+    "imagePrompt": "A female humanoid demon with attractive upper body and demonic features, six arms wielding multiple weapons including swords, serpentine lower body with snake tail, intelligent commanding presence. Beautiful but deadly demon commander.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1644,9 +1644,9 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large fiend with challenge rating 13.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A large fiend creature with demonic or devilish features",
+    "description": "A massive 20-foot tall grotesque fusion of ape and boar with a hulking, bloated body. Small feathered wings, clawed hands and feet, tusks, and glowing red eyes.",
+    "background": "Nalfeshnees are monstrous demons known for their grotesque appearance and high intelligence. They serve as judges of souls in the Abyss and command lesser demons despite their corpulent form.",
+    "imagePrompt": "A massive 20-foot tall grotesque demon, fusion of ape and boar with hulking bloated body, small feathered wings that somehow support its weight, clawed hands and feet, tusks, glowing red eyes. Monstrous corpulent demon judge.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1759,9 +1759,9 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fiend with challenge rating 5.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A hideously ugly hag with blue-violet or black skin, wiry black hair, jagged yellow teeth, warts, blisters, and open sores. Burning red eyes, horns, and long sharp claws.",
+    "background": "Night Hags are fiendish hags known for invading dreams and twisting them into nightmares. They are physically repulsive with grotesque human-like features and serve as soul collectors.",
+    "imagePrompt": "A hideously ugly hag with blue-violet or black bruised-looking skin, wiry black hair, jagged yellow teeth, warts blisters and open sores, burning red eyes, horns, long sharp claws. Grotesque human-like fiendish hag.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1842,9 +1842,9 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large fiend with challenge rating 3.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A large fiend creature with demonic or devilish features",
+    "description": "A large emaciated black horse with flaming mane and tail, red glowing eyes, and fiery demonic features. Serves as a steed for evil creatures.",
+    "background": "Nightmares are fiery fiendish horses that serve as mounts for evil creatures like demons, devils, death knights, and liches. They can travel between the Material and Ethereal Planes.",
+    "imagePrompt": "A large 6-foot tall emaciated black horse with flaming mane and tail, red glowing eyes, demonic features, shedding bright light. Fiery fiendish steed for evil creatures.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2158,9 +2158,9 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fiend with challenge rating 13.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A humanoid fiend with an animalistic head (commonly tiger), reversed hands with palms facing up, and infernal glowing eyes. Master of shapeshifting and illusion magic.",
+    "background": "Rakshasas are manipulative fiends known for their powerful sorcery and ability to shapeshift. They can appear as any humanoid but their true form reveals animal heads and reversed hands.",
+    "imagePrompt": "A humanoid fiend with tiger head (or other animal head), reversed hands with palms facing up, infernal glowing eyes, manipulative appearance. Shapeshifting fiend with animalistic features.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2272,9 +2272,9 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium fiend with challenge rating 4.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A beautiful, seductive fiend with horns, bat-like wings, and clawed hands. Can shapeshift between male and female forms to charm and manipulate mortals.",
+    "background": "Succubi and Incubi are seductive fiends that can shapeshift between male and female forms. They use charm and telepathy to corrupt mortals, serving as spies and advisors in the Lower Planes.",
+    "imagePrompt": "A beautiful seductive fiend with horns, bat-like wings, clawed hands, sharp teeth, alluring humanoid form, scantily clad, sexual appeal. Charming manipulative demon with infernal beauty.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2387,9 +2387,9 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large fiend with challenge rating 6.",
-    "background": "This fiend is a formidable opponent.",
-    "imagePrompt": "A large fiend creature with demonic or devilish features",
+    "description": "A large 8-foot tall vulture-like humanoid demon with gray feathers, broad wings, long powerful limbs, and a beak filled with sharp teeth. Emanates an unpleasant odor of offal and carrion.",
+    "background": "Vrocks are grotesque vulture-like demons used as shock troops by demon lords. They are known for their powerful screech, toxic spores, and penchant for violence.",
+    "imagePrompt": "A large 8-foot tall vulture-like humanoid demon with gray feathers covering its body, broad wings, long powerful limbs, beak filled with sharp teeth, grotesque fusion of humanoid and vulture features. Violent demonic shock troop.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

@@ -1,8 +1,27 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { clientCache } from '@/lib/client-cache';
 
 export function useClientCache() {
-  const isInitialized = clientCache.isInitialized();
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Check initialization status periodically until it's true
+  useEffect(() => {
+    const checkInitialization = () => {
+      const initialized = clientCache.isInitialized();
+      if (initialized !== isInitialized) {
+        setIsInitialized(initialized);
+      }
+    };
+
+    // Check immediately
+    checkInitialization();
+
+    // If not initialized, check periodically
+    if (!isInitialized) {
+      const interval = setInterval(checkInitialization, 100);
+      return () => clearInterval(interval);
+    }
+  }, [isInitialized]);
 
   const data = useMemo(() => ({
     // Character creation data

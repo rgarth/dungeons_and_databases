@@ -167,6 +167,10 @@ const BODY_TYPES = [
   'average stature', 'lean build', 'average physique'
 ];
 
+const GENDERS = [
+  'male', 'female'
+];
+
 // Utility function to get random item from array
 function getRandomItem(array) {
   return array[Math.floor(Math.random() * array.length)];
@@ -188,7 +192,9 @@ function generateContextualBackground(monsterType, monsterName) {
       monsterName.toLowerCase().includes('seahorse') ||
       monsterName.toLowerCase().includes('octopus') ||
       monsterName.toLowerCase().includes('quipper') ||
-      monsterName.toLowerCase().includes('fish')) {
+      monsterName.toLowerCase().includes('fish') ||
+      monsterName.toLowerCase().includes('merfolk') ||
+      monsterName.toLowerCase().includes('sahuagin')) {
     const aquaticBackgrounds = [
       'deep ocean depths with coral reefs and ancient shipwrecks',
       'underwater cavern with bioluminescent creatures and flowing currents',
@@ -228,6 +234,94 @@ function generateContextualBackground(monsterType, monsterName) {
       'ice cave with icicles and shimmering walls'
     ];
     return getRandomItem(arcticBackgrounds);
+  }
+  
+  // Special handling for plesiosaurus - ocean backgrounds
+  if (monsterName.toLowerCase().includes('plesiosaurus')) {
+    const oceanBackgrounds = [
+      'deep ocean depths with coral reefs and ancient shipwrecks',
+      'underwater cavern with bioluminescent creatures and flowing currents',
+      'coastal waters with crashing waves and rocky formations',
+      'submerged temple ruins with seaweed and marine life',
+      'abyssal trench with mysterious deep-sea creatures',
+      'crystal clear ocean waters with sunlight filtering through',
+      'underwater kelp forest with swaying seaweed and marine life',
+      'deep sea floor with volcanic vents and strange creatures',
+      'underwater city ruins with stone structures and marine growth'
+    ];
+    return getRandomItem(oceanBackgrounds);
+  }
+  
+  // Special handling for warhorse skeleton - battlefield/cemetery backgrounds
+  if (monsterName.toLowerCase().includes('warhorse skeleton')) {
+    const warhorseSkeletonBackgrounds = [
+      'ancient battlefield with scattered bones and rusted weapons',
+      'deserted cemetery with crumbling tombstones and fog',
+      'abandoned battlefield with fallen soldiers and horses',
+      'dark catacombs with bone-lined walls and eerie silence',
+      'forgotten temple with ancient runes and decay',
+      'shadowy graveyard with twisted trees and moonlight',
+      'ancient ruins with scattered skeletons and dust',
+      'cursed battlefield with spectral mists and death'
+    ];
+    return getRandomItem(warhorseSkeletonBackgrounds);
+  }
+  
+  // Special handling for sahuagin - underwater backgrounds
+  if (monsterName.toLowerCase().includes('sahuagin')) {
+    const sahuaginBackgrounds = [
+      'deep ocean depths with coral reefs and ancient shipwrecks',
+      'underwater cavern with bioluminescent creatures and flowing currents',
+      'submerged temple ruins with seaweed and marine life',
+      'abyssal trench with mysterious deep-sea creatures',
+      'crystal clear ocean waters with sunlight filtering through',
+      'underwater kelp forest with swaying seaweed and marine life',
+      'deep sea floor with volcanic vents and strange creatures',
+      'underwater city ruins with stone structures and marine growth'
+    ];
+    return getRandomItem(sahuaginBackgrounds);
+  }
+  
+  // Special handling for veterans - battlefield/military backgrounds
+  if (monsterName.toLowerCase().includes('veteran')) {
+    const veteranBackgrounds = [
+      'battlefield with scattered weapons and armor',
+      'military camp with tents and campfires',
+      'fortress walls with defensive positions',
+      'war-torn village with smoke and destruction',
+      'training grounds with weapon racks and targets',
+      'castle courtyard with military banners',
+      'abandoned battlefield with fallen soldiers',
+      'military outpost with watchtowers and fortifications'
+    ];
+    return getRandomItem(veteranBackgrounds);
+  }
+  
+  // Special handling for were-creatures (lycanthropes) - forest/natural backgrounds
+  if (monsterName.toLowerCase().includes('were')) {
+    const wereBackgrounds = [
+      'dark forest clearing with moonlight filtering through trees',
+      'misty woodland with ancient trees and fallen logs',
+      'rocky mountain pass with sparse vegetation and moonlight',
+      'abandoned village outskirts with overgrown vegetation',
+      'forest edge with dense undergrowth and shadowy trees',
+      'moonlit meadow with tall grass and scattered rocks',
+      'dark cave entrance with forest surroundings',
+      'ancient ruins overgrown with vines and moss'
+    ];
+    return getRandomItem(wereBackgrounds);
+  }
+  
+  // Special handling for grimlocks - Underdark backgrounds
+  if (monsterName.toLowerCase().includes('grimlock')) {
+    const underdarkBackgrounds = [
+      'dark underground cave with stalactites and glowing fungi',
+      'deep Underdark cavern with bioluminescent mushrooms and stone formations',
+      'underground tunnel with dripping water and ancient stone walls',
+      'dark cave system with crystal formations and underground streams',
+      'Underdark chamber with massive stalagmites and eerie shadows'
+    ];
+    return getRandomItem(underdarkBackgrounds);
   }
   const backgrounds = {
     'dragon': [
@@ -349,11 +443,14 @@ function generateContextualBackground(monsterType, monsterName) {
 // Function to generate prompt for a monster
 function generateMonsterPrompt(monster) {
   // Create a detailed description based on monster data
-  let description = monster.name;
+  // Skip monster name for gnomes to avoid garden gnome confusion
+  let description = monster.name.toLowerCase().includes('gnome') ? '' : monster.name;
   
-  // Add size and type information (special handling for Wyvern)
+  // Add size and type information (special handling for Wyvern and Gnomes)
   if (monster.name.toLowerCase().includes('wyvern')) {
     description += `, a ${monster.size.toLowerCase()} wyvern`;
+  } else if (monster.name.toLowerCase().includes('gnome')) {
+    description += `A ${monster.size.toLowerCase()} ${monster.type}`;
   } else {
     description += `, a ${monster.size.toLowerCase()} ${monster.type}`;
   }
@@ -377,28 +474,137 @@ function generateMonsterPrompt(monster) {
       if (monster.name.toLowerCase().includes('wyrmling')) {
         description += `. Young dragon wyrmling, just hatched, about the size of a large wolf. Small, round features, big bright eyes, soft scales, playful and curious, gentle expression, almost cute, not yet fully grown, innocent and harmless appearance, hatchling dragon, adorable, baby dragon, photorealistic, fantasy, D&D`;
       }
-      // Special handling for Dragon Turtle - no wings
+      // Special handling for Dragon Turtle - emphasize dragon head and tail
       else if (monster.name.toLowerCase().includes('dragon turtle')) {
-        description += `. Majestic dragon turtle with detailed scales, massive shell, sharp claws, and powerful presence. Single dragon turtle in frame, photorealistic, detailed textures, imposing figure`;
+        description += `. Majestic dragon turtle with dragon-like head, long dragon tail, massive shell, detailed scales, sharp claws, and powerful presence. Dragon head with horns and fangs, long serpentine dragon tail, turtle shell body, photorealistic, detailed textures, imposing figure`;
       } else {
         description += `. Majestic dragon with detailed scales, large wings, sharp claws, and powerful presence. Single dragon in frame, photorealistic, detailed textures, imposing figure`;
       }
       break;
     case 'humanoid':
-      // Add ethnic diversity and anti-trope language for humanoids
-      const skinTone = getRandomItem(SKIN_TONES);
-      const ethnicity = getRandomItem(ETHNICITIES);
-      const bodyType = getRandomItem(BODY_TYPES);
-      description += `. Single humanoid character, ${ethnicity} with ${skinTone}, ${bodyType}, detailed facial features, realistic proportions, medieval fantasy clothing and armor, weathered skin, expressive face, respectful character design, practical armor, realistic medieval attire`;
+      // Special handling for sahuagin - shark people
+      if (monster.name.toLowerCase().includes('sahuagin')) {
+        description += `. Single sahuagin, shark-humanoid hybrid, shark-like head with sharp teeth, dorsal fin, webbed hands and feet, scaly skin, predatory features, aquatic humanoid, photorealistic, detailed textures`;
+      }
+      // Special handling for veterans - old and scarred
+      else if (monster.name.toLowerCase().includes('veteran')) {
+        const gender = getRandomItem(GENDERS);
+        const skinTone = getRandomItem(SKIN_TONES);
+        const ethnicity = getRandomItem(ETHNICITIES);
+        const bodyType = getRandomItem(BODY_TYPES);
+        
+        // Determine if it's a half-dragon veteran
+        const isHalfDragon = monster.name.toLowerCase().includes('dragon');
+        
+        if (isHalfDragon) {
+          // Half-dragon veteran: old, scarred, with dragon features
+          description += `. Single ${gender} half-dragon veteran, ${ethnicity} with ${skinTone}, ${bodyType}, aged and weathered appearance, numerous battle scars, dragon-like features, battered armor, experienced warrior, photorealistic, detailed textures`;
+        } else {
+          // Regular veteran: old, scarred, battle-hardened
+          description += `. Single ${gender} veteran, ${ethnicity} with ${skinTone}, ${bodyType}, aged and weathered appearance, numerous battle scars, grizzled features, battered armor, experienced warrior, photorealistic, detailed textures`;
+        }
+      }
+      // Special handling for were-creatures (lycanthropes)
+      else if (monster.name.toLowerCase().includes('were')) {
+        const gender = getRandomItem(GENDERS);
+        const skinTone = getRandomItem(SKIN_TONES);
+        const ethnicity = getRandomItem(ETHNICITIES);
+        const bodyType = getRandomItem(BODY_TYPES);
+        
+        // Determine the animal type and form
+        let animalType = '';
+        let formType = '';
+        
+        if (monster.name.toLowerCase().includes('werebear')) {
+          animalType = 'bear';
+        } else if (monster.name.toLowerCase().includes('wereboar')) {
+          animalType = 'boar';
+        } else if (monster.name.toLowerCase().includes('wererat')) {
+          animalType = 'rat';
+        } else if (monster.name.toLowerCase().includes('weretiger')) {
+          animalType = 'tiger';
+        } else if (monster.name.toLowerCase().includes('werewolf')) {
+          animalType = 'wolf';
+        }
+        
+        if (monster.name.toLowerCase().includes('human form')) {
+          formType = 'human';
+        } else if (monster.name.toLowerCase().includes('hybrid form')) {
+          formType = 'hybrid';
+        } else if (monster.name.toLowerCase().includes(`${animalType} form`)) {
+          formType = 'animal';
+        }
+        
+        // Generate appropriate description based on form
+        if (formType === 'human') {
+          // Human form: mostly human with subtle animal features
+          description += `. Single ${gender} human, ${ethnicity} with ${skinTone}, ${bodyType}, mostly human appearance with very subtle ${animalType} features, perhaps slightly pointed ears or animalistic eyes, wearing medieval fantasy clothing, realistic human proportions, detailed facial features`;
+        } else if (formType === 'hybrid') {
+          // Hybrid form: classic were-creature look
+          description += `. Single ${gender} were-${animalType} in hybrid form, humanoid body with ${animalType} head, fur-covered body, sharp claws, fangs, muscular build, savage appearance, detailed textures, photorealistic were-creature`;
+        } else if (formType === 'animal') {
+          // Animal form: should look like the actual animal
+          if (animalType === 'bear') {
+            description += `. Single brown bear, massive furry body, powerful build, four legs, realistic bear anatomy, photorealistic wild animal`;
+          } else if (animalType === 'boar') {
+            description += `. Single wild boar, muscular body with bristly fur, sharp tusks, four legs, realistic boar anatomy, photorealistic wild animal`;
+          } else if (animalType === 'rat') {
+            description += `. Single giant rat, large rodent with long tail, sharp teeth, four legs, realistic rat anatomy, photorealistic animal`;
+          } else if (animalType === 'tiger') {
+            description += `. Single tiger, striped orange fur, powerful feline body, four legs, realistic tiger anatomy, photorealistic wild animal`;
+          } else if (animalType === 'wolf') {
+            description += `. Single wolf, grey fur, lean canine body, four legs, realistic wolf anatomy, photorealistic wild animal`;
+          }
+        }
+      }
+      // Special handling for grimlocks - primitive cavemen, no armor
+      else if (monster.name.toLowerCase().includes('grimlock')) {
+        const gender = getRandomItem(GENDERS);
+        description += `. Single primitive ${gender} human, grey-skinned with leathery skin, caveman-like features, balding with greasy black long hair, wearing only rough loincloth or simple pants, no shirt, no armor, absolutely NO HORNS, primitive appearance`;
+      } else {
+        // Add ethnic diversity and anti-trope language for other humanoids
+        const skinTone = getRandomItem(SKIN_TONES);
+        const ethnicity = getRandomItem(ETHNICITIES);
+        const bodyType = getRandomItem(BODY_TYPES);
+        const gender = getRandomItem(GENDERS);
+        
+        // Determine appropriate clothing based on monster name/type
+        let clothing = 'medieval fantasy clothing';
+        if (monster.name.toLowerCase().includes('veteran')) {
+          clothing = 'battered armor and worn military clothing';
+        } else if (monster.name.toLowerCase().includes('mage') || monster.name.toLowerCase().includes('wizard') || monster.name.toLowerCase().includes('sorcerer')) {
+          clothing = 'mystical robes and arcane clothing';
+        } else if (monster.name.toLowerCase().includes('acolyte') || monster.name.toLowerCase().includes('priest') || monster.name.toLowerCase().includes('cleric')) {
+          clothing = 'religious vestments and holy robes';
+        } else if (monster.name.toLowerCase().includes('cult') || monster.name.toLowerCase().includes('fanatic')) {
+          clothing = 'cult robes and dark ceremonial clothing';
+        } else if (monster.name.toLowerCase().includes('guard') || monster.name.toLowerCase().includes('soldier') || monster.name.toLowerCase().includes('knight')) {
+          clothing = 'practical armor and military clothing';
+        } else if (monster.name.toLowerCase().includes('bandit') || monster.name.toLowerCase().includes('thug') || monster.name.toLowerCase().includes('brigand')) {
+          clothing = 'rough leather clothing and practical gear';
+        } else if (monster.name.toLowerCase().includes('noble') || monster.name.toLowerCase().includes('lord') || monster.name.toLowerCase().includes('lady')) {
+          clothing = 'fine noble clothing and elegant attire';
+        } else if (monster.name.toLowerCase().includes('peasant') || monster.name.toLowerCase().includes('commoner')) {
+          clothing = 'simple peasant clothing and basic attire';
+        }
+        
+        description += `. Single ${gender} humanoid character, ${ethnicity} with ${skinTone}, ${bodyType}, detailed facial features, realistic proportions, ${clothing}, weathered skin, expressive face, respectful character design, realistic medieval attire`;
+      }
       break;
     case 'beast':
+      // Special handling for axe beak - two-legged flightless bird
+      if (monster.name.toLowerCase().includes('axe beak')) {
+        description += `. Single axe beak, large flightless bird with two powerful legs, long neck, MASSIVE WIDE FLAT ORGANIC BEAK made of keratin, shaped like a hatchet blade but natural and organic, broad and flat like a weapon blade but made of bone-like material, NOT a narrow bird beak, NOT metal or shiny, beak is the primary weapon and most prominent feature, ostrich-like body, feathered body, no wings, two-legged stance, prehistoric bird, photorealistic, anatomically correct flightless bird with organic weapon-shaped beak`;
+      }
       // Special handling for aquatic beasts
-      if (monster.name.toLowerCase().includes('shark')) {
+      else if (monster.name.toLowerCase().includes('shark')) {
         description += `. Single predatory shark, sleek streamlined body, sharp triangular teeth, powerful jaws, dark eyes, swimming in ocean waters, photorealistic marine predator`;
       } else if (monster.name.toLowerCase().includes('killer whale') || monster.name.toLowerCase().includes('orca')) {
         description += `. Single killer whale, black and white coloring, powerful streamlined body, swimming in ocean waters, photorealistic marine mammal`;
       } else if (monster.name.toLowerCase().includes('sea horse') || monster.name.toLowerCase().includes('seahorse')) {
         description += `. Single seahorse fish, elongated body with curled tail, colorful scales, seahorse head with tubular snout, underwater in ocean depths, photorealistic marine creature`;
+      } else if (monster.name.toLowerCase().includes('plesiosaurus')) {
+        description += `. Single plesiosaurus, long-necked marine dinosaur, massive body with four flippers, extremely long serpentine neck, small head, swimming underwater in ocean depths, prehistoric marine reptile, photorealistic, anatomically correct plesiosaur`;
       } else if (monster.name.toLowerCase().includes('scorpion')) {
         description += `. Single scorpion, segmented body, two large pincers, long segmented tail curled over back with venomous stinger at tip, armored exoskeleton, desert environment, photorealistic arachnid, anatomically correct scorpion`;
       } else if (monster.name.toLowerCase().includes('mammoth')) {
@@ -415,12 +621,19 @@ function generateMonsterPrompt(monster) {
         description += `. Single stirge, bat-mosquito hybrid with leathery wings, sharp pincers on legs, long needle-like proboscis, flying vampire creature, photorealistic flying monster`;
       } else if (monster.name.toLowerCase().includes('fish') || monster.speed?.swim) {
         description += `. Single fish, streamlined body, gills, fins, underwater creature, marine environment, photorealistic aquatic animal`;
+      } else if (monster.name.toLowerCase().includes('panther')) {
+        description += `. Single panther, solid black fur, melanistic big cat, no spots, sleek and muscular, large feline, photorealistic, anatomically correct, black jaguar or black leopard`;
       } else {
         description += `. Single animal creature, natural fur or scales, realistic anatomy, wild eyes, natural pose, detailed textures`;
       }
       break;
     case 'undead':
-      description += `. Single undead creature, pale or decayed skin, hollow eyes, tattered clothing, supernatural aura, eerie atmosphere`;
+      // Special handling for warhorse skeleton - four-legged horse skeleton
+      if (monster.name.toLowerCase().includes('warhorse skeleton')) {
+        description += `. Single warhorse skeleton, four-legged horse skeleton, bony equine form, skeletal horse anatomy, four legs, horse skull, rib cage, spine, leg bones, undead horse, photorealistic, detailed textures`;
+      } else {
+        description += `. Single undead creature, pale or decayed skin, hollow eyes, tattered clothing, supernatural aura, eerie atmosphere`;
+      }
       break;
     case 'fiend':
       description += `. Single demonic creature, infernal features, horns, dark skin, glowing eyes, menacing expression, hellish aura`;
@@ -429,7 +642,14 @@ function generateMonsterPrompt(monster) {
       description += `. Single angelic being, divine radiance, ethereal beauty, holy aura, wings, pure white or golden features`;
       break;
     case 'construct':
-      description += `. Single mechanical construct, metallic surfaces, magical runes, artificial joints, glowing eyes, imposing structure`;
+      // Special handling for specific constructs
+      if (monster.name.toLowerCase().includes('rug of smothering')) {
+        description += `. Single magical rug, decorative floor covering, ornate patterns, lying on floor`;
+      } else if (monster.name.toLowerCase().includes('flying sword')) {
+        description += `. Single magical sword, floating weapon, no wielder, no mechanical parts`;
+      } else {
+        description += `. Single mechanical construct, metallic surfaces, magical runes, artificial joints, glowing eyes, imposing structure`;
+      }
       break;
     case 'elemental':
       description += `. Single elemental being, composed of pure elements, flowing forms, natural energy, ethereal appearance`;
@@ -441,7 +661,16 @@ function generateMonsterPrompt(monster) {
       description += `. Single massive giant, imposing stature, muscular build, primitive clothing, weathered features, towering presence`;
       break;
     case 'monstrosity':
-      description += `. Single monstrous creature, terrifying features, unnatural anatomy, menacing expression, dark aura`;
+      // Special handling for specific monstrosities that aren't "monstrous"
+      if (monster.name.toLowerCase().includes('centaur')) {
+        description += `. Single fantasy centaur, noble creature, half human half horse`;
+      } else if (monster.name.toLowerCase().includes('hippogriff')) {
+        description += `. Single fantasy hippogriff, eagle front half, horse back half`;
+      } else if (monster.name.toLowerCase().includes('mimic')) {
+        description += `. Single shapeshifting mimic, amorphous creature`;
+      } else {
+        description += `. Single monstrous creature, terrifying features, unnatural anatomy, menacing expression, dark aura`;
+      }
       break;
     case 'ooze':
       description += `. Single amorphous ooze, gelatinous form, translucent body, fluid movement, alien appearance`;
@@ -450,7 +679,16 @@ function generateMonsterPrompt(monster) {
       description += `. Single plant creature, organic features, bark-like skin, leafy appendages, natural colors, living vegetation`;
       break;
     case 'aberration':
-      description += `. Single alien aberration, otherworldly features, unnatural anatomy, cosmic horror, eldritch appearance`;
+      // Special handling for aboleth - massive fish-like amphibian with tentacles
+      if (monster.name.toLowerCase().includes('aboleth')) {
+        description += `. Single aboleth, massive fish-like amphibian reaching 20-40 feet in length, bizarre eel-like body with long tubular form, lamprey-like mouth with serrated jawless teeth, four long tentacles (two on top, two on underbelly), triangular head with spherical beak-like nose, three eyes stacked vertically above nose, tendrils and shorter tentacles dangling from head, orange-pink underbelly, sea-green topside, four blue-black slime-secreting orifices along body, prehistoric aquatic aberration, photorealistic, anatomically correct aboleth`;
+      }
+      // Special handling for chuul - large lobster-like aberration
+      else if (monster.name.toLowerCase().includes('chuul')) {
+        description += `. Single chuul, large lobster-like aberration, massive crustacean body with armored exoskeleton, powerful lobster claws, many tentacles surrounding mouth that can cause paralysis, aquatic aberration with hatred for surface-dwelling creatures, prehistoric lobster monster, photorealistic, anatomically correct chuul`;
+      } else {
+        description += `. Single alien aberration, otherworldly features, unnatural anatomy, cosmic horror, eldritch appearance`;
+      }
       break;
     default:
       description += `. Single fantasy creature, unique characteristics, detailed features, realistic appearance`;
@@ -499,6 +737,68 @@ function generateMonsterPrompt(monster) {
   else if (monster.name.toLowerCase().includes('scorpion')) {
     description += `. Crawling menacingly in the scene, surrounded by desert environment`;
   } 
+  // Special handling for warhorse skeleton - four-legged positioning
+  else if (monster.name.toLowerCase().includes('warhorse skeleton')) {
+    description += `. Standing on four legs in the scene, skeletal horse pose`;
+  }
+  // Special handling for sahuagin - swimming positioning
+  else if (monster.name.toLowerCase().includes('sahuagin')) {
+    description += `. Swimming menacingly in the scene, surrounded by ocean environment`;
+  }
+  // Special handling for plesiosaurus - underwater swimming with long neck
+  else if (monster.name.toLowerCase().includes('plesiosaurus')) {
+    description += `. Swimming gracefully underwater in the scene, long neck extended forward, surrounded by ocean environment`;
+  }
+  // Special handling for aboleth - massive aquatic aberration swimming
+  else if (monster.name.toLowerCase().includes('aboleth')) {
+    description += `. Swimming menacingly in deep ocean depths, massive eel-like body undulating, tentacles extended, surrounded by dark underwater environment`;
+  }
+  // Special handling for chuul - aquatic lobster-like aberration
+  else if (monster.name.toLowerCase().includes('chuul')) {
+    description += `. Crawling menacingly underwater in the scene, lobster-like body with claws raised, tentacles around mouth extended, surrounded by aquatic environment`;
+  }
+  // Special handling for veterans - battle-ready positioning
+  else if (monster.name.toLowerCase().includes('veteran')) {
+    description += `. Standing in a defensive stance, battle-ready and alert`;
+  }
+  // Special handling for axe beaks - two-legged flightless bird positioning
+  else if (monster.name.toLowerCase().includes('axe beak')) {
+    description += `. Standing on two powerful legs in the scene, long neck extended, prehistoric flightless bird pose`;
+  }
+  // Special handling for were-creatures (lycanthropes)
+  else if (monster.name.toLowerCase().includes('were')) {
+    // Determine the animal type and form for positioning
+    let animalType = '';
+    let formType = '';
+    
+    if (monster.name.toLowerCase().includes('werebear')) {
+      animalType = 'bear';
+    } else if (monster.name.toLowerCase().includes('wereboar')) {
+      animalType = 'boar';
+    } else if (monster.name.toLowerCase().includes('wererat')) {
+      animalType = 'rat';
+    } else if (monster.name.toLowerCase().includes('weretiger')) {
+      animalType = 'tiger';
+    } else if (monster.name.toLowerCase().includes('werewolf')) {
+      animalType = 'wolf';
+    }
+    
+    if (monster.name.toLowerCase().includes('human form')) {
+      formType = 'human';
+    } else if (monster.name.toLowerCase().includes('hybrid form')) {
+      formType = 'hybrid';
+    } else if (monster.name.toLowerCase().includes(`${animalType} form`)) {
+      formType = 'animal';
+    }
+    
+    if (formType === 'human') {
+      description += `. Standing cautiously in the scene, looking around warily`;
+    } else if (formType === 'hybrid') {
+      description += `. Stalking menacingly in the scene, ready to attack`;
+    } else if (formType === 'animal') {
+      description += `. Moving naturally in the scene, wild animal behavior`;
+    }
+  }
   // Special handling for flying creatures
   else if (monster.speed?.fly || monster.name.toLowerCase().includes('stirge')) {
     description += `. Flying menacingly in the scene, wings spread`;
@@ -555,7 +855,7 @@ async function callReplicateAPI(prompt) {
     throw new Error('REPLICATE_API_KEY not found in environment variables');
   }
   
-  // Using Flux Pro XL model for high quality images
+  // Using Flux Schnell model for high quality images (same as avatar generator)
   const response = await fetch('https://api.replicate.com/v1/predictions', {
     method: 'POST',
     headers: {
@@ -563,15 +863,16 @@ async function callReplicateAPI(prompt) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      version: "c221b2b8ef527988fb59bf24a8b97c4561f1c671f73bd389f866bfb27c061316",
+      version: 'black-forest-labs/flux-schnell',
       input: {
         prompt: prompt,
-        width: 1024,
-        height: 1024, // Square format
+        go_fast: true,
+        megapixels: "1",
         num_outputs: 1,
-        scheduler: "K_EULER",
-        num_inference_steps: 20,
-        guidance_scale: 7.5,
+        aspect_ratio: "1:1", // Square format for monsters
+        output_format: "webp",
+        output_quality: 80,
+        num_inference_steps: 4,
         seed: Math.floor(Math.random() * 1000000), // Random seed for variety
         negative_prompt: (() => {
           const baseNegative = "blurry, low quality, distorted, deformed, ugly, bad anatomy, watermark, signature, text, logo, multiple characters, multiple people, crowd, group, background, landscape, scenery, cartoon, anime, illustration, painting, drawing, digital art, fantasy art, multiple subjects, people, humans, characters, crowd scene, busy background, cluttered, messy, low resolution, pixelated, grainy, noise, artifacts, multiple monsters, multiple creatures, offensive stereotypes, inappropriate content, revealing clothing, impractical armor, sexualized appearance, exaggerated features, caricature, racist depictions, cultural appropriation, disrespectful portrayal, overly muscular, unrealistic proportions, objectification, fetishization, harmful tropes, problematic imagery";
@@ -579,6 +880,36 @@ async function callReplicateAPI(prompt) {
           // Special negative prompt for Wyverns to prevent 4-legged dragons
           if (options.monster && options.monster.toLowerCase().includes('wyvern')) {
             return `${baseNegative}, four legs, four-legged, dragon with four legs, four-legged dragon, quadrupedal dragon, traditional dragon, classic dragon, four limbs, four-legged creature, dragon anatomy, four-legged monster, quadrupedal monster, four-legged beast, four-legged winged creature, four-legged flying creature, four-legged reptile, four-legged scaled creature, four-legged mythical creature, four-legged fantasy creature, four-legged monster, four-legged beast, four-legged animal, four-legged winged beast, four-legged flying beast, four-legged reptile, four-legged scaled beast, four-legged mythical beast, four-legged fantasy beast`;
+          }
+          
+          // Special negative prompt for Grimlocks to prevent horns
+          if (options.monster && options.monster.toLowerCase().includes('grimlock')) {
+            return `${baseNegative}, horns, horned, antlers, demonic features, monster features, armor, medieval clothing, fancy clothing, civilized appearance, modern clothing`;
+          }
+          
+          // Special negative prompt for Axe Beaks to prevent four-legged creatures
+          if (options.monster && options.monster.toLowerCase().includes('axe beak')) {
+            return `${baseNegative}, four legs, four-legged, quadrupedal, four-legged creature, four-legged animal, four-legged beast, four-legged monster, four-legged bird, four-legged dinosaur, four-legged reptile, four-legged mammal, four-legged predator, four-legged prey, four-legged carnivore, four-legged herbivore, four-legged omnivore, four-legged creature anatomy, four-legged animal anatomy, four-legged beast anatomy, four-legged monster anatomy, four-legged bird anatomy, four-legged dinosaur anatomy, four-legged reptile anatomy, four-legged mammal anatomy`;
+          }
+          
+          // Special negative prompt for Plesiosaurus to prevent land animal features
+          if (options.monster && options.monster.toLowerCase().includes('plesiosaurus')) {
+            return `${baseNegative}, land animal, terrestrial, walking, standing on land, legs, feet, paws, claws, land-based, ground-dwelling, terrestrial animal, land creature, walking dinosaur, land dinosaur, terrestrial dinosaur, walking reptile, land reptile, terrestrial reptile, walking beast, land beast, terrestrial beast, walking monster, land monster, terrestrial monster, walking creature, land creature, terrestrial creature, walking animal, land animal, terrestrial animal, walking predator, land predator, terrestrial predator, walking prey, land prey, terrestrial prey, walking carnivore, land carnivore, terrestrial carnivore, walking herbivore, land herbivore, terrestrial herbivore, walking omnivore, land omnivore, terrestrial omnivore`;
+          }
+          
+          // Special negative prompt for Axe Beaks to prevent narrow bird beaks
+          if (options.monster && options.monster.toLowerCase().includes('axe beak')) {
+            return `${baseNegative}, narrow beak, thin beak, pointed beak, small beak, normal bird beak, typical bird beak, standard bird beak, regular bird beak, ordinary bird beak, common bird beak, usual bird beak, conventional bird beak, traditional bird beak, classic bird beak, standard avian beak, normal avian beak, typical avian beak, regular avian beak, ordinary avian beak, common avian beak, usual avian beak, conventional avian beak, traditional avian beak, classic avian beak, narrow avian beak, thin avian beak, pointed avian beak, small avian beak, normal bird bill, typical bird bill, standard bird bill, regular bird bill, ordinary bird bill, common bird bill, usual bird bill, conventional bird bill, traditional bird bill, classic bird bill, narrow bird bill, thin bird bill, pointed bird bill, small bird bill, actual axe, actual hatchet, actual weapon, axe tool, hatchet tool, weapon tool, metal axe, metal hatchet, metal weapon, wooden axe, wooden hatchet, wooden weapon, axe handle, hatchet handle, weapon handle, axe blade, hatchet blade, weapon blade, axe head, hatchet head, weapon head, axe edge, hatchet edge, weapon edge, axe sharp, hatchet sharp, weapon sharp, axe cutting, hatchet cutting, weapon cutting, axe chopping, hatchet chopping, weapon chopping, axe swinging, hatchet swinging, weapon swinging, axe throwing, hatchet throwing, weapon throwing, axe wielding, hatchet wielding, weapon wielding, axe holding, hatchet holding, weapon holding, axe carrying, hatchet carrying, weapon carrying, axe brandishing, hatchet brandishing, weapon brandishing, axe ready, hatchet ready, weapon ready, axe prepared, hatchet prepared, weapon prepared, axe drawn, hatchet drawn, weapon drawn, axe unsheathed, hatchet unsheathed, weapon unsheathed, axe unsheathed, hatchet unsheathed, weapon unsheathed, axe drawn, hatchet drawn, weapon drawn, axe ready, hatchet ready, weapon ready, axe prepared, hatchet prepared, weapon prepared, axe brandishing, hatchet brandishing, weapon brandishing, axe carrying, hatchet carrying, weapon carrying, axe holding, hatchet holding, weapon holding, axe wielding, hatchet wielding, weapon wielding, axe throwing, hatchet throwing, weapon throwing, axe swinging, hatchet swinging, weapon swinging, axe chopping, hatchet chopping, weapon chopping, axe cutting, hatchet cutting, weapon cutting, axe sharp, hatchet sharp, weapon sharp, axe edge, hatchet edge, weapon edge, axe head, hatchet head, weapon head, axe blade, hatchet blade, weapon blade, axe handle, hatchet handle, weapon handle, wooden weapon, wooden hatchet, wooden axe, metal weapon, metal hatchet, metal axe, weapon tool, hatchet tool, axe tool, actual weapon, actual hatchet, actual axe`;
+          }
+          
+          // Special negative prompt for Aboleths to prevent land creature features
+          if (options.monster && options.monster.toLowerCase().includes('aboleth')) {
+            return `${baseNegative}, land creature, terrestrial, walking, standing on land, legs, feet, paws, claws, land-based, ground-dwelling, terrestrial creature, land animal, walking aberration, land aberration, terrestrial aberration, walking monster, land monster, terrestrial monster, walking beast, land beast, terrestrial beast, walking fish, land fish, terrestrial fish, walking amphibian, land amphibian, terrestrial amphibian, walking eel, land eel, terrestrial eel, walking tentacle creature, land tentacle creature, terrestrial tentacle creature, walking cephalopod, land cephalopod, terrestrial cephalopod, walking mollusk, land mollusk, terrestrial mollusk, walking invertebrate, land invertebrate, terrestrial invertebrate, walking aquatic creature, land aquatic creature, terrestrial aquatic creature, walking marine creature, land marine creature, terrestrial marine creature, walking ocean creature, land ocean creature, terrestrial ocean creature, walking sea creature, land sea creature, terrestrial sea creature, walking water creature, land water creature, terrestrial water creature, walking underwater creature, land underwater creature, terrestrial underwater creature, walking deep sea creature, land deep sea creature, terrestrial deep sea creature, walking abyssal creature, land abyssal creature, terrestrial abyssal creature, walking benthic creature, land benthic creature, terrestrial benthic creature, walking pelagic creature, land pelagic creature, terrestrial pelagic creature, walking nektonic creature, land nektonic creature, terrestrial nektonic creature, walking planktonic creature, land planktonic creature, terrestrial planktonic creature, walking benthopelagic creature, land benthopelagic creature, terrestrial benthopelagic creature, walking demersal creature, land demersal creature, terrestrial demersal creature, walking epipelagic creature, land epipelagic creature, terrestrial epipelagic creature, walking mesopelagic creature, land mesopelagic creature, terrestrial mesopelagic creature, walking bathypelagic creature, land bathypelagic creature, terrestrial bathypelagic creature, walking abyssopelagic creature, land abyssopelagic creature, terrestrial abyssopelagic creature, walking hadopelagic creature, land hadopelagic creature, terrestrial hadopelagic creature`;
+          }
+          
+          // Special negative prompt for Chuuls to prevent demon features
+          if (options.monster && options.monster.toLowerCase().includes('chuul')) {
+            return `${baseNegative}, demon, demonic, devil, infernal, hellish, fiend, demonic creature, devil creature, infernal creature, hellish creature, fiend creature, demonic monster, devil monster, infernal monster, hellish monster, fiend monster, demonic aberration, devil aberration, infernal aberration, hellish aberration, fiend aberration, demonic beast, devil beast, infernal beast, hellish beast, fiend beast, demonic humanoid, devil humanoid, infernal humanoid, hellish humanoid, fiend humanoid, demonic dragon, devil dragon, infernal dragon, hellish dragon, fiend dragon, demonic undead, devil undead, infernal undead, hellish undead, fiend undead, demonic construct, devil construct, infernal construct, hellish construct, fiend construct, demonic elemental, devil elemental, infernal elemental, hellish elemental, fiend elemental, demonic fey, devil fey, infernal fey, hellish fey, fiend fey, demonic giant, devil giant, infernal giant, hellish giant, fiend giant, demonic monstrosity, devil monstrosity, infernal monstrosity, hellish monstrosity, fiend monstrosity, demonic ooze, devil ooze, infernal ooze, hellish ooze, fiend ooze, land creature, terrestrial, walking, standing on land, legs, feet, paws, claws, land-based, ground-dwelling, terrestrial creature, land animal, walking aberration, land aberration, terrestrial aberration, walking monster, land monster, terrestrial monster, walking beast, land beast, terrestrial beast, walking fish, land fish, terrestrial fish, walking amphibian, land amphibian, terrestrial amphibian, walking lobster, land lobster, terrestrial lobster, walking crustacean, land crustacean, terrestrial crustacean, walking invertebrate, land invertebrate, terrestrial invertebrate, walking aquatic creature, land aquatic creature, terrestrial aquatic creature, walking marine creature, land marine creature, terrestrial marine creature, walking ocean creature, land ocean creature, terrestrial ocean creature, walking sea creature, land sea creature, terrestrial sea creature, walking water creature, land water creature, terrestrial water creature, walking underwater creature, land underwater creature, terrestrial underwater creature, walking deep sea creature, land deep sea creature, terrestrial deep sea creature, walking abyssal creature, land abyssal creature, terrestrial abyssal creature, walking benthic creature, land benthic creature, terrestrial benthic creature, walking pelagic creature, land pelagic creature, terrestrial pelagic creature, walking nektonic creature, land nektonic creature, terrestrial nektonic creature, walking planktonic creature, land planktonic creature, terrestrial planktonic creature, walking benthopelagic creature, land benthopelagic creature, terrestrial benthopelagic creature, walking demersal creature, land demersal creature, terrestrial demersal creature, walking epipelagic creature, land epipelagic creature, terrestrial epipelagic creature, walking mesopelagic creature, land mesopelagic creature, terrestrial mesopelagic creature, walking bathypelagic creature, land bathypelagic creature, terrestrial bathypelagic creature, walking abyssopelagic creature, land abyssopelagic creature, terrestrial abyssopelagic creature, walking hadopelagic creature, land hadopelagic creature, terrestrial hadopelagic creature`;
           }
           
           // Append custom negative prompt if provided
@@ -734,8 +1065,11 @@ async function processBatch(monsters, batchNumber) {
     const result = await generateMonsterImage(monster);
     results.push({ monster: monster.name, type: monster.type, ...result });
     
-    // Add a small delay between requests to be respectful to the API
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    // Only add delay if we actually generated an image (not when skipping)
+    if (!result.skipped) {
+      // Add a small delay between requests to be respectful to the API
+      await new Promise(resolve => setTimeout(resolve, 3000));
+    }
   }
   
   // Log batch results

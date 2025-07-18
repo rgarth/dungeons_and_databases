@@ -346,8 +346,7 @@ class ClientCache {
         subraces,
         languages,
         spells,
-        games,
-        monsters
+        games
       ] = await Promise.all([
         fetch('/api/races').then(res => res.json()),
         fetch('/api/classes').then(res => res.json()),
@@ -361,8 +360,7 @@ class ClientCache {
         fetch('/api/subraces').then(res => res.json()),
         fetch('/api/languages').then(res => res.json()),
         fetch('/api/spells').then(res => res.json()),
-        fetch('/api/games').then(res => res.json()).catch(() => []), // Games might fail if not authenticated
-        fetch('/api/monsters').then(res => res.json())
+        fetch('/api/games').then(res => res.json()).catch(() => []) // Games might fail if not authenticated
       ]);
 
       // Pre-load weapon and armor suggestions for all classes
@@ -441,8 +439,7 @@ class ClientCache {
         armorSuggestions,
         spells,
         spellLimits,
-        games,
-        monsters
+        games
       };
 
       console.log('✅ Client cache initialized:', {
@@ -461,8 +458,7 @@ class ClientCache {
         weaponSuggestions: Object.keys(weaponSuggestions).length,
         armorSuggestions: Object.keys(armorSuggestions).length,
         spellLimits: Object.keys(spellLimits).length,
-        games: games.length,
-        monsters: monsters.length
+        games: games.length
       });
     } catch (error) {
       console.error('❌ Failed to initialize client cache:', error);
@@ -540,8 +536,20 @@ class ClientCache {
     return this.cache.games || [];
   }
 
-  getMonsters() {
-    return this.cache.monsters || [];
+  async getMonsters() {
+    if (!this.cache.monsters) {
+      try {
+        console.log('🔄 Loading monsters on demand...');
+        const response = await fetch('/api/monsters');
+        const monstersData = await response.json();
+        this.cache.monsters = monstersData;
+        console.log(`✅ Loaded ${monstersData.length} monsters`);
+      } catch (error) {
+        console.error('❌ Failed to load monsters:', error);
+        this.cache.monsters = [];
+      }
+    }
+    return this.cache.monsters ?? [];
   }
 
   isInitialized() {

@@ -532,9 +532,9 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 1.",
-    "background": "This humanoid is a formidable opponent.",
-    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A large, hairy goblinoid with long arms, hunched posture, and bestial features.",
+    "background": "This bugbear is a large, hairy goblinoid with long arms, hunched posture, and bestial features.",
+    "imagePrompt": "A large hairy goblinoid with long arms, hunched posture, bestial features, fangs, pointed ears, and animal-like appearance",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -832,9 +832,9 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small humanoid with challenge rating 0.5.",
-    "background": "This humanoid is a formidable opponent.",
-    "imagePrompt": "A small humanoid creature with humanoid features",
+    "description": "A small fey humanoid with pointed ears, intelligent eyes, prominent nose, earth-toned skin, mature features.",
+    "background": "This deep gnome is a small fey humanoid with pointed ears, intelligent eyes, prominent nose, earth-toned skin, mature features.",
+    "imagePrompt": "A small fey humanoid with pointed ears, intelligent eyes, prominent nose, earth-toned skin, mature features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -922,7 +922,7 @@ export const humanoidMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A medium humanoid with challenge rating 0.25.",
     "background": "This humanoid is a formidable opponent.",
-    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imagePrompt": "A drow dark elf with PITCH BLACK SKIN, DEEP BLACK SKIN, COAL BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, RED EYES, BLOOD RED EYES, pointed ears, graceful features, underdark heritage, drow appearance, NOT ASIAN, NOT OLIVE SKIN, NOT HUMAN, PURE BLACK SKIN ONLY, clearly dark elf features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1092,7 +1092,7 @@ export const humanoidMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A medium humanoid with challenge rating 1.",
     "background": "This humanoid is a formidable opponent.",
-    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imagePrompt": "A gray dwarf duergar with GRAY SKIN, ASHEN SKIN, DEEP GRAY SKIN, BIG BUSHY BEARD, traditional dwarven features, stocky build, broad shoulders, underdark heritage, gray dwarf, underdark dwarf, wearing armor and wielding weapons",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1267,9 +1267,9 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 0.5.",
-    "background": "This humanoid is a formidable opponent.",
-    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A medium humanoid with hyena-like head, brown fur, muscular torso, and thin legs.",
+    "background": "This gnoll is a medium humanoid with hyena-like head, brown fur, muscular torso, and thin legs.",
+    "imagePrompt": "A gnoll with HYENA HEAD, long hyena snout, pointed hyena ears, yellow hyena eyes, brown fur covering body, muscular torso, thin legs, bestial hyena features, NOT human with hyena makeup, clearly hyena-headed humanoid",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1426,9 +1426,9 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 0.25.",
-    "background": "This humanoid is a formidable opponent.",
-    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A grey-skinned, perverted primitive human with leathery skin, living in the Underdark caves.",
+    "background": "This grimlock is a grey-skinned, perverted primitive human with leathery skin, living in the Underdark caves.",
+    "imagePrompt": "A grey-skinned, perverted primitive human with leathery skin, caveman-like features, living in dark underground caves of the Underdark, no horns or monster features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1670,7 +1670,7 @@ export const humanoidMonsters: Monster[] = [
     "legendaryActions": [],
     "description": "A medium humanoid with challenge rating 0.5.",
     "background": "This humanoid is a formidable opponent.",
-    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imagePrompt": "A hobgoblin with REDDISH-BROWN SKIN, GRAY SKIN, BRIGHT RED-ORANGE FACE, prominent BLUE NOSE or RED NOSE, yellowish to dark brown eyes, yellowed teeth, dark reddish-brown to gray hair, burly muscular build, 5-6 feet tall, goblinoid features, military appearance, NOT beautiful lady, NOT human, clearly goblinoid monster",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1842,9 +1842,9 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small humanoid with challenge rating 0.125.",
-    "background": "This humanoid is a formidable opponent.",
-    "imagePrompt": "A small humanoid creature with humanoid features",
+    "description": "A small reptilian humanoid with scaly skin, crocodile-like jaw, small horns, and rat-like tail.",
+    "background": "This kobold is a small reptilian humanoid with scaly skin ranging from reddish-brown to black, burnt orange to red eyes, double-jointed legs, long clawed fingers, crocodile-like jaw, small horns, and rat-like tail.",
+    "imagePrompt": "A small reptilian humanoid with scaly reddish-brown to black skin, burnt orange to red eyes, double-jointed legs, long clawed fingers, crocodile-like jaw, small horns, rat-like tail, wearing red or orange tattered clothing",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1951,9 +1951,9 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 0.5.",
-    "background": "This humanoid is a formidable opponent.",
-    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A medium reptilian humanoid that looks like a walking lizard with scales and reptilian features.",
+    "background": "This lizardfolk is a medium reptilian humanoid that looks like a walking lizard with scales, reptilian head, and lizard-like features.",
+    "imagePrompt": "A lizardfolk with LIZARD HEAD, long lizard snout, forked tongue, slit lizard eyes, green scales covering entire body, lizard tail, clawed hands and feet, anthropomorphic lizard, NOT human with lizard features, clearly lizard-headed humanoid",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2088,9 +2088,9 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 0.125.",
-    "background": "This humanoid is a formidable opponent.",
-    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A medium aquatic humanoid with human upper body and fish tail, living underwater.",
+    "background": "This merfolk is a medium aquatic humanoid with human upper body and fish tail, living underwater.",
+    "imagePrompt": "A medium aquatic humanoid with human upper body and fish tail, swimming underwater in ocean environment",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2231,9 +2231,9 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 0.5.",
-    "background": "This humanoid is a formidable opponent.",
-    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A medium orc with greenish-gray skin, tusks, and brutish features.",
+    "background": "This orc is a medium humanoid with greenish-gray skin, prominent tusks, brutish features, and muscular build.",
+    "imagePrompt": "A medium orc with greenish-gray skin, prominent tusks, brutish features, muscular build, and aggressive appearance",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2410,9 +2410,9 @@ export const humanoidMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium humanoid with challenge rating 0.5.",
-    "background": "This humanoid is a formidable opponent.",
-    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "description": "A medium aquatic humanoid with shark-like features, fins, and webbed hands.",
+    "background": "This sahuagin is a medium aquatic humanoid with shark-like head, fins, webbed hands, and predatory features.",
+    "imagePrompt": "A medium aquatic humanoid with shark-like head, fins, webbed hands, predatory features, swimming underwater in ocean environment",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

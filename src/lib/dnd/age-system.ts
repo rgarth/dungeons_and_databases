@@ -87,6 +87,11 @@ export function getDiverseAgeDescription(race: string, gender?: string, subrace?
     return 'young adult to middle-aged drow, mature features, some fine lines, confident expression, DARK SKIN, BLACK SKIN, DEEP BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, PURE WHITE HAIR, RED EYES, BLOOD RED EYES, CRIMSON RED EYES, pointed ears, underdark features, drow heritage, dark elf, underdark elf';
   }
 
+  // Special handling for Duergar subrace
+  if (race === 'Dwarf' && subrace === 'Duergar') {
+    return 'young adult to middle-aged duergar, mature features, some fine lines, confident expression, traditional dwarven features, stocky build, broad shoulders, GRAY SKIN, ASHEN SKIN, DEEP GRAY SKIN, BIG BUSHY BEARD, well-maintained beard, underdark heritage, gray dwarf';
+  }
+
   // For races with gender-specific beards, modify the description
   if (profile.special.beardByGender && gender) {
     // This is a simplified approach - in practice, you might want to modify the diverse description

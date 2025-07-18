@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MainLayout from "@/components/layout/MainLayout";
 import { LoadingModal } from "@/components/loading-modal";
@@ -87,8 +87,32 @@ export default function MonstersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Use cached monsters data from client cache
-  const { monsters, isInitialized } = useClientCache();
+  const { monsters: getMonsters, isInitialized } = useClientCache();
+  const [monsters, setMonsters] = useState<Monster[]>([]);
   const isLoading = !isInitialized;
+  
+
+
+  // Load monsters when component mounts
+  useEffect(() => {
+    const loadMonsters = async () => {
+      if (isInitialized) {
+        try {
+          const monstersData = await getMonsters;
+          console.log(`📊 Loaded ${monstersData.length} monsters`);
+          console.log('📊 First few monsters:', monstersData.slice(0, 3).map(m => ({ name: m.name, type: m.type })));
+          setMonsters(monstersData);
+          console.log(`🔄 Set monsters state to ${monstersData.length} monsters`);
+        } catch (error) {
+          console.error('Failed to load monsters:', error);
+        }
+      }
+    };
+
+    loadMonsters();
+  }, [isInitialized, getMonsters]);
+
+
 
   // Helper function to get CR as number for range filtering
   const getCRAsNumber = (cr: string): number => {
@@ -163,7 +187,7 @@ export default function MonstersPage() {
       }
     };
 
-    return monsters.filter(monster => {
+    const filtered = monsters.filter(monster => {
       // Search term filter
       const matchesSearch = searchTerm === "" || 
         monster.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -200,6 +224,8 @@ export default function MonstersPage() {
 
       return matchesSearch && matchesCategory && matchesCR && matchesSize && matchesAlignment;
     });
+    
+    return filtered;
   }, [monsters, searchTerm, selectedCategory, selectedCR, selectedSize, selectedAlignment]);
 
   // Get category counts
@@ -443,7 +469,7 @@ export default function MonstersPage() {
                 <Icon className="h-4 w-4" />
                 {category}
                                   <span className="text-xs bg-[var(--color-card)] text-[var(--color-text-primary)] px-2 py-1 rounded-full">
-                  {categoryCounts[category] || 0}
+                  {isLoading ? "..." : (categoryCounts[category] || 0)}
                 </span>
               </button>
             );
@@ -454,7 +480,7 @@ export default function MonstersPage() {
       {/* Results count and active filters */}
       <div className="mb-4 flex flex-wrap items-center gap-4 text-sm">
         <span className="text-[var(--color-text-secondary)]">
-          Showing {filteredMonsters.length} of {monsters.length} monsters
+          {isLoading ? "Loading monsters..." : `Showing ${filteredMonsters.length} of ${monsters.length} monsters`}
         </span>
         
         {/* CR Difficulty Legend */}

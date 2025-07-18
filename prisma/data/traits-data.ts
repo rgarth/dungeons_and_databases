@@ -188,6 +188,11 @@ export const traitsData = [
     description: "When you reach 3rd level, you can cast the enlarge/reduce spell on yourself once with this trait, using only the spell's enlarge option. When you reach 5th level, you can cast the invisibility spell on yourself once with this trait. You don't need material components for either spell, and you can't cast them while you're in direct sunlight, although sunlight has no effect on them once cast. You regain the ability to cast these spells with this trait when you finish a long rest. Intelligence is your spellcasting ability for these spells.",
     type: "active"
   },
+  {
+    name: "Duergar Resilience",
+    description: "You have advantage on saving throws against poison, spells, and illusions, as well as to resist being charmed or paralyzed.",
+    type: "passive"
+  },
 
   // Missing Traits from Races Data
   {

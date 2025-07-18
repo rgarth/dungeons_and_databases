@@ -42,7 +42,7 @@ export async function GET(
     let chatMessages = chatCache.get(gameId);
     if (!chatMessages) {
       // Fetch from DB
-      const messages = await prisma.gameChatMessage.findMany({
+    const messages = await prisma.gameChatMessage.findMany({
         where: { gameId },
         orderBy: { createdAt: 'desc' },
         take: 100,
@@ -73,9 +73,9 @@ export async function POST(
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     const { gameId } = await params;
-    
+
     // Verify user is a participant in this game
     const participant = await prisma.gameParticipant.findUnique({
       where: {

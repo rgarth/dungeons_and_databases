@@ -5,6 +5,7 @@ import { Monster } from "@/types/monster";
 import { Button } from "@/components/ui";
 import { X, Shield, Sword, BookOpen, Zap, Crown, Eye, Users, Leaf, Flame, Skull, Droplets, Mountain, Sparkles } from "lucide-react";
 import { useDiceRoll } from './providers/dice-provider';
+import { MonsterImage } from './monster-image';
 
 interface MonsterDetailModalProps {
   monster: Monster | null;
@@ -538,60 +539,79 @@ export default function MonsterDetailModal({ monster, isOpen, onClose }: Monster
         <div className="overflow-y-auto flex-1 p-6">
           {activeTab === 'overview' && (
             <div className="space-y-6">
-              {/* Basic Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-4">
-                  <h4 className="font-semibold text-[var(--color-text-primary)] mb-2">Challenge Rating</h4>
-                  <p 
-                    className="text-2xl font-bold"
-                    style={{
-                      background: getCRDifficultyBg(monster.challengeRating),
-                      color: getCRDifficultyTextColor(monster.challengeRating),
-                      padding: "0.25rem 0.5rem",
-                      borderRadius: "0.375rem",
-                      display: "inline-block"
-                    }}
-                  >
-                    CR {monster.challengeRating}
-                  </p>
-                  <p className="text-sm text-[var(--color-text-secondary)] mt-2">{monster.xp.toLocaleString()} XP</p>
-                </div>
-                
-                <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-4">
-                  <h4 className="font-semibold text-[var(--color-text-primary)] mb-2">Armor Class</h4>
-                  <p className="text-2xl font-bold text-[var(--color-accent)]">{formatArmorClass()}</p>
-                </div>
-                
-                <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-4">
-                  <h4 className="font-semibold text-[var(--color-text-primary)] mb-2">Hit Points</h4>
-                  <p className="text-2xl font-bold text-[var(--color-accent)]">{monster.hitPoints}</p>
-                  <p className="text-sm text-[var(--color-text-secondary)]">{monster.hitDice}</p>
-                </div>
-                
-                <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-4">
-                  <h4 className="font-semibold text-[var(--color-text-primary)] mb-2">Speed</h4>
-                  <p className="text-lg font-semibold text-[var(--color-accent)]">{formatSpeed(monster.speed)}</p>
-                </div>
-              </div>
-
-              {/* Ability Scores */}
-              <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-4">
-                <h4 className="font-semibold text-[var(--color-text-primary)] mb-4">Ability Scores</h4>
-                <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                  {[
-                    { name: 'STR', score: monster.strength },
-                    { name: 'DEX', score: monster.dexterity },
-                    { name: 'CON', score: monster.constitution },
-                    { name: 'INT', score: monster.intelligence },
-                    { name: 'WIS', score: monster.wisdom },
-                    { name: 'CHA', score: monster.charisma }
-                  ].map(({ name, score }) => (
-                    <div key={name} className="text-center">
-                      <p className="text-sm text-[var(--color-text-secondary)]">{name}</p>
-                      <p className="text-lg font-bold text-[var(--color-text-primary)]">{score}</p>
-                      <p className="text-sm text-[var(--color-accent)]">{getAbilityModifier(score)}</p>
+              {/* Hero Section: Image and Key Stats */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Left Column: Key Stats (Mobile: below image, Desktop: left side) */}
+                <div className="space-y-4 order-2 lg:order-1">
+                  {/* Basic Stats Grid */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-4">
+                      <h4 className="font-semibold text-[var(--color-text-primary)] mb-2">Challenge Rating</h4>
+                      <p 
+                        className="text-2xl font-bold"
+                        style={{
+                          background: getCRDifficultyBg(monster.challengeRating),
+                          color: getCRDifficultyTextColor(monster.challengeRating),
+                          padding: "0.25rem 0.5rem",
+                          borderRadius: "0.375rem",
+                          display: "inline-block"
+                        }}
+                      >
+                        CR {monster.challengeRating}
+                      </p>
+                      <p className="text-sm text-[var(--color-text-secondary)] mt-2">{monster.xp.toLocaleString()} XP</p>
                     </div>
-                  ))}
+                    
+                    <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-4">
+                      <h4 className="font-semibold text-[var(--color-text-primary)] mb-2">Armor Class</h4>
+                      <p className="text-2xl font-bold text-[var(--color-accent)]">{formatArmorClass()}</p>
+                    </div>
+                    
+                    <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-4">
+                      <h4 className="font-semibold text-[var(--color-text-primary)] mb-2">Hit Points</h4>
+                      <p className="text-2xl font-bold text-[var(--color-accent)]">{monster.hitPoints}</p>
+                      <p className="text-sm text-[var(--color-text-secondary)]">{monster.hitDice}</p>
+                    </div>
+                    
+                    <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-4">
+                      <h4 className="font-semibold text-[var(--color-text-primary)] mb-2">Speed</h4>
+                      <p className="text-lg font-semibold text-[var(--color-accent)]">{formatSpeed(monster.speed)}</p>
+                    </div>
+                  </div>
+
+                  {/* Ability Scores */}
+                  <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-4">
+                    <h4 className="font-semibold text-[var(--color-text-primary)] mb-4">Ability Scores</h4>
+                    <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
+                      {[
+                        { name: 'STR', score: monster.strength },
+                        { name: 'DEX', score: monster.dexterity },
+                        { name: 'CON', score: monster.constitution },
+                        { name: 'INT', score: monster.intelligence },
+                        { name: 'WIS', score: monster.wisdom },
+                        { name: 'CHA', score: monster.charisma }
+                      ].map(({ name, score }) => (
+                        <div key={name} className="text-center">
+                          <p className="text-sm text-[var(--color-text-secondary)]">{name}</p>
+                          <p className="text-lg font-bold text-[var(--color-text-primary)]">{score}</p>
+                          <p className="text-sm text-[var(--color-accent)]">{getAbilityModifier(score)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                                {/* Right Column: Monster Image (Mobile: top, Desktop: right side) */}
+                <div className="flex justify-center items-start order-1 lg:order-2">
+                  <div className="bg-gradient-to-br from-[var(--color-card)] to-[var(--color-surface)] p-4 rounded-lg shadow-lg border border-[var(--color-border)]">
+                    <MonsterImage 
+                      monsterName={monster.name}
+                      width={400}
+                      height={400}
+                      className="max-w-full h-auto rounded-lg"
+                      priority={true}
+                    />
+                  </div>
                 </div>
               </div>
 

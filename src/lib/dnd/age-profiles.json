@@ -129,6 +129,86 @@
     },
     "diverseDescription": "young adult to middle-aged dwarf, mature features, some fine lines, confident expression, traditional dwarven features, stocky build, broad shoulders, well-maintained beard"
   },
+  "Duergar": {
+    "adulthood": 50,
+    "maxAge": 400,
+    "stages": [
+      {
+        "name": "child",
+        "range": [0, 29],
+        "appearance": "youthful duergar features, smooth gray skin, minimal wrinkles, child-like proportions, round face, bright eyes, GRAY SKIN, ASHEN SKIN, UNDERDARK HERITAGE",
+        "maturity": "childhood - still learning and growing",
+        "beard": {
+          "male": "no beard, clean-shaven, youthful appearance",
+          "female": "no facial hair, clean-shaven"
+        }
+      },
+      {
+        "name": "adolescent",
+        "range": [30, 39],
+        "appearance": "young duergar features, some fine lines beginning, developing adult proportions, earnest expression, GRAY SKIN, ASHEN SKIN, UNDERDARK HERITAGE",
+        "maturity": "adolescence - finding their place in society",
+        "beard": {
+          "male": "scraggly beard, patchy facial hair, adolescent growth",
+          "female": "minimal facial hair, clean-shaven"
+        }
+      },
+      {
+        "name": "young_adult",
+        "range": [40, 79],
+        "appearance": "young adult duergar, mature features, some fine lines, confident expression, strong features, GRAY SKIN, ASHEN SKIN, DEEP GRAY SKIN, UNDERDARK HERITAGE",
+        "maturity": "young adulthood - establishing themselves",
+        "beard": {
+          "male": "well-groomed beard, full facial hair, traditional dwarven style, BIG BUSHY BEARD",
+          "female": "short, well-groomed beard or clean-shaven"
+        }
+      },
+      {
+        "name": "adult",
+        "range": [80, 149],
+        "appearance": "mature adult duergar, weathered features, prominent wrinkles, experienced expression, strong character, GRAY SKIN, ASHEN SKIN, DEEP GRAY SKIN, UNDERDARK HERITAGE",
+        "maturity": "full adulthood - respected member of community",
+        "beard": {
+          "male": "thick, well-maintained beard, traditional braids or beads, signs of care, BIG BUSHY BEARD",
+          "female": "short, well-maintained beard or clean-shaven"
+        }
+      },
+      {
+        "name": "middle_aged",
+        "range": [150, 239],
+        "appearance": "middle-aged duergar, deeply weathered features, prominent wrinkles, wise expression, experienced, GRAY SKIN, ASHEN SKIN, DEEP GRAY SKIN, UNDERDARK HERITAGE",
+        "maturity": "middle age - wise and experienced",
+        "beard": {
+          "male": "thick, long beard, often with elaborate braids, beads, or metalwork, well-maintained, BIG BUSHY BEARD",
+          "female": "moderate beard, well-groomed, traditional style"
+        }
+      },
+      {
+        "name": "elderly",
+        "range": [240, 299],
+        "appearance": "elderly duergar, deeply wrinkled face, wise eyes, weathered but strong features, venerable appearance, GRAY SKIN, ASHEN SKIN, DEEP GRAY SKIN, UNDERDARK HERITAGE",
+        "maturity": "elderly - highly respected and wise",
+        "beard": {
+          "male": "long, flowing beard, often white or gray, elaborate braids and decorations, sign of status, BIG BUSHY BEARD",
+          "female": "longer beard, well-maintained, elaborate braids"
+        }
+      },
+      {
+        "name": "venerable",
+        "range": [300, 400],
+        "appearance": "venerable duergar, ancient features, deeply wrinkled, wise and knowing expression, legendary appearance, GRAY SKIN, ASHEN SKIN, DEEP GRAY SKIN, UNDERDARK HERITAGE",
+        "maturity": "venerable - living legend, ancient wisdom",
+        "beard": {
+          "male": "extremely long, flowing beard, often white, elaborate decorations and braids, legendary status, BIG BUSHY BEARD",
+          "female": "long, flowing beard, elaborate decorations, legendary status"
+        }
+      }
+    ],
+    "special": {
+      "beardByGender": true
+    },
+    "diverseDescription": "young adult to middle-aged duergar, mature features, some fine lines, confident expression, traditional dwarven features, stocky build, broad shoulders, GRAY SKIN, ASHEN SKIN, DEEP GRAY SKIN, BIG BUSHY BEARD, well-maintained beard, underdark heritage, gray dwarf"
+  },
   "Elf": {
     "adulthood": 100,
     "maxAge": 750,
