@@ -69,12 +69,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The balor makes two attacks: one with its longsword and one with its whip.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Longsword",
         "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 21 (3d8 + 8) slashing damage plus 13 (3d8) lightning damage. If the balor scores a critical hit, it rolls damage dice three times, instead of twice.",
@@ -183,12 +178,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The devil makes three melee attacks: one with its tail and two with its claws. Alternatively, it can use Hurl Flame twice.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
@@ -294,12 +284,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The devil makes two attacks: one with its beard and one with its glaive.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Beard",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one creature. Hit: 6 (1d8 + 2) piercing damage, and the target must succeed on a DC 12 Constitution saving throw or be poisoned for 1 minute. While poisoned in this way, the target can't regain hit points. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
@@ -395,12 +380,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The devil makes three attacks: two with its claws and one with its sting.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 8 (1d8 + 4) slashing damage.",
@@ -492,12 +472,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The devil makes two attacks with its chains.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Chain",
         "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 11 (2d6 + 4) slashing damage. The target is grappled (escape DC 14) if the devil isn't already grappling a creature. Until this grapple ends, the target is restrained and takes 7 (2d6) piercing damage at the start of each of its turns.",
@@ -579,12 +554,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The dretch makes two attacks: one with its bite and one with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 3 (1d6) piercing damage.",
@@ -686,12 +656,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The erinyes makes three attacks",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Longsword",
         "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) slashing damage, or 9 (1d10 + 4) slashing damage if used with two hands, plus 13 (3d8) poison damage.",
@@ -786,12 +751,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The glabrezu makes four attacks: two with its pincers and two with its fists. Alternatively, it makes two attacks with its pincers and casts one spell.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Pincer",
         "description": "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 16 (2d10 + 5) bludgeoning damage. If the target is a Medium or smaller creature, it is grappled (escape DC 15). The glabrezu has two pincers, each of which can grapple only one target.",
@@ -967,12 +927,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The hezrou makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 15 (2d10 + 4) piercing damage.",
@@ -1067,12 +1022,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The devil makes three melee attacks: two with its fork and one with its tail. It can use Hurl Flame in place of any melee attack.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Fork",
         "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 15 (2d8 + 6) piercing damage.",
@@ -1174,12 +1124,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The devil makes three attacks: one with its bite, one with its claws, and one with its tail.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 12 (2d6 + 5) piercing damage plus 10 (3d6) cold damage.",
@@ -1474,12 +1419,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The marilith can make seven attacks: six with its longswords and one with its tail.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Longsword",
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
@@ -1580,12 +1520,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The nalfeshnee uses Horror Nimbus if it can. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 32 (5d10 + 5) piercing damage.",
@@ -1904,12 +1839,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The pit fiend makes four attacks: one with its bite, one with its claw, one with its mace, and one with its tail.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +14 to hit, reach 5 ft., one target. Hit: 22 (4d6 + 8) piercing damage. The target must succeed on a DC 21 Constitution saving throw or become poisoned. While poisoned in this way, the target can't regain hit points, and it takes 21 (6d6) poison damage at the start of each of its turns. The poisoned target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
@@ -2118,12 +2048,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The rakshasa makes two claw attacks",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 9 (2d6 + 2) slashing damage, and the target is cursed if it is a creature. The magical curse takes effect whenever the target takes a short or long rest, filling the target's thoughts with horrible images and dreams. The cursed target gains no benefit from finishing a short or long rest. The curse lasts until it is lifted by a remove curse spell or similar magic.",
@@ -2319,12 +2244,7 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The vrock makes two attacks: one with its beak and one with its talons.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Beak",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) piercing damage.",

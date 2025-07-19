@@ -65,12 +65,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The sphinx makes two claw attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +12 to hit, reach 5 ft., one target. Hit: 17 (2d10 + 6) slashing damage.",
@@ -294,12 +289,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The behir makes two attacks: one with its bite and one to constrict.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 22 (3d10 + 6) piercing damage.",
@@ -476,12 +466,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The centaur makes two attacks: one with its pike and one with its hooves or two with its longbow.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Pike",
         "description": "Melee Weapon Attack: +6 to hit, reach 10 ft., one target. Hit: 9 (1d10 + 4) piercing damage.",
@@ -568,12 +553,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The chimera makes three attacks: one with its bite, one with its horns, and one with its claws. When its fire breath is available, it can use the breath in place of its bite or horns.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) piercing damage.",
@@ -810,12 +790,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The dog makes two bite attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage. If the target is a creature, it must succeed on a DC 12 Constitution saving throw against disease or become poisoned until the disease is cured. Every 24 hours that elapse, the creature must repeat the saving throw, reducing its hit point maximum by 5 (1d10) on a failure. This reduction lasts until the disease is cured. The creature dies if the disease reduces its hit point maximum to 0.",
@@ -898,12 +873,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The doppelganger makes two melee attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 7 (1d6 + 4) bludgeoning damage.",
@@ -1002,12 +972,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The drider makes three attacks, either with its longsword or its longbow. It can replace one of those attacks with a bite attack.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one creature. Hit: 2 (1d4) piercing damage plus 9 (2d8) poison damage.",
@@ -1107,12 +1072,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The ettercap makes two attacks: one with its bite and one with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 6 (1d8 + 2) piercing damage plus 4 (1d8) poison damage. The target must succeed on a DC 11 Constitution saving throw or be poisoned for 1 minute. The creature can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
@@ -1288,12 +1248,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The grick makes one attack with its tentacles. If that attack hits, the grick can make one beak attack against the same target.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Tentacles",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 9 (2d6 + 2) slashing damage.",
@@ -1373,12 +1328,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The griffon makes two attacks: one with its beak and one with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Beak",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) piercing damage.",
@@ -1564,12 +1514,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The sphinx makes two claw attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
@@ -1646,12 +1591,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The harpy makes two attacks: one with its claws and one with its club.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 6 (2d4 + 1) slashing damage.",
@@ -1739,12 +1679,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The hippogriff makes two attacks: one with its beak and one with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Beak",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 8 (1d10 + 3) piercing damage.",
@@ -1836,12 +1771,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The hydra makes as many bite attacks as it has heads.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 10 (1d10 + 5) piercing damage.",
@@ -1930,12 +1860,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The kraken makes three tentacle attacks, each of which it can replace with one use of Fling.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 23 (3d8 + 10) piercing damage. If the target is a Large or smaller creature grappled by the kraken, that creature is swallowed, and the grapple ends. While swallowed, the creature is blinded and restrained, it has total cover against attacks and other effects outside the kraken, and it takes 42 (12d6) acid damage at the start of each of the kraken's turns. If the kraken takes 50 damage or more on a single turn from a creature inside it, the kraken must succeed on a DC 25 Constitution saving throw at the end of that turn or regurgitate all swallowed creatures, which fall prone in a space within 10 feet of the kraken. If the kraken dies, a swallowed creature is no longer restrained by it and can escape from the corpse using 15 feet of movement, exiting prone.",
@@ -2051,12 +1976,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The lamia makes two attacks: one with its claws and one with its dagger or Intoxicating Touch.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 14 (2d10 + 3) slashing damage.",
@@ -2144,12 +2064,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The manticore makes three attacks: one with its bite and two with its claws or three with its tail spikes.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) piercing damage.",
@@ -2243,12 +2158,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The medusa makes either three melee attacks--one with its snake hair and two with its shortsword--or two ranged attacks with its longbow.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Snake Hair",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one creature. Hit: 4 (1d4 + 2) piercing damage plus 14 (4d6) poison damage.",
@@ -2339,12 +2249,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The merrow makes two attacks: one with its bite and one with its claws or harpoon.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) piercing damage.",
@@ -2610,12 +2515,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The owlbear makes two attacks: one with its beak and one with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Beak",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one creature. Hit: 10 (1d10 + 5) piercing damage.",
@@ -2768,12 +2668,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The worm makes two attacks: one with its bite and one with its stinger.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 22 (3d8 + 9) piercing damage. If the target is a Large or smaller creature, it must succeed on a DC 19 Dexterity saving throw or be swallowed by the worm. A swallowed creature is blinded and restrained, it has total cover against attacks and other effects outside the worm, and it takes 21 (6d6) acid damage at the start of each of the worm's turns.\nIf the worm takes 30 damage or more on a single turn from a creature inside it, the worm must succeed on a DC 21 Constitution saving throw at the end of that turn or regurgitate all swallowed creatures, which fall prone in a space within 10 feet of the worm. If the worm dies, a swallowed creature is no longer restrained by it and can escape from the corpse by using 20 feet of movement, exiting prone.",
@@ -2929,12 +2824,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The roc makes two attacks: one with its beak and one with its talons.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Beak",
         "description": "Melee Weapon Attack: +13 to hit, reach 10 ft., one target. Hit: 27 (4d8 + 9) piercing damage.",
@@ -3023,12 +2913,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The roper makes four attacks with its tendrils, uses Reel, and makes one attack with its bite.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 22 (4d8 + 4) piercing damage.",
@@ -3287,12 +3172,7 @@ export const monstrosityMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The tarrasque can use its Frightful Presence. It then makes five attacks: one with its bite, two with its claws, one with its horns, and one with its tail. It can use its Swallow instead of its bite.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +19 to hit, reach 10 ft., one target. Hit: 36 (4d12 + 10) piercing damage. If the target is a creature, it is grappled (escape DC 20). Until this grapple ends, the target is restrained, and the tarrasque can't bite another target.",

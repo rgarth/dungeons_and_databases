@@ -57,13 +57,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +11 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage plus 4 (1d8) acid damage.",
@@ -190,13 +185,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +12 to hit, reach 10 ft., one target. Hit: 18 (2d10 + 7) piercing damage plus 5 (1d10) lightning damage.",
@@ -325,13 +315,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +11 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage.",
@@ -463,13 +448,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +12 to hit, reach 10 ft., one target. Hit: 18 (2d10 + 7) piercing damage.",
@@ -597,13 +577,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +11 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage.",
@@ -736,13 +711,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 19 (2d10 + 8) piercing damage.",
@@ -878,13 +848,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +11 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage plus 7 (2d6) poison damage.",
@@ -1011,13 +976,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 19 (2d10 + 8) piercing damage plus 7 (2d6) fire damage.",
@@ -1145,13 +1105,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +13 to hit, reach 10 ft., one target. Hit: 19 (2d10 + 8) piercing damage.",
@@ -1283,13 +1238,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +11 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage plus 4 (1d8) cold damage.",
@@ -1420,13 +1370,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack:+ 15 to hit, reach 15 ft., one target. Hit: 19 (2d10 + 8) piercing damage plus 9 (2d8) acid damage.",
@@ -1553,13 +1498,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +16 to hit, reach 15 ft., one target. Hit: 20 (2d10 + 9) piercing damage plus 11 (2d10) lightning damage.",
@@ -1688,13 +1628,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +14 to hit, reach 15 ft., one target. Hit: 19 (2d10 + 8) piercing damage.",
@@ -1835,13 +1770,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +16 to hit, reach 15 ft., one target. Hit: 20 (2d10 + 9) piercing damage.",
@@ -1978,13 +1908,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +15 to hit, reach 15 ft., one target. Hit: 19 (2d10 + 8) piercing damage.",
@@ -2126,13 +2051,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +17 to hit, reach 15 ft., one target. Hit: 21 (2d10 + 10) piercing damage.",
@@ -2277,13 +2197,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +15 to hit, reach 15 ft., one target. Hit: 19 (2d10 + 8) piercing damage plus 10 (3d6) poison damage.",
@@ -2410,13 +2325,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +17 to hit, reach 15 ft., one target. Hit: 21 (2d10 + 10) piercing damage plus 14 (4d6) fire damage.",
@@ -2544,13 +2454,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +17 to hit, reach 15 ft., one target. Hit: 21 (2d10 + 10) piercing damage.",
@@ -2691,13 +2596,8 @@ export const dragonMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        "description": "The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +14 to hit, reach 15 ft., one target. Hit: 19 (2d10 + 8) piercing damage plus 9 (2d8) cold damage.",
@@ -3210,12 +3110,7 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The dragon turtle makes three attacks: one with its bite and two with its claws. It can make one tail attack in place of its two claw attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +13 to hit, reach 15 ft., one target. Hit: 26 (3d12 + 7) piercing damage.",
@@ -3787,12 +3682,7 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The wyvern makes two attacks: one with its bite and one with its stinger. While flying, it can use its claws in place of one other attack.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one creature. Hit: 11 (2d6 + 4) piercing damage.",
@@ -3889,12 +3779,7 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The dragon makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 15 (2d10 + 4) piercing damage plus 4 (1d8) acid damage.",
@@ -3985,12 +3870,7 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The dragon makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 16 (2d10 + 5) piercing damage plus 5 (1d10) lightning damage.",
@@ -4082,12 +3962,7 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The dragon makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 15 (2d10 + 4) piercing damage.",
@@ -4184,12 +4059,7 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The dragon makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 16 (2d10 + 5) piercing damage.",
@@ -4281,12 +4151,7 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The dragon makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 15 (2d10 + 4) piercing damage.",
@@ -4384,12 +4249,7 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The dragon makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage.",
@@ -4488,12 +4348,7 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The dragon makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 15 (2d10 + 4) piercing damage plus 7 (2d6) poison damage.",
@@ -4584,12 +4439,7 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The dragon makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage plus 3 (1d6) fire damage.",
@@ -4681,12 +4531,7 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The dragon makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage.",
@@ -4783,12 +4628,7 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The dragon makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 15 (2d10 + 4) piercing damage plus 4 (1d8) cold damage.",

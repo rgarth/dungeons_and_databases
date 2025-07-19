@@ -203,12 +203,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The assassin makes two shortsword attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Shortsword",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage, and the target must make a DC 15 Constitution saving throw, taking 24 (7d6) poison damage on a failed save, or half as much damage on a successful one.",
@@ -355,12 +350,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The captain makes three melee attacks: two with its scimitar and one with its dagger. Or the captain makes two ranged attacks with its daggers.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Scimitar",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
@@ -653,12 +643,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The fanatic makes two melee attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Dagger",
         "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one creature. Hit: 4 (1d4 + 2) piercing damage.",
@@ -1145,12 +1130,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The gladiator makes three melee attacks or two ranged attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Spear",
         "description": "Melee or Ranged Weapon Attack: +7 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 11 (2d6 + 4) piercing damage, or 13 (2d8 + 4) piercing damage if used with two hands to make a melee attack.",
@@ -1533,12 +1513,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The veteran makes two longsword attacks. If it has a shortsword drawn, it can also make a shortsword attack.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Longsword",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage, or 8 (1d10 + 3) slashing damage if used with two hands.",
@@ -1709,12 +1684,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The knight makes two melee attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Greatsword",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage.",
@@ -1887,12 +1857,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The lizardfolk makes two melee attacks, each one with a different weapon.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
@@ -2355,12 +2320,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The sahuagin makes two melee attacks: one with its bite and one with its claws or spear.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 3 (1d4 + 1) piercing damage.",
@@ -2454,12 +2414,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The scout makes two melee attacks or two ranged attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Shortsword",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
@@ -2549,12 +2504,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The spy makes two melee attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Shortsword",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
@@ -2635,12 +2585,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The thug makes two melee attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Mace",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 5 (1d6 + 2) bludgeoning damage.",
@@ -2782,12 +2727,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The veteran makes two longsword attacks. If it has a shortsword drawn, it can also make a shortsword attack.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Longsword",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage, or 8 (1d10 + 3) slashing damage if used with two hands.",
@@ -2883,12 +2823,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "In bear form, the werebear makes two claw attacks. In humanoid form, it makes two greataxe attacks. In hybrid form, it can attack like a bear or a humanoid.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 15 (2d10 + 4) piercing damage. If the target is a humanoid, it must succeed on a DC 14 Constitution saving throw or be cursed with werebear lycanthropy.",
@@ -2973,12 +2908,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "In bear form, the werebear makes two claw attacks. In humanoid form, it makes two greataxe attacks. In hybrid form, it can attack like a bear or a humanoid.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Greataxe",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 10 (1d12 + 4) slashing damage.",
@@ -3054,12 +2984,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "In bear form, the werebear makes two claw attacks. In humanoid form, it makes two greataxe attacks. In hybrid form, it can attack like a bear or a humanoid.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 15 (2d10 + 4) piercing damage. If the target is a humanoid, it must succeed on a DC 14 Constitution saving throw or be cursed with werebear lycanthropy.",
@@ -3227,12 +3152,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The wereboar makes two attacks, only one of which can be with its tusks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Maul",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage.",
@@ -3311,12 +3231,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The wereboar makes two attacks, only one of which can be with its tusks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Maul",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage.",
@@ -3402,12 +3317,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The wererat makes two attacks, only one of which can be a bite.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Shortsword",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
@@ -3493,12 +3403,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The wererat makes two attacks, only one of which can be a bite.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 11 Constitution saving throw or be cursed with wererat lycanthropy.",
@@ -3666,12 +3571,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "In humanoid form, the weretiger makes two scimitar attacks or two longbow attacks. In hybrid form, it can attack like a humanoid or make two claw attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Scimitar",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
@@ -3762,12 +3662,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "In humanoid form, the weretiger makes two scimitar attacks or two longbow attacks. In hybrid form, it can attack like a humanoid or make two claw attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 8 (1d10 + 3) piercing damage. If the target is a humanoid, it must succeed on a DC 13 Constitution saving throw or be cursed with weretiger lycanthropy.",
@@ -3957,12 +3852,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The werewolf makes two attacks: two with its spear (humanoid form) or one with its bite and one with its claws (hybrid form).",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Spear",
         "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one creature. Hit: 5 (1d6 + 2) piercing damage, or 6 (1d8 + 2) piercing damage if used with two hands to make a melee attack.",
@@ -4037,12 +3927,7 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The werewolf makes two attacks: two with its spear (humanoid form) or one with its bite and one with its claws (hybrid form).",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with werewolf lycanthropy.",

@@ -192,12 +192,7 @@ export const plantMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The shambling mound makes two slam attacks. If both attacks hit a Medium or smaller target, the target is grappled (escape DC 14), and the shambling mound uses its Engulf on it.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
@@ -338,12 +333,7 @@ export const plantMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The treant makes two slam attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 16 (3d6 + 6) bludgeoning damage.",
@@ -431,12 +421,7 @@ export const plantMonsters: Monster[] = [
       {
         "name": "Multiattack",
         "description": "The fungus makes 1d4 Rotting Touch attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
-      },
+        },
       {
         "name": "Rotting Touch",
         "description": "Melee Weapon Attack: +2 to hit, reach 10 ft., one creature. Hit: 4 (1d8) necrotic damage.",
