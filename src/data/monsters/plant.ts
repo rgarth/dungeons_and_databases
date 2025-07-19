@@ -172,7 +172,6 @@ export const plantMonsters: Monster[] = [
     ],
     "conditionImmunities": [
       "Blinded",
-      "Blinded",
       "Exhaustion"
     ],
     "damageVulnerabilities": [],
@@ -207,9 +206,9 @@ export const plantMonsters: Monster[] = [
         "name": "Engulf",
         "description": "The shambling mound engulfs a Medium or smaller creature grappled by it. The engulfed target is blinded, restrained, and unable to breathe, and it must succeed on a DC 14 Constitution saving throw at the start of each of the mound's turns or take 13 (2d8 + 4) bludgeoning damage. If the mound moves, the engulfed target moves with it. The mound can have only one creature engulfed at a time.",
         "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
+          "type": "Bludgeoning",
+          "roll": "2d8+4",
+          "average": 13
         }
       }
     ],
@@ -332,8 +331,8 @@ export const plantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The treant makes two slam attacks.",
-        },
+        "description": "The treant makes two slam attacks."
+      },
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 16 (3d6 + 6) bludgeoning damage.",
@@ -356,12 +355,7 @@ export const plantMonsters: Monster[] = [
       },
       {
         "name": "Animate Trees",
-        "description": "The treant magically animates one or two trees it can see within 60 feet of it. These trees have the same statistics as a treant, except they have Intelligence and Charisma scores of 1, they can't speak, and they have only the Slam action option. An animated tree acts as an ally of the treant. The tree remains animate for 1 day or until it dies; until the treant dies or is more than 120 feet from the tree; or until the treant takes a bonus action to turn it back into an inanimate tree. The tree then takes root if possible.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The treant magically animates one or two trees it can see within 60 feet of it. These trees have the same statistics as a treant, except they have Intelligence and Charisma scores of 1, they can't speak, and they have only the Slam action option. An animated tree acts as an ally of the treant. The tree remains animate for 1 day or until it dies; until the treant dies or is more than 120 feet from the tree; or until the treant takes a bonus action to turn it back into an inanimate tree. The tree then takes root if possible."
       }
     ],
     "legendaryActions": [],
@@ -420,8 +414,8 @@ export const plantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The fungus makes 1d4 Rotting Touch attacks.",
-        },
+        "description": "The fungus makes 1d4 Rotting Touch attacks."
+      },
       {
         "name": "Rotting Touch",
         "description": "Melee Weapon Attack: +2 to hit, reach 10 ft., one creature. Hit: 4 (1d8) necrotic damage.",
