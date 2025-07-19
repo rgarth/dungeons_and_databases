@@ -57,12 +57,7 @@ export const feyMonsters: Monster[] = [
       },
       {
         "name": "Teleport",
-        "description": "The dog magically teleports, along with any equipment it is wearing or carrying, up to 40 ft. to an unoccupied space it can see. Before or after teleporting, the dog can make one bite attack.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The dog magically teleports, along with any equipment it is wearing or carrying, up to 40 ft. to an unoccupied space it can see. Before or after teleporting, the dog can make one bite attack."
       }
     ],
     "legendaryActions": [],
@@ -157,7 +152,8 @@ export const feyMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A mystical fey creature with ethereal beauty and magical abilities. Fey creatures are native to the Feywild and often have strange, otherworldly powers.",    "imagePrompt": "A medium fey creature with magical and ethereal features",
+    "description": "A mystical fey creature with ethereal beauty and magical abilities. Fey creatures are native to the Feywild and often have strange, otherworldly powers.",
+    "imagePrompt": "A medium fey creature with magical and ethereal features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -530,7 +526,8 @@ export const feyMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny fey creature with magical and ethereal features. Fey creatures are native to the Feywild and often have strange, otherworldly powers.",    "imagePrompt": "A tiny fey creature with magical and ethereal features",
+    "description": "A tiny fey creature with magical and ethereal features. Fey creatures are native to the Feywild and often have strange, otherworldly powers.",
+    "imagePrompt": "A tiny fey creature with magical and ethereal features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
