@@ -60,12 +60,7 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The elemental makes two slam attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The elemental makes two slam attacks."
       },
       {
         "name": "Slam",
@@ -79,12 +74,7 @@ export const elementalMonsters: Monster[] = [
       },
       {
         "name": "Whirlwind",
-        "description": "Each creature in the elemental's space must make a DC 13 Strength saving throw. On a failure, a target takes 15 (3d8 + 2) bludgeoning damage and is flung up 20 feet away from the elemental in a random direction and knocked prone. If a thrown target strikes an object, such as a wall or floor, the target takes 3 (1d6) bludgeoning damage for every 10 feet it was thrown. If the target is thrown at another creature, that creature must succeed on a DC 13 Dexterity saving throw or take the same damage and be knocked prone.\nIf the saving throw is successful, the target takes half the bludgeoning damage and isn't flung away or knocked prone.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "Each creature in the elemental's space must make a DC 13 Strength saving throw. On a failure, a target takes 15 (3d8 + 2) bludgeoning damage and is flung up 20 feet away from the elemental in a random direction and knocked prone. If a thrown target strikes an object, such as a wall or floor, the target takes 3 (1d6) bludgeoning damage for every 10 feet it was thrown. If the target is thrown at another creature, that creature must succeed on a DC 13 Dexterity saving throw or take the same damage and be knocked prone.\nIf the saving throw is successful, the target takes half the bludgeoning damage and isn't flung away or knocked prone."
       }
     ],
     "legendaryActions": [],
@@ -227,12 +217,7 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The djinni makes three scimitar attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The djinni makes three scimitar attacks."
       },
       {
         "name": "Scimitar",
@@ -246,12 +231,7 @@ export const elementalMonsters: Monster[] = [
       },
       {
         "name": "Create Whirlwind",
-        "description": "A 5-foot-radius, 30-foot-tall cylinder of swirling air magically forms on a point the djinni can see within 120 feet of it. The whirlwind lasts as long as the djinni maintains concentration (as if concentrating on a spell). Any creature but the djinni that enters the whirlwind must succeed on a DC 18 Strength saving throw or be restrained by it. The djinni can move the whirlwind up to 60 feet as an action, and creatures restrained by the whirlwind move with it. The whirlwind ends if the djinni loses sight of it.\nA creature can use its action to free a creature restrained by the whirlwind, including itself, by succeeding on a DC 18 Strength check. If the check succeeds, the creature is no longer restrained and moves to the nearest space outside the whirlwind.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "A 5-foot-radius, 30-foot-tall cylinder of swirling air magically forms on a point the djinni can see within 120 feet of it. The whirlwind lasts as long as the djinni maintains concentration (as if concentrating on a spell). Any creature but the djinni that enters the whirlwind must succeed on a DC 18 Strength saving throw or be restrained by it. The djinni can move the whirlwind up to 60 feet as an action, and creatures restrained by the whirlwind move with it. The whirlwind ends if the djinni loses sight of it.\nA creature can use its action to free a creature restrained by the whirlwind, including itself, by succeeding on a DC 18 Strength check. If the check succeeds, the creature is no longer restrained and moves to the nearest space outside the whirlwind."
       }
     ],
     "legendaryActions": [],
@@ -344,7 +324,8 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small being of pure elemental energy, often taking the form of a tiny humanoid made of its respective element. Elementals are powerful creatures that can be summoned or created through magic.",    "imagePrompt": "A small being made of swirling dust and sand particles, tiny humanoid form, constantly shifting dust particles, blinding dust clouds, dust mephit nature",
+    "description": "A small being of pure elemental energy, often taking the form of a tiny humanoid made of its respective element. Elementals are powerful creatures that can be summoned or created through magic.",
+    "imagePrompt": "A small being made of swirling dust and sand particles, tiny humanoid form, constantly shifting dust particles, blinding dust clouds, dust mephit nature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -415,12 +396,7 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The elemental makes two slam attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The elemental makes two slam attacks."
       },
       {
         "name": "Slam",
@@ -495,12 +471,7 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The efreeti makes two scimitar attacks or uses its Hurl Flame twice.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The efreeti makes two scimitar attacks or uses its Hurl Flame twice."
       },
       {
         "name": "Scimitar",
@@ -601,12 +572,7 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The elemental makes two touch attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The elemental makes two touch attacks."
       },
       {
         "name": "Touch",
@@ -683,12 +649,7 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The gargoyle makes two attacks: one with its bite and one with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The gargoyle makes two attacks: one with its bite and one with its claws."
       },
       {
         "name": "Bite",
@@ -712,7 +673,8 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A stone creature with a grotesque, demonic appearance, often taking the form of a winged humanoid with horns, claws, and a hideous face. Gargoyles are living stone elementals that can blend seamlessly with architecture, appearing as decorative statues until they spring to life. They are immune to poison and resistant to nonmagical weapons, making them excellent guardians for ancient buildings and ruins.",    "imagePrompt": "A stone creature with grotesque demonic appearance, winged humanoid with horns claws hideous face, living stone body, architectural camouflage, gargoyle nature",
+    "description": "A stone creature with a grotesque, demonic appearance, often taking the form of a winged humanoid with horns, claws, and a hideous face. Gargoyles are living stone elementals that can blend seamlessly with architecture, appearing as decorative statues until they spring to life. They are immune to poison and resistant to nonmagical weapons, making them excellent guardians for ancient buildings and ruins.",
+    "imagePrompt": "A stone creature with grotesque demonic appearance, winged humanoid with horns claws hideous face, living stone body, architectural camouflage, gargoyle nature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -882,12 +844,7 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The stalker makes two slam attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The stalker makes two slam attacks."
       },
       {
         "name": "Slam",
@@ -901,7 +858,8 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "An invisible elemental creature made of air and shadow that exists solely to track and eliminate its assigned quarry. Invisible stalkers are summoned by powerful spellcasters to hunt down specific targets, and they are relentless in their pursuit. They can fly, are completely invisible, and are immune to most conditions that would hinder their tracking. They speak only in whispers and are bound to complete their mission.",    "imagePrompt": "A medium elemental creature with elemental energy",
+    "description": "An invisible elemental creature made of air and shadow that exists solely to track and eliminate its assigned quarry. Invisible stalkers are summoned by powerful spellcasters to hunt down specific targets, and they are relentless in their pursuit. They can fly, are completely invisible, and are immune to most conditions that would hinder their tracking. They speak only in whispers and are bound to complete their mission.",
+    "imagePrompt": "A medium elemental creature with elemental energy",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1128,12 +1086,7 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The salamander makes two attacks: one with its spear and one with its tail.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The salamander makes two attacks: one with its spear and one with its tail."
       },
       {
         "name": "Spear",
@@ -1314,12 +1267,7 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The elemental makes two slam attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The elemental makes two slam attacks."
       },
       {
         "name": "Slam",
@@ -1411,12 +1359,7 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The xorn makes three claw attacks and one bite attack.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The xorn makes three claw attacks and one bite attack."
       },
       {
         "name": "Bite",
