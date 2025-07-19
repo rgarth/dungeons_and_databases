@@ -40,12 +40,7 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The ape makes two fist attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The ape makes two fist attacks."
       },
       {
         "name": "Fist",
@@ -376,12 +371,7 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The bear makes two attacks: one with its bite and one with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The bear makes two attacks: one with its bite and one with its claws."
       },
       {
         "name": "Bite",
@@ -596,12 +586,7 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The bear makes two attacks: one with its bite and one with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The bear makes two attacks: one with its bite and one with its claws."
       },
       {
         "name": "Bite",
@@ -1516,12 +1501,7 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The ape makes two fist attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The ape makes two fist attacks."
       },
       {
         "name": "Fist",
@@ -1599,12 +1579,7 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The badger makes two attacks: one with its bite and one with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The badger makes two attacks: one with its bite and one with its claws."
       },
       {
         "name": "Bite",
@@ -2013,12 +1988,7 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The crocodile makes two attacks: one with its bite and one with its tail.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The crocodile makes two attacks: one with its bite and one with its tail."
       },
       {
         "name": "Bite",
@@ -2100,12 +2070,7 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The eagle makes two attacks: one with its beak and one with its talons.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The eagle makes two attacks: one with its beak and one with its talons."
       },
       {
         "name": "Beak",
@@ -2345,12 +2310,7 @@ export const beastMonsters: Monster[] = [
       },
       {
         "name": "Swallow",
-        "description": "The frog makes one bite attack against a Small or smaller target it is grappling. If the attack hits, the target is swallowed, and the grapple ends. The swallowed target is blinded and restrained, it has total cover against attacks and other effects outside the frog, and it takes 5 (2d4) acid damage at the start of each of the frog's turns. The frog can have only one target swallowed at a time. If the frog dies, a swallowed creature is no longer restrained by it and can escape from the corpse using 5 ft. of movement, exiting prone.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The frog makes one bite attack against a Small or smaller target it is grappling. If the attack hits, the target is swallowed, and the grapple ends. The swallowed target is blinded and restrained, it has total cover against attacks and other effects outside the frog, and it takes 5 (2d4) acid damage at the start of each of the frog's turns. The frog can have only one target swallowed at a time. If the frog dies, a swallowed creature is no longer restrained by it and can escape from the corpse using 5 ft. of movement, exiting prone."
       }
     ],
     "legendaryActions": [],
@@ -2619,12 +2579,7 @@ export const beastMonsters: Monster[] = [
       },
       {
         "name": "Ink Cloud",
-        "description": "A 20-foot-radius cloud of ink extends all around the octopus if it is underwater. The area is heavily obscured for 1 minute, although a significant current can disperse the ink. After releasing the ink, the octopus can use the Dash action as a bonus action.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "A 20-foot-radius cloud of ink extends all around the octopus if it is underwater. The area is heavily obscured for 1 minute, although a significant current can disperse the ink. After releasing the ink, the octopus can use the Dash action as a bonus action."
       }
     ],
     "legendaryActions": [],
@@ -2957,12 +2912,7 @@ export const beastMonsters: Monster[] = [
       },
       {
         "name": "Multiattack",
-        "description": "The scorpion makes three attacks: two with its claws and one with its sting.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The scorpion makes three attacks: two with its claws and one with its sting."
       },
       {
         "name": "Sting",
@@ -3191,12 +3141,7 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Web",
         "description": "Ranged Weapon Attack: +5 to hit, range 30/60 ft., one creature. Hit: The target is restrained by webbing. As an action, the restrained target can make a DC 12 Strength check, bursting the webbing on a success. The webbing can also be attacked and destroyed (AC 10; hp 5; vulnerability to fire damage; immunity to bludgeoning, poison, and psychic damage).",
-        "attackBonus": 5,
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
@@ -3269,12 +3214,7 @@ export const beastMonsters: Monster[] = [
       },
       {
         "name": "Swallow",
-        "description": "The toad makes one bite attack against a Medium or smaller target it is grappling. If the attack hits, the target is swallowed, and the grapple ends. The swallowed target is blinded and restrained, it has total cover against attacks and other effects outside the toad, and it takes 10 (3d6) acid damage at the start of each of the toad's turns. The toad can have only one target swallowed at a time.\nIf the toad dies, a swallowed creature is no longer restrained by it and can escape from the corpse using 5 feet of movement, exiting prone.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The toad makes one bite attack against a Medium or smaller target it is grappling. If the attack hits, the target is swallowed, and the grapple ends. The swallowed target is blinded and restrained, it has total cover against attacks and other effects outside the toad, and it takes 10 (3d6) acid damage at the start of each of the toad's turns. The toad can have only one target swallowed at a time.\nIf the toad dies, a swallowed creature is no longer restrained by it and can escape from the corpse using 5 feet of movement, exiting prone."
       }
     ],
     "legendaryActions": [],
@@ -3339,12 +3279,7 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The vulture makes two attacks: one with its beak and one with its talons.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The vulture makes two attacks: one with its beak and one with its talons."
       },
       {
         "name": "Beak",
@@ -4402,12 +4337,7 @@ export const beastMonsters: Monster[] = [
       },
       {
         "name": "Ink Cloud",
-        "description": "A 5-foot-radius cloud of ink extends all around the octopus if it is underwater. The area is heavily obscured for 1 minute, although a significant current can disperse the ink. After releasing the ink, the octopus can use the Dash action as a bonus action.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "A 5-foot-radius cloud of ink extends all around the octopus if it is underwater. The area is heavily obscured for 1 minute, although a significant current can disperse the ink. After releasing the ink, the octopus can use the Dash action as a bonus action."
       }
     ],
     "legendaryActions": [],
@@ -4743,12 +4673,7 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The bear makes two attacks: one with its bite and one with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The bear makes two attacks: one with its bite and one with its claws."
       },
       {
         "name": "Bite",
@@ -5737,12 +5662,7 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The tyrannosaurus makes two attacks: one with its bite and one with its tail. It can't make both attacks against the same target.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The tyrannosaurus makes two attacks: one with its bite and one with its tail. It can't make both attacks against the same target."
       },
       {
         "name": "Bite",

@@ -57,12 +57,7 @@ export const aberrationMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The aboleth makes three tentacle attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The aboleth makes three tentacle attacks."
       },
       {
         "name": "Tentacle",
@@ -86,12 +81,7 @@ export const aberrationMonsters: Monster[] = [
       },
       {
         "name": "Enslave",
-        "description": "The aboleth targets one creature it can see within 30 ft. of it. The target must succeed on a DC 14 Wisdom saving throw or be magically charmed by the aboleth until the aboleth dies or until it is on a different plane of existence from the target. The charmed target is under the aboleth's control and can't take reactions, and the aboleth and the target can communicate telepathically with each other over any distance.\nWhenever the charmed target takes damage, the target can repeat the saving throw. On a success, the effect ends. No more than once every 24 hours, the target can also repeat the saving throw when it is at least 1 mile away from the aboleth.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The aboleth targets one creature it can see within 30 ft. of it. The target must succeed on a DC 14 Wisdom saving throw or be magically charmed by the aboleth until the aboleth dies or until it is on a different plane of existence from the target. The charmed target is under the aboleth's control and can't take reactions, and the aboleth and the target can communicate telepathically with each other over any distance.\nWhenever the charmed target takes damage, the target can repeat the saving throw. On a success, the effect ends. No more than once every 24 hours, the target can also repeat the saving throw when it is at least 1 mile away from the aboleth."
       }
     ],
     "legendaryActions": [
@@ -175,12 +165,7 @@ export const aberrationMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The chuul makes two pincer attacks. If the chuul is grappling a creature, the chuul can also use its tentacles once.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The chuul makes two pincer attacks. If the chuul is grappling a creature, the chuul can also use its tentacles once."
       },
       {
         "name": "Pincer",
@@ -194,12 +179,7 @@ export const aberrationMonsters: Monster[] = [
       },
       {
         "name": "Tentacles",
-        "description": "One creature grappled by the chuul must succeed on a DC 13 Constitution saving throw or be poisoned for 1 minute. Until this poison ends, the target is paralyzed. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "One creature grappled by the chuul must succeed on a DC 13 Constitution saving throw or be poisoned for 1 minute. Until this poison ends, the target is paralyzed. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success."
       }
     ],
     "legendaryActions": [],
@@ -271,12 +251,7 @@ export const aberrationMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The cloaker makes two attacks: one with its bite and one with its tail.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The cloaker makes two attacks: one with its bite and one with its tail."
       },
       {
         "name": "Bite",
@@ -300,12 +275,7 @@ export const aberrationMonsters: Monster[] = [
       },
       {
         "name": "Moan",
-        "description": "Each creature within 60 feet of the cloaker that can hear its moan and that isn't an aberration must succeed on a DC 13 Wisdom saving throw or become frightened until the end of the cloaker's next turn. If a creature's saving throw is successful, the creature is immune to the cloaker's moan for the next 24 hours.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "Each creature within 60 feet of the cloaker that can hear its moan and that isn't an aberration must succeed on a DC 13 Wisdom saving throw or become frightened until the end of the cloaker's next turn. If a creature's saving throw is successful, the creature is immune to the cloaker's moan for the next 24 hours."
       },
       {
         "name": "Phantasms",
@@ -379,12 +349,7 @@ export const aberrationMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The gibbering mouther makes one bite attack and, if it can, uses its Blinding Spittle.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The gibbering mouther makes one bite attack and, if it can, uses its Blinding Spittle."
       },
       {
         "name": "Bites",
@@ -463,12 +428,7 @@ export const aberrationMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The otyugh makes three attacks: one with its bite and two with its tentacles.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The otyugh makes three attacks: one with its bite and two with its tentacles."
       },
       {
         "name": "Bite",
@@ -492,12 +452,7 @@ export const aberrationMonsters: Monster[] = [
       },
       {
         "name": "Tentacle Slam",
-        "description": "The otyugh slams creatures grappled by it into each other or a solid surface. Each creature must succeed on a DC 14 Constitution saving throw or take 10 (2d6 + 3) bludgeoning damage and be stunned until the end of the otyugh's next turn. On a successful save, the target takes half the bludgeoning damage and isn't stunned.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The otyugh slams creatures grappled by it into each other or a solid surface. Each creature must succeed on a DC 14 Constitution saving throw or take 10 (2d6 + 3) bludgeoning damage and be stunned until the end of the otyugh's next turn. On a successful save, the target takes half the bludgeoning damage and isn't stunned."
       }
     ],
     "legendaryActions": [],

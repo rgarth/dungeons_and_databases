@@ -58,12 +58,7 @@ export const constructMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The armor makes two melee attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The armor makes two melee attacks."
       },
       {
         "name": "Slam",
@@ -77,7 +72,8 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A suit of armor that moves and fights as if worn by an invisible warrior. Animated armor appears as normal armor until it detects intruders, at which point it springs to life and attacks. It is immune to poison and psychic damage, and while motionless, it is indistinguishable from ordinary armor. It can be disabled by antimagic fields or dispel magic.",    "imagePrompt": "A medium construct creature with mechanical or magical construction",
+    "description": "A suit of armor that moves and fights as if worn by an invisible warrior. Animated armor appears as normal armor until it detects intruders, at which point it springs to life and attacks. It is immune to poison and psychic damage, and while motionless, it is indistinguishable from ordinary armor. It can be disabled by antimagic fields or dispel magic.",
+    "imagePrompt": "A medium construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -159,12 +155,7 @@ export const constructMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The golem makes two slam attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The golem makes two slam attacks."
       },
       {
         "name": "Slam",
@@ -178,16 +169,12 @@ export const constructMonsters: Monster[] = [
       },
       {
         "name": "Haste",
-        "description": "Until the end of its next turn, the golem magically gains a +2 bonus to its AC, has advantage on Dexterity saving throws, and can use its slam attack as a bonus action.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "Until the end of its next turn, the golem magically gains a +2 bonus to its AC, has advantage on Dexterity saving throws, and can use its slam attack as a bonus action."
       }
     ],
     "legendaryActions": [],
-    "description": "A large humanoid figure sculpted from clay and animated by powerful magic. Clay golems are slow but incredibly durable, immune to acid (which actually heals them), poison, psychic damage, and nonmagical weapons. They can go berserk when damaged, attacking anything nearby. Their slam attacks can reduce a target's maximum hit points, and they can cast haste on themselves.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "description": "A large humanoid figure sculpted from clay and animated by powerful magic. Clay golems are slow but incredibly durable, immune to acid (which actually heals them), poison, psychic damage, and nonmagical weapons. They can go berserk when damaged, attacking anything nearby. Their slam attacks can reduce a target's maximum hit points, and they can cast haste on themselves.",
+    "imagePrompt": "A large construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -272,12 +259,7 @@ export const constructMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The golem makes two slam attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The golem makes two slam attacks."
       },
       {
         "name": "Slam",
@@ -291,7 +273,8 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A grotesque humanoid figure stitched together from various body parts and animated by dark magic. Flesh golems are created from the remains of multiple corpses, giving them a patchwork appearance. They are immune to lightning (which heals them), poison, and nonmagical weapons, but are vulnerable to fire. They can go berserk when damaged and are often difficult to control.",    "imagePrompt": "A medium construct creature with mechanical or magical construction",
+    "description": "A grotesque humanoid figure stitched together from various body parts and animated by dark magic. Flesh golems are created from the remains of multiple corpses, giving them a patchwork appearance. They are immune to lightning (which heals them), poison, and nonmagical weapons, but are vulnerable to fire. They can go berserk when damaged and are often difficult to control.",
+    "imagePrompt": "A medium construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -522,12 +505,7 @@ export const constructMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The golem makes two melee attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The golem makes two melee attacks."
       },
       {
         "name": "Slam",
@@ -560,7 +538,8 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A massive humanoid figure forged entirely from iron and animated by powerful magic. Iron golems are among the most durable constructs, with extremely high armor class and hit points. They are immune to fire, poison, psychic damage, and nonmagical weapons. They can exhale poisonous gas and are nearly indestructible except by adamantine weapons or powerful magic.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "description": "A massive humanoid figure forged entirely from iron and animated by powerful magic. Iron golems are among the most durable constructs, with extremely high armor class and hit points. They are immune to fire, poison, psychic damage, and nonmagical weapons. They can exhale poisonous gas and are nearly indestructible except by adamantine weapons or powerful magic.",
+    "imagePrompt": "A large construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -632,12 +611,7 @@ export const constructMonsters: Monster[] = [
       {
         "name": "Smother",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one Medium or smaller creature. Hit: The creature is grappled (escape DC 13). Until this grapple ends, the target is restrained, blinded, and at risk of suffocating, and the rug can't smother another target. In addition, at the start of each of the target's turns, the target takes 10 (2d6 + 3) bludgeoning damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
@@ -714,12 +688,7 @@ export const constructMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The guardian makes two fist attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The guardian makes two fist attacks."
       },
       {
         "name": "Fist",
@@ -733,7 +702,8 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large humanoid construct designed to protect its master. Shield guardians are magically bound to an amulet worn by their creator, allowing them to share damage and be summoned from great distances. They can store and cast spells on command, regenerate hit points, and are immune to poison. They serve as powerful bodyguards and magical assistants.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "description": "A large humanoid construct designed to protect its master. Shield guardians are magically bound to an amulet worn by their creator, allowing them to share damage and be summoned from great distances. They can store and cast spells on command, regenerate hit points, and are immune to poison. They serve as powerful bodyguards and magical assistants.",
+    "imagePrompt": "A large construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -806,12 +776,7 @@ export const constructMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The golem makes two slam attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The golem makes two slam attacks."
       },
       {
         "name": "Slam",
@@ -825,16 +790,12 @@ export const constructMonsters: Monster[] = [
       },
       {
         "name": "Slow",
-        "description": "The golem targets one or more creatures it can see within 10 ft. of it. Each target must make a DC 17 Wisdom saving throw against this magic. On a failed save, a target can't use reactions, its speed is halved, and it can't make more than one attack on its turn. In addition, the target can take either an action or a bonus action on its turn, not both. These effects last for 1 minute. A target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The golem targets one or more creatures it can see within 10 ft. of it. Each target must make a DC 17 Wisdom saving throw against this magic. On a failed save, a target can't use reactions, its speed is halved, and it can't make more than one attack on its turn. In addition, the target can take either an action or a bonus action on its turn, not both. These effects last for 1 minute. A target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success."
       }
     ],
     "legendaryActions": [],
-    "description": "A massive humanoid figure carved from solid stone and animated by powerful magic. Stone golems are incredibly durable, immune to poison, psychic damage, and nonmagical weapons. They are among the strongest constructs, with devastating slam attacks and the ability to cast slow on their enemies. They are nearly indestructible except by adamantine weapons or powerful magic.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "description": "A massive humanoid figure carved from solid stone and animated by powerful magic. Stone golems are incredibly durable, immune to poison, psychic damage, and nonmagical weapons. They are among the strongest constructs, with devastating slam attacks and the ability to cast slow on their enemies. They are nearly indestructible except by adamantine weapons or powerful magic.",
+    "imagePrompt": "A large construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

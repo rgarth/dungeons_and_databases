@@ -79,16 +79,12 @@ export const celestialMonsters: Monster[] = [
       },
       {
         "name": "Change Shape",
-        "description": "The couatl magically polymorphs into a humanoid or beast that has a challenge rating equal to or less than its own, or back into its true form. It reverts to its true form if it dies. Any equipment it is wearing or carrying is absorbed or borne by the new form (the couatl's choice).\nIn a new form, the couatl retains its game statistics and ability to speak, but its AC, movement modes, Strength, Dexterity, and other actions are replaced by those of the new form, and it gains any statistics and capabilities (except class features, legendary actions, and lair actions) that the new form has but that it lacks. If the new form has a bite attack, the couatl can use its bite in that form.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The couatl magically polymorphs into a humanoid or beast that has a challenge rating equal to or less than its own, or back into its true form. It reverts to its true form if it dies. Any equipment it is wearing or carrying is absorbed or borne by the new form (the couatl's choice).\nIn a new form, the couatl retains its game statistics and ability to speak, but its AC, movement modes, Strength, Dexterity, and other actions are replaced by those of the new form, and it gains any statistics and capabilities (except class features, legendary actions, and lair actions) that the new form has but that it lacks. If the new form has a bite attack, the couatl can use its bite in that form."
       }
     ],
     "legendaryActions": [],
-    "description": "A medium-sized winged serpent about 12 feet long with a 15-foot wingspan. Couatls have a serpentine body that can coil even in flight, with rainbow-colored or silvery-white feathers on their wings. They are wise and benevolent celestial beings who serve as protectors and messengers of the gods. They can shapeshift into humanoid or beast forms, cast powerful healing magic, and are immune to psychic damage and nonmagical weapons.",    "imagePrompt": "A medium-sized winged serpent about 12 feet long with a 15-foot wingspan. The creature has a serpentine body that can coil even in flight, with rainbow-colored or silvery-white feathers on its wings. It has a beautiful, wise appearance with celestial features, embodying lawful good alignment and divine protection.",
+    "description": "A medium-sized winged serpent about 12 feet long with a 15-foot wingspan. Couatls have a serpentine body that can coil even in flight, with rainbow-colored or silvery-white feathers on their wings. They are wise and benevolent celestial beings who serve as protectors and messengers of the gods. They can shapeshift into humanoid or beast forms, cast powerful healing magic, and are immune to psychic damage and nonmagical weapons.",
+    "imagePrompt": "A medium-sized winged serpent about 12 feet long with a 15-foot wingspan. The creature has a serpentine body that can coil even in flight, with rainbow-colored or silvery-white feathers on its wings. It has a beautiful, wise appearance with celestial features, embodying lawful good alignment and divine protection.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -162,12 +158,7 @@ export const celestialMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The deva makes two melee attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The deva makes two melee attacks."
       },
       {
         "name": "Mace",
@@ -199,7 +190,8 @@ export const celestialMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A beautiful humanoid angel with flawless features, radiant wings, and glowing eyes. Devas are powerful celestial beings who serve as divine messengers and protectors. They can shapeshift into humanoid or beast forms, wield magical weapons that deal radiant damage, and cast powerful spells including commune and raise dead. They are immune to charm, exhaustion, and fear.",    "imagePrompt": "A medium celestial creature with divine and angelic features",
+    "description": "A beautiful humanoid angel with flawless features, radiant wings, and glowing eyes. Devas are powerful celestial beings who serve as divine messengers and protectors. They can shapeshift into humanoid or beast forms, wield magical weapons that deal radiant damage, and cast powerful spells including commune and raise dead. They are immune to charm, exhaustion, and fear.",
+    "imagePrompt": "A medium celestial creature with divine and angelic features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -263,7 +255,8 @@ export const celestialMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A magnificent white horse with large, feathered wings that allow it to fly gracefully through the air. Pegasi are celestial steeds known for their speed, grace, and loyalty to good-aligned creatures. They are intelligent and can understand multiple languages, though they cannot speak. They are often found in the service of paladins, clerics, and other champions of good.",    "imagePrompt": "A large celestial creature with divine and angelic features",
+    "description": "A magnificent white horse with large, feathered wings that allow it to fly gracefully through the air. Pegasi are celestial steeds known for their speed, grace, and loyalty to good-aligned creatures. They are intelligent and can understand multiple languages, though they cannot speak. They are often found in the service of paladins, clerics, and other champions of good.",
+    "imagePrompt": "A large celestial creature with divine and angelic features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -340,12 +333,7 @@ export const celestialMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The planetar makes two melee attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The planetar makes two melee attacks."
       },
       {
         "name": "Greatsword",
@@ -368,7 +356,8 @@ export const celestialMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A massive angelic being with powerful wings, radiant armor, and a commanding presence. Planetars are high-ranking celestial warriors who serve as generals in the armies of good. They wield greatswords that deal devastating radiant damage, can cast powerful spells like flame strike and raise dead, and have the ability to detect lies. They are nearly invulnerable to nonmagical weapons and immune to charm, exhaustion, and fear.",    "imagePrompt": "A large celestial creature with divine and angelic features",
+    "description": "A massive angelic being with powerful wings, radiant armor, and a commanding presence. Planetars are high-ranking celestial warriors who serve as generals in the armies of good. They wield greatswords that deal devastating radiant damage, can cast powerful spells like flame strike and raise dead, and have the ability to detect lies. They are nearly invulnerable to nonmagical weapons and immune to charm, exhaustion, and fear.",
+    "imagePrompt": "A large celestial creature with divine and angelic features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -449,12 +438,7 @@ export const celestialMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The solar makes two greatsword attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The solar makes two greatsword attacks."
       },
       {
         "name": "Greatsword",
@@ -509,7 +493,8 @@ export const celestialMonsters: Monster[] = [
         "description": "The solar targets one creature it can see within 30 ft. of it. If the target can see it, the target must succeed on a DC 15 Constitution saving throw or be blinded until magic such as the lesser restoration spell removes the blindness."
       }
     ],
-    "description": "A towering angelic being of immense power with brilliant wings, radiant armor, and an aura of divine authority. Solars are the highest-ranking celestial beings, serving as the personal agents of the gods. They wield magical greatswords and longbows that deal devastating radiant damage, can cast powerful spells like resurrection and control weather, and have legendary actions including teleportation and blinding gaze. They are nearly invulnerable to all forms of damage and immune to most conditions.",    "imagePrompt": "A large celestial creature with divine and angelic features",
+    "description": "A towering angelic being of immense power with brilliant wings, radiant armor, and an aura of divine authority. Solars are the highest-ranking celestial beings, serving as the personal agents of the gods. They wield magical greatswords and longbows that deal devastating radiant damage, can cast powerful spells like resurrection and control weather, and have legendary actions including teleportation and blinding gaze. They are nearly invulnerable to all forms of damage and immune to most conditions.",
+    "imagePrompt": "A large celestial creature with divine and angelic features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -584,12 +569,7 @@ export const celestialMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The unicorn makes two attacks: one with its hooves and one with its horn.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The unicorn makes two attacks: one with its hooves and one with its horn."
       },
       {
         "name": "Hooves",
