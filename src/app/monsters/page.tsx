@@ -32,16 +32,7 @@ const MONSTER_CATEGORIES = {
   "Swarm": { icon: Users, color: "bg-yellow-600" }
 };
 
-// Challenge Rating ranges for quick filtering
-const CR_RANGES = [
-  { label: "All CR", value: "all" },
-  { label: "CR 0-1", value: "0-1" },
-  { label: "CR 2-5", value: "2-5" },
-  { label: "CR 6-10", value: "6-10" },
-  { label: "CR 11-15", value: "11-15" },
-  { label: "CR 16-20", value: "16-20" },
-  { label: "CR 21+", value: "21+" }
-];
+
 
 // Size options
 const SIZE_OPTIONS = [
@@ -95,8 +86,8 @@ export default function MonstersPage() {
   
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All Monsters");
-  const [selectedCR, setSelectedCR] = useState("all");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(["All Monsters"]);
+  const [selectedCRs, setSelectedCRs] = useState<string[]>(["all"]);
   const [selectedSize, setSelectedSize] = useState("all");
   const [selectedAlignment, setSelectedAlignment] = useState("all");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -113,6 +104,45 @@ export default function MonstersPage() {
   const { monsters: getMonsters, isInitialized } = useClientCache();
   const [monsters, setMonsters] = useState<Monster[]>([]);
   const isLoading = !isInitialized;
+
+  // Helper functions for toggling selections
+  const toggleCategory = (category: string) => {
+    if (category === "All Monsters") {
+      setSelectedCategories(["All Monsters"]);
+    } else {
+      setSelectedCategories(prev => {
+        const newSelection = prev.includes("All Monsters") 
+          ? prev.filter(c => c !== "All Monsters")
+          : [...prev];
+        
+        if (newSelection.includes(category)) {
+          const filtered = newSelection.filter(c => c !== category);
+          return filtered.length === 0 ? ["All Monsters"] : filtered;
+        } else {
+          return [...newSelection, category];
+        }
+      });
+    }
+  };
+
+  const toggleCR = (crRange: string) => {
+    if (crRange === "all") {
+      setSelectedCRs(["all"]);
+    } else {
+      setSelectedCRs(prev => {
+        const newSelection = prev.includes("all") 
+          ? prev.filter(cr => cr !== "all")
+          : [...prev];
+        
+        if (newSelection.includes(crRange)) {
+          const filtered = newSelection.filter(cr => cr !== crRange);
+          return filtered.length === 0 ? ["all"] : filtered;
+        } else {
+          return [...newSelection, crRange];
+        }
+      });
+    }
+  };
   
 
 
@@ -218,26 +248,32 @@ export default function MonstersPage() {
         monster.subtype?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         monster.tags?.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
 
-      // Category filter
-      const matchesCategory = selectedCategory === "All Monsters" || 
-        (selectedCategory === "Humanoids" && monster.type === "humanoid") ||
-        (selectedCategory === "Beasts" && monster.type === "beast") ||
-        (selectedCategory === "Dragons" && monster.type === "dragon") ||
-        (selectedCategory === "Undead" && monster.type === "undead") ||
-        (selectedCategory === "Fiends" && monster.type === "fiend") ||
-        (selectedCategory === "Celestials" && monster.type === "celestial") ||
-        (selectedCategory === "Constructs" && monster.type === "construct") ||
-        (selectedCategory === "Elementals" && monster.type === "elemental") ||
-        (selectedCategory === "Fey" && monster.type === "fey") ||
-        (selectedCategory === "Giants" && monster.type === "giant") ||
-        (selectedCategory === "Monstrosities" && monster.type === "monstrosity") ||
-        (selectedCategory === "Oozes" && monster.type === "ooze") ||
-        (selectedCategory === "Plants" && monster.type === "plant") ||
-        (selectedCategory === "Aberrations" && monster.type === "aberration") ||
-        (selectedCategory === "Swarm" && monster.type === "swarm of Tiny beasts");
+      // Category filter - check if monster matches any selected category
+      const matchesCategory = selectedCategories.includes("All Monsters") || 
+        selectedCategories.some(category => {
+          switch (category) {
+            case "Humanoids": return monster.type === "humanoid";
+            case "Beasts": return monster.type === "beast";
+            case "Dragons": return monster.type === "dragon";
+            case "Undead": return monster.type === "undead";
+            case "Fiends": return monster.type === "fiend";
+            case "Celestials": return monster.type === "celestial";
+            case "Constructs": return monster.type === "construct";
+            case "Elementals": return monster.type === "elemental";
+            case "Fey": return monster.type === "fey";
+            case "Giants": return monster.type === "giant";
+            case "Monstrosities": return monster.type === "monstrosity";
+            case "Oozes": return monster.type === "ooze";
+            case "Plants": return monster.type === "plant";
+            case "Aberrations": return monster.type === "aberration";
+            case "Swarm": return monster.type === "swarm of Tiny beasts";
+            default: return false;
+          }
+        });
 
-      // CR filter
-      const matchesCR = matchesCRRange(monster, selectedCR);
+      // CR filter - check if monster matches any selected CR range
+      const matchesCR = selectedCRs.includes("all") || 
+        selectedCRs.some(crRange => matchesCRRange(monster, crRange));
 
       // Size filter
       const matchesSize = selectedSize === "all" || monster.size === selectedSize;
@@ -276,7 +312,7 @@ export default function MonstersPage() {
     });
     
     return sorted;
-  }, [monsters, searchTerm, selectedCategory, selectedCR, selectedSize, selectedAlignment, sortField, sortDirection]);
+  }, [monsters, searchTerm, selectedCategories, selectedCRs, selectedSize, selectedAlignment, sortField, sortDirection]);
 
   // Get category counts
   const categoryCounts = useMemo(() => {
@@ -407,9 +443,9 @@ export default function MonstersPage() {
             </Button>
           </div>
           
-          {selectedCR !== "all" && (
+          {!selectedCRs.includes("all") && (
             <Button
-              onClick={() => setSelectedCR("all")}
+              onClick={() => setSelectedCRs(["all"])}
               variant="secondary"
               size="sm"
               className="text-xs"
@@ -445,23 +481,7 @@ export default function MonstersPage() {
         {showAdvancedFilters && (
           <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-4 space-y-4">
             <h3 className="font-semibold text-[var(--color-text-primary)]">Advanced Filters</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Challenge Rating Filter */}
-              <div>
-                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">
-                  Challenge Rating
-                </label>
-                <select
-                  value={selectedCR}
-                  onChange={(e) => setSelectedCR(e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--color-border)] rounded-lg bg-[var(--color-card)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-                >
-                  {CR_RANGES.map(cr => (
-                    <option key={cr.value} value={cr.value}>{cr.label}</option>
-                  ))}
-                </select>
-              </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Size Filter */}
               <div>
                 <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">
@@ -527,9 +547,9 @@ export default function MonstersPage() {
             return (
               <button
                 key={category}
-                onClick={() => setSelectedCategory(category)}
+                onClick={() => toggleCategory(category)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors border-l-4 ${
-                  selectedCategory === category
+                  selectedCategories.includes(category)
                     ? "bg-[var(--color-accent)] text-[var(--color-accent-text)]"
                     : "bg-[var(--color-card)] text-[var(--color-text-primary)] hover:bg-[var(--color-card-secondary)] hover:text-[var(--color-text-primary)] border border-[var(--color-border)]"
                 }`}
@@ -554,77 +574,95 @@ export default function MonstersPage() {
           {isLoading ? "Loading monsters..." : `Showing ${filteredAndSortedMonsters.length} of ${monsters.length} monsters`}
         </span>
         
-        {/* CR Difficulty Legend */}
+        {/* CR Difficulty Legend - Clickable */}
         <div className="flex items-center gap-2">
           <span className="text-[var(--color-text-secondary)]">CR Difficulty:</span>
           <div className="flex gap-1">
-            <span 
-              className="text-xs px-2 py-1 rounded"
+            <button
+              onClick={() => toggleCR("0-1")}
+              className={`text-xs px-2 py-1 rounded cursor-pointer transition-opacity ${
+                selectedCRs.includes("0-1") ? "opacity-100" : "opacity-60 hover:opacity-80"
+              }`}
               style={{
                 background: "var(--color-success)",
                 color: "var(--color-success-text)"
               }}
             >
               Easy (0-1)
-            </span>
-            <span 
-              className="text-xs px-2 py-1 rounded"
+            </button>
+            <button
+              onClick={() => toggleCR("2-5")}
+              className={`text-xs px-2 py-1 rounded cursor-pointer transition-opacity ${
+                selectedCRs.includes("2-5") ? "opacity-100" : "opacity-60 hover:opacity-80"
+              }`}
               style={{
                 background: "var(--color-warning)",
                 color: "var(--color-warning-text)"
               }}
             >
-              Medium (2-3)
-            </span>
-            <span 
-              className="text-xs px-2 py-1 rounded"
+              Medium (2-5)
+            </button>
+            <button
+              onClick={() => toggleCR("6-10")}
+              className={`text-xs px-2 py-1 rounded cursor-pointer transition-opacity ${
+                selectedCRs.includes("6-10") ? "opacity-100" : "opacity-60 hover:opacity-80"
+              }`}
               style={{
                 background: "var(--color-accent)",
                 color: "var(--color-accent-text)"
               }}
             >
-              Hard (4-7)
-            </span>
-            <span 
-              className="text-xs px-2 py-1 rounded"
+              Hard (6-10)
+            </button>
+            <button
+              onClick={() => toggleCR("11-15")}
+              className={`text-xs px-2 py-1 rounded cursor-pointer transition-opacity ${
+                selectedCRs.includes("11-15") ? "opacity-100" : "opacity-60 hover:opacity-80"
+              }`}
               style={{
                 background: "var(--color-error)",
                 color: "var(--color-error-text)"
               }}
             >
-              Deadly (8-12)
-            </span>
-            <span 
-              className="text-xs px-2 py-1 rounded"
+              Deadly (11-15)
+            </button>
+            <button
+              onClick={() => toggleCR("16-20")}
+              className={`text-xs px-2 py-1 rounded cursor-pointer transition-opacity ${
+                selectedCRs.includes("16-20") ? "opacity-100" : "opacity-60 hover:opacity-80"
+              }`}
               style={{
                 background: "var(--color-error-hover)",
                 color: "var(--color-error-text)"
               }}
             >
-              Very Deadly (13-20)
-            </span>
-            <span 
-              className="text-xs px-2 py-1 rounded"
+              Very Deadly (16-20)
+            </button>
+            <button
+              onClick={() => toggleCR("21+")}
+              className={`text-xs px-2 py-1 rounded cursor-pointer transition-opacity ${
+                selectedCRs.includes("21+") ? "opacity-100" : "opacity-60 hover:opacity-80"
+              }`}
               style={{
                 background: "var(--color-monster-monstrosity)",
                 color: "var(--color-accent-text)"
               }}
             >
               Legendary (21+)
-            </span>
+            </button>
           </div>
         </div>
         
 
         
-        {(selectedCR !== "all" || selectedSize !== "all" || selectedAlignment !== "all") && (
+        {(selectedCRs.length > 1 || selectedSize !== "all" || selectedAlignment !== "all") && (
           <div className="flex items-center gap-2">
             <span className="text-[var(--color-text-secondary)]">Active filters:</span>
-            {selectedCR !== "all" && (
-              <span className="bg-[var(--color-accent)] text-[var(--color-accent-text)] px-2 py-1 rounded text-xs">
-                CR {selectedCR}
+            {selectedCRs.length > 1 && selectedCRs.filter(cr => cr !== "all").map(cr => (
+              <span key={cr} className="bg-[var(--color-accent)] text-[var(--color-accent-text)] px-2 py-1 rounded text-xs">
+                CR {cr}
               </span>
-            )}
+            ))}
             {selectedSize !== "all" && (
               <span className="bg-[var(--color-accent)] text-[var(--color-accent-text)] px-2 py-1 rounded text-xs">
                 {selectedSize}
@@ -715,8 +753,8 @@ export default function MonstersPage() {
                      <Button
              onClick={() => {
                setSearchTerm("");
-               setSelectedCategory("All Monsters");
-               setSelectedCR("all");
+               setSelectedCategories(["All Monsters"]);
+               setSelectedCRs(["all"]);
                setSelectedSize("all");
                setSelectedAlignment("all");
                setSortField("name");
