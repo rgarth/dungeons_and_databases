@@ -677,7 +677,7 @@ export const elementalMonsters: Monster[] = [
     "traits": [
       {
         "name": "False Appearance",
-        "description": "A stone creature with a grotesque, demonic appearance, often taking the form of a winged humanoid with horns, claws, and a hideous face. Its body is made of living stone that can blend seamlessly with architecture."
+        "description": "While the gargoyle remains motionless, it is indistinguishable from an inanimate statue."
       }
     ],
     "actions": [
@@ -712,7 +712,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium-sized being of pure elemental energy, often taking the form of a humanoid made of its respective element. Elementals are powerful creatures that can be summoned or created through magic.",    "imagePrompt": "A stone creature with grotesque demonic appearance, winged humanoid with horns claws hideous face, living stone body, architectural camouflage, gargoyle nature",
+    "description": "A stone creature with a grotesque, demonic appearance, often taking the form of a winged humanoid with horns, claws, and a hideous face. Gargoyles are living stone elementals that can blend seamlessly with architecture, appearing as decorative statues until they spring to life. They are immune to poison and resistant to nonmagical weapons, making them excellent guardians for ancient buildings and ruins.",    "imagePrompt": "A stone creature with grotesque demonic appearance, winged humanoid with horns claws hideous face, living stone body, architectural camouflage, gargoyle nature",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -901,7 +901,7 @@ export const elementalMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A medium-sized being of pure elemental energy, often taking the form of a humanoid made of its respective element. Elementals are powerful creatures that can be summoned or created through magic.",    "imagePrompt": "A medium elemental creature with elemental energy",
+    "description": "An invisible elemental creature made of air and shadow that exists solely to track and eliminate its assigned quarry. Invisible stalkers are summoned by powerful spellcasters to hunt down specific targets, and they are relentless in their pursuit. They can fly, are completely invisible, and are immune to most conditions that would hinder their tracking. They speak only in whispers and are bound to complete their mission.",    "imagePrompt": "A medium elemental creature with elemental energy",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

@@ -77,7 +77,7 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous magical construct with distinctive features and abilities.",    "imagePrompt": "A medium construct creature with mechanical or magical construction",
+    "description": "A suit of armor that moves and fights as if worn by an invisible warrior. Animated armor appears as normal armor until it detects intruders, at which point it springs to life and attacks. It is immune to poison and psychic damage, and while motionless, it is indistinguishable from ordinary armor. It can be disabled by antimagic fields or dispel magic.",    "imagePrompt": "A medium construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -187,7 +187,7 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable magical construct with distinctive features and abilities.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "description": "A large humanoid figure sculpted from clay and animated by powerful magic. Clay golems are slow but incredibly durable, immune to acid (which actually heals them), poison, psychic damage, and nonmagical weapons. They can go berserk when damaged, attacking anything nearby. Their slam attacks can reduce a target's maximum hit points, and they can cast haste on themselves.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -291,7 +291,7 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable magical construct with distinctive features and abilities.",    "imagePrompt": "A medium construct creature with mechanical or magical construction",
+    "description": "A grotesque humanoid figure stitched together from various body parts and animated by dark magic. Flesh golems are created from the remains of multiple corpses, giving them a patchwork appearance. They are immune to lightning (which heals them), poison, and nonmagical weapons, but are vulnerable to fire. They can go berserk when damaged and are often difficult to control.",    "imagePrompt": "A medium construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -560,7 +560,7 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A powerful magical construct with distinctive features and abilities.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "description": "A massive humanoid figure forged entirely from iron and animated by powerful magic. Iron golems are among the most durable constructs, with extremely high armor class and hit points. They are immune to fire, poison, psychic damage, and nonmagical weapons. They can exhale poisonous gas and are nearly indestructible except by adamantine weapons or powerful magic.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -733,7 +733,7 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable magical construct with distinctive features and abilities.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "description": "A large humanoid construct designed to protect its master. Shield guardians are magically bound to an amulet worn by their creator, allowing them to share damage and be summoned from great distances. They can store and cast spells on command, regenerate hit points, and are immune to poison. They serve as powerful bodyguards and magical assistants.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -834,7 +834,7 @@ export const constructMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A powerful magical construct with distinctive features and abilities.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "description": "A massive humanoid figure carved from solid stone and animated by powerful magic. Stone golems are incredibly durable, immune to poison, psychic damage, and nonmagical weapons. They are among the strongest constructs, with devastating slam attacks and the ability to cast slow on their enemies. They are nearly indestructible except by adamantine weapons or powerful magic.",    "imagePrompt": "A large construct creature with mechanical or magical construction",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
