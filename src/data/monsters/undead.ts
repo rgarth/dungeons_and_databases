@@ -76,7 +76,8 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A putrid, rotting undead creature with yellowed fangs and a foul stench that can sicken the living. Ghasts are more powerful and intelligent than ghouls, with an overwhelming stench that poisons those nearby. They can paralyze victims with their claws and are resistant to turning effects.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A putrid, rotting undead creature with yellowed fangs and a foul stench that can sicken the living. Ghasts are more powerful and intelligent than ghouls, with an overwhelming stench that poisons those nearby. They can paralyze victims with their claws and are resistant to turning effects.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -166,12 +167,7 @@ export const undeadMonsters: Monster[] = [
       },
       {
         "name": "Etherealness",
-        "description": "The ghost enters the Ethereal Plane from the Material Plane, or vice versa. It is visible on the Material Plane while it is in the Border Ethereal, and vice versa, yet it can't affect or be affected by anything on the other plane.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The ghost enters the Ethereal Plane from the Material Plane, or vice versa. It is visible on the Material Plane while it is in the Border Ethereal, and vice versa, yet it can't affect or be affected by anything on the other plane."
       },
       {
         "name": "Horrifying Visage",
@@ -184,16 +180,12 @@ export const undeadMonsters: Monster[] = [
       },
       {
         "name": "Possession",
-        "description": "One humanoid that the ghost can see within 5 ft. of it must succeed on a DC 13 Charisma saving throw or be possessed by the ghost; the ghost then disappears, and the target is incapacitated and loses control of its body. The ghost now controls the body but doesn't deprive the target of awareness. The ghost can't be targeted by any attack, spell, or other effect, except ones that turn undead, and it retains its alignment, Intelligence, Wisdom, Charisma, and immunity to being charmed and frightened. It otherwise uses the possessed target's statistics, but doesn't gain access to the target's knowledge, class features, or proficiencies.\nThe possession lasts until the body drops to 0 hit points, the ghost ends it as a bonus action, or the ghost is turned or forced out by an effect like the dispel evil and good spell. When the possession ends, the ghost reappears in an unoccupied space within 5 ft. of the body. The target is immune to this ghost's Possession for 24 hours after succeeding on the saving throw or after the possession ends.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "One humanoid that the ghost can see within 5 ft. of it must succeed on a DC 13 Charisma saving throw or be possessed by the ghost; the ghost then disappears, and the target is incapacitated and loses control of its body. The ghost now controls the body but doesn't deprive the target of awareness. The ghost can't be targeted by any attack, spell, or other effect, except ones that turn undead, and it retains its alignment, Intelligence, Wisdom, Charisma, and immunity to being charmed and frightened. It otherwise uses the possessed target's statistics, but doesn't gain access to the target's knowledge, class features, or proficiencies.\nThe possession lasts until the body drops to 0 hit points, the ghost ends it as a bonus action, or the ghost is turned or forced out by an effect like the dispel evil and good spell. When the possession ends, the ghost reappears in an unoccupied space within 5 ft. of the body. The target is immune to this ghost's Possession for 24 hours after succeeding on the saving throw or after the possession ends."
       }
     ],
     "legendaryActions": [],
-    "description": "A translucent, ethereal figure that appears as a pale reflection of its former self. Ghosts are the spirits of the dead who cannot find rest, often bound to specific locations or objects due to unfinished business, strong emotions, or dark magic. They can phase through walls, possess the living, and age those who gaze upon their horrifying visage.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A translucent, ethereal figure that appears as a pale reflection of its former self. Ghosts are the spirits of the dead who cannot find rest, often bound to specific locations or objects due to unfinished business, strong emotions, or dark magic. They can phase through walls, possess the living, and age those who gaze upon their horrifying visage.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -268,7 +260,8 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A gaunt, emaciated undead creature with sharp claws and fangs, driven by an insatiable hunger for flesh. Ghouls are mindless predators that hunt in packs, using their paralyzing claws to immobilize prey before devouring them. They are immune to poison and can paralyze most creatures with their touch.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A gaunt, emaciated undead creature with sharp claws and fangs, driven by an insatiable hunger for flesh. Ghouls are mindless predators that hunt in packs, using their paralyzing claws to immobilize prey before devouring them. They are immune to poison and can paralyze most creatures with their touch.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -379,7 +372,8 @@ export const undeadMonsters: Monster[] = [
         "description": "Each living creature within 20 feet of the lich must make a DC 18 Constitution saving throw against this magic, taking 21 (6d6) necrotic damage on a failed save, or half as much damage on a successful one."
       }
     ],
-    "description": "A skeletal undead creature with glowing eyes and tattered robes, radiating dark magical power. Liches are powerful spellcasters who have achieved immortality through dark magic, sacrificing their humanity in the process. They are nearly indestructible due to their phylactery, which allows them to return from destruction. Their paralyzing touch and powerful spells make them among the most feared undead creatures.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A skeletal undead creature with glowing eyes and tattered robes, radiating dark magical power. Liches are powerful spellcasters who have achieved immortality through dark magic, sacrificing their humanity in the process. They are nearly indestructible due to their phylactery, which allows them to return from destruction. Their paralyzing touch and powerful spells make them among the most feared undead creatures.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -460,7 +454,8 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "An animated skeleton with bones that rattle and clatter as it moves. Skeletons are typically created by necromancers or other evil spellcasters to serve as guards, laborers, or soldiers.",    "imagePrompt": "A large undead creature with deathly and spectral features",
+    "description": "An animated skeleton with bones that rattle and clatter as it moves. Skeletons are typically created by necromancers or other evil spellcasters to serve as guards, laborers, or soldiers.",
+    "imagePrompt": "A large undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -522,12 +517,7 @@ export const undeadMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The mummy can use its Dreadful Glare and makes one attack with its rotting fist.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The mummy can use its Dreadful Glare and makes one attack with its rotting fist."
       },
       {
         "name": "Rotting Fist",
@@ -550,7 +540,8 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A preserved corpse wrapped in ancient bandages, radiating dark magical energy. Mummies are undead guardians created through powerful necromantic rituals, often bound to protect tombs and treasures. Their rotting fists can curse victims with mummy rot, and their dreadful glare can paralyze with fear. They are vulnerable to fire but resistant to most other damage.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A preserved corpse wrapped in ancient bandages, radiating dark magical energy. Mummies are undead guardians created through powerful necromantic rituals, often bound to protect tombs and treasures. Their rotting fists can curse victims with mummy rot, and their dreadful glare can paralyze with fear. They are vulnerable to fire but resistant to most other damage.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -627,12 +618,7 @@ export const undeadMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The mummy can use its Dreadful Glare and makes one attack with its rotting fist.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The mummy can use its Dreadful Glare and makes one attack with its rotting fist."
       },
       {
         "name": "Rotting Fist",
@@ -676,7 +662,8 @@ export const undeadMonsters: Monster[] = [
         "description": "The mummy lord magically transforms into a whirlwind of sand, moves up to 60 feet, and reverts to its normal form. While in whirlwind form, the mummy lord is immune to all damage, and it can't be grappled, petrified, knocked prone, restrained, or stunned. Equipment worn or carried by the mummy lord remain in its possession."
       }
     ],
-    "description": "A mighty undead ruler wrapped in ornate bandages and adorned with ancient jewelry, radiating overwhelming dark power. Mummy lords are the most powerful of mummies, often former pharaohs or high priests who achieved undeath through dark rituals. They possess spellcasting abilities, can transform into whirlwinds of sand, and are nearly indestructible due to their ability to rejuvenate from their preserved heart.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A mighty undead ruler wrapped in ornate bandages and adorned with ancient jewelry, radiating overwhelming dark power. Mummy lords are the most powerful of mummies, often former pharaohs or high priests who achieved undeath through dark rituals. They possess spellcasting abilities, can transform into whirlwinds of sand, and are nearly indestructible due to their ability to rejuvenate from their preserved heart.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -744,7 +731,8 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A massive, rotting ogre corpse that shambles with mindless purpose, wielding a heavy morningstar. Ogre zombies are created when ogres are raised as undead, combining the brute strength of their living form with the mindless persistence of the undead. They are incredibly difficult to destroy due to their undead fortitude, often continuing to fight even when they should be dead.",    "imagePrompt": "A large undead creature with deathly and spectral features",
+    "description": "A massive, rotting ogre corpse that shambles with mindless purpose, wielding a heavy morningstar. Ogre zombies are created when ogres are raised as undead, combining the brute strength of their living form with the mindless persistence of the undead. They are incredibly difficult to destroy due to their undead fortitude, often continuing to fight even when they should be dead.",
+    "imagePrompt": "A large undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -837,7 +825,8 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dark, shadowy figure that seems to absorb light around it, appearing as a living shadow with glowing eyes. Shadows are malevolent undead that drain the life force from their victims, reducing their strength until they die. They are vulnerable to radiant damage and sunlight, but can move through walls and become invisible in darkness.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A dark, shadowy figure that seems to absorb light around it, appearing as a living shadow with glowing eyes. Shadows are malevolent undead that drain the life force from their victims, reducing their strength until they die. They are vulnerable to radiant damage and sunlight, but can move through walls and become invisible in darkness.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -913,7 +902,8 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A reanimated skeleton with bones held together by dark magic, wielding weapons with unnatural precision. Skeletons are mindless undead created by necromancers, often wearing the armor and carrying the weapons they had in life. They are vulnerable to bludgeoning damage but immune to poison and exhaustion.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A reanimated skeleton with bones held together by dark magic, wielding weapons with unnatural precision. Skeletons are mindless undead created by necromancers, often wearing the armor and carrying the weapons they had in life. They are vulnerable to bludgeoning damage but immune to poison and exhaustion.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1003,7 +993,8 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A ghostly, incorporeal spirit that appears as a pale, translucent figure with hollow eyes. Specters are the restless souls of those who died violently or with unfinished business. They can phase through walls and objects, drain the life force from the living, and are vulnerable to sunlight but resistant to most physical damage.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A ghostly, incorporeal spirit that appears as a pale, translucent figure with hollow eyes. Specters are the restless souls of those who died violently or with unfinished business. They can phase through walls and objects, drain the life force from the living, and are vulnerable to sunlight but resistant to most physical damage.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1095,12 +1086,7 @@ export const undeadMonsters: Monster[] = [
       },
       {
         "name": "Charm",
-        "description": "The vampire targets one humanoid it can see within 30 ft. of it. If the target can see the vampire, the target must succeed on a DC 17 Wisdom saving throw against this magic or be charmed by the vampire. The charmed target regards the vampire as a trusted friend to be heeded and protected. Although the target isn't under the vampire's control, it takes the vampire's requests or actions in the most favorable way it can, and it is a willing target for the vampire's bit attack.\nEach time the vampire or the vampire's companions do anything harmful to the target, it can repeat the saving throw, ending the effect on itself on a success. Otherwise, the effect lasts 24 hours or until the vampire is destroyed, is on a different plane of existence than the target, or takes a bonus action to end the effect.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The vampire targets one humanoid it can see within 30 ft. of it. If the target can see the vampire, the target must succeed on a DC 17 Wisdom saving throw against this magic or be charmed by the vampire. The charmed target regards the vampire as a trusted friend to be heeded and protected. Although the target isn't under the vampire's control, it takes the vampire's requests or actions in the most favorable way it can, and it is a willing target for the vampire's bit attack.\nEach time the vampire or the vampire's companions do anything harmful to the target, it can repeat the saving throw, ending the effect on itself on a success. Otherwise, the effect lasts 24 hours or until the vampire is destroyed, is on a different plane of existence than the target, or takes a bonus action to end the effect."
       },
       {
         "name": "Children of the Night",
@@ -1126,7 +1112,8 @@ export const undeadMonsters: Monster[] = [
         "description": "The vampire makes one bite attack."
       }
     ],
-    "description": "A large, bat-like creature with leathery wings and sharp fangs, transformed from a vampire's true form. In bat form, vampires can fly silently through the night, scouting for prey or escaping danger. They retain their vampiric abilities but cannot speak or use their hands, making them excellent for stealth and reconnaissance.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A large, bat-like creature with leathery wings and sharp fangs, transformed from a vampire's true form. In bat form, vampires can fly silently through the night, scouting for prey or escaping danger. They retain their vampiric abilities but cannot speak or use their hands, making them excellent for stealth and reconnaissance.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1219,7 +1206,8 @@ export const undeadMonsters: Monster[] = [
         "description": "The vampire makes one bite attack."
       }
     ],
-    "description": "A swirling cloud of dark mist that moves with unnatural grace, appearing as a vampire's gaseous form. In mist form, vampires become weightless and can pass through tiny spaces, making them nearly impossible to contain or harm. They cannot take actions or speak, but can hover and move through the air, often using this form to escape danger or infiltrate secure locations.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A swirling cloud of dark mist that moves with unnatural grace, appearing as a vampire's gaseous form. In mist form, vampires become weightless and can pass through tiny spaces, making them nearly impossible to contain or harm. They cannot take actions or speak, but can hover and move through the air, often using this form to escape danger or infiltrate secure locations.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1287,12 +1275,7 @@ export const undeadMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The vampire makes two attacks, only one of which can be a bite attack.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The vampire makes two attacks, only one of which can be a bite attack."
       },
       {
         "name": "Bite",
@@ -1316,7 +1299,8 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A newly created vampire with pale skin, sharp fangs, and eyes that gleam with hunger and confusion. Vampire spawn are the lesser offspring of true vampires, created when a vampire drains a humanoid to death and buries them. They are weaker than their creators but still possess formidable abilities including regeneration, spider climb, and the same weaknesses to sunlight and running water.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A newly created vampire with pale skin, sharp fangs, and eyes that gleam with hunger and confusion. Vampire spawn are the lesser offspring of true vampires, created when a vampire drains a humanoid to death and buries them. They are weaker than their creators but still possess formidable abilities including regeneration, spider climb, and the same weaknesses to sunlight and running water.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1397,12 +1381,7 @@ export const undeadMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The vampire makes two attacks, only one of which can be a bite attack.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The vampire makes two attacks, only one of which can be a bite attack."
       },
       {
         "name": "Unarmed Strike",
@@ -1426,12 +1405,7 @@ export const undeadMonsters: Monster[] = [
       },
       {
         "name": "Charm",
-        "description": "The vampire targets one humanoid it can see within 30 ft. of it. If the target can see the vampire, the target must succeed on a DC 17 Wisdom saving throw against this magic or be charmed by the vampire. The charmed target regards the vampire as a trusted friend to be heeded and protected. Although the target isn't under the vampire's control, it takes the vampire's requests or actions in the most favorable way it can, and it is a willing target for the vampire's bit attack.\nEach time the vampire or the vampire's companions do anything harmful to the target, it can repeat the saving throw, ending the effect on itself on a success. Otherwise, the effect lasts 24 hours or until the vampire is destroyed, is on a different plane of existence than the target, or takes a bonus action to end the effect.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The vampire targets one humanoid it can see within 30 ft. of it. If the target can see the vampire, the target must succeed on a DC 17 Wisdom saving throw against this magic or be charmed by the vampire. The charmed target regards the vampire as a trusted friend to be heeded and protected. Although the target isn't under the vampire's control, it takes the vampire's requests or actions in the most favorable way it can, and it is a willing target for the vampire's bit attack.\nEach time the vampire or the vampire's companions do anything harmful to the target, it can repeat the saving throw, ending the effect on itself on a success. Otherwise, the effect lasts 24 hours or until the vampire is destroyed, is on a different plane of existence than the target, or takes a bonus action to end the effect."
       },
       {
         "name": "Children of the Night",
@@ -1457,7 +1431,8 @@ export const undeadMonsters: Monster[] = [
         "description": "The vampire makes one bite attack."
       }
     ],
-    "description": "A pale, aristocratic undead creature with sharp fangs and eyes that gleam with malevolent intelligence. Vampires are immortal but vulnerable to sunlight, running water, and certain holy symbols. They can transform into bats or mist, charm victims, drain life force with their bite, and call forth creatures of the night. They are nearly indestructible due to their regeneration and ability to escape as mist when defeated.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A pale, aristocratic undead creature with sharp fangs and eyes that gleam with malevolent intelligence. Vampires are immortal but vulnerable to sunlight, running water, and certain holy symbols. They can transform into bats or mist, charm victims, drain life force with their bite, and call forth creatures of the night. They are nearly indestructible due to their regeneration and ability to escape as mist when defeated.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1521,7 +1496,8 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A skeletal warhorse with bones held together by dark magic, still wearing tattered barding and carrying the weight of its rider. Warhorse skeletons are created when powerful warhorses are raised as undead, retaining their speed and strength but losing all fear and pain. They are vulnerable to bludgeoning damage but immune to poison and exhaustion.",    "imagePrompt": "A large undead creature with deathly and spectral features",
+    "description": "A skeletal warhorse with bones held together by dark magic, still wearing tattered barding and carrying the weight of its rider. Warhorse skeletons are created when powerful warhorses are raised as undead, retaining their speed and strength but losing all fear and pain. They are vulnerable to bludgeoning damage but immune to poison and exhaustion.",
+    "imagePrompt": "A large undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1586,12 +1562,7 @@ export const undeadMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The wight makes two longsword attacks or two longbow attacks. It can use its Life Drain in place of one longsword attack.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The wight makes two longsword attacks or two longbow attacks. It can use its Life Drain in place of one longsword attack."
       },
       {
         "name": "Life Drain",
@@ -1625,7 +1596,8 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A gaunt, armored undead warrior with hollow eyes and a malevolent aura. Wights are intelligent undead created from fallen warriors, retaining their combat skills and equipment. They can drain the life force from victims and raise the dead as zombies under their control. They are vulnerable to sunlight but resistant to most damage types.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A gaunt, armored undead warrior with hollow eyes and a malevolent aura. Wights are intelligent undead created from fallen warriors, retaining their combat skills and equipment. They can drain the life force from victims and raise the dead as zombies under their control. They are vulnerable to sunlight but resistant to most damage types.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1730,7 +1702,8 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small, flickering ball of light that dances and weaves through the darkness, appearing as a ghostly flame. Will-o'-wisps are malevolent spirits that lure travelers to their doom, often appearing as friendly lights in dangerous areas. They can become invisible, shock enemies with lightning, and consume the life force of dying creatures.",    "imagePrompt": "A tiny undead creature with deathly and spectral features",
+    "description": "A small, flickering ball of light that dances and weaves through the darkness, appearing as a ghostly flame. Will-o'-wisps are malevolent spirits that lure travelers to their doom, often appearing as friendly lights in dangerous areas. They can become invisible, shock enemies with lightning, and consume the life force of dying creatures.",
+    "imagePrompt": "A tiny undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1828,7 +1801,8 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dark, shadowy figure wrapped in tattered robes, appearing as a malevolent spirit of pure evil. Wraiths are powerful undead created from the souls of particularly evil individuals. They can drain life force from the living and create specters from those they kill. They are vulnerable to sunlight but can phase through walls and objects.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A dark, shadowy figure wrapped in tattered robes, appearing as a malevolent spirit of pure evil. Wraiths are powerful undead created from the souls of particularly evil individuals. They can drain life force from the living and create specters from those they kill. They are vulnerable to sunlight but can phase through walls and objects.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1896,7 +1870,8 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A shambling, rotting corpse with vacant eyes and a mindless hunger for flesh. Zombies are mindless undead created through necromantic magic or as the result of certain diseases or curses. They are incredibly difficult to destroy due to their undead fortitude, often continuing to fight even when they should be dead.",    "imagePrompt": "A medium undead creature with deathly and spectral features",
+    "description": "A shambling, rotting corpse with vacant eyes and a mindless hunger for flesh. Zombies are mindless undead created through necromantic magic or as the result of certain diseases or curses. They are incredibly difficult to destroy due to their undead fortitude, often continuing to fight even when they should be dead.",
+    "imagePrompt": "A medium undead creature with deathly and spectral features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
