@@ -314,7 +314,8 @@ export const beastMonsters: Monster[] = [
           "type": "Piercing",
           "roll": "1",
           "average": 0
-        }
+        },
+        "attackBonus": 0
       }
     ],
     "legendaryActions": [],
@@ -660,7 +661,7 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 2 (1d4) bludgeoning damage.",
         "attackBonus": 5,
         "damage": {
-          "type": "Bludgeoning",
+          "type": "Piercing",
           "roll": "1d4",
           "average": 3
         }
@@ -728,7 +729,8 @@ export const beastMonsters: Monster[] = [
           "type": "Slashing",
           "roll": "1",
           "average": 0
-        }
+        },
+        "attackBonus": 0
       }
     ],
     "legendaryActions": [],
@@ -859,10 +861,11 @@ export const beastMonsters: Monster[] = [
         "name": "Claw",
         "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 bludgeoning damage.",
         "damage": {
-          "type": "Bludgeoning",
+          "type": "Slashing",
           "roll": "1",
           "average": 0
-        }
+        },
+        "attackBonus": 0
       }
     ],
     "legendaryActions": [],
@@ -924,7 +927,7 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 7 (1d10 + 2) piercing damage, and the target is grappled (escape DC 12). Until this grapple ends, the target is restrained, and the crocodile can't bite another target",
         "attackBonus": 4,
         "damage": {
-          "type": "Bludgeoning",
+          "type": "Piercing",
           "roll": "1d10+2",
           "average": 8
         }
@@ -1381,7 +1384,7 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 1 piercing damage plus 7 (3d4) poison damage.",
         "attackBonus": 6,
         "damage": {
-          "type": "Bludgeoning",
+          "type": "Piercing",
           "roll": "1",
           "average": 0
         }
@@ -1926,7 +1929,7 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) bludgeoning damage, and the target is grappled (escape DC 11). The crab has two claws, each of which can grapple only one target.",
         "attackBonus": 3,
         "damage": {
-          "type": "Bludgeoning",
+          "type": "Slashing",
           "roll": "1d6+1",
           "average": 5
         }
@@ -2231,7 +2234,7 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +1 to hit, reach 5 ft., one target. Hit: 2 (1d6 - 1) slashing damage.",
         "attackBonus": 1,
         "damage": {
-          "type": "Slashing",
+          "type": "Piercing",
           "roll": "1d6-1",
           "average": 0
         }
@@ -2905,7 +2908,7 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) bludgeoning damage, and the target is grappled (escape DC 12). The scorpion has two claws, each of which can grapple only one target.",
         "attackBonus": 4,
         "damage": {
-          "type": "Bludgeoning",
+          "type": "Slashing",
           "roll": "1d8+2",
           "average": 7
         }
@@ -3699,7 +3702,7 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) piercing damage.",
         "attackBonus": 6,
         "damage": {
-          "type": "Bludgeoning",
+          "type": "Piercing",
           "roll": "2d8+4",
           "average": 13
         }
@@ -4054,7 +4057,8 @@ export const beastMonsters: Monster[] = [
           "type": "Piercing",
           "roll": "1",
           "average": 0
-        }
+        },
+        "attackBonus": 0
       }
     ],
     "legendaryActions": [],
@@ -4552,7 +4556,7 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +6 to hit, reach 10 ft., one target. Hit: 14 (3d6 + 4) piercing damage.",
         "attackBonus": 6,
         "damage": {
-          "type": "Bludgeoning",
+          "type": "Piercing",
           "roll": "3d6+4",
           "average": 15
         }
@@ -4880,7 +4884,8 @@ export const beastMonsters: Monster[] = [
           "type": "Piercing",
           "roll": "1",
           "average": 0
-        }
+        },
+        "attackBonus": 0
       }
     ],
     "legendaryActions": [],
@@ -5074,7 +5079,7 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 14 (2d8 + 5) bludgeoning damage.",
         "attackBonus": 7,
         "damage": {
-          "type": "Bludgeoning",
+          "type": "Piercing",
           "roll": "2d8+5",
           "average": 14
         }
