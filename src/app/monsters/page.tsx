@@ -69,6 +69,25 @@ const ALIGNMENT_OPTIONS = [
   { label: "Unaligned", value: "Unaligned" }
 ];
 
+// Sort field options
+const SORT_FIELDS = [
+  { label: "Name", value: "name" },
+  { label: "CR", value: "cr" },
+  { label: "HP", value: "hp" },
+  { label: "Category", value: "category" },
+  { label: "Size", value: "size" }
+];
+
+// Size order for sorting
+const SIZE_ORDER = {
+  "Tiny": 1,
+  "Small": 2,
+  "Medium": 3,
+  "Large": 4,
+  "Huge": 5,
+  "Gargantuan": 6
+};
+
 export default function MonstersPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -81,6 +100,10 @@ export default function MonstersPage() {
   const [selectedSize, setSelectedSize] = useState("all");
   const [selectedAlignment, setSelectedAlignment] = useState("all");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  
+  // Sort state
+  const [sortField, setSortField] = useState("name");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   
   // Modal state
   const [selectedMonster, setSelectedMonster] = useState<Monster | null>(null);
@@ -168,8 +191,8 @@ export default function MonstersPage() {
     return "var(--color-accent-text)"; // Legendary
   };
 
-  // Filter monsters based on all criteria
-  const filteredMonsters = useMemo(() => {
+  // Filter and sort monsters based on all criteria
+  const filteredAndSortedMonsters = useMemo(() => {
     // Helper function to check if monster matches CR range
     const matchesCRRange = (monster: Monster, range: string): boolean => {
       if (range === "all") return true;
@@ -224,9 +247,36 @@ export default function MonstersPage() {
 
       return matchesSearch && matchesCategory && matchesCR && matchesSize && matchesAlignment;
     });
+
+    // Sort the filtered monsters
+    const sorted = [...filtered].sort((a, b) => {
+      let comparison = 0;
+      
+      switch (sortField) {
+        case "name":
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case "cr":
+          comparison = getCRAsNumber(a.challengeRating) - getCRAsNumber(b.challengeRating);
+          break;
+        case "hp":
+          comparison = a.hitPoints - b.hitPoints;
+          break;
+        case "category":
+          comparison = a.type.localeCompare(b.type);
+          break;
+        case "size":
+          comparison = (SIZE_ORDER[a.size as keyof typeof SIZE_ORDER] || 0) - (SIZE_ORDER[b.size as keyof typeof SIZE_ORDER] || 0);
+          break;
+        default:
+          comparison = a.name.localeCompare(b.name);
+      }
+      
+      return sortDirection === "asc" ? comparison : -comparison;
+    });
     
-    return filtered;
-  }, [monsters, searchTerm, selectedCategory, selectedCR, selectedSize, selectedAlignment]);
+    return sorted;
+  }, [monsters, searchTerm, selectedCategory, selectedCR, selectedSize, selectedAlignment, sortField, sortDirection]);
 
   // Get category counts
   const categoryCounts = useMemo(() => {
@@ -324,7 +374,7 @@ export default function MonstersPage() {
           />
         </div>
 
-        {/* Quick Filters */}
+        {/* Quick Filters and Sort */}
         <div className="flex flex-wrap gap-2">
           <Button
             onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
@@ -335,6 +385,27 @@ export default function MonstersPage() {
             <Filter className="h-4 w-4" />
             {showAdvancedFilters ? "Hide" : "Show"} Advanced Filters
           </Button>
+          
+          {/* Sort Controls */}
+          <div className="flex items-center gap-2">
+            <select
+              value={sortField}
+              onChange={(e) => setSortField(e.target.value)}
+              className="px-3 py-2 border border-[var(--color-border)] rounded-lg bg-[var(--color-card)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] text-sm"
+            >
+              {SORT_FIELDS.map(field => (
+                <option key={field.value} value={field.value}>{field.label}</option>
+              ))}
+            </select>
+            <Button
+              onClick={() => setSortDirection(sortDirection === "asc" ? "desc" : "asc")}
+              variant="secondary"
+              size="sm"
+              className="flex items-center gap-1"
+            >
+              {sortDirection === "asc" ? "↑" : "↓"}
+            </Button>
+          </div>
           
           {selectedCR !== "all" && (
             <Button
@@ -480,7 +551,7 @@ export default function MonstersPage() {
       {/* Results count and active filters */}
       <div className="mb-4 flex flex-wrap items-center gap-4 text-sm">
         <span className="text-[var(--color-text-secondary)]">
-          {isLoading ? "Loading monsters..." : `Showing ${filteredMonsters.length} of ${monsters.length} monsters`}
+          {isLoading ? "Loading monsters..." : `Showing ${filteredAndSortedMonsters.length} of ${monsters.length} monsters`}
         </span>
         
         {/* CR Difficulty Legend */}
@@ -575,7 +646,7 @@ export default function MonstersPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredMonsters.map((monster, index) => (
+          {filteredAndSortedMonsters.map((monster: Monster, index: number) => (
             <div
               key={`${monster.name}-${index}`}
               className="bg-[var(--color-card)] border-l-4 rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer"
@@ -638,7 +709,7 @@ export default function MonstersPage() {
         </div>
       )}
 
-      {filteredMonsters.length === 0 && !isLoading && (
+      {filteredAndSortedMonsters.length === 0 && !isLoading && (
         <div className="text-center py-12">
           <p className="text-[var(--color-text-secondary)]">No monsters found matching your criteria.</p>
                      <Button
@@ -648,6 +719,8 @@ export default function MonstersPage() {
                setSelectedCR("all");
                setSelectedSize("all");
                setSelectedAlignment("all");
+               setSortField("name");
+               setSortDirection("asc");
              }}
              variant="secondary"
              className="mt-4"
