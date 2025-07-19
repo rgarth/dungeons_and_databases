@@ -127,7 +127,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A massive, ancient dragon with scales the color of molten lava and eyes that burn with malevolent intelligence. Ancient red dragons are the most covetous of the true dragons, driven by their insatiable thirst for wealth and power.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A cunning, evil dragon with slick black scales and a foul, acidic breath. Adult black dragons haunt swamps and ruins, lurking in the shadows and ambushing prey. They are territorial, cruel, and delight in spreading fear and decay throughout their domains.",    "imagePrompt": "A huge dragon creature with slick black scales, acid dripping from its jaws, lurking in a swamp or ruined temple",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -533,7 +533,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 20 Dexterity saving throw or take 14 (2d6 + 7) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A large, malevolent dragon with scales as dark as midnight and eyes that gleam with cruel intelligence. Adult black dragons prefer to dwell in swamps and marshes, using their acidic breath and ambush tactics to terrorize their prey.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A noble, lawful dragon with scales the color of polished bronze and a love for the sea. Adult bronze dragons are protectors of coastal regions and islands, using their lightning breath and repulsion abilities to defend their territories. They are honorable, wise, and often serve as guardians of maritime trade routes.",    "imagePrompt": "A huge dragon creature with bronze scales, lightning crackling around its body, near a coastal region or island",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -667,7 +667,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A clever, mischievous dragon with scales the color of burnished copper and a love for riddles and pranks. Adult copper dragons dwell in rocky hills and mountains, using their acid breath and slowing abilities to outmaneuver foes. They are playful tricksters who enjoy testing the wit and wisdom of travelers.",    "imagePrompt": "A huge dragon creature with copper scales, acid dripping from its jaws, in rocky hills or mountains",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -948,7 +948,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A cunning, manipulative dragon with scales the color of forest canopy and eyes that gleam with deceptive intelligence. Adult green dragons make their homes in dense forests and jungles, using their poisonous breath and mastery of deception to dominate their territories.",    "imagePrompt": "A huge dragon creature with green scales, poison gas emanating from its jaws, in a dense forest or jungle",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1081,7 +1081,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A massive, greedy dragon with scales the color of molten lava and eyes that burn with malevolent intelligence. Adult red dragons are the most covetous of the true dragons, driven by their insatiable thirst for wealth and power. They prefer to dwell in mountainous regions and volcanic areas.",    "imagePrompt": "A huge dragon creature with red scales, fire and smoke billowing from its jaws, in mountainous or volcanic terrain",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1215,7 +1215,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A noble, honorable dragon with scales the color of polished silver and a love for humanoid civilization. Adult silver dragons are protectors of good-aligned communities, using their cold breath and wisdom to defend the innocent. They often take humanoid form to walk among mortals.",    "imagePrompt": "A huge dragon creature with silver scales, frost and cold emanating from its body, near a humanoid settlement or castle",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1353,7 +1353,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A huge dragon creature with scales, wings, and a powerful presence",
+    "description": "A savage, bestial dragon with scales the color of pure ice and eyes that gleam with primal hunger. Adult white dragons are the most feral of the true dragons, dwelling in frozen wastelands and arctic regions. They rely on brute strength and their freezing breath to hunt prey.",    "imagePrompt": "A huge dragon creature with white scales, frost and ice emanating from its jaws, in frozen wastelands or arctic terrain",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1490,7 +1490,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 23 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A massive, ancient dragon with scales that gleam like polished gold and eyes that radiate wisdom and benevolence. Ancient gold dragons are the most powerful and majestic of the metallic dragons, dedicated to protecting the innocent.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A terrifying, ancient dragon with scales as black as the deepest shadows and eyes that gleam with centuries of malevolence. Ancient black dragons are the most cunning and cruel of their kind, dwelling in the darkest swamps and ruins. Their acidic breath dissolves all before them, and they delight in spreading corruption and despair.",    "imagePrompt": "A gargantuan dragon creature with black scales, acid dripping from its jaws, in dark swamps or ruins",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1623,7 +1623,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 24 Dexterity saving throw or take 16 (2d6 + 9) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A massive, ancient dragon with scales the color of molten lava and eyes that burn with malevolent intelligence. Ancient red dragons are the most covetous of the true dragons, driven by their insatiable thirst for wealth and power.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A massive, ancient dragon with scales the color of desert sky and eyes that crackle with lightning. Ancient blue dragons are territorial overlords of arid regions, using their lightning breath and love of riddles to dominate vast territories. They are calculating and patient, building elaborate lairs in desert mountains.",    "imagePrompt": "A gargantuan dragon creature with blue scales, lightning crackling around its body, in desert mountains or arid terrain",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1767,7 +1767,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A legendary powerful dragon with distinctive features and abilities.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A wise, ancient dragon with scales the color of burnished brass and a love for conversation and debate. Ancient brass dragons are the most talkative of their kind, dwelling in desert regions and using their fire breath and sleep abilities to protect their domains. They are generous hosts who enjoy testing the wisdom of travelers.",    "imagePrompt": "A gargantuan dragon creature with brass scales, fire and heat emanating from its body, in desert regions",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1914,7 +1914,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 24 Dexterity saving throw or take 16 (2d6 + 9) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A massive, ancient dragon with scales as dark as midnight and eyes that gleam with cruel intelligence. Ancient black dragons prefer to dwell in swamps and marshes, using their acidic breath and ambush tactics to terrorize their prey.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A noble, ancient dragon with scales the color of polished bronze and a deep love for the sea. Ancient bronze dragons are protectors of coastal regions and islands, using their lightning breath and repulsion abilities to defend maritime trade routes. They are honorable guardians who have witnessed centuries of humanoid civilization.",    "imagePrompt": "A gargantuan dragon creature with bronze scales, lightning crackling around its body, near coastal regions or islands",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2057,7 +2057,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 23 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A legendary powerful dragon with distinctive features and abilities.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A clever, ancient dragon with scales the color of burnished copper and a love for riddles and elaborate pranks. Ancient copper dragons dwell in rocky hills and mountains, using their acid breath and slowing abilities to outmaneuver foes. They are playful tricksters who have perfected their craft over centuries.",    "imagePrompt": "A gargantuan dragon creature with copper scales, acid dripping from its jaws, in rocky hills or mountains",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2205,7 +2205,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 25 Dexterity saving throw or take 17 (2d6 + 10) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A massive, ancient dragon with scales the color of desert sky and eyes that crackle with lightning. Ancient blue dragons are cunning and territorial, preferring to dwell in arid regions and using their lightning breath to dominate their domain.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A majestic, ancient dragon with scales the color of pure gold and eyes that radiate wisdom and compassion. Ancient gold dragons are the most noble of their kind, protectors of good-aligned communities and defenders of justice. They use their fire breath and weakening abilities to fight evil and inspire hope.",    "imagePrompt": "A gargantuan dragon creature with gold scales, fire and light emanating from its body, near good-aligned communities or sacred sites",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2347,7 +2347,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 23 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A legendary powerful dragon with distinctive features and abilities.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A cunning, ancient dragon with scales the color of forest canopy and eyes that gleam with deceptive intelligence. Ancient green dragons are master manipulators, dwelling in dense forests and jungles. They use their poisonous breath and mastery of deception to dominate their territories through fear and intrigue.",    "imagePrompt": "A gargantuan dragon creature with green scales, poison gas emanating from its jaws, in dense forests or jungles",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2480,7 +2480,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 25 Dexterity saving throw or take 17 (2d6 + 10) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A legendary powerful dragon with distinctive features and abilities.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A massive, ancient dragon with scales the color of molten lava and eyes that burn with malevolent intelligence. Ancient red dragons are the most covetous of the true dragons, driven by their insatiable thirst for wealth and power. They prefer to dwell in mountainous regions and volcanic areas, amassing vast hoards.",    "imagePrompt": "A gargantuan dragon creature with red scales, fire and smoke billowing from its jaws, in mountainous or volcanic terrain",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2623,7 +2623,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 25 Dexterity saving throw or take 17 (2d6 + 10) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A legendary powerful dragon with distinctive features and abilities.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A noble, ancient dragon with scales the color of polished silver and a deep love for humanoid civilization. Ancient silver dragons are protectors of good-aligned communities, using their cold breath and wisdom to defend the innocent. They often take humanoid form to walk among mortals and guide them toward justice.",    "imagePrompt": "A gargantuan dragon creature with silver scales, frost and cold emanating from its body, near humanoid settlements or castles",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2761,7 +2761,7 @@ export const dragonMonsters: Monster[] = [
         "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
       }
     ],
-    "description": "A legendary powerful dragon with distinctive features and abilities.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A savage, ancient dragon with scales the color of pure ice and eyes that gleam with primal hunger. Ancient white dragons are the most feral of the true dragons, dwelling in frozen wastelands and arctic regions. They rely on brute strength and their freezing breath to hunt prey, having little use for subtlety or strategy.",    "imagePrompt": "A gargantuan dragon creature with white scales, frost and ice emanating from its jaws, in frozen wastelands or arctic terrain",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2842,7 +2842,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A small, vicious dragon with scales as dark as shadows and eyes that gleam with malevolent curiosity. Black dragon wyrmlings are already cruel and cunning, lurking in swamps and ruins where they learn to use their acidic breath to dissolve prey.",    "imagePrompt": "A medium dragon creature with black scales, acid dripping from its jaws, in swamps or ruins",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2918,7 +2918,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A small, territorial dragon with scales the color of desert sky and eyes that crackle with lightning. Blue dragon wyrmlings are already calculating and patient, dwelling in arid regions where they practice their lightning breath and learn to dominate their domain.",    "imagePrompt": "A medium dragon creature with blue scales, lightning crackling around its body, in arid regions",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2994,7 +2994,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A small, talkative dragon with scales the color of burnished brass and an insatiable curiosity. Brass dragon wyrmlings are already social creatures, dwelling in desert regions where they practice their fire breath and love to engage travelers in conversation.",    "imagePrompt": "A medium dragon creature with brass scales, fire and heat emanating from its body, in desert regions",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3075,7 +3075,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A small, noble dragon with scales the color of polished bronze and a natural affinity for the sea. Bronze dragon wyrmlings are already protective and honorable, dwelling near coastal regions where they practice their lightning breath and learn to defend their territories.",    "imagePrompt": "A medium dragon creature with bronze scales, lightning crackling around its body, near coastal regions",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3151,7 +3151,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A small, mischievous dragon with scales the color of burnished copper and a love for simple pranks. Copper dragon wyrmlings are already clever and playful, dwelling in rocky hills where they practice their acid breath and enjoy testing the wit of travelers.",    "imagePrompt": "A medium dragon creature with copper scales, acid dripping from its jaws, in rocky hills",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3257,7 +3257,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A gargantuan dragon creature with scales, wings, and a powerful presence",
+    "description": "A massive, ancient dragon with a shell like a living fortress and scales that gleam like polished sea stone. Dragon turtles are the guardians of the deep, dwelling in the darkest ocean depths where they use their steam breath to boil the waters around them. They are territorial and protective of their underwater domains, often demanding tribute from ships that pass through their waters.",    "imagePrompt": "A gargantuan dragon creature with a massive shell, steam billowing from its jaws, in deep ocean waters",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3338,7 +3338,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A small, majestic dragon with scales the color of pure gold and eyes that radiate innate goodness. Gold dragon wyrmlings are already noble and compassionate, dwelling near good-aligned communities where they practice their fire breath and learn to protect the innocent.",    "imagePrompt": "A medium dragon creature with gold scales, fire and light emanating from its body, near good-aligned communities",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3421,7 +3421,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A small, cunning dragon with scales the color of forest canopy and eyes that gleam with deceptive intelligence. Green dragon wyrmlings are already manipulative and territorial, dwelling in dense forests where they practice their poisonous breath and learn the art of deception.",    "imagePrompt": "A medium dragon creature with green scales, poison gas emanating from its jaws, in dense forests",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3508,7 +3508,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common powerful dragon with distinctive features and abilities.",    "imagePrompt": "A tiny dragon creature with scales, wings, and a powerful presence",
+    "description": "A tiny, cat-sized dragon with scales that shimmer like precious metals and a long, scorpion-like tail tipped with a venomous stinger. Pseudodragons are intelligent and curious creatures who often form bonds with spellcasters and other magical beings. They communicate through limited telepathy and are known for their keen senses and magical resistance.",    "imagePrompt": "A tiny dragon creature with shimmering scales, scorpion-like tail with stinger, near spellcasters or magical beings",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3584,7 +3584,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A small, greedy dragon with scales the color of molten lava and eyes that burn with malevolent intelligence. Red dragon wyrmlings are already covetous and aggressive, dwelling in mountainous regions where they practice their fire breath and begin amassing their first hoards.",    "imagePrompt": "A medium dragon creature with red scales, fire and smoke billowing from its jaws, in mountainous regions",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3659,7 +3659,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A small, honorable dragon with scales the color of polished silver and a natural love for humanoid civilization. Silver dragon wyrmlings are already noble and protective, dwelling near humanoid settlements where they practice their cold breath and learn to defend the innocent.",    "imagePrompt": "A medium dragon creature with silver scales, frost and cold emanating from its body, near humanoid settlements",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3736,7 +3736,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous powerful dragon with distinctive features and abilities.",    "imagePrompt": "A medium dragon creature with scales, wings, and a powerful presence",
+    "description": "A small, savage dragon with scales the color of pure ice and eyes that gleam with primal hunger. White dragon wyrmlings are already feral and aggressive, dwelling in frozen wastelands where they practice their freezing breath and learn to hunt prey through brute strength.",    "imagePrompt": "A medium dragon creature with white scales, frost and ice emanating from its jaws, in frozen wastelands",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3825,7 +3825,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable creature with distinctive features and abilities.",    "imagePrompt": "A large wyvern creature with leathery wings, hind legs, and a venomous stinger tail",
+    "description": "A large, dragon-like creature with leathery wings, powerful hind legs, and a long tail tipped with a venomous stinger. Wyverns are aggressive predators that hunt from the skies, using their poisonous sting to bring down prey. Unlike true dragons, they lack forelegs and are more bestial in nature, relying on brute strength and their deadly venom.",    "imagePrompt": "A large wyvern creature with leathery wings, hind legs, and a venomous stinger tail",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3926,7 +3926,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A young, cunning dragon with slick black scales and a foul, acidic breath. Young black dragons are smaller but no less dangerous than their adult counterparts, lurking in swamps and ruins to ambush prey. They are territorial and cruel, using their acid breath to dissolve both flesh and stone.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4022,7 +4022,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A young dragon with scales the color of desert sky and eyes that crackle with lightning. Young blue dragons are territorial and prefer to dwell in arid regions, using their lightning breath to hunt prey. They are cunning and patient, often burrowing into the sand to ambush unsuspecting travelers.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4119,7 +4119,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A young dragon with scales the color of polished brass and eyes that gleam with intelligence. Young brass dragons are known for their love of conversation and their tendency to talk to anyone they meet. They prefer to dwell in warm deserts and arid hills, using their fire breath and sleep gas to subdue rather than kill their prey.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4221,7 +4221,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A young, noble dragon with scales the color of polished bronze and a love for the sea. Young bronze dragons are protectors of coastal regions and islands, using their lightning breath and repulsion breath to defend their territories. They are lawful and good-natured, often forming alliances with coastal communities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4318,7 +4318,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A young, clever dragon with scales the color of burnished copper and a love for riddles and pranks. Young copper dragons dwell in rocky hills and mountains, using their acid breath and slowing breath to play tricks on travelers. They are mischievous but good-natured, often testing visitors with riddles before revealing themselves.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4421,7 +4421,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A young, noble dragon with scales the color of burnished gold and eyes that gleam with wisdom. Young gold dragons are the most powerful of the metallic dragons, using their fire breath and weakening breath to protect the innocent. They are lawful and good, often serving as guardians of ancient knowledge and protectors of civilization.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4525,7 +4525,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A young, cunning dragon with scales the color of forest canopy and eyes that gleam with deceptive intelligence. Young green dragons make their homes in dense forests and jungles, using their poison breath to hunt prey. They are manipulative and territorial, often setting up elaborate schemes to control their domains.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4621,7 +4621,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A powerful powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A young, greedy dragon with scales the color of molten lava and eyes that burn with malevolent intelligence. Young red dragons are the most covetous of the true dragons, driven by their insatiable desire for treasure and power. They prefer to dwell in mountainous regions, using their devastating fire breath to incinerate enemies and claim territory.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4718,7 +4718,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A young, noble dragon with scales the color of polished silver and a love for humanoid civilization. Young silver dragons are protectors of good-aligned communities, using their cold breath and paralyzing breath to defend the innocent. They are honorable and wise, often studying humanoid cultures and forming close bonds with paladins and other champions of good.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4820,7 +4820,7 @@ export const dragonMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable powerful dragon with distinctive features and abilities.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
+    "description": "A young, savage dragon with scales the color of pure ice and eyes that gleam with primal hunger. Young white dragons are the most feral of the true dragons, dwelling in frozen wastelands and arctic regions. They are bestial and cruel, using their cold breath to freeze prey before devouring it whole.",    "imagePrompt": "A large dragon creature with scales, wings, and a powerful presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
