@@ -256,7 +256,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small, harmless animal that poses no threat to adventurers. Tiny beasts are often found in natural environments and serve as prey for larger creatures.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A small, harmless animal that poses no threat to adventurers. Tiny beasts are often found in natural environments and serve as prey for larger creatures.",
+    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -322,7 +323,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A small brown bat with leathery wings, pointed ears, and tiny claws hanging upside down",
+    "description": "A small flying mammal with leathery wings and echolocation abilities. Bats hunt insects at night and can navigate in complete darkness. They often roost in caves and abandoned buildings, hanging upside down from ceilings.",
+    "imagePrompt": "A small brown bat with leathery wings, pointed ears, and tiny claws hanging upside down",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -403,7 +405,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A powerful forest predator with shaggy black fur and sharp claws. Black bears are excellent climbers, often scaling trees to escape danger or reach food. They roam dense woodlands and mountain valleys, where their dark fur helps them blend into the shadows. Though generally shy, black bears become fierce when protecting their cubs or when surprised by travelers. They are known to raid campsites and villages for food, and their strength makes them dangerous opponents even for experienced adventurers. In the wild, they often mark their territory with deep claw marks on trees, serving as warnings to other creatures and unwary travelers.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -538,7 +541,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A fierce wild pig with thick bristly fur and deadly curved tusks. Boars are incredibly tough creatures that refuse to die easily, often continuing to fight even when grievously wounded. They roam forests and scrublands, using their powerful snouts to root through the earth for food. Boars are known for their aggressive nature and will charge at anything that threatens them, using their tusks to gore enemies and knock them to the ground. They often travel in small groups called sounders, and their territory is marked by deep wallows they create in muddy areas. Boars are dangerous opponents that can easily overwhelm unwary travelers, and their meat is prized by hunters and villagers alike.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -621,7 +625,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A massive brown bear with powerful claws and incredible strength. Brown bears are territorial predators that can take down large prey with their sheer power. They are excellent swimmers and climbers, often fishing for salmon in rivers or raiding beehives for honey. Brown bears are more aggressive than black bears and will defend their territory fiercely.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -677,7 +682,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A large desert beast with a distinctive hump that stores water and fat. Camels can travel for days without water across scorching sands, making them essential for desert caravans and expeditions. They are stubborn but reliable mounts that can carry heavy loads through harsh terrain.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -741,7 +747,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A small, agile feline with sharp claws and keen senses. Cats are excellent climbers and can move silently through shadows, making them perfect companions for rogues and rangers. They are independent hunters that can survive in both urban and wilderness environments.",
+    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -809,7 +816,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A massive serpent that hunts by coiling around its prey and crushing them to death. Constrictor snakes are excellent swimmers and can hold their breath for extended periods while stalking prey in rivers and swamps. They are patient hunters that strike from ambush.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -873,7 +881,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A small armored crustacean with powerful pincers and a hard shell. Crabs scuttle sideways along beaches and riverbanks, using their claws to dig for food and defend themselves. They can breathe both air and water, making them adaptable to coastal environments.",
+    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -937,7 +946,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A massive reptile with armored scales and powerful jaws. Crocodiles lurk in rivers and swamps, waiting motionless for prey to approach before launching a devastating attack. They can hold their breath for hours while stalking underwater.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -993,7 +1003,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A graceful forest creature with branching antlers and keen senses. Deer are excellent runners and can leap great distances to escape predators. They are often found in woodlands and serve as prey for larger hunters.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1061,7 +1072,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A massive, savage wolf with thick fur and powerful jaws. Dire wolves are pack hunters that coordinate attacks to bring down large prey. They are more aggressive and dangerous than regular wolves.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1117,7 +1129,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A large, muscular horse bred for heavy labor and pulling carts. Draft horses are patient and strong, making them ideal for farm work and transporting goods. They are less skittish than riding horses.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1181,7 +1194,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A small beast creature with animal-like features",
+    "description": "A majestic bird of prey with keen eyesight and powerful talons. Eagles soar high above mountains and forests, scanning for prey below. They are symbols of freedom and strength in many cultures.",
+    "imagePrompt": "A small beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1252,7 +1266,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A huge beast creature with animal-like features",
+    "description": "A massive pachyderm with a long trunk and ivory tusks. Elephants are incredibly strong and intelligent, capable of complex social behaviors. They are often used as mounts or beasts of burden in warmer climates.",
+    "imagePrompt": "A huge beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1323,7 +1338,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A large, muscular horse bred for heavy labor and pulling carts. Draft horses are patient and strong, making them ideal for farm work and transporting goods. They are less skittish than riding horses.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1387,7 +1403,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A flying snake is a brightly colored, winged serpent found in remote jungles. Tribespeople and cultists sometimes domesticate flying snakes to serve as messengers that deliver scrolls wrapped in their coils.",
+    "description": "A slender serpent that can glide through the air by flattening its body. Flying snakes launch themselves from trees and can cover surprising distances while hunting or escaping predators.",
     "background": "A flying snake is a brightly colored, winged serpent found in remote jungles. Tribespeople and cultists sometimes domesticate flying snakes to serve as messengers that deliver scrolls wrapped in their coils.",
     "imagePrompt": "A small colorful snake with feathered wings on its back, flying through the air with wings spread wide, snake body extended straight, head pointing forward",
     "imageStyle": "fantasy",
@@ -1448,7 +1464,7 @@ export const beastMonsters: Monster[] = [
     ],
     "actions": [],
     "legendaryActions": [],
-    "description": "A frog has no effective attacks. It feeds on small insects and typically dwells near water, in trees, or underground. The frog's statistics can also be used to represent a toad.",
+    "description": "A small amphibian with long legs and sticky tongue. Frogs inhabit ponds and marshes, using their powerful jumps to escape danger and catch insects. They are often found near water sources.",
     "background": "A frog has no effective attacks. It feeds on small insects and typically dwells near water, in trees, or underground. The frog's statistics can also be used to represent a toad.",
     "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
@@ -1529,7 +1545,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable wild beast with distinctive features and abilities.",    "imagePrompt": "A massive gorilla-like ape with enormous muscles, dark fur, and intimidating presence",
+    "description": "A massive primate with incredible strength and intelligence. Giant apes are territorial creatures that can use simple tools and communicate through gestures and vocalizations.",
+    "imagePrompt": "A massive gorilla-like ape with enormous muscles, dark fur, and intimidating presence",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1611,7 +1628,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A large, aggressive burrowing mammal with powerful claws. Giant badgers dig extensive tunnel systems and are fiercely protective of their territory. They are known for their tenacity in combat.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1678,7 +1696,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A massive flying mammal with leathery wings and sharp fangs. Giant bats hunt larger prey than their smaller cousins and can be found in deep caves or abandoned ruins.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1743,7 +1762,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A massive wild pig with deadly tusks and incredible toughness. Giant boars are even more aggressive than regular boars and can charge with devastating force.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1801,7 +1821,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A long segmented arthropod with one pair of legs per body segment, flat body, antennae on head, venomous fangs, reddish-brown color, crawling on ground",
+    "description": "A massive segmented arthropod with venomous fangs. Giant centipedes hunt in dark places and can inject deadly poison with their bites.",
+    "imagePrompt": "A long segmented arthropod with one pair of legs per body segment, flat body, antennae on head, venomous fangs, reddish-brown color, crawling on ground",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1871,7 +1892,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A huge beast creature with animal-like features",
+    "description": "A massive serpent that can crush even large prey. Giant constrictor snakes are patient hunters that coil around their victims and squeeze the life from them.",
+    "imagePrompt": "A huge beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1936,7 +1958,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A massive crustacean with powerful pincers and armored shell. Giant crabs are dangerous coastal predators that can easily crush smaller creatures.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2019,7 +2042,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable wild beast with distinctive features and abilities.",    "imagePrompt": "A huge beast creature with animal-like features",
+    "description": "A massive reptile that rules rivers and swamps. Giant crocodiles are ancient predators that can take down even large prey with their powerful jaws.",
+    "imagePrompt": "A huge beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2105,7 +2129,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A giant eagle is a noble creature that speaks its own language and understands speech in the Common tongue. A mated pair of giant eagles typically has up to four eggs or young in their nest (treat the young as normal eagles).",
+    "description": "A majestic bird of prey large enough to carry humanoids. Giant eagles are intelligent creatures that often serve as mounts or allies to good-aligned beings.",
     "background": "A giant eagle is a noble creature that speaks its own language and understands speech in the Common tongue. A mated pair of giant eagles typically has up to four eggs or young in their nest (treat the young as normal eagles).",
     "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
@@ -2185,7 +2209,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "The majestic giant elk is rare to the point that its appearance is often taken as a foreshadowing of an important event, such as the birth of a king. Legends tell of gods that take the form of giant elk when visiting the Material Plane. Many cultures therefore believe that to hunt these creatures is to invite divine wrath.",
+    "description": "A massive deer with impressive antlers and powerful hooves. Giant elk are majestic creatures that roam ancient forests and are often revered by druids.",
     "background": "The majestic giant elk is rare to the point that its appearance is often taken as a foreshadowing of an important event, such as the birth of a king. Legends tell of gods that take the form of giant elk when visiting the Material Plane. Many cultures therefore believe that to hunt these creatures is to invite divine wrath.",
     "imagePrompt": "A huge beast creature with animal-like features",
     "imageStyle": "fantasy",
@@ -2249,7 +2273,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A giant fire beetle is a nocturnal creature that takes its name from a pair of glowing glands that give off light. Miners and adventurers prize these creatures, for a giant fire beetle's glands continue to shed light for 1d6 days after the beetle dies. Giant fire beetles are most commonly found underground and in dark forests.",
+    "description": "A large insect that glows with internal light. Giant fire beetles are often kept as pets or used as light sources in underground communities.",
     "background": "A giant fire beetle is a nocturnal creature that takes its name from a pair of glowing glands that give off light. Miners and adventurers prize these creatures, for a giant fire beetle's glands continue to shed light for 1d6 days after the beetle dies. Giant fire beetles are most commonly found underground and in dark forests.",
     "imagePrompt": "A small beast creature with animal-like features",
     "imageStyle": "fantasy",
@@ -2330,7 +2354,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A massive amphibian with powerful leaps and sticky tongue. Giant frogs can swallow smaller creatures whole and are excellent swimmers.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2395,7 +2420,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A large, sure-footed mountain dweller with curved horns. Giant goats can climb steep cliffs and are often used as mounts in mountainous regions.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2458,7 +2484,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A massive scavenger with powerful jaws and pack mentality. Giant hyenas are dangerous predators that hunt in groups and can bring down large prey.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2516,7 +2543,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A giant lizard can be ridden or used as a draft animal. Lizardfolk also keep them as pets, and subterranean giant lizards are used as mounts and pack animals by drow, duergar, and others.",
+    "description": "A large reptile with armored scales and powerful tail. Giant lizards are territorial creatures that can be found in warm climates and underground.",
     "background": "A giant lizard can be ridden or used as a draft animal. Lizardfolk also keep them as pets, and subterranean giant lizards are used as mounts and pack animals by drow, duergar, and others.",
     "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
@@ -2601,7 +2628,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A massive cephalopod with eight powerful tentacles. Giant octopuses are intelligent hunters that can squeeze through small openings and use camouflage.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2676,7 +2704,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A massive nocturnal bird with silent flight and keen senses. Giant owls are intelligent creatures that often serve as mounts or companions to spellcasters.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2736,7 +2765,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A massive serpent with deadly venom. Giant poisonous snakes are feared for their lethal bites and are often found in jungles and swamps.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2802,7 +2832,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A small beast creature with animal-like features",
+    "description": "A large rodent with sharp teeth and disease-carrying fleas. Giant rats are often found in sewers and dungeons, spreading filth and disease.",
+    "imagePrompt": "A small beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2868,7 +2899,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large diseased rat with matted fur, open sores, yellowed teeth, red eyes, and aggressive stance, clearly sick and dangerous",
+    "description": "A large rodent with sharp teeth and disease-carrying fleas. Giant rats are often found in sewers and dungeons, spreading filth and disease.",
+    "imagePrompt": "A large diseased rat with matted fur, open sores, yellowed teeth, red eyes, and aggressive stance, clearly sick and dangerous",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2944,7 +2976,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large scorpion with segmented body, two large pincers, curved stinger tail, armored exoskeleton.",
+    "description": "A massive arachnid with deadly stinger and powerful pincers. Giant scorpions are dangerous desert predators that inject lethal poison.",
     "background": "This giant scorpion is a deadly desert predator with venomous stinger.",
     "imagePrompt": "A large scorpion with curved tail and stinger in desert environment",
     "imageStyle": "fantasy",
@@ -3012,7 +3044,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "Like their smaller kin, giant sea horses are shy, colorful fish with elongated bodies and curled tails. Aquatic elves train them as mounts.",
+    "description": "A massive aquatic creature with horse-like head and prehensile tail. Giant sea horses are often used as mounts by aquatic races.",
     "background": "Like their smaller kin, giant sea horses are shy, colorful fish with elongated bodies and curled tails. Aquatic elves train them as mounts.",
     "imagePrompt": "A large seahorse fish with elongated body, curled tail, colorful scales, seahorse head with tubular snout, underwater in ocean depths",
     "imageStyle": "fantasy",
@@ -3082,7 +3114,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A giant shark is 30 feet long and normally found in deep oceans. Utterly fearless, it preys on anything that crosses its path, including whales and ships.",
+    "description": "A massive ocean predator with rows of razor-sharp teeth. Giant sharks are the apex predators of the deep, feared by sailors and coastal dwellers.",
     "background": "A giant shark is 30 feet long and normally found in deep oceans. Utterly fearless, it preys on anything that crosses its path, including whales and ships.",
     "imagePrompt": "A huge predatory shark with sleek body, sharp teeth, powerful jaws, swimming in deep ocean waters",
     "imageStyle": "fantasy",
@@ -3168,7 +3200,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "To snare its prey, a giant spider spins elaborate webs or shoots sticky strands of webbing from its abdomen. Giant spiders are most commonly found underground, making their lairs on ceilings or in dark, web-filled crevices. Such lairs are often festooned with web cocoons holding past victims.",
+    "description": "A massive arachnid that spins webs and injects poison. Giant spiders are ambush predators that trap prey in their sticky webs.",
     "background": "To snare its prey, a giant spider spins elaborate webs or shoots sticky strands of webbing from its abdomen. Giant spiders are most commonly found underground, making their lairs on ceilings or in dark, web-filled crevices. Such lairs are often festooned with web cocoons holding past victims.",
     "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
@@ -3246,7 +3278,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A massive amphibian with powerful leaps and toxic skin. Giant toads can swallow smaller creatures whole and are often found in swamps.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3335,7 +3368,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A giant vulture has advanced intelligence and a malevolent bent. Unlike its smaller kin, it will attack a wounded creature to hasten its end. Giant vultures have been known to haunt a thirsty, starving creature for days to enjoy its suffering.",
+    "description": "A massive carrion bird with sharp beak and keen eyesight. Giant vultures circle above battlefields and dungeons, waiting for the dead.",
     "background": "A giant vulture has advanced intelligence and a malevolent bent. Unlike its smaller kin, it will attack a wounded creature to hasten its end. Giant vultures have been known to haunt a thirsty, starving creature for days to enjoy its suffering.",
     "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
@@ -3395,7 +3428,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A massive flying insect with deadly stinger and aggressive nature. Giant wasps are territorial creatures that attack anything that threatens their nests.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3460,7 +3494,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A large, agile predator with sharp teeth and hunting instincts. Giant weasels are excellent trackers and can squeeze through small openings.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3535,7 +3570,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "Smaller than a giant spider, a giant wolf spider hunts prey across open ground or hides in a burrow or crevice, or in a hidden cavity beneath debris.",
+    "description": "A massive arachnid that hunts actively rather than spinning webs. Giant wolf spiders are fast and aggressive hunters.",
     "background": "Smaller than a giant spider, a giant wolf spider hunts prey across open ground or hides in a burrow or crevice, or in a hidden cavity beneath debris.",
     "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
@@ -3602,7 +3637,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A sure-footed mountain dweller with curved horns and stubborn nature. Goats can climb steep cliffs and are often kept as livestock in hilly regions.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3666,7 +3702,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A swift bird of prey with keen eyesight and sharp talons. Hawks are excellent hunters that can spot prey from great distances.",
+    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3734,7 +3771,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "Smaller than a giant shark but larger and fiercer than a reef shark, a hunter shark haunts deep waters. It usually hunts alone, but multiple hunter sharks might feed in the same area. A fully grown hunter shark is 15 to 20 feet long.",
+    "description": "A large ocean predator that actively hunts for prey. Hunter sharks are aggressive and will attack anything that looks like food.",
     "background": "Smaller than a giant shark but larger and fiercer than a reef shark, a hunter shark haunts deep waters. It usually hunts alone, but multiple hunter sharks might feed in the same area. A fully grown hunter shark is 15 to 20 feet long.",
     "imagePrompt": "A large predatory shark with sleek body, sharp teeth, powerful jaws, swimming in deep ocean waters",
     "imageStyle": "fantasy",
@@ -3799,7 +3836,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A scavenging predator with powerful jaws and pack mentality. Hyenas are often found near battlefields and dungeons, feeding on the dead.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3866,7 +3904,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A small beast creature with animal-like features",
+    "description": "A small, opportunistic predator with keen senses. Jackals are often found in deserts and wastelands, scavenging for food.",
+    "imagePrompt": "A small beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -3938,7 +3977,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A huge killer whale with black and white coloring, powerful body, swimming in deep ocean waters.",
+    "description": "A massive ocean predator with intelligence and pack hunting tactics. Killer whales are apex predators that hunt in coordinated groups.",
     "background": "This killer whale is a powerful marine predator found in ocean waters.",
     "imagePrompt": "A huge killer whale with black and white coloring, powerful body, swimming in deep ocean waters",
     "imageStyle": "fantasy",
@@ -4026,7 +4065,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A majestic big cat with powerful build and hunting prowess. Lions are social predators that hunt in prides and are symbols of strength.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4083,7 +4123,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A small reptile with scaly skin and quick movements. Lizards are common in warm climates and can be found basking in the sun.",
+    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4154,7 +4195,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A mammoth is an elephantine creature with thick fur and long tusks. Stockier and fiercer than normal elephants, mammoths inhabit a wide range of climes, from subarctic to subtropical.",
+    "description": "A massive prehistoric elephant with long tusks and shaggy fur. Mammoths are powerful creatures adapted to cold climates.",
     "background": "A mammoth is an elephantine creature with thick fur and long tusks. Stockier and fiercer than normal elephants, mammoths inhabit a wide range of climes, from subarctic to subtropical.",
     "imagePrompt": "A huge hairy elephant with thick fur, long curved tusks, four legs, trunk, mammoth anatomy, prehistoric elephant",
     "imageStyle": "fantasy",
@@ -4219,7 +4260,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "Mastiffs are impressive hounds prized by humanoids for their loyalty and keen senses. Mastiffs can be trained as guard dogs, hunting dogs, and war dogs. Halflings and other Small humanoids ride them as mounts.",
+    "description": "A large, loyal dog bred for guarding and protection. Mastiffs are fearless defenders that will protect their masters to the death.",
     "background": "Mastiffs are impressive hounds prized by humanoids for their loyalty and keen senses. Mastiffs can be trained as guard dogs, hunting dogs, and war dogs. Halflings and other Small humanoids ride them as mounts.",
     "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
@@ -4286,7 +4327,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A hardy hybrid of horse and donkey with great endurance. Mules are excellent pack animals that can carry heavy loads through rough terrain.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4369,7 +4411,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small, intelligent cephalopod with eight flexible tentacles and a bulbous head. Octopuses are masters of camouflage and can change their skin color and texture to blend seamlessly with their surroundings. They are excellent swimmers and can squeeze through incredibly small spaces.",
+    "description": "A highly intelligent cephalopod with eight tentacles and camouflage abilities. Octopuses are excellent escape artists and can squeeze through tiny openings.",
     "background": "Octopuses inhabit coastal waters and coral reefs, where they hunt for crabs, fish, and other small marine creatures. They are highly intelligent for invertebrates and have been known to solve complex puzzles and use tools. When threatened, they release a cloud of dark ink to confuse predators and escape.",
     "imagePrompt": "A small beast creature with animal-like features",
     "imageStyle": "fantasy",
@@ -4441,7 +4483,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A nocturnal bird of prey with silent flight and keen hearing. Owls are excellent hunters that can see in near darkness.",
+    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4520,7 +4563,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A sleek black big cat with stealth and hunting abilities. Panthers are solitary hunters that prefer to stalk their prey from the shadows.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4585,7 +4629,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A massive prehistoric marine reptile with a long neck and powerful flippers. Plesiosaurus are excellent swimmers that hunt fish and other sea creatures in ancient oceans. They can hold their breath for extended periods while stalking prey underwater.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4643,7 +4688,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A venomous serpent that can deliver lethal bites. Poisonous snakes are feared for their deadly venom and are often found in warm climates.",
+    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4726,7 +4772,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A massive white bear adapted to arctic conditions. Polar bears are powerful predators that hunt seals and other arctic animals.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4782,7 +4829,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A small, hardy horse suitable for children and small riders. Ponies are often used as mounts for halflings and gnomes.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4848,7 +4896,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A quipper is a carnivorous fish with sharp teeth. Quippers can adapt to any aquatic environment, including cold subterranean lakes. They frequently gather in swarms; the statistics for a swarm of quippers appear later in this appendix.",
+    "description": "A small, aggressive fish with razor-sharp teeth. Quippers are dangerous in groups and are often found in dark waters.",
     "background": "A quipper is a carnivorous fish with sharp teeth. Quippers can adapt to any aquatic environment, including cold subterranean lakes. They frequently gather in swarms; the statistics for a swarm of quippers appear later in this appendix.",
     "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
@@ -4911,7 +4959,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A small rodent that spreads disease and filth. Rats are common in cities and dungeons, often serving as familiars to evil spellcasters.",
+    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -4975,7 +5024,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "An intelligent black bird with mimicry abilities. Ravens are often associated with omens and can be found serving dark masters.",
+    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5043,7 +5093,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "Smaller than giant sharks and hunter sharks, reef sharks inhabit shallow waters and coral reefs, gathering in small packs to hunt. A full-grown specimen measures 6 to 10 feet long.",
+    "description": "A medium-sized shark that hunts in coral reefs. Reef sharks are territorial and will attack anything that enters their domain.",
     "background": "Smaller than giant sharks and hunter sharks, reef sharks inhabit shallow waters and coral reefs, gathering in small packs to hunt. A full-grown specimen measures 6 to 10 feet long.",
     "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
@@ -5106,7 +5156,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A massive herbivore with thick gray skin and a deadly horn on its snout. Rhinoceroses are incredibly strong and can charge with devastating force, using their horn to gore enemies and knock them prone. They are territorial creatures that will attack anything that threatens them.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5162,7 +5213,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A well-trained horse bred for speed and endurance. Riding horses are the preferred mounts for travelers and adventurers.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5240,7 +5292,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A prehistoric big cat with massive fangs and hunting prowess. Saber-toothed tigers are extinct in most worlds but can be found in ancient ruins.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5297,7 +5350,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny scorpion with segmented body, two small pincers, curved stinger tail, armored exoskeleton.",
+    "description": "A small arachnid with deadly stinger and armored body. Scorpions are dangerous desert creatures that inject lethal poison.",
     "background": "This tiny scorpion is a venomous desert creature with deadly stinger.",
     "imagePrompt": "A tiny scorpion with curved tail and stinger in desert environment",
     "imageStyle": "fantasy",
@@ -5349,7 +5402,7 @@ export const beastMonsters: Monster[] = [
     ],
     "actions": [],
     "legendaryActions": [],
-    "description": "A tiny aquatic fish with elongated body, curled tail, colorful scales, seahorse-like appearance.",
+    "description": "A small aquatic creature with horse-like head and prehensile tail. Sea horses are often kept as pets by aquatic races.",
     "background": "This tiny seahorse is a shy, colorful fish found in ocean waters.",
     "imagePrompt": "A tiny seahorse fish with elongated body, curled tail, colorful scales, seahorse head with tubular snout, underwater in ocean depths",
     "imageStyle": "fantasy",
@@ -5424,7 +5477,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A small arachnid that spins webs and injects poison. Spiders are common in dark places and are often used as familiars.",
+    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5482,7 +5536,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A small flying creature with bat-like wings and a long proboscis. Stirges are blood-sucking parasites that attach to their prey and drain their life force. They are often found in swamps and dungeons, hunting in groups to overwhelm larger creatures.",
+    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5561,7 +5616,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous wild beast with distinctive features and abilities.",    "imagePrompt": "A large beast creature with animal-like features",
+    "description": "A powerful big cat with striped fur and hunting prowess. Tigers are solitary hunters that prefer to stalk their prey from the shadows.",
+    "imagePrompt": "A large beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5632,7 +5688,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable wild beast with distinctive features and abilities.",    "imagePrompt": "A huge beast creature with animal-like features",
+    "description": "A massive prehistoric dinosaur with three horns and armored frill. Triceratops are powerful herbivores that can defend themselves against predators.",
+    "imagePrompt": "A huge beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5709,7 +5766,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable wild beast with distinctive features and abilities.",    "imagePrompt": "A huge beast creature with animal-like features",
+    "description": "A massive prehistoric predator with powerful jaws and tiny arms. T-Rex is the apex predator of prehistoric times.",
+    "imagePrompt": "A huge beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5777,7 +5835,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A carrion bird that feeds on the dead. Vultures are often found near battlefields and dungeons, waiting for the dead.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5838,7 +5897,7 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A great big horse bred for war, with a muscular build and powerful legs. It wears a war bridle and saddle designed for combat, with sturdy leather straps and metal fittings. Its coat is typically dark and well-groomed, and it has a strong, confident bearing suitable for carrying armored riders into battle.",
+    "description": "A large, trained horse bred for combat. Warhorses are fearless in battle and can carry armored riders into combat.",
     "background": "Warhorses are specially bred and trained horses designed for combat. They are larger and stronger than regular horses, with the stamina and courage needed for battle. They are equipped with war bridles and saddles that allow riders to fight effectively while mounted.",
     "imagePrompt": "A great big horse bred for war, muscular build and powerful legs, war bridle and saddle designed for combat, sturdy leather straps and metal fittings, dark well-groomed coat, strong confident bearing for carrying armored riders into battle.",
     "imageStyle": "fantasy",
@@ -5904,7 +5963,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A tiny beast creature with animal-like features",
+    "description": "A small, agile predator with sharp teeth and hunting instincts. Weasels are excellent trackers and can squeeze through small openings.",
+    "imagePrompt": "A tiny beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -5972,7 +6032,8 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A common wild beast with distinctive features and abilities.",    "imagePrompt": "A medium beast creature with animal-like features",
+    "description": "A pack-hunting canine with keen senses and coordination. Wolves are social predators that hunt in coordinated groups.",
+    "imagePrompt": "A medium beast creature with animal-like features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [

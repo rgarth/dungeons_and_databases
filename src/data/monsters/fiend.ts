@@ -221,7 +221,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A massive devil with bat-like wings, a long tail, and burning red eyes. Pit fiends are the highest-ranking devils in the Nine Hells, serving as generals and administrators.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A muscular devil covered in sharp, barbed spines that protrude from its red, leathery skin. Barbed devils are sadistic torturers who delight in causing pain, using their spiked hide to harm anyone who grapples them. They can hurl balls of hellfire and are immune to fire and poison, making them dangerous opponents in close combat.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -322,7 +322,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A beautiful but malevolent fiend with bat-like wings and a seductive appearance. Succubi often work alone, infiltrating mortal societies to corrupt individuals and spread evil.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A muscular devil with a thick, wiry beard that writhes like living snakes. Bearded devils are disciplined soldiers of the Nine Hells who wield glaives and use their animated beards as deadly weapons. Their beard attacks can poison victims and prevent healing, while their glaive strikes create infernal wounds that bleed profusely unless treated.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -423,7 +423,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable demonic fiend with distinctive features and abilities.",    "imagePrompt": "A large skeletal devil with a bony, emaciated appearance. The creature has exposed bones and a skeletal structure, with sharp claws and a long, bony tail ending in a stinger. It has a skull-like head with horns and glowing eyes, embodying the essence of a devil made of bone rather than flesh and muscle.",
+    "description": "A large skeletal devil with exposed bones and a bony, emaciated appearance. Bone devils have sharp claws, a long bony tail ending in a stinger, and a skull-like head with horns and glowing eyes. They are intelligent commanders in the Nine Hells, using their poisonous sting to weaken enemies before finishing them off with their claws. They are immune to fire and poison, making them difficult to defeat.",    "imagePrompt": "A large skeletal devil with a bony, emaciated appearance. The creature has exposed bones and a skeletal structure, with sharp claws and a long, bony tail ending in a stinger. It has a skull-like head with horns and glowing eyes, embodying the essence of a devil made of bone rather than flesh and muscle.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -519,7 +519,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A formidable demonic fiend with distinctive features and abilities.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A skeletal devil wrapped in rusted chains that writhe and move of their own accord. Chain devils are sadistic torturers who use their animated chains to restrain and slowly kill their victims. They can animate nearby chains to create additional weapons and are immune to fire and poison, making them difficult to defeat in their domain.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -616,7 +616,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A small, mischievous devil with bat-like wings and a pointed tail. Imps are native to the Nine Hells and are often bound to serve evil masters as spies and messengers.",    "imagePrompt": "A small, squat demon about 4 feet tall with a rounded body that heavily contrasts its gaunt, emaciated limbs. The creature has ape-like features with pale, rubbery skin ranging from white to beige and blue, sparsely covered by bristly hairs and pulsing, varicose veins. It has a grotesque, misshapen appearance typical of the lowest form of demon.",
+    "description": "A small, squat demon about 4 feet tall with a rounded body that heavily contrasts its gaunt, emaciated limbs. Dretches have ape-like features with pale, rubbery skin ranging from white to beige and blue, sparsely covered by bristly hairs and pulsing, varicose veins. They are the lowest form of demon, barely intelligent and constantly exuding a fetid cloud of poisonous gas. Despite their weak appearance, they are vicious in combat and can poison enemies with their noxious breath.",    "imagePrompt": "A small, squat demon about 4 feet tall with a rounded body that heavily contrasts its gaunt, emaciated limbs. The creature has ape-like features with pale, rubbery skin ranging from white to beige and blue, sparsely covered by bristly hairs and pulsing, varicose veins. It has a grotesque, misshapen appearance typical of the lowest form of demon.",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -897,7 +897,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous demonic fiend with distinctive features and abilities.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
+    "description": "A large, muscular hound with black fur, glowing red eyes, and smoke rising from its nostrils and mouth. Hell hounds are fiendish hunting dogs bred in the Nine Hells to track and kill prey. They can breathe fire in a cone, their bites deal both piercing and fire damage, and they work together in packs to bring down larger prey. They are immune to fire and understand Infernal but cannot speak.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1105,7 +1105,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A powerful demonic fiend with distinctive features and abilities.",    "imagePrompt": "A large fiend creature with demonic or devilish features",
+    "description": "A massive devil with large horns, leathery wings, and a muscular build covered in thick hide. Horned devils are powerful warriors of the Nine Hells who wield massive forks and can hurl balls of hellfire. Their tail attacks create infernal wounds that bleed profusely, and they are immune to fire and poison, making them formidable opponents in battle.",    "imagePrompt": "A large fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1320,7 +1320,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous demonic fiend with distinctive features and abilities.",    "imagePrompt": "A tiny fiend creature with demonic or devilish features",
+    "description": "A tiny devil with bat-like wings, a pointed tail, and sharp claws. Imps are the smallest and most common devils, often serving as spies, messengers, and familiars to more powerful evil beings. They can shapeshift into animals, turn invisible, and are immune to fire and poison, making them excellent for stealth missions and reconnaissance.",    "imagePrompt": "A tiny fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -1952,7 +1952,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A legendary demonic fiend with distinctive features and abilities.",    "imagePrompt": "A large fiend creature with demonic or devilish features",
+    "description": "A massive devil with bat-like wings, a long tail, and burning red eyes. Pit fiends are the highest-ranking devils in the Nine Hells, serving as generals and administrators. They are nearly indestructible due to their regeneration, can hurl fireballs, and are immune to fire and poison. Their mere presence can inspire fear in lesser creatures.",    "imagePrompt": "A large fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -2051,7 +2051,7 @@ export const fiendMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dangerous demonic fiend with distinctive features and abilities.",    "imagePrompt": "A tiny fiend creature with demonic or devilish features",
+    "description": "A tiny demon with bat-like wings, sharp claws, and a mischievous appearance. Quasits are the smallest demons, often serving as familiars to evil spellcasters. They can shapeshift into animals, turn invisible, and use their claws to poison victims. Despite their small size, they are cunning and dangerous, using stealth and deception to achieve their goals.",    "imagePrompt": "A tiny fiend creature with demonic or devilish features",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
