@@ -51,12 +51,7 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The giant makes two morningstar attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The giant makes two morningstar attacks."
       },
       {
         "name": "Morningstar",
@@ -80,7 +75,8 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A massive giant with skin that ranges from pearly white to sky blue, often with hair that resembles clouds. Cloud giants are among the most intelligent and cultured of the giant races, dwelling in floating castles and valuing art and music.",    "imagePrompt": "A huge giant with pearly white to sky blue skin, cloud-like hair, floating castle dweller, cultured and intelligent appearance, massive size and strength",
+    "description": "A massive giant with skin that ranges from pearly white to sky blue, often with hair that resembles clouds. Cloud giants are among the most intelligent and cultured of the giant races, dwelling in floating castles and valuing art and music.",
+    "imagePrompt": "A huge giant with pearly white to sky blue skin, cloud-like hair, floating castle dweller, cultured and intelligent appearance, massive size and strength",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -141,12 +137,7 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The ettin makes two attacks: one with its battleaxe and one with its morningstar.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The ettin makes two attacks: one with its battleaxe and one with its morningstar."
       },
       {
         "name": "Battleaxe",
@@ -225,12 +216,7 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "A massive giant with skin the color of molten iron and hair that flickers like flame. Fire giants dwell in volcanic regions and are master smiths, creating powerful weapons and armor in their forges. They are lawful evil and highly organized.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "A massive giant with skin the color of molten iron and hair that flickers like flame. Fire giants dwell in volcanic regions and are master smiths, creating powerful weapons and armor in their forges. They are lawful evil and highly organized."
       },
       {
         "name": "Greatsword",
@@ -308,12 +294,7 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The giant makes two greataxe attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The giant makes two greataxe attacks."
       },
       {
         "name": "Greataxe",
@@ -388,12 +369,7 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The giant makes two greatclub attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The giant makes two greatclub attacks."
       },
       {
         "name": "Greatclub",
@@ -488,7 +464,8 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large, brutish giant with dirty, unkempt hair and simple clothing made of animal hides. Hill giants are the most common and least intelligent of the giant races, living in simple communities.",    "imagePrompt": "A large brutish giant with dirty unkempt hair, animal hide clothing, simple community dweller, least intelligent appearance, chaotic evil demeanor",
+    "description": "A large, brutish giant with dirty, unkempt hair and simple clothing made of animal hides. Hill giants are the most common and least intelligent of the giant races, living in simple communities.",
+    "imagePrompt": "A large brutish giant with dirty unkempt hair, animal hide clothing, simple community dweller, least intelligent appearance, chaotic evil demeanor",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -555,12 +532,7 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The oni makes two attacks, either with its claws or its glaive.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The oni makes two attacks, either with its claws or its glaive."
       },
       {
         "name": "Claw (Oni Form Only)",
@@ -652,12 +624,7 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The giant makes two greatclub attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The giant makes two greatclub attacks."
       },
       {
         "name": "Greatclub",
@@ -681,7 +648,8 @@ export const giantMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large giant with skin that resembles weathered stone and a stoic, contemplative demeanor. Stone giants prefer to live in mountainous regions and are deeply connected to the earth.",    "imagePrompt": "A huge giant with weathered stone-like skin, stoic contemplative demeanor, mountainous dweller, earth-connected appearance, massive size and strength, neutral alignment",
+    "description": "A large giant with skin that resembles weathered stone and a stoic, contemplative demeanor. Stone giants prefer to live in mountainous regions and are deeply connected to the earth.",
+    "imagePrompt": "A huge giant with weathered stone-like skin, stoic contemplative demeanor, mountainous dweller, earth-connected appearance, massive size and strength, neutral alignment",
     "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
@@ -750,12 +718,7 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The giant makes two greatsword attacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The giant makes two greatsword attacks."
       },
       {
         "name": "Greatsword",
@@ -849,12 +812,7 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The troll makes three attacks: one with its bite and two with its claws.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The troll makes three attacks: one with its bite and two with its claws."
       },
       {
         "name": "Bite",
