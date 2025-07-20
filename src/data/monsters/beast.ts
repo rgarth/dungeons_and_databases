@@ -1,4 +1,4 @@
-import { Monster } from '@/types/monster';
+import { Monster } from '../../types/monster';
 
 export const beastMonsters: Monster[] = [
   {
@@ -17,10 +17,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 19,
-    "hitDice": "3d8+6",
+    "hitDice": "3d8",
     "speed": {
       "walk": 30,
-      "climb": 30
+      "climb": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -45,36 +46,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Fist",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) bludgeoning damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "1d6+3",
-          "average": 7
-        }
+        "attackBonus": 5
       },
       {
         "name": "Rock",
         "description": "Ranged Weapon Attack: +5 to hit, range 25/50 ft., one target. Hit: 6 (1d6 + 3) bludgeoning damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "1d6+3",
-          "average": 7
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A powerful primate with muscular arms and intelligent eyes. Apes are highly intelligent creatures that can use tools and communicate through gestures and vocalizations. They are excellent climbers and can swing through trees with remarkable agility.",
-    "background": "Apes inhabit dense forests and jungles where they live in social groups led by dominant males. They are omnivorous, feeding on fruits, leaves, insects, and occasionally small animals. Apes are known for their problem-solving abilities and have been observed using sticks as tools to extract insects from tree bark.",
-    "imagePrompt": "A medium-sized gorilla-like ape with dark fur, muscular arms, and intelligent eyes",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -93,9 +79,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "dex",
     "hitPoints": 19,
-    "hitDice": "3d10+3",
+    "hitDice": "3d10",
     "speed": {
-      "walk": 50
+      "walk": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -113,26 +100,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Beak",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) slashing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Slashing",
-          "roll": "1d8+2",
-          "average": 7
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
     "description": "An axe beak is a tall flightless bird with strong legs and a heavy, wedge-shaped beak. It has a nasty disposition and tends to attack any unfamiliar creature that wanders too close.",
-    "background": "An axe beak is a tall flightless bird with strong legs and a heavy, wedge-shaped beak. It has a nasty disposition and tends to attack any unfamiliar creature that wanders too close.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -154,7 +131,8 @@ export const beastMonsters: Monster[] = [
     "hitDice": "1d6",
     "speed": {
       "walk": 30,
-      "climb": 30
+      "climb": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -177,26 +155,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +1 to hit, reach 5 ft., one target. Hit: 1 (1d4 - 1) piercing damage.",
-        "attackBonus": 1,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d4-1",
-          "average": 0
-        }
+        "attackBonus": 1
       }
     ],
     "legendaryActions": [],
-    "description": "A small, intelligent primate with distinctive facial features and a long tail. Baboons are highly social animals that live in large troops with complex hierarchies. They are excellent climbers and can be quite aggressive when defending their territory.",
-    "background": "Baboons inhabit savannas, grasslands, and rocky areas where they forage for food in large groups. They are omnivorous, eating fruits, seeds, insects, and small animals. Baboons are known for their complex social behavior and communication through vocalizations and body language.",
-    "imagePrompt": "A small beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "small",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -215,10 +183,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 10,
     "armorType": "dex",
     "hitPoints": 3,
-    "hitDice": "1d4+1",
+    "hitDice": "1d4",
     "speed": {
       "walk": 20,
-      "burrow": 5
+      "burrow": 5,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -227,8 +196,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 11,
-      "darkvision": 30
+      "darkvision": 30,
+      "passivePerception": 11
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -242,25 +211,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 1 piercing damage.",
-        "attackBonus": 2,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1",
-          "average": 0
-        }
+        "attackBonus": 2
       }
     ],
     "legendaryActions": [],
-    "description": "A small, harmless animal that poses no threat to adventurers. Tiny beasts are often found in natural environments and serve as prey for larger creatures.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -279,10 +239,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 1,
-    "hitDice": "1d4+-1",
+    "hitDice": "1d4",
     "speed": {
       "walk": 5,
-      "fly": 30
+      "fly": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -291,8 +252,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 11,
-      "blindsight": 60
+      "blindsight": 60,
+      "passivePerception": 11
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -309,26 +270,16 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Bite",
-        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one creature. Hit: 1 piercing damage.",
-        "damage": {
-          "type": "Piercing",
-          "roll": "1",
-          "average": 0
-        },
-        "attackBonus": 0
+        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one creature. Hit: 1 piercing damage."
       }
     ],
     "legendaryActions": [],
-    "description": "A small flying mammal with leathery wings and echolocation abilities. Bats hunt insects at night and can navigate in complete darkness. They often roost in caves and abandoned buildings, hanging upside down from ceilings.",
-    "imagePrompt": "A small brown bat with leathery wings, pointed ears, and tiny claws hanging upside down",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -347,10 +298,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "natural",
     "hitPoints": 19,
-    "hitDice": "3d8+6",
+    "hitDice": "3d8",
     "speed": {
       "walk": 40,
-      "climb": 30
+      "climb": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -377,35 +329,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 3,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d6+2",
-          "average": 6
-        }
+        "attackBonus": 3
       },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 7 (2d4 + 2) slashing damage.",
-        "attackBonus": 3,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d4+2",
-          "average": 7
-        }
+        "attackBonus": 3
       }
     ],
     "legendaryActions": [],
-    "description": "A powerful forest predator with shaggy black fur and sharp claws. Black bears are excellent climbers, often scaling trees to escape danger or reach food. They roam dense woodlands and mountain valleys, where their dark fur helps them blend into the shadows. Though generally shy, black bears become fierce when protecting their cubs or when surprised by travelers. They are known to raid campsites and villages for food, and their strength makes them dangerous opponents even for experienced adventurers. In the wild, they often mark their territory with deep claw marks on trees, serving as warnings to other creatures and unwary travelers.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -427,7 +365,8 @@ export const beastMonsters: Monster[] = [
     "hitDice": "2d6",
     "speed": {
       "walk": 10,
-      "fly": 60
+      "fly": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -456,26 +395,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Beak",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d4+2",
-          "average": 5
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
     "description": "Taking its name from its crimson feathers and aggressive nature, the blood hawk fearlessly attacks almost any animal, stabbing it with its daggerlike beak. Blood hawks flock together in large numbers, attacking as a pack to take down prey.",
-    "background": "Taking its name from its crimson feathers and aggressive nature, the blood hawk fearlessly attacks almost any animal, stabbing it with its daggerlike beak. Blood hawks flock together in large numbers, attacking as a pack to take down prey.",
-    "imagePrompt": "A small beast creature with animal-like features",
-    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "beast",
       "small",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -494,9 +423,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "natural",
     "hitPoints": 11,
-    "hitDice": "2d8+2",
+    "hitDice": "2d8",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -523,25 +453,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Tusk",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) slashing damage.",
-        "attackBonus": 3,
-        "damage": {
-          "type": "Slashing",
-          "roll": "1d6+1",
-          "average": 5
-        }
+        "attackBonus": 3
       }
     ],
     "legendaryActions": [],
-    "description": "A fierce wild pig with thick bristly fur and deadly curved tusks. Boars are incredibly tough creatures that refuse to die easily, often continuing to fight even when grievously wounded. They roam forests and scrublands, using their powerful snouts to root through the earth for food. Boars are known for their aggressive nature and will charge at anything that threatens them, using their tusks to gore enemies and knock them to the ground. They often travel in small groups called sounders, and their territory is marked by deep wallows they create in muddy areas. Boars are dangerous opponents that can easily overwhelm unwary travelers, and their meat is prized by hunters and villagers alike.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -560,10 +481,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "natural",
     "hitPoints": 34,
-    "hitDice": "4d10+12",
+    "hitDice": "4d10",
     "speed": {
       "walk": 40,
-      "climb": 30
+      "climb": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -592,35 +514,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) piercing damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d8+4",
-          "average": 9
-        }
+        "attackBonus": 5
       },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d6+4",
-          "average": 11
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A massive brown bear with powerful claws and incredible strength. Brown bears are territorial predators that can take down large prey with their sheer power. They are excellent swimmers and climbers, often fishing for salmon in rivers or raiding beehives for honey. Brown bears are more aggressive than black bears and will defend their territory fiercely.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -639,9 +547,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 9,
     "armorType": "dex",
     "hitPoints": 15,
-    "hitDice": "2d10+4",
+    "hitDice": "2d10",
     "speed": {
-      "walk": 50
+      "walk": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -661,23 +570,19 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 2 (1d4) bludgeoning damage.",
         "attackBonus": 5,
         "damage": {
-          "type": "Piercing",
+          "type": "Bludgeoning",
           "roll": "1d4",
-          "average": 3
+          "average": 2
         }
       }
     ],
     "legendaryActions": [],
-    "description": "A large desert beast with a distinctive hump that stores water and fat. Camels can travel for days without water across scorching sands, making them essential for desert caravans and expeditions. They are stubborn but reliable mounts that can carry heavy loads through harsh terrain.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -699,7 +604,8 @@ export const beastMonsters: Monster[] = [
     "hitDice": "1d4",
     "speed": {
       "walk": 40,
-      "climb": 30
+      "climb": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -724,26 +630,16 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Claws",
-        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 slashing damage.",
-        "damage": {
-          "type": "Slashing",
-          "roll": "1",
-          "average": 0
-        },
-        "attackBonus": 0
+        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 slashing damage."
       }
     ],
     "legendaryActions": [],
-    "description": "A small, agile feline with sharp claws and keen senses. Cats are excellent climbers and can move silently through shadows, making them perfect companions for rogues and rangers. They are independent hunters that can survive in both urban and wilderness environments.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -762,10 +658,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 13,
-    "hitDice": "2d10+2",
+    "hitDice": "2d10",
     "speed": {
       "walk": 30,
-      "swim": 30
+      "swim": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -774,8 +671,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "blindsight": 10
+      "blindsight": 10,
+      "passivePerception": 10
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -784,35 +681,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d6+2",
-          "average": 6
-        }
+        "attackBonus": 4
       },
       {
         "name": "Constrict",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 6 (1d8 + 2) bludgeoning damage, and the target is grappled (escape DC 14). Until this grapple ends, the creature is restrained, and the snake can't constrict another target.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "1d8+2",
-          "average": 7
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A massive serpent that hunts by coiling around its prey and crushing them to death. Constrictor snakes are excellent swimmers and can hold their breath for extended periods while stalking prey in rivers and swamps. They are patient hunters that strike from ambush.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -834,7 +717,8 @@ export const beastMonsters: Monster[] = [
     "hitDice": "1d4",
     "speed": {
       "walk": 20,
-      "swim": 20
+      "swim": 20,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -845,8 +729,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 9,
-      "blindsight": 30
+      "blindsight": 30,
+      "passivePerception": 9
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -859,26 +743,16 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Claw",
-        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 bludgeoning damage.",
-        "damage": {
-          "type": "Slashing",
-          "roll": "1",
-          "average": 0
-        },
-        "attackBonus": 0
+        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 bludgeoning damage."
       }
     ],
     "legendaryActions": [],
-    "description": "A small armored crustacean with powerful pincers and a hard shell. Crabs scuttle sideways along beaches and riverbanks, using their claws to dig for food and defend themselves. They can breathe both air and water, making them adaptable to coastal environments.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -897,10 +771,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "natural",
     "hitPoints": 19,
-    "hitDice": "3d10+3",
+    "hitDice": "3d10",
     "speed": {
       "walk": 20,
-      "swim": 20
+      "swim": 20,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -925,25 +800,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 7 (1d10 + 2) piercing damage, and the target is grappled (escape DC 12). Until this grapple ends, the target is restrained, and the crocodile can't bite another target",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d10+2",
-          "average": 8
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A massive reptile with armored scales and powerful jaws. Crocodiles lurk in rivers and swamps, waiting motionless for prey to approach before launching a devastating attack. They can hold their breath for hours while stalking underwater.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -964,7 +830,8 @@ export const beastMonsters: Monster[] = [
     "hitPoints": 4,
     "hitDice": "1d8",
     "speed": {
-      "walk": 50
+      "walk": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -986,21 +853,17 @@ export const beastMonsters: Monster[] = [
         "damage": {
           "type": "Piercing",
           "roll": "1d4",
-          "average": 3
+          "average": 2
         }
       }
     ],
     "legendaryActions": [],
-    "description": "A graceful forest creature with branching antlers and keen senses. Deer are excellent runners and can leap great distances to escape predators. They are often found in woodlands and serve as prey for larger hunters.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -1019,9 +882,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 14,
     "armorType": "natural",
     "hitPoints": 37,
-    "hitDice": "5d10+10",
+    "hitDice": "5d10",
     "speed": {
-      "walk": 50
+      "walk": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -1051,25 +915,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) piercing damage. If the target is a creature, it must succeed on a DC 13 Strength saving throw or be knocked prone.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d6+3",
-          "average": 10
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A massive, savage wolf with thick fur and powerful jaws. Dire wolves are pack hunters that coordinate attacks to bring down large prey. They are more aggressive and dangerous than regular wolves.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -1088,9 +943,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 10,
     "armorType": "dex",
     "hitPoints": 19,
-    "hitDice": "3d10+3",
+    "hitDice": "3d10",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1108,25 +964,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Hooves",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 9 (2d4 + 4) bludgeoning damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d4+4",
-          "average": 9
-        }
+        "attackBonus": 6
       }
     ],
     "legendaryActions": [],
-    "description": "A large, muscular horse bred for heavy labor and pulling carts. Draft horses are patient and strong, making them ideal for farm work and transporting goods. They are less skittish than riding horses.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -1148,7 +995,8 @@ export const beastMonsters: Monster[] = [
     "hitDice": "1d6",
     "speed": {
       "walk": 10,
-      "fly": 60
+      "fly": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -1173,25 +1021,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Talons",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) slashing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "1d4+2",
-          "average": 5
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A majestic bird of prey with keen eyesight and powerful talons. Eagles soar high above mountains and forests, scanning for prey below. They are symbols of freedom and strength in many cultures.",
-    "imagePrompt": "A small beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "small",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -1210,9 +1049,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "natural",
     "hitPoints": 76,
-    "hitDice": "8d12+24",
+    "hitDice": "8d12",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1235,35 +1075,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Gore",
         "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 19 (3d8 + 6) piercing damage.",
-        "attackBonus": 8,
-        "damage": {
-          "type": "Piercing",
-          "roll": "3d8+6",
-          "average": 20
-        }
+        "attackBonus": 8
       },
       {
         "name": "Stomp",
         "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one prone creature. Hit: 22 (3d10 + 6) bludgeoning damage.",
-        "attackBonus": 8,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "3d10+6",
-          "average": 23
-        }
+        "attackBonus": 8
       }
     ],
     "legendaryActions": [],
-    "description": "A massive pachyderm with a long trunk and ivory tusks. Elephants are incredibly strong and intelligent, capable of complex social behaviors. They are often used as mounts or beasts of burden in warmer climates.",
-    "imagePrompt": "A huge beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "huge",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -1282,9 +1108,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 10,
     "armorType": "dex",
     "hitPoints": 13,
-    "hitDice": "2d10+2",
+    "hitDice": "2d10",
     "speed": {
-      "walk": 50
+      "walk": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1307,35 +1134,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Ram",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) bludgeoning damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "1d6+3",
-          "average": 7
-        }
+        "attackBonus": 5
       },
       {
         "name": "Hooves",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one prone creature. Hit: 8 (2d4 + 3) bludgeoning damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d4+3",
-          "average": 8
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A large, muscular horse bred for heavy labor and pulling carts. Draft horses are patient and strong, making them ideal for farm work and transporting goods. They are less skittish than riding horses.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -1358,7 +1171,8 @@ export const beastMonsters: Monster[] = [
     "speed": {
       "walk": 30,
       "fly": 60,
-      "swim": 30
+      "swim": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1367,8 +1181,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 11,
-      "blindsight": 10
+      "blindsight": 10,
+      "passivePerception": 11
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -1384,24 +1198,19 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 1 piercing damage plus 7 (3d4) poison damage.",
         "attackBonus": 6,
         "damage": {
-          "type": "Piercing",
-          "roll": "1",
-          "average": 0
+          "type": "Poison",
+          "roll": "3d4",
+          "average": 7
         }
       }
     ],
     "legendaryActions": [],
-    "description": "A slender serpent that can glide through the air by flattening its body. Flying snakes launch themselves from trees and can cover surprising distances while hunting or escaping predators.",
-    "background": "A flying snake is a brightly colored, winged serpent found in remote jungles. Tribespeople and cultists sometimes domesticate flying snakes to serve as messengers that deliver scrolls wrapped in their coils.",
-    "imagePrompt": "A small colorful snake with feathered wings on its back, flying through the air with wings spread wide, snake body extended straight, head pointing forward",
-    "imageStyle": "fantasy",
+    "description": "A flying snake is a brightly colored, winged serpent found in remote jungles. Tribespeople and cultists sometimes domesticate flying snakes to serve as messengers that deliver scrolls wrapped in their coils.",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -1420,10 +1229,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "dex",
     "hitPoints": 1,
-    "hitDice": "1d4+-1",
+    "hitDice": "1d4",
     "speed": {
       "walk": 20,
-      "swim": 20
+      "swim": 20,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -1435,8 +1245,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 11,
-      "darkvision": 30
+      "darkvision": 30,
+      "passivePerception": 11
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -1452,17 +1262,12 @@ export const beastMonsters: Monster[] = [
     ],
     "actions": [],
     "legendaryActions": [],
-    "description": "A small amphibian with long legs and sticky tongue. Frogs inhabit ponds and marshes, using their powerful jumps to escape danger and catch insects. They are often found near water sources.",
-    "background": "A frog has no effective attacks. It feeds on small insects and typically dwells near water, in trees, or underground. The frog's statistics can also be used to represent a toad.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "A frog has no effective attacks. It feeds on small insects and typically dwells near water, in trees, or underground. The frog’s statistics can also be used to represent a toad.",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -1481,10 +1286,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 157,
-    "hitDice": "15d12+60",
+    "hitDice": "15d12",
     "speed": {
       "walk": 40,
-      "climb": 40
+      "climb": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -1509,35 +1315,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Fist",
         "description": "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 22 (3d10 + 6) bludgeoning damage.",
-        "attackBonus": 9,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "3d10+6",
-          "average": 23
-        }
+        "attackBonus": 9
       },
       {
         "name": "Rock",
         "description": "Ranged Weapon Attack: +9 to hit, range 50/100 ft., one target. Hit: 30 (7d6 + 6) bludgeoning damage.",
-        "attackBonus": 9,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "7d6+6",
-          "average": 31
-        }
+        "attackBonus": 9
       }
     ],
     "legendaryActions": [],
-    "description": "A massive primate with incredible strength and intelligence. Giant apes are territorial creatures that can use simple tools and communicate through gestures and vocalizations.",
-    "imagePrompt": "A massive gorilla-like ape with enormous muscles, dark fur, and intimidating presence",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "huge",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -1556,10 +1348,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 10,
     "armorType": "dex",
     "hitPoints": 13,
-    "hitDice": "2d8+4",
+    "hitDice": "2d8",
     "speed": {
       "walk": 30,
-      "burrow": 10
+      "burrow": 10,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1568,8 +1361,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 11,
-      "darkvision": 30
+      "darkvision": 30,
+      "passivePerception": 11
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -1587,35 +1380,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) piercing damage.",
-        "attackBonus": 3,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d6+1",
-          "average": 5
-        }
+        "attackBonus": 3
       },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 6 (2d4 + 1) slashing damage.",
-        "attackBonus": 3,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d4+1",
-          "average": 6
-        }
+        "attackBonus": 3
       }
     ],
     "legendaryActions": [],
-    "description": "A large, aggressive burrowing mammal with powerful claws. Giant badgers dig extensive tunnel systems and are fiercely protective of their territory. They are known for their tenacity in combat.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -1637,7 +1416,8 @@ export const beastMonsters: Monster[] = [
     "hitDice": "4d10",
     "speed": {
       "walk": 10,
-      "fly": 60
+      "fly": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1646,8 +1426,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 11,
-      "blindsight": 60
+      "blindsight": 60,
+      "passivePerception": 11
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -1665,25 +1445,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d6+2",
-          "average": 6
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A massive flying mammal with leathery wings and sharp fangs. Giant bats hunt larger prey than their smaller cousins and can be found in deep caves or abandoned ruins.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -1702,9 +1473,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "natural",
     "hitPoints": 42,
-    "hitDice": "5d10+15",
+    "hitDice": "5d10",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1731,25 +1503,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Tusk",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d6+3",
-          "average": 10
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A massive wild pig with deadly tusks and incredible toughness. Giant boars are even more aggressive than regular boars and can charge with devastating force.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -1768,10 +1531,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "natural",
     "hitPoints": 4,
-    "hitDice": "1d6+1",
+    "hitDice": "1d6",
     "speed": {
       "walk": 30,
-      "climb": 30
+      "climb": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1780,8 +1544,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 8,
-      "blindsight": 30
+      "blindsight": 30,
+      "passivePerception": 8
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -1792,23 +1556,19 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 4 (1d4 + 2) piercing damage, and the target must succeed on a DC 11 Constitution saving throw or take 10 (3d6) poison damage. If the poison damage reduces the target to 0 hit points, the target is stable but poisoned for 1 hour, even after regaining hit points, and is paralyzed while poisoned in this way.",
         "attackBonus": 4,
         "damage": {
-          "type": "Piercing",
-          "roll": "1d4+2",
-          "average": 5
+          "type": "Poison",
+          "roll": "3d6",
+          "average": 10
         }
       }
     ],
     "legendaryActions": [],
-    "description": "A massive segmented arthropod with venomous fangs. Giant centipedes hunt in dark places and can inject deadly poison with their bites.",
-    "imagePrompt": "A long segmented arthropod with one pair of legs per body segment, flat body, antennae on head, venomous fangs, reddish-brown color, crawling on ground",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "small",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -1827,10 +1587,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 60,
-    "hitDice": "8d12+8",
+    "hitDice": "8d12",
     "speed": {
       "walk": 30,
-      "swim": 30
+      "swim": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -1841,8 +1602,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 12,
-      "blindsight": 10
+      "blindsight": 10,
+      "passivePerception": 12
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -1851,35 +1612,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +6 to hit, reach 10 ft., one creature. Hit: 11 (2d6 + 4) piercing damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d6+4",
-          "average": 11
-        }
+        "attackBonus": 6
       },
       {
         "name": "Constrict",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one creature. Hit: 13 (2d8 + 4) bludgeoning damage, and the target is grappled (escape DC 16). Until this grapple ends, the creature is restrained, and the snake can't constrict another target.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d8+4",
-          "average": 13
-        }
+        "attackBonus": 6
       }
     ],
     "legendaryActions": [],
-    "description": "A massive serpent that can crush even large prey. Giant constrictor snakes are patient hunters that coil around their victims and squeeze the life from them.",
-    "imagePrompt": "A huge beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "huge",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -1901,7 +1648,8 @@ export const beastMonsters: Monster[] = [
     "hitDice": "3d8",
     "speed": {
       "walk": 30,
-      "swim": 30
+      "swim": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -1912,8 +1660,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 9,
-      "blindsight": 30
+      "blindsight": 30,
+      "passivePerception": 9
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -1927,25 +1675,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) bludgeoning damage, and the target is grappled (escape DC 11). The crab has two claws, each of which can grapple only one target.",
-        "attackBonus": 3,
-        "damage": {
-          "type": "Slashing",
-          "roll": "1d6+1",
-          "average": 5
-        }
+        "attackBonus": 3
       }
     ],
     "legendaryActions": [],
-    "description": "A massive crustacean with powerful pincers and armored shell. Giant crabs are dangerous coastal predators that can easily crush smaller creatures.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -1964,10 +1703,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 14,
     "armorType": "natural",
     "hitPoints": 85,
-    "hitDice": "9d12+27",
+    "hitDice": "9d12",
     "speed": {
       "walk": 30,
-      "swim": 50
+      "swim": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -1996,35 +1736,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 21 (3d10 + 5) piercing damage, and the target is grappled (escape DC 16). Until this grapple ends, the target is restrained, and the crocodile can't bite another target.",
-        "attackBonus": 8,
-        "damage": {
-          "type": "Piercing",
-          "roll": "3d10+5",
-          "average": 22
-        }
+        "attackBonus": 8
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target not grappled by the crocodile. Hit: 14 (2d8 + 5) bludgeoning damage. If the target is a creature, it must succeed on a DC 16 Strength saving throw or be knocked prone.",
-        "attackBonus": 8,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d8+5",
-          "average": 14
-        }
+        "attackBonus": 8
       }
     ],
     "legendaryActions": [],
-    "description": "A massive reptile that rules rivers and swamps. Giant crocodiles are ancient predators that can take down even large prey with their powerful jaws.",
-    "imagePrompt": "A huge beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "huge",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -2043,10 +1769,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "dex",
     "hitPoints": 26,
-    "hitDice": "4d10+4",
+    "hitDice": "4d10",
     "speed": {
       "walk": 10,
-      "fly": 80
+      "fly": 80,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -2078,36 +1805,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Beak",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d6+3",
-          "average": 7
-        }
+        "attackBonus": 5
       },
       {
         "name": "Talons",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d6+3",
-          "average": 10
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A majestic bird of prey large enough to carry humanoids. Giant eagles are intelligent creatures that often serve as mounts or allies to good-aligned beings.",
-    "background": "A giant eagle is a noble creature that speaks its own language and understands speech in the Common tongue. A mated pair of giant eagles typically has up to four eggs or young in their nest (treat the young as normal eagles).",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "A giant eagle is a noble creature that speaks its own language and understands speech in the Common tongue. A mated pair of giant eagles typically has up to four eggs or young in their nest (treat the young as normal eagles).",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "neutral-good",
-      "beast",
-      "animal"
+      "neutral good"
     ]
   },
   {
@@ -2126,9 +1838,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 14,
     "armorType": "natural",
     "hitPoints": 42,
-    "hitDice": "5d12+10",
+    "hitDice": "5d12",
     "speed": {
-      "walk": 60
+      "walk": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -2158,36 +1871,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Ram",
         "description": "Melee Weapon Attack: +6 to hit, reach 10 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d6+4",
-          "average": 11
-        }
+        "attackBonus": 6
       },
       {
         "name": "Hooves",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one prone creature. Hit: 22 (4d8 + 4) bludgeoning damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "4d8+4",
-          "average": 22
-        }
+        "attackBonus": 6
       }
     ],
     "legendaryActions": [],
-    "description": "A massive deer with impressive antlers and powerful hooves. Giant elk are majestic creatures that roam ancient forests and are often revered by druids.",
-    "background": "The majestic giant elk is rare to the point that its appearance is often taken as a foreshadowing of an important event, such as the birth of a king. Legends tell of gods that take the form of giant elk when visiting the Material Plane. Many cultures therefore believe that to hunt these creatures is to invite divine wrath.",
-    "imagePrompt": "A huge beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "The majestic giant elk is rare to the point that its appearance is often taken as a foreshadowing of an important event, such as the birth of a king. Legends tell of gods that take the form of giant elk when visiting the Material Plane. Many cultures therefore believe that to hunt these creatures is to invite divine wrath.",
     "source": "SRD",
     "tags": [
       "beast",
       "huge",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -2206,9 +1904,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "natural",
     "hitPoints": 4,
-    "hitDice": "1d6+1",
+    "hitDice": "1d6",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -2217,8 +1916,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 8,
-      "blindsight": 30
+      "blindsight": 30,
+      "passivePerception": 8
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -2232,26 +1931,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +1 to hit, reach 5 ft., one target. Hit: 2 (1d6 - 1) slashing damage.",
-        "attackBonus": 1,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d6-1",
-          "average": 0
-        }
+        "attackBonus": 1
       }
     ],
     "legendaryActions": [],
-    "description": "A large insect that glows with internal light. Giant fire beetles are often kept as pets or used as light sources in underground communities.",
-    "background": "A giant fire beetle is a nocturnal creature that takes its name from a pair of glowing glands that give off light. Miners and adventurers prize these creatures, for a giant fire beetle's glands continue to shed light for 1d6 days after the beetle dies. Giant fire beetles are most commonly found underground and in dark forests.",
-    "imagePrompt": "A small beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "A giant fire beetle is a nocturnal creature that takes its name from a pair of glowing glands that give off light. Miners and adventurers prize these creatures, for a giant fire beetle’s glands continue to shed light for 1d6 days after the beetle dies. Giant fire beetles are most commonly found underground and in dark forests.",
     "source": "SRD",
     "tags": [
       "beast",
       "small",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -2273,7 +1962,8 @@ export const beastMonsters: Monster[] = [
     "hitDice": "4d8",
     "speed": {
       "walk": 30,
-      "swim": 30
+      "swim": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -2285,8 +1975,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 12,
-      "darkvision": 30
+      "darkvision": 30,
+      "passivePerception": 12
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -2304,29 +1994,25 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) piercing damage, and the target is grappled (escape DC 11). Until this grapple ends, the target is restrained, and the frog can't bite another target.",
-        "attackBonus": 3,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d6+1",
-          "average": 5
-        }
+        "attackBonus": 3
       },
       {
         "name": "Swallow",
-        "description": "The frog makes one bite attack against a Small or smaller target it is grappling. If the attack hits, the target is swallowed, and the grapple ends. The swallowed target is blinded and restrained, it has total cover against attacks and other effects outside the frog, and it takes 5 (2d4) acid damage at the start of each of the frog's turns. The frog can have only one target swallowed at a time. If the frog dies, a swallowed creature is no longer restrained by it and can escape from the corpse using 5 ft. of movement, exiting prone."
+        "description": "The frog makes one bite attack against a Small or smaller target it is grappling. If the attack hits, the target is swallowed, and the grapple ends. The swallowed target is blinded and restrained, it has total cover against attacks and other effects outside the frog, and it takes 5 (2d4) acid damage at the start of each of the frog's turns. The frog can have only one target swallowed at a time. If the frog dies, a swallowed creature is no longer restrained by it and can escape from the corpse using 5 ft. of movement, exiting prone.",
+        "damage": {
+          "type": "Acid",
+          "roll": "2d4",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "A massive amphibian with powerful leaps and sticky tongue. Giant frogs can swallow smaller creatures whole and are excellent swimmers.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -2345,9 +2031,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "dex",
     "hitPoints": 19,
-    "hitDice": "3d10+3",
+    "hitDice": "3d10",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -2374,25 +2061,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Ram",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 8 (2d4 + 3) bludgeoning damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d4+3",
-          "average": 8
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A large, sure-footed mountain dweller with curved horns. Giant goats can climb steep cliffs and are often used as mounts in mountainous regions.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -2411,9 +2089,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 45,
-    "hitDice": "6d10+12",
+    "hitDice": "6d10",
     "speed": {
-      "walk": 50
+      "walk": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -2438,25 +2117,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) piercing damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d6+3",
-          "average": 10
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A massive scavenger with powerful jaws and pack mentality. Giant hyenas are dangerous predators that hunt in groups and can bring down large prey.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -2475,10 +2145,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "natural",
     "hitPoints": 19,
-    "hitDice": "3d10+3",
+    "hitDice": "3d10",
     "speed": {
       "walk": 30,
-      "climb": 30
+      "climb": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -2487,8 +2158,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "darkvision": 30
+      "darkvision": 30,
+      "passivePerception": 10
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -2497,26 +2168,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d8+2",
-          "average": 7
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A large reptile with armored scales and powerful tail. Giant lizards are territorial creatures that can be found in warm climates and underground.",
-    "background": "A giant lizard can be ridden or used as a draft animal. Lizardfolk also keep them as pets, and subterranean giant lizards are used as mounts and pack animals by drow, duergar, and others.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "A giant lizard can be ridden or used as a draft animal. Lizardfolk also keep them as pets, and subterranean giant lizards are used as mounts and pack animals by drow, duergar, and others.",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -2535,10 +2196,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "dex",
     "hitPoints": 52,
-    "hitDice": "8d10+8",
+    "hitDice": "8d10",
     "speed": {
       "walk": 10,
-      "swim": 60
+      "swim": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -2550,8 +2212,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 14,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 14
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -2573,12 +2235,7 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Tentacles",
         "description": "Melee Weapon Attack: +5 to hit, reach 15 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage. If the target is a creature, it is grappled (escape DC 16). Until this grapple ends, the target is restrained, and the octopus can't use its tentacles on another target.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d6+3",
-          "average": 10
-        }
+        "attackBonus": 5
       },
       {
         "name": "Ink Cloud",
@@ -2586,16 +2243,12 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A massive cephalopod with eight powerful tentacles. Giant octopuses are intelligent hunters that can squeeze through small openings and use camouflage.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -2614,10 +2267,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 19,
-    "hitDice": "3d10+3",
+    "hitDice": "3d10",
     "speed": {
       "walk": 5,
-      "fly": 60
+      "fly": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -2629,8 +2283,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 15,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 15
     },
     "languages": [
       "Giant Owl",
@@ -2653,25 +2307,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Talons",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 8 (2d6 + 1) slashing damage.",
-        "attackBonus": 3,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d6+1",
-          "average": 8
-        }
+        "attackBonus": 3
       }
     ],
     "legendaryActions": [],
-    "description": "A massive nocturnal bird with silent flight and keen senses. Giant owls are intelligent creatures that often serve as mounts or companions to spellcasters.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "neutral",
-      "beast",
-      "animal"
+      "neutral"
     ]
   },
   {
@@ -2690,10 +2335,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 14,
     "armorType": "dex",
     "hitPoints": 11,
-    "hitDice": "2d8+2",
+    "hitDice": "2d8",
     "speed": {
       "walk": 30,
-      "swim": 30
+      "swim": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -2704,8 +2350,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 12,
-      "blindsight": 10
+      "blindsight": 10,
+      "passivePerception": 12
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -2716,23 +2362,19 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +6 to hit, reach 10 ft., one target. Hit: 6 (1d4 + 4) piercing damage, and the target must make a DC 11 Constitution saving throw, taking 10 (3d6) poison damage on a failed save, or half as much damage on a successful one.",
         "attackBonus": 6,
         "damage": {
-          "type": "Piercing",
-          "roll": "1d4+4",
-          "average": 7
+          "type": "Poison",
+          "roll": "3d6",
+          "average": 10
         }
       }
     ],
     "legendaryActions": [],
-    "description": "A massive serpent with deadly venom. Giant poisonous snakes are feared for their lethal bites and are often found in jungles and swamps.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -2753,7 +2395,8 @@ export const beastMonsters: Monster[] = [
     "hitPoints": 7,
     "hitDice": "2d6",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -2762,8 +2405,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 10
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -2781,25 +2424,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d4+2",
-          "average": 5
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A large rodent with sharp teeth and disease-carrying fleas. Giant rats are often found in sewers and dungeons, spreading filth and disease.",
-    "imagePrompt": "A small beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "small",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -2820,7 +2454,8 @@ export const beastMonsters: Monster[] = [
     "hitPoints": 7,
     "hitDice": "2d6",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -2829,8 +2464,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 10
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -2848,25 +2483,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 3 (1d4 + 2) piercing damage. If the target is a creature, it must succeed on a DC 10 Constitution saving throw or contract a disease. Until the disease is cured, the target can't regain hit points except by magical means, and the target's hit point maximum decreases by 3 (1d6) every 24 hours. If the target's hit point maximum drops to 0 as a result of this disease, the target dies.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d4+2",
-          "average": 5
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A large rodent with sharp teeth and disease-carrying fleas. Giant rats are often found in sewers and dungeons, spreading filth and disease.",
-    "imagePrompt": "A large diseased rat with matted fur, open sores, yellowed teeth, red eyes, and aggressive stance, clearly sick and dangerous",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "small",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -2885,9 +2511,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 15,
     "armorType": "natural",
     "hitPoints": 52,
-    "hitDice": "7d10+14",
+    "hitDice": "7d10",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -2896,8 +2523,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 9,
-      "blindsight": 60
+      "blindsight": 60,
+      "passivePerception": 9
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -2906,12 +2533,7 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) bludgeoning damage, and the target is grappled (escape DC 12). The scorpion has two claws, each of which can grapple only one target.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Slashing",
-          "roll": "1d8+2",
-          "average": 7
-        }
+        "attackBonus": 4
       },
       {
         "name": "Multiattack",
@@ -2922,24 +2544,19 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 7 (1d10 + 2) piercing damage, and the target must make a DC 12 Constitution saving throw, taking 22 (4d10) poison damage on a failed save, or half as much damage on a successful one.",
         "attackBonus": 4,
         "damage": {
-          "type": "Piercing",
-          "roll": "1d10+2",
-          "average": 8
+          "type": "Poison",
+          "roll": "4d10",
+          "average": 22
         }
       }
     ],
     "legendaryActions": [],
-    "description": "A massive arachnid with deadly stinger and powerful pincers. Giant scorpions are dangerous desert predators that inject lethal poison.",
-    "background": "This giant scorpion is a deadly desert predator with venomous stinger.",
-    "imagePrompt": "A large scorpion with curved tail and stinger in desert environment",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -2961,7 +2578,8 @@ export const beastMonsters: Monster[] = [
     "hitDice": "3d10",
     "speed": {
       "walk": 0,
-      "swim": 40
+      "swim": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -2988,26 +2606,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Ram",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) bludgeoning damage.",
-        "attackBonus": 3,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "1d6+1",
-          "average": 5
-        }
+        "attackBonus": 3
       }
     ],
     "legendaryActions": [],
-    "description": "A massive aquatic creature with horse-like head and prehensile tail. Giant sea horses are often used as mounts by aquatic races.",
-    "background": "Like their smaller kin, giant sea horses are shy, colorful fish with elongated bodies and curled tails. Aquatic elves train them as mounts.",
-    "imagePrompt": "A large seahorse fish with elongated body, curled tail, colorful scales, seahorse head with tubular snout, underwater in ocean depths",
-    "imageStyle": "fantasy",
+    "description": "Like their smaller kin, giant sea horses are shy, colorful fish with elongated bodies and curled tails. Aquatic elves train them as mounts.",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -3026,9 +2634,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "natural",
     "hitPoints": 126,
-    "hitDice": "11d12+55",
+    "hitDice": "11d12",
     "speed": {
-      "swim": 50
+      "swim": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -3039,8 +2648,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 13,
-      "blindsight": 60
+      "blindsight": 60,
+      "passivePerception": 13
     },
     "languages": [],
     "proficiencyBonus": 3,
@@ -3058,26 +2667,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 22 (3d10 + 6) piercing damage.",
-        "attackBonus": 9,
-        "damage": {
-          "type": "Piercing",
-          "roll": "3d10+6",
-          "average": 23
-        }
+        "attackBonus": 9
       }
     ],
     "legendaryActions": [],
-    "description": "A massive ocean predator with rows of razor-sharp teeth. Giant sharks are the apex predators of the deep, feared by sailors and coastal dwellers.",
-    "background": "A giant shark is 30 feet long and normally found in deep oceans. Utterly fearless, it preys on anything that crosses its path, including whales and ships.",
-    "imagePrompt": "A huge predatory shark with sleek body, sharp teeth, powerful jaws, swimming in deep ocean waters",
-    "imageStyle": "fantasy",
+    "description": "A giant shark is 30 feet long and normally found in deep oceans. Utterly fearless, it preys on anything that crosses its path, including whales and ships.",
     "source": "SRD",
     "tags": [
       "beast",
       "huge",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -3096,10 +2695,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 14,
     "armorType": "natural",
     "hitPoints": 26,
-    "hitDice": "4d10+4",
+    "hitDice": "4d10",
     "speed": {
       "walk": 30,
-      "climb": 30
+      "climb": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -3110,9 +2710,9 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
       "darkvision": 60,
-      "blindsight": 10
+      "blindsight": 10,
+      "passivePerception": 10
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -3136,9 +2736,9 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one creature. Hit: 7 (1d8 + 3) piercing damage, and the target must make a DC 11 Constitution saving throw, taking 9 (2d8) poison damage on a failed save, or half as much damage on a successful one. If the poison damage reduces the target to 0 hit points, the target is stable but poisoned for 1 hour, even after regaining hit points, and is paralyzed while poisoned in this way.",
         "attackBonus": 5,
         "damage": {
-          "type": "Piercing",
-          "roll": "1d8+3",
-          "average": 8
+          "type": "Poison",
+          "roll": "2d8",
+          "average": 9
         }
       },
       {
@@ -3148,17 +2748,12 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A massive arachnid that spins webs and injects poison. Giant spiders are ambush predators that trap prey in their sticky webs.",
-    "background": "To snare its prey, a giant spider spins elaborate webs or shoots sticky strands of webbing from its abdomen. Giant spiders are most commonly found underground, making their lairs on ceilings or in dark, web-filled crevices. Such lairs are often festooned with web cocoons holding past victims.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "To snare its prey, a giant spider spins elaborate webs or shoots sticky strands of webbing from its abdomen. Giant spiders are most commonly found underground, making their lairs on ceilings or in dark, web-filled crevices. Such lairs are often festooned with web cocoons holding past victims.",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -3177,10 +2772,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "dex",
     "hitPoints": 39,
-    "hitDice": "6d10+6",
+    "hitDice": "6d10",
     "speed": {
       "walk": 20,
-      "swim": 40
+      "swim": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -3189,8 +2785,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "darkvision": 30
+      "darkvision": 30,
+      "passivePerception": 10
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -3210,27 +2806,28 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (1d10 + 2) piercing damage plus 5 (1d10) poison damage, and the target is grappled (escape DC 13). Until this grapple ends, the target is restrained, and the toad can't bite another target.",
         "attackBonus": 4,
         "damage": {
-          "type": "Piercing",
-          "roll": "1d10+2",
-          "average": 8
+          "type": "Poison",
+          "roll": "1d10",
+          "average": 5
         }
       },
       {
         "name": "Swallow",
-        "description": "The toad makes one bite attack against a Medium or smaller target it is grappling. If the attack hits, the target is swallowed, and the grapple ends. The swallowed target is blinded and restrained, it has total cover against attacks and other effects outside the toad, and it takes 10 (3d6) acid damage at the start of each of the toad's turns. The toad can have only one target swallowed at a time.\nIf the toad dies, a swallowed creature is no longer restrained by it and can escape from the corpse using 5 feet of movement, exiting prone."
+        "description": "The toad makes one bite attack against a Medium or smaller target it is grappling. If the attack hits, the target is swallowed, and the grapple ends. The swallowed target is blinded and restrained, it has total cover against attacks and other effects outside the toad, and it takes 10 (3d6) acid damage at the start of each of the toad's turns. The toad can have only one target swallowed at a time.\nIf the toad dies, a swallowed creature is no longer restrained by it and can escape from the corpse using 5 feet of movement, exiting prone.",
+        "damage": {
+          "type": "Acid",
+          "roll": "3d6",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "A massive amphibian with powerful leaps and toxic skin. Giant toads can swallow smaller creatures whole and are often found in swamps.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -3249,10 +2846,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 10,
     "armorType": "dex",
     "hitPoints": 22,
-    "hitDice": "3d10+6",
+    "hitDice": "3d10",
     "speed": {
       "walk": 10,
-      "fly": 60
+      "fly": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -3287,36 +2885,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Beak",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (2d4 + 2) piercing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d4+2",
-          "average": 7
-        }
+        "attackBonus": 4
       },
       {
         "name": "Talons",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 9 (2d6 + 2) slashing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d6+2",
-          "average": 9
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A massive carrion bird with sharp beak and keen eyesight. Giant vultures circle above battlefields and dungeons, waiting for the dead.",
-    "background": "A giant vulture has advanced intelligence and a malevolent bent. Unlike its smaller kin, it will attack a wounded creature to hasten its end. Giant vultures have been known to haunt a thirsty, starving creature for days to enjoy its suffering.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "A giant vulture has advanced intelligence and a malevolent bent. Unlike its smaller kin, it will attack a wounded creature to hasten its end. Giant vultures have been known to haunt a thirsty, starving creature for days to enjoy its suffering.",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "neutral-evil",
-      "beast",
-      "animal"
+      "neutral evil"
     ]
   },
   {
@@ -3339,7 +2922,8 @@ export const beastMonsters: Monster[] = [
     "speed": {
       "walk": 10,
       "fly": 50,
-      "swim": 50
+      "swim": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -3359,23 +2943,19 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 5 (1d6 + 2) piercing damage, and the target must make a DC 11 Constitution saving throw, taking 10 (3d6) poison damage on a failed save, or half as much damage on a successful one. If the poison damage reduces the target to 0 hit points, the target is stable but poisoned for 1 hour, even after regaining hit points, and is paralyzed while poisoned in this way.",
         "attackBonus": 4,
         "damage": {
-          "type": "Piercing",
-          "roll": "1d6+2",
-          "average": 6
+          "type": "Poison",
+          "roll": "3d6",
+          "average": 10
         }
       }
     ],
     "legendaryActions": [],
-    "description": "A massive flying insect with deadly stinger and aggressive nature. Giant wasps are territorial creatures that attack anything that threatens their nests.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -3396,7 +2976,8 @@ export const beastMonsters: Monster[] = [
     "hitPoints": 9,
     "hitDice": "2d8",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -3408,8 +2989,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 13,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 13
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -3423,25 +3004,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 5 (1d4 + 3) piercing damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d4+3",
-          "average": 6
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A large, agile predator with sharp teeth and hunting instincts. Giant weasels are excellent trackers and can squeeze through small openings.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -3460,10 +3032,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "dex",
     "hitPoints": 11,
-    "hitDice": "2d8+2",
+    "hitDice": "2d8",
     "speed": {
       "walk": 40,
-      "climb": 40
+      "climb": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -3475,9 +3048,9 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 13,
       "darkvision": 60,
-      "blindsight": 10
+      "blindsight": 10,
+      "passivePerception": 13
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -3501,24 +3074,19 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 4 (1d6 + 1) piercing damage, and the target must make a DC 11 Constitution saving throw, taking 7 (2d6) poison damage on a failed save, or half as much damage on a successful one. If the poison damage reduces the target to 0 hit points, the target is stable but poisoned for 1 hour, even after regaining hit points, and is paralyzed while poisoned in this way.",
         "attackBonus": 3,
         "damage": {
-          "type": "Piercing",
-          "roll": "1d6+1",
-          "average": 5
+          "type": "Poison",
+          "roll": "2d6",
+          "average": 7
         }
       }
     ],
     "legendaryActions": [],
-    "description": "A massive arachnid that hunts actively rather than spinning webs. Giant wolf spiders are fast and aggressive hunters.",
-    "background": "Smaller than a giant spider, a giant wolf spider hunts prey across open ground or hides in a burrow or crevice, or in a hidden cavity beneath debris.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "Smaller than a giant spider, a giant wolf spider hunts prey across open ground or hides in a burrow or crevice, or in a hidden cavity beneath debris.",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -3539,7 +3107,8 @@ export const beastMonsters: Monster[] = [
     "hitPoints": 4,
     "hitDice": "1d8",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -3566,25 +3135,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Ram",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 3 (1d4 + 1) bludgeoning damage.",
-        "attackBonus": 3,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "1d4+1",
-          "average": 4
-        }
+        "attackBonus": 3
       }
     ],
     "legendaryActions": [],
-    "description": "A sure-footed mountain dweller with curved horns and stubborn nature. Goats can climb steep cliffs and are often kept as livestock in hilly regions.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -3603,10 +3163,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "dex",
     "hitPoints": 1,
-    "hitDice": "1d4+-1",
+    "hitDice": "1d4",
     "speed": {
       "walk": 10,
-      "fly": 60
+      "fly": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -3631,25 +3192,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Talons",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 1 slashing damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Slashing",
-          "roll": "1",
-          "average": 0
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A swift bird of prey with keen eyesight and sharp talons. Hawks are excellent hunters that can spot prey from great distances.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -3668,9 +3220,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 45,
-    "hitDice": "6d10+12",
+    "hitDice": "6d10",
     "speed": {
-      "swim": 40
+      "swim": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -3681,8 +3234,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 12,
-      "darkvision": 30
+      "darkvision": 30,
+      "passivePerception": 12
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -3700,26 +3253,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) piercing damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d8+4",
-          "average": 13
-        }
+        "attackBonus": 6
       }
     ],
     "legendaryActions": [],
-    "description": "A large ocean predator that actively hunts for prey. Hunter sharks are aggressive and will attack anything that looks like food.",
-    "background": "Smaller than a giant shark but larger and fiercer than a reef shark, a hunter shark haunts deep waters. It usually hunts alone, but multiple hunter sharks might feed in the same area. A fully grown hunter shark is 15 to 20 feet long.",
-    "imagePrompt": "A large predatory shark with sleek body, sharp teeth, powerful jaws, swimming in deep ocean waters",
-    "imageStyle": "fantasy",
+    "description": "Smaller than a giant shark but larger and fiercer than a reef shark, a hunter shark haunts deep waters. It usually hunts alone, but multiple hunter sharks might feed in the same area. A fully grown hunter shark is 15 to 20 feet long.",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -3738,9 +3281,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "dex",
     "hitPoints": 5,
-    "hitDice": "1d8+1",
+    "hitDice": "1d8",
     "speed": {
-      "walk": 50
+      "walk": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -3769,21 +3313,17 @@ export const beastMonsters: Monster[] = [
         "damage": {
           "type": "Piercing",
           "roll": "1d6",
-          "average": 4
+          "average": 3
         }
       }
     ],
     "legendaryActions": [],
-    "description": "A scavenging predator with powerful jaws and pack mentality. Hyenas are often found near battlefields and dungeons, feeding on the dead.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -3804,7 +3344,8 @@ export const beastMonsters: Monster[] = [
     "hitPoints": 3,
     "hitDice": "1d6",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -3833,25 +3374,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +1 to hit, reach 5 ft., one target. Hit: 1 (1d4 - 1) piercing damage.",
-        "attackBonus": 1,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d4-1",
-          "average": 0
-        }
+        "attackBonus": 1
       }
     ],
     "legendaryActions": [],
-    "description": "A small, opportunistic predator with keen senses. Jackals are often found in deserts and wastelands, scavenging for food.",
-    "imagePrompt": "A small beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "small",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -3870,9 +3402,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "natural",
     "hitPoints": 90,
-    "hitDice": "12d12+12",
+    "hitDice": "12d12",
     "speed": {
-      "swim": 60
+      "swim": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -3883,8 +3416,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 13,
-      "blindsight": 120
+      "blindsight": 120,
+      "passivePerception": 13
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -3906,26 +3439,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 21 (5d6 + 4) piercing damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Piercing",
-          "roll": "5d6+4",
-          "average": 22
-        }
+        "attackBonus": 6
       }
     ],
     "legendaryActions": [],
-    "description": "A massive ocean predator with intelligence and pack hunting tactics. Killer whales are apex predators that hunt in coordinated groups.",
-    "background": "This killer whale is a powerful marine predator found in ocean waters.",
-    "imagePrompt": "A huge killer whale with black and white coloring, powerful body, swimming in deep ocean waters",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "huge",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -3944,9 +3467,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 26,
-    "hitDice": "4d10+4",
+    "hitDice": "4d10",
     "speed": {
-      "walk": 50
+      "walk": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -3984,35 +3508,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) piercing damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d8+3",
-          "average": 8
-        }
+        "attackBonus": 5
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Slashing",
-          "roll": "1d6+3",
-          "average": 7
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A majestic big cat with powerful build and hunting prowess. Lions are social predators that hunt in prides and are symbols of strength.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -4034,7 +3544,8 @@ export const beastMonsters: Monster[] = [
     "hitDice": "1d4",
     "speed": {
       "walk": 20,
-      "climb": 20
+      "climb": 20,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -4043,8 +3554,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 9,
-      "darkvision": 30
+      "darkvision": 30,
+      "passivePerception": 9
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -4052,26 +3563,16 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Bite",
-        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 piercing damage.",
-        "damage": {
-          "type": "Piercing",
-          "roll": "1",
-          "average": 0
-        },
-        "attackBonus": 0
+        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 piercing damage."
       }
     ],
     "legendaryActions": [],
-    "description": "A small reptile with scaly skin and quick movements. Lizards are common in warm climates and can be found basking in the sun.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -4090,9 +3591,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "natural",
     "hitPoints": 126,
-    "hitDice": "11d12+55",
+    "hitDice": "11d12",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -4115,36 +3617,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Gore",
         "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 25 (4d8 + 7) piercing damage.",
-        "attackBonus": 10,
-        "damage": {
-          "type": "Piercing",
-          "roll": "4d8+7",
-          "average": 25
-        }
+        "attackBonus": 10
       },
       {
         "name": "Stomp",
         "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one prone creature. Hit: 29 (4d10 + 7) bludgeoning damage.",
-        "attackBonus": 10,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "4d10+7",
-          "average": 29
-        }
+        "attackBonus": 10
       }
     ],
     "legendaryActions": [],
-    "description": "A massive prehistoric elephant with long tusks and shaggy fur. Mammoths are powerful creatures adapted to cold climates.",
-    "background": "A mammoth is an elephantine creature with thick fur and long tusks. Stockier and fiercer than normal elephants, mammoths inhabit a wide range of climes, from subarctic to subtropical.",
-    "imagePrompt": "A huge hairy elephant with thick fur, long curved tusks, four legs, trunk, mammoth anatomy, prehistoric elephant",
-    "imageStyle": "fantasy",
+    "description": "A mammoth is an elephantine creature with thick fur and long tusks. Stockier and fiercer than normal elephants, mammoths inhabit a wide range of climes, from subarctic to subtropical.",
     "source": "SRD",
     "tags": [
       "beast",
       "huge",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -4163,9 +3650,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 5,
-    "hitDice": "1d8+1",
+    "hitDice": "1d8",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -4190,26 +3678,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) piercing damage. If the target is a creature, it must succeed on a DC 11 Strength saving throw or be knocked prone.",
-        "attackBonus": 3,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d6+1",
-          "average": 5
-        }
+        "attackBonus": 3
       }
     ],
     "legendaryActions": [],
-    "description": "A large, loyal dog bred for guarding and protection. Mastiffs are fearless defenders that will protect their masters to the death.",
-    "background": "Mastiffs are impressive hounds prized by humanoids for their loyalty and keen senses. Mastiffs can be trained as guard dogs, hunting dogs, and war dogs. Halflings and other Small humanoids ride them as mounts.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "Mastiffs are impressive hounds prized by humanoids for their loyalty and keen senses. Mastiffs can be trained as guard dogs, hunting dogs, and war dogs. Halflings and other Small humanoids ride them as mounts.",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -4228,9 +3706,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 10,
     "armorType": "dex",
     "hitPoints": 11,
-    "hitDice": "2d8+2",
+    "hitDice": "2d8",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -4257,25 +3736,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Hooves",
         "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) bludgeoning damage.",
-        "attackBonus": 2,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "1d4+2",
-          "average": 5
-        }
+        "attackBonus": 2
       }
     ],
     "legendaryActions": [],
-    "description": "A hardy hybrid of horse and donkey with great endurance. Mules are excellent pack animals that can carry heavy loads through rough terrain.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -4297,7 +3767,8 @@ export const beastMonsters: Monster[] = [
     "hitDice": "1d6",
     "speed": {
       "walk": 5,
-      "swim": 30
+      "swim": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -4309,8 +3780,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 12,
-      "darkvision": 30
+      "darkvision": 30,
+      "passivePerception": 12
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -4332,12 +3803,7 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Tentacles",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 1 bludgeoning damage, and the target is grappled (escape DC 10). Until this grapple ends, the octopus can't use its tentacles on another target.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "1",
-          "average": 0
-        }
+        "attackBonus": 4
       },
       {
         "name": "Ink Cloud",
@@ -4345,17 +3811,12 @@ export const beastMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A highly intelligent cephalopod with eight tentacles and camouflage abilities. Octopuses are excellent escape artists and can squeeze through tiny openings.",
-    "background": "Octopuses inhabit coastal waters and coral reefs, where they hunt for crabs, fish, and other small marine creatures. They are highly intelligent for invertebrates and have been known to solve complex puzzles and use tools. When threatened, they release a cloud of dark ink to confuse predators and escape.",
-    "imagePrompt": "A small beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "small",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -4374,10 +3835,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "dex",
     "hitPoints": 1,
-    "hitDice": "1d4+-1",
+    "hitDice": "1d4",
     "speed": {
       "walk": 5,
-      "fly": 60
+      "fly": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -4389,8 +3851,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 13,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 13
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -4408,25 +3870,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Talons",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 1 slashing damage.",
-        "attackBonus": 3,
-        "damage": {
-          "type": "Slashing",
-          "roll": "1",
-          "average": 0
-        }
+        "attackBonus": 3
       }
     ],
     "legendaryActions": [],
-    "description": "A nocturnal bird of prey with silent flight and keen hearing. Owls are excellent hunters that can see in near darkness.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -4448,7 +3901,8 @@ export const beastMonsters: Monster[] = [
     "hitDice": "3d8",
     "speed": {
       "walk": 50,
-      "climb": 40
+      "climb": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -4478,35 +3932,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d6+2",
-          "average": 6
-        }
+        "attackBonus": 4
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) slashing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Slashing",
-          "roll": "1d4+2",
-          "average": 5
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A sleek black big cat with stealth and hunting abilities. Panthers are solitary hunters that prefer to stalk their prey from the shadows.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -4525,10 +3965,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "natural",
     "hitPoints": 68,
-    "hitDice": "8d10+24",
+    "hitDice": "8d10",
     "speed": {
       "walk": 20,
-      "swim": 40
+      "swim": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -4554,25 +3995,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +6 to hit, reach 10 ft., one target. Hit: 14 (3d6 + 4) piercing damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Piercing",
-          "roll": "3d6+4",
-          "average": 15
-        }
+        "attackBonus": 6
       }
     ],
     "legendaryActions": [],
-    "description": "A massive prehistoric marine reptile with a long neck and powerful flippers. Plesiosaurus are excellent swimmers that hunt fish and other sea creatures in ancient oceans. They can hold their breath for extended periods while stalking prey underwater.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -4594,7 +4026,8 @@ export const beastMonsters: Monster[] = [
     "hitDice": "1d4",
     "speed": {
       "walk": 30,
-      "swim": 30
+      "swim": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -4603,8 +4036,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "blindsight": 10
+      "blindsight": 10,
+      "passivePerception": 10
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -4615,23 +4048,19 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 1 piercing damage, and the target must make a DC 10 Constitution saving throw, taking 5 (2d4) poison damage on a failed save, or half as much damage on a successful one.",
         "attackBonus": 5,
         "damage": {
-          "type": "Piercing",
-          "roll": "1",
-          "average": 0
+          "type": "Poison",
+          "roll": "2d4",
+          "average": 5
         }
       }
     ],
     "legendaryActions": [],
-    "description": "A venomous serpent that can deliver lethal bites. Poisonous snakes are feared for their deadly venom and are often found in warm climates.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -4650,10 +4079,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "natural",
     "hitPoints": 42,
-    "hitDice": "5d10+15",
+    "hitDice": "5d10",
     "speed": {
       "walk": 40,
-      "swim": 30
+      "swim": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -4682,35 +4112,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 9 (1d8 + 5) piercing damage.",
-        "attackBonus": 7,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d8+5",
-          "average": 10
-        }
+        "attackBonus": 7
       },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 12 (2d6 + 5) slashing damage.",
-        "attackBonus": 7,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d6+5",
-          "average": 12
-        }
+        "attackBonus": 7
       }
     ],
     "legendaryActions": [],
-    "description": "A massive white bear adapted to arctic conditions. Polar bears are powerful predators that hunt seals and other arctic animals.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -4729,9 +4145,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 10,
     "armorType": "dex",
     "hitPoints": 11,
-    "hitDice": "2d8+2",
+    "hitDice": "2d8",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -4749,25 +4166,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Hooves",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (2d4 + 2) bludgeoning damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d4+2",
-          "average": 7
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A small, hardy horse suitable for children and small riders. Ponies are often used as mounts for halflings and gnomes.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -4786,9 +4194,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "dex",
     "hitPoints": 1,
-    "hitDice": "1d4+-1",
+    "hitDice": "1d4",
     "speed": {
-      "swim": 40
+      "swim": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -4797,8 +4206,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 8,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 8
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -4816,26 +4225,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 1 piercing damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1",
-          "average": 0
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A small, aggressive fish with razor-sharp teeth. Quippers are dangerous in groups and are often found in dark waters.",
-    "background": "A quipper is a carnivorous fish with sharp teeth. Quippers can adapt to any aquatic environment, including cold subterranean lakes. They frequently gather in swarms; the statistics for a swarm of quippers appear later in this appendix.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "A quipper is a carnivorous fish with sharp teeth. Quippers can adapt to any aquatic environment, including cold subterranean lakes. They frequently gather in swarms; the statistics for a swarm of quippers appear later in this appendix.",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -4854,9 +4253,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 10,
     "armorType": "dex",
     "hitPoints": 1,
-    "hitDice": "1d4+-1",
+    "hitDice": "1d4",
     "speed": {
-      "walk": 20
+      "walk": 20,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -4865,8 +4265,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "darkvision": 30
+      "darkvision": 30,
+      "passivePerception": 10
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -4879,26 +4279,16 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Bite",
-        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 piercing damage.",
-        "damage": {
-          "type": "Piercing",
-          "roll": "1",
-          "average": 0
-        },
-        "attackBonus": 0
+        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 piercing damage."
       }
     ],
     "legendaryActions": [],
-    "description": "A small rodent that spreads disease and filth. Rats are common in cities and dungeons, often serving as familiars to evil spellcasters.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -4917,10 +4307,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 1,
-    "hitDice": "1d4+-1",
+    "hitDice": "1d4",
     "speed": {
       "walk": 10,
-      "fly": 50
+      "fly": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -4945,25 +4336,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Beak",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 1 piercing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1",
-          "average": 0
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "An intelligent black bird with mimicry abilities. Ravens are often associated with omens and can be found serving dark masters.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -4982,9 +4364,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "natural",
     "hitPoints": 22,
-    "hitDice": "4d8+4",
+    "hitDice": "4d8",
     "speed": {
-      "swim": 40
+      "swim": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -4995,8 +4378,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 12,
-      "blindsight": 30
+      "blindsight": 30,
+      "passivePerception": 12
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -5014,26 +4397,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d8+2",
-          "average": 7
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A medium-sized shark that hunts in coral reefs. Reef sharks are territorial and will attack anything that enters their domain.",
-    "background": "Smaller than giant sharks and hunter sharks, reef sharks inhabit shallow waters and coral reefs, gathering in small packs to hunt. A full-grown specimen measures 6 to 10 feet long.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "Smaller than giant sharks and hunter sharks, reef sharks inhabit shallow waters and coral reefs, gathering in small packs to hunt. A full-grown specimen measures 6 to 10 feet long.",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -5052,9 +4425,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "natural",
     "hitPoints": 45,
-    "hitDice": "6d10+12",
+    "hitDice": "6d10",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -5077,25 +4451,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Gore",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 14 (2d8 + 5) bludgeoning damage.",
-        "attackBonus": 7,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d8+5",
-          "average": 14
-        }
+        "attackBonus": 7
       }
     ],
     "legendaryActions": [],
-    "description": "A massive herbivore with thick gray skin and a deadly horn on its snout. Rhinoceroses are incredibly strong and can charge with devastating force, using their horn to gore enemies and knock them prone. They are territorial creatures that will attack anything that threatens them.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -5114,9 +4479,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 10,
     "armorType": "dex",
     "hitPoints": 13,
-    "hitDice": "2d10+2",
+    "hitDice": "2d10",
     "speed": {
-      "walk": 60
+      "walk": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -5134,25 +4500,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Hooves",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 8 (2d4 + 3) bludgeoning damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d4+3",
-          "average": 8
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A well-trained horse bred for speed and endurance. Riding horses are the preferred mounts for travelers and adventurers.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -5171,9 +4528,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 52,
-    "hitDice": "7d10+14",
+    "hitDice": "7d10",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -5203,35 +4561,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (1d10 + 5) piercing damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d10+5",
-          "average": 11
-        }
+        "attackBonus": 6
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 12 (2d6 + 5) slashing damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d6+5",
-          "average": 12
-        }
+        "attackBonus": 6
       }
     ],
     "legendaryActions": [],
-    "description": "A prehistoric big cat with massive fangs and hunting prowess. Saber-toothed tigers are extinct in most worlds but can be found in ancient ruins.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -5250,9 +4594,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "natural",
     "hitPoints": 1,
-    "hitDice": "1d4+-1",
+    "hitDice": "1d4",
     "speed": {
-      "walk": 10
+      "walk": 10,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -5261,8 +4606,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 9,
-      "blindsight": 10
+      "blindsight": 10,
+      "passivePerception": 9
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -5273,24 +4618,19 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one creature. Hit: 1 piercing damage, and the target must make a DC 9 Constitution saving throw, taking 4 (1d8) poison damage on a failed save, or half as much damage on a successful one.",
         "attackBonus": 2,
         "damage": {
-          "type": "Bludgeoning",
-          "roll": "1",
-          "average": 0
+          "type": "Poison",
+          "roll": "1d8",
+          "average": 4
         }
       }
     ],
     "legendaryActions": [],
-    "description": "A small arachnid with deadly stinger and armored body. Scorpions are dangerous desert creatures that inject lethal poison.",
-    "background": "This tiny scorpion is a venomous desert creature with deadly stinger.",
-    "imagePrompt": "A tiny scorpion with curved tail and stinger in desert environment",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -5309,9 +4649,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "dex",
     "hitPoints": 1,
-    "hitDice": "1d4+-1",
+    "hitDice": "1d4",
     "speed": {
-      "swim": 20
+      "swim": 20,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -5332,17 +4673,12 @@ export const beastMonsters: Monster[] = [
     ],
     "actions": [],
     "legendaryActions": [],
-    "description": "A small aquatic creature with horse-like head and prehensile tail. Sea horses are often kept as pets by aquatic races.",
-    "background": "This tiny seahorse is a shy, colorful fish found in ocean waters.",
-    "imagePrompt": "A tiny seahorse fish with elongated body, curled tail, colorful scales, seahorse head with tubular snout, underwater in ocean depths",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -5361,10 +4697,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 1,
-    "hitDice": "1d4+-1",
+    "hitDice": "1d4",
     "speed": {
       "walk": 20,
-      "climb": 20
+      "climb": 20,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -5375,8 +4712,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 12,
-      "darkvision": 30
+      "darkvision": 30,
+      "passivePerception": 12
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -5400,23 +4737,19 @@ export const beastMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 1 piercing damage, and the target must succeed on a DC 9 Constitution saving throw or take 2 (1d4) poison damage.",
         "attackBonus": 4,
         "damage": {
-          "type": "Piercing",
-          "roll": "1",
-          "average": 0
+          "type": "Poison",
+          "roll": "1d4",
+          "average": 2
         }
       }
     ],
     "legendaryActions": [],
-    "description": "A small arachnid that spins webs and injects poison. Spiders are common in dark places and are often used as familiars.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -5438,7 +4771,8 @@ export const beastMonsters: Monster[] = [
     "hitDice": "1d4",
     "speed": {
       "walk": 10,
-      "fly": 40
+      "fly": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -5447,8 +4781,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 9,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 9
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -5457,25 +4791,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Blood Drain",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one creature. Hit: 5 (1d4 + 3) piercing damage, and the stirge attaches to the target. While attached, the stirge doesn't attack. Instead, at the start of each of the stirge's turns, the target loses 5 (1d4 + 3) hit points due to blood loss.\nThe stirge can detach itself by spending 5 feet of its movement. It does so after it drains 10 hit points of blood from the target or the target dies. A creature, including the target, can use its action to detach the stirge.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d4+3",
-          "average": 6
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A small flying creature with bat-like wings and a long proboscis. Stirges are blood-sucking parasites that attach to their prey and drain their life force. They are often found in swamps and dungeons, hunting in groups to overwhelm larger creatures.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -5494,9 +4819,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 37,
-    "hitDice": "5d10+10",
+    "hitDice": "5d10",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -5508,8 +4834,8 @@ export const beastMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 13,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 13
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -5527,35 +4853,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 8 (1d10 + 3) piercing damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d10+3",
-          "average": 9
-        }
+        "attackBonus": 5
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Slashing",
-          "roll": "1d8+3",
-          "average": 8
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A powerful big cat with striped fur and hunting prowess. Tigers are solitary hunters that prefer to stalk their prey from the shadows.",
-    "imagePrompt": "A large beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -5574,9 +4886,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "natural",
     "hitPoints": 95,
-    "hitDice": "10d12+30",
+    "hitDice": "10d12",
     "speed": {
-      "walk": 50
+      "walk": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -5599,35 +4912,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Gore",
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 24 (4d8 + 6) piercing damage.",
-        "attackBonus": 9,
-        "damage": {
-          "type": "Piercing",
-          "roll": "4d8+6",
-          "average": 24
-        }
+        "attackBonus": 9
       },
       {
         "name": "Stomp",
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one prone creature. Hit: 22 (3d10 + 6) bludgeoning damage",
-        "attackBonus": 9,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "3d10+6",
-          "average": 23
-        }
+        "attackBonus": 9
       }
     ],
     "legendaryActions": [],
-    "description": "A massive prehistoric dinosaur with three horns and armored frill. Triceratops are powerful herbivores that can defend themselves against predators.",
-    "imagePrompt": "A huge beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "huge",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -5646,9 +4945,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "natural",
     "hitPoints": 136,
-    "hitDice": "13d12+52",
+    "hitDice": "13d12",
     "speed": {
-      "walk": 50
+      "walk": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -5672,35 +4972,21 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 33 (4d12 + 7) piercing damage. If the target is a Medium or smaller creature, it is grappled (escape DC 17). Until this grapple ends, the target is restrained, and the tyrannosaurus can't bite another target.",
-        "attackBonus": 10,
-        "damage": {
-          "type": "Piercing",
-          "roll": "4d12+7",
-          "average": 33
-        }
+        "attackBonus": 10
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 20 (3d8 + 7) bludgeoning damage.",
-        "attackBonus": 10,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "3d8+7",
-          "average": 21
-        }
+        "attackBonus": 10
       }
     ],
     "legendaryActions": [],
-    "description": "A massive prehistoric predator with powerful jaws and tiny arms. T-Rex is the apex predator of prehistoric times.",
-    "imagePrompt": "A huge beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "huge",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -5719,10 +5005,11 @@ export const beastMonsters: Monster[] = [
     "armorClass": 10,
     "armorType": "dex",
     "hitPoints": 5,
-    "hitDice": "1d8+1",
+    "hitDice": "1d8",
     "speed": {
       "walk": 10,
-      "fly": 50
+      "fly": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -5755,21 +5042,17 @@ export const beastMonsters: Monster[] = [
         "damage": {
           "type": "Piercing",
           "roll": "1d4",
-          "average": 3
+          "average": 2
         }
       }
     ],
     "legendaryActions": [],
-    "description": "A carrion bird that feeds on the dead. Vultures are often found near battlefields and dungeons, waiting for the dead.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -5788,9 +5071,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "dex",
     "hitPoints": 19,
-    "hitDice": "3d10+3",
+    "hitDice": "3d10",
     "speed": {
-      "walk": 60
+      "walk": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -5813,26 +5097,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Hooves",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d6+4",
-          "average": 11
-        }
+        "attackBonus": 6
       }
     ],
     "legendaryActions": [],
-    "description": "A large, trained horse bred for combat. Warhorses are fearless in battle and can carry armored riders into combat.",
-    "background": "Warhorses are specially bred and trained horses designed for combat. They are larger and stronger than regular horses, with the stamina and courage needed for battle. They are equipped with war bridles and saddles that allow riders to fight effectively while mounted.",
-    "imagePrompt": "A great big horse bred for war, muscular build and powerful legs, war bridle and saddle designed for combat, sturdy leather straps and metal fittings, dark well-groomed coat, strong confident bearing for carrying armored riders into battle.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "large",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -5851,9 +5125,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "dex",
     "hitPoints": 1,
-    "hitDice": "1d4+-1",
+    "hitDice": "1d4",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -5879,25 +5154,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one creature. Hit: 1 piercing damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1",
-          "average": 0
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A small, agile predator with sharp teeth and hunting instincts. Weasels are excellent trackers and can squeeze through small openings.",
-    "imagePrompt": "A tiny beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "tiny",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   },
   {
@@ -5916,9 +5182,10 @@ export const beastMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "natural",
     "hitPoints": 11,
-    "hitDice": "2d8+2",
+    "hitDice": "2d8",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -5948,25 +5215,16 @@ export const beastMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (2d4 + 2) piercing damage. If the target is a creature, it must succeed on a DC 11 Strength saving throw or be knocked prone.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d4+2",
-          "average": 7
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A pack-hunting canine with keen senses and coordination. Wolves are social predators that hunt in coordinated groups.",
-    "imagePrompt": "A medium beast creature with animal-like features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "beast",
       "medium",
-      "unaligned",
-      "beast",
-      "animal"
+      "unaligned"
     ]
   }
 ];

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { monstersData, getMonsterByName, getMonstersByType, searchMonsters } from '@/data/monsters-data';
+import { allMonsters } from '../../../data/monsters';
 
 // GET /api/monsters - Get all monsters with optional filtering
 export async function GET(request: NextRequest) {
@@ -15,11 +15,11 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '1000'); // Return all monsters by default
     const offset = parseInt(searchParams.get('offset') || '0');
     
-    let filteredMonsters = [...monstersData];
+    let filteredMonsters = [...allMonsters];
     
     // Apply filters
     if (name) {
-      const monster = getMonsterByName(name);
+      const monster = filteredMonsters.find(m => m.name.toLowerCase() === name.toLowerCase());
       if (monster) {
         return NextResponse.json([monster]);
       } else {
@@ -28,7 +28,17 @@ export async function GET(request: NextRequest) {
     }
     
     if (type) {
-      filteredMonsters = getMonstersByType(type);
+      filteredMonsters = filteredMonsters.filter(monster => {
+        const monsterType = monster.type.toLowerCase();
+        const filterType = type.toLowerCase();
+        
+        // Special handling for swarm type
+        if (filterType === 'swarm') {
+          return monsterType.startsWith('swarm');
+        }
+        
+        return monsterType === filterType;
+      });
     }
     
     if (size) {
@@ -44,7 +54,12 @@ export async function GET(request: NextRequest) {
     }
     
     if (search) {
-      filteredMonsters = searchMonsters(search);
+      const searchLower = search.toLowerCase();
+      filteredMonsters = filteredMonsters.filter(monster => 
+        monster.name.toLowerCase().includes(searchLower) ||
+        monster.type.toLowerCase().includes(searchLower) ||
+        (monster.description && monster.description.toLowerCase().includes(searchLower))
+      );
     }
     
     // Apply pagination

@@ -1,11 +1,5 @@
-// Monster data sharded by type for better maintainability
-// Source: D&D 5e SRD via dnd5eapi.co
-
-import { Monster } from '@/types/monster';
-
-// Import all monster type data
-import { aberrationMonsters } from './aberration';
 import { beastMonsters } from './beast';
+import { aberrationMonsters } from './aberration';
 import { celestialMonsters } from './celestial';
 import { constructMonsters } from './construct';
 import { dragonMonsters } from './dragon';
@@ -20,10 +14,25 @@ import { plantMonsters } from './plant';
 import { swarmMonsters } from './swarm';
 import { undeadMonsters } from './undead';
 
-// Combined monster data
-export const monstersData: Monster[] = [
-  ...aberrationMonsters,
+export { beastMonsters } from './beast';
+export { aberrationMonsters } from './aberration';
+export { celestialMonsters } from './celestial';
+export { constructMonsters } from './construct';
+export { dragonMonsters } from './dragon';
+export { elementalMonsters } from './elemental';
+export { feyMonsters } from './fey';
+export { fiendMonsters } from './fiend';
+export { giantMonsters } from './giant';
+export { humanoidMonsters } from './humanoid';
+export { monstrosityMonsters } from './monstrosity';
+export { oozeMonsters } from './ooze';
+export { plantMonsters } from './plant';
+export { swarmMonsters } from './swarm';
+export { undeadMonsters } from './undead';
+
+export const allMonsters = [
   ...beastMonsters,
+  ...aberrationMonsters,
   ...celestialMonsters,
   ...constructMonsters,
   ...dragonMonsters,
@@ -36,59 +45,5 @@ export const monstersData: Monster[] = [
   ...oozeMonsters,
   ...plantMonsters,
   ...swarmMonsters,
-  ...undeadMonsters,
+  ...undeadMonsters
 ];
-
-// Helper functions for monster data
-export const getMonsterByName = (name: string): Monster | undefined => {
-  return monstersData.find(monster => 
-    monster.name.toLowerCase() === name.toLowerCase()
-  );
-};
-
-export const getMonstersByType = (type: string): Monster[] => {
-  return monstersData.filter(monster => 
-    monster.type.toLowerCase() === type.toLowerCase()
-  );
-};
-
-export const getMonstersByChallengeRating = (cr: string): Monster[] => {
-  return monstersData.filter(monster => 
-    monster.challengeRating === cr
-  );
-};
-
-export const getMonstersBySize = (size: string): Monster[] => {
-  return monstersData.filter(monster => 
-    monster.size.toLowerCase() === size.toLowerCase()
-  );
-};
-
-export const searchMonsters = (query: string): Monster[] => {
-  const lowerQuery = query.toLowerCase();
-  return monstersData.filter(monster => 
-    monster.name.toLowerCase().includes(lowerQuery) ||
-    monster.type.toLowerCase().includes(lowerQuery) ||
-    monster.subtype?.toLowerCase().includes(lowerQuery) ||
-    monster.tags?.some(tag => tag.toLowerCase().includes(lowerQuery))
-  );
-};
-
-// Export individual type arrays for direct access
-export {
-  aberrationMonsters,
-  beastMonsters,
-  celestialMonsters,
-  constructMonsters,
-  dragonMonsters,
-  elementalMonsters,
-  feyMonsters,
-  fiendMonsters,
-  giantMonsters,
-  humanoidMonsters,
-  monstrosityMonsters,
-  oozeMonsters,
-  plantMonsters,
-  swarmMonsters,
-  undeadMonsters,
-};

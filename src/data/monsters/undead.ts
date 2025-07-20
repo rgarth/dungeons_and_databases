@@ -1,4 +1,4 @@
-import { Monster } from '@/types/monster';
+import { Monster } from '../../types/monster';
 
 export const undeadMonsters: Monster[] = [
   {
@@ -19,7 +19,8 @@ export const undeadMonsters: Monster[] = [
     "hitPoints": 36,
     "hitDice": "8d8",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -30,14 +31,26 @@ export const undeadMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned",
-      "Charmed",
-      "Exhaustion"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      },
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 10
     },
     "languages": [
       "Common"
@@ -57,35 +70,21 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 12 (2d8 + 3) piercing damage.",
-        "attackBonus": 3,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d8+3",
-          "average": 12
-        }
+        "attackBonus": 3
       },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage. If the target is a creature other than an undead, it must succeed on a DC 10 Constitution saving throw or be paralyzed for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d6+3",
-          "average": 10
-        }
+        "attackBonus": 5
       }
     ],
     "legendaryActions": [],
-    "description": "A putrid, rotting undead creature with yellowed fangs and a foul stench that can sicken the living. Ghasts are more powerful and intelligent than ghouls, with an overwhelming stench that poisons those nearby. They can paralyze victims with their claws and are resistant to turning effects.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "chaotic-evil",
-      "undead",
-      "evil"
+      "chaotic evil"
     ]
   },
   {
@@ -125,20 +124,56 @@ export const undeadMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Charmed",
-      "Exhaustion",
-      "Frightened",
-      "Grappled",
-      "Paralyzed",
-      "Petrified",
-      "Poisoned",
-      "Prone",
-      "Restrained"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "grappled",
+        "name": "Grappled",
+        "url": "/api/2014/conditions/grappled"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "petrified",
+        "name": "Petrified",
+        "url": "/api/2014/conditions/petrified"
+      },
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      },
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      },
+      {
+        "index": "restrained",
+        "name": "Restrained",
+        "url": "/api/2014/conditions/restrained"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 11,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 11
     },
     "languages": [
       "any languages it knew in life"
@@ -158,12 +193,7 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Withering Touch",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 17 (4d6 + 3) necrotic damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Necrotic",
-          "roll": "4d6+3",
-          "average": 17
-        }
+        "attackBonus": 5
       },
       {
         "name": "Etherealness",
@@ -171,12 +201,7 @@ export const undeadMonsters: Monster[] = [
       },
       {
         "name": "Horrifying Visage",
-        "description": "Each non-undead creature within 60 ft. of the ghost that can see it must succeed on a DC 13 Wisdom saving throw or be frightened for 1 minute. If the save fails by 5 or more, the target also ages 1d4 × 10 years. A frightened target can repeat the saving throw at the end of each of its turns, ending the frightened condition on itself on a success. If a target's saving throw is successful or the effect ends for it, the target is immune to this ghost's Horrifying Visage for the next 24 hours. The aging effect can be reversed with a greater restoration spell, but only within 24 hours of it occurring.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "Each non-undead creature within 60 ft. of the ghost that can see it must succeed on a DC 13 Wisdom saving throw or be frightened for 1 minute. If the save fails by 5 or more, the target also ages 1d4 × 10 years. A frightened target can repeat the saving throw at the end of each of its turns, ending the frightened condition on itself on a success. If a target's saving throw is successful or the effect ends for it, the target is immune to this ghost's Horrifying Visage for the next 24 hours. The aging effect can be reversed with a greater restoration spell, but only within 24 hours of it occurring."
       },
       {
         "name": "Possession",
@@ -184,16 +209,12 @@ export const undeadMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A translucent, ethereal figure that appears as a pale reflection of its former self. Ghosts are the spirits of the dead who cannot find rest, often bound to specific locations or objects due to unfinished business, strong emotions, or dark magic. They can phase through walls, possess the living, and age those who gaze upon their horrifying visage.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "any-alignment",
-      "undead",
-      "evil"
+      "any alignment"
     ]
   },
   {
@@ -214,7 +235,8 @@ export const undeadMonsters: Monster[] = [
     "hitPoints": 22,
     "hitDice": "5d8",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -223,14 +245,26 @@ export const undeadMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned",
-      "Charmed",
-      "Exhaustion"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      },
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 10
     },
     "languages": [
       "Common"
@@ -241,35 +275,21 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one creature. Hit: 9 (2d6 + 2) piercing damage.",
-        "attackBonus": 2,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d6+2",
-          "average": 9
-        }
+        "attackBonus": 2
       },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (2d4 + 2) slashing damage. If the target is a creature other than an elf or undead, it must succeed on a DC 10 Constitution saving throw or be paralyzed for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d4+2",
-          "average": 7
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A gaunt, emaciated undead creature with sharp claws and fangs, driven by an insatiable hunger for flesh. Ghouls are mindless predators that hunt in packs, using their paralyzing claws to immobilize prey before devouring them. They are immune to poison and can paralyze most creatures with their touch.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "chaotic-evil",
-      "undead",
-      "evil"
+      "chaotic evil"
     ]
   },
   {
@@ -288,9 +308,10 @@ export const undeadMonsters: Monster[] = [
     "armorClass": 17,
     "armorType": "natural",
     "hitPoints": 135,
-    "hitDice": "18d8+54",
+    "hitDice": "18d8",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -309,16 +330,36 @@ export const undeadMonsters: Monster[] = [
       "bludgeoning, piercing, and slashing from nonmagical weapons"
     ],
     "conditionImmunities": [
-      "Charmed",
-      "Exhaustion",
-      "Frightened",
-      "Paralyzed",
-      "Poisoned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 19,
-      "truesight": 120
+      "truesight": 120,
+      "passivePerception": 19
     },
     "languages": [
       "Common plus up to five other languages"
@@ -350,7 +391,7 @@ export const undeadMonsters: Monster[] = [
         "damage": {
           "type": "Cold",
           "roll": "3d6",
-          "average": 11
+          "average": 10
         }
       }
     ],
@@ -372,16 +413,12 @@ export const undeadMonsters: Monster[] = [
         "description": "Each living creature within 20 feet of the lich must make a DC 18 Constitution saving throw against this magic, taking 21 (6d6) necrotic damage on a failed save, or half as much damage on a successful one."
       }
     ],
-    "description": "A skeletal undead creature with glowing eyes and tattered robes, radiating dark magical power. Liches are powerful spellcasters who have achieved immortality through dark magic, sacrificing their humanity in the process. They are nearly indestructible due to their phylactery, which allows them to return from destruction. Their paralyzing touch and powerful spells make them among the most feared undead creatures.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "any-evil alignment",
-      "undead",
-      "evil"
+      "any evil alignment"
     ]
   },
   {
@@ -400,9 +437,10 @@ export const undeadMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "natural",
     "hitPoints": 67,
-    "hitDice": "9d10+18",
+    "hitDice": "9d10",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -411,15 +449,23 @@ export const undeadMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Exhaustion",
-      "Poisoned"
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      },
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [
       "bludgeoning"
     ],
     "senses": {
-      "passivePerception": 9,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 9
     },
     "languages": [
       "understands Abyssal but can't speak"
@@ -435,35 +481,21 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Greataxe",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 17 (2d12 + 4) slashing damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d12+4",
-          "average": 17
-        }
+        "attackBonus": 6
       },
       {
         "name": "Gore",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) piercing damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d8+4",
-          "average": 13
-        }
+        "attackBonus": 6
       }
     ],
     "legendaryActions": [],
-    "description": "An animated skeleton with bones that rattle and clatter as it moves. Skeletons are typically created by necromancers or other evil spellcasters to serve as guards, laborers, or soldiers.",
-    "imagePrompt": "A large undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "large",
-      "lawful-evil",
-      "undead",
-      "evil"
+      "lawful evil"
     ]
   },
   {
@@ -482,9 +514,10 @@ export const undeadMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "natural",
     "hitPoints": 58,
-    "hitDice": "9d8+18",
+    "hitDice": "9d8",
     "speed": {
-      "walk": 20
+      "walk": 20,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -496,18 +529,38 @@ export const undeadMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Charmed",
-      "Exhaustion",
-      "Frightened",
-      "Paralyzed",
-      "Poisoned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [
       "fire"
     ],
     "senses": {
-      "passivePerception": 10,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 10
     },
     "languages": [
       "the languages it knew in life"
@@ -524,32 +577,23 @@ export const undeadMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage plus 10 (3d6) necrotic damage. If the target is a creature, it must succeed on a DC 12 Constitution saving throw or be cursed with mummy rot. The cursed target can't regain hit points, and its hit point maximum decreases by 10 (3d6) for every 24 hours that elapse. If the curse reduces the target's hit point maximum to 0, the target dies, and its body turns to dust. The curse lasts until removed by the remove curse spell or other magic.",
         "attackBonus": 5,
         "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d6+3",
+          "type": "Necrotic",
+          "roll": "3d6",
           "average": 10
         }
       },
       {
         "name": "Dreadful Glare",
-        "description": "The mummy targets one creature it can see within 60 ft. of it. If the target can see the mummy, it must succeed on a DC 11 Wisdom saving throw against this magic or become frightened until the end of the mummy's next turn. If the target fails the saving throw by 5 or more, it is also paralyzed for the same duration. A target that succeeds on the saving throw is immune to the Dreadful Glare of all mummies (but not mummy lords) for the next 24 hours.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The mummy targets one creature it can see within 60 ft. of it. If the target can see the mummy, it must succeed on a DC 11 Wisdom saving throw against this magic or become frightened until the end of the mummy's next turn. If the target fails the saving throw by 5 or more, it is also paralyzed for the same duration. A target that succeeds on the saving throw is immune to the Dreadful Glare of all mummies (but not mummy lords) for the next 24 hours."
       }
     ],
     "legendaryActions": [],
-    "description": "A preserved corpse wrapped in ancient bandages, radiating dark magical energy. Mummies are undead guardians created through powerful necromantic rituals, often bound to protect tombs and treasures. Their rotting fists can curse victims with mummy rot, and their dreadful glare can paralyze with fear. They are vulnerable to fire but resistant to most other damage.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "lawful-evil",
-      "undead",
-      "evil"
+      "lawful evil"
     ]
   },
   {
@@ -568,9 +612,10 @@ export const undeadMonsters: Monster[] = [
     "armorClass": 17,
     "armorType": "natural",
     "hitPoints": 97,
-    "hitDice": "13d8+39",
+    "hitDice": "13d8",
     "speed": {
-      "walk": 20
+      "walk": 20,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -584,18 +629,38 @@ export const undeadMonsters: Monster[] = [
       "bludgeoning, piercing, and slashing from nonmagical weapons"
     ],
     "conditionImmunities": [
-      "Charmed",
-      "Exhaustion",
-      "Frightened",
-      "Paralyzed",
-      "Poisoned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [
       "fire"
     ],
     "senses": {
-      "passivePerception": 14,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 14
     },
     "languages": [
       "the languages it knew in life"
@@ -625,19 +690,14 @@ export const undeadMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 14 (3d6 + 4) bludgeoning damage plus 21 (6d6) necrotic damage. If the target is a creature, it must succeed on a DC 16 Constitution saving throw or be cursed with mummy rot. The cursed target can't regain hit points, and its hit point maximum decreases by 10 (3d6) for every 24 hours that elapse. If the curse reduces the target's hit point maximum to 0, the target dies, and its body turns to dust. The curse lasts until removed by the remove curse spell or other magic.",
         "attackBonus": 9,
         "damage": {
-          "type": "Bludgeoning",
-          "roll": "3d6+4",
-          "average": 15
+          "type": "Necrotic",
+          "roll": "6d6",
+          "average": 21
         }
       },
       {
         "name": "Dreadful Glare",
-        "description": "The mummy lord targets one creature it can see within 60 feet of it. If the target can see the mummy lord, it must succeed on a DC 16 Wisdom saving throw against this magic or become frightened until the end of the mummy's next turn. If the target fails the saving throw by 5 or more, it is also paralyzed for the same duration. A target that succeeds on the saving throw is immune to the Dreadful Glare of all mummies and mummy lords for the next 24 hours.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The mummy lord targets one creature it can see within 60 feet of it. If the target can see the mummy lord, it must succeed on a DC 16 Wisdom saving throw against this magic or become frightened until the end of the mummy's next turn. If the target fails the saving throw by 5 or more, it is also paralyzed for the same duration. A target that succeeds on the saving throw is immune to the Dreadful Glare of all mummies and mummy lords for the next 24 hours."
       }
     ],
     "legendaryActions": [
@@ -662,16 +722,12 @@ export const undeadMonsters: Monster[] = [
         "description": "The mummy lord magically transforms into a whirlwind of sand, moves up to 60 feet, and reverts to its normal form. While in whirlwind form, the mummy lord is immune to all damage, and it can't be grappled, petrified, knocked prone, restrained, or stunned. Equipment worn or carried by the mummy lord remain in its possession."
       }
     ],
-    "description": "A mighty undead ruler wrapped in ornate bandages and adorned with ancient jewelry, radiating overwhelming dark power. Mummy lords are the most powerful of mummies, often former pharaohs or high priests who achieved undeath through dark rituals. They possess spellcasting abilities, can transform into whirlwinds of sand, and are nearly indestructible due to their ability to rejuvenate from their preserved heart.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "lawful-evil",
-      "undead",
-      "evil"
+      "lawful evil"
     ]
   },
   {
@@ -690,9 +746,10 @@ export const undeadMonsters: Monster[] = [
     "armorClass": 8,
     "armorType": "dex",
     "hitPoints": 85,
-    "hitDice": "9d10+36",
+    "hitDice": "9d10",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -701,12 +758,16 @@ export const undeadMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 8,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 8
     },
     "languages": [
       "understands Common and Giant but can't speak"
@@ -722,25 +783,16 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Morningstar",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d8+4",
-          "average": 13
-        }
+        "attackBonus": 6
       }
     ],
     "legendaryActions": [],
-    "description": "A massive, rotting ogre corpse that shambles with mindless purpose, wielding a heavy morningstar. Ogre zombies are created when ogres are raised as undead, combining the brute strength of their living form with the mindless persistence of the undead. They are incredibly difficult to destroy due to their undead fortitude, often continuing to fight even when they should be dead.",
-    "imagePrompt": "A large undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "large",
-      "neutral-evil",
-      "undead",
-      "evil"
+      "neutral evil"
     ]
   },
   {
@@ -759,9 +811,10 @@ export const undeadMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 16,
-    "hitDice": "3d8+3",
+    "hitDice": "3d8",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -780,21 +833,53 @@ export const undeadMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Exhaustion",
-      "Frightened",
-      "Grappled",
-      "Paralyzed",
-      "Petrified",
-      "Poisoned",
-      "Prone",
-      "Restrained"
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "grappled",
+        "name": "Grappled",
+        "url": "/api/2014/conditions/grappled"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "petrified",
+        "name": "Petrified",
+        "url": "/api/2014/conditions/petrified"
+      },
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      },
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      },
+      {
+        "index": "restrained",
+        "name": "Restrained",
+        "url": "/api/2014/conditions/restrained"
+      }
     ],
     "damageVulnerabilities": [
       "radiant"
     ],
     "senses": {
-      "passivePerception": 10,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 10
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -816,25 +901,16 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Strength Drain",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 9 (2d6 + 2) necrotic damage, and the target's Strength score is reduced by 1d4. The target dies if this reduces its Strength to 0. Otherwise, the reduction lasts until the target finishes a short or long rest.\nIf a non-evil humanoid dies from this attack, a new shadow rises from the corpse 1d4 hours later.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Necrotic",
-          "roll": "2d6+2",
-          "average": 9
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A dark, shadowy figure that seems to absorb light around it, appearing as a living shadow with glowing eyes. Shadows are malevolent undead that drain the life force from their victims, reducing their strength until they die. They are vulnerable to radiant damage and sunlight, but can move through walls and become invisible in darkness.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "chaotic-evil",
-      "undead",
-      "evil"
+      "chaotic evil"
     ]
   },
   {
@@ -853,9 +929,10 @@ export const undeadMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "armor",
     "hitPoints": 13,
-    "hitDice": "2d8+4",
+    "hitDice": "2d8",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -864,15 +941,23 @@ export const undeadMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned",
-      "Exhaustion"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      },
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      }
     ],
     "damageVulnerabilities": [
       "bludgeoning"
     ],
     "senses": {
-      "passivePerception": 9,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 9
     },
     "languages": [
       "understands all languages it spoke in life but can't speak"
@@ -883,35 +968,21 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Shortsword",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d6+2",
-          "average": 6
-        }
+        "attackBonus": 4
       },
       {
         "name": "Shortbow",
         "description": "Ranged Weapon Attack: +4 to hit, range 80/320 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d6+2",
-          "average": 6
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A reanimated skeleton with bones held together by dark magic, wielding weapons with unnatural precision. Skeletons are mindless undead created by necromancers, often wearing the armor and carrying the weapons they had in life. They are vulnerable to bludgeoning damage but immune to poison and exhaustion.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "lawful-evil",
-      "undead",
-      "evil"
+      "lawful evil"
     ]
   },
   {
@@ -951,20 +1022,56 @@ export const undeadMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Charmed",
-      "Exhaustion",
-      "Grappled",
-      "Paralyzed",
-      "Petrified",
-      "Poisoned",
-      "Prone",
-      "Restrained",
-      "Unconscious"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      },
+      {
+        "index": "grappled",
+        "name": "Grappled",
+        "url": "/api/2014/conditions/grappled"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "petrified",
+        "name": "Petrified",
+        "url": "/api/2014/conditions/petrified"
+      },
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      },
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      },
+      {
+        "index": "restrained",
+        "name": "Restrained",
+        "url": "/api/2014/conditions/restrained"
+      },
+      {
+        "index": "unconscious",
+        "name": "Unconscious",
+        "url": "/api/2014/conditions/unconscious"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 10
     },
     "languages": [
       "understands all languages it knew in life but can't speak"
@@ -988,28 +1095,23 @@ export const undeadMonsters: Monster[] = [
         "damage": {
           "type": "Necrotic",
           "roll": "3d6",
-          "average": 11
+          "average": 10
         }
       }
     ],
     "legendaryActions": [],
-    "description": "A ghostly, incorporeal spirit that appears as a pale, translucent figure with hollow eyes. Specters are the restless souls of those who died violently or with unfinished business. They can phase through walls and objects, drain the life force from the living, and are vulnerable to sunlight but resistant to most physical damage.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "chaotic-evil",
-      "undead",
-      "evil"
+      "chaotic evil"
     ]
   },
   {
     "name": "Vampire, Bat Form",
     "size": "Medium",
     "type": "undead",
-    "subtype": "shapechanger",
     "alignment": "lawful evil",
     "challengeRating": "13",
     "xp": 10000,
@@ -1022,10 +1124,11 @@ export const undeadMonsters: Monster[] = [
     "armorClass": 16,
     "armorType": "natural",
     "hitPoints": 144,
-    "hitDice": "17d8+68",
+    "hitDice": "17d8",
     "speed": {
       "walk": 5,
-      "fly": 30
+      "fly": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -1040,8 +1143,8 @@ export const undeadMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 17,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 17
     },
     "languages": [
       "the languages it knew in life"
@@ -1079,9 +1182,9 @@ export const undeadMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one willing creature, or a creature that is grappled by the vampire, incapacitated, or restrained. Hit: 7 (1d6 + 4) piercing damage plus 10 (3d6) necrotic damage. The target's hit point maximum is reduced by an amount equal to the necrotic damage taken, and the vampire regains hit points equal to that amount. The reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0. A humanoid slain in this way and then buried in the ground rises the following night as a vampire spawn under the vampire's control.",
         "attackBonus": 9,
         "damage": {
-          "type": "Piercing",
-          "roll": "1d6+4",
-          "average": 8
+          "type": "Necrotic",
+          "roll": "3d6",
+          "average": 10
         }
       },
       {
@@ -1090,12 +1193,7 @@ export const undeadMonsters: Monster[] = [
       },
       {
         "name": "Children of the Night",
-        "description": "The vampire magically calls 2d4 swarms of bats or rats, provided that the sun isn't up. While outdoors, the vampire can call 3d6 wolves instead. The called creatures arrive in 1d4 rounds, acting as allies of the vampire and obeying its spoken commands. The beasts remain for 1 hour, until the vampire dies, or until the vampire dismisses them as a bonus action.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The vampire magically calls 2d4 swarms of bats or rats, provided that the sun isn't up. While outdoors, the vampire can call 3d6 wolves instead. The called creatures arrive in 1d4 rounds, acting as allies of the vampire and obeying its spoken commands. The beasts remain for 1 hour, until the vampire dies, or until the vampire dismisses them as a bonus action."
       }
     ],
     "legendaryActions": [
@@ -1112,23 +1210,18 @@ export const undeadMonsters: Monster[] = [
         "description": "The vampire makes one bite attack."
       }
     ],
-    "description": "A large, bat-like creature with leathery wings and sharp fangs, transformed from a vampire's true form. In bat form, vampires can fly silently through the night, scouting for prey or escaping danger. They retain their vampiric abilities but cannot speak or use their hands, making them excellent for stealth and reconnaissance.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "lawful-evil",
-      "undead",
-      "evil"
+      "lawful evil"
     ]
   },
   {
     "name": "Vampire, Mist Form",
     "size": "Medium",
     "type": "undead",
-    "subtype": "shapechanger",
     "alignment": "lawful evil",
     "challengeRating": "13",
     "xp": 10000,
@@ -1141,9 +1234,10 @@ export const undeadMonsters: Monster[] = [
     "armorClass": 16,
     "armorType": "natural",
     "hitPoints": 144,
-    "hitDice": "17d8+68",
+    "hitDice": "17d8",
     "speed": {
-      "fly": 20
+      "fly": 20,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -1158,8 +1252,8 @@ export const undeadMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 17,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 17
     },
     "languages": [
       "the languages it knew in life"
@@ -1206,16 +1300,12 @@ export const undeadMonsters: Monster[] = [
         "description": "The vampire makes one bite attack."
       }
     ],
-    "description": "A swirling cloud of dark mist that moves with unnatural grace, appearing as a vampire's gaseous form. In mist form, vampires become weightless and can pass through tiny spaces, making them nearly impossible to contain or harm. They cannot take actions or speak, but can hover and move through the air, often using this form to escape danger or infiltrate secure locations.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "lawful-evil",
-      "undead",
-      "evil"
+      "lawful evil"
     ]
   },
   {
@@ -1234,9 +1324,10 @@ export const undeadMonsters: Monster[] = [
     "armorClass": 15,
     "armorType": "natural",
     "hitPoints": 82,
-    "hitDice": "11d8+33",
+    "hitDice": "11d8",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -1251,8 +1342,8 @@ export const undeadMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 13,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 13
     },
     "languages": [
       "the languages it knew in life"
@@ -1282,40 +1373,30 @@ export const undeadMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one willing creature, or a creature that is grappled by the vampire, incapacitated, or restrained. Hit: 6 (1d6 + 3) piercing damage plus 7 (2d6) necrotic damage. The target's hit point maximum is reduced by an amount equal to the necrotic damage taken, and the vampire regains hit points equal to that amount. The reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0.",
         "attackBonus": 6,
         "damage": {
-          "type": "Piercing",
-          "roll": "1d6+3",
+          "type": "Necrotic",
+          "roll": "2d6",
           "average": 7
         }
       },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one creature. Hit: 8 (2d4 + 3) slashing damage. Instead of dealing damage, the vampire can grapple the target (escape DC 13).",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d4+3",
-          "average": 8
-        }
+        "attackBonus": 6
       }
     ],
     "legendaryActions": [],
-    "description": "A newly created vampire with pale skin, sharp fangs, and eyes that gleam with hunger and confusion. Vampire spawn are the lesser offspring of true vampires, created when a vampire drains a humanoid to death and buries them. They are weaker than their creators but still possess formidable abilities including regeneration, spider climb, and the same weaknesses to sunlight and running water.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "neutral-evil",
-      "undead",
-      "evil"
+      "neutral evil"
     ]
   },
   {
     "name": "Vampire, Vampire Form",
     "size": "Medium",
     "type": "undead",
-    "subtype": "shapechanger",
     "alignment": "lawful evil",
     "challengeRating": "13",
     "xp": 10000,
@@ -1328,9 +1409,10 @@ export const undeadMonsters: Monster[] = [
     "armorClass": 16,
     "armorType": "natural",
     "hitPoints": 144,
-    "hitDice": "17d8+68",
+    "hitDice": "17d8",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -1345,8 +1427,8 @@ export const undeadMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 17,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 17
     },
     "languages": [
       "the languages it knew in life"
@@ -1386,21 +1468,16 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Unarmed Strike",
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one creature. Hit: 8 (1d8 + 4) bludgeoning damage. Instead of dealing damage, the vampire can grapple the target (escape DC 18).",
-        "attackBonus": 9,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "1d8+4",
-          "average": 9
-        }
+        "attackBonus": 9
       },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one willing creature, or a creature that is grappled by the vampire, incapacitated, or restrained. Hit: 7 (1d6 + 4) piercing damage plus 10 (3d6) necrotic damage. The target's hit point maximum is reduced by an amount equal to the necrotic damage taken, and the vampire regains hit points equal to that amount. The reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0. A humanoid slain in this way and then buried in the ground rises the following night as a vampire spawn under the vampire's control.",
         "attackBonus": 9,
         "damage": {
-          "type": "Piercing",
-          "roll": "1d6+4",
-          "average": 8
+          "type": "Necrotic",
+          "roll": "3d6",
+          "average": 10
         }
       },
       {
@@ -1409,12 +1486,7 @@ export const undeadMonsters: Monster[] = [
       },
       {
         "name": "Children of the Night",
-        "description": "The vampire magically calls 2d4 swarms of bats or rats, provided that the sun isn't up. While outdoors, the vampire can call 3d6 wolves instead. The called creatures arrive in 1d4 rounds, acting as allies of the vampire and obeying its spoken commands. The beasts remain for 1 hour, until the vampire dies, or until the vampire dismisses them as a bonus action.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The vampire magically calls 2d4 swarms of bats or rats, provided that the sun isn't up. While outdoors, the vampire can call 3d6 wolves instead. The called creatures arrive in 1d4 rounds, acting as allies of the vampire and obeying its spoken commands. The beasts remain for 1 hour, until the vampire dies, or until the vampire dismisses them as a bonus action."
       }
     ],
     "legendaryActions": [
@@ -1431,16 +1503,12 @@ export const undeadMonsters: Monster[] = [
         "description": "The vampire makes one bite attack."
       }
     ],
-    "description": "A pale, aristocratic undead creature with sharp fangs and eyes that gleam with malevolent intelligence. Vampires are immortal but vulnerable to sunlight, running water, and certain holy symbols. They can transform into bats or mist, charm victims, drain life force with their bite, and call forth creatures of the night. They are nearly indestructible due to their regeneration and ability to escape as mist when defeated.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "lawful-evil",
-      "undead",
-      "evil"
+      "lawful evil"
     ]
   },
   {
@@ -1459,9 +1527,10 @@ export const undeadMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "armor",
     "hitPoints": 22,
-    "hitDice": "3d10+6",
+    "hitDice": "3d10",
     "speed": {
-      "walk": 60
+      "walk": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1470,15 +1539,23 @@ export const undeadMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Exhaustion",
-      "Poisoned"
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      },
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [
       "bludgeoning"
     ],
     "senses": {
-      "passivePerception": 9,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 9
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -1487,25 +1564,16 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Hooves",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d6+4",
-          "average": 11
-        }
+        "attackBonus": 6
       }
     ],
     "legendaryActions": [],
-    "description": "A skeletal warhorse with bones held together by dark magic, still wearing tattered barding and carrying the weight of its rider. Warhorse skeletons are created when powerful warhorses are raised as undead, retaining their speed and strength but losing all fear and pain. They are vulnerable to bludgeoning damage but immune to poison and exhaustion.",
-    "imagePrompt": "A large undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "large",
-      "lawful-evil",
-      "undead",
-      "evil"
+      "lawful evil"
     ]
   },
   {
@@ -1524,9 +1592,10 @@ export const undeadMonsters: Monster[] = [
     "armorClass": 14,
     "armorType": "armor",
     "hitPoints": 45,
-    "hitDice": "6d8+18",
+    "hitDice": "6d8",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -1541,13 +1610,21 @@ export const undeadMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Exhaustion",
-      "Poisoned"
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      },
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 13,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 13
     },
     "languages": [
       "the languages it knew in life"
@@ -1567,45 +1644,26 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Life Drain",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 5 (1d6 + 2) necrotic damage. The target must succeed on a DC 13 Constitution saving throw or its hit point maximum is reduced by an amount equal to the damage taken. This reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0.\nA humanoid slain by this attack rises 24 hours later as a zombie under the wight's control, unless the humanoid is restored to life or its body is destroyed. The wight can have no more than twelve zombies under its control at one time.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Necrotic",
-          "roll": "1d6+2",
-          "average": 6
-        }
+        "attackBonus": 4
       },
       {
         "name": "Longsword",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) slashing damage, or 7 (1d10 + 2) slashing damage if used with two hands.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "attackBonus": 4
       },
       {
         "name": "Longbow",
         "description": "Ranged Weapon Attack: +4 to hit, range 150/600 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d8+2",
-          "average": 7
-        }
+        "attackBonus": 4
       }
     ],
     "legendaryActions": [],
-    "description": "A gaunt, armored undead warrior with hollow eyes and a malevolent aura. Wights are intelligent undead created from fallen warriors, retaining their combat skills and equipment. They can drain the life force from victims and raise the dead as zombies under their control. They are vulnerable to sunlight but resistant to most damage types.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "neutral-evil",
-      "undead",
-      "evil"
+      "neutral evil"
     ]
   },
   {
@@ -1645,18 +1703,46 @@ export const undeadMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Exhaustion",
-      "Grappled",
-      "Paralyzed",
-      "Poisoned",
-      "Prone",
-      "Restrained",
-      "Unconscious"
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      },
+      {
+        "index": "grappled",
+        "name": "Grappled",
+        "url": "/api/2014/conditions/grappled"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      },
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      },
+      {
+        "index": "restrained",
+        "name": "Restrained",
+        "url": "/api/2014/conditions/restrained"
+      },
+      {
+        "index": "unconscious",
+        "name": "Unconscious",
+        "url": "/api/2014/conditions/unconscious"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 12,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 12
     },
     "languages": [
       "the languages it knew in life"
@@ -1693,25 +1779,16 @@ export const undeadMonsters: Monster[] = [
       },
       {
         "name": "Invisibility",
-        "description": "The will-o'-wisp and its light magically become invisible until it attacks or uses its Consume Life, or until its concentration ends (as if concentrating on a spell).",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The will-o'-wisp and its light magically become invisible until it attacks or uses its Consume Life, or until its concentration ends (as if concentrating on a spell)."
       }
     ],
     "legendaryActions": [],
-    "description": "A small, flickering ball of light that dances and weaves through the darkness, appearing as a ghostly flame. Will-o'-wisps are malevolent spirits that lure travelers to their doom, often appearing as friendly lights in dangerous areas. They can become invisible, shock enemies with lightning, and consume the life force of dying creatures.",
-    "imagePrompt": "A tiny undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "tiny",
-      "chaotic-evil",
-      "undead",
-      "evil"
+      "chaotic evil"
     ]
   },
   {
@@ -1730,7 +1807,7 @@ export const undeadMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "dex",
     "hitPoints": 67,
-    "hitDice": "9d8+27",
+    "hitDice": "9d8",
     "speed": {
       "walk": 0,
       "fly": 60,
@@ -1751,19 +1828,51 @@ export const undeadMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Charmed",
-      "Exhaustion",
-      "Grappled",
-      "Paralyzed",
-      "Petrified",
-      "Poisoned",
-      "Prone",
-      "Restrained"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      },
+      {
+        "index": "grappled",
+        "name": "Grappled",
+        "url": "/api/2014/conditions/grappled"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "petrified",
+        "name": "Petrified",
+        "url": "/api/2014/conditions/petrified"
+      },
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      },
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      },
+      {
+        "index": "restrained",
+        "name": "Restrained",
+        "url": "/api/2014/conditions/restrained"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 12,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 12
     },
     "languages": [
       "the languages it knew in life"
@@ -1783,34 +1892,20 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Life Drain",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one creature. Hit: 21 (4d8 + 3) necrotic damage. The target must succeed on a DC 14 Constitution saving throw or its hit point maximum is reduced by an amount equal to the damage taken. This reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Necrotic",
-          "roll": "4d8+3",
-          "average": 21
-        }
+        "attackBonus": 6
       },
       {
         "name": "Create Specter",
-        "description": "The wraith targets a humanoid within 10 feet of it that has been dead for no longer than 1 minute and died violently. The target's spirit rises as a specter in the space of its corpse or in the nearest unoccupied space. The specter is under the wraith's control. The wraith can have no more than seven specters under its control at one time.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The wraith targets a humanoid within 10 feet of it that has been dead for no longer than 1 minute and died violently. The target's spirit rises as a specter in the space of its corpse or in the nearest unoccupied space. The specter is under the wraith's control. The wraith can have no more than seven specters under its control at one time."
       }
     ],
     "legendaryActions": [],
-    "description": "A dark, shadowy figure wrapped in tattered robes, appearing as a malevolent spirit of pure evil. Wraiths are powerful undead created from the souls of particularly evil individuals. They can drain life force from the living and create specters from those they kill. They are vulnerable to sunlight but can phase through walls and objects.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "neutral-evil",
-      "undead",
-      "evil"
+      "neutral evil"
     ]
   },
   {
@@ -1829,9 +1924,10 @@ export const undeadMonsters: Monster[] = [
     "armorClass": 8,
     "armorType": "dex",
     "hitPoints": 22,
-    "hitDice": "3d8+9",
+    "hitDice": "3d8",
     "speed": {
-      "walk": 20
+      "walk": 20,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1840,12 +1936,16 @@ export const undeadMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 8,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 8
     },
     "languages": [
       "understands all languages it spoke in life but can't speak"
@@ -1861,25 +1961,16 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) bludgeoning damage.",
-        "attackBonus": 3,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "1d6+1",
-          "average": 5
-        }
+        "attackBonus": 3
       }
     ],
     "legendaryActions": [],
-    "description": "A shambling, rotting corpse with vacant eyes and a mindless hunger for flesh. Zombies are mindless undead created through necromantic magic or as the result of certain diseases or curses. They are incredibly difficult to destroy due to their undead fortitude, often continuing to fight even when they should be dead.",
-    "imagePrompt": "A medium undead creature with deathly and spectral features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "undead",
       "medium",
-      "neutral-evil",
-      "undead",
-      "evil"
+      "neutral evil"
     ]
   }
 ];

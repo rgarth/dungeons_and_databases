@@ -2,6 +2,26 @@
 
 const fs = require('fs');
 
+// Helper function to parse damage from action description
+function parseDamageFromDescription(description) {
+  // Look for damage patterns like "X (YdZ + W) damage" or "X (YdZ) damage"
+  const damageMatch = description.match(/(\d+)\s*\((\d+d\d+(?:\+\d+)?)\)\s*(\w+)\s*damage/);
+  if (damageMatch) {
+    return {
+      type: damageMatch[3].charAt(0).toUpperCase() + damageMatch[3].slice(1),
+      roll: damageMatch[2],
+      average: parseInt(damageMatch[1])
+    };
+  }
+  return null;
+}
+
+// Helper function to parse attack bonus from description
+function parseAttackBonusFromDescription(description) {
+  const attackMatch = description.match(/\+(\d+)\s+to\s+hit/);
+  return attackMatch ? parseInt(attackMatch[1]) : null;
+}
+
 async function fetchMonsterWithRetry(monsterRef, maxRetries = 3) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -64,15 +84,31 @@ async function fetchMonsterWithRetry(monsterRef, maxRetries = 3) {
           name: ability.name,
           description: ability.desc
         })),
-        actions: (monster.actions || []).map(action => ({
-          name: action.name,
-          desc: action.desc,
-          attack_bonus: action.attack_bonus,
-          damage: action.damage,
-          multiattack_type: action.multiattack_type,
-          action_options: action.action_options,
-          actions: action.actions
-        })),
+        actions: (monster.actions || []).map(action => {
+          const transformedAction = {
+            name: action.name,
+            description: action.desc
+          };
+          
+          // Only add attackBonus if it's an attack action
+          if (action.attack_bonus) {
+            transformedAction.attackBonus = action.attack_bonus;
+          } else {
+            // Try to parse attack bonus from description
+            const parsedAttackBonus = parseAttackBonusFromDescription(action.desc);
+            if (parsedAttackBonus) {
+              transformedAction.attackBonus = parsedAttackBonus;
+            }
+          }
+          
+          // Only add damage if there's actually damage in the description
+          const parsedDamage = parseDamageFromDescription(action.desc);
+          if (parsedDamage) {
+            transformedAction.damage = parsedDamage;
+          }
+          
+          return transformedAction;
+        }),
         legendaryActions: (monster.legendary_actions || []).map(action => ({
           name: action.name,
           description: action.desc,
@@ -80,7 +116,14 @@ async function fetchMonsterWithRetry(monsterRef, maxRetries = 3) {
         })),
         description: monster.desc || "",
         source: "SRD",
-        tags: [monster.type.toLowerCase(), monster.size.toLowerCase(), monster.alignment.toLowerCase()]
+        // Always add tags for filtering
+        tags: Array.isArray(monster.tags) && monster.tags.length > 0
+          ? monster.tags
+          : [
+              monster.type?.toLowerCase() || 'unknown',
+              monster.size?.toLowerCase() || 'unknown',
+              monster.alignment?.toLowerCase() || 'unknown'
+            ],
       };
       
       // Add skills from proficiencies
@@ -163,7 +206,7 @@ function generateTypeScriptFile(monsters) {
   const monstrosityMonsters = monsters.filter(m => m.type === 'monstrosity');
   const oozeMonsters = monsters.filter(m => m.type === 'ooze');
   const plantMonsters = monsters.filter(m => m.type === 'plant');
-  const swarmMonsters = monsters.filter(m => m.type === 'swarm');
+  const swarmMonsters = monsters.filter(m => m.type.startsWith('swarm'));
   const undeadMonsters = monsters.filter(m => m.type === 'undead');
   
   // Generate beast.ts

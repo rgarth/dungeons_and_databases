@@ -1,4 +1,4 @@
-import { monstersData } from '@/data/monsters-data';
+import { allMonsters } from '@/data/monsters';
 import { 
   calculateAverageDamage, 
   getMonsterByName, 
@@ -10,12 +10,12 @@ import {
 
 describe('Monster Data', () => {
   test('should have valid monster data', () => {
-    expect(monstersData).toBeDefined();
-    expect(monstersData.length).toBeGreaterThan(0);
+    expect(allMonsters).toBeDefined();
+    expect(allMonsters.length).toBeGreaterThan(0);
   });
 
   test('should have required fields for each monster', () => {
-    monstersData.forEach(monster => {
+    allMonsters.forEach(monster => {
       expect(monster.name).toBeDefined();
       expect(monster.size).toBeDefined();
       expect(monster.type).toBeDefined();
@@ -48,14 +48,14 @@ describe('Monster Utilities', () => {
   });
 
   test('should find monster by name', () => {
-    const goblin = getMonsterByName('Goblin', monstersData);
+    const goblin = getMonsterByName('Goblin', allMonsters);
     expect(goblin).toBeDefined();
     expect(goblin?.name).toBe('Goblin');
-    expect(goblin?.challengeRating).toBe('1/4');
+    expect(goblin?.challengeRating).toBe('0.25');
   });
 
   test('should filter monsters by type', () => {
-    const humanoids = filterMonsters(monstersData, { type: 'humanoid' });
+    const humanoids = filterMonsters(allMonsters, { type: 'humanoid' });
     expect(humanoids.length).toBeGreaterThan(0);
     humanoids.forEach(monster => {
       expect(monster.type).toBe('humanoid');
@@ -63,7 +63,7 @@ describe('Monster Utilities', () => {
   });
 
   test('should filter monsters by size', () => {
-    const smallMonsters = filterMonsters(monstersData, { size: 'Small' });
+    const smallMonsters = filterMonsters(allMonsters, { size: 'Small' });
     expect(smallMonsters.length).toBeGreaterThan(0);
     smallMonsters.forEach(monster => {
       expect(monster.size).toBe('Small');
@@ -71,7 +71,7 @@ describe('Monster Utilities', () => {
   });
 
   test('should search monsters by name', () => {
-    const results = searchMonsters(monstersData, 'goblin');
+    const results = searchMonsters(allMonsters, 'goblin');
     expect(results.length).toBeGreaterThan(0);
     expect(results[0].name.toLowerCase()).toContain('goblin');
   });

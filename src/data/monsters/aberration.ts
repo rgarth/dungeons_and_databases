@@ -1,4 +1,4 @@
-import { Monster } from '@/types/monster';
+import { Monster } from '../../types/monster';
 
 export const aberrationMonsters: Monster[] = [
   {
@@ -17,10 +17,11 @@ export const aberrationMonsters: Monster[] = [
     "armorClass": 17,
     "armorType": "natural",
     "hitPoints": 135,
-    "hitDice": "18d10+36",
+    "hitDice": "18d10",
     "speed": {
       "walk": 10,
-      "swim": 40
+      "swim": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -32,8 +33,8 @@ export const aberrationMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 20,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 20
     },
     "languages": [
       "Deep Speech",
@@ -64,20 +65,15 @@ export const aberrationMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 12 (2d6 + 5) bludgeoning damage. If the target is a creature, it must succeed on a DC 14 Constitution saving throw or become diseased. The disease has no effect for 1 minute and can be removed by any magic that cures disease. After 1 minute, the diseased creature's skin becomes translucent and slimy, the creature can't regain hit points unless it is underwater, and the disease can be removed only by heal or another disease-curing spell of 6th level or higher. When the creature is outside a body of water, it takes 6 (1d12) acid damage every 10 minutes unless moisture is applied to the skin before 10 minutes have passed.",
         "attackBonus": 9,
         "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d6+5",
-          "average": 12
+          "type": "Acid",
+          "roll": "1d12",
+          "average": 6
         }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 15 (3d6 + 5) bludgeoning damage.",
-        "attackBonus": 9,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "3d6+5",
-          "average": 16
-        }
+        "attackBonus": 9
       },
       {
         "name": "Enslave",
@@ -98,17 +94,12 @@ export const aberrationMonsters: Monster[] = [
         "description": "One creature charmed by the aboleth takes 10 (3d6) psychic damage, and the aboleth regains hit points equal to the damage the creature takes."
       }
     ],
-    "description": "A massive, ancient aberration with a bulbous, fish-like body and four writhing tentacles. The aboleth's skin is covered in a slimy, translucent mucus that transforms creatures it touches. Its three eyes glow with malevolent intelligence, and it possesses memories that span millennia, making it one of the oldest and most knowledgeable creatures in existence.",
-    "background": "Aboleths are among the oldest creatures in the multiverse, predating even the gods themselves. They dwell in vast underwater caverns and ancient ruins, where they rule over enslaved minions and plot to expand their influence. Aboleths possess perfect memories that stretch back to the dawn of time, and they use their telepathic abilities to probe the minds of lesser creatures, learning their deepest desires and using this knowledge to manipulate and enslave them. They are master manipulators who prefer to work through proxies rather than confront enemies directly.",
-    "imagePrompt": "A large aberration creature with otherworldly and alien appearance",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "aberration",
       "large",
-      "lawful-evil",
-      "aberration",
-      "alien"
+      "lawful evil"
     ]
   },
   {
@@ -127,10 +118,11 @@ export const aberrationMonsters: Monster[] = [
     "armorClass": 16,
     "armorType": "natural",
     "hitPoints": 93,
-    "hitDice": "11d10+33",
+    "hitDice": "11d10",
     "speed": {
       "walk": 30,
-      "swim": 30
+      "swim": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -141,12 +133,16 @@ export const aberrationMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 14,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 14
     },
     "languages": [
       "understands Deep Speech but can't speak"
@@ -170,12 +166,7 @@ export const aberrationMonsters: Monster[] = [
       {
         "name": "Pincer",
         "description": "Melee Weapon Attack: +6 to hit, reach 10 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage. The target is grappled (escape DC 14) if it is a Large or smaller creature and the chuul doesn't have two other creatures grappled.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d6+4",
-          "average": 11
-        }
+        "attackBonus": 6
       },
       {
         "name": "Tentacles",
@@ -183,17 +174,12 @@ export const aberrationMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A massive, lobster-like aberration with chitinous armor and powerful pincers. The chuul's body is covered in dark, segmented plates, and it has numerous writhing tentacles around its mouth. Its eyes glow with a malevolent intelligence, and it can sense magical auras from great distances.",
-    "background": "Chuuls are ancient aberrations that serve as guardians and enforcers for more powerful creatures like aboleths and mind flayers. They are often found in underground lakes, ancient ruins, or near magical sites where they can detect and hunt spellcasters. Chuuls are highly territorial and will attack any creature that enters their domain, especially those carrying magical items or displaying magical abilities.",
-    "imagePrompt": "A large aberration creature with otherworldly and alien appearance",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "aberration",
       "large",
-      "chaotic-evil",
-      "aberration",
-      "alien"
+      "chaotic evil"
     ]
   },
   {
@@ -212,10 +198,11 @@ export const aberrationMonsters: Monster[] = [
     "armorClass": 14,
     "armorType": "natural",
     "hitPoints": 78,
-    "hitDice": "12d10+12",
+    "hitDice": "12d10",
     "speed": {
       "walk": 10,
-      "fly": 40
+      "fly": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -226,8 +213,8 @@ export const aberrationMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 11,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 11
     },
     "languages": [
       "Deep Speech",
@@ -256,22 +243,12 @@ export const aberrationMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one creature. Hit: 10 (2d6 + 3) piercing damage, and if the target is Large or smaller, the cloaker attaches to it. If the cloaker has advantage against the target, the cloaker attaches to the target's head, and the target is blinded and unable to breathe while the cloaker is attached. While attached, the cloaker can make this attack only against the target and has advantage on the attack roll. The cloaker can detach itself by spending 5 feet of its movement. A creature, including the target, can take its action to detach the cloaker by succeeding on a DC 16 Strength check.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d6+3",
-          "average": 10
-        }
+        "attackBonus": 6
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +6 to hit, reach 10 ft., one creature. Hit: 7 (1d8 + 3) slashing damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "1d8+3",
-          "average": 8
-        }
+        "attackBonus": 6
       },
       {
         "name": "Moan",
@@ -283,17 +260,12 @@ export const aberrationMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A large, leathery aberration that resembles a living cloak or manta ray. The cloaker's body is covered in dark, rubbery skin that can blend seamlessly with shadows. When motionless, it appears to be nothing more than a discarded piece of clothing, but when it attacks, it reveals rows of sharp teeth and a long, whip-like tail.",
-    "background": "Cloakers are stealthy aberrations that lurk in dark places, particularly in the Underdark and abandoned ruins. They are ambush predators that use their ability to create illusory duplicates to confuse and overwhelm their prey. Cloakers are highly intelligent and often work together in small groups, using their moaning abilities to disorient victims before swooping in for the kill.",
-    "imagePrompt": "A large aberration creature with otherworldly and alien appearance",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "aberration",
       "large",
-      "chaotic-neutral",
-      "aberration",
-      "alien"
+      "chaotic neutral"
     ]
   },
   {
@@ -312,22 +284,27 @@ export const aberrationMonsters: Monster[] = [
     "armorClass": 9,
     "armorType": "dex",
     "hitPoints": 67,
-    "hitDice": "9d8+27",
+    "hitDice": "9d8",
     "speed": {
       "walk": 10,
-      "swim": 10
+      "swim": 10,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
     "damageResistances": [],
     "damageImmunities": [],
     "conditionImmunities": [
-      "Prone"
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 10
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -351,33 +328,23 @@ export const aberrationMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one creature. Hit: 17 (5d6) piercing damage. If the target is Medium or smaller, it must succeed on a DC 10 Strength saving throw or be knocked prone. If the target is killed by this damage, it is absorbed into the mouther.",
         "attackBonus": 2,
         "damage": {
-          "type": "Bludgeoning",
+          "type": "Piercing",
           "roll": "5d6",
-          "average": 18
+          "average": 17
         }
       },
       {
         "name": "Blinding Spittle",
-        "description": "The mouther spits a chemical glob at a point it can see within 15 feet of it. The glob explodes in a blinding flash of light on impact. Each creature within 5 feet of the flash must succeed on a DC 13 Dexterity saving throw or be blinded until the end of the mouther's next turn.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "description": "The mouther spits a chemical glob at a point it can see within 15 feet of it. The glob explodes in a blinding flash of light on impact. Each creature within 5 feet of the flash must succeed on a DC 13 Dexterity saving throw or be blinded until the end of the mouther's next turn."
       }
     ],
     "legendaryActions": [],
-    "description": "A writhing mass of liquefied flesh covered in dozens of eyes and mouths that constantly babble and gibber. The gibbering mouther's amorphous body shifts and flows like quicksand, and the ground around it becomes soft and unstable. Its many mouths speak in different voices, creating a maddening cacophony that can drive creatures to insanity.",
-    "background": "Gibbering mouthers are the result of failed magical experiments or the corruption of living creatures by aberrant magic. They are often found in areas where reality has been warped by powerful magic, such as near ancient spell circles or in regions affected by planar rifts. The creature's constant babbling contains fragments of forgotten languages and forbidden knowledge, making it both fascinating and dangerous to study.",
-    "imagePrompt": "A roughly three-foot across and three to four-foot high creature composed of liquefied flesh, eyes, and mouths. The body has a color similar to human flesh but with a consistency like viscous ooze or slime. The surface constantly shifts with new eyes and mouths forming and dissolving as it moves. Multiple mouths babble incoherently while numerous eyes of various sizes dot the amorphous surface.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "aberration",
       "medium",
-      "neutral",
-      "aberration",
-      "alien"
+      "neutral"
     ]
   },
   {
@@ -396,9 +363,10 @@ export const aberrationMonsters: Monster[] = [
     "armorClass": 14,
     "armorType": "natural",
     "hitPoints": 114,
-    "hitDice": "12d10+48",
+    "hitDice": "12d10",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -407,8 +375,8 @@ export const aberrationMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 11,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 11
     },
     "languages": [
       "Otyugh"
@@ -428,21 +396,16 @@ export const aberrationMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 12 (2d8 + 3) piercing damage. If the target is a creature, it must succeed on a DC 15 Constitution saving throw against disease or become poisoned until the disease is cured. Every 24 hours that elapse, the target must repeat the saving throw, reducing its hit point maximum by 5 (1d10) on a failure. The disease is cured on a success. The target dies if the disease reduces its hit point maximum to 0. This reduction to the target's hit point maximum lasts until the disease is cured.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d8+3",
-          "average": 12
-        }
+        "attackBonus": 6
       },
       {
         "name": "Tentacle",
         "description": "Melee Weapon Attack: +6 to hit, reach 10 ft., one target. Hit: 7 (1d8 + 3) bludgeoning damage plus 4 (1d8) piercing damage. If the target is Medium or smaller, it is grappled (escape DC 13) and restrained until the grapple ends. The otyugh has two tentacles, each of which can grapple one target.",
         "attackBonus": 6,
         "damage": {
-          "type": "Bludgeoning",
-          "roll": "1d8+3",
-          "average": 8
+          "type": "Piercing",
+          "roll": "1d8",
+          "average": 4
         }
       },
       {
@@ -451,17 +414,12 @@ export const aberrationMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A massive, bloated aberration with a roughly spherical body supported by three thick, elephantine legs. The otyugh's rough, rock-like hide is covered in filth and emits a foul stench of decay. It has two prehensile tentacles ending in leaf-like pads with sharp spikes, and a third tentacle topped with three eyes and an olfactory organ. Its massive mouth is filled with sharp teeth, and the entire creature is often covered in refuse and carrion.",
-    "background": "Otyughs are scavenger aberrations that dwell in sewers, dungeons, and other filthy environments where they can feed on waste and carrion. They are often found near settlements where they can scavenge from garbage dumps or sewage systems. Despite their grotesque appearance, otyughs are intelligent enough to communicate telepathically and can sometimes be bargained with, though they prefer to eat rather than talk.",
-    "imagePrompt": "A large, bloated, oval-shaped aberration about 8 feet in diameter, standing on three sturdy, elephantine legs. Its rough, rock-like hide is caked in filth and emits a foul odor of rot and decay. The creature has two prehensile tentacles covered in thorny growths ending in leaf-like pads with sharp spikes, and a third tentacle rising from its body, topped with a stalk bearing three eyes and an olfactory organ. Its massive mouth is filled with sharp teeth, and the entire creature is covered in refuse and carrion, giving it a grotesque, scavenger appearance.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "aberration",
       "large",
-      "neutral",
-      "aberration",
-      "alien"
+      "neutral"
     ]
   }
 ];

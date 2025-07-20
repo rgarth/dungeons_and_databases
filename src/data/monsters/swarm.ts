@@ -1,4 +1,4 @@
-import { Monster } from '@/types/monster';
+import { Monster } from '../../types/monster';
 
 export const swarmMonsters: Monster[] = [
   {
@@ -20,7 +20,8 @@ export const swarmMonsters: Monster[] = [
     "hitDice": "5d8",
     "speed": {
       "walk": 0,
-      "fly": 30
+      "fly": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -31,19 +32,51 @@ export const swarmMonsters: Monster[] = [
     ],
     "damageImmunities": [],
     "conditionImmunities": [
-      "Charmed",
-      "Frightened",
-      "Grappled",
-      "Paralyzed",
-      "Petrified",
-      "Prone",
-      "Restrained",
-      "Stunned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "grappled",
+        "name": "Grappled",
+        "url": "/api/2014/conditions/grappled"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "petrified",
+        "name": "Petrified",
+        "url": "/api/2014/conditions/petrified"
+      },
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      },
+      {
+        "index": "restrained",
+        "name": "Restrained",
+        "url": "/api/2014/conditions/restrained"
+      },
+      {
+        "index": "stunned",
+        "name": "Stunned",
+        "url": "/api/2014/conditions/stunned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 11,
-      "blindsight": 60
+      "blindsight": 60,
+      "passivePerception": 11
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -74,11 +107,10 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A cloud of hundreds of bats flying together in perfect coordination. The swarm creates a terrifying sound of flapping wings and high-pitched squeaks as it moves through the darkness.",    "imagePrompt": "Multiple bats flying together in a dark cloud formation, swarm of flying creatures, no single portrait focus",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
-      "swarm of Tiny beasts",
+      "swarm of tiny beasts",
       "medium",
       "unaligned"
     ]
@@ -103,7 +135,8 @@ export const swarmMonsters: Monster[] = [
     "speed": {
       "walk": 20,
       "climb": 20,
-      "burrow": 5
+      "burrow": 5,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -114,19 +147,51 @@ export const swarmMonsters: Monster[] = [
     ],
     "damageImmunities": [],
     "conditionImmunities": [
-      "Charmed",
-      "Frightened",
-      "Grappled",
-      "Paralyzed",
-      "Petrified",
-      "Prone",
-      "Restrained",
-      "Stunned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "grappled",
+        "name": "Grappled",
+        "url": "/api/2014/conditions/grappled"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "petrified",
+        "name": "Petrified",
+        "url": "/api/2014/conditions/petrified"
+      },
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      },
+      {
+        "index": "restrained",
+        "name": "Restrained",
+        "url": "/api/2014/conditions/restrained"
+      },
+      {
+        "index": "stunned",
+        "name": "Stunned",
+        "url": "/api/2014/conditions/stunned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 8,
-      "blindsight": 10
+      "blindsight": 10,
+      "passivePerception": 8
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -149,11 +214,10 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dense mass of hundreds of beetles crawling together in perfect coordination. The swarm creates a rustling sound as the insects move over each other, overwhelming prey through sheer numbers.",    "imagePrompt": "Multiple beetles crawling together in a mass formation, swarm of insects, no single portrait focus",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
-      "swarm of Tiny beasts",
+      "swarm of tiny beasts",
       "medium",
       "unaligned"
     ]
@@ -177,7 +241,8 @@ export const swarmMonsters: Monster[] = [
     "hitDice": "5d8",
     "speed": {
       "walk": 20,
-      "climb": 20
+      "climb": 20,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -188,19 +253,51 @@ export const swarmMonsters: Monster[] = [
     ],
     "damageImmunities": [],
     "conditionImmunities": [
-      "Charmed",
-      "Frightened",
-      "Grappled",
-      "Paralyzed",
-      "Petrified",
-      "Prone",
-      "Restrained",
-      "Stunned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "grappled",
+        "name": "Grappled",
+        "url": "/api/2014/conditions/grappled"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "petrified",
+        "name": "Petrified",
+        "url": "/api/2014/conditions/petrified"
+      },
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      },
+      {
+        "index": "restrained",
+        "name": "Restrained",
+        "url": "/api/2014/conditions/restrained"
+      },
+      {
+        "index": "stunned",
+        "name": "Stunned",
+        "url": "/api/2014/conditions/stunned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 8,
-      "blindsight": 10
+      "blindsight": 10,
+      "passivePerception": 8
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -223,11 +320,10 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A writhing mass of hundreds of poisonous centipedes moving as one entity. The swarm creates a terrifying sight as the creatures crawl over each other, overwhelming prey through sheer numbers and venom.",    "imagePrompt": "Multiple centipedes writhing together in a mass formation, swarm of poisonous insects, no single portrait focus",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
-      "swarm of Tiny beasts",
+      "swarm of tiny beasts",
       "medium",
       "unaligned"
     ]
@@ -251,7 +347,8 @@ export const swarmMonsters: Monster[] = [
     "hitDice": "5d8",
     "speed": {
       "walk": 20,
-      "climb": 20
+      "climb": 20,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -262,19 +359,51 @@ export const swarmMonsters: Monster[] = [
     ],
     "damageImmunities": [],
     "conditionImmunities": [
-      "Charmed",
-      "Frightened",
-      "Grappled",
-      "Paralyzed",
-      "Petrified",
-      "Prone",
-      "Restrained",
-      "Stunned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "grappled",
+        "name": "Grappled",
+        "url": "/api/2014/conditions/grappled"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "petrified",
+        "name": "Petrified",
+        "url": "/api/2014/conditions/petrified"
+      },
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      },
+      {
+        "index": "restrained",
+        "name": "Restrained",
+        "url": "/api/2014/conditions/restrained"
+      },
+      {
+        "index": "stunned",
+        "name": "Stunned",
+        "url": "/api/2014/conditions/stunned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 8,
-      "blindsight": 10
+      "blindsight": 10,
+      "passivePerception": 8
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -297,11 +426,10 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dense cloud of thousands of insects moving as one entity. The swarm creates a loud buzzing sound and can quickly overwhelm prey through sheer numbers and their ability to crawl into any opening.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
-      "swarm of Tiny beasts",
+      "swarm of tiny beasts",
       "medium",
       "unaligned"
     ]
@@ -325,7 +453,8 @@ export const swarmMonsters: Monster[] = [
     "hitDice": "8d8",
     "speed": {
       "walk": 30,
-      "swim": 30
+      "swim": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -336,19 +465,51 @@ export const swarmMonsters: Monster[] = [
     ],
     "damageImmunities": [],
     "conditionImmunities": [
-      "Charmed",
-      "Frightened",
-      "Grappled",
-      "Paralyzed",
-      "Petrified",
-      "Prone",
-      "Restrained",
-      "Stunned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "grappled",
+        "name": "Grappled",
+        "url": "/api/2014/conditions/grappled"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "petrified",
+        "name": "Petrified",
+        "url": "/api/2014/conditions/petrified"
+      },
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      },
+      {
+        "index": "restrained",
+        "name": "Restrained",
+        "url": "/api/2014/conditions/restrained"
+      },
+      {
+        "index": "stunned",
+        "name": "Stunned",
+        "url": "/api/2014/conditions/stunned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "blindsight": 10
+      "blindsight": 10,
+      "passivePerception": 10
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -371,11 +532,10 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A horrifying mass of hundreds of venomous snakes writhing together in a coordinated swarm. The snakes work together to trap and overwhelm prey, using their venom to deadly effect.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
-      "swarm of Tiny beasts",
+      "swarm of tiny beasts",
       "medium",
       "unaligned"
     ]
@@ -396,10 +556,11 @@ export const swarmMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "dex",
     "hitPoints": 28,
-    "hitDice": "8d8+-8",
+    "hitDice": "8d8",
     "speed": {
       "walk": 0,
-      "swim": 40
+      "swim": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -410,19 +571,51 @@ export const swarmMonsters: Monster[] = [
     ],
     "damageImmunities": [],
     "conditionImmunities": [
-      "Charmed",
-      "Frightened",
-      "Grappled",
-      "Paralyzed",
-      "Petrified",
-      "Prone",
-      "Restrained",
-      "Stunned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "grappled",
+        "name": "Grappled",
+        "url": "/api/2014/conditions/grappled"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "petrified",
+        "name": "Petrified",
+        "url": "/api/2014/conditions/petrified"
+      },
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      },
+      {
+        "index": "restrained",
+        "name": "Restrained",
+        "url": "/api/2014/conditions/restrained"
+      },
+      {
+        "index": "stunned",
+        "name": "Stunned",
+        "url": "/api/2014/conditions/stunned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 8,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 8
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -453,11 +646,10 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A school of hundreds of vicious, carnivorous fish swimming together in perfect coordination. The swarm creates a terrifying sight as the fish dart and weave through the water, overwhelming prey through sheer numbers.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
-      "swarm of Tiny beasts",
+      "swarm of tiny beasts",
       "medium",
       "unaligned"
     ]
@@ -478,9 +670,10 @@ export const swarmMonsters: Monster[] = [
     "armorClass": 10,
     "armorType": "dex",
     "hitPoints": 24,
-    "hitDice": "7d8+-7",
+    "hitDice": "7d8",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -491,19 +684,51 @@ export const swarmMonsters: Monster[] = [
     ],
     "damageImmunities": [],
     "conditionImmunities": [
-      "Charmed",
-      "Frightened",
-      "Grappled",
-      "Paralyzed",
-      "Petrified",
-      "Prone",
-      "Restrained",
-      "Stunned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "grappled",
+        "name": "Grappled",
+        "url": "/api/2014/conditions/grappled"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "petrified",
+        "name": "Petrified",
+        "url": "/api/2014/conditions/petrified"
+      },
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      },
+      {
+        "index": "restrained",
+        "name": "Restrained",
+        "url": "/api/2014/conditions/restrained"
+      },
+      {
+        "index": "stunned",
+        "name": "Stunned",
+        "url": "/api/2014/conditions/stunned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "darkvision": 30
+      "darkvision": 30,
+      "passivePerception": 10
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -530,11 +755,10 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A writhing mass of hundreds of rats moving as one entity. The swarm creates a terrifying cacophony of squeaks and rustling as it moves, overwhelming prey through sheer numbers.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
-      "swarm of Tiny beasts",
+      "swarm of tiny beasts",
       "medium",
       "unaligned"
     ]
@@ -555,10 +779,11 @@ export const swarmMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 24,
-    "hitDice": "7d8+-7",
+    "hitDice": "7d8",
     "speed": {
       "walk": 10,
-      "fly": 50
+      "fly": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -569,14 +794,46 @@ export const swarmMonsters: Monster[] = [
     ],
     "damageImmunities": [],
     "conditionImmunities": [
-      "Charmed",
-      "Frightened",
-      "Grappled",
-      "Paralyzed",
-      "Petrified",
-      "Prone",
-      "Restrained",
-      "Stunned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "grappled",
+        "name": "Grappled",
+        "url": "/api/2014/conditions/grappled"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "petrified",
+        "name": "Petrified",
+        "url": "/api/2014/conditions/petrified"
+      },
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      },
+      {
+        "index": "restrained",
+        "name": "Restrained",
+        "url": "/api/2014/conditions/restrained"
+      },
+      {
+        "index": "stunned",
+        "name": "Stunned",
+        "url": "/api/2014/conditions/stunned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
@@ -603,11 +860,10 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A cloud of hundreds of ravens flying together in perfect coordination. The swarm creates a terrifying sound of flapping wings and harsh caws as it moves through the air.",    "imagePrompt": "A medium swarm of Tiny beasts creature",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
-      "swarm of Tiny beasts",
+      "swarm of tiny beasts",
       "medium",
       "unaligned"
     ]
@@ -631,7 +887,8 @@ export const swarmMonsters: Monster[] = [
     "hitDice": "5d8",
     "speed": {
       "walk": 20,
-      "climb": 20
+      "climb": 20,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -642,18 +899,46 @@ export const swarmMonsters: Monster[] = [
     ],
     "damageImmunities": [],
     "conditionImmunities": [
-      "Charmed",
-      "Frightened",
-      "Paralyzed",
-      "Petrified",
-      "Prone",
-      "Restrained",
-      "Stunned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "petrified",
+        "name": "Petrified",
+        "url": "/api/2014/conditions/petrified"
+      },
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      },
+      {
+        "index": "restrained",
+        "name": "Restrained",
+        "url": "/api/2014/conditions/restrained"
+      },
+      {
+        "index": "stunned",
+        "name": "Stunned",
+        "url": "/api/2014/conditions/stunned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 8,
-      "blindsight": 10
+      "blindsight": 10,
+      "passivePerception": 8
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -688,11 +973,10 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A horrifying mass of hundreds of spiders crawling over each other in a coordinated swarm. The spiders work together to trap and overwhelm prey, using their webs and venom to deadly effect.",    "imagePrompt": "A MASSIVE SWARM of HUNDREDS of spiders, thousands of tiny spiders crawling over each other, dense cloud of spiders, spider swarm covering area, NOT just a few spiders, clearly hundreds of individual spiders moving together",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
-      "swarm of Tiny beasts",
+      "swarm of tiny beasts",
       "medium",
       "unaligned"
     ]
@@ -716,7 +1000,8 @@ export const swarmMonsters: Monster[] = [
     "hitDice": "5d8",
     "speed": {
       "walk": 5,
-      "fly": 30
+      "fly": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -727,19 +1012,51 @@ export const swarmMonsters: Monster[] = [
     ],
     "damageImmunities": [],
     "conditionImmunities": [
-      "Charmed",
-      "Frightened",
-      "Grappled",
-      "Paralyzed",
-      "Petrified",
-      "Prone",
-      "Restrained",
-      "Stunned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "grappled",
+        "name": "Grappled",
+        "url": "/api/2014/conditions/grappled"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "petrified",
+        "name": "Petrified",
+        "url": "/api/2014/conditions/petrified"
+      },
+      {
+        "index": "prone",
+        "name": "Prone",
+        "url": "/api/2014/conditions/prone"
+      },
+      {
+        "index": "restrained",
+        "name": "Restrained",
+        "url": "/api/2014/conditions/restrained"
+      },
+      {
+        "index": "stunned",
+        "name": "Stunned",
+        "url": "/api/2014/conditions/stunned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 8,
-      "blindsight": 10
+      "blindsight": 10,
+      "passivePerception": 8
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -762,11 +1079,10 @@ export const swarmMonsters: Monster[] = [
       }
     ],
     "legendaryActions": [],
-    "description": "A dense cloud of hundreds of angry wasps flying together in perfect coordination. The swarm creates a terrifying buzzing sound and can quickly overwhelm prey through sheer numbers and their painful stings.",    "imagePrompt": "A MASSIVE SWARM of HUNDREDS of wasps, thousands of angry wasps flying together, dense cloud of wasps, wasp swarm covering area, NOT just a single wasp, clearly hundreds of individual wasps flying in formation",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
-      "swarm of Tiny beasts",
+      "swarm of tiny beasts",
       "medium",
       "unaligned"
     ]

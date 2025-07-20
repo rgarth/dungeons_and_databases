@@ -108,7 +108,7 @@ export interface Monster {
   skills?: Record<string, number>; // e.g., { "Perception": 6, "Stealth": 4 }
   damageResistances?: string[];
   damageImmunities?: string[];
-  conditionImmunities?: string[];
+  conditionImmunities?: (string | { index: string; name: string; url: string })[];
   damageVulnerabilities?: string[];
   
   // Senses
