@@ -282,7 +282,6 @@ export const oozeMonsters: Monster[] = [
     "conditionImmunities": [
       "Blinded",
       "Charmed",
-      "Blinded",
       "Exhaustion",
       "Frightened",
       "Prone"
