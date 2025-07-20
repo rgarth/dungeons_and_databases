@@ -1,4 +1,4 @@
-import { Monster } from '../../types/monster';
+import { Monster } from '@/types/monster';
 
 export const giantMonsters: Monster[] = [
   {
@@ -17,10 +17,9 @@ export const giantMonsters: Monster[] = [
     "armorClass": 14,
     "armorType": "natural",
     "hitPoints": 200,
-    "hitDice": "16d12",
+    "hitDice": "16d12+96",
     "speed": {
-      "walk": 40,
-      "hover": false
+      "walk": 40
     },
     "savingThrows": {},
     "skills": {
@@ -42,7 +41,7 @@ export const giantMonsters: Monster[] = [
     "traits": [
       {
         "name": "Keen Smell",
-        "description": "The giant has advantage on Wisdom (Perception) checks that rely on smell."
+        "description": "A massive giant with skin that ranges from pearly white to sky blue, often with hair that resembles clouds. Cloud giants are among the most intelligent and cultured of the giant races, dwelling in floating castles and valuing art and music."
       },
       {
         "name": "Innate Spellcasting",
@@ -52,57 +51,40 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The giant makes two morningstar attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Morningstar",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The giant makes two morningstar attacks."
       },
       {
         "name": "Morningstar",
-        "desc": "Melee Weapon Attack: +12 to hit, reach 10 ft., one target. Hit: 21 (3d8 + 8) piercing damage.",
-        "attack_bonus": 12,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "3d8+8"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +12 to hit, reach 10 ft., one target. Hit: 21 (3d8 + 8) piercing damage.",
+        "attackBonus": 12,
+        "damage": {
+          "type": "Piercing",
+          "roll": "3d8+8",
+          "average": 22
+        }
       },
       {
         "name": "Rock",
-        "desc": "Ranged Weapon Attack: +12 to hit, range 60/240 ft., one target. Hit: 30 (4d10 + 8) bludgeoning damage.",
-        "attack_bonus": 12,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "4d10+8"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +12 to hit, range 60/240 ft., one target. Hit: 30 (4d10 + 8) bludgeoning damage.",
+        "attackBonus": 12,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "4d10+8",
+          "average": 30
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A massive giant with skin that ranges from pearly white to sky blue, often with hair that resembles clouds. Cloud giants are among the most intelligent and cultured of the giant races, dwelling in floating castles and valuing art and music.",
+    "imagePrompt": "A huge giant with pearly white to sky blue skin, cloud-like hair, floating castle dweller, cultured and intelligent appearance, massive size and strength",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "giant",
       "huge",
-      "neutral good (50%) or neutral evil (50%)"
+      "neutral-good (50%) or neutral evil (50%)",
+      "giant",
+      "large"
     ]
   },
   {
@@ -121,10 +103,9 @@ export const giantMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "natural",
     "hitPoints": 85,
-    "hitDice": "10d10",
+    "hitDice": "10d10+30",
     "speed": {
-      "walk": 40,
-      "hover": false
+      "walk": 40
     },
     "savingThrows": {},
     "skills": {
@@ -135,8 +116,8 @@ export const giantMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 14
+      "passivePerception": 14,
+      "darkvision": 60
     },
     "languages": [
       "Giant",
@@ -146,7 +127,7 @@ export const giantMonsters: Monster[] = [
     "traits": [
       {
         "name": "Two Heads",
-        "description": "The ettin has advantage on Wisdom (Perception) checks and on saving throws against being blinded, charmed, deafened, frightened, stunned, and knocked unconscious."
+        "description": "A large two-headed giant-like humanoid with filthy, unkempt hair and dirty skin. Each head has its own personality and desires, often arguing with itself. Ettins are brutish, solitary creatures that prefer to live alone in remote areas."
       },
       {
         "name": "Wakeful",
@@ -156,62 +137,41 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The ettin makes two attacks: one with its battleaxe and one with its morningstar.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Battleaxe",
-            "count": "1",
-            "type": "melee"
-          },
-          {
-            "action_name": "Morningstar",
-            "count": "1",
-            "type": "melee"
-          }
-        ]
+        "description": "The ettin makes two attacks: one with its battleaxe and one with its morningstar."
       },
       {
         "name": "Battleaxe",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 14 (2d8 + 5) slashing damage.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "2d8+5"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 14 (2d8 + 5) slashing damage.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d8+5",
+          "average": 14
+        }
       },
       {
         "name": "Morningstar",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 14 (2d8 + 5) piercing damage.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "2d8+5"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 14 (2d8 + 5) piercing damage.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d8+5",
+          "average": 14
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A large two-headed giant-like humanoid with filthy, unkempt hair and dirty skin. Each head has its own personality and desires.",
+    "background": "Ettins are two-headed, giant-like humanoids known for their brute strength and brutish nature. They are typically solitary, chaotic evil creatures that prefer to live alone in remote areas.",
+    "imagePrompt": "A large two-headed giant-like humanoid with filthy unkempt hair, dirty skin, two heads each with its own personality, brutish appearance, solitary demonic giant",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "giant",
       "large",
-      "chaotic evil"
+      "chaotic-evil",
+      "giant",
+      "large"
     ]
   },
   {
@@ -230,10 +190,9 @@ export const giantMonsters: Monster[] = [
     "armorClass": 18,
     "armorType": "armor",
     "hitPoints": 162,
-    "hitDice": "13d12",
+    "hitDice": "13d12+78",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -257,57 +216,40 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The giant makes two greatsword attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Greatsword",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "A massive giant with skin the color of molten iron and hair that flickers like flame. Fire giants dwell in volcanic regions and are master smiths, creating powerful weapons and armor in their forges. They are lawful evil and highly organized."
       },
       {
         "name": "Greatsword",
-        "desc": "Melee Weapon Attack: +11 to hit, reach 10 ft., one target. Hit: 28 (6d6 + 7) slashing damage.",
-        "attack_bonus": 11,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "6d6+7"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +11 to hit, reach 10 ft., one target. Hit: 28 (6d6 + 7) slashing damage.",
+        "attackBonus": 11,
+        "damage": {
+          "type": "Slashing",
+          "roll": "6d6+7",
+          "average": 28
+        }
       },
       {
         "name": "Rock",
-        "desc": "Ranged Weapon Attack: +11 to hit, range 60/240 ft., one target. Hit: 29 (4d10 + 7) bludgeoning damage.",
-        "attack_bonus": 11,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "4d10+7"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +11 to hit, range 60/240 ft., one target. Hit: 29 (4d10 + 7) bludgeoning damage.",
+        "attackBonus": 11,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "4d10+7",
+          "average": 29
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A massive giant with skin the color of molten iron and hair that flickers like flame. Fire giants dwell in volcanic regions and are master smiths, creating powerful weapons and armor in their forges. They are lawful evil and highly organized.",
+    "imagePrompt": "A huge giant with molten iron-colored skin, flame-like hair, volcanic dweller, master smith appearance, massive size and strength, lawful evil demeanor",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "giant",
       "huge",
-      "lawful evil"
+      "lawful-evil",
+      "giant",
+      "large"
     ]
   },
   {
@@ -326,10 +268,9 @@ export const giantMonsters: Monster[] = [
     "armorClass": 15,
     "armorType": "armor",
     "hitPoints": 138,
-    "hitDice": "12d12",
+    "hitDice": "12d12+60",
     "speed": {
-      "walk": 40,
-      "hover": false
+      "walk": 40
     },
     "savingThrows": {},
     "skills": {
@@ -353,57 +294,40 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The giant makes two greataxe attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Greataxe",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The giant makes two greataxe attacks."
       },
       {
         "name": "Greataxe",
-        "desc": "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 25 (3d12 + 6) slashing damage.",
-        "attack_bonus": 9,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "3d12+6"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 25 (3d12 + 6) slashing damage.",
+        "attackBonus": 9,
+        "damage": {
+          "type": "Slashing",
+          "roll": "3d12+6",
+          "average": 26
+        }
       },
       {
         "name": "Rock",
-        "desc": "Ranged Weapon Attack: +9 to hit, range 60/240 ft., one target. Hit: 28 (4d10 + 6) bludgeoning damage.",
-        "attack_bonus": 9,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "4d10+6"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +9 to hit, range 60/240 ft., one target. Hit: 28 (4d10 + 6) bludgeoning damage.",
+        "attackBonus": 9,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "4d10+6",
+          "average": 28
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A massive giant with pale blue skin and hair as white as snow. Frost giants are native to cold regions and are well-adapted to freezing temperatures, often keeping giant animals as pets and mounts. They are neutral evil and value strength above all.",
+    "imagePrompt": "A huge giant with pale blue skin, snow-white hair, cold region dweller, frost-adapted appearance, massive size and strength, neutral evil demeanor",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "giant",
       "huge",
-      "neutral evil"
+      "neutral-evil",
+      "giant",
+      "large"
     ]
   },
   {
@@ -422,10 +346,9 @@ export const giantMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "natural",
     "hitPoints": 105,
-    "hitDice": "10d12",
+    "hitDice": "10d12+40",
     "speed": {
-      "walk": 40,
-      "hover": false
+      "walk": 40
     },
     "savingThrows": {},
     "skills": {
@@ -446,57 +369,40 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The giant makes two greatclub attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Greatclub",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The giant makes two greatclub attacks."
       },
       {
         "name": "Greatclub",
-        "desc": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 18 (3d8 + 5) bludgeoning damage.",
-        "attack_bonus": 8,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "3d8+5"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 18 (3d8 + 5) bludgeoning damage.",
+        "attackBonus": 8,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d8+5",
+          "average": 19
+        }
       },
       {
         "name": "Rock",
-        "desc": "Ranged Weapon Attack: +8 to hit, range 60/240 ft., one target. Hit: 21 (3d10 + 5) bludgeoning damage.",
-        "attack_bonus": 8,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "3d10+5"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +8 to hit, range 60/240 ft., one target. Hit: 21 (3d10 + 5) bludgeoning damage.",
+        "attackBonus": 8,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d10+5",
+          "average": 22
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A large, brutish giant with dirty, unkempt hair and simple clothing made of animal hides. Hill giants are the most common and least intelligent of the giant races, living in simple communities. They are chaotic evil and often raid human settlements for food.",
+    "imagePrompt": "A large brutish giant with dirty unkempt hair, animal hide clothing, simple community dweller, least intelligent appearance, chaotic evil demeanor",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "giant",
       "huge",
-      "chaotic evil"
+      "chaotic-evil",
+      "giant",
+      "large"
     ]
   },
   {
@@ -515,10 +421,9 @@ export const giantMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "armor",
     "hitPoints": 59,
-    "hitDice": "7d10",
+    "hitDice": "7d10+21",
     "speed": {
-      "walk": 40,
-      "hover": false
+      "walk": 40
     },
     "savingThrows": {},
     "skills": {},
@@ -527,8 +432,8 @@ export const giantMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 8
+      "passivePerception": 8,
+      "darkvision": 60
     },
     "languages": [
       "Common",
@@ -539,44 +444,36 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Greatclub",
-        "desc": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
-        "attack_bonus": 6,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "2d8+4"
-          }
-        ],
-        "actions": []
+        "description": "A large, brutish giant with dirty, unkempt hair and simple clothing made of animal hides. Ogres are among the most common and least intelligent of the giant races, living in simple communities and often serving as muscle for more powerful creatures.",
+        "attackBonus": 6,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8+4",
+          "average": 13
+        }
       },
       {
         "name": "Javelin",
-        "desc": "Melee or Ranged Weapon Attack: +6 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 11 (2d6 + 4) piercing damage.",
-        "attack_bonus": 6,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "2d6+4"
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +6 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 11 (2d6 + 4) piercing damage.",
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d6+4",
+          "average": 11
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A large, brutish giant with dirty, unkempt hair and simple clothing made of animal hides. Hill giants are the most common and least intelligent of the giant races, living in simple communities.",
+    "imagePrompt": "A large brutish giant with dirty unkempt hair, animal hide clothing, simple community dweller, least intelligent appearance, chaotic evil demeanor",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "giant",
       "large",
-      "chaotic evil"
+      "chaotic-evil",
+      "giant",
+      "large"
     ]
   },
   {
@@ -595,11 +492,9 @@ export const giantMonsters: Monster[] = [
     "armorClass": 16,
     "armorType": "armor",
     "hitPoints": 110,
-    "hitDice": "13d10",
+    "hitDice": "13d10+39",
     "speed": {
-      "walk": 30,
-      "fly": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -612,8 +507,8 @@ export const giantMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 14
+      "passivePerception": 14,
+      "darkvision": 60
     },
     "languages": [
       "Common",
@@ -623,7 +518,7 @@ export const giantMonsters: Monster[] = [
     "traits": [
       {
         "name": "Innate Spellcasting",
-        "description": "The oni's innate spellcasting ability is Charisma (spell save DC 13). The oni can innately cast the following spells, requiring no material components:\n\nAt will: darkness, invisibility\n1/day each: charm person, cone of cold, gaseous form, sleep"
+        "description": "A large 8-14 foot tall monstrous humanoid with blue or green skin, dark hair, horns, and sharp teeth. Some have red faces like kabuki masks. Oni are intelligent and cunning, known for their cruelty and love of causing suffering. They can shapeshift to deceive and manipulate their prey."
       },
       {
         "name": "Magic Weapons",
@@ -637,97 +532,50 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The oni makes two attacks, either with its claws or its glaive.",
-        "damage": [],
-        "multiattack_type": "action_options",
-        "action_options": {
-          "choose": 1,
-          "type": "action",
-          "from": {
-            "option_set_type": "options_array",
-            "options": [
-              {
-                "option_type": "action",
-                "action_name": "Glaive",
-                "count": 2,
-                "type": "melee"
-              },
-              {
-                "option_type": "action",
-                "action_name": "Claw",
-                "desc": "If in Oni form",
-                "count": 2,
-                "type": "melee"
-              },
-              {
-                "desc": "If in Oni form",
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Glaive",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Claw",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        "actions": []
+        "description": "The oni makes two attacks, either with its claws or its glaive."
       },
       {
         "name": "Claw (Oni Form Only)",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) slashing damage.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d8+4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) slashing damage.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d8+4",
+          "average": 9
+        }
       },
       {
         "name": "Glaive",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 15 (2d10 + 4) slashing damage, or 9 (1d10 + 4) slashing damage in Small or Medium form.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "2d10+4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 15 (2d10 + 4) slashing damage, or 9 (1d10 + 4) slashing damage in Small or Medium form.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d10+4",
+          "average": 15
+        }
       },
       {
         "name": "Change Shape",
-        "desc": "The oni magically polymorphs into a Small or Medium humanoid, into a Large giant, or back into its true form. Other than its size, its statistics are the same in each form. The only equipment that is transformed is its glaive, which shrinks so that it can be wielded in humanoid form. If the oni dies, it reverts to its true form, and its glaive reverts to its normal size.",
-        "damage": [],
-        "actions": []
+        "description": "The oni magically polymorphs into a Small or Medium humanoid, into a Large giant, or back into its true form. Other than its size, its statistics are the same in each form. The only equipment that is transformed is its glaive, which shrinks so that it can be wielded in humanoid form. If the oni dies, it reverts to its true form, and its glaive reverts to its normal size.",
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A large 8-14 foot tall monstrous humanoid with blue or green skin, dark hair, horns, and sharp teeth. Some have red faces like kabuki masks.",
+    "background": "Oni are intelligent and cunning monstrous humanoids known for their cruelty and love of causing suffering. They can shapeshift to deceive and manipulate their prey.",
+    "imagePrompt": "A large 8-14 foot tall monstrous humanoid with blue or green skin, dark hair, horns, sharp teeth, some with red faces like kabuki masks, fearsome demonic ogre appearance",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "giant",
       "large",
-      "lawful evil"
+      "lawful-evil",
+      "giant",
+      "large"
     ]
   },
   {
@@ -746,10 +594,9 @@ export const giantMonsters: Monster[] = [
     "armorClass": 17,
     "armorType": "natural",
     "hitPoints": 126,
-    "hitDice": "11d12",
+    "hitDice": "11d12+55",
     "speed": {
-      "walk": 40,
-      "hover": false
+      "walk": 40
     },
     "savingThrows": {},
     "skills": {
@@ -761,8 +608,8 @@ export const giantMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 14
+      "passivePerception": 14,
+      "darkvision": 60
     },
     "languages": [
       "Giant"
@@ -771,63 +618,46 @@ export const giantMonsters: Monster[] = [
     "traits": [
       {
         "name": "Stone Camouflage",
-        "description": "The giant has advantage on Dexterity (Stealth) checks made to hide in rocky terrain."
+        "description": "A massive giant with skin that resembles weathered stone and a stoic, contemplative demeanor. Stone giants prefer to live in mountainous regions and are deeply connected to the earth. They are neutral in alignment and value solitude and meditation."
       }
     ],
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The giant makes two greatclub attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Greatclub",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The giant makes two greatclub attacks."
       },
       {
         "name": "Greatclub",
-        "desc": "Melee Weapon Attack: +9 to hit, reach 15 ft., one target. Hit: 19 (3d8 + 6) bludgeoning damage.",
-        "attack_bonus": 9,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "3d8+6"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +9 to hit, reach 15 ft., one target. Hit: 19 (3d8 + 6) bludgeoning damage.",
+        "attackBonus": 9,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d8+6",
+          "average": 20
+        }
       },
       {
         "name": "Rock",
-        "desc": "Ranged Weapon Attack: +9 to hit, range 60/240 ft., one target. Hit: 28 (4d10 + 6) bludgeoning damage. If the target is a creature, it must succeed on a DC 17 Strength saving throw or be knocked prone.",
-        "attack_bonus": 9,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "4d10+6"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +9 to hit, range 60/240 ft., one target. Hit: 28 (4d10 + 6) bludgeoning damage. If the target is a creature, it must succeed on a DC 17 Strength saving throw or be knocked prone.",
+        "attackBonus": 9,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "4d10+6",
+          "average": 28
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A large giant with skin that resembles weathered stone and a stoic, contemplative demeanor. Stone giants prefer to live in mountainous regions and are deeply connected to the earth.",
+    "imagePrompt": "A huge giant with weathered stone-like skin, stoic contemplative demeanor, mountainous dweller, earth-connected appearance, massive size and strength, neutral alignment",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "giant",
       "huge",
-      "neutral"
+      "neutral",
+      "giant",
+      "large"
     ]
   },
   {
@@ -846,11 +676,10 @@ export const giantMonsters: Monster[] = [
     "armorClass": 16,
     "armorType": "armor",
     "hitPoints": 230,
-    "hitDice": "20d12",
+    "hitDice": "20d12+100",
     "speed": {
       "walk": 50,
-      "swim": 50,
-      "hover": false
+      "swim": 50
     },
     "savingThrows": {},
     "skills": {
@@ -889,72 +718,49 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The giant makes two greatsword attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Greatsword",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The giant makes two greatsword attacks."
       },
       {
         "name": "Greatsword",
-        "desc": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 30 (6d6 + 9) slashing damage.",
-        "attack_bonus": 14,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "6d6+9"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 30 (6d6 + 9) slashing damage.",
+        "attackBonus": 14,
+        "damage": {
+          "type": "Slashing",
+          "roll": "6d6+9",
+          "average": 30
+        }
       },
       {
         "name": "Rock",
-        "desc": "Ranged Weapon Attack: +14 to hit, range 60/240 ft., one target. Hit: 35 (4d12 + 9) bludgeoning damage.",
-        "attack_bonus": 14,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "4d12+9"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +14 to hit, range 60/240 ft., one target. Hit: 35 (4d12 + 9) bludgeoning damage.",
+        "attackBonus": 14,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "4d12+9",
+          "average": 35
+        }
       },
       {
         "name": "Lightning Strike",
-        "desc": "The giant hurls a magical lightning bolt at a point it can see within 500 feet of it. Each creature within 10 feet of that point must make a DC 17 Dexterity saving throw, taking 54 (12d8) lightning damage on a failed save, or half as much damage on a successful one.",
-        "damage": [
-          {
-            "damage_type": {
-              "index": "lightning",
-              "name": "Lightning",
-              "url": "/api/2014/damage-types/lightning"
-            },
-            "damage_dice": "12d8"
-          }
-        ],
-        "actions": []
+        "description": "The giant hurls a magical lightning bolt at a point it can see within 500 feet of it. Each creature within 10 feet of that point must make a DC 17 Dexterity saving throw, taking 54 (12d8) lightning damage on a failed save, or half as much damage on a successful one.",
+        "damage": {
+          "type": "Lightning",
+          "roll": "12d8",
+          "average": 54
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A massive giant with skin that ranges from deep blue to purple, with hair that crackles with lightning. Storm giants are the most powerful and noble of the giant races, dwelling in cloud castles and commanding the weather. They are chaotic good and protect the natural world.",
+    "imagePrompt": "A huge giant with deep blue to purple skin, lightning-crackling hair, cloud castle dweller, noble powerful appearance, massive size and strength, chaotic good demeanor",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "giant",
       "huge",
-      "chaotic good"
+      "chaotic-good",
+      "giant",
+      "large"
     ]
   },
   {
@@ -973,10 +779,9 @@ export const giantMonsters: Monster[] = [
     "armorClass": 15,
     "armorType": "natural",
     "hitPoints": 84,
-    "hitDice": "8d10",
+    "hitDice": "8d10+40",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -987,8 +792,8 @@ export const giantMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 12
+      "passivePerception": 12,
+      "darkvision": 60
     },
     "languages": [
       "Giant"
@@ -1007,62 +812,40 @@ export const giantMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The troll makes three attacks: one with its bite and two with its claws.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Bite",
-            "count": "1",
-            "type": "melee"
-          },
-          {
-            "action_name": "Claw",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The troll makes three attacks: one with its bite and two with its claws."
       },
       {
         "name": "Bite",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 7 (1d6 + 4) piercing damage.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 7 (1d6 + 4) piercing damage.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+4",
+          "average": 8
+        }
       },
       {
         "name": "Claw",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "2d6+4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6+4",
+          "average": 11
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A large, gangly humanoid with rubbery, warty skin that ranges from green to gray. Trolls have long arms, sharp claws, and a hideous face with a prominent nose. They are incredibly resilient and can regenerate from almost any wound, making them fearsome opponents.",
+    "imagePrompt": "A large gangly humanoid with rubbery warty green to gray skin, long arms, sharp claws, hideous face with prominent nose, regenerative appearance, chaotic evil demeanor",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "giant",
       "large",
-      "chaotic evil"
+      "chaotic-evil",
+      "giant",
+      "large"
     ]
   }
 ];

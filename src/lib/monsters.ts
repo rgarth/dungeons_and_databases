@@ -18,8 +18,8 @@ export const calculateAverageDamage = (roll: string): number => {
 
 // Calculate the attack bonus for an action
 export const calculateAttackBonus = (monster: Monster, action: MonsterAction): number => {
-  if (action.attack_bonus !== undefined) {
-    return action.attack_bonus;
+  if (action.attackBonus !== undefined) {
+    return action.attackBonus;
   }
   
   // Default calculation based on action type

@@ -1,73 +1,27 @@
-// Full API-compliant damage structures
-export interface MonsterDamageType {
-  index: string;
-  name: string;
-  url: string;
-}
-
-export interface MonsterDamageOption {
-  option_type: "damage";
-  damage_type: MonsterDamageType;
-  damage_dice: string;
-  notes?: string;
-}
-
-export interface MonsterDamageChoice {
-  choose: number;
-  type: "damage";
-  from: {
-    option_set_type: "options_array";
-    options: MonsterDamageOption[];
-  };
-}
-
-export interface MonsterDamageSimple {
-  damage_type: MonsterDamageType;
-  damage_dice: string;
-  dc?: {
-    dc_type: {
-      index: string;
-      name: string;
-      url: string;
-    };
-    dc_value: number;
-    success_type: string;
-  };
-}
-
-// Full API-compliant multiattack structures
-export interface MonsterMultiattackOption {
-  option_type: "action" | "multiple";
-  action_name?: string;
-  count?: number;
-  type?: "melee" | "ranged" | "magic" | "ability";
-  desc?: string;
-  items?: {
-    option_type: "action";
-    action_name: string;
-    count: number;
-    type: "melee" | "ranged" | "magic" | "ability";
-    desc?: string;
-  }[];
-}
-
-export interface MonsterActionOptions {
-  choose: number;
-  type: "action";
-  from: {
-    option_set_type: "options_array";
-    options: MonsterMultiattackOption[];
-  };
-}
-
 export interface MonsterAction {
   name: string;
-  desc: string; // Keep original API field name
-  attack_bonus?: number; // Keep original API field name
-  damage?: (MonsterDamageSimple | MonsterDamageChoice)[]; // Full API structure
-  multiattack_type?: string;
-  action_options?: MonsterActionOptions; // Full API structure
-  actions?: unknown[]; // Keep original API field
+  description: string;
+  attackBonus?: number;
+  damage?: {
+    type: string;
+    roll: string; // e.g., "2d6+3"
+    average?: number;
+  };
+  secondaryDamage?: {
+    type: string;
+    roll: string; // e.g., "4d8"
+    average?: number;
+  };
+  reach?: string;
+  target?: string;
+  savingThrow?: {
+    ability: string;
+    dc: number;
+    effect: string;
+  };
+  recharge?: string; // e.g., "5-6", "Recharge 5-6"
+  legendary?: boolean;
+  lair?: boolean;
 }
 
 export interface MonsterSpellcasting {
@@ -154,11 +108,7 @@ export interface Monster {
   skills?: Record<string, number>; // e.g., { "Perception": 6, "Stealth": 4 }
   damageResistances?: string[];
   damageImmunities?: string[];
-  conditionImmunities?: Array<{
-    index: string;
-    name: string;
-    url: string;
-  }>;
+  conditionImmunities?: string[];
   damageVulnerabilities?: string[];
   
   // Senses

@@ -1,4 +1,4 @@
-import { Monster } from '../../types/monster';
+import { Monster } from '@/types/monster';
 
 export const oozeMonsters: Monster[] = [
   {
@@ -17,11 +17,10 @@ export const oozeMonsters: Monster[] = [
     "armorClass": 7,
     "armorType": "dex",
     "hitPoints": 85,
-    "hitDice": "10d10",
+    "hitDice": "10d10+30",
     "speed": {
       "walk": 20,
-      "climb": 20,
-      "hover": false
+      "climb": 20
     },
     "savingThrows": {},
     "skills": {},
@@ -33,36 +32,16 @@ export const oozeMonsters: Monster[] = [
       "slashing"
     ],
     "conditionImmunities": [
-      {
-        "index": "blinded",
-        "name": "Blinded",
-        "url": "/api/2014/conditions/blinded"
-      },
-      {
-        "index": "charmed",
-        "name": "Charmed",
-        "url": "/api/2014/conditions/charmed"
-      },
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "frightened",
-        "name": "Frightened",
-        "url": "/api/2014/conditions/frightened"
-      },
-      {
-        "index": "prone",
-        "name": "Prone",
-        "url": "/api/2014/conditions/prone"
-      }
+      "Blinded",
+      "Charmed",
+      "Exhaustion",
+      "Frightened",
+      "Prone"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "blindsight": 60,
-      "passivePerception": 8
+      "passivePerception": 8,
+      "blindsight": 60
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -83,36 +62,30 @@ export const oozeMonsters: Monster[] = [
     "actions": [
       {
         "name": "Pseudopod",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) bludgeoning damage plus 18 (4d8) acid damage. In addition, nonmagical armor worn by the target is partly dissolved and takes a permanent and cumulative -1 penalty to the AC it offers. The armor is destroyed if the penalty reduces its AC to 10.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "1d6+3"
-          },
-          {
-            "damage_type": {
-              "index": "acid",
-              "name": "Acid",
-              "url": "/api/2014/damage-types/acid"
-            },
-            "damage_dice": "4d8"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) bludgeoning damage plus 18 (4d8) acid damage. In addition, nonmagical armor worn by the target is partly dissolved and takes a permanent and cumulative -1 penalty to the AC it offers. The armor is destroyed if the penalty reduces its AC to 10.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d6+3",
+          "average": 7
+        },
+        "secondaryDamage": {
+          "type": "Acid",
+          "roll": "4d8",
+          "average": 18
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A massive, amorphous blob of acidic jelly that can dissolve almost anything it touches. Black puddings are among the most dangerous oozes, capable of splitting into multiple smaller creatures when damaged.",    "imagePrompt": "A large ooze creature with amorphous and fluid form",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "ooze",
       "large",
-      "unaligned"
+      "unaligned",
+      "ooze",
+      "amorphous"
     ]
   },
   {
@@ -131,51 +104,26 @@ export const oozeMonsters: Monster[] = [
     "armorClass": 6,
     "armorType": "dex",
     "hitPoints": 84,
-    "hitDice": "8d10",
+    "hitDice": "8d10+40",
     "speed": {
-      "walk": 15,
-      "hover": false
+      "walk": 15
     },
     "savingThrows": {},
     "skills": {},
     "damageResistances": [],
     "damageImmunities": [],
     "conditionImmunities": [
-      {
-        "index": "blinded",
-        "name": "Blinded",
-        "url": "/api/2014/conditions/blinded"
-      },
-      {
-        "index": "charmed",
-        "name": "Charmed",
-        "url": "/api/2014/conditions/charmed"
-      },
-      {
-        "index": "deafened",
-        "name": "Deafened",
-        "url": "/api/2014/conditions/deafened"
-      },
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "frightened",
-        "name": "Frightened",
-        "url": "/api/2014/conditions/frightened"
-      },
-      {
-        "index": "prone",
-        "name": "Prone",
-        "url": "/api/2014/conditions/prone"
-      }
+      "Blinded",
+      "Charmed",
+      "Deafened",
+      "Exhaustion",
+      "Frightened",
+      "Prone"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "blindsight": 60,
-      "passivePerception": 8
+      "passivePerception": 8,
+      "blindsight": 60
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -192,43 +140,34 @@ export const oozeMonsters: Monster[] = [
     "actions": [
       {
         "name": "Pseudopod",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 10 (3d6) acid damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "acid",
-              "name": "Acid",
-              "url": "/api/2014/damage-types/acid"
-            },
-            "damage_dice": "3d6"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 10 (3d6) acid damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Acid",
+          "roll": "3d6",
+          "average": 11
+        }
       },
       {
         "name": "Engulf",
-        "desc": "The cube moves up to its speed. While doing so, it can enter Large or smaller creatures' spaces. Whenever the cube enters a creature's space, the creature must make a DC 12 Dexterity saving throw.\nOn a successful save, the creature can choose to be pushed 5 feet back or to the side of the cube. A creature that chooses not to be pushed suffers the consequences of a failed saving throw.\nOn a failed save, the cube enters the creature's space, and the creature takes 10 (3d6) acid damage and is engulfed. The engulfed creature can't breathe, is restrained, and takes 21 (6d6) acid damage at the start of each of the cube's turns. When the cube moves, the engulfed creature moves with it.\nAn engulfed creature can try to escape by taking an action to make a DC 12 Strength check. On a success, the creature escapes and enters a space of its choice within 5 feet of the cube.",
-        "damage": [
-          {
-            "damage_type": {
-              "index": "acid",
-              "name": "Acid",
-              "url": "/api/2014/damage-types/acid"
-            },
-            "damage_dice": "3d6"
-          }
-        ],
-        "actions": []
+        "description": "The cube moves up to its speed. While doing so, it can enter Large or smaller creatures' spaces. Whenever the cube enters a creature's space, the creature must make a DC 12 Dexterity saving throw.\nOn a successful save, the creature can choose to be pushed 5 feet back or to the side of the cube. A creature that chooses not to be pushed suffers the consequences of a failed saving throw.\nOn a failed save, the cube enters the creature's space, and the creature takes 10 (3d6) acid damage and is engulfed. The engulfed creature can't breathe, is restrained, and takes 21 (6d6) acid damage at the start of each of the cube's turns. When the cube moves, the engulfed creature moves with it.\nAn engulfed creature can try to escape by taking an action to make a DC 12 Strength check. On a success, the creature escapes and enters a space of its choice within 5 feet of the cube.",
+        "damage": {
+          "type": "Acid",
+          "roll": "3d6",
+          "average": 11
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A large, acidic ooze that can dissolve flesh and bone. Ochre jellies are dangerous predators that can split into multiple smaller creatures when damaged.",    "imagePrompt": "A large ooze creature with amorphous and fluid form",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "ooze",
       "large",
-      "unaligned"
+      "unaligned",
+      "ooze",
+      "amorphous"
     ]
   },
   {
@@ -247,11 +186,10 @@ export const oozeMonsters: Monster[] = [
     "armorClass": 8,
     "armorType": "dex",
     "hitPoints": 22,
-    "hitDice": "3d8",
+    "hitDice": "3d8+9",
     "speed": {
       "walk": 10,
-      "climb": 10,
-      "hover": false
+      "climb": 10
     },
     "savingThrows": {},
     "skills": {
@@ -264,41 +202,17 @@ export const oozeMonsters: Monster[] = [
     ],
     "damageImmunities": [],
     "conditionImmunities": [
-      {
-        "index": "blinded",
-        "name": "Blinded",
-        "url": "/api/2014/conditions/blinded"
-      },
-      {
-        "index": "charmed",
-        "name": "Charmed",
-        "url": "/api/2014/conditions/charmed"
-      },
-      {
-        "index": "deafened",
-        "name": "Deafened",
-        "url": "/api/2014/conditions/deafened"
-      },
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "frightened",
-        "name": "Frightened",
-        "url": "/api/2014/conditions/frightened"
-      },
-      {
-        "index": "prone",
-        "name": "Prone",
-        "url": "/api/2014/conditions/prone"
-      }
+      "Blinded",
+      "Charmed",
+      "Deafened",
+      "Exhaustion",
+      "Frightened",
+      "Prone"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "blindsight": 60,
-      "passivePerception": 8
+      "passivePerception": 8,
+      "blindsight": 60
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -319,36 +233,30 @@ export const oozeMonsters: Monster[] = [
     "actions": [
       {
         "name": "Pseudopod",
-        "desc": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) bludgeoning damage plus 7 (2d6) acid damage, and if the target is wearing nonmagical metal armor, its armor is partly corroded and takes a permanent and cumulative -1 penalty to the AC it offers. The armor is destroyed if the penalty reduces its AC to 10.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "1d6+1"
-          },
-          {
-            "damage_type": {
-              "index": "acid",
-              "name": "Acid",
-              "url": "/api/2014/damage-types/acid"
-            },
-            "damage_dice": "2d6"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) bludgeoning damage plus 7 (2d6) acid damage, and if the target is wearing nonmagical metal armor, its armor is partly corroded and takes a permanent and cumulative -1 penalty to the AC it offers. The armor is destroyed if the penalty reduces its AC to 10.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d6+1",
+          "average": 5
+        },
+        "secondaryDamage": {
+          "type": "Acid",
+          "roll": "2d6",
+          "average": 7
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A small, acidic ooze that can dissolve metal and other materials. Gray oozes are often found in dungeons and ruins where they feed on rusted metal and other debris.",    "imagePrompt": "A medium ooze creature with amorphous and fluid form",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "ooze",
       "medium",
-      "unaligned"
+      "unaligned",
+      "ooze",
+      "amorphous"
     ]
   },
   {
@@ -367,11 +275,10 @@ export const oozeMonsters: Monster[] = [
     "armorClass": 8,
     "armorType": "dex",
     "hitPoints": 45,
-    "hitDice": "6d10",
+    "hitDice": "6d10+12",
     "speed": {
       "walk": 10,
-      "climb": 10,
-      "hover": false
+      "climb": 10
     },
     "savingThrows": {},
     "skills": {},
@@ -383,41 +290,16 @@ export const oozeMonsters: Monster[] = [
       "slashing"
     ],
     "conditionImmunities": [
-      {
-        "index": "blinded",
-        "name": "Blinded",
-        "url": "/api/2014/conditions/blinded"
-      },
-      {
-        "index": "charmed",
-        "name": "Charmed",
-        "url": "/api/2014/conditions/charmed"
-      },
-      {
-        "index": "blinded",
-        "name": "Blinded",
-        "url": "/api/2014/conditions/blinded"
-      },
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "frightened",
-        "name": "Frightened",
-        "url": "/api/2014/conditions/frightened"
-      },
-      {
-        "index": "prone",
-        "name": "Prone",
-        "url": "/api/2014/conditions/prone"
-      }
+      "Blinded",
+      "Charmed",
+      "Exhaustion",
+      "Frightened",
+      "Prone"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "blindsight": 60,
-      "passivePerception": 8
+      "passivePerception": 8,
+      "blindsight": 60
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -434,36 +316,30 @@ export const oozeMonsters: Monster[] = [
     "actions": [
       {
         "name": "Pseudopod",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 9 (2d6 + 2) bludgeoning damage plus 3 (1d6) acid damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "2d6+2"
-          },
-          {
-            "damage_type": {
-              "index": "acid",
-              "name": "Acid",
-              "url": "/api/2014/damage-types/acid"
-            },
-            "damage_dice": "1d6"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 9 (2d6 + 2) bludgeoning damage plus 3 (1d6) acid damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6+2",
+          "average": 9
+        },
+        "secondaryDamage": {
+          "type": "Acid",
+          "roll": "1d6",
+          "average": 4
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A large, acidic ooze that can dissolve flesh and bone. Ochre jellies are dangerous predators that can split into multiple smaller creatures when damaged by lightning or slashing attacks, making them particularly difficult to destroy.",    "imagePrompt": "A large ooze creature with amorphous and fluid form",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "ooze",
       "large",
-      "unaligned"
+      "unaligned",
+      "ooze",
+      "amorphous"
     ]
   }
 ];

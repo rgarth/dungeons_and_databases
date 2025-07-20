@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { allMonsters } from '@/data/monsters';
+import { monstersData, getMonsterByName, getMonstersByType, searchMonsters } from '@/data/monsters-data';
 
 // GET /api/monsters - Get all monsters with optional filtering
 export async function GET(request: NextRequest) {
@@ -15,11 +15,11 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '1000'); // Return all monsters by default
     const offset = parseInt(searchParams.get('offset') || '0');
     
-    let filteredMonsters = [...allMonsters];
+    let filteredMonsters = [...monstersData];
     
     // Apply filters
     if (name) {
-      const monster = allMonsters.find(m => m.name.toLowerCase() === name.toLowerCase());
+      const monster = getMonsterByName(name);
       if (monster) {
         return NextResponse.json([monster]);
       } else {
@@ -28,9 +28,7 @@ export async function GET(request: NextRequest) {
     }
     
     if (type) {
-      filteredMonsters = allMonsters.filter(monster => 
-        monster.type.toLowerCase() === type.toLowerCase()
-      );
+      filteredMonsters = getMonstersByType(type);
     }
     
     if (size) {
@@ -46,9 +44,7 @@ export async function GET(request: NextRequest) {
     }
     
     if (search) {
-      filteredMonsters = allMonsters.filter(monster => 
-        monster.name.toLowerCase().includes(search.toLowerCase())
-      );
+      filteredMonsters = searchMonsters(search);
     }
     
     // Apply pagination

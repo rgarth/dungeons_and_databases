@@ -1,4 +1,4 @@
-import { Monster } from '../../types/monster';
+import { Monster } from '@/types/monster';
 
 export const constructMonsters: Monster[] = [
   {
@@ -17,10 +17,9 @@ export const constructMonsters: Monster[] = [
     "armorClass": 18,
     "armorType": "natural",
     "hitPoints": 33,
-    "hitDice": "6d8",
+    "hitDice": "6d8+6",
     "speed": {
-      "walk": 25,
-      "hover": false
+      "walk": 25
     },
     "savingThrows": {},
     "skills": {},
@@ -30,51 +29,19 @@ export const constructMonsters: Monster[] = [
       "psychic"
     ],
     "conditionImmunities": [
-      {
-        "index": "blinded",
-        "name": "Blinded",
-        "url": "/api/2014/conditions/blinded"
-      },
-      {
-        "index": "charmed",
-        "name": "Charmed",
-        "url": "/api/2014/conditions/charmed"
-      },
-      {
-        "index": "deafened",
-        "name": "Deafened",
-        "url": "/api/2014/conditions/deafened"
-      },
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "frightened",
-        "name": "Frightened",
-        "url": "/api/2014/conditions/frightened"
-      },
-      {
-        "index": "paralyzed",
-        "name": "Paralyzed",
-        "url": "/api/2014/conditions/paralyzed"
-      },
-      {
-        "index": "petrified",
-        "name": "Petrified",
-        "url": "/api/2014/conditions/petrified"
-      },
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      }
+      "Blinded",
+      "Charmed",
+      "Deafened",
+      "Exhaustion",
+      "Frightened",
+      "Paralyzed",
+      "Petrified",
+      "Poisoned"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "blindsight": 60,
-      "passivePerception": 6
+      "passivePerception": 6,
+      "blindsight": 60
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -91,41 +58,30 @@ export const constructMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The armor makes two melee attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Slam",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The armor makes two melee attacks."
       },
       {
         "name": "Slam",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) bludgeoning damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) bludgeoning damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d6+2",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A suit of armor that moves and fights as if worn by an invisible warrior. Animated armor appears as normal armor until it detects intruders, at which point it springs to life and attacks. It is immune to poison and psychic damage, and while motionless, it is indistinguishable from ordinary armor. It can be disabled by antimagic fields or dispel magic.",
+    "imagePrompt": "A medium construct creature with mechanical or magical construction",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "construct",
       "medium",
-      "unaligned"
+      "unaligned",
+      "construct",
+      "magical"
     ]
   },
   {
@@ -144,10 +100,9 @@ export const constructMonsters: Monster[] = [
     "armorClass": 14,
     "armorType": "natural",
     "hitPoints": 133,
-    "hitDice": "14d10",
+    "hitDice": "14d10+56",
     "speed": {
-      "walk": 20,
-      "hover": false
+      "walk": 20
     },
     "savingThrows": {},
     "skills": {},
@@ -159,41 +114,17 @@ export const constructMonsters: Monster[] = [
       "bludgeoning, piercing, and slashing from nonmagical weapons that aren't adamantine"
     ],
     "conditionImmunities": [
-      {
-        "index": "charmed",
-        "name": "Charmed",
-        "url": "/api/2014/conditions/charmed"
-      },
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "frightened",
-        "name": "Frightened",
-        "url": "/api/2014/conditions/frightened"
-      },
-      {
-        "index": "paralyzed",
-        "name": "Paralyzed",
-        "url": "/api/2014/conditions/paralyzed"
-      },
-      {
-        "index": "petrified",
-        "name": "Petrified",
-        "url": "/api/2014/conditions/petrified"
-      },
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      }
+      "Charmed",
+      "Exhaustion",
+      "Frightened",
+      "Paralyzed",
+      "Petrified",
+      "Poisoned"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 9
+      "passivePerception": 9,
+      "darkvision": 60
     },
     "languages": [
       "understands the languages of its creator but can't speak"
@@ -224,47 +155,34 @@ export const constructMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The golem makes two slam attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Slam",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The golem makes two slam attacks."
       },
       {
         "name": "Slam",
-        "desc": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 16 (2d10 + 5) bludgeoning damage. If the target is a creature, it must succeed on a DC 15 Constitution saving throw or have its hit point maximum reduced by an amount equal to the damage taken. The target dies if this attack reduces its hit point maximum to 0. The reduction lasts until removed by the greater restoration spell or other magic.",
-        "attack_bonus": 8,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "2d10+5"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 16 (2d10 + 5) bludgeoning damage. If the target is a creature, it must succeed on a DC 15 Constitution saving throw or have its hit point maximum reduced by an amount equal to the damage taken. The target dies if this attack reduces its hit point maximum to 0. The reduction lasts until removed by the greater restoration spell or other magic.",
+        "attackBonus": 8,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d10+5",
+          "average": 16
+        }
       },
       {
         "name": "Haste",
-        "desc": "Until the end of its next turn, the golem magically gains a +2 bonus to its AC, has advantage on Dexterity saving throws, and can use its slam attack as a bonus action.",
-        "damage": [],
-        "actions": []
+        "description": "Until the end of its next turn, the golem magically gains a +2 bonus to its AC, has advantage on Dexterity saving throws, and can use its slam attack as a bonus action."
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A large humanoid figure sculpted from clay and animated by powerful magic. Clay golems are slow but incredibly durable, immune to acid (which actually heals them), poison, psychic damage, and nonmagical weapons. They can go berserk when damaged, attacking anything nearby. Their slam attacks can reduce a target's maximum hit points, and they can cast haste on themselves.",
+    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "construct",
       "large",
-      "unaligned"
+      "unaligned",
+      "construct",
+      "magical"
     ]
   },
   {
@@ -283,10 +201,9 @@ export const constructMonsters: Monster[] = [
     "armorClass": 9,
     "armorType": "dex",
     "hitPoints": 93,
-    "hitDice": "11d8",
+    "hitDice": "11d8+44",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -297,41 +214,17 @@ export const constructMonsters: Monster[] = [
       "bludgeoning, piercing, and slashing from nonmagical weapons that aren't adamantine"
     ],
     "conditionImmunities": [
-      {
-        "index": "charmed",
-        "name": "Charmed",
-        "url": "/api/2014/conditions/charmed"
-      },
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "frightened",
-        "name": "Frightened",
-        "url": "/api/2014/conditions/frightened"
-      },
-      {
-        "index": "paralyzed",
-        "name": "Paralyzed",
-        "url": "/api/2014/conditions/paralyzed"
-      },
-      {
-        "index": "petrified",
-        "name": "Petrified",
-        "url": "/api/2014/conditions/petrified"
-      },
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      }
+      "Charmed",
+      "Exhaustion",
+      "Frightened",
+      "Paralyzed",
+      "Petrified",
+      "Poisoned"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 60
     },
     "languages": [
       "understands the languages of its creator but can't speak"
@@ -366,41 +259,30 @@ export const constructMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The golem makes two slam attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Slam",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The golem makes two slam attacks."
       },
       {
         "name": "Slam",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "2d8+4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8+4",
+          "average": 13
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A grotesque humanoid figure stitched together from various body parts and animated by dark magic. Flesh golems are created from the remains of multiple corpses, giving them a patchwork appearance. They are immune to lightning (which heals them), poison, and nonmagical weapons, but are vulnerable to fire. They can go berserk when damaged and are often difficult to control.",
+    "imagePrompt": "A medium construct creature with mechanical or magical construction",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "construct",
       "medium",
-      "neutral"
+      "neutral",
+      "construct",
+      "magical"
     ]
   },
   {
@@ -433,46 +315,18 @@ export const constructMonsters: Monster[] = [
       "psychic"
     ],
     "conditionImmunities": [
-      {
-        "index": "blinded",
-        "name": "Blinded",
-        "url": "/api/2014/conditions/blinded"
-      },
-      {
-        "index": "charmed",
-        "name": "Charmed",
-        "url": "/api/2014/conditions/charmed"
-      },
-      {
-        "index": "blinded",
-        "name": "Blinded",
-        "url": "/api/2014/conditions/blinded"
-      },
-      {
-        "index": "frightened",
-        "name": "Frightened",
-        "url": "/api/2014/conditions/frightened"
-      },
-      {
-        "index": "paralyzed",
-        "name": "Paralyzed",
-        "url": "/api/2014/conditions/paralyzed"
-      },
-      {
-        "index": "petrified",
-        "name": "Petrified",
-        "url": "/api/2014/conditions/petrified"
-      },
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      }
+      "Blinded",
+      "Charmed",
+      "Blinded",
+      "Frightened",
+      "Paralyzed",
+      "Petrified",
+      "Poisoned"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "blindsight": 60,
-      "passivePerception": 7
+      "passivePerception": 7,
+      "blindsight": 60
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -489,28 +343,27 @@ export const constructMonsters: Monster[] = [
     "actions": [
       {
         "name": "Longsword",
-        "desc": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 5 (1d8 + 1) slashing damage.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d8+1"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 5 (1d8 + 1) slashing damage.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d8+1",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A regular sword flying through the air like it has been thrown, coming toward the camera with the blade pointing forward. It appears as a normal longsword but moves independently through the air with no visible thrower or magical apparatus. When motionless, it looks like an ordinary sword until it suddenly springs to life.",
+    "background": "Flying swords are magical constructs created by enchanters to guard their lairs. They appear as normal swords until they detect intruders, at which point they animate and attack. They are often placed in areas where they can surprise unsuspecting visitors.",
+    "imagePrompt": "A REGULAR SWORD flying through the air, just a normal longsword hovering and moving independently, NO WINGS, NO TECHNOLOGY, NO MAGICAL APPARATUS, NO THROWER, just a sword floating and flying through the air, plain sword appearance",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "construct",
       "small",
-      "unaligned"
+      "unaligned",
+      "construct",
+      "magical"
     ]
   },
   {
@@ -532,8 +385,7 @@ export const constructMonsters: Monster[] = [
     "hitDice": "2d4",
     "speed": {
       "walk": 20,
-      "fly": 40,
-      "hover": false
+      "fly": 40
     },
     "savingThrows": {},
     "skills": {},
@@ -542,21 +394,13 @@ export const constructMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      {
-        "index": "charmed",
-        "name": "Charmed",
-        "url": "/api/2014/conditions/charmed"
-      },
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      }
+      "Charmed",
+      "Poisoned"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 60
     },
     "languages": [
       "understands the languages of its creator but can't speak"
@@ -571,28 +415,27 @@ export const constructMonsters: Monster[] = [
     "actions": [
       {
         "name": "Bite",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 1 piercing damage, and the target must succeed on a DC 10 Constitution saving throw or be poisoned for 1 minute. If the saving throw fails by 5 or more, the target is instead poisoned for 5 (1d10) minutes and unconscious while poisoned in this way.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 1 piercing damage, and the target must succeed on a DC 10 Constitution saving throw or be poisoned for 1 minute. If the saving throw fails by 5 or more, the target is instead poisoned for 5 (1d10) minutes and unconscious while poisoned in this way.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1",
+          "average": 0
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A tiny magical construct resembling a small humanoid figure, often made of clay, wax, or other materials. It has bat-like wings and serves as a familiar to its creator, capable of flying and communicating telepathically with its master.",
+    "background": "Homunculi are tiny magical constructs created by wizards and alchemists to serve as familiars and assistants. They are bound to their creator through a telepathic link and can relay information, scout areas, and perform simple tasks. They are often made from clay, wax, or other materials and given life through magical rituals.",
+    "imagePrompt": "A tiny humanoid construct with bat-like wings, made of clay or wax, magical familiar appearance, small size, flying ability. Magical assistant construct that serves as a familiar, organic-looking not robotic.",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "construct",
       "tiny",
-      "neutral"
+      "neutral",
+      "construct",
+      "magical"
     ]
   },
   {
@@ -611,10 +454,9 @@ export const constructMonsters: Monster[] = [
     "armorClass": 20,
     "armorType": "natural",
     "hitPoints": 210,
-    "hitDice": "20d10",
+    "hitDice": "20d10+100",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -626,41 +468,17 @@ export const constructMonsters: Monster[] = [
       "bludgeoning, piercing, and slashing from nonmagical weapons that aren't adamantine"
     ],
     "conditionImmunities": [
-      {
-        "index": "charmed",
-        "name": "Charmed",
-        "url": "/api/2014/conditions/charmed"
-      },
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "frightened",
-        "name": "Frightened",
-        "url": "/api/2014/conditions/frightened"
-      },
-      {
-        "index": "paralyzed",
-        "name": "Paralyzed",
-        "url": "/api/2014/conditions/paralyzed"
-      },
-      {
-        "index": "petrified",
-        "name": "Petrified",
-        "url": "/api/2014/conditions/petrified"
-      },
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      }
+      "Charmed",
+      "Exhaustion",
+      "Frightened",
+      "Paralyzed",
+      "Petrified",
+      "Poisoned"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 120,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 120
     },
     "languages": [
       "understands the languages of its creator but can't speak"
@@ -687,104 +505,49 @@ export const constructMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The golem makes two melee attacks.",
-        "damage": [],
-        "multiattack_type": "action_options",
-        "action_options": {
-          "choose": 1,
-          "type": "action",
-          "from": {
-            "option_set_type": "options_array",
-            "options": [
-              {
-                "option_type": "action",
-                "action_name": "Slam",
-                "count": 2,
-                "type": "melee"
-              },
-              {
-                "option_type": "action",
-                "action_name": "Sword",
-                "count": 2,
-                "type": "melee"
-              },
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Slam",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Sword",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        "actions": []
+        "description": "The golem makes two melee attacks."
       },
       {
         "name": "Slam",
-        "desc": "Melee Weapon Attack: +13 to hit, reach 5 ft., one target. Hit: 20 (3d8 + 7) bludgeoning damage.",
-        "attack_bonus": 13,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "3d8+7"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +13 to hit, reach 5 ft., one target. Hit: 20 (3d8 + 7) bludgeoning damage.",
+        "attackBonus": 13,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d8+7",
+          "average": 21
+        }
       },
       {
         "name": "Sword",
-        "desc": "Melee Weapon Attack: +13 to hit, reach 10 ft., one target. Hit: 23 (3d10 + 7) slashing damage.",
-        "attack_bonus": 13,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "3d10+7"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +13 to hit, reach 10 ft., one target. Hit: 23 (3d10 + 7) slashing damage.",
+        "attackBonus": 13,
+        "damage": {
+          "type": "Slashing",
+          "roll": "3d10+7",
+          "average": 24
+        }
       },
       {
         "name": "Poison Breath",
-        "desc": "The golem exhales poisonous gas in a 15-foot cone. Each creature in that area must make a DC 19 Constitution saving throw, taking 45 (10d8) poison damage on a failed save, or half as much damage on a successful one.",
-        "damage": [
-          {
-            "damage_type": {
-              "index": "poison",
-              "name": "Poison",
-              "url": "/api/2014/damage-types/poison"
-            },
-            "damage_dice": "10d8"
-          }
-        ],
-        "actions": []
+        "description": "The golem exhales poisonous gas in a 15-foot cone. Each creature in that area must make a DC 19 Constitution saving throw, taking 45 (10d8) poison damage on a failed save, or half as much damage on a successful one.",
+        "damage": {
+          "type": "Poison",
+          "roll": "10d8",
+          "average": 45
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A massive humanoid figure forged entirely from iron and animated by powerful magic. Iron golems are among the most durable constructs, with extremely high armor class and hit points. They are immune to fire, poison, psychic damage, and nonmagical weapons. They can exhale poisonous gas and are nearly indestructible except by adamantine weapons or powerful magic.",
+    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "construct",
       "large",
-      "unaligned"
+      "unaligned",
+      "construct",
+      "magical"
     ]
   },
   {
@@ -805,8 +568,7 @@ export const constructMonsters: Monster[] = [
     "hitPoints": 33,
     "hitDice": "6d10",
     "speed": {
-      "walk": 10,
-      "hover": false
+      "walk": 10
     },
     "savingThrows": {},
     "skills": {},
@@ -816,46 +578,18 @@ export const constructMonsters: Monster[] = [
       "psychic"
     ],
     "conditionImmunities": [
-      {
-        "index": "blinded",
-        "name": "Blinded",
-        "url": "/api/2014/conditions/blinded"
-      },
-      {
-        "index": "charmed",
-        "name": "Charmed",
-        "url": "/api/2014/conditions/charmed"
-      },
-      {
-        "index": "blinded",
-        "name": "Blinded",
-        "url": "/api/2014/conditions/blinded"
-      },
-      {
-        "index": "frightened",
-        "name": "Frightened",
-        "url": "/api/2014/conditions/frightened"
-      },
-      {
-        "index": "paralyzed",
-        "name": "Paralyzed",
-        "url": "/api/2014/conditions/paralyzed"
-      },
-      {
-        "index": "petrified",
-        "name": "Petrified",
-        "url": "/api/2014/conditions/petrified"
-      },
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      }
+      "Blinded",
+      "Charmed",
+      "Blinded",
+      "Frightened",
+      "Paralyzed",
+      "Petrified",
+      "Poisoned"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "blindsight": 60,
-      "passivePerception": 6
+      "passivePerception": 6,
+      "blindsight": 60
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -876,19 +610,27 @@ export const constructMonsters: Monster[] = [
     "actions": [
       {
         "name": "Smother",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one Medium or smaller creature. Hit: The creature is grappled (escape DC 13). Until this grapple ends, the target is restrained, blinded, and at risk of suffocating, and the rug can't smother another target. In addition, at the start of each of the target's turns, the target takes 10 (2d6 + 3) bludgeoning damage.",
-        "attack_bonus": 5,
-        "damage": [],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one Medium or smaller creature. Hit: The creature is grappled (escape DC 13). Until this grapple ends, the target is restrained, blinded, and at risk of suffocating, and the rug can't smother another target. In addition, at the start of each of the target's turns, the target takes 10 (2d6 + 3) bludgeoning damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6+3",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A large magical rug that appears to be a normal decorative floor covering until it suddenly animates and attempts to smother creatures. It can wrap itself around victims and constrict them, appearing as an ornate carpet or tapestry when motionless.",
+    "background": "Rugs of smothering are magical constructs created by enchanters to protect their lairs. They appear as normal decorative rugs until they detect prey, at which point they animate and attempt to wrap around and suffocate intruders. They are often placed in areas where they can surprise unsuspecting visitors.",
+    "imagePrompt": "A decorative rug with ornate patterns lying on a dungeon floor, just a normal floor rug, NO MECHANICAL PARTS, NO METAL, NO JOINTS, NO EYES, NO HUMANOID FEATURES, PURELY A RUG, floor covering",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "construct",
       "large",
-      "unaligned"
+      "unaligned",
+      "construct",
+      "magical"
     ]
   },
   {
@@ -907,10 +649,9 @@ export const constructMonsters: Monster[] = [
     "armorClass": 17,
     "armorType": "natural",
     "hitPoints": 142,
-    "hitDice": "15d10",
+    "hitDice": "15d10+60",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -919,37 +660,17 @@ export const constructMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      {
-        "index": "charmed",
-        "name": "Charmed",
-        "url": "/api/2014/conditions/charmed"
-      },
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "frightened",
-        "name": "Frightened",
-        "url": "/api/2014/conditions/frightened"
-      },
-      {
-        "index": "paralyzed",
-        "name": "Paralyzed",
-        "url": "/api/2014/conditions/paralyzed"
-      },
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      }
+      "Charmed",
+      "Exhaustion",
+      "Frightened",
+      "Paralyzed",
+      "Poisoned"
     ],
     "damageVulnerabilities": [],
     "senses": {
+      "passivePerception": 10,
       "darkvision": 60,
-      "blindsight": 10,
-      "passivePerception": 10
+      "blindsight": 10
     },
     "languages": [
       "understands commands given in any language but can't speak"
@@ -972,41 +693,30 @@ export const constructMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The guardian makes two fist attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Fist",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The guardian makes two fist attacks."
       },
       {
         "name": "Fist",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "2d6+4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6+4",
+          "average": 11
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A large humanoid construct designed to protect its master. Shield guardians are magically bound to an amulet worn by their creator, allowing them to share damage and be summoned from great distances. They can store and cast spells on command, regenerate hit points, and are immune to poison. They serve as powerful bodyguards and magical assistants.",
+    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "construct",
       "large",
-      "unaligned"
+      "unaligned",
+      "construct",
+      "magical"
     ]
   },
   {
@@ -1025,10 +735,9 @@ export const constructMonsters: Monster[] = [
     "armorClass": 17,
     "armorType": "natural",
     "hitPoints": 178,
-    "hitDice": "17d10",
+    "hitDice": "17d10+85",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -1039,41 +748,17 @@ export const constructMonsters: Monster[] = [
       "bludgeoning, piercing, and slashing from nonmagical weapons that aren't adamantine"
     ],
     "conditionImmunities": [
-      {
-        "index": "charmed",
-        "name": "Charmed",
-        "url": "/api/2014/conditions/charmed"
-      },
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "frightened",
-        "name": "Frightened",
-        "url": "/api/2014/conditions/frightened"
-      },
-      {
-        "index": "paralyzed",
-        "name": "Paralyzed",
-        "url": "/api/2014/conditions/paralyzed"
-      },
-      {
-        "index": "petrified",
-        "name": "Petrified",
-        "url": "/api/2014/conditions/petrified"
-      },
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      }
+      "Charmed",
+      "Exhaustion",
+      "Frightened",
+      "Paralyzed",
+      "Petrified",
+      "Poisoned"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 120,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 120
     },
     "languages": [
       "understands the languages of its creator but can't speak"
@@ -1096,47 +781,34 @@ export const constructMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The golem makes two slam attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Slam",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The golem makes two slam attacks."
       },
       {
         "name": "Slam",
-        "desc": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 19 (3d8 + 6) bludgeoning damage.",
-        "attack_bonus": 10,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "3d8+6"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 19 (3d8 + 6) bludgeoning damage.",
+        "attackBonus": 10,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d8+6",
+          "average": 20
+        }
       },
       {
         "name": "Slow",
-        "desc": "The golem targets one or more creatures it can see within 10 ft. of it. Each target must make a DC 17 Wisdom saving throw against this magic. On a failed save, a target can't use reactions, its speed is halved, and it can't make more than one attack on its turn. In addition, the target can take either an action or a bonus action on its turn, not both. These effects last for 1 minute. A target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
-        "damage": [],
-        "actions": []
+        "description": "The golem targets one or more creatures it can see within 10 ft. of it. Each target must make a DC 17 Wisdom saving throw against this magic. On a failed save, a target can't use reactions, its speed is halved, and it can't make more than one attack on its turn. In addition, the target can take either an action or a bonus action on its turn, not both. These effects last for 1 minute. A target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success."
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A massive humanoid figure carved from solid stone and animated by powerful magic. Stone golems are incredibly durable, immune to poison, psychic damage, and nonmagical weapons. They are among the strongest constructs, with devastating slam attacks and the ability to cast slow on their enemies. They are nearly indestructible except by adamantine weapons or powerful magic.",
+    "imagePrompt": "A large construct creature with mechanical or magical construction",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "construct",
       "large",
-      "unaligned"
+      "unaligned",
+      "construct",
+      "magical"
     ]
   }
 ];

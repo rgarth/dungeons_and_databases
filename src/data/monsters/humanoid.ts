@@ -1,10 +1,11 @@
-import { Monster } from '../../types/monster';
+import { Monster } from '@/types/monster';
 
 export const humanoidMonsters: Monster[] = [
   {
     "name": "Acolyte",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any alignment",
     "challengeRating": "0.25",
     "xp": 50,
@@ -19,8 +20,7 @@ export const humanoidMonsters: Monster[] = [
     "hitPoints": 9,
     "hitDice": "2d8",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -47,34 +47,33 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Club",
-        "desc": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 2 (1d4) bludgeoning damage.",
-        "attack_bonus": 2,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "1d4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 2 (1d4) bludgeoning damage.",
+        "attackBonus": 2,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Acolytes are junior members of a clergy, usually answerable to a priest. They perform a variety of functions in a temple and are granted minor spellcasting power by their deities.",
+    "background": "Acolytes are junior members of a clergy, usually answerable to a priest. They perform a variety of functions in a temple and are granted minor spellcasting power by their deities.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any alignment"
+      "any-alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Archmage",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any alignment",
     "challengeRating": "12",
     "xp": 8400,
@@ -87,10 +86,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 99,
-    "hitDice": "18d8",
+    "hitDice": "18d8+18",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -124,34 +122,33 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Dagger",
-        "desc": "Melee or Ranged Weapon Attack: +6 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",
-        "attack_bonus": 6,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d4+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +6 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4+2",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Archmages are powerful (and usually quite old) spellcasters dedicated to the study of the arcane arts. Benevolent ones counsel kings and queens, while evil ones rule as tyrants and pursue lichdom. Those who are neither good nor evil sequester themselves in remote towers to practice their magic without interruption. \n\nAn archmage typically has one or more apprentice mages, and an archmage’s abode has numerous magical wards and guardians to discourage interlopers.",
+    "background": "Archmages are powerful (and usually quite old) spellcasters dedicated to the study of the arcane arts. Benevolent ones counsel kings and queens, while evil ones rule as tyrants and pursue lichdom. Those who are neither good nor evil sequester themselves in remote towers to practice their magic without interruption. \n\nAn archmage typically has one or more apprentice mages, and an archmage’s abode has numerous magical wards and guardians to discourage interlopers.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any alignment"
+      "any-alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Assassin",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any non-good alignment",
     "challengeRating": "8",
     "xp": 3900,
@@ -164,10 +161,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 15,
     "armorType": "armor",
     "hitPoints": 78,
-    "hitDice": "12d8",
+    "hitDice": "12d8+24",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -206,97 +202,47 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The assassin makes two shortsword attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Shortsword",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
-      },
+        "description": "The assassin makes two shortsword attacks.",
+        },
       {
         "name": "Shortsword",
-        "desc": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage, and the target must make a DC 15 Constitution saving throw, taking 24 (7d6) poison damage on a failed save, or half as much damage on a successful one.",
-        "attack_bonus": 6,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+3"
-          },
-          {
-            "dc": {
-              "dc_type": {
-                "index": "con",
-                "name": "CON",
-                "url": "/api/2014/ability-scores/con"
-              },
-              "dc_value": 15,
-              "success_type": "half"
-            },
-            "damage_type": {
-              "index": "poison",
-              "name": "Poison",
-              "url": "/api/2014/damage-types/poison"
-            },
-            "damage_dice": "7d6"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage, and the target must make a DC 15 Constitution saving throw, taking 24 (7d6) poison damage on a failed save, or half as much damage on a successful one.",
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+3",
+          "average": 7
+        }
       },
       {
         "name": "Light Crossbow",
-        "desc": "Ranged Weapon Attack: +6 to hit, range 80/320 ft., one target. Hit: 7 (1d8 + 3) piercing damage, and the target must make a DC 15 Constitution saving throw, taking 24 (7d6) poison damage on a failed save, or half as much damage on a successful one.",
-        "attack_bonus": 6,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d8+3"
-          },
-          {
-            "dc": {
-              "dc_type": {
-                "index": "con",
-                "name": "CON",
-                "url": "/api/2014/ability-scores/con"
-              },
-              "dc_value": 15,
-              "success_type": "half"
-            },
-            "damage_type": {
-              "index": "poison",
-              "name": "Poison",
-              "url": "/api/2014/damage-types/poison"
-            },
-            "damage_dice": "7d6"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +6 to hit, range 80/320 ft., one target. Hit: 7 (1d8 + 3) piercing damage, and the target must make a DC 15 Constitution saving throw, taking 24 (7d6) poison damage on a failed save, or half as much damage on a successful one.",
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8+3",
+          "average": 8
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Trained in the use of poison, assassins are remorseless killers who work for nobles, guildmasters, sovereigns, and anyone else who can afford them.",
+    "background": "Trained in the use of poison, assassins are remorseless killers who work for nobles, guildmasters, sovereigns, and anyone else who can afford them.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any non-good alignment"
+      "any-non-good alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Bandit",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any non-lawful alignment",
     "challengeRating": "0.125",
     "xp": 25,
@@ -309,10 +255,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "armor",
     "hitPoints": 11,
-    "hitDice": "2d8",
+    "hitDice": "2d8+2",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -331,50 +276,43 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Scimitar",
-        "desc": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) slashing damage.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d6+1"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) slashing damage.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6+1",
+          "average": 5
+        }
       },
       {
         "name": "Light Crossbow",
-        "desc": "Ranged Weapon Attack: +3 to hit, range 80 ft./320 ft., one target. Hit: 5 (1d8 + 1) piercing damage.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d8+1"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +3 to hit, range 80 ft./320 ft., one target. Hit: 5 (1d8 + 1) piercing damage.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8+1",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
     "description": "**Bandits** rove in gangs and are sometimes led by thugs, veterans, or spellcasters. Not all bandits are evil. Oppression, drought, disease, or famine can often drive otherwise honest folk to a life of banditry.\n\n**Pirates** are bandits of the high seas. They might be freebooters interested only in treasure and murder, or they might be privateers sanctioned by the crown to attack and plunder an enemy nation’s vessels.",
+    "background": "**Bandits** rove in gangs and are sometimes led by thugs, veterans, or spellcasters. Not all bandits are evil. Oppression, drought, disease, or famine can often drive otherwise honest folk to a life of banditry.\n\n**Pirates** are bandits of the high seas. They might be freebooters interested only in treasure and murder, or they might be privateers sanctioned by the crown to attack and plunder an enemy nation’s vessels.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any non-lawful alignment"
+      "any-non-lawful alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Bandit Captain",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any non-lawful alignment",
     "challengeRating": "2",
     "xp": 450,
@@ -387,10 +325,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 15,
     "armorType": "armor",
     "hitPoints": 65,
-    "hitDice": "10d8",
+    "hitDice": "10d8+20",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -412,89 +349,47 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The captain makes three melee attacks: two with its scimitar and one with its dagger. Or the captain makes two ranged attacks with its daggers.",
-        "damage": [],
-        "multiattack_type": "action_options",
-        "action_options": {
-          "choose": 1,
-          "type": "action",
-          "from": {
-            "option_set_type": "options_array",
-            "options": [
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Scimitar",
-                    "count": 2,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Dagger",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              },
-              {
-                "option_type": "action",
-                "action_name": "Dagger",
-                "count": 2,
-                "type": "ranged"
-              }
-            ]
-          }
+        "description": "The captain makes three melee attacks: two with its scimitar and one with its dagger. Or the captain makes two ranged attacks with its daggers.",
         },
-        "actions": []
-      },
       {
         "name": "Scimitar",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d6+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6+3",
+          "average": 7
+        }
       },
       {
         "name": "Dagger",
-        "desc": "Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 5 (1d4 + 3) piercing damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d4+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 5 (1d4 + 3) piercing damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4+3",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
     "description": "It takes a strong personality, ruthless cunning, and a silver tongue to keep a gang of bandits in line. The **bandit captain** has these qualities in spades.\n\nIn addition to managing a crew of selfish malcontents, the **pirate captain** is a variation of the bandit captain, with a ship to protect and command. To keep the crew in line, the captain must mete out rewards and punishment on a regular basis.\n\nMore than treasure, a bandit captain or pirate captain craves infamy. A prisoner who appeals to the captain’s vanity or ego is more likely to be treated fairly than a prisoner who does not or claims not to know anything of the captain’s colorful reputation.",
+    "background": "It takes a strong personality, ruthless cunning, and a silver tongue to keep a gang of bandits in line. The **bandit captain** has these qualities in spades.\n\nIn addition to managing a crew of selfish malcontents, the **pirate captain** is a variation of the bandit captain, with a ship to protect and command. To keep the crew in line, the captain must mete out rewards and punishment on a regular basis.\n\nMore than treasure, a bandit captain or pirate captain craves infamy. A prisoner who appeals to the captain’s vanity or ego is more likely to be treated fairly than a prisoner who does not or claims not to know anything of the captain’s colorful reputation.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any non-lawful alignment"
+      "any-non-lawful alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Berserker",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any chaotic alignment",
     "challengeRating": "2",
     "xp": 450,
@@ -507,10 +402,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "armor",
     "hitPoints": 67,
-    "hitDice": "9d8",
+    "hitDice": "9d8+27",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -534,34 +428,31 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Greataxe",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 9 (1d12 + 3) slashing damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d12+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 9 (1d12 + 3) slashing damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d12+3",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A dark elf with obsidian-black skin, white hair, and red eyes. Drow live in vast underground cities in the Underdark and are ruled by powerful matriarchs.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any chaotic alignment"
+      "any-chaotic alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Bugbear",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "goblinoid",
     "alignment": "chaotic evil",
     "challengeRating": "1",
     "xp": 200,
@@ -574,10 +465,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 16,
     "armorType": "armor",
     "hitPoints": 27,
-    "hitDice": "5d8",
+    "hitDice": "5d8+5",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -589,8 +479,8 @@ export const humanoidMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 60
     },
     "languages": [
       "Common",
@@ -610,50 +500,42 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Morningstar",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 11 (2d8 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "2d8+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 11 (2d8 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d8+2",
+          "average": 11
+        }
       },
       {
         "name": "Javelin",
-        "desc": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 9 (2d6 + 2) piercing damage in melee or 5 (1d6 + 2) piercing damage at range.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "2d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 9 (2d6 + 2) piercing damage in melee or 5 (1d6 + 2) piercing damage at range.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d6+2",
+          "average": 9
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Bugbears are large, hairy goblinoids with long arms and a hunched posture. They are stealthy despite their size and prefer to ambush their prey. Bugbears are more intelligent than their goblin cousins and often serve as leaders or enforcers in goblinoid communities. They are cruel and sadistic, taking pleasure in the suffering of others.",
+    "imagePrompt": "A large hairy goblinoid with long arms, hunched posture, bestial features, fangs, pointed ears, and animal-like appearance",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "chaotic evil"
+      "chaotic-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Commoner",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any alignment",
     "challengeRating": "0",
     "xp": 10,
@@ -668,8 +550,7 @@ export const humanoidMonsters: Monster[] = [
     "hitPoints": 4,
     "hitDice": "1d8",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -688,34 +569,33 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Club",
-        "desc": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 2 (1d4) bludgeoning damage.",
-        "attack_bonus": 2,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "1d4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 2 (1d4) bludgeoning damage.",
+        "attackBonus": 2,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Commoners include peasants, serfs, slaves, servants, pilgrims, merchants, artisans, and hermits.",
+    "background": "Commoners include peasants, serfs, slaves, servants, pilgrims, merchants, artisans, and hermits.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any alignment"
+      "any-alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Cult Fanatic",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any non-good alignment",
     "challengeRating": "2",
     "xp": 450,
@@ -728,10 +608,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "armor",
     "hitPoints": 22,
-    "hitDice": "6d8",
+    "hitDice": "6d8+6",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -763,47 +642,37 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The fanatic makes two melee attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Dagger",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
-      },
+        "description": "The fanatic makes two melee attacks.",
+        },
       {
         "name": "Dagger",
-        "desc": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one creature. Hit: 4 (1d4 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d4+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one creature. Hit: 4 (1d4 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4+2",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Fanatics are often part of a cult’s leadership, using their charisma and dogma to influence and prey on those of weak will. Most are interested in personal power above all else.",
+    "background": "Fanatics are often part of a cult’s leadership, using their charisma and dogma to influence and prey on those of weak will. Most are interested in personal power above all else.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any non-good alignment"
+      "any-non-good alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Cultist",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any non-good alignment",
     "challengeRating": "0.125",
     "xp": 25,
@@ -818,8 +687,7 @@ export const humanoidMonsters: Monster[] = [
     "hitPoints": 9,
     "hitDice": "2d8",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -846,34 +714,33 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Scimitar",
-        "desc": "Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 4 (1d6 + 1) slashing damage.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d6+1"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 4 (1d6 + 1) slashing damage.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6+1",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Cultists swear allegiance to dark powers such as elemental princes, demon lords, or archdevils. Most conceal their loyalties to avoid being ostracized, imprisoned, or executed for their beliefs. Unlike evil acolytes, cultists often show signs of insanity in their beliefs and practices.",
+    "background": "Cultists swear allegiance to dark powers such as elemental princes, demon lords, or archdevils. Most conceal their loyalties to avoid being ostracized, imprisoned, or executed for their beliefs. Unlike evil acolytes, cultists often show signs of insanity in their beliefs and practices.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any non-good alignment"
+      "any-non-good alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Deep Gnome (Svirfneblin)",
     "size": "Small",
     "type": "humanoid",
+    "subtype": "gnome",
     "alignment": "neutral good",
     "challengeRating": "0.5",
     "xp": 50,
@@ -886,10 +753,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 15,
     "armorType": "armor",
     "hitPoints": 16,
-    "hitDice": "3d6",
+    "hitDice": "3d6+6",
     "speed": {
-      "walk": 20,
-      "hover": false
+      "walk": 20
     },
     "savingThrows": {},
     "skills": {
@@ -902,8 +768,8 @@ export const humanoidMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 120,
-      "passivePerception": 12
+      "passivePerception": 12,
+      "darkvision": 120
     },
     "languages": [
       "Gnomish",
@@ -928,50 +794,42 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "War Pick",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d8+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8+2",
+          "average": 7
+        }
       },
       {
         "name": "Poisoned Dart",
-        "desc": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one creature. Hit: 4 (1d4 + 2) piercing damage, and the target must succeed on a DC 12 Constitution saving throw or be poisoned for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d4+2"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one creature. Hit: 4 (1d4 + 2) piercing damage, and the target must succeed on a DC 12 Constitution saving throw or be poisoned for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4+2",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Deep gnomes, also known as svirfneblin, are small, reclusive fey humanoids that dwell in the deepest reaches of the Underdark. They are known for their exceptional stealth abilities, innate magical talents, and their ability to blend seamlessly with stone. Deep gnomes are highly intelligent and resourceful, using their natural camouflage and magical abilities to survive in the harsh underground environment. They are generally neutral and prefer to avoid conflict, but they are fierce defenders of their hidden communities.",
+    "imagePrompt": "A small fey humanoid with pointed ears, intelligent eyes, prominent nose, earth-toned skin, mature features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "small",
-      "neutral good"
+      "neutral-good",
+      "humanoid"
     ]
   },
   {
     "name": "Drow",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "elf",
     "alignment": "neutral evil",
     "challengeRating": "0.25",
     "xp": 50,
@@ -986,8 +844,7 @@ export const humanoidMonsters: Monster[] = [
     "hitPoints": 13,
     "hitDice": "3d8",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -999,8 +856,8 @@ export const humanoidMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 120,
-      "passivePerception": 12
+      "passivePerception": 12,
+      "darkvision": 120
     },
     "languages": [
       "Elvish",
@@ -1024,50 +881,41 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Shortsword",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d6+2",
+          "average": 6
+        }
       },
       {
         "name": "Hand Crossbow",
-        "desc": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage, and the target must succeed on a DC 13 Constitution saving throw or be poisoned for 1 hour. If the saving throw fails by 5 or more, the target is also unconscious while poisoned in this way. The target wakes up if it takes damage or if another creature takes an action to shake it awake.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage, and the target must succeed on a DC 13 Constitution saving throw or be poisoned for 1 hour. If the saving throw fails by 5 or more, the target is also unconscious while poisoned in this way. The target wakes up if it takes damage or if another creature takes an action to shake it awake.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+2",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Drow are dark elves who dwell in the vast underground cities of the Underdark. They are ruled by powerful matriarchs and are known for their cruelty, ambition, and mastery of dark magic. Drow society is built on intrigue and betrayal, with each house constantly scheming against the others. They are excellent warriors and spellcasters, but their greatest weapon is their ability to manipulate and deceive.",    "imagePrompt": "A drow dark elf with PITCH BLACK SKIN, DEEP BLACK SKIN, COAL BLACK SKIN, WHITE HAIR, SNOW WHITE HAIR, RED EYES, BLOOD RED EYES, pointed ears, graceful features, underdark heritage, drow appearance, NOT ASIAN, NOT OLIVE SKIN, NOT HUMAN, PURE BLACK SKIN ONLY, clearly dark elf features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "neutral evil"
+      "neutral-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Druid",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any alignment",
     "challengeRating": "2",
     "xp": 450,
@@ -1080,10 +928,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "dex",
     "hitPoints": 27,
-    "hitDice": "5d8",
+    "hitDice": "5d8+5",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -1111,65 +958,33 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Quarterstaff",
-        "desc": " Melee Weapon Attack: +2 to hit (+4 to hit with shillelagh), reach 5 ft., one target. Hit: 3 (1d6) bludgeoning damage, 4 (1d8) bludgeoning damage if wielded with two hands, or 6 (1d8 + 2) bludgeoning damage with shillelagh.",
-        "attack_bonus": 2,
-        "damage": [
-          {
-            "choose": 1,
-            "type": "damage",
-            "from": {
-              "option_set_type": "options_array",
-              "options": [
-                {
-                  "option_type": "damage",
-                  "damage_type": {
-                    "index": "bludgeoning",
-                    "name": "Bludgeoning",
-                    "url": "/api/2014/damage-types/bludgeoning"
-                  },
-                  "damage_dice": "1d6",
-                  "notes": "One handed"
-                },
-                {
-                  "option_type": "damage",
-                  "damage_type": {
-                    "index": "bludgeoning",
-                    "name": "Bludgeoning",
-                    "url": "/api/2014/damage-types/bludgeoning"
-                  },
-                  "damage_dice": "1d8",
-                  "notes": "Two handed"
-                },
-                {
-                  "option_type": "damage",
-                  "damage_type": {
-                    "index": "bludgeoning",
-                    "name": "Bludgeoning",
-                    "url": "/api/2014/damage-types/bludgeoning"
-                  },
-                  "damage_dice": "1d8+2",
-                  "notes": "With shillelagh"
-                }
-              ]
-            }
-          }
-        ],
-        "actions": []
+        "description": " Melee Weapon Attack: +2 to hit (+4 to hit with shillelagh), reach 5 ft., one target. Hit: 3 (1d6) bludgeoning damage, 4 (1d8) bludgeoning damage if wielded with two hands, or 6 (1d8 + 2) bludgeoning damage with shillelagh.",
+        "attackBonus": 2,
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       }
     ],
     "legendaryActions": [],
     "description": "**Druids** dwell in forests and other secluded wilderness locations, where they protect the natural world from monsters and the encroachment of civilization. Some are **tribal shamans** who heal the sick, pray to animal spirits, and provide spiritual guidance.",
+    "background": "**Druids** dwell in forests and other secluded wilderness locations, where they protect the natural world from monsters and the encroachment of civilization. Some are **tribal shamans** who heal the sick, pray to animal spirits, and provide spiritual guidance.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any alignment"
+      "any-alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Duergar",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "dwarf",
     "alignment": "lawful evil",
     "challengeRating": "1",
     "xp": 200,
@@ -1182,10 +997,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 16,
     "armorType": "armor",
     "hitPoints": 26,
-    "hitDice": "4d8",
+    "hitDice": "4d8+8",
     "speed": {
-      "walk": 25,
-      "hover": false
+      "walk": 25
     },
     "savingThrows": {},
     "skills": {},
@@ -1196,8 +1010,8 @@ export const humanoidMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 120,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 120
     },
     "languages": [
       "Dwarvish",
@@ -1217,62 +1031,59 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Enlarge",
-        "desc": "For 1 minute, the duergar magically increases in size, along with anything it is wearing or carrying. While enlarged, the duergar is Large, doubles its damage dice on Strength-based weapon attacks (included in the attacks), and makes Strength checks and Strength saving throws with advantage. If the duergar lacks the room to become Large, it attains the maximum size possible in the space available.",
-        "damage": [],
-        "actions": []
+        "description": "For 1 minute, the duergar magically increases in size, along with anything it is wearing or carrying. While enlarged, the duergar is Large, doubles its damage dice on Strength-based weapon attacks (included in the attacks), and makes Strength checks and Strength saving throws with advantage. If the duergar lacks the room to become Large, it attains the maximum size possible in the space available.",
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       },
       {
         "name": "War Pick",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage, or 11 (2d8 + 2) piercing damage while enlarged.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d8+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage, or 11 (2d8 + 2) piercing damage while enlarged.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8+2",
+          "average": 7
+        }
       },
       {
         "name": "Javelin",
-        "desc": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage, or 9 (2d6 + 2) piercing damage while enlarged.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage, or 9 (2d6 + 2) piercing damage while enlarged.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d6+2",
+          "average": 6
+        }
       },
       {
         "name": "Invisibility",
-        "desc": "The duergar magically turns invisible until it attacks, casts a spell, or uses its Enlarge, or until its concentration is broken, up to 1 hour (as if concentrating on a spell). Any equipment the duergar wears or carries is invisible with it.",
-        "damage": [],
-        "actions": []
+        "description": "The duergar magically turns invisible until it attacks, casts a spell, or uses its Enlarge, or until its concentration is broken, up to 1 hour (as if concentrating on a spell). Any equipment the duergar wears or carries is invisible with it.",
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Duergar are gray dwarves who have been corrupted by the influence of the Underdark. They are larger and stronger than their surface-dwelling cousins, but their souls have been twisted by centuries of slavery and exposure to dark magic. Duergar are excellent craftsmen and warriors, but they are also paranoid and cruel. They often serve as mercenaries or slavers, using their innate magical abilities to dominate others.",    "imagePrompt": "A gray dwarf duergar with GRAY SKIN, ASHEN SKIN, DEEP GRAY SKIN, BIG BUSHY BEARD, traditional dwarven features, stocky build, broad shoulders, underdark heritage, gray dwarf, underdark dwarf, wearing armor and wielding weapons",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "lawful evil"
+      "lawful-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Gladiator",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any alignment",
     "challengeRating": "5",
     "xp": 1800,
@@ -1285,10 +1096,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 16,
     "armorType": "armor",
     "hitPoints": 112,
-    "hitDice": "15d8",
+    "hitDice": "15d8+45",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -1319,139 +1129,47 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The gladiator makes three melee attacks or two ranged attacks.",
-        "damage": [],
-        "multiattack_type": "action_options",
-        "action_options": {
-          "choose": 1,
-          "type": "action",
-          "from": {
-            "option_set_type": "options_array",
-            "options": [
-              {
-                "option_type": "action",
-                "action_name": "Spear",
-                "count": 3,
-                "type": "melee"
-              },
-              {
-                "option_type": "action",
-                "action_name": "Shield Bash",
-                "count": 3,
-                "type": "melee"
-              },
-              {
-                "option_type": "action",
-                "action_name": "Spear",
-                "count": 2,
-                "type": "ranged"
-              },
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Spear",
-                    "count": 2,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Shield Bash",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              },
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Spear",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Shield Bash",
-                    "count": 2,
-                    "type": "melee"
-                  }
-                ]
-              }
-            ]
-          }
+        "description": "The gladiator makes three melee attacks or two ranged attacks.",
         },
-        "actions": []
-      },
       {
         "name": "Spear",
-        "desc": "Melee or Ranged Weapon Attack: +7 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 11 (2d6 + 4) piercing damage, or 13 (2d8 + 4) piercing damage if used with two hands to make a melee attack.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "choose": 1,
-            "type": "damage",
-            "from": {
-              "option_set_type": "options_array",
-              "options": [
-                {
-                  "option_type": "damage",
-                  "notes": "One handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "2d6+4"
-                },
-                {
-                  "option_type": "damage",
-                  "notes": "Two handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "2d8+4"
-                }
-              ]
-            }
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +7 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 11 (2d6 + 4) piercing damage, or 13 (2d8 + 4) piercing damage if used with two hands to make a melee attack.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       },
       {
         "name": "Shield Bash",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one creature. Hit: 9 (2d4 + 4) bludgeoning damage. If the target is a Medium or smaller creature, it must succeed on a DC 15 Strength saving throw or be knocked prone.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "2d4+4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one creature. Hit: 9 (2d4 + 4) bludgeoning damage. If the target is a Medium or smaller creature, it must succeed on a DC 15 Strength saving throw or be knocked prone.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d4+4",
+          "average": 9
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Gladiators battle for the entertainment of raucous crowds. Some gladiators are brutal pit fighters who treat each match as a life-or-death struggle, while others are professional duelists who command huge fees but rarely fight to the death.",
+    "background": "Gladiators battle for the entertainment of raucous crowds. Some gladiators are brutal pit fighters who treat each match as a life-or-death struggle, while others are professional duelists who command huge fees but rarely fight to the death.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any alignment"
+      "any-alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Gnoll",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "gnoll",
     "alignment": "chaotic evil",
     "challengeRating": "0.5",
     "xp": 100,
@@ -1466,8 +1184,7 @@ export const humanoidMonsters: Monster[] = [
     "hitPoints": 22,
     "hitDice": "5d8",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -1476,8 +1193,8 @@ export const humanoidMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 60
     },
     "languages": [
       "Gnoll"
@@ -1492,87 +1209,52 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Bite",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 4 (1d4 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d4+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 4 (1d4 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4+2",
+          "average": 5
+        }
       },
       {
         "name": "Spear",
-        "desc": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 5 (1d6 + 2) piercing damage, or 6 (1d8 + 2) piercing damage if used with two hands to make a melee attack.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "choose": 1,
-            "type": "damage",
-            "from": {
-              "option_set_type": "options_array",
-              "options": [
-                {
-                  "option_type": "damage",
-                  "notes": "One handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "1d6+2"
-                },
-                {
-                  "option_type": "damage",
-                  "notes": "Two handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "1d8+2"
-                }
-              ]
-            }
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 5 (1d6 + 2) piercing damage, or 6 (1d8 + 2) piercing damage if used with two hands to make a melee attack.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       },
       {
         "name": "Longbow",
-        "desc": "Ranged Weapon Attack: +3 to hit, range 150/600 ft., one target. Hit: 5 (1d8 + 1) piercing damage.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d8+1"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +3 to hit, range 150/600 ft., one target. Hit: 5 (1d8 + 1) piercing damage.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8+1",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Gnolls are hyena-headed humanoids who are driven by an insatiable hunger for flesh. They are savage and cruel, forming packs that hunt and raid settlements for food and slaves. Gnolls are led by powerful spellcasters called flinds, who can control their pack through magical means. They are excellent trackers and can follow prey for days without rest.",
+    "imagePrompt": "A gnoll with HYENA HEAD, long hyena snout, pointed hyena ears, yellow hyena eyes, brown fur covering body, muscular torso, thin legs, bestial hyena features, NOT human with hyena makeup, clearly hyena-headed humanoid",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "chaotic evil"
+      "chaotic-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Goblin",
     "size": "Small",
     "type": "humanoid",
+    "subtype": "goblinoid",
     "alignment": "neutral evil",
     "challengeRating": "0.25",
     "xp": 50,
@@ -1587,8 +1269,7 @@ export const humanoidMonsters: Monster[] = [
     "hitPoints": 7,
     "hitDice": "2d6",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -1599,8 +1280,8 @@ export const humanoidMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 9
+      "passivePerception": 9,
+      "darkvision": 60
     },
     "languages": [
       "Common",
@@ -1616,50 +1297,41 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Scimitar",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) slashing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) slashing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6+2",
+          "average": 6
+        }
       },
       {
         "name": "Shortbow",
-        "desc": "Ranged Weapon Attack: +4 to hit, range 80/320 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +4 to hit, range 80/320 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+2",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Goblins are small, green-skinned humanoids with a penchant for mischief and cruelty. They are cowardly when alone but dangerous in groups, especially when led by stronger creatures like hobgoblins or bugbears. Goblins prefer to live in dark, cramped spaces and are excellent at setting traps and ambushes. They are also skilled riders and often use wolves or other beasts as mounts.",    "imagePrompt": "A small humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "small",
-      "neutral evil"
+      "neutral-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Grimlock",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "grimlock",
     "alignment": "neutral evil",
     "challengeRating": "0.25",
     "xp": 50,
@@ -1672,10 +1344,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "dex",
     "hitPoints": 11,
-    "hitDice": "2d8",
+    "hitDice": "2d8+2",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -1686,16 +1357,12 @@ export const humanoidMonsters: Monster[] = [
     "damageResistances": [],
     "damageImmunities": [],
     "conditionImmunities": [
-      {
-        "index": "blinded",
-        "name": "Blinded",
-        "url": "/api/2014/conditions/blinded"
-      }
+      "Blinded"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "blindsight": 30,
-      "passivePerception": 13
+      "passivePerception": 13,
+      "blindsight": 30
     },
     "languages": [
       "Undercommon"
@@ -1718,42 +1385,33 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Spiked Bone Club",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 5 (1d4 + 3) bludgeoning damage plus 2 (1d4) piercing damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "1d4+3"
-          },
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 5 (1d4 + 3) bludgeoning damage plus 2 (1d4) piercing damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d4+3",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Grimlocks are sightless humanoids that have adapted to life in the deepest reaches of the Underdark. They have pale, hairless skin that ranges from chalky white to ashen grey, with leathery, calloused flesh that has toughened from generations of living in harsh underground environments. Their faces are featureless except for gaping mouths filled with sharp teeth and small, vestigial eye sockets that are completely sealed over. Grimlocks rely entirely on their heightened senses of hearing and smell to navigate their dark world. They are incredibly strong and resilient, having evolved to survive in the unforgiving depths where other creatures would perish. Grimlocks live in primitive tribal societies, often serving more powerful Underdark denizens like mind flayers or drow as slaves or hunting parties. They are known for their ferocity in combat and their ability to move silently through rocky terrain, making them dangerous ambush predators. Despite their primitive nature, grimlocks are intelligent enough to use tools and weapons, typically crafting crude implements from bone, stone, and scavenged materials.",
+    "background": "Grimlocks are sightless humanoids that have adapted to life in the deepest reaches of the Underdark. They have pale, hairless skin that ranges from chalky white to ashen grey, with leathery, calloused flesh that has toughened from generations of living in harsh underground environments. Their faces are featureless except for gaping mouths filled with sharp teeth and small, vestigial eye sockets that are completely sealed over. Grimlocks rely entirely on their heightened senses of hearing and smell to navigate their dark world. They are incredibly strong and resilient, having evolved to survive in the unforgiving depths where other creatures would perish. Grimlocks live in primitive tribal societies, often serving more powerful Underdark denizens like mind flayers or drow as slaves or hunting parties. They are known for their ferocity in combat and their ability to move silently through rocky terrain, making them dangerous ambush predators. Despite their primitive nature, grimlocks are intelligent enough to use tools and weapons, typically crafting crude implements from bone, stone, and scavenged materials.",
+    "imagePrompt": "A grey-skinned, perverted primitive human with leathery skin, caveman-like features, living in dark underground caves of the Underdark, no horns or monster features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "neutral evil"
+      "neutral-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Guard",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any alignment",
     "challengeRating": "0.125",
     "xp": 25,
@@ -1766,10 +1424,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 16,
     "armorType": "armor",
     "hitPoints": 11,
-    "hitDice": "2d8",
+    "hitDice": "2d8+2",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -1790,55 +1447,33 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Spear",
-        "desc": "Melee or Ranged Weapon Attack: +3 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d6 + 1) piercing damage or 5 (1d8 + 1) piercing damage if used with two hands to make a melee attack.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "choose": 1,
-            "type": "damage",
-            "from": {
-              "option_set_type": "options_array",
-              "options": [
-                {
-                  "option_type": "damage",
-                  "notes": "One handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "1d6+1"
-                },
-                {
-                  "option_type": "damage",
-                  "notes": "Two handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "1d8+1"
-                }
-              ]
-            }
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +3 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d6 + 1) piercing damage or 5 (1d8 + 1) piercing damage if used with two hands to make a melee attack.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Guards include members of a city watch, sentries in a citadel or fortified town, and the bodyguards of merchants and nobles.",
+    "background": "Guards include members of a city watch, sentries in a citadel or fortified town, and the bodyguards of merchants and nobles.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any alignment"
+      "any-alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Half-Red Dragon Veteran",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "any alignment",
     "challengeRating": "5",
     "xp": 1800,
@@ -1851,10 +1486,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 18,
     "armorType": "armor",
     "hitPoints": 65,
-    "hitDice": "10d8",
+    "hitDice": "10d8+20",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -1865,9 +1499,9 @@ export const humanoidMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
+      "passivePerception": 12,
       "darkvision": 60,
-      "blindsight": 10,
-      "passivePerception": 12
+      "blindsight": 10
     },
     "languages": [
       "Common",
@@ -1878,120 +1512,64 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The veteran makes two longsword attacks. If it has a shortsword drawn, it can also make a shortsword attack.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Longsword",
-            "count": "2",
-            "type": "melee"
-          },
-          {
-            "action_name": "Shortsword",
-            "count": "1",
-            "type": "melee"
-          }
-        ]
-      },
+        "description": "The veteran makes two longsword attacks. If it has a shortsword drawn, it can also make a shortsword attack.",
+        },
       {
         "name": "Longsword",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage, or 8 (1d10 + 3) slashing damage if used with two hands.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "choose": 1,
-            "type": "damage",
-            "from": {
-              "option_set_type": "options_array",
-              "options": [
-                {
-                  "option_type": "damage",
-                  "notes": "One handed",
-                  "damage_type": {
-                    "index": "slashing",
-                    "name": "Slashing",
-                    "url": "/api/2014/damage-types/slashing"
-                  },
-                  "damage_dice": "1d8+3"
-                },
-                {
-                  "option_type": "damage",
-                  "notes": "Two handed",
-                  "damage_type": {
-                    "index": "slashing",
-                    "name": "Slashing",
-                    "url": "/api/2014/damage-types/slashing"
-                  },
-                  "damage_dice": "1d10+3"
-                }
-              ]
-            }
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage, or 8 (1d10 + 3) slashing damage if used with two hands.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       },
       {
         "name": "Shortsword",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+3",
+          "average": 7
+        }
       },
       {
         "name": "Heavy Crossbow",
-        "desc": "Ranged Weapon Attack: +3 to hit, range 100/400 ft., one target. Hit: 6 (1d10 + 1) piercing damage.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d10+1"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +3 to hit, range 100/400 ft., one target. Hit: 6 (1d10 + 1) piercing damage.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d10+1",
+          "average": 7
+        }
       },
       {
         "name": "Fire Breath",
-        "desc": "The veteran exhales fire in a 15-foot cone. Each creature in that area must make a DC 15 Dexterity saving throw, taking 24 (7d6) fire damage on a failed save, or half as much damage on a successful one.",
-        "damage": [
-          {
-            "damage_type": {
-              "index": "fire",
-              "name": "Fire",
-              "url": "/api/2014/damage-types/fire"
-            },
-            "damage_dice": "7d6"
-          }
-        ],
-        "actions": []
+        "description": "The veteran exhales fire in a 15-foot cone. Each creature in that area must make a DC 15 Dexterity saving throw, taking 24 (7d6) fire damage on a failed save, or half as much damage on a successful one.",
+        "damage": {
+          "type": "Fire",
+          "roll": "7d6",
+          "average": 25
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Half-red dragon veterans are experienced warriors who have been transformed by draconic blood, either through heritage or magical means. They combine the tactical expertise of a seasoned fighter with the destructive power of red dragon ancestry. These warriors are immune to fire damage and can breathe devastating cones of flame, making them formidable opponents on the battlefield. Many serve as elite guards for powerful individuals or lead mercenary companies.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any alignment"
+      "any-alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Hobgoblin",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "goblinoid",
     "alignment": "lawful evil",
     "challengeRating": "0.5",
     "xp": 100,
@@ -2004,10 +1582,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 18,
     "armorType": "armor",
     "hitPoints": 11,
-    "hitDice": "2d8",
+    "hitDice": "2d8+2",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -2016,8 +1593,8 @@ export const humanoidMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 60
     },
     "languages": [
       "Common",
@@ -2033,71 +1610,41 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Longsword",
-        "desc": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 5 (1d8 + 1) slashing damage, or 6 (1d10 + 1) slashing damage if used with two hands.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "choose": 1,
-            "type": "damage",
-            "from": {
-              "option_set_type": "options_array",
-              "options": [
-                {
-                  "option_type": "damage",
-                  "notes": "One handed",
-                  "damage_type": {
-                    "index": "slashing",
-                    "name": "Slashing",
-                    "url": "/api/2014/damage-types/slashing"
-                  },
-                  "damage_dice": "1d8+1"
-                },
-                {
-                  "option_type": "damage",
-                  "notes": "Two handed",
-                  "damage_type": {
-                    "index": "slashing",
-                    "name": "Slashing",
-                    "url": "/api/2014/damage-types/slashing"
-                  },
-                  "damage_dice": "1d10+1"
-                }
-              ]
-            }
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 5 (1d8 + 1) slashing damage, or 6 (1d10 + 1) slashing damage if used with two hands.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       },
       {
         "name": "Longbow",
-        "desc": "Ranged Weapon Attack: +3 to hit, range 150/600 ft., one target. Hit: 5 (1d8 + 1) piercing damage.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d8+1"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +3 to hit, range 150/600 ft., one target. Hit: 5 (1d8 + 1) piercing damage.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8+1",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Hobgoblins are disciplined, militaristic humanoids that value order and hierarchy. They are larger and more organized than goblins, with a strong martial tradition and sophisticated tactics. Hobgoblins build fortified settlements and maintain strict military discipline. They are excellent engineers and often construct elaborate fortifications and war machines. Hobgoblins respect strength and skill, and they often serve as mercenaries or military advisors.",    "imagePrompt": "A hobgoblin with REDDISH-BROWN SKIN, GRAY SKIN, BRIGHT RED-ORANGE FACE, prominent BLUE NOSE or RED NOSE, yellowish to dark brown eyes, yellowed teeth, dark reddish-brown to gray hair, burly muscular build, 5-6 feet tall, goblinoid features, military appearance, NOT beautiful lady, NOT human, clearly goblinoid monster",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "lawful evil"
+      "lawful-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Knight",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any alignment",
     "challengeRating": "3",
     "xp": 700,
@@ -2110,10 +1657,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 18,
     "armorType": "armor",
     "hitPoints": 52,
-    "hitDice": "8d8",
+    "hitDice": "8d8+16",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -2137,69 +1683,56 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The knight makes two melee attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Greatsword",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
-      },
+        "description": "The knight makes two melee attacks.",
+        },
       {
         "name": "Greatsword",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "2d6+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6+3",
+          "average": 10
+        }
       },
       {
         "name": "Heavy Crossbow",
-        "desc": "Ranged Weapon Attack: +2 to hit, range 100/400 ft., one target. Hit: 5 (1d10) piercing damage.",
-        "attack_bonus": 2,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d10"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +2 to hit, range 100/400 ft., one target. Hit: 5 (1d10) piercing damage.",
+        "attackBonus": 2,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d10",
+          "average": 6
+        }
       },
       {
         "name": "Leadership",
-        "desc": "For 1 minute, the knight can utter a special command or warning whenever a nonhostile creature that it can see within 30 ft. of it makes an attack roll or a saving throw. The creature can add a d4 to its roll provided it can hear and understand the knight. A creature can benefit from only one Leadership die at a time. This effect ends if the knight is incapacitated.",
-        "damage": [],
-        "actions": []
+        "description": "For 1 minute, the knight can utter a special command or warning whenever a nonhostile creature that it can see within 30 ft. of it makes an attack roll or a saving throw. The creature can add a d4 to its roll provided it can hear and understand the knight. A creature can benefit from only one Leadership die at a time. This effect ends if the knight is incapacitated.",
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Knights are warriors who pledge service to rulers, religious orders, and noble causes. A knight’s alignment determines the extent to which a pledge is honored. Whether undertaking a quest or patrolling a realm, a knight often travels with an entourage that includes squires and hirelings who are commoners.",
+    "background": "Knights are warriors who pledge service to rulers, religious orders, and noble causes. A knight’s alignment determines the extent to which a pledge is honored. Whether undertaking a quest or patrolling a realm, a knight often travels with an entourage that includes squires and hirelings who are commoners.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any alignment"
+      "any-alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Kobold",
     "size": "Small",
     "type": "humanoid",
+    "subtype": "kobold",
     "alignment": "lawful evil",
     "challengeRating": "0.125",
     "xp": 25,
@@ -2212,10 +1745,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 5,
-    "hitDice": "2d6",
+    "hitDice": "2d6+-2",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -2224,8 +1756,8 @@ export const humanoidMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 8
+      "passivePerception": 8,
+      "darkvision": 60
     },
     "languages": [
       "Common",
@@ -2245,50 +1777,42 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Dagger",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d4+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4+2",
+          "average": 5
+        }
       },
       {
         "name": "Sling",
-        "desc": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 4 (1d4 + 2) bludgeoning damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "1d4+2"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 4 (1d4 + 2) bludgeoning damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d4+2",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Kobolds are small, reptilian humanoids who are often underestimated due to their size. They are excellent miners and trapmakers, and they often live in complex tunnel systems beneath the earth. Kobolds are highly social and work together in large groups, using their numbers and cunning to overcome stronger opponents. They are also skilled at domesticating and training various creatures, particularly giant rats and other small beasts.",
+    "imagePrompt": "A small reptilian humanoid with scaly reddish-brown to black skin, burnt orange to red eyes, double-jointed legs, long clawed fingers, crocodile-like jaw, small horns, rat-like tail, wearing red or orange tattered clothing",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "small",
-      "lawful evil"
+      "lawful-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Lizardfolk",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "lizardfolk",
     "alignment": "neutral",
     "challengeRating": "0.5",
     "xp": 100,
@@ -2301,11 +1825,10 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "natural",
     "hitPoints": 22,
-    "hitDice": "4d8",
+    "hitDice": "4d8+4",
     "speed": {
       "walk": 30,
-      "swim": 30,
-      "hover": false
+      "swim": 30
     },
     "savingThrows": {},
     "skills": {
@@ -2333,200 +1856,67 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The lizardfolk makes two melee attacks, each one with a different weapon.",
-        "damage": [],
-        "multiattack_type": "action_options",
-        "action_options": {
-          "choose": 1,
-          "type": "action",
-          "from": {
-            "option_set_type": "options_array",
-            "options": [
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Bite",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Heavy Club",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              },
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Bite",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Javelin",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              },
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Bite",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Spiked Shield",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              },
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Javelin",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Heavy Club",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              },
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Spiked Shield",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Javelin",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              },
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Spiked Shield",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Heavy Club",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              }
-            ]
-          }
+        "description": "The lizardfolk makes two melee attacks, each one with a different weapon.",
         },
-        "actions": []
-      },
       {
         "name": "Bite",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+2",
+          "average": 6
+        }
       },
       {
         "name": "Heavy Club",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) bludgeoning damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) bludgeoning damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d6+2",
+          "average": 6
+        }
       },
       {
         "name": "Javelin",
-        "desc": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+2",
+          "average": 6
+        }
       },
       {
         "name": "Spiked Shield",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+2",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Lizardfolk are primitive, reptilian humanoids that dwell in swamps and marshes. They have scaly, greenish-brown skin, long snouts with sharp teeth, and yellow eyes with vertical pupils. Their bodies are lean and muscular, with long tails that help them balance and swim. Lizardfolk are excellent swimmers and can hold their breath for extended periods, making them formidable in aquatic environments. They are known for their stoic nature, practical mindset, and strong tribal bonds. Lizardfolk communities are typically led by shamans or chieftains, and they value strength, survival skills, and loyalty to their tribe above all else. They are skilled hunters and crafters, creating weapons and tools from bone, stone, and other natural materials. Despite their primitive appearance, lizardfolk are intelligent and adaptable, though they often prefer to avoid contact with other races unless necessary for trade or defense.",
+    "background": "Lizardfolk are primitive, reptilian humanoids that dwell in swamps and marshes. They have scaly, greenish-brown skin, long snouts with sharp teeth, and yellow eyes with vertical pupils. Their bodies are lean and muscular, with long tails that help them balance and swim. Lizardfolk are excellent swimmers and can hold their breath for extended periods, making them formidable in aquatic environments. They are known for their stoic nature, practical mindset, and strong tribal bonds. Lizardfolk communities are typically led by shamans or chieftains, and they value strength, survival skills, and loyalty to their tribe above all else. They are skilled hunters and crafters, creating weapons and tools from bone, stone, and other natural materials. Despite their primitive appearance, lizardfolk are intelligent and adaptable, though they often prefer to avoid contact with other races unless necessary for trade or defense.",
+    "imagePrompt": "A lizardfolk with LIZARD HEAD, long lizard snout, forked tongue, slit lizard eyes, green scales covering entire body, lizard tail, clawed hands and feet, anthropomorphic lizard, NOT human with lizard features, clearly lizard-headed humanoid",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "neutral"
+      "neutral",
+      "humanoid"
     ]
   },
   {
     "name": "Mage",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any alignment",
     "challengeRating": "6",
     "xp": 2300,
@@ -2541,8 +1931,7 @@ export const humanoidMonsters: Monster[] = [
     "hitPoints": 40,
     "hitDice": "9d8",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -2569,34 +1958,33 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Dagger",
-        "desc": "Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d4+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4+2",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Mages spend their lives in the study and practice of magic. Good-aligned mages offer counsel to nobles and others in power, while evil mages dwell in isolated sites to perform unspeakable experiments without interference.",
+    "background": "Mages spend their lives in the study and practice of magic. Good-aligned mages offer counsel to nobles and others in power, while evil mages dwell in isolated sites to perform unspeakable experiments without interference.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any alignment"
+      "any-alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Merfolk",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "merfolk",
     "alignment": "neutral",
     "challengeRating": "0.125",
     "xp": 25,
@@ -2609,11 +1997,10 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "dex",
     "hitPoints": 11,
-    "hitDice": "2d8",
+    "hitDice": "2d8+2",
     "speed": {
       "walk": 10,
-      "swim": 40,
-      "hover": false
+      "swim": 40
     },
     "savingThrows": {},
     "skills": {
@@ -2640,55 +2027,33 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Spear",
-        "desc": "Melee or Ranged Weapon Attack: +2 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 3 (1d6) piercing damage, or 4 (1d8) piercing damage if used with two hands to make a melee attack.",
-        "attack_bonus": 2,
-        "damage": [
-          {
-            "choose": 1,
-            "type": "damage",
-            "from": {
-              "option_set_type": "options_array",
-              "options": [
-                {
-                  "option_type": "damage",
-                  "notes": "One handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "1d6"
-                },
-                {
-                  "option_type": "damage",
-                  "notes": "Two handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "1d8"
-                }
-              ]
-            }
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +2 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 3 (1d6) piercing damage, or 4 (1d8) piercing damage if used with two hands to make a melee attack.",
+        "attackBonus": 2,
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A medium aquatic humanoid with human upper body and fish tail, living underwater.",
+    "background": "This merfolk is a medium aquatic humanoid with human upper body and fish tail, living underwater.",
+    "imagePrompt": "A medium aquatic humanoid with human upper body and fish tail, swimming underwater in ocean environment",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "neutral"
+      "neutral",
+      "humanoid"
     ]
   },
   {
     "name": "Noble",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any alignment",
     "challengeRating": "0.125",
     "xp": 25,
@@ -2703,8 +2068,7 @@ export const humanoidMonsters: Monster[] = [
     "hitPoints": 9,
     "hitDice": "2d8",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -2727,34 +2091,33 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Rapier",
-        "desc": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 5 (1d8 + 1) piercing damage.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "1d8+1"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 5 (1d8 + 1) piercing damage.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d8+1",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
     "description": "**Nobles** wield great authority and influence as members of the upper class, possessing wealth and connections that can make them as powerful as monarchs and generals. A noble often travels in the company of guards, as well as servants who are commoners.\n\nThe noble’s statistics can also be used to represent **courtiers** who aren’t of noble birth.",
+    "background": "**Nobles** wield great authority and influence as members of the upper class, possessing wealth and connections that can make them as powerful as monarchs and generals. A noble often travels in the company of guards, as well as servants who are commoners.\n\nThe noble’s statistics can also be used to represent **courtiers** who aren’t of noble birth.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any alignment"
+      "any-alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Orc",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "orc",
     "alignment": "chaotic evil",
     "challengeRating": "0.5",
     "xp": 100,
@@ -2767,10 +2130,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "armor",
     "hitPoints": 15,
-    "hitDice": "2d8",
+    "hitDice": "2d8+6",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -2781,8 +2143,8 @@ export const humanoidMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 60
     },
     "languages": [
       "Common",
@@ -2798,50 +2160,42 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Greataxe",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 9 (1d12 + 3) slashing damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d12+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 9 (1d12 + 3) slashing damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d12+3",
+          "average": 10
+        }
       },
       {
         "name": "Javelin",
-        "desc": "Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+3",
+          "average": 7
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Orcs are fierce, warlike humanoids with greenish-gray skin and prominent tusks. They are known for their strength, aggression, and tribal society based on might and conquest. Orcs typically dwell in harsh environments such as mountains, caves, or wastelands, organizing themselves into tribes led by the strongest warriors. They are constantly seeking to expand their territory and often raid nearby settlements for food, slaves, and treasure.",
+    "imagePrompt": "A medium orc with greenish-gray skin, prominent tusks, brutish features, muscular build, and aggressive appearance",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "chaotic evil"
+      "chaotic-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Priest",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any alignment",
     "challengeRating": "2",
     "xp": 450,
@@ -2854,10 +2208,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "armor",
     "hitPoints": 27,
-    "hitDice": "5d8",
+    "hitDice": "5d8+5",
     "speed": {
-      "walk": 25,
-      "hover": false
+      "walk": 25
     },
     "savingThrows": {},
     "skills": {
@@ -2889,34 +2242,33 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Mace",
-        "desc": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 3 (1d6) bludgeoning damage.",
-        "attack_bonus": 2,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "1d6"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 3 (1d6) bludgeoning damage.",
+        "attackBonus": 2,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d6",
+          "average": 4
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Priests bring the teachings of their gods to the common folk. They are the spiritual leaders of temples and shrines and often hold positions of influence in their communities. Evil priests might work openly under a tyrant, or they might be the leaders of religious sects hidden in the shadows of good society, overseeing depraved rites.\n\nA priest typically has one or more acolytes to help with religious ceremonies and other sacred duties.",
+    "background": "Priests bring the teachings of their gods to the common folk. They are the spiritual leaders of temples and shrines and often hold positions of influence in their communities. Evil priests might work openly under a tyrant, or they might be the leaders of religious sects hidden in the shadows of good society, overseeing depraved rites.\n\nA priest typically has one or more acolytes to help with religious ceremonies and other sacred duties.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any alignment"
+      "any-alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Sahuagin",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "sahuagin",
     "alignment": "lawful evil",
     "challengeRating": "0.5",
     "xp": 100,
@@ -2929,11 +2281,10 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "natural",
     "hitPoints": 22,
-    "hitDice": "4d8",
+    "hitDice": "4d8+4",
     "speed": {
       "walk": 30,
-      "swim": 40,
-      "hover": false
+      "swim": 40
     },
     "savingThrows": {},
     "skills": {
@@ -2944,8 +2295,8 @@ export const humanoidMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 120,
-      "passivePerception": 15
+      "passivePerception": 15,
+      "darkvision": 120
     },
     "languages": [
       "Sahuagin"
@@ -2968,137 +2319,57 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The sahuagin makes two melee attacks: one with its bite and one with its claws or spear.",
-        "damage": [],
-        "multiattack_type": "action_options",
-        "action_options": {
-          "choose": 1,
-          "type": "action",
-          "from": {
-            "option_set_type": "options_array",
-            "options": [
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Bite",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Claws",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              },
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Bite",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Spear",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              }
-            ]
-          }
+        "description": "The sahuagin makes two melee attacks: one with its bite and one with its claws or spear.",
         },
-        "actions": []
-      },
       {
         "name": "Bite",
-        "desc": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 3 (1d4 + 1) piercing damage.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d4+1"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 3 (1d4 + 1) piercing damage.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4+1",
+          "average": 4
+        }
       },
       {
         "name": "Claws",
-        "desc": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 3 (1d4 + 1) slashing damage.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d4+1"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 3 (1d4 + 1) slashing damage.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d4+1",
+          "average": 4
+        }
       },
       {
         "name": "Spear",
-        "desc": "Melee or Ranged Weapon Attack: +3 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d6 + 1) piercing damage, or 5 (1d8 + 1) piercing damage if used with two hands to make a melee attack.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "choose": 1,
-            "type": "damage",
-            "from": {
-              "option_set_type": "options_array",
-              "options": [
-                {
-                  "option_type": "damage",
-                  "notes": "One handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "1d6+1"
-                },
-                {
-                  "option_type": "damage",
-                  "notes": "Two handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "1d8+1"
-                }
-              ]
-            }
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +3 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d6 + 1) piercing damage, or 5 (1d8 + 1) piercing damage if used with two hands to make a melee attack.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Sahuagin are vicious, shark-like humanoids that rule the depths of the ocean with an iron fist. They have sleek, muscular bodies covered in dark green or blue scales, with distinctive shark-like heads featuring rows of razor-sharp teeth and cold, predatory eyes. Their limbs end in webbed hands and feet, and they sport dorsal fins and gill slits along their necks. Sahuagin are perfectly adapted to aquatic life, able to breathe both air and water, though they must return to the sea every few hours to avoid suffocation. These creatures are known for their bloodthirsty nature and their ability to enter a terrifying blood frenzy when their prey is wounded. Sahuagin possess a unique telepathic connection with sharks, allowing them to command these apex predators to do their bidding. They live in hierarchical societies ruled by powerful barons and priestesses, often serving as the enforcers of underwater kingdoms. Sahuagin are excellent swimmers and fierce combatants, using their natural weapons and crude spears to hunt both sea creatures and surface dwellers who venture into their domain.",
+    "background": "Sahuagin are vicious, shark-like humanoids that rule the depths of the ocean with an iron fist. They have sleek, muscular bodies covered in dark green or blue scales, with distinctive shark-like heads featuring rows of razor-sharp teeth and cold, predatory eyes. Their limbs end in webbed hands and feet, and they sport dorsal fins and gill slits along their necks. Sahuagin are perfectly adapted to aquatic life, able to breathe both air and water, though they must return to the sea every few hours to avoid suffocation. These creatures are known for their bloodthirsty nature and their ability to enter a terrifying blood frenzy when their prey is wounded. Sahuagin possess a unique telepathic connection with sharks, allowing them to command these apex predators to do their bidding. They live in hierarchical societies ruled by powerful barons and priestesses, often serving as the enforcers of underwater kingdoms. Sahuagin are excellent swimmers and fierce combatants, using their natural weapons and crude spears to hunt both sea creatures and surface dwellers who venture into their domain.",
+    "imagePrompt": "A medium aquatic humanoid with shark-like head, fins, webbed hands, predatory features, swimming underwater in ocean environment",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "lawful evil"
+      "lawful-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Scout",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any alignment",
     "challengeRating": "0.5",
     "xp": 100,
@@ -3111,10 +2382,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "armor",
     "hitPoints": 16,
-    "hitDice": "3d8",
+    "hitDice": "3d8+3",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -3143,78 +2413,47 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The scout makes two melee attacks or two ranged attacks.",
-        "damage": [],
-        "multiattack_type": "action_options",
-        "action_options": {
-          "choose": 1,
-          "type": "action",
-          "from": {
-            "option_set_type": "options_array",
-            "options": [
-              {
-                "option_type": "action",
-                "action_name": "Shortsword",
-                "count": 2,
-                "type": "melee"
-              },
-              {
-                "option_type": "action",
-                "action_name": "Longbow",
-                "count": 2,
-                "type": "ranged"
-              }
-            ]
-          }
+        "description": "The scout makes two melee attacks or two ranged attacks.",
         },
-        "actions": []
-      },
       {
         "name": "Shortsword",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+2",
+          "average": 6
+        }
       },
       {
         "name": "Longbow",
-        "desc": "Ranged Weapon Attack: +4 to hit, range 150/600 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d8+2"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +4 to hit, range 150/600 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8+2",
+          "average": 7
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Scouts are skilled hunters and trackers who offer their services for a fee. Most hunt wild game, but a few work as bounty hunters, serve as guides, or provide military reconnaissance.",
+    "background": "Scouts are skilled hunters and trackers who offer their services for a fee. Most hunt wild game, but a few work as bounty hunters, serve as guides, or provide military reconnaissance.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any alignment"
+      "any-alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Spy",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any alignment",
     "challengeRating": "1",
     "xp": 200,
@@ -3229,8 +2468,7 @@ export const humanoidMonsters: Monster[] = [
     "hitPoints": 27,
     "hitDice": "6d8",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -3265,63 +2503,47 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The spy makes two melee attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Shortsword",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
-      },
+        "description": "The spy makes two melee attacks.",
+        },
       {
         "name": "Shortsword",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+2",
+          "average": 6
+        }
       },
       {
         "name": "Hand Crossbow",
-        "desc": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+2",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Rulers, nobles, merchants, guildmasters, and other wealthy individuals use spies to gain the upper hand in a world of cutthroat politics. A spy is trained to secretly gather information. Loyal spies would rather die than divulge information that could compromise them or their employers.",
+    "background": "Rulers, nobles, merchants, guildmasters, and other wealthy individuals use spies to gain the upper hand in a world of cutthroat politics. A spy is trained to secretly gather information. Loyal spies would rather die than divulge information that could compromise them or their employers.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any alignment"
+      "any-alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Thug",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any non-good alignment",
     "challengeRating": "0.5",
     "xp": 100,
@@ -3334,10 +2556,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "armor",
     "hitPoints": 32,
-    "hitDice": "5d8",
+    "hitDice": "5d8+10",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -3363,63 +2584,47 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The thug makes two melee attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Mace",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
-      },
+        "description": "The thug makes two melee attacks.",
+        },
       {
         "name": "Mace",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 5 (1d6 + 2) bludgeoning damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 5 (1d6 + 2) bludgeoning damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d6+2",
+          "average": 6
+        }
       },
       {
         "name": "Heavy Crossbow",
-        "desc": "Ranged Weapon Attack: +2 to hit, range 100/400 ft., one target. Hit: 5 (1d10) piercing damage.",
-        "attack_bonus": 2,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d10"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +2 to hit, range 100/400 ft., one target. Hit: 5 (1d10) piercing damage.",
+        "attackBonus": 2,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d10",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Thugs are ruthless enforcers skilled at intimidation and violence. They work for money and have few scruples.",
+    "background": "Thugs are ruthless enforcers skilled at intimidation and violence. They work for money and have few scruples.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any non-good alignment"
+      "any-non-good alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Tribal Warrior",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any alignment",
     "challengeRating": "0.125",
     "xp": 25,
@@ -3432,10 +2637,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "armor",
     "hitPoints": 11,
-    "hitDice": "2d8",
+    "hitDice": "2d8+2",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -3459,55 +2663,33 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Spear",
-        "desc": "Melee or Ranged Weapon Attack: +3 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d6 + 1) piercing damage, or 5 (1d8 + 1) piercing damage if used with two hands to make a melee attack.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "choose": 1,
-            "type": "damage",
-            "from": {
-              "option_set_type": "options_array",
-              "options": [
-                {
-                  "option_type": "damage",
-                  "notes": "One handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "1d6+1"
-                },
-                {
-                  "option_type": "damage",
-                  "notes": "Two handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "1d8+1"
-                }
-              ]
-            }
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +3 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d6 + 1) piercing damage, or 5 (1d8 + 1) piercing damage if used with two hands to make a melee attack.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Tribal warriors live beyond civilization, most often subsisting on fishing and hunting. Each tribe acts in accordance with the wishes of its chief, who is the greatest or oldest warrior of the tribe or a tribe member blessed by the gods.",
+    "background": "Tribal warriors live beyond civilization, most often subsisting on fishing and hunting. Each tribe acts in accordance with the wishes of its chief, who is the greatest or oldest warrior of the tribe or a tribe member blessed by the gods.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any alignment"
+      "any-alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Veteran",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "any race",
     "alignment": "any alignment",
     "challengeRating": "3",
     "xp": 700,
@@ -3520,10 +2702,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 17,
     "armorType": "armor",
     "hitPoints": 58,
-    "hitDice": "9d8",
+    "hitDice": "9d8+18",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -3545,105 +2726,57 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The veteran makes two longsword attacks. If it has a shortsword drawn, it can also make a shortsword attack.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Longsword",
-            "count": "2",
-            "type": "melee"
-          },
-          {
-            "action_name": "Shortsword",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
-      },
+        "description": "The veteran makes two longsword attacks. If it has a shortsword drawn, it can also make a shortsword attack.",
+        },
       {
         "name": "Longsword",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage, or 8 (1d10 + 3) slashing damage if used with two hands.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "choose": 1,
-            "type": "damage",
-            "from": {
-              "option_set_type": "options_array",
-              "options": [
-                {
-                  "option_type": "damage",
-                  "notes": "One handed",
-                  "damage_type": {
-                    "index": "slashing",
-                    "name": "Slashing",
-                    "url": "/api/2014/damage-types/slashing"
-                  },
-                  "damage_dice": "1d8+3"
-                },
-                {
-                  "option_type": "damage",
-                  "notes": "Two handed",
-                  "damage_type": {
-                    "index": "slashing",
-                    "name": "Slashing",
-                    "url": "/api/2014/damage-types/slashing"
-                  },
-                  "damage_dice": "1d10+3"
-                }
-              ]
-            }
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage, or 8 (1d10 + 3) slashing damage if used with two hands.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       },
       {
         "name": "Shortsword",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+3",
+          "average": 7
+        }
       },
       {
         "name": "Heavy Crossbow",
-        "desc": "Ranged Weapon Attack: +3 to hit, range 100/400 ft., one target. Hit: 6 (1d10 + 1) piercing damage.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d10+1"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +3 to hit, range 100/400 ft., one target. Hit: 6 (1d10 + 1) piercing damage.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d10+1",
+          "average": 7
+        }
       }
     ],
     "legendaryActions": [],
     "description": "Veterans are professional fighters that take up arms for pay or to protect something they believe in or value. Their ranks include soldiers retired from long service and warriors who never served anyone but themselves.",
+    "background": "Veterans are professional fighters that take up arms for pay or to protect something they believe in or value. Their ranks include soldiers retired from long service and warriors who never served anyone but themselves.",
+    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "any alignment"
+      "any-alignment",
+      "humanoid"
     ]
   },
   {
     "name": "Werebear, Bear Form",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "neutral good",
     "challengeRating": "5",
     "xp": 1800,
@@ -3656,11 +2789,10 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "natural",
     "hitPoints": 135,
-    "hitDice": "18d8",
+    "hitDice": "18d8+54",
     "speed": {
       "walk": 40,
-      "climb": 30,
-      "hover": false
+      "climb": 30
     },
     "savingThrows": {},
     "skills": {
@@ -3690,63 +2822,45 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "In bear form, the werebear makes two claw attacks. In humanoid form, it makes two greataxe attacks. In hybrid form, it can attack like a bear or a humanoid.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Claw",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
-      },
+        "description": "In bear form, the werebear makes two claw attacks. In humanoid form, it makes two greataxe attacks. In hybrid form, it can attack like a bear or a humanoid.",
+        },
       {
         "name": "Bite",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 15 (2d10 + 4) piercing damage. If the target is a humanoid, it must succeed on a DC 14 Constitution saving throw or be cursed with werebear lycanthropy.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "2d10+4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 15 (2d10 + 4) piercing damage. If the target is a humanoid, it must succeed on a DC 14 Constitution saving throw or be cursed with werebear lycanthropy.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10+4",
+          "average": 15
+        }
       },
       {
         "name": "Claw",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "2d8+4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d8+4",
+          "average": 13
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Werebears are lycanthropes who can transform into bears or hybrid forms. They are generally good-natured and protective, often serving as guardians of forests and wilderness areas. Werebears are incredibly strong and resilient, and they can heal rapidly from injuries. They are also skilled at tracking and survival, making them excellent rangers and protectors.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "neutral good"
+      "neutral-good",
+      "humanoid"
     ]
   },
   {
     "name": "Werebear, Human Form",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "neutral good",
     "challengeRating": "5",
     "xp": 1800,
@@ -3759,10 +2873,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 10,
     "armorType": "dex",
     "hitPoints": 135,
-    "hitDice": "18d8",
+    "hitDice": "18d8+54",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -3794,47 +2907,35 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "In bear form, the werebear makes two claw attacks. In humanoid form, it makes two greataxe attacks. In hybrid form, it can attack like a bear or a humanoid.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Greataxe",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
-      },
+        "description": "In bear form, the werebear makes two claw attacks. In humanoid form, it makes two greataxe attacks. In hybrid form, it can attack like a bear or a humanoid.",
+        },
       {
         "name": "Greataxe",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 10 (1d12 + 4) slashing damage.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d12+4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 10 (1d12 + 4) slashing damage.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d12+4",
+          "average": 11
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Werebears are lycanthropes who can transform into bears or hybrid forms. They are generally good-natured and protective, often serving as guardians of forests and wilderness areas. Werebears are incredibly strong and resilient, and they can heal rapidly from injuries. They are also skilled at tracking and survival, making them excellent rangers and protectors.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "neutral good"
+      "neutral-good",
+      "humanoid"
     ]
   },
   {
     "name": "Werebear, Hybrid Form",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "neutral good",
     "challengeRating": "5",
     "xp": 1800,
@@ -3847,11 +2948,10 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "natural",
     "hitPoints": 135,
-    "hitDice": "18d8",
+    "hitDice": "18d8+54",
     "speed": {
       "walk": 40,
-      "climb": 30,
-      "hover": false
+      "climb": 30
     },
     "savingThrows": {},
     "skills": {
@@ -3883,111 +2983,55 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "In bear form, the werebear makes two claw attacks. In humanoid form, it makes two greataxe attacks. In hybrid form, it can attack like a bear or a humanoid.",
-        "damage": [],
-        "multiattack_type": "action_options",
-        "action_options": {
-          "choose": 1,
-          "type": "action",
-          "from": {
-            "option_set_type": "options_array",
-            "options": [
-              {
-                "option_type": "action",
-                "action_name": "Claw",
-                "count": 2,
-                "type": "melee"
-              },
-              {
-                "option_type": "action",
-                "action_name": "Greataxe",
-                "count": 2,
-                "type": "melee"
-              },
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Greataxe",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Claw",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              }
-            ]
-          }
+        "description": "In bear form, the werebear makes two claw attacks. In humanoid form, it makes two greataxe attacks. In hybrid form, it can attack like a bear or a humanoid.",
         },
-        "actions": []
-      },
       {
         "name": "Bite",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 15 (2d10 + 4) piercing damage. If the target is a humanoid, it must succeed on a DC 14 Constitution saving throw or be cursed with werebear lycanthropy.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "2d10+4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 15 (2d10 + 4) piercing damage. If the target is a humanoid, it must succeed on a DC 14 Constitution saving throw or be cursed with werebear lycanthropy.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10+4",
+          "average": 15
+        }
       },
       {
         "name": "Claw",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "2d8+4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d8+4",
+          "average": 13
+        }
       },
       {
         "name": "Greataxe",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 10 (1d12 + 4) slashing damage.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d12+4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 10 (1d12 + 4) slashing damage.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d12+4",
+          "average": 11
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Werebears are lycanthropes who can transform into bears or hybrid forms. They are generally good-natured and protective, often serving as guardians of forests and wilderness areas. Werebears are incredibly strong and resilient, and they can heal rapidly from injuries. They are also skilled at tracking and survival, making them excellent rangers and protectors.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "neutral good"
+      "neutral-good",
+      "humanoid"
     ]
   },
   {
     "name": "Wereboar, Boar Form",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "neutral evil",
     "challengeRating": "4",
     "xp": 1100,
@@ -4000,10 +3044,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "natural",
     "hitPoints": 78,
-    "hitDice": "12d8",
+    "hitDice": "12d8+24",
     "speed": {
-      "walk": 40,
-      "hover": false
+      "walk": 40
     },
     "savingThrows": {},
     "skills": {
@@ -4037,34 +3080,31 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Tusks",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with wereboar lycanthropy.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "2d6+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with wereboar lycanthropy.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6+3",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Wereboars are savage lycanthropes who transform into boars or hybrid forms. They are known for their incredible toughness and relentless nature, often continuing to fight even when severely wounded. Wereboars are typically solitary creatures who prefer to live in remote wilderness areas, though some form small packs or serve as enforcers for more powerful evil beings. They are incredibly strong and durable, with a natural resistance to damage that makes them difficult to defeat. Wereboars are known for their charging attacks and their ability to knock opponents prone with their powerful tusks. Despite their bestial nature, they retain their human intelligence and can be cunning opponents.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "neutral evil"
+      "neutral-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Wereboar, Human Form",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "neutral evil",
     "challengeRating": "4",
     "xp": 1100,
@@ -4077,10 +3117,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 10,
     "armorType": "dex",
     "hitPoints": 78,
-    "hitDice": "12d8",
+    "hitDice": "12d8+24",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -4112,47 +3151,35 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The wereboar makes two attacks, only one of which can be with its tusks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Maul",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
-      },
+        "description": "The wereboar makes two attacks, only one of which can be with its tusks.",
+        },
       {
         "name": "Maul",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "2d6+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6+3",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Wereboars are savage lycanthropes who transform into boars or hybrid forms. They are known for their incredible toughness and relentless nature, often continuing to fight even when severely wounded. Wereboars are typically solitary creatures who prefer to live in remote wilderness areas, though some form small packs or serve as enforcers for more powerful evil beings. They are incredibly strong and durable, with a natural resistance to damage that makes them difficult to defeat. Wereboars are known for their charging attacks and their ability to knock opponents prone with their powerful tusks. Despite their bestial nature, they retain their human intelligence and can be cunning opponents.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "neutral evil"
+      "neutral-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Wereboar, Hybrid Form",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "neutral evil",
     "challengeRating": "4",
     "xp": 1100,
@@ -4165,10 +3192,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "natural",
     "hitPoints": 78,
-    "hitDice": "12d8",
+    "hitDice": "12d8+24",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -4204,89 +3230,45 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The wereboar makes two attacks, only one of which can be with its tusks.",
-        "damage": [],
-        "multiattack_type": "action_options",
-        "action_options": {
-          "choose": 1,
-          "type": "action",
-          "from": {
-            "option_set_type": "options_array",
-            "options": [
-              {
-                "option_type": "action",
-                "action_name": "Maul",
-                "count": 2,
-                "type": "melee"
-              },
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Maul",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Tusks",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              }
-            ]
-          }
+        "description": "The wereboar makes two attacks, only one of which can be with its tusks.",
         },
-        "actions": []
-      },
       {
         "name": "Maul",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "2d6+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6+3",
+          "average": 10
+        }
       },
       {
         "name": "Tusks",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with wereboar lycanthropy.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "2d6+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with wereboar lycanthropy.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6+3",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Wereboars are savage lycanthropes who transform into boars or hybrid forms. They are known for their incredible toughness and relentless nature, often continuing to fight even when severely wounded. Wereboars are typically solitary creatures who prefer to live in remote wilderness areas, though some form small packs or serve as enforcers for more powerful evil beings. They are incredibly strong and durable, with a natural resistance to damage that makes them difficult to defeat. Wereboars are known for their charging attacks and their ability to knock opponents prone with their powerful tusks. Despite their bestial nature, they retain their human intelligence and can be cunning opponents.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "neutral evil"
+      "neutral-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Wererat, Human Form",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "lawful evil",
     "challengeRating": "2",
     "xp": 450,
@@ -4299,10 +3281,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 33,
-    "hitDice": "6d8",
+    "hitDice": "6d8+6",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -4335,95 +3316,45 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The wererat makes two attacks, only one of which can be a bite.",
-        "damage": [],
-        "multiattack_type": "action_options",
-        "action_options": {
-          "choose": 1,
-          "type": "action",
-          "from": {
-            "option_set_type": "options_array",
-            "options": [
-              {
-                "option_type": "action",
-                "action_name": "Shortsword",
-                "count": 2,
-                "type": "melee"
-              },
-              {
-                "option_type": "action",
-                "action_name": "Hand Crossbow",
-                "count": 2,
-                "type": "ranged"
-              },
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Shortsword",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Hand Crossbow",
-                    "count": 1,
-                    "type": "ranged"
-                  }
-                ]
-              }
-            ]
-          }
+        "description": "The wererat makes two attacks, only one of which can be a bite.",
         },
-        "actions": []
-      },
       {
         "name": "Shortsword",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+2",
+          "average": 6
+        }
       },
       {
         "name": "Hand Crossbow",
-        "desc": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+2",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Wererats are stealthy lycanthropes who can transform into rats or hybrid forms. They are known for their cunning and adaptability, often operating in urban environments where they can blend in with the local rat population. Wererats typically form organized groups or guilds, using their ability to communicate with rats to gather information and spy on their enemies. They are excellent at stealth and infiltration, making them dangerous assassins and thieves. Wererats are particularly feared for their ability to spread disease and their tendency to work in coordinated groups. Despite their small size, they are dangerous opponents who prefer to strike from the shadows and use their numbers to overwhelm their prey.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "lawful evil"
+      "lawful-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Wererat, Hybrid Form",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "lawful evil",
     "challengeRating": "2",
     "xp": 450,
@@ -4436,10 +3367,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "natural",
     "hitPoints": 33,
-    "hitDice": "6d8",
+    "hitDice": "6d8+6",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -4472,145 +3402,55 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The wererat makes two attacks, only one of which can be a bite.",
-        "damage": [],
-        "multiattack_type": "action_options",
-        "action_options": {
-          "choose": 1,
-          "type": "action",
-          "from": {
-            "option_set_type": "options_array",
-            "options": [
-              {
-                "option_type": "action",
-                "action_name": "Shortsword",
-                "count": 2,
-                "type": "melee"
-              },
-              {
-                "option_type": "action",
-                "action_name": "Hand Crossbow",
-                "count": 2,
-                "type": "ranged"
-              },
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Shortsword",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Hand Crossbow",
-                    "count": 1,
-                    "type": "ranged"
-                  }
-                ]
-              },
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Shortsword",
-                    "count": 1,
-                    "type": "melee"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Bite",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              },
-              {
-                "option_type": "multiple",
-                "items": [
-                  {
-                    "option_type": "action",
-                    "action_name": "Hand Crossbow",
-                    "count": 1,
-                    "type": "ranged"
-                  },
-                  {
-                    "option_type": "action",
-                    "action_name": "Bite",
-                    "count": 1,
-                    "type": "melee"
-                  }
-                ]
-              }
-            ]
-          }
+        "description": "The wererat makes two attacks, only one of which can be a bite.",
         },
-        "actions": []
-      },
       {
         "name": "Bite",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 11 Constitution saving throw or be cursed with wererat lycanthropy.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d4+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 11 Constitution saving throw or be cursed with wererat lycanthropy.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4+2",
+          "average": 5
+        }
       },
       {
         "name": "Shortsword",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+2",
+          "average": 6
+        }
       },
       {
         "name": "Hand Crossbow",
-        "desc": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+2",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Wererats are stealthy lycanthropes who can transform into rats or hybrid forms. They are known for their cunning and adaptability, often operating in urban environments where they can blend in with the local rat population. Wererats typically form organized groups or guilds, using their ability to communicate with rats to gather information and spy on their enemies. They are excellent at stealth and infiltration, making them dangerous assassins and thieves. Wererats are particularly feared for their ability to spread disease and their tendency to work in coordinated groups. Despite their small size, they are dangerous opponents who prefer to strike from the shadows and use their numbers to overwhelm their prey.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "lawful evil"
+      "lawful-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Wererat, Rat Form",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "lawful evil",
     "challengeRating": "2",
     "xp": 450,
@@ -4623,10 +3463,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "natural",
     "hitPoints": 33,
-    "hitDice": "6d8",
+    "hitDice": "6d8+6",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -4640,8 +3479,8 @@ export const humanoidMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 12
+      "passivePerception": 12,
+      "darkvision": 60
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -4658,34 +3497,31 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Bite",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 11 Constitution saving throw or be cursed with wererat lycanthropy.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d4+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 11 Constitution saving throw or be cursed with wererat lycanthropy.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4+2",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Wererats are stealthy lycanthropes who can transform into rats or hybrid forms. They are known for their cunning and adaptability, often operating in urban environments where they can blend in with the local rat population. Wererats typically form organized groups or guilds, using their ability to communicate with rats to gather information and spy on their enemies. They are excellent at stealth and infiltration, making them dangerous assassins and thieves. Wererats are particularly feared for their ability to spread disease and their tendency to work in coordinated groups. Despite their small size, they are dangerous opponents who prefer to strike from the shadows and use their numbers to overwhelm their prey.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "lawful evil"
+      "lawful-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Weretiger, Human Form",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "neutral",
     "challengeRating": "4",
     "xp": 1100,
@@ -4698,10 +3534,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 120,
-    "hitDice": "16d8",
+    "hitDice": "16d8+48",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -4715,8 +3550,8 @@ export const humanoidMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 15
+      "passivePerception": 15,
+      "darkvision": 60
     },
     "languages": [
       "Common"
@@ -4735,78 +3570,45 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "In humanoid form, the weretiger makes two scimitar attacks or two longbow attacks. In hybrid form, it can attack like a humanoid or make two claw attacks.",
-        "damage": [],
-        "multiattack_type": "action_options",
-        "action_options": {
-          "choose": 1,
-          "type": "action",
-          "from": {
-            "option_set_type": "options_array",
-            "options": [
-              {
-                "option_type": "action",
-                "action_name": "Scimitar",
-                "count": 2,
-                "type": "melee"
-              },
-              {
-                "option_type": "action",
-                "action_name": "Longbow",
-                "count": 2,
-                "type": "ranged"
-              }
-            ]
-          }
+        "description": "In humanoid form, the weretiger makes two scimitar attacks or two longbow attacks. In hybrid form, it can attack like a humanoid or make two claw attacks.",
         },
-        "actions": []
-      },
       {
         "name": "Scimitar",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d6+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6+3",
+          "average": 7
+        }
       },
       {
         "name": "Longbow",
-        "desc": "Ranged Weapon Attack: +4 to hit, range 150/600 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d8+2"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +4 to hit, range 150/600 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8+2",
+          "average": 7
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Weretigers are powerful lycanthropes who can transform into tigers or hybrid forms. They are known for their grace, speed, and deadly hunting prowess. Weretigers are typically solitary hunters who prefer to stalk their prey from the shadows, using their enhanced senses and stealth abilities to get close before striking. They are incredibly agile and can move with remarkable speed, making them difficult to escape from once they've chosen their target. Weretigers are known for their pounce ability, which allows them to knock opponents prone and then deliver devastating follow-up attacks. They are often found in jungle or forest environments where they can use their natural camouflage and hunting skills to their advantage.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "neutral"
+      "neutral",
+      "humanoid"
     ]
   },
   {
     "name": "Weretiger, Hybrid Form",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "neutral",
     "challengeRating": "4",
     "xp": 1100,
@@ -4819,10 +3621,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 120,
-    "hitDice": "16d8",
+    "hitDice": "16d8+48",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -4836,8 +3637,8 @@ export const humanoidMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 15
+      "passivePerception": 15,
+      "darkvision": 60
     },
     "languages": [
       "Common"
@@ -4860,116 +3661,65 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "In humanoid form, the weretiger makes two scimitar attacks or two longbow attacks. In hybrid form, it can attack like a humanoid or make two claw attacks.",
-        "damage": [],
-        "multiattack_type": "action_options",
-        "action_options": {
-          "choose": 1,
-          "type": "action",
-          "from": {
-            "option_set_type": "options_array",
-            "options": [
-              {
-                "option_type": "action",
-                "action_name": "Scimitar",
-                "count": 2,
-                "type": "melee"
-              },
-              {
-                "option_type": "action",
-                "action_name": "Longbow",
-                "count": 2,
-                "type": "ranged"
-              },
-              {
-                "option_type": "action",
-                "action_name": "Claw",
-                "count": 2,
-                "type": "melee"
-              }
-            ]
-          }
+        "description": "In humanoid form, the weretiger makes two scimitar attacks or two longbow attacks. In hybrid form, it can attack like a humanoid or make two claw attacks.",
         },
-        "actions": []
-      },
       {
         "name": "Bite",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 8 (1d10 + 3) piercing damage. If the target is a humanoid, it must succeed on a DC 13 Constitution saving throw or be cursed with weretiger lycanthropy.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d10+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 8 (1d10 + 3) piercing damage. If the target is a humanoid, it must succeed on a DC 13 Constitution saving throw or be cursed with weretiger lycanthropy.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d10+3",
+          "average": 9
+        }
       },
       {
         "name": "Claw",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d8+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d8+3",
+          "average": 8
+        }
       },
       {
         "name": "Scimitar",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d6+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6+3",
+          "average": 7
+        }
       },
       {
         "name": "Longbow",
-        "desc": "Ranged Weapon Attack: +4 to hit, range 150/600 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d8+2"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Weapon Attack: +4 to hit, range 150/600 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8+2",
+          "average": 7
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Weretigers are powerful lycanthropes who can transform into tigers or hybrid forms. They are known for their grace, speed, and deadly hunting prowess. Weretigers are typically solitary hunters who prefer to stalk their prey from the shadows, using their enhanced senses and stealth abilities to get close before striking. They are incredibly agile and can move with remarkable speed, making them difficult to escape from once they've chosen their target. Weretigers are known for their pounce ability, which allows them to knock opponents prone and then deliver devastating follow-up attacks. They are often found in jungle or forest environments where they can use their natural camouflage and hunting skills to their advantage.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "neutral"
+      "neutral",
+      "humanoid"
     ]
   },
   {
     "name": "Weretiger, Tiger Form",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "neutral",
     "challengeRating": "4",
     "xp": 1100,
@@ -4982,10 +3732,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "natural",
     "hitPoints": 120,
-    "hitDice": "16d8",
+    "hitDice": "16d8+48",
     "speed": {
-      "walk": 40,
-      "hover": false
+      "walk": 40
     },
     "savingThrows": {},
     "skills": {
@@ -4999,8 +3748,8 @@ export const humanoidMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 15
+      "passivePerception": 15,
+      "darkvision": 60
     },
     "languages": [],
     "proficiencyBonus": 2,
@@ -5021,50 +3770,41 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Bite",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 8 (1d10 + 3) piercing damage. If the target is a humanoid, it must succeed on a DC 13 Constitution saving throw or be cursed with weretiger lycanthropy.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d10+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 8 (1d10 + 3) piercing damage. If the target is a humanoid, it must succeed on a DC 13 Constitution saving throw or be cursed with weretiger lycanthropy.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d10+3",
+          "average": 9
+        }
       },
       {
         "name": "Claw",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d8+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d8+3",
+          "average": 8
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Weretigers are powerful lycanthropes who can transform into tigers or hybrid forms. They are known for their grace, speed, and deadly hunting prowess. Weretigers are typically solitary hunters who prefer to stalk their prey from the shadows, using their enhanced senses and stealth abilities to get close before striking. They are incredibly agile and can move with remarkable speed, making them difficult to escape from once they've chosen their target. Weretigers are known for their pounce ability, which allows them to knock opponents prone and then deliver devastating follow-up attacks. They are often found in jungle or forest environments where they can use their natural camouflage and hunting skills to their advantage.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "neutral"
+      "neutral",
+      "humanoid"
     ]
   },
   {
     "name": "Werewolf, Human Form",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "chaotic evil",
     "challengeRating": "3",
     "xp": 700,
@@ -5077,10 +3817,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "dex",
     "hitPoints": 58,
-    "hitDice": "9d8",
+    "hitDice": "9d8+18",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -5112,68 +3851,35 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The werewolf makes two attacks: two with its spear (humanoid form) or one with its bite and one with its claws (hybrid form).",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Spear",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
-      },
+        "description": "The werewolf makes two attacks: two with its spear (humanoid form) or one with its bite and one with its claws (hybrid form).",
+        },
       {
         "name": "Spear",
-        "desc": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one creature. Hit: 5 (1d6 + 2) piercing damage, or 6 (1d8 + 2) piercing damage if used with two hands to make a melee attack.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "choose": 1,
-            "type": "damage",
-            "from": {
-              "option_set_type": "options_array",
-              "options": [
-                {
-                  "option_type": "damage",
-                  "notes": "One handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "1d6+2"
-                },
-                {
-                  "option_type": "damage",
-                  "notes": "Two handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "1d8+2"
-                }
-              ]
-            }
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one creature. Hit: 5 (1d6 + 2) piercing damage, or 6 (1d8 + 2) piercing damage if used with two hands to make a melee attack.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Werewolves are the most infamous of all lycanthropes, able to transform into wolves or hybrid forms. They are known for their pack mentality and their ability to coordinate attacks with other werewolves. Werewolves are incredibly dangerous in groups, using their enhanced senses and communication abilities to hunt as a coordinated unit. They are particularly feared for their ability to spread lycanthropy through their bites, which can curse victims to become werewolves themselves. Werewolves are often associated with the full moon, though they can transform at will. They are known for their relentless pursuit of prey and their ability to track targets over great distances using their keen sense of smell. Despite their bestial nature, they retain their human intelligence and can be cunning strategists.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "chaotic evil"
+      "chaotic-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Werewolf, Hybrid Form",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "chaotic evil",
     "challengeRating": "3",
     "xp": 700,
@@ -5186,10 +3892,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "natural",
     "hitPoints": 58,
-    "hitDice": "9d8",
+    "hitDice": "9d8+18",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {
@@ -5221,68 +3926,45 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The werewolf makes two attacks: two with its spear (humanoid form) or one with its bite and one with its claws (hybrid form).",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Bite",
-            "count": "1",
-            "type": "melee"
-          },
-          {
-            "action_name": "Claws",
-            "count": "1",
-            "type": "melee"
-          }
-        ]
-      },
+        "description": "The werewolf makes two attacks: two with its spear (humanoid form) or one with its bite and one with its claws (hybrid form).",
+        },
       {
         "name": "Bite",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with werewolf lycanthropy.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d8+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with werewolf lycanthropy.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8+2",
+          "average": 7
+        }
       },
       {
         "name": "Claws",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 7 (2d4 + 2) slashing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "2d4+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 7 (2d4 + 2) slashing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d4+2",
+          "average": 7
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Werewolves are the most infamous of all lycanthropes, able to transform into wolves or hybrid forms. They are known for their pack mentality and their ability to coordinate attacks with other werewolves. Werewolves are incredibly dangerous in groups, using their enhanced senses and communication abilities to hunt as a coordinated unit. They are particularly feared for their ability to spread lycanthropy through their bites, which can curse victims to become werewolves themselves. Werewolves are often associated with the full moon, though they can transform at will. They are known for their relentless pursuit of prey and their ability to track targets over great distances using their keen sense of smell. Despite their bestial nature, they retain their human intelligence and can be cunning strategists.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "chaotic evil"
+      "chaotic-evil",
+      "humanoid"
     ]
   },
   {
     "name": "Werewolf, Wolf Form",
     "size": "Medium",
     "type": "humanoid",
+    "subtype": "human",
     "alignment": "chaotic evil",
     "challengeRating": "3",
     "xp": 700,
@@ -5295,10 +3977,9 @@ export const humanoidMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "natural",
     "hitPoints": 58,
-    "hitDice": "9d8",
+    "hitDice": "9d8+18",
     "speed": {
-      "walk": 40,
-      "hover": false
+      "walk": 40
     },
     "savingThrows": {},
     "skills": {
@@ -5328,28 +4009,24 @@ export const humanoidMonsters: Monster[] = [
     "actions": [
       {
         "name": "Bite",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with werewolf lycanthropy.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d8+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with werewolf lycanthropy.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8+2",
+          "average": 7
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "Werewolves are the most infamous of all lycanthropes, able to transform into wolves or hybrid forms. They are known for their pack mentality and their ability to coordinate attacks with other werewolves. Werewolves are incredibly dangerous in groups, using their enhanced senses and communication abilities to hunt as a coordinated unit. They are particularly feared for their ability to spread lycanthropy through their bites, which can curse victims to become werewolves themselves. Werewolves are often associated with the full moon, though they can transform at will. They are known for their relentless pursuit of prey and their ability to track targets over great distances using their keen sense of smell. Despite their bestial nature, they retain their human intelligence and can be cunning strategists.",    "imagePrompt": "A medium humanoid creature with humanoid features",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "humanoid",
       "medium",
-      "chaotic evil"
+      "chaotic-evil",
+      "humanoid"
     ]
   }
 ];

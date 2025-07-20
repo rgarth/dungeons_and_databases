@@ -1,13 +1,21 @@
-import { allMonsters } from '@/data/monsters';
+import { monstersData } from '@/data/monsters-data';
+import { 
+  calculateAverageDamage, 
+  getMonsterByName, 
+  filterMonsters, 
+  searchMonsters,
+  formatChallengeRating,
+  getXPForCR
+} from '@/lib/monsters';
 
 describe('Monster Data', () => {
   test('should have valid monster data', () => {
-    expect(allMonsters).toBeDefined();
-    expect(allMonsters.length).toBeGreaterThan(0);
+    expect(monstersData).toBeDefined();
+    expect(monstersData.length).toBeGreaterThan(0);
   });
 
   test('should have required fields for each monster', () => {
-    allMonsters.forEach(monster => {
+    monstersData.forEach(monster => {
       expect(monster.name).toBeDefined();
       expect(monster.size).toBeDefined();
       expect(monster.type).toBeDefined();
@@ -29,16 +37,25 @@ describe('Monster Data', () => {
       expect(monster.proficiencyBonus).toBeDefined();
     });
   });
+});
+
+describe('Monster Utilities', () => {
+  test('should calculate average damage correctly', () => {
+    expect(calculateAverageDamage('1d6')).toBe(3);
+    expect(calculateAverageDamage('2d6+3')).toBe(10);
+    expect(calculateAverageDamage('1d8')).toBe(4);
+    expect(calculateAverageDamage('3d10+5')).toBe(21);
+  });
 
   test('should find monster by name', () => {
-    const goblin = allMonsters.find(m => m.name === 'Goblin');
+    const goblin = getMonsterByName('Goblin', monstersData);
     expect(goblin).toBeDefined();
     expect(goblin?.name).toBe('Goblin');
     expect(goblin?.challengeRating).toBe('1/4');
   });
 
   test('should filter monsters by type', () => {
-    const humanoids = allMonsters.filter(monster => monster.type === 'humanoid');
+    const humanoids = filterMonsters(monstersData, { type: 'humanoid' });
     expect(humanoids.length).toBeGreaterThan(0);
     humanoids.forEach(monster => {
       expect(monster.type).toBe('humanoid');
@@ -46,7 +63,7 @@ describe('Monster Data', () => {
   });
 
   test('should filter monsters by size', () => {
-    const smallMonsters = allMonsters.filter(monster => monster.size === 'Small');
+    const smallMonsters = filterMonsters(monstersData, { size: 'Small' });
     expect(smallMonsters.length).toBeGreaterThan(0);
     smallMonsters.forEach(monster => {
       expect(monster.size).toBe('Small');
@@ -54,10 +71,21 @@ describe('Monster Data', () => {
   });
 
   test('should search monsters by name', () => {
-    const results = allMonsters.filter(monster => 
-      monster.name.toLowerCase().includes('goblin')
-    );
+    const results = searchMonsters(monstersData, 'goblin');
     expect(results.length).toBeGreaterThan(0);
     expect(results[0].name.toLowerCase()).toContain('goblin');
+  });
+
+  test('should format challenge rating correctly', () => {
+    expect(formatChallengeRating('1/4')).toBe('1/4 (50 XP)');
+    expect(formatChallengeRating('1')).toBe('1 (200 XP)');
+    expect(formatChallengeRating('10')).toBe('10 (5900 XP)');
+  });
+
+  test('should get XP for challenge rating', () => {
+    expect(getXPForCR('1/4')).toBe(50);
+    expect(getXPForCR('1')).toBe(200);
+    expect(getXPForCR('10')).toBe(5900);
+    expect(getXPForCR('20')).toBe(25000);
   });
 }); 

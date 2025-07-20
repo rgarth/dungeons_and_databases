@@ -1,4 +1,4 @@
-import { Monster } from '../../types/monster';
+import { Monster } from '@/types/monster';
 
 export const elementalMonsters: Monster[] = [
   {
@@ -17,7 +17,7 @@ export const elementalMonsters: Monster[] = [
     "armorClass": 15,
     "armorType": "dex",
     "hitPoints": 90,
-    "hitDice": "12d10",
+    "hitDice": "12d10+24",
     "speed": {
       "fly": 90,
       "hover": false
@@ -33,51 +33,19 @@ export const elementalMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "grappled",
-        "name": "Grappled",
-        "url": "/api/2014/conditions/grappled"
-      },
-      {
-        "index": "paralyzed",
-        "name": "Paralyzed",
-        "url": "/api/2014/conditions/paralyzed"
-      },
-      {
-        "index": "petrified",
-        "name": "Petrified",
-        "url": "/api/2014/conditions/petrified"
-      },
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      },
-      {
-        "index": "prone",
-        "name": "Prone",
-        "url": "/api/2014/conditions/prone"
-      },
-      {
-        "index": "restrained",
-        "name": "Restrained",
-        "url": "/api/2014/conditions/restrained"
-      },
-      {
-        "index": "unconscious",
-        "name": "Unconscious",
-        "url": "/api/2014/conditions/unconscious"
-      }
+      "Exhaustion",
+      "Grappled",
+      "Paralyzed",
+      "Petrified",
+      "Poisoned",
+      "Prone",
+      "Restrained",
+      "Unconscious"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 60
     },
     "languages": [
       "Auran"
@@ -86,53 +54,39 @@ export const elementalMonsters: Monster[] = [
     "traits": [
       {
         "name": "Air Form",
-        "description": "The elemental can enter a hostile creature's space and stop there. It can move through a space as narrow as 1 inch wide without squeezing."
+        "description": "A massive being composed entirely of swirling wind and air currents. It appears as a humanoid form made of constantly moving air, with features that shift and change like clouds. It can move through the smallest openings and creates powerful gusts as it moves."
       }
     ],
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The elemental makes two slam attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Slam",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The elemental makes two slam attacks."
       },
       {
         "name": "Slam",
-        "desc": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 14 (2d8 + 5) bludgeoning damage.",
-        "attack_bonus": 8,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "2d8+5"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 14 (2d8 + 5) bludgeoning damage.",
+        "attackBonus": 8,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8+5",
+          "average": 14
+        }
       },
       {
         "name": "Whirlwind",
-        "desc": "Each creature in the elemental's space must make a DC 13 Strength saving throw. On a failure, a target takes 15 (3d8 + 2) bludgeoning damage and is flung up 20 feet away from the elemental in a random direction and knocked prone. If a thrown target strikes an object, such as a wall or floor, the target takes 3 (1d6) bludgeoning damage for every 10 feet it was thrown. If the target is thrown at another creature, that creature must succeed on a DC 13 Dexterity saving throw or take the same damage and be knocked prone.\nIf the saving throw is successful, the target takes half the bludgeoning damage and isn't flung away or knocked prone.",
-        "damage": [],
-        "actions": []
+        "description": "Each creature in the elemental's space must make a DC 13 Strength saving throw. On a failure, a target takes 15 (3d8 + 2) bludgeoning damage and is flung up 20 feet away from the elemental in a random direction and knocked prone. If a thrown target strikes an object, such as a wall or floor, the target takes 3 (1d6) bludgeoning damage for every 10 feet it was thrown. If the target is thrown at another creature, that creature must succeed on a DC 13 Dexterity saving throw or take the same damage and be knocked prone.\nIf the saving throw is successful, the target takes half the bludgeoning damage and isn't flung away or knocked prone."
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A massive being composed entirely of swirling wind and air currents. It appears as a humanoid form made of constantly moving air, with features that shift and change like clouds. It can move through the smallest openings and creates powerful gusts as it moves.",
+    "imagePrompt": "A massive being composed of swirling wind and air currents, humanoid form made of constantly moving air, shifting cloud-like features, ethereal appearance, air elemental nature",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "large",
-      "neutral"
+      "neutral",
+      "elemental"
     ]
   },
   {
@@ -151,10 +105,9 @@ export const elementalMonsters: Monster[] = [
     "armorClass": 15,
     "armorType": "natural",
     "hitPoints": 39,
-    "hitDice": "6d8",
+    "hitDice": "6d8+12",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -164,11 +117,7 @@ export const elementalMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      }
+      "Poisoned"
     ],
     "damageVulnerabilities": [],
     "senses": {
@@ -195,36 +144,26 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Warhammer",
-        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) bludgeoning damage, or 8 (1d10 + 3) bludgeoning damage if used with two hands to make a melee attack, plus 3 (1d6) fire damage.",
-        "attack_bonus": 5,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "1d8+3"
-          },
-          {
-            "damage_type": {
-              "index": "fire",
-              "name": "Fire",
-              "url": "/api/2014/damage-types/fire"
-            },
-            "damage_dice": "1d6"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) bludgeoning damage, or 8 (1d10 + 3) bludgeoning damage if used with two hands to make a melee attack, plus 3 (1d6) fire damage.",
+        "attackBonus": 5,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d8+3",
+          "average": 8
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A bronze dwarf with a flaming head, standing about 4 feet tall with a stocky, muscular build. Its body is made of living bronze metal, and its head is wreathed in magical flames that never go out. It wears simple clothing and wields a warhammer that glows with heat. The flames on its head provide light and make it impossible to miss in the darkness.",
+    "background": "Azers are fire elementals that take the form of dwarves made of living bronze. They dwell in the Elemental Plane of Fire and are known for their craftsmanship and love of metalwork. Their flaming heads provide both light and heat, and they are immune to fire damage. They are often found in forges and workshops where they create magical items and weapons.",
+    "imagePrompt": "A bronze dwarf with flaming head, 4 feet tall stocky muscular build, body made of living bronze metal, head wreathed in magical flames that never go out, simple clothing, warhammer glowing with heat, flames providing light. Fire elemental in dwarf form with bronze body and flaming head.",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "medium",
-      "lawful neutral"
+      "lawful-neutral",
+      "elemental"
     ]
   },
   {
@@ -243,11 +182,10 @@ export const elementalMonsters: Monster[] = [
     "armorClass": 17,
     "armorType": "natural",
     "hitPoints": 161,
-    "hitDice": "14d10",
+    "hitDice": "14d10+84",
     "speed": {
       "walk": 30,
-      "fly": 90,
-      "hover": false
+      "fly": 90
     },
     "savingThrows": {},
     "skills": {},
@@ -259,8 +197,8 @@ export const elementalMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 120,
-      "passivePerception": 13
+      "passivePerception": 13,
+      "darkvision": 120
     },
     "languages": [
       "Auran"
@@ -279,74 +217,34 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The djinni makes three scimitar attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Scimitar",
-            "count": "3",
-            "type": "melee"
-          }
-        ]
+        "description": "The djinni makes three scimitar attacks."
       },
       {
         "name": "Scimitar",
-        "desc": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 12 (2d6 + 5) slashing damage plus 3 (1d6) lightning or thunder damage (djinni's choice).",
-        "attack_bonus": 9,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "2d6+5"
-          },
-          {
-            "choose": 1,
-            "type": "damage",
-            "from": {
-              "option_set_type": "options_array",
-              "options": [
-                {
-                  "option_type": "damage",
-                  "damage_type": {
-                    "index": "lightning",
-                    "name": "Lightning",
-                    "url": "/api/2014/damage-types/lightning"
-                  },
-                  "damage_dice": "1d6"
-                },
-                {
-                  "option_type": "damage",
-                  "damage_type": {
-                    "index": "thunder",
-                    "name": "Thunder",
-                    "url": "/api/2014/damage-types/thunder"
-                  },
-                  "damage_dice": "1d6"
-                }
-              ]
-            }
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 12 (2d6 + 5) slashing damage plus 3 (1d6) lightning or thunder damage (djinni's choice).",
+        "attackBonus": 9,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6+5",
+          "average": 12
+        }
       },
       {
         "name": "Create Whirlwind",
-        "desc": "A 5-foot-radius, 30-foot-tall cylinder of swirling air magically forms on a point the djinni can see within 120 feet of it. The whirlwind lasts as long as the djinni maintains concentration (as if concentrating on a spell). Any creature but the djinni that enters the whirlwind must succeed on a DC 18 Strength saving throw or be restrained by it. The djinni can move the whirlwind up to 60 feet as an action, and creatures restrained by the whirlwind move with it. The whirlwind ends if the djinni loses sight of it.\nA creature can use its action to free a creature restrained by the whirlwind, including itself, by succeeding on a DC 18 Strength check. If the check succeeds, the creature is no longer restrained and moves to the nearest space outside the whirlwind.",
-        "damage": [],
-        "actions": []
+        "description": "A 5-foot-radius, 30-foot-tall cylinder of swirling air magically forms on a point the djinni can see within 120 feet of it. The whirlwind lasts as long as the djinni maintains concentration (as if concentrating on a spell). Any creature but the djinni that enters the whirlwind must succeed on a DC 18 Strength saving throw or be restrained by it. The djinni can move the whirlwind up to 60 feet as an action, and creatures restrained by the whirlwind move with it. The whirlwind ends if the djinni loses sight of it.\nA creature can use its action to free a creature restrained by the whirlwind, including itself, by succeeding on a DC 18 Strength check. If the check succeeds, the creature is no longer restrained and moves to the nearest space outside the whirlwind."
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A large genie with a humanoid form made of swirling air and mist. It has a muscular build, flowing robes that seem to be made of wind, and a noble, otherworldly appearance. Its lower body trails off into a whirlwind of air, and it carries a scimitar that crackles with lightning.",
+    "background": "Djinn are powerful genies from the Elemental Plane of Air. They are typically chaotic good and serve as protectors and benefactors to mortals. They can grant wishes and are known for their magical abilities, including the power to create whirlwinds and control the wind. They are often bound to magical items like rings and lamps.",
+    "imagePrompt": "A large genie with humanoid form made of swirling air and mist, muscular build, flowing wind-like robes, noble otherworldly features, lower body trailing into whirlwind of air, scimitar crackling with lightning. Traditional genie appearance with air elemental nature.",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "large",
-      "chaotic good"
+      "chaotic-good",
+      "elemental"
     ]
   },
   {
@@ -368,8 +266,7 @@ export const elementalMonsters: Monster[] = [
     "hitDice": "5d6",
     "speed": {
       "walk": 30,
-      "fly": 30,
-      "hover": false
+      "fly": 30
     },
     "savingThrows": {},
     "skills": {
@@ -381,18 +278,14 @@ export const elementalMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      }
+      "Poisoned"
     ],
     "damageVulnerabilities": [
       "fire"
     ],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 12
+      "passivePerception": 12,
+      "darkvision": 60
     },
     "languages": [
       "Auran",
@@ -402,7 +295,7 @@ export const elementalMonsters: Monster[] = [
     "traits": [
       {
         "name": "Death Burst",
-        "description": "When the mephit dies, it explodes in a burst of dust. Each creature within 5 ft. of it must then succeed on a DC 10 Constitution saving throw or be blinded for 1 minute. A blinded creature can repeat the saving throw on each of its turns, ending the effect on itself on a success."
+        "description": "A small being made of swirling dust and sand particles, taking the form of a tiny humanoid. Its body constantly shifts and changes as the dust particles move around it, and it can create blinding clouds of dust when threatened."
       },
       {
         "name": "Innate Spellcasting",
@@ -412,34 +305,34 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Claws",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 4 (1d4 + 2) slashing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d4+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 4 (1d4 + 2) slashing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d4+2",
+          "average": 5
+        }
       },
       {
         "name": "Blinding Breath",
-        "desc": "The mephit exhales a 15-foot cone of blinding dust. Each creature in that area must succeed on a DC 10 Dexterity saving throw or be blinded for 1 minute. A creature can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
-        "damage": [],
-        "actions": []
+        "description": "The mephit exhales a 15-foot cone of blinding dust. Each creature in that area must succeed on a DC 10 Dexterity saving throw or be blinded for 1 minute. A creature can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A small being of pure elemental energy, often taking the form of a tiny humanoid made of its respective element. Elementals are powerful creatures that can be summoned or created through magic.",
+    "imagePrompt": "A small being made of swirling dust and sand particles, tiny humanoid form, constantly shifting dust particles, blinding dust clouds, dust mephit nature",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "small",
-      "neutral evil"
+      "neutral-evil",
+      "elemental"
     ]
   },
   {
@@ -458,11 +351,10 @@ export const elementalMonsters: Monster[] = [
     "armorClass": 17,
     "armorType": "natural",
     "hitPoints": 126,
-    "hitDice": "12d10",
+    "hitDice": "12d10+60",
     "speed": {
       "walk": 30,
-      "burrow": 30,
-      "hover": false
+      "burrow": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -473,39 +365,19 @@ export const elementalMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "paralyzed",
-        "name": "Paralyzed",
-        "url": "/api/2014/conditions/paralyzed"
-      },
-      {
-        "index": "petrified",
-        "name": "Petrified",
-        "url": "/api/2014/conditions/petrified"
-      },
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      },
-      {
-        "index": "unconscious",
-        "name": "Unconscious",
-        "url": "/api/2014/conditions/unconscious"
-      }
+      "Exhaustion",
+      "Paralyzed",
+      "Petrified",
+      "Poisoned",
+      "Unconscious"
     ],
     "damageVulnerabilities": [
       "thunder"
     ],
     "senses": {
+      "passivePerception": 10,
       "darkvision": 60,
-      "tremorsense": 60,
-      "passivePerception": 10
+      "tremorsense": 60
     },
     "languages": [
       "Terran"
@@ -514,7 +386,7 @@ export const elementalMonsters: Monster[] = [
     "traits": [
       {
         "name": "Earth Glide",
-        "description": "The elemental can burrow through nonmagical, unworked earth and stone. While doing so, the elemental doesn't disturb the material it moves through."
+        "description": "A massive being made of solid stone and earth, with a humanoid form that appears to be carved from living rock. Its body is covered in moss, crystals, and other natural elements, and it moves with the slow, deliberate motion of shifting earth."
       },
       {
         "name": "Siege Monster",
@@ -524,41 +396,29 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The elemental makes two slam attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Slam",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The elemental makes two slam attacks."
       },
       {
         "name": "Slam",
-        "desc": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 14 (2d8 + 5) bludgeoning damage.",
-        "attack_bonus": 8,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "2d8+5"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 14 (2d8 + 5) bludgeoning damage.",
+        "attackBonus": 8,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8+5",
+          "average": 14
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A massive being made of solid stone and earth, with a humanoid form that appears to be carved from living rock. Its body is covered in moss, crystals, and other natural elements, and it moves with the slow, deliberate motion of shifting earth.",
+    "imagePrompt": "A massive being made of solid stone and earth, humanoid form carved from living rock, moss and crystals covering body, slow deliberate motion, earth elemental nature",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "large",
-      "neutral"
+      "neutral",
+      "elemental"
     ]
   },
   {
@@ -577,11 +437,10 @@ export const elementalMonsters: Monster[] = [
     "armorClass": 17,
     "armorType": "natural",
     "hitPoints": 200,
-    "hitDice": "16d10",
+    "hitDice": "16d10+112",
     "speed": {
       "walk": 40,
-      "fly": 60,
-      "hover": false
+      "fly": 60
     },
     "savingThrows": {},
     "skills": {},
@@ -592,8 +451,8 @@ export const elementalMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 120,
-      "passivePerception": 12
+      "passivePerception": 12,
+      "darkvision": 120
     },
     "languages": [
       "Ignan"
@@ -612,80 +471,40 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The efreeti makes two scimitar attacks or uses its Hurl Flame twice.",
-        "damage": [],
-        "multiattack_type": "action_options",
-        "action_options": {
-          "choose": 1,
-          "type": "action",
-          "from": {
-            "option_set_type": "options_array",
-            "options": [
-              {
-                "option_type": "action",
-                "action_name": "Scimitar",
-                "count": 2,
-                "type": "melee"
-              },
-              {
-                "option_type": "action",
-                "action_name": "Hurl Flame",
-                "count": 2,
-                "type": "ranged"
-              }
-            ]
-          }
-        },
-        "actions": []
+        "description": "The efreeti makes two scimitar attacks or uses its Hurl Flame twice."
       },
       {
         "name": "Scimitar",
-        "desc": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) slashing damage plus 7 (2d6) fire damage.",
-        "attack_bonus": 10,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "2d6+6"
-          },
-          {
-            "damage_type": {
-              "index": "fire",
-              "name": "Fire",
-              "url": "/api/2014/damage-types/fire"
-            },
-            "damage_dice": "2d6"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) slashing damage plus 7 (2d6) fire damage.",
+        "attackBonus": 10,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6+6",
+          "average": 13
+        }
       },
       {
         "name": "Hurl Flame",
-        "desc": "Ranged Spell Attack: +7 to hit, range 120 ft., one target. Hit: 17 (5d6) fire damage.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "fire",
-              "name": "Fire",
-              "url": "/api/2014/damage-types/fire"
-            },
-            "damage_dice": "5d6"
-          }
-        ],
-        "actions": []
+        "description": "Ranged Spell Attack: +7 to hit, range 120 ft., one target. Hit: 17 (5d6) fire damage.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Fire",
+          "roll": "5d6",
+          "average": 18
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A large red genie with a muscular humanoid form made of living flame and smoke. It has dark red skin, burning orange eyes, and flowing robes that seem to be made of fire. It wields a scimitar that burns with magical fire, and its body radiates intense heat. It has a proud, arrogant bearing typical of fire genies.",
+    "background": "Efreeti are powerful fire genies from the Elemental Plane of Fire. They are typically lawful evil and are known for their arrogance and love of wealth and power. They can grant wishes but often twist them to cause harm. They are often bound to magical items like rings and lamps, and they serve as powerful allies or dangerous enemies.",
+    "imagePrompt": "A large red genie with muscular humanoid form made of living flame and smoke, dark red skin, burning orange eyes, flowing fire-like robes, scimitar burning with magical fire, body radiating intense heat, proud arrogant bearing. Traditional fire genie with sword.",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "large",
-      "lawful evil"
+      "lawful-evil",
+      "elemental"
     ]
   },
   {
@@ -704,10 +523,9 @@ export const elementalMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "dex",
     "hitPoints": 102,
-    "hitDice": "12d10",
+    "hitDice": "12d10+36",
     "speed": {
-      "walk": 50,
-      "hover": false
+      "walk": 50
     },
     "savingThrows": {},
     "skills": {},
@@ -719,51 +537,19 @@ export const elementalMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "grappled",
-        "name": "Grappled",
-        "url": "/api/2014/conditions/grappled"
-      },
-      {
-        "index": "paralyzed",
-        "name": "Paralyzed",
-        "url": "/api/2014/conditions/paralyzed"
-      },
-      {
-        "index": "petrified",
-        "name": "Petrified",
-        "url": "/api/2014/conditions/petrified"
-      },
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      },
-      {
-        "index": "prone",
-        "name": "Prone",
-        "url": "/api/2014/conditions/prone"
-      },
-      {
-        "index": "restrained",
-        "name": "Restrained",
-        "url": "/api/2014/conditions/restrained"
-      },
-      {
-        "index": "unconscious",
-        "name": "Unconscious",
-        "url": "/api/2014/conditions/unconscious"
-      }
+      "Exhaustion",
+      "Grappled",
+      "Paralyzed",
+      "Petrified",
+      "Poisoned",
+      "Prone",
+      "Restrained",
+      "Unconscious"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 60
     },
     "languages": [
       "Ignan"
@@ -786,41 +572,29 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The elemental makes two touch attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Touch",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The elemental makes two touch attacks."
       },
       {
         "name": "Touch",
-        "desc": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) fire damage. If the target is a creature or a flammable object, it ignites. Until a creature takes an action to douse the fire, the target takes 5 (1d10) fire damage at the start of each of its turns.",
-        "attack_bonus": 6,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "fire",
-              "name": "Fire",
-              "url": "/api/2014/damage-types/fire"
-            },
-            "damage_dice": "2d6+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) fire damage. If the target is a creature or a flammable object, it ignites. Until a creature takes an action to douse the fire, the target takes 5 (1d10) fire damage at the start of each of its turns.",
+        "attackBonus": 6,
+        "damage": {
+          "type": "Fire",
+          "roll": "2d6+3",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A massive being of pure flame and heat, taking the form of a humanoid made entirely of fire. Its body constantly flickers and dances with orange, red, and yellow flames. It radiates intense heat and can set anything it touches ablaze.",
+    "imagePrompt": "A massive being of pure flame and heat, humanoid form made entirely of fire, constantly flickering orange red yellow flames, intense heat radiation, fire elemental nature",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "large",
-      "neutral"
+      "neutral",
+      "elemental"
     ]
   },
   {
@@ -839,11 +613,10 @@ export const elementalMonsters: Monster[] = [
     "armorClass": 15,
     "armorType": "natural",
     "hitPoints": 52,
-    "hitDice": "7d8",
+    "hitDice": "7d8+21",
     "speed": {
       "walk": 30,
-      "fly": 60,
-      "hover": false
+      "fly": 60
     },
     "savingThrows": {},
     "skills": {},
@@ -854,26 +627,14 @@ export const elementalMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "petrified",
-        "name": "Petrified",
-        "url": "/api/2014/conditions/petrified"
-      },
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      }
+      "Exhaustion",
+      "Petrified",
+      "Poisoned"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 60
     },
     "languages": [
       "Terran"
@@ -882,68 +643,45 @@ export const elementalMonsters: Monster[] = [
     "traits": [
       {
         "name": "False Appearance",
-        "description": "While the gargoyle remains motion less, it is indistinguishable from an inanimate statue."
+        "description": "While the gargoyle remains motionless, it is indistinguishable from an inanimate statue."
       }
     ],
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The gargoyle makes two attacks: one with its bite and one with its claws.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Bite",
-            "count": "1",
-            "type": "melee"
-          },
-          {
-            "action_name": "Claws",
-            "count": "1",
-            "type": "melee"
-          }
-        ]
+        "description": "The gargoyle makes two attacks: one with its bite and one with its claws."
       },
       {
         "name": "Bite",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6+2",
+          "average": 6
+        }
       },
       {
         "name": "Claws",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) slashing damage.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d6+2"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) slashing damage.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6+2",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A stone creature with a grotesque, demonic appearance, often taking the form of a winged humanoid with horns, claws, and a hideous face. Gargoyles are living stone elementals that can blend seamlessly with architecture, appearing as decorative statues until they spring to life. They are immune to poison and resistant to nonmagical weapons, making them excellent guardians for ancient buildings and ruins.",
+    "imagePrompt": "A stone creature with grotesque demonic appearance, winged humanoid with horns claws hideous face, living stone body, architectural camouflage, gargoyle nature",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "medium",
-      "chaotic evil"
+      "chaotic-evil",
+      "elemental"
     ]
   },
   {
@@ -965,8 +703,7 @@ export const elementalMonsters: Monster[] = [
     "hitDice": "6d6",
     "speed": {
       "walk": 30,
-      "fly": 30,
-      "hover": false
+      "fly": 30
     },
     "savingThrows": {},
     "skills": {
@@ -979,19 +716,15 @@ export const elementalMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      }
+      "Poisoned"
     ],
     "damageVulnerabilities": [
       "bludgeoning",
       "fire"
     ],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 12
+      "passivePerception": 12,
+      "darkvision": 60
     },
     "languages": [
       "Aquan",
@@ -1001,7 +734,7 @@ export const elementalMonsters: Monster[] = [
     "traits": [
       {
         "name": "Death Burst",
-        "description": "When the mephit dies, it explodes in a burst of jagged ice. Each creature within 5 ft. of it must make a DC 10 Dexterity saving throw, taking 4 (1d8) slashing damage on a failed save, or half as much damage on a successful one."
+        "description": "A small being made of crystalline ice and frost, taking the form of a tiny humanoid. Its body glistens with frozen crystals and it radiates cold, leaving trails of frost wherever it moves."
       },
       {
         "name": "False Appearance",
@@ -1015,51 +748,34 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Claws",
-        "desc": "Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 3 (1d4 + 1) slashing damage plus 2 (1d4) cold damage.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d4+1"
-          },
-          {
-            "damage_type": {
-              "index": "cold",
-              "name": "Cold",
-              "url": "/api/2014/damage-types/cold"
-            },
-            "damage_dice": "1d4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 3 (1d4 + 1) slashing damage plus 2 (1d4) cold damage.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d4+1",
+          "average": 4
+        }
       },
       {
         "name": "Frost Breath",
-        "desc": "The mephit exhales a 15-foot cone of cold air. Each creature in that area must succeed on a DC 10 Dexterity saving throw, taking 5 (2d4) cold damage on a failed save, or half as much damage on a successful one.",
-        "damage": [
-          {
-            "damage_type": {
-              "index": "cold",
-              "name": "Cold",
-              "url": "/api/2014/damage-types/cold"
-            },
-            "damage_dice": "2d4"
-          }
-        ],
-        "actions": []
+        "description": "The mephit exhales a 15-foot cone of cold air. Each creature in that area must succeed on a DC 10 Dexterity saving throw, taking 5 (2d4) cold damage on a failed save, or half as much damage on a successful one.",
+        "damage": {
+          "type": "Cold",
+          "roll": "2d4",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A small being made of crystalline ice and frost, taking the form of a tiny humanoid. Its body glistens with frozen crystals and it radiates cold, leaving trails of frost wherever it moves.",
+    "imagePrompt": "A small being made of crystalline ice and frost, tiny humanoid form, glistening frozen crystals, cold radiation, frost trails, ice mephit nature",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "small",
-      "neutral evil"
+      "neutral-evil",
+      "elemental"
     ]
   },
   {
@@ -1078,7 +794,7 @@ export const elementalMonsters: Monster[] = [
     "armorClass": 14,
     "armorType": "dex",
     "hitPoints": 104,
-    "hitDice": "16d8",
+    "hitDice": "16d8+32",
     "speed": {
       "walk": 50,
       "fly": 50,
@@ -1096,51 +812,19 @@ export const elementalMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "grappled",
-        "name": "Grappled",
-        "url": "/api/2014/conditions/grappled"
-      },
-      {
-        "index": "paralyzed",
-        "name": "Paralyzed",
-        "url": "/api/2014/conditions/paralyzed"
-      },
-      {
-        "index": "petrified",
-        "name": "Petrified",
-        "url": "/api/2014/conditions/petrified"
-      },
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      },
-      {
-        "index": "prone",
-        "name": "Prone",
-        "url": "/api/2014/conditions/prone"
-      },
-      {
-        "index": "restrained",
-        "name": "Restrained",
-        "url": "/api/2014/conditions/restrained"
-      },
-      {
-        "index": "unconscious",
-        "name": "Unconscious",
-        "url": "/api/2014/conditions/unconscious"
-      }
+      "Exhaustion",
+      "Grappled",
+      "Paralyzed",
+      "Petrified",
+      "Poisoned",
+      "Prone",
+      "Restrained",
+      "Unconscious"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 18
+      "passivePerception": 18,
+      "darkvision": 60
     },
     "languages": [
       "Auran",
@@ -1160,41 +844,29 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The stalker makes two slam attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Slam",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The stalker makes two slam attacks."
       },
       {
         "name": "Slam",
-        "desc": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage.",
-        "attack_bonus": 6,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "2d6+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage.",
+        "attackBonus": 6,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6+3",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "An invisible elemental creature made of air and shadow that exists solely to track and eliminate its assigned quarry. Invisible stalkers are summoned by powerful spellcasters to hunt down specific targets, and they are relentless in their pursuit. They can fly, are completely invisible, and are immune to most conditions that would hinder their tracking. They speak only in whispers and are bound to complete their mission.",
+    "imagePrompt": "A medium elemental creature with elemental energy",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "medium",
-      "neutral"
+      "neutral",
+      "elemental"
     ]
   },
   {
@@ -1213,11 +885,10 @@ export const elementalMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "dex",
     "hitPoints": 22,
-    "hitDice": "5d6",
+    "hitDice": "5d6+5",
     "speed": {
       "walk": 30,
-      "fly": 30,
-      "hover": false
+      "fly": 30
     },
     "savingThrows": {},
     "skills": {
@@ -1229,18 +900,14 @@ export const elementalMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      }
+      "Poisoned"
     ],
     "damageVulnerabilities": [
       "cold"
     ],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 60
     },
     "languages": [
       "Ignan",
@@ -1250,7 +917,7 @@ export const elementalMonsters: Monster[] = [
     "traits": [
       {
         "name": "Death Burst",
-        "description": "When the mephit dies, it explodes in a burst of lava. Each creature within 5 ft. of it must make a DC 11 Dexterity saving throw, taking 7 (2d6) fire damage on a failed save, or half as much damage on a successful one."
+        "description": "When the mephit dies, it explodes in a burst of lava. Each creature within 5 ft. of it must then succeed on a DC 11 Dexterity saving throw or be blinded until the end of the creature's next turn."
       },
       {
         "name": "False Appearance",
@@ -1264,51 +931,34 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Claws",
-        "desc": "Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 3 (1d4 + 1) slashing damage plus 2 (1d4) fire damage.",
-        "attack_bonus": 3,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d4+1"
-          },
-          {
-            "damage_type": {
-              "index": "fire",
-              "name": "Fire",
-              "url": "/api/2014/damage-types/fire"
-            },
-            "damage_dice": "1d4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 3 (1d4 + 1) slashing damage plus 2 (1d4) fire damage.",
+        "attackBonus": 3,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d4+1",
+          "average": 4
+        }
       },
       {
         "name": "Fire Breath",
-        "desc": "The mephit exhales a 15-foot cone of fire. Each creature in that area must make a DC 11 Dexterity saving throw, taking 7 (2d6) fire damage on a failed save, or half as much damage on a successful one.",
-        "damage": [
-          {
-            "damage_type": {
-              "index": "fire",
-              "name": "Fire",
-              "url": "/api/2014/damage-types/fire"
-            },
-            "damage_dice": "2d6"
-          }
-        ],
-        "actions": []
+        "description": "The mephit exhales a 15-foot cone of fire. Each creature in that area must make a DC 11 Dexterity saving throw, taking 7 (2d6) fire damage on a failed save, or half as much damage on a successful one.",
+        "damage": {
+          "type": "Fire",
+          "roll": "2d6",
+          "average": 7
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A small being made of molten rock and flowing lava, taking the form of a tiny humanoid. Its body glows with intense heat and constantly drips molten material, leaving scorched trails in its wake.",
+    "imagePrompt": "A small being made of molten rock and flowing lava, tiny humanoid form, glowing intense heat, dripping molten material, scorched trails, magma mephit nature",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "small",
-      "neutral evil"
+      "neutral-evil",
+      "elemental"
     ]
   },
   {
@@ -1327,10 +977,9 @@ export const elementalMonsters: Monster[] = [
     "armorClass": 14,
     "armorType": "natural",
     "hitPoints": 9,
-    "hitDice": "2d6",
+    "hitDice": "2d6+2",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -1343,8 +992,8 @@ export const elementalMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 60
     },
     "languages": [
       "Ignan"
@@ -1363,28 +1012,25 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Touch",
-        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (2d6) fire damage. If the target is a creature or a flammable object, it ignites. Until a target takes an action to douse the fire, the target takes 3 (1d6) fire damage at the end of each of its turns.",
-        "attack_bonus": 4,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "fire",
-              "name": "Fire",
-              "url": "/api/2014/damage-types/fire"
-            },
-            "damage_dice": "2d6"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (2d6) fire damage. If the target is a creature or a flammable object, it ignites. Until a target takes an action to douse the fire, the target takes 3 (1d6) fire damage at the end of each of its turns.",
+        "attackBonus": 4,
+        "damage": {
+          "type": "Fire",
+          "roll": "2d6",
+          "average": 7
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A small being made of living flame and molten rock, taking the form of a tiny humanoid. Its body constantly flickers with fire and drips molten material, leaving scorched trails wherever it moves.",
+    "imagePrompt": "A small being made of living flame and molten rock, tiny humanoid form, constantly flickering fire, dripping molten material, scorched trails, magmin elemental nature",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "small",
-      "chaotic neutral"
+      "chaotic-neutral",
+      "elemental"
     ]
   },
   {
@@ -1403,10 +1049,9 @@ export const elementalMonsters: Monster[] = [
     "armorClass": 15,
     "armorType": "natural",
     "hitPoints": 90,
-    "hitDice": "12d10",
+    "hitDice": "12d10+24",
     "speed": {
-      "walk": 30,
-      "hover": false
+      "walk": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -1421,8 +1066,8 @@ export const elementalMonsters: Monster[] = [
       "cold"
     ],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 60
     },
     "languages": [
       "Ignan"
@@ -1441,99 +1086,39 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The salamander makes two attacks: one with its spear and one with its tail.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Spear",
-            "count": "1",
-            "type": "melee"
-          },
-          {
-            "action_name": "Tail",
-            "count": "1",
-            "type": "melee"
-          }
-        ]
+        "description": "The salamander makes two attacks: one with its spear and one with its tail."
       },
       {
         "name": "Spear",
-        "desc": "Melee or Ranged Weapon Attack: +7 to hit, reach 5 ft. or range 20 ft./60 ft., one target. Hit: 11 (2d6 + 4) piercing damage, or 13 (2d8 + 4) piercing damage if used with two hands to make a melee attack, plus 3 (1d6) fire damage.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "choose": 1,
-            "type": "damage",
-            "from": {
-              "option_set_type": "options_array",
-              "options": [
-                {
-                  "option_type": "damage",
-                  "notes": "One handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "2d6+4"
-                },
-                {
-                  "option_type": "damage",
-                  "notes": "Two handed",
-                  "damage_type": {
-                    "index": "piercing",
-                    "name": "Piercing",
-                    "url": "/api/2014/damage-types/piercing"
-                  },
-                  "damage_dice": "2d8+4"
-                }
-              ]
-            }
-          },
-          {
-            "damage_type": {
-              "index": "fire",
-              "name": "Fire",
-              "url": "/api/2014/damage-types/fire"
-            },
-            "damage_dice": "1d6"
-          }
-        ],
-        "actions": []
+        "description": "Melee or Ranged Weapon Attack: +7 to hit, reach 5 ft. or range 20 ft./60 ft., one target. Hit: 11 (2d6 + 4) piercing damage, or 13 (2d8 + 4) piercing damage if used with two hands to make a melee attack, plus 3 (1d6) fire damage.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "bludgeoning",
+          "roll": "1d4",
+          "average": 3
+        }
       },
       {
         "name": "Tail",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage plus 7 (2d6) fire damage, and the target is grappled (escape DC 14). Until this grapple ends, the target is restrained, the salamander can automatically hit the target with its tail, and the salamander can't make tail attacks against other targets.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "2d6+4"
-          },
-          {
-            "damage_type": {
-              "index": "fire",
-              "name": "Fire",
-              "url": "/api/2014/damage-types/fire"
-            },
-            "damage_dice": "2d6"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage plus 7 (2d6) fire damage, and the target is grappled (escape DC 14). Until this grapple ends, the target is restrained, the salamander can automatically hit the target with its tail, and the salamander can't make tail attacks against other targets.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6+4",
+          "average": 11
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A large serpentine creature with a humanoid upper body and a long, coiling tail. Its body is covered in scales that glow with inner fire, and it radiates intense heat. It has a reptilian head with burning eyes and wields a spear that burns with magical fire.",
+    "imagePrompt": "A large serpentine creature with humanoid upper body and long coiling tail, scales glowing with inner fire, intense heat radiation, reptilian head with burning eyes, spear burning with magical fire, salamander elemental nature",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "large",
-      "neutral evil"
+      "neutral-evil",
+      "elemental"
     ]
   },
   {
@@ -1555,8 +1140,7 @@ export const elementalMonsters: Monster[] = [
     "hitDice": "6d6",
     "speed": {
       "walk": 30,
-      "fly": 30,
-      "hover": false
+      "fly": 30
     },
     "savingThrows": {},
     "skills": {},
@@ -1566,16 +1150,12 @@ export const elementalMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      }
+      "Poisoned"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 60
     },
     "languages": [
       "Aquan",
@@ -1585,7 +1165,7 @@ export const elementalMonsters: Monster[] = [
     "traits": [
       {
         "name": "Death Burst",
-        "description": "When the mephit dies, it explodes in a cloud of steam. Each creature within 5 ft. of the mephit must succeed on a DC 10 Dexterity saving throw or take 4 (1d8) fire damage."
+        "description": "When the mephit dies, it explodes in a burst of steam. Each creature within 5 ft. of it must then succeed on a DC 10 Constitution saving throw or take 4 (1d8) fire damage."
       },
       {
         "name": "Innate Spellcasting",
@@ -1595,51 +1175,34 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Claws",
-        "desc": "Melee Weapon Attack: +2 to hit, reach 5 ft., one creature. Hit: 2 (1d4) slashing damage plus 2 (1d4) fire damage.",
-        "attack_bonus": 2,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d4"
-          },
-          {
-            "damage_type": {
-              "index": "fire",
-              "name": "Fire",
-              "url": "/api/2014/damage-types/fire"
-            },
-            "damage_dice": "1d4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one creature. Hit: 2 (1d4) slashing damage plus 2 (1d4) fire damage.",
+        "attackBonus": 2,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d4",
+          "average": 3
+        }
       },
       {
         "name": "Steam Breath",
-        "desc": "The mephit exhales a 15-foot cone of scalding steam. Each creature in that area must succeed on a DC 10 Dexterity saving throw, taking 4 (1d8) fire damage on a failed save, or half as much damage on a successful one.",
-        "damage": [
-          {
-            "damage_type": {
-              "index": "fire",
-              "name": "Fire",
-              "url": "/api/2014/damage-types/fire"
-            },
-            "damage_dice": "1d8"
-          }
-        ],
-        "actions": []
+        "description": "The mephit exhales a 15-foot cone of scalding steam. Each creature in that area must succeed on a DC 10 Dexterity saving throw, taking 4 (1d8) fire damage on a failed save, or half as much damage on a successful one.",
+        "damage": {
+          "type": "Fire",
+          "roll": "1d8",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A small being made of hot steam and vapor, taking the form of a tiny humanoid. Its body constantly releases billowing steam and it can create scalding clouds of hot vapor when threatened.",
+    "imagePrompt": "A small being made of hot steam and vapor, tiny humanoid form, constantly releasing billowing steam, scalding hot vapor clouds, steam mephit nature",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "small",
-      "neutral evil"
+      "neutral-evil",
+      "elemental"
     ]
   },
   {
@@ -1658,11 +1221,10 @@ export const elementalMonsters: Monster[] = [
     "armorClass": 14,
     "armorType": "natural",
     "hitPoints": 114,
-    "hitDice": "12d10",
+    "hitDice": "12d10+48",
     "speed": {
       "walk": 30,
-      "swim": 90,
-      "hover": false
+      "swim": 90
     },
     "savingThrows": {},
     "skills": {},
@@ -1674,51 +1236,19 @@ export const elementalMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      {
-        "index": "exhaustion",
-        "name": "Exhaustion",
-        "url": "/api/2014/conditions/exhaustion"
-      },
-      {
-        "index": "grappled",
-        "name": "Grappled",
-        "url": "/api/2014/conditions/grappled"
-      },
-      {
-        "index": "paralyzed",
-        "name": "Paralyzed",
-        "url": "/api/2014/conditions/paralyzed"
-      },
-      {
-        "index": "petrified",
-        "name": "Petrified",
-        "url": "/api/2014/conditions/petrified"
-      },
-      {
-        "index": "poisoned",
-        "name": "Poisoned",
-        "url": "/api/2014/conditions/poisoned"
-      },
-      {
-        "index": "prone",
-        "name": "Prone",
-        "url": "/api/2014/conditions/prone"
-      },
-      {
-        "index": "restrained",
-        "name": "Restrained",
-        "url": "/api/2014/conditions/restrained"
-      },
-      {
-        "index": "unconscious",
-        "name": "Unconscious",
-        "url": "/api/2014/conditions/unconscious"
-      }
+      "Exhaustion",
+      "Grappled",
+      "Paralyzed",
+      "Petrified",
+      "Poisoned",
+      "Prone",
+      "Restrained",
+      "Unconscious"
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "darkvision": 60,
-      "passivePerception": 10
+      "passivePerception": 10,
+      "darkvision": 60
     },
     "languages": [
       "Aquan"
@@ -1737,56 +1267,38 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The elemental makes two slam attacks.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Slam",
-            "count": "2",
-            "type": "melee"
-          }
-        ]
+        "description": "The elemental makes two slam attacks."
       },
       {
         "name": "Slam",
-        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
-        "attack_bonus": 7,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "2d8+4"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
+        "attackBonus": 7,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8+4",
+          "average": 13
+        }
       },
       {
         "name": "Whelm",
-        "desc": "Each creature in the elemental's space must make a DC 15 Strength saving throw. On a failure, a target takes 13 (2d8 + 4) bludgeoning damage. If it is Large or smaller, it is also grappled (escape DC 14). Until this grapple ends, the target is restrained and unable to breathe unless it can breathe water. If the saving throw is successful, the target is pushed out of the elemental's space.\nThe elemental can grapple one Large creature or up to two Medium or smaller creatures at one time. At the start of each of the elemental's turns, each target grappled by it takes 13 (2d8 + 4) bludgeoning damage. A creature within 5 feet of the elemental can pull a creature or object out of it by taking an action to make a DC 14 Strength and succeeding.",
-        "damage": [
-          {
-            "damage_type": {
-              "index": "bludgeoning",
-              "name": "Bludgeoning",
-              "url": "/api/2014/damage-types/bludgeoning"
-            },
-            "damage_dice": "2d8+4"
-          }
-        ],
-        "actions": []
+        "description": "Each creature in the elemental's space must make a DC 15 Strength saving throw. On a failure, a target takes 13 (2d8 + 4) bludgeoning damage. If it is Large or smaller, it is also grappled (escape DC 14). Until this grapple ends, the target is restrained and unable to breathe unless it can breathe water. If the saving throw is successful, the target is pushed out of the elemental's space.\nThe elemental can grapple one Large creature or up to two Medium or smaller creatures at one time. At the start of each of the elemental's turns, each target grappled by it takes 13 (2d8 + 4) bludgeoning damage. A creature within 5 feet of the elemental can pull a creature or object out of it by taking an action to make a DC 14 Strength and succeeding.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8+4",
+          "average": 13
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A massive being composed entirely of flowing water, taking the form of a humanoid made of constantly moving liquid. Its body ripples and flows like a living stream, and it can change shape to flow through any opening or around obstacles.",
+    "imagePrompt": "A massive being composed of flowing water, humanoid form made of constantly moving liquid, rippling flowing body like living stream, water elemental nature",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "large",
-      "neutral"
+      "neutral",
+      "elemental"
     ]
   },
   {
@@ -1805,11 +1317,10 @@ export const elementalMonsters: Monster[] = [
     "armorClass": 19,
     "armorType": "natural",
     "hitPoints": 73,
-    "hitDice": "7d8",
+    "hitDice": "7d8+42",
     "speed": {
       "walk": 20,
-      "burrow": 20,
-      "hover": false
+      "burrow": 20
     },
     "savingThrows": {},
     "skills": {
@@ -1823,9 +1334,9 @@ export const elementalMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
+      "passivePerception": 16,
       "darkvision": 60,
-      "tremorsense": 60,
-      "passivePerception": 16
+      "tremorsense": 60
     },
     "languages": [
       "Terran"
@@ -1848,62 +1359,39 @@ export const elementalMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "desc": "The xorn makes three claw attacks and one bite attack.",
-        "damage": [],
-        "multiattack_type": "actions",
-        "actions": [
-          {
-            "action_name": "Claw",
-            "count": "3",
-            "type": "melee"
-          },
-          {
-            "action_name": "Bite",
-            "count": "1",
-            "type": "melee"
-          }
-        ]
+        "description": "The xorn makes three claw attacks and one bite attack."
       },
       {
         "name": "Bite",
-        "desc": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (3d6 + 3) piercing damage.",
-        "attack_bonus": 6,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "piercing",
-              "name": "Piercing",
-              "url": "/api/2014/damage-types/piercing"
-            },
-            "damage_dice": "3d6+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (3d6 + 3) piercing damage.",
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "3d6+3",
+          "average": 14
+        }
       },
       {
         "name": "Claw",
-        "desc": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
-        "attack_bonus": 6,
-        "damage": [
-          {
-            "damage_type": {
-              "index": "slashing",
-              "name": "Slashing",
-              "url": "/api/2014/damage-types/slashing"
-            },
-            "damage_dice": "1d6+3"
-          }
-        ],
-        "actions": []
+        "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
+        "attackBonus": 6,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6+3",
+          "average": 7
+        }
       }
     ],
     "legendaryActions": [],
-    "description": "",
+    "description": "A medium-sized elemental creature with a distinctive rocky appearance, wide body, and a large mouth at the top. It has three arms and three legs, with three eyes. The creature's coloration resembles stone and earth, making it blend into rocky terrain. It has a neutral, docile appearance unless provoked or hungry.",
+    "imagePrompt": "A medium-sized elemental creature with a distinctive rocky appearance, wide body, and a large mouth at the top. It has three arms and three legs, with three eyes. The creature's coloration resembles stone and earth, making it blend into rocky terrain. It has a neutral, docile appearance unless provoked or hungry.",
+    "imageStyle": "fantasy",
     "source": "SRD",
     "tags": [
       "elemental",
       "medium",
-      "neutral"
+      "neutral",
+      "elemental"
     ]
   }
 ];

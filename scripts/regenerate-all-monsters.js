@@ -149,18 +149,6 @@ async function fetchAllMonsters() {
   return monsters;
 }
 
-function calculateAverage(diceRoll) {
-  // Simple average calculation for common dice
-  const match = diceRoll.match(/(\d+)d(\d+)([+-]\d+)?/);
-  if (match) {
-    const numDice = parseInt(match[1]);
-    const dieSize = parseInt(match[2]);
-    const modifier = match[3] ? parseInt(match[3]) : 0;
-    return Math.floor((numDice * (dieSize + 1) / 2) + modifier);
-  }
-  return undefined;
-}
-
 function generateTypeScriptFile(monsters) {
   const beastMonsters = monsters.filter(m => m.type === 'beast');
   const aberrationMonsters = monsters.filter(m => m.type === 'aberration');
@@ -179,7 +167,7 @@ function generateTypeScriptFile(monsters) {
   const undeadMonsters = monsters.filter(m => m.type === 'undead');
   
   // Generate beast.ts
-  const beastContent = `import { Monster } from '@/types/monster';
+  const beastContent = `import { Monster } from '../../types/monster';
 
 export const beastMonsters: Monster[] = ${JSON.stringify(beastMonsters, null, 2)};
 `;
@@ -188,7 +176,7 @@ export const beastMonsters: Monster[] = ${JSON.stringify(beastMonsters, null, 2)
   console.log(`Generated beast.ts with ${beastMonsters.length} monsters`);
   
   // Generate aberration.ts
-  const aberrationContent = `import { Monster } from '@/types/monster';
+  const aberrationContent = `import { Monster } from '../../types/monster';
 
 export const aberrationMonsters: Monster[] = ${JSON.stringify(aberrationMonsters, null, 2)};
 `;
@@ -214,7 +202,7 @@ export const aberrationMonsters: Monster[] = ${JSON.stringify(aberrationMonsters
   ];
   
   for (const file of typeFiles) {
-    const content = `import { Monster } from '@/types/monster';
+    const content = `import { Monster } from '../../types/monster';
 
 export const ${file.name}Monsters: Monster[] = ${JSON.stringify(file.monsters, null, 2)};
 `;
@@ -270,20 +258,18 @@ async function main() {
     const monsters = await fetchAllMonsters();
     
     if (monsters.length === 0) {
-      console.error('❌ No monsters fetched successfully. Aborting.');
+      console.error('❌ No monsters fetched successfully');
       process.exit(1);
     }
     
-    console.log(`\nSuccessfully fetched ${monsters.length} monsters`);
-    console.log('Generating TypeScript files...\n');
-    
+    console.log('\nGenerating TypeScript files...\n');
     generateTypeScriptFile(monsters);
     
     console.log('\n✅ Monster regeneration complete!');
     console.log('All monster data is now sourced directly from the official D&D 5e API');
     
   } catch (error) {
-    console.error('Error:', error);
+    console.error('❌ Error during monster regeneration:', error);
     process.exit(1);
   }
 }
