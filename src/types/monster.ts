@@ -7,6 +7,11 @@ export interface MonsterAction {
     roll: string; // e.g., "2d6+3"
     average?: number;
   };
+  secondaryDamage?: {
+    type: string;
+    roll: string; // e.g., "4d8"
+    average?: number;
+  };
   reach?: string;
   target?: string;
   savingThrow?: {

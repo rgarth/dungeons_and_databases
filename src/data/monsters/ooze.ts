@@ -68,6 +68,11 @@ export const oozeMonsters: Monster[] = [
           "type": "Bludgeoning",
           "roll": "1d6+3",
           "average": 7
+        },
+        "secondaryDamage": {
+          "type": "Acid",
+          "roll": "4d8",
+          "average": 18
         }
       }
     ],
@@ -234,6 +239,11 @@ export const oozeMonsters: Monster[] = [
           "type": "Bludgeoning",
           "roll": "1d6+1",
           "average": 5
+        },
+        "secondaryDamage": {
+          "type": "Acid",
+          "roll": "2d6",
+          "average": 7
         }
       }
     ],
@@ -312,6 +322,11 @@ export const oozeMonsters: Monster[] = [
           "type": "Bludgeoning",
           "roll": "2d6+2",
           "average": 9
+        },
+        "secondaryDamage": {
+          "type": "Acid",
+          "roll": "1d6",
+          "average": 4
         }
       }
     ],
