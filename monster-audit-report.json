@@ -1,0 +1,341 @@
+{
+  "summary": {
+    "totalMonsters": 173,
+    "monstersWithIssues": 24,
+    "totalIssues": 29,
+    "issuesByType": {
+      "SUSPICIOUS_1D4_BLUDGEONING": 21,
+      "MISSING_ATTACK_BONUS": 5,
+      "NO_DAMAGE_ABILITY": 3
+    },
+    "issuesByFile": {
+      "aberration.ts": 1,
+      "beast.ts": 5,
+      "celestial.ts": 6,
+      "elemental.ts": 1,
+      "fey.ts": 6,
+      "giant.ts": 1,
+      "undead.ts": 9
+    }
+  },
+  "detailedIssues": [
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Gibbering Mouther",
+      "ability": "Blinding Spittle",
+      "cr": "2",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The mouther spits a chemical glob at a point it can see within 15 feet of it. The glob explodes in a blinding flash of light on impact. Each creature within 5 feet of the flash must succeed on a DC 13 Dexterity saving throw or be blinded until the end of the mouther's next turn."
+    },
+    {
+      "type": "MISSING_ATTACK_BONUS",
+      "monster": "Bat",
+      "ability": "Bite",
+      "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one creature. Hit: 1 piercing damage."
+    },
+    {
+      "type": "MISSING_ATTACK_BONUS",
+      "monster": "Cat",
+      "ability": "Claws",
+      "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 slashing damage."
+    },
+    {
+      "type": "MISSING_ATTACK_BONUS",
+      "monster": "Crab",
+      "ability": "Claw",
+      "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 bludgeoning damage."
+    },
+    {
+      "type": "MISSING_ATTACK_BONUS",
+      "monster": "Lizard",
+      "ability": "Bite",
+      "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 piercing damage."
+    },
+    {
+      "type": "MISSING_ATTACK_BONUS",
+      "monster": "Rat",
+      "ability": "Bite",
+      "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 piercing damage."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Deva",
+      "ability": "Healing Touch",
+      "cr": "10",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The deva touches another creature. The target magically regains 20 (4d8 + 2) hit points and is freed from any curse, disease, poison, blindness, or deafness."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Deva",
+      "ability": "Change Shape",
+      "cr": "10",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The deva magically polymorphs into a humanoid or beast that has a challenge rating equal to or less than its own, or back into its true form. It reverts to its true form if it dies. Any equipment it is wearing or carrying is absorbed or borne by the new form (the deva's choice).\nIn a new form, the deva retains its game statistics and ability to speak, but its AC, movement modes, Strength, Dexterity, and special senses are replaced by those of the new form, and it gains any statistics and capabilities (except class features, legendary actions, and lair actions) that the new form has but that it lacks."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Planetar",
+      "ability": "Healing Touch",
+      "cr": "16",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The planetar touches another creature. The target magically regains 30 (6d8 + 3) hit points and is freed from any curse, disease, poison, blindness, or deafness."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Solar",
+      "ability": "Flying Sword",
+      "cr": "21",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The solar releases its greatsword to hover magically in an unoccupied space within 5 ft. of it. If the solar can see the sword, the solar can mentally command it as a bonus action to fly up to 50 ft. and either make one attack against a target or return to the solar's hands. If the hovering sword is targeted by any effect, the solar is considered to be holding it. The hovering sword falls if the solar dies."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Solar",
+      "ability": "Healing Touch",
+      "cr": "21",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The solar touches another creature. The target magically regains 40 (8d8 + 4) hit points and is freed from any curse, disease, poison, blindness, or deafness."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Unicorn",
+      "ability": "Healing Touch",
+      "cr": "5",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The unicorn touches another creature with its horn. The target magically regains 11 (2d8 + 2) hit points. In addition, the touch removes all diseases and neutralizes all poisons afflicting the target."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Salamander",
+      "ability": "Spear",
+      "cr": "5",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "Melee or Ranged Weapon Attack: +7 to hit, reach 5 ft. or range 20 ft./60 ft., one target. Hit: 11 (2d6 + 4) piercing damage, or 13 (2d8 + 4) piercing damage if used with two hands to make a melee attack, plus 3 (1d6) fire damage."
+    },
+    {
+      "type": "NO_DAMAGE_ABILITY",
+      "monster": "Dryad",
+      "ability": "Fey Charm",
+      "description": "The dryad targets one humanoid or beast that she can see within 30 feet of her. If the target can see the dryad, it must succeed on a DC 14 Wisdom saving throw or be magically charmed. The charmed creature regards the dryad as a trusted friend to be heeded and protected. Although the target isn't under the dryad's control, it takes the dryad's requests or actions in the most favorable way it can.\nEach time the dryad or its allies do anything harmful to the target, it can repeat the saving throw, ending the effect on itself on a success. Otherwise, the effect lasts 24 hours or until the dryad dies, is on a different plane of existence from the target, or ends the effect as a bonus action. If a target's saving throw is successful, the target is immune to the dryad's Fey Charm for the next 24 hours.\nThe dryad can have no more than one humanoid and up to three beasts charmed at a time.",
+      "currentDamage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "expected": "No damage"
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Green Hag",
+      "ability": "Illusory Appearance",
+      "cr": "3",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The hag covers herself and anything she is wearing or carrying with a magical illusion that makes her look like another creature of her general size and humanoid shape. The illusion ends if the hag takes a bonus action to end it or if she dies.\nThe changes wrought by this effect fail to hold up to physical inspection. For example, the hag could appear to have smooth skin, but someone touching her would feel her rough flesh. Otherwise, a creature must take an action to visually inspect the illusion and succeed on a DC 20 Intelligence (Investigation) check to discern that the hag is disguised."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Green Hag",
+      "ability": "Invisible Passage",
+      "cr": "3",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The hag magically turns invisible until she attacks or casts a spell, or until her concentration ends (as if concentrating on a spell). While invisible, she leaves no physical evidence of her passage, so she can be tracked only by magic. Any equipment she wears or carries is invisible with her."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Sea Hag",
+      "ability": "Death Glare",
+      "cr": "2",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The hag targets one frightened creature she can see within 30 ft. of her. If the target can see the hag, it must succeed on a DC 11 Wisdom saving throw against this magic or drop to 0 hit points."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Sea Hag",
+      "ability": "Illusory Appearance",
+      "cr": "2",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The hag covers herself and anything she is wearing or carrying with a magical illusion that makes her look like an ugly creature of her general size and humanoid shape. The effect ends if the hag takes a bonus action to end it or if she dies.\nThe changes wrought by this effect fail to hold up to physical inspection. For example, the hag could appear to have no claws, but someone touching her hand might feel the claws. Otherwise, a creature must take an action to visually inspect the illusion and succeed on a DC 16 Intelligence (Investigation) check to discern that the hag is disguised."
+    },
+    {
+      "type": "NO_DAMAGE_ABILITY",
+      "monster": "Sprite",
+      "ability": "Invisibility",
+      "description": "The sprite magically turns invisible until it attacks or casts a spell, or until its concentration ends (as if concentrating on a spell). Any equipment the sprite wears or carries is invisible with it.",
+      "currentDamage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "expected": "No damage"
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Oni",
+      "ability": "Change Shape",
+      "cr": "7",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The oni magically polymorphs into a Small or Medium humanoid, into a Large giant, or back into its true form. Other than its size, its statistics are the same in each form. The only equipment that is transformed is its glaive, which shrinks so that it can be wielded in humanoid form. If the oni dies, it reverts to its true form, and its glaive reverts to its normal size."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Ghost",
+      "ability": "Horrifying Visage",
+      "cr": "4",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "Each non-undead creature within 60 ft. of the ghost that can see it must succeed on a DC 13 Wisdom saving throw or be frightened for 1 minute. If the save fails by 5 or more, the target also ages 1d4 × 10 years. A frightened target can repeat the saving throw at the end of each of its turns, ending the frightened condition on itself on a success. If a target's saving throw is successful or the effect ends for it, the target is immune to this ghost's Horrifying Visage for the next 24 hours. The aging effect can be reversed with a greater restoration spell, but only within 24 hours of it occurring."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Mummy",
+      "ability": "Dreadful Glare",
+      "cr": "3",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The mummy targets one creature it can see within 60 ft. of it. If the target can see the mummy, it must succeed on a DC 11 Wisdom saving throw against this magic or become frightened until the end of the mummy's next turn. If the target fails the saving throw by 5 or more, it is also paralyzed for the same duration. A target that succeeds on the saving throw is immune to the Dreadful Glare of all mummies (but not mummy lords) for the next 24 hours."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Mummy Lord",
+      "ability": "Dreadful Glare",
+      "cr": "15",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The mummy lord targets one creature it can see within 60 feet of it. If the target can see the mummy lord, it must succeed on a DC 16 Wisdom saving throw against this magic or become frightened until the end of the mummy's next turn. If the target fails the saving throw by 5 or more, it is also paralyzed for the same duration. A target that succeeds on the saving throw is immune to the Dreadful Glare of all mummies and mummy lords for the next 24 hours."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Vampire, Bat Form",
+      "ability": "Children of the Night",
+      "cr": "13",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The vampire magically calls 2d4 swarms of bats or rats, provided that the sun isn't up. While outdoors, the vampire can call 3d6 wolves instead. The called creatures arrive in 1d4 rounds, acting as allies of the vampire and obeying its spoken commands. The beasts remain for 1 hour, until the vampire dies, or until the vampire dismisses them as a bonus action."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Vampire, Vampire Form",
+      "ability": "Children of the Night",
+      "cr": "13",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The vampire magically calls 2d4 swarms of bats or rats, provided that the sun isn't up. While outdoors, the vampire can call 3d6 wolves instead. The called creatures arrive in 1d4 rounds, acting as allies of the vampire and obeying its spoken commands. The beasts remain for 1 hour, until the vampire dies, or until the vampire dismisses them as a bonus action."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Wight",
+      "ability": "Longsword",
+      "cr": "3",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) slashing damage, or 7 (1d10 + 2) slashing damage if used with two hands."
+    },
+    {
+      "type": "NO_DAMAGE_ABILITY",
+      "monster": "Will-o'-Wisp",
+      "ability": "Invisibility",
+      "description": "The will-o'-wisp and its light magically become invisible until it attacks or uses its Consume Life, or until its concentration ends (as if concentrating on a spell).",
+      "currentDamage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "expected": "No damage"
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Will-o'-Wisp",
+      "ability": "Invisibility",
+      "cr": "2",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The will-o'-wisp and its light magically become invisible until it attacks or uses its Consume Life, or until its concentration ends (as if concentrating on a spell)."
+    },
+    {
+      "type": "SUSPICIOUS_1D4_BLUDGEONING",
+      "monster": "Wraith",
+      "ability": "Create Specter",
+      "cr": "5",
+      "damage": {
+        "type": "bludgeoning",
+        "roll": "1d4",
+        "average": 3
+      },
+      "description": "The wraith targets a humanoid within 10 feet of it that has been dead for no longer than 1 minute and died violently. The target's spirit rises as a specter in the space of its corpse or in the nearest unoccupied space. The specter is under the wraith's control. The wraith can have no more than seven specters under its control at one time."
+    }
+  ]
+}

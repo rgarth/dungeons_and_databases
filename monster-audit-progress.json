@@ -1,0 +1,15 @@
+{
+  "started": "2025-01-27T00:00:00Z",
+  "total": 334,
+  "completed": 1,
+  "current": null,
+  "issues": [],
+  "changes": [
+    {
+      "monster": "Aboleth",
+      "change": "Added missing 1d12 acid damage to Tentacle attack"
+    }
+  ],
+  "notFound": [],
+  "errors": []
+} 

@@ -168,8 +168,8 @@ export default function MonstersPage() {
 
 
   // Helper function to get CR as number for range filtering
-  const getCRAsNumber = (cr: string): number => {
-    if (cr === "0") return 0;
+  const getCRAsNumber = (cr: string | null): number => {
+    if (!cr || cr === "0") return 0;
     if (cr.includes("/")) {
       const [num, denom] = cr.split("/");
       return parseInt(num) / parseInt(denom);

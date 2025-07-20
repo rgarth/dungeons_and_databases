@@ -1,11 +1,23 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Monster } from "@/types/monster";
+import { Monster, MonsterDamageSimple, MonsterDamageChoice } from "@/types/monster";
 import { Button } from "@/components/ui";
 import { X, Shield, Sword, BookOpen, Zap, Crown, Eye, Users, Leaf, Flame, Skull, Droplets, Mountain, Sparkles } from "lucide-react";
 import { useDiceRoll } from './providers/dice-provider';
 import { MonsterImage } from './monster-image';
+
+// Type guards for damage structures
+const isSimpleDamage = (damage: MonsterDamageSimple | MonsterDamageChoice): damage is MonsterDamageSimple => {
+  return 'damage_dice' in damage && 'damage_type' in damage;
+};
+
+// Helper function to get first damage from array
+const getFirstDamage = (damageArray: (MonsterDamageSimple | MonsterDamageChoice)[]): MonsterDamageSimple | null => {
+  if (!damageArray || damageArray.length === 0) return null;
+  const firstDamage = damageArray[0];
+  return isSimpleDamage(firstDamage) ? firstDamage : null;
+};
 
 interface MonsterDetailModalProps {
   monster: Monster | null;
@@ -344,75 +356,56 @@ export default function MonsterDetailModal({ monster, isOpen, onClose }: Monster
           {monster.actions.map((action, index) => (
             <div key={index} className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-4">
               <h4 className="font-semibold text-[var(--color-text-primary)] mb-2">{action.name}</h4>
-              <p className="text-[var(--color-text-secondary)] text-sm whitespace-pre-wrap mb-2">{stripMarkdown(action.description)}</p>
+              <p className="text-[var(--color-text-secondary)] text-sm whitespace-pre-wrap mb-2">{stripMarkdown(action.desc)}</p>
               
               {/* Attack and Damage Dice Rollers */}
               <div className="flex gap-2 mb-3">
-                {action.attackBonus !== undefined && (
+                {action.attack_bonus !== undefined && (
                   <button
-                    onClick={() => rollDice(`1d20${action.attackBonus! >= 0 ? '+' : ''}${action.attackBonus!}`)}
+                    onClick={() => rollDice(`1d20${action.attack_bonus! >= 0 ? '+' : ''}${action.attack_bonus!}`)}
                     className="text-center bg-[var(--color-card-secondary)] rounded p-2 hover:bg-[var(--color-card-tertiary)] transition-colors cursor-pointer group"
-                    title={`Roll attack: 1d20${action.attackBonus! >= 0 ? '+' : ''}${action.attackBonus!}`}
+                    title={`Roll attack: 1d20${action.attack_bonus! >= 0 ? '+' : ''}${action.attack_bonus!}`}
                   >
                     <div className="text-lg font-bold text-[var(--color-success)] group-hover:scale-105 transition-transform">
-                      {action.attackBonus! >= 0 ? '+' : ''}{action.attackBonus!}
+                      {action.attack_bonus! >= 0 ? '+' : ''}{action.attack_bonus!}
                     </div>
                     <div className="text-xs text-[var(--color-text-muted)]">Attack</div>
                   </button>
                 )}
                 
-                {action.damage && action.damage.roll && (
-                  <button
-                    onClick={() => rollDice(action.damage!.roll)}
-                    className="text-center bg-[var(--color-card-secondary)] rounded p-2 hover:bg-[var(--color-card-tertiary)] transition-colors cursor-pointer group"
-                    title={`Roll damage: ${action.damage.roll} ${action.damage.type}`}
-                  >
-                    <div className="text-lg font-bold text-[var(--color-danger)] group-hover:scale-105 transition-transform">
-                      {action.damage.roll}
-                    </div>
-                    <div className="text-xs text-[var(--color-text-muted)]">{action.damage.type} Damage</div>
-                  </button>
-                )}
+                {(() => {
+                  const firstDamage = getFirstDamage(action.damage || []);
+                  return firstDamage ? (
+                    <button
+                      onClick={() => rollDice(firstDamage.damage_dice)}
+                      className="text-center bg-[var(--color-card-secondary)] rounded p-2 hover:bg-[var(--color-card-tertiary)] transition-colors cursor-pointer group"
+                      title={`Roll damage: ${firstDamage.damage_dice} ${firstDamage.damage_type.name}`}
+                    >
+                      <div className="text-lg font-bold text-[var(--color-danger)] group-hover:scale-105 transition-transform">
+                        {firstDamage.damage_dice}
+                      </div>
+                      <div className="text-xs text-[var(--color-text-muted)]">{firstDamage.damage_type.name} Damage</div>
+                    </button>
+                  ) : null;
+                })()}
               </div>
               
               {/* Action Details */}
               <div className="space-y-1">
-                {action.attackBonus && (
+                {action.attack_bonus && (
                   <p className="text-sm text-[var(--color-text-secondary)]">
-                    <span className="font-medium">Attack Bonus:</span> {action.attackBonus >= 0 ? `+${action.attackBonus}` : action.attackBonus}
+                    <span className="font-medium">Attack Bonus:</span> {action.attack_bonus >= 0 ? `+${action.attack_bonus}` : action.attack_bonus}
                   </p>
                 )}
                 
-                {action.damage && (
-                  <p className="text-sm text-[var(--color-text-secondary)]">
-                    <span className="font-medium">Damage:</span> {action.damage.roll} {action.damage.type}
-                    {action.damage.average && ` (average ${action.damage.average})`}
-                  </p>
-                )}
-                
-                {action.reach && (
-                  <p className="text-sm text-[var(--color-text-secondary)]">
-                    <span className="font-medium">Reach:</span> {action.reach}
-                  </p>
-                )}
-                
-                {action.target && (
-                  <p className="text-sm text-[var(--color-text-secondary)]">
-                    <span className="font-medium">Target:</span> {action.target}
-                  </p>
-                )}
-                
-                {action.savingThrow && (
-                  <p className="text-sm text-[var(--color-text-secondary)]">
-                    <span className="font-medium">Saving Throw:</span> {action.savingThrow.ability.toUpperCase()} DC {action.savingThrow.dc} ({action.savingThrow.effect})
-                  </p>
-                )}
-                
-                {action.recharge && (
-                  <p className="text-sm text-[var(--color-text-secondary)]">
-                    <span className="font-medium">Recharge:</span> {action.recharge}
-                  </p>
-                )}
+                {(() => {
+                  const firstDamage = getFirstDamage(action.damage || []);
+                  return firstDamage ? (
+                    <p className="text-sm text-[var(--color-text-secondary)]">
+                      <span className="font-medium">Damage:</span> {firstDamage.damage_dice} {firstDamage.damage_type.name}
+                    </p>
+                  ) : null;
+                })()}
               </div>
             </div>
           ))}

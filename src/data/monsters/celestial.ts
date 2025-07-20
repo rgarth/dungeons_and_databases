@@ -1,4 +1,4 @@
-import { Monster } from '@/types/monster';
+import { Monster } from '../../types/monster';
 
 export const celestialMonsters: Monster[] = [
   {
@@ -17,10 +17,11 @@ export const celestialMonsters: Monster[] = [
     "armorClass": 19,
     "armorType": "natural",
     "hitPoints": 97,
-    "hitDice": "13d8+39",
+    "hitDice": "13d8",
     "speed": {
       "walk": 30,
-      "fly": 90
+      "fly": 90,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -34,8 +35,8 @@ export const celestialMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 15,
-      "truesight": 120
+      "truesight": 120,
+      "passivePerception": 15
     },
     "languages": [
       "all",
@@ -59,40 +60,50 @@ export const celestialMonsters: Monster[] = [
     "actions": [
       {
         "name": "Bite",
-        "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one creature. Hit: 8 (1d6 + 5) piercing damage, and the target must succeed on a DC 13 Constitution saving throw or be poisoned for 24 hours. Until this poison ends, the target is unconscious. Another creature can use an action to shake the target awake.",
-        "attackBonus": 8,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d6+5",
-          "average": 9
-        }
+        "desc": "Melee Weapon Attack: +8 to hit, reach 5 ft., one creature. Hit: 8 (1d6 + 5) piercing damage, and the target must succeed on a DC 13 Constitution saving throw or be poisoned for 24 hours. Until this poison ends, the target is unconscious. Another creature can use an action to shake the target awake.",
+        "attack_bonus": 8,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "1d6+5"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Constrict",
-        "description": "Melee Weapon Attack: +6 to hit, reach 10 ft., one Medium or smaller creature. Hit: 10 (2d6 + 3) bludgeoning damage, and the target is grappled (escape DC 15). Until this grapple ends, the target is restrained, and the couatl can't constrict another target.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d6+3",
-          "average": 10
-        }
+        "desc": "Melee Weapon Attack: +6 to hit, reach 10 ft., one Medium or smaller creature. Hit: 10 (2d6 + 3) bludgeoning damage, and the target is grappled (escape DC 15). Until this grapple ends, the target is restrained, and the couatl can't constrict another target.",
+        "attack_bonus": 6,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "bludgeoning",
+              "name": "Bludgeoning",
+              "url": "/api/2014/damage-types/bludgeoning"
+            },
+            "damage_dice": "2d6+3"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Change Shape",
-        "description": "The couatl magically polymorphs into a humanoid or beast that has a challenge rating equal to or less than its own, or back into its true form. It reverts to its true form if it dies. Any equipment it is wearing or carrying is absorbed or borne by the new form (the couatl's choice).\nIn a new form, the couatl retains its game statistics and ability to speak, but its AC, movement modes, Strength, Dexterity, and other actions are replaced by those of the new form, and it gains any statistics and capabilities (except class features, legendary actions, and lair actions) that the new form has but that it lacks. If the new form has a bite attack, the couatl can use its bite in that form."
+        "desc": "The couatl magically polymorphs into a humanoid or beast that has a challenge rating equal to or less than its own, or back into its true form. It reverts to its true form if it dies. Any equipment it is wearing or carrying is absorbed or borne by the new form (the couatl's choice).\nIn a new form, the couatl retains its game statistics and ability to speak, but its AC, movement modes, Strength, Dexterity, and other actions are replaced by those of the new form, and it gains any statistics and capabilities (except class features, legendary actions, and lair actions) that the new form has but that it lacks. If the new form has a bite attack, the couatl can use its bite in that form.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A medium-sized winged serpent about 12 feet long with a 15-foot wingspan. Couatls have a serpentine body that can coil even in flight, with rainbow-colored or silvery-white feathers on their wings. They are wise and benevolent celestial beings who serve as protectors and messengers of the gods. They can shapeshift into humanoid or beast forms, cast powerful healing magic, and are immune to psychic damage and nonmagical weapons.",
-    "imagePrompt": "A medium-sized winged serpent about 12 feet long with a 15-foot wingspan. The creature has a serpentine body that can coil even in flight, with rainbow-colored or silvery-white feathers on its wings. It has a beautiful, wise appearance with celestial features, embodying lawful good alignment and divine protection.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "celestial",
       "medium",
-      "lawful-good",
-      "celestial",
-      "good"
+      "lawful good"
     ]
   },
   {
@@ -111,10 +122,11 @@ export const celestialMonsters: Monster[] = [
     "armorClass": 17,
     "armorType": "natural",
     "hitPoints": 136,
-    "hitDice": "16d8+64",
+    "hitDice": "16d8",
     "speed": {
       "walk": 30,
-      "fly": 90
+      "fly": 90,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -127,14 +139,26 @@ export const celestialMonsters: Monster[] = [
     ],
     "damageImmunities": [],
     "conditionImmunities": [
-      "Charmed",
-      "Exhaustion",
-      "Frightened"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 19,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 19
     },
     "languages": [
       "all",
@@ -158,48 +182,61 @@ export const celestialMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The deva makes two melee attacks."
+        "desc": "The deva makes two melee attacks.",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Mace",
+            "count": "2",
+            "type": "melee"
+          }
+        ]
       },
       {
         "name": "Mace",
-        "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 7 (1d6 + 4) bludgeoning damage plus 18 (4d8) radiant damage.",
-        "attackBonus": 8,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "1d6+4",
-          "average": 8
-        }
+        "desc": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 7 (1d6 + 4) bludgeoning damage plus 18 (4d8) radiant damage.",
+        "attack_bonus": 8,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "bludgeoning",
+              "name": "Bludgeoning",
+              "url": "/api/2014/damage-types/bludgeoning"
+            },
+            "damage_dice": "1d6+4"
+          },
+          {
+            "damage_type": {
+              "index": "radiant",
+              "name": "Radiant",
+              "url": "/api/2014/damage-types/radiant"
+            },
+            "damage_dice": "4d8"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Healing Touch",
-        "description": "The deva touches another creature. The target magically regains 20 (4d8 + 2) hit points and is freed from any curse, disease, poison, blindness, or deafness.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The deva touches another creature. The target magically regains 20 (4d8 + 2) hit points and is freed from any curse, disease, poison, blindness, or deafness.",
+        "damage": [],
+        "actions": []
       },
       {
         "name": "Change Shape",
-        "description": "The deva magically polymorphs into a humanoid or beast that has a challenge rating equal to or less than its own, or back into its true form. It reverts to its true form if it dies. Any equipment it is wearing or carrying is absorbed or borne by the new form (the deva's choice).\nIn a new form, the deva retains its game statistics and ability to speak, but its AC, movement modes, Strength, Dexterity, and special senses are replaced by those of the new form, and it gains any statistics and capabilities (except class features, legendary actions, and lair actions) that the new form has but that it lacks.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The deva magically polymorphs into a humanoid or beast that has a challenge rating equal to or less than its own, or back into its true form. It reverts to its true form if it dies. Any equipment it is wearing or carrying is absorbed or borne by the new form (the deva's choice).\nIn a new form, the deva retains its game statistics and ability to speak, but its AC, movement modes, Strength, Dexterity, and special senses are replaced by those of the new form, and it gains any statistics and capabilities (except class features, legendary actions, and lair actions) that the new form has but that it lacks.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A beautiful humanoid angel with flawless features, radiant wings, and glowing eyes. Devas are powerful celestial beings who serve as divine messengers and protectors. They can shapeshift into humanoid or beast forms, wield magical weapons that deal radiant damage, and cast powerful spells including commune and raise dead. They are immune to charm, exhaustion, and fear.",
-    "imagePrompt": "A medium celestial creature with divine and angelic features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "celestial",
       "medium",
-      "lawful-good",
-      "celestial",
-      "good"
+      "lawful good"
     ]
   },
   {
@@ -218,10 +255,11 @@ export const celestialMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 59,
-    "hitDice": "7d10+21",
+    "hitDice": "7d10",
     "speed": {
       "walk": 60,
-      "fly": 90
+      "fly": 90,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -245,26 +283,28 @@ export const celestialMonsters: Monster[] = [
     "actions": [
       {
         "name": "Hooves",
-        "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d6+4",
-          "average": 11
-        }
+        "desc": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage.",
+        "attack_bonus": 6,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "bludgeoning",
+              "name": "Bludgeoning",
+              "url": "/api/2014/damage-types/bludgeoning"
+            },
+            "damage_dice": "2d6+4"
+          }
+        ],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A magnificent white horse with large, feathered wings that allow it to fly gracefully through the air. Pegasi are celestial steeds known for their speed, grace, and loyalty to good-aligned creatures. They are intelligent and can understand multiple languages, though they cannot speak. They are often found in the service of paladins, clerics, and other champions of good.",
-    "imagePrompt": "A large celestial creature with divine and angelic features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "celestial",
       "large",
-      "chaotic-good",
-      "celestial",
-      "good"
+      "chaotic good"
     ]
   },
   {
@@ -283,10 +323,11 @@ export const celestialMonsters: Monster[] = [
     "armorClass": 19,
     "armorType": "natural",
     "hitPoints": 200,
-    "hitDice": "16d10+112",
+    "hitDice": "16d10",
     "speed": {
       "walk": 40,
-      "fly": 120
+      "fly": 120,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -298,14 +339,26 @@ export const celestialMonsters: Monster[] = [
     ],
     "damageImmunities": [],
     "conditionImmunities": [
-      "Charmed",
-      "Exhaustion",
-      "Frightened"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 21,
-      "truesight": 120
+      "truesight": 120,
+      "passivePerception": 21
     },
     "languages": [
       "all",
@@ -333,39 +386,55 @@ export const celestialMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The planetar makes two melee attacks."
+        "desc": "The planetar makes two melee attacks.",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Greatsword",
+            "count": "2",
+            "type": "melee"
+          }
+        ]
       },
       {
         "name": "Greatsword",
-        "description": "Melee Weapon Attack: +12 to hit, reach 5 ft., one target. Hit: 21 (4d6 + 7) slashing damage plus 22 (5d8) radiant damage.",
-        "attackBonus": 12,
-        "damage": {
-          "type": "Slashing",
-          "roll": "4d6+7",
-          "average": 21
-        }
+        "desc": "Melee Weapon Attack: +12 to hit, reach 5 ft., one target. Hit: 21 (4d6 + 7) slashing damage plus 22 (5d8) radiant damage.",
+        "attack_bonus": 12,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "4d6+7"
+          },
+          {
+            "damage_type": {
+              "index": "radiant",
+              "name": "Radiant",
+              "url": "/api/2014/damage-types/radiant"
+            },
+            "damage_dice": "5d8"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Healing Touch",
-        "description": "The planetar touches another creature. The target magically regains 30 (6d8 + 3) hit points and is freed from any curse, disease, poison, blindness, or deafness.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The planetar touches another creature. The target magically regains 30 (6d8 + 3) hit points and is freed from any curse, disease, poison, blindness, or deafness.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A massive angelic being with powerful wings, radiant armor, and a commanding presence. Planetars are high-ranking celestial warriors who serve as generals in the armies of good. They wield greatswords that deal devastating radiant damage, can cast powerful spells like flame strike and raise dead, and have the ability to detect lies. They are nearly invulnerable to nonmagical weapons and immune to charm, exhaustion, and fear.",
-    "imagePrompt": "A large celestial creature with divine and angelic features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "celestial",
       "large",
-      "lawful-good",
-      "celestial",
-      "good"
+      "lawful good"
     ]
   },
   {
@@ -384,10 +453,11 @@ export const celestialMonsters: Monster[] = [
     "armorClass": 21,
     "armorType": "natural",
     "hitPoints": 243,
-    "hitDice": "18d10+144",
+    "hitDice": "18d10",
     "speed": {
       "walk": 50,
-      "fly": 150
+      "fly": 150,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -402,15 +472,31 @@ export const celestialMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Charmed",
-      "Exhaustion",
-      "Frightened",
-      "Poisoned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "exhaustion",
+        "name": "Exhaustion",
+        "url": "/api/2014/conditions/exhaustion"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 24,
-      "truesight": 120
+      "truesight": 120,
+      "passivePerception": 24
     },
     "languages": [
       "all",
@@ -438,45 +524,76 @@ export const celestialMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The solar makes two greatsword attacks."
+        "desc": "The solar makes two greatsword attacks.",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Greatsword",
+            "count": "2",
+            "type": "melee"
+          }
+        ]
       },
       {
         "name": "Greatsword",
-        "description": "Melee Weapon Attack: +15 to hit, reach 5 ft., one target. Hit: 22 (4d6 + 8) slashing damage plus 27 (6d8) radiant damage.",
-        "attackBonus": 15,
-        "damage": {
-          "type": "Radiant",
-          "roll": "4d6+8",
-          "average": 22
-        }
+        "desc": "Melee Weapon Attack: +15 to hit, reach 5 ft., one target. Hit: 22 (4d6 + 8) slashing damage plus 27 (6d8) radiant damage.",
+        "attack_bonus": 15,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "radiant",
+              "name": "Radiant",
+              "url": "/api/2014/damage-types/radiant"
+            },
+            "damage_dice": "4d6+8"
+          },
+          {
+            "damage_type": {
+              "index": "radiant",
+              "name": "Radiant",
+              "url": "/api/2014/damage-types/radiant"
+            },
+            "damage_dice": "6d8"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Slaying Longbow",
-        "description": "Ranged Weapon Attack: +13 to hit, range 150/600 ft., one target. Hit: 15 (2d8 + 6) piercing damage plus 27 (6d8) radiant damage. If the target is a creature that has 190 hit points or fewer, it must succeed on a DC 15 Constitution saving throw or die.",
-        "attackBonus": 13,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d8+6",
-          "average": 15
-        }
+        "desc": "Ranged Weapon Attack: +13 to hit, range 150/600 ft., one target. Hit: 15 (2d8 + 6) piercing damage plus 27 (6d8) radiant damage. If the target is a creature that has 190 hit points or fewer, it must succeed on a DC 15 Constitution saving throw or die.",
+        "attack_bonus": 13,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "2d8+6"
+          },
+          {
+            "damage_type": {
+              "index": "radiant",
+              "name": "Radiant",
+              "url": "/api/2014/damage-types/radiant"
+            },
+            "damage_dice": "6d8"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Flying Sword",
-        "description": "The solar releases its greatsword to hover magically in an unoccupied space within 5 ft. of it. If the solar can see the sword, the solar can mentally command it as a bonus action to fly up to 50 ft. and either make one attack against a target or return to the solar's hands. If the hovering sword is targeted by any effect, the solar is considered to be holding it. The hovering sword falls if the solar dies.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The solar releases its greatsword to hover magically in an unoccupied space within 5 ft. of it. If the solar can see the sword, the solar can mentally command it as a bonus action to fly up to 50 ft. and either make one attack against a target or return to the solar's hands. If the hovering sword is targeted by any effect, the solar is considered to be holding it. The hovering sword falls if the solar dies.",
+        "damage": [],
+        "actions": []
       },
       {
         "name": "Healing Touch",
-        "description": "The solar touches another creature. The target magically regains 40 (8d8 + 4) hit points and is freed from any curse, disease, poison, blindness, or deafness.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The solar touches another creature. The target magically regains 40 (8d8 + 4) hit points and is freed from any curse, disease, poison, blindness, or deafness.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [
@@ -493,16 +610,12 @@ export const celestialMonsters: Monster[] = [
         "description": "The solar targets one creature it can see within 30 ft. of it. If the target can see it, the target must succeed on a DC 15 Constitution saving throw or be blinded until magic such as the lesser restoration spell removes the blindness."
       }
     ],
-    "description": "A towering angelic being of immense power with brilliant wings, radiant armor, and an aura of divine authority. Solars are the highest-ranking celestial beings, serving as the personal agents of the gods. They wield magical greatswords and longbows that deal devastating radiant damage, can cast powerful spells like resurrection and control weather, and have legendary actions including teleportation and blinding gaze. They are nearly invulnerable to all forms of damage and immune to most conditions.",
-    "imagePrompt": "A large celestial creature with divine and angelic features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "celestial",
       "large",
-      "lawful-good",
-      "celestial",
-      "good"
+      "lawful good"
     ]
   },
   {
@@ -521,9 +634,10 @@ export const celestialMonsters: Monster[] = [
     "armorClass": 12,
     "armorType": "dex",
     "hitPoints": 67,
-    "hitDice": "9d10+18",
+    "hitDice": "9d10",
     "speed": {
-      "walk": 50
+      "walk": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -532,14 +646,26 @@ export const celestialMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Charmed",
-      "Paralyzed",
-      "Poisoned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "paralyzed",
+        "name": "Paralyzed",
+        "url": "/api/2014/conditions/paralyzed"
+      },
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 13,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 13
     },
     "languages": [
       "Celestial",
@@ -569,40 +695,65 @@ export const celestialMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The unicorn makes two attacks: one with its hooves and one with its horn."
+        "desc": "The unicorn makes two attacks: one with its hooves and one with its horn.",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Hooves",
+            "count": "1",
+            "type": "melee"
+          },
+          {
+            "action_name": "Horn",
+            "count": "1",
+            "type": "melee"
+          }
+        ]
       },
       {
         "name": "Hooves",
-        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage.",
-        "attackBonus": 7,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d6+4",
-          "average": 11
-        }
+        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage.",
+        "attack_bonus": 7,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "bludgeoning",
+              "name": "Bludgeoning",
+              "url": "/api/2014/damage-types/bludgeoning"
+            },
+            "damage_dice": "2d6+4"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Horn",
-        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) piercing damage.",
-        "attackBonus": 7,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d8+4",
-          "average": 9
-        }
+        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) piercing damage.",
+        "attack_bonus": 7,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "1d8+4"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Healing Touch",
-        "description": "The unicorn touches another creature with its horn. The target magically regains 11 (2d8 + 2) hit points. In addition, the touch removes all diseases and neutralizes all poisons afflicting the target.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The unicorn touches another creature with its horn. The target magically regains 11 (2d8 + 2) hit points. In addition, the touch removes all diseases and neutralizes all poisons afflicting the target.",
+        "damage": [],
+        "actions": []
       },
       {
         "name": "Teleport",
-        "description": "The unicorn magically teleports itself and up to three willing creatures it can see within 5 ft. of it, along with any equipment they are wearing or carrying, to a location the unicorn is familiar with, up to 1 mile away."
+        "desc": "The unicorn magically teleports itself and up to three willing creatures it can see within 5 ft. of it, along with any equipment they are wearing or carrying, to a location the unicorn is familiar with, up to 1 mile away.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [
@@ -619,17 +770,12 @@ export const celestialMonsters: Monster[] = [
         "description": "The unicorn magically regains 11 (2d8 + 2) hit points."
       }
     ],
-    "description": "A majestic white horse with a single spiraled horn growing from its forehead. It has a pure white coat that seems to shimmer with magical light, intelligent eyes, and a graceful, noble bearing. It moves with supernatural grace and its horn glows with healing magic.",
-    "background": "Unicorns are celestial creatures that appear as pure white horses with a single magical horn. They are symbols of purity and goodness, known for their healing abilities and their ability to detect evil. They are often found in enchanted forests and serve as protectors of nature and the innocent.",
-    "imagePrompt": "A majestic white horse with single spiraled horn growing from forehead, pure white coat shimmering with magical light, intelligent eyes, graceful noble bearing, supernatural grace, horn glowing with healing magic. Celestial horse with magical horn. NO WINGS, NO FEATHERS, NOT A PEGASUS, JUST A HORSE WITH A HORN, PURE WHITE HORSE WITH HORN ONLY.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "celestial",
       "large",
-      "lawful-good",
-      "celestial",
-      "good"
+      "lawful good"
     ]
   }
 ];

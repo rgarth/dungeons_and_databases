@@ -1,11 +1,10 @@
-import { Monster } from '@/types/monster';
+import { Monster } from '../../types/monster';
 
 export const fiendMonsters: Monster[] = [
   {
     "name": "Balor",
     "size": "Huge",
     "type": "fiend",
-    "subtype": "demon",
     "alignment": "chaotic evil",
     "challengeRating": "19",
     "xp": 22000,
@@ -18,10 +17,11 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 19,
     "armorType": "natural",
     "hitPoints": 262,
-    "hitDice": "21d12+126",
+    "hitDice": "21d12",
     "speed": {
       "walk": 40,
-      "fly": 80
+      "fly": 80,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -35,12 +35,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 13,
-      "truesight": 120
+      "truesight": 120,
+      "passivePerception": 13
     },
     "languages": [
       "Abyssal",
@@ -68,55 +72,90 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The balor makes two attacks: one with its longsword and one with its whip.",
-        },
+        "desc": "The balor makes two attacks: one with its longsword and one with its whip.",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Longsword",
+            "count": "1",
+            "type": "melee"
+          },
+          {
+            "action_name": "Whip",
+            "count": "1",
+            "type": "melee"
+          }
+        ]
+      },
       {
         "name": "Longsword",
-        "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 21 (3d8 + 8) slashing damage plus 13 (3d8) lightning damage. If the balor scores a critical hit, it rolls damage dice three times, instead of twice.",
-        "attackBonus": 14,
-        "damage": {
-          "type": "Slashing",
-          "roll": "3d8+8",
-          "average": 22
-        }
+        "desc": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 21 (3d8 + 8) slashing damage plus 13 (3d8) lightning damage. If the balor scores a critical hit, it rolls damage dice three times, instead of twice.",
+        "attack_bonus": 14,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "3d8+8"
+          },
+          {
+            "damage_type": {
+              "index": "lightning",
+              "name": "Lightning",
+              "url": "/api/2014/damage-types/lightning"
+            },
+            "damage_dice": "3d8"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Whip",
-        "description": "Melee Weapon Attack: +14 to hit, reach 30 ft., one target. Hit: 15 (2d6 + 8) slashing damage plus 10 (3d6) fire damage, and the target must succeed on a DC 20 Strength saving throw or be pulled up to 25 feet toward the balor.",
-        "attackBonus": 14,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d6+8",
-          "average": 15
-        }
+        "desc": "Melee Weapon Attack: +14 to hit, reach 30 ft., one target. Hit: 15 (2d6 + 8) slashing damage plus 10 (3d6) fire damage, and the target must succeed on a DC 20 Strength saving throw or be pulled up to 25 feet toward the balor.",
+        "attack_bonus": 14,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "2d6+8"
+          },
+          {
+            "damage_type": {
+              "index": "fire",
+              "name": "Fire",
+              "url": "/api/2014/damage-types/fire"
+            },
+            "damage_dice": "3d6"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Teleport",
-        "description": "The balor magically teleports, along with any equipment it is wearing or carrying, up to 120 feet to an unoccupied space it can see.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The balor magically teleports, along with any equipment it is wearing or carrying, up to 120 feet to an unoccupied space it can see.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A massive demon with burning wings, a whip of lightning, and a flaming sword. Balors are among the most powerful demons in the Abyss, often serving as generals in the Blood War against the devils.",    "imagePrompt": "A huge fiend creature with demonic or devilish features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "huge",
-      "chaotic-evil",
-      "fiend",
-      "evil"
+      "chaotic evil"
     ]
   },
   {
     "name": "Barbed Devil",
     "size": "Medium",
     "type": "fiend",
-    "subtype": "devil",
     "alignment": "lawful evil",
     "challengeRating": "5",
     "xp": 1800,
@@ -129,9 +168,10 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 15,
     "armorType": "natural",
     "hitPoints": 110,
-    "hitDice": "13d8+52",
+    "hitDice": "13d8",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -148,12 +188,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 18,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 18
     },
     "languages": [
       "Infernal",
@@ -177,56 +221,105 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The devil makes three melee attacks: one with its tail and two with its claws. Alternatively, it can use Hurl Flame twice.",
+        "desc": "The devil makes three melee attacks: one with its tail and two with its claws. Alternatively, it can use Hurl Flame twice.",
+        "damage": [],
+        "multiattack_type": "action_options",
+        "action_options": {
+          "choose": 1,
+          "type": "action",
+          "from": {
+            "option_set_type": "options_array",
+            "options": [
+              {
+                "option_type": "multiple",
+                "items": [
+                  {
+                    "option_type": "action",
+                    "action_name": "Tail",
+                    "count": 1,
+                    "type": "melee"
+                  },
+                  {
+                    "option_type": "action",
+                    "action_name": "Claw",
+                    "count": 2,
+                    "type": "melee"
+                  }
+                ]
+              },
+              {
+                "option_type": "action",
+                "action_name": "Hurl Flame",
+                "count": 2,
+                "type": "ranged"
+              }
+            ]
+          }
         },
+        "actions": []
+      },
       {
         "name": "Claw",
-        "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d6+3",
-          "average": 7
-        }
+        "desc": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
+        "attack_bonus": 6,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "1d6+3"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Tail",
-        "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) piercing damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d6+3",
-          "average": 10
-        }
+        "desc": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) piercing damage.",
+        "attack_bonus": 6,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "2d6+3"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Hurl Flame",
-        "description": "Ranged Spell Attack: +5 to hit, range 150 ft., one target. Hit: 10 (3d6) fire damage. If the target is a flammable object that isn't being worn or carried, it also catches fire.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Fire",
-          "roll": "3d6",
-          "average": 11
-        }
+        "desc": "Ranged Spell Attack: +5 to hit, range 150 ft., one target. Hit: 10 (3d6) fire damage. If the target is a flammable object that isn't being worn or carried, it also catches fire.",
+        "attack_bonus": 5,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "fire",
+              "name": "Fire",
+              "url": "/api/2014/damage-types/fire"
+            },
+            "damage_dice": "3d6"
+          }
+        ],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A muscular devil covered in sharp, barbed spines that protrude from its red, leathery skin. Barbed devils are sadistic torturers who delight in causing pain, using their spiked hide to harm anyone who grapples them. They can hurl balls of hellfire and are immune to fire and poison, making them dangerous opponents in close combat.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "medium",
-      "lawful-evil",
-      "fiend",
-      "evil"
+      "lawful evil"
     ]
   },
   {
     "name": "Bearded Devil",
     "size": "Medium",
     "type": "fiend",
-    "subtype": "devil",
     "alignment": "lawful evil",
     "challengeRating": "3",
     "xp": 700,
@@ -239,9 +332,10 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "natural",
     "hitPoints": 52,
-    "hitDice": "8d8+16",
+    "hitDice": "8d8",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -254,12 +348,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 10
     },
     "languages": [
       "Infernal",
@@ -283,46 +381,68 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The devil makes two attacks: one with its beard and one with its glaive.",
-        },
+        "desc": "The devil makes two attacks: one with its beard and one with its glaive.",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Beard",
+            "count": "1",
+            "type": "melee"
+          },
+          {
+            "action_name": "Glaive",
+            "count": "1",
+            "type": "melee"
+          }
+        ]
+      },
       {
         "name": "Beard",
-        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one creature. Hit: 6 (1d8 + 2) piercing damage, and the target must succeed on a DC 12 Constitution saving throw or be poisoned for 1 minute. While poisoned in this way, the target can't regain hit points. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d8+2",
-          "average": 7
-        }
+        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one creature. Hit: 6 (1d8 + 2) piercing damage, and the target must succeed on a DC 12 Constitution saving throw or be poisoned for 1 minute. While poisoned in this way, the target can't regain hit points. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
+        "attack_bonus": 5,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "1d8+2"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Glaive",
-        "description": "Melee Weapon Attack: +5 to hit, reach 10 ft., one target. Hit: 8 (1d10 + 3) slashing damage. If the target is a creature other than an undead or a construct, it must succeed on a DC 12 Constitution saving throw or lose 5 (1d10) hit points at the start of each of its turns due to an infernal wound. Each time the devil hits the wounded target with this attack, the damage dealt by the wound increases by 5 (1d10). Any creature can take an action to stanch the wound with a successful DC 12 Wisdom (Medicine) check. The wound also closes if the target receives magical healing.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Slashing",
-          "roll": "1d10+3",
-          "average": 9
-        }
+        "desc": "Melee Weapon Attack: +5 to hit, reach 10 ft., one target. Hit: 8 (1d10 + 3) slashing damage. If the target is a creature other than an undead or a construct, it must succeed on a DC 12 Constitution saving throw or lose 5 (1d10) hit points at the start of each of its turns due to an infernal wound. Each time the devil hits the wounded target with this attack, the damage dealt by the wound increases by 5 (1d10). Any creature can take an action to stanch the wound with a successful DC 12 Wisdom (Medicine) check. The wound also closes if the target receives magical healing.",
+        "attack_bonus": 5,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "1d10+3"
+          }
+        ],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A muscular devil with a thick, wiry beard that writhes like living snakes. Bearded devils are disciplined soldiers of the Nine Hells who wield glaives and use their animated beards as deadly weapons. Their beard attacks can poison victims and prevent healing, while their glaive strikes create infernal wounds that bleed profusely unless treated.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "medium",
-      "lawful-evil",
-      "fiend",
-      "evil"
+      "lawful evil"
     ]
   },
   {
     "name": "Bone Devil",
     "size": "Large",
     "type": "fiend",
-    "subtype": "devil",
     "alignment": "lawful evil",
     "challengeRating": "9",
     "xp": 5000,
@@ -335,10 +455,11 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 19,
     "armorType": "natural",
     "hitPoints": 142,
-    "hitDice": "15d10+60",
+    "hitDice": "15d10",
     "speed": {
       "walk": 40,
-      "fly": 40
+      "fly": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -354,12 +475,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 12,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 12
     },
     "languages": [
       "Infernal",
@@ -379,46 +504,76 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The devil makes three attacks: two with its claws and one with its sting.",
-        },
+        "desc": "The devil makes three attacks: two with its claws and one with its sting.",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Claw",
+            "count": "2",
+            "type": "melee"
+          },
+          {
+            "action_name": "Sting",
+            "count": "1",
+            "type": "melee"
+          }
+        ]
+      },
       {
         "name": "Claw",
-        "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 8 (1d8 + 4) slashing damage.",
-        "attackBonus": 8,
-        "damage": {
-          "type": "Slashing",
-          "roll": "1d8+4",
-          "average": 9
-        }
+        "desc": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 8 (1d8 + 4) slashing damage.",
+        "attack_bonus": 8,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "1d8+4"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Sting",
-        "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 13 (2d8 + 4) piercing damage plus 17 (5d6) poison damage, and the target must succeed on a DC 14 Constitution saving throw or become poisoned for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
-        "attackBonus": 8,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d8+4",
-          "average": 13
-        }
+        "desc": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 13 (2d8 + 4) piercing damage plus 17 (5d6) poison damage, and the target must succeed on a DC 14 Constitution saving throw or become poisoned for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
+        "attack_bonus": 8,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "2d8+4"
+          },
+          {
+            "damage_type": {
+              "index": "poison",
+              "name": "Poison",
+              "url": "/api/2014/damage-types/poison"
+            },
+            "damage_dice": "5d6"
+          }
+        ],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A large skeletal devil with exposed bones and a bony, emaciated appearance. Bone devils have sharp claws, a long bony tail ending in a stinger, and a skull-like head with horns and glowing eyes. They are intelligent commanders in the Nine Hells, using their poisonous sting to weaken enemies before finishing them off with their claws. They are immune to fire and poison, making them difficult to defeat.",    "imagePrompt": "A large skeletal devil with a bony, emaciated appearance. The creature has exposed bones and a skeletal structure, with sharp claws and a long, bony tail ending in a stinger. It has a skull-like head with horns and glowing eyes, embodying the essence of a devil made of bone rather than flesh and muscle.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "large",
-      "lawful-evil",
-      "fiend",
-      "evil"
+      "lawful evil"
     ]
   },
   {
     "name": "Chain Devil",
     "size": "Medium",
     "type": "fiend",
-    "subtype": "devil",
     "alignment": "lawful evil",
     "challengeRating": "8",
     "xp": 3900,
@@ -431,9 +586,10 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 16,
     "armorType": "natural",
     "hitPoints": 85,
-    "hitDice": "10d8+40",
+    "hitDice": "10d8",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -446,12 +602,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 11,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 11
     },
     "languages": [
       "Infernal",
@@ -471,45 +631,53 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The devil makes two attacks with its chains.",
-        },
+        "desc": "The devil makes two attacks with its chains.",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Chain",
+            "count": "2",
+            "type": "melee"
+          }
+        ]
+      },
       {
         "name": "Chain",
-        "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 11 (2d6 + 4) slashing damage. The target is grappled (escape DC 14) if the devil isn't already grappling a creature. Until this grapple ends, the target is restrained and takes 7 (2d6) piercing damage at the start of each of its turns.",
-        "attackBonus": 8,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d6+4",
-          "average": 11
-        }
+        "desc": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 11 (2d6 + 4) slashing damage. The target is grappled (escape DC 14) if the devil isn't already grappling a creature. Until this grapple ends, the target is restrained and takes 7 (2d6) piercing damage at the start of each of its turns.",
+        "attack_bonus": 8,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "2d6+4"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Animate Chains",
-        "description": "Up to four chains the devil can see within 60 feet of it magically sprout razor-edged barbs and animate under the devil's control, provided that the chains aren't being worn or carried.\nEach animated chain is an object with AC 20, 20 hit points, resistance to piercing damage, and immunity to psychic and thunder damage. When the devil uses Multiattack on its turn, it can use each animated chain to make one additional chain attack. An animated chain can grapple one creature of its own but can't make attacks while grappling. An animated chain reverts to its inanimate state if reduced to 0 hit points or if the devil is incapacitated or dies.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "Up to four chains the devil can see within 60 feet of it magically sprout razor-edged barbs and animate under the devil's control, provided that the chains aren't being worn or carried.\nEach animated chain is an object with AC 20, 20 hit points, resistance to piercing damage, and immunity to psychic and thunder damage. When the devil uses Multiattack on its turn, it can use each animated chain to make one additional chain attack. An animated chain can grapple one creature of its own but can't make attacks while grappling. An animated chain reverts to its inanimate state if reduced to 0 hit points or if the devil is incapacitated or dies.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A skeletal devil wrapped in rusted chains that writhe and move of their own accord. Chain devils are sadistic torturers who use their animated chains to restrain and slowly kill their victims. They can animate nearby chains to create additional weapons and are immune to fire and poison, making them difficult to defeat in their domain.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "medium",
-      "lawful-evil",
-      "fiend",
-      "evil"
+      "lawful evil"
     ]
   },
   {
     "name": "Dretch",
     "size": "Small",
     "type": "fiend",
-    "subtype": "demon",
     "alignment": "chaotic evil",
     "challengeRating": "0.25",
     "xp": 25,
@@ -522,9 +690,10 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 11,
     "armorType": "natural",
     "hitPoints": 18,
-    "hitDice": "4d6+4",
+    "hitDice": "4d6",
     "speed": {
-      "walk": 20
+      "walk": 20,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -537,12 +706,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 9,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 9
     },
     "languages": [
       "Abyssal",
@@ -553,55 +726,74 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The dretch makes two attacks: one with its bite and one with its claws.",
-        },
+        "desc": "The dretch makes two attacks: one with its bite and one with its claws.",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Bite",
+            "count": "1",
+            "type": "melee"
+          },
+          {
+            "action_name": "Claws",
+            "count": "1",
+            "type": "melee"
+          }
+        ]
+      },
       {
         "name": "Bite",
-        "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 3 (1d6) piercing damage.",
-        "attackBonus": 2,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d6",
-          "average": 4
-        }
+        "desc": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 3 (1d6) piercing damage.",
+        "attack_bonus": 2,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "1d6"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Claws",
-        "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 5 (2d4) slashing damage.",
-        "attackBonus": 2,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d4",
-          "average": 5
-        }
+        "desc": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 5 (2d4) slashing damage.",
+        "attack_bonus": 2,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "2d4"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Fetid Cloud",
-        "description": "A 10-foot radius of disgusting green gas extends out from the dretch. The gas spreads around corners, and its area is lightly obscured. It lasts for 1 minute or until a strong wind disperses it. Any creature that starts its turn in that area must succeed on a DC 11 Constitution saving throw or be poisoned until the start of its next turn. While poisoned in this way, the target can take either an action or a bonus action on its turn, not both, and can't take reactions.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "A 10-foot radius of disgusting green gas extends out from the dretch. The gas spreads around corners, and its area is lightly obscured. It lasts for 1 minute or until a strong wind disperses it. Any creature that starts its turn in that area must succeed on a DC 11 Constitution saving throw or be poisoned until the start of its next turn. While poisoned in this way, the target can take either an action or a bonus action on its turn, not both, and can't take reactions.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A small, squat demon about 4 feet tall with a rounded body that heavily contrasts its gaunt, emaciated limbs. Dretches have ape-like features with pale, rubbery skin ranging from white to beige and blue, sparsely covered by bristly hairs and pulsing, varicose veins. They are the lowest form of demon, barely intelligent and constantly exuding a fetid cloud of poisonous gas. Despite their weak appearance, they are vicious in combat and can poison enemies with their noxious breath.",    "imagePrompt": "A small, squat demon about 4 feet tall with a rounded body that heavily contrasts its gaunt, emaciated limbs. The creature has ape-like features with pale, rubbery skin ranging from white to beige and blue, sparsely covered by bristly hairs and pulsing, varicose veins. It has a grotesque, misshapen appearance typical of the lowest form of demon.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "small",
-      "chaotic-evil",
-      "fiend",
-      "evil"
+      "chaotic evil"
     ]
   },
   {
     "name": "Erinyes",
     "size": "Medium",
     "type": "fiend",
-    "subtype": "devil",
     "alignment": "lawful evil",
     "challengeRating": "12",
     "xp": 8400,
@@ -614,10 +806,11 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 18,
     "armorType": "armor",
     "hitPoints": 153,
-    "hitDice": "18d8+72",
+    "hitDice": "18d8",
     "speed": {
       "walk": 30,
-      "fly": 60
+      "fly": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -630,12 +823,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 12,
-      "truesight": 120
+      "truesight": 120,
+      "passivePerception": 12
     },
     "languages": [
       "Infernal",
@@ -655,48 +852,149 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The erinyes makes three attacks",
+        "desc": "The erinyes makes three attacks",
+        "damage": [],
+        "multiattack_type": "action_options",
+        "action_options": {
+          "choose": 1,
+          "type": "action",
+          "from": {
+            "option_set_type": "options_array",
+            "options": [
+              {
+                "option_type": "action",
+                "action_name": "Longsword",
+                "count": 3,
+                "type": "melee"
+              },
+              {
+                "option_type": "action",
+                "action_name": "Longbow",
+                "count": 3,
+                "type": "ranged"
+              },
+              {
+                "option_type": "multiple",
+                "items": [
+                  {
+                    "option_type": "action",
+                    "action_name": "Longsword",
+                    "count": 2,
+                    "type": "melee"
+                  },
+                  {
+                    "option_type": "action",
+                    "action_name": "Longbow",
+                    "count": 1,
+                    "type": "ranged"
+                  }
+                ]
+              },
+              {
+                "option_type": "multiple",
+                "items": [
+                  {
+                    "option_type": "action",
+                    "action_name": "Longsword",
+                    "count": 1,
+                    "type": "melee"
+                  },
+                  {
+                    "option_type": "action",
+                    "action_name": "Longbow",
+                    "count": 2,
+                    "type": "ranged"
+                  }
+                ]
+              }
+            ]
+          }
         },
+        "actions": []
+      },
       {
         "name": "Longsword",
-        "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) slashing damage, or 9 (1d10 + 4) slashing damage if used with two hands, plus 13 (3d8) poison damage.",
-        "attackBonus": 8,
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) slashing damage, or 9 (1d10 + 4) slashing damage if used with two hands, plus 13 (3d8) poison damage.",
+        "attack_bonus": 8,
+        "damage": [
+          {
+            "choose": 1,
+            "type": "damage",
+            "from": {
+              "option_set_type": "options_array",
+              "options": [
+                {
+                  "option_type": "damage",
+                  "damage_type": {
+                    "index": "slashing",
+                    "name": "Slashing",
+                    "url": "/api/2014/damage-types/slashing"
+                  },
+                  "damage_dice": "1d8+4",
+                  "notes": "One handed"
+                },
+                {
+                  "option_type": "damage",
+                  "damage_type": {
+                    "index": "slashing",
+                    "name": "Slashing",
+                    "url": "/api/2014/damage-types/slashing"
+                  },
+                  "damage_dice": "1d10+4",
+                  "notes": "Two handed"
+                }
+              ]
+            }
+          },
+          {
+            "damage_type": {
+              "index": "poison",
+              "name": "Poison",
+              "url": "/api/2014/damage-types/poison"
+            },
+            "damage_dice": "3d8"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Longbow",
-        "description": "Ranged Weapon Attack: +7 to hit, range 150/600 ft., one target. Hit: 7 (1d8 + 3) piercing damage plus 13 (3d8) poison damage, and the target must succeed on a DC 14 Constitution saving throw or be poisoned. The poison lasts until it is removed by the lesser restoration spell or similar magic.",
-        "attackBonus": 7,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d8+3",
-          "average": 8
-        }
+        "desc": "Ranged Weapon Attack: +7 to hit, range 150/600 ft., one target. Hit: 7 (1d8 + 3) piercing damage plus 13 (3d8) poison damage, and the target must succeed on a DC 14 Constitution saving throw or be poisoned. The poison lasts until it is removed by the lesser restoration spell or similar magic.",
+        "attack_bonus": 7,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "1d8+3"
+          },
+          {
+            "damage_type": {
+              "index": "poison",
+              "name": "Poison",
+              "url": "/api/2014/damage-types/poison"
+            },
+            "damage_dice": "3d8"
+          }
+        ],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A beautiful, winged humanoid devil with striking features that belie their evil nature. Often mistaken for celestials due to their appearance.",
-    "background": "Erinyes are greater devils, often called 'furies', known for their deceptive beauty and fierce combat prowess. They serve as elite enforcers in the Nine Hells.",
-    "imagePrompt": "A beautiful winged humanoid devil with large feathery wings, well-toned build, clad in fiendish armor with horned helm. Striking features that could be mistaken for celestial, wielding a longsword or longbow. Female or male form with devilish beauty.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "medium",
-      "lawful-evil",
-      "fiend",
-      "evil"
+      "lawful evil"
     ]
   },
   {
     "name": "Glabrezu",
     "size": "Large",
     "type": "fiend",
-    "subtype": "demon",
     "alignment": "chaotic evil",
     "challengeRating": "9",
     "xp": 5000,
@@ -709,9 +1007,10 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 17,
     "armorType": "natural",
     "hitPoints": 157,
-    "hitDice": "15d10+75",
+    "hitDice": "15d10",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -725,12 +1024,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 13,
-      "truesight": 120
+      "truesight": 120,
+      "passivePerception": 13
     },
     "languages": [
       "Abyssal",
@@ -750,41 +1053,94 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The glabrezu makes four attacks: two with its pincers and two with its fists. Alternatively, it makes two attacks with its pincers and casts one spell.",
+        "desc": "The glabrezu makes four attacks: two with its pincers and two with its fists. Alternatively, it makes two attacks with its pincers and casts one spell.",
+        "damage": [],
+        "multiattack_type": "action_options",
+        "action_options": {
+          "choose": 1,
+          "type": "action",
+          "from": {
+            "option_set_type": "options_array",
+            "options": [
+              {
+                "option_type": "multiple",
+                "items": [
+                  {
+                    "option_type": "action",
+                    "action_name": "Pincer",
+                    "count": 2,
+                    "type": "melee"
+                  },
+                  {
+                    "option_type": "action",
+                    "action_name": "Fist",
+                    "count": 2,
+                    "type": "ranged"
+                  }
+                ]
+              },
+              {
+                "option_type": "multiple",
+                "items": [
+                  {
+                    "option_type": "action",
+                    "action_name": "Pincer",
+                    "count": 2,
+                    "type": "melee"
+                  },
+                  {
+                    "option_type": "action",
+                    "action_name": "Innate Spellcasting",
+                    "count": 1,
+                    "type": "magic"
+                  }
+                ]
+              }
+            ]
+          }
         },
+        "actions": []
+      },
       {
         "name": "Pincer",
-        "description": "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 16 (2d10 + 5) bludgeoning damage. If the target is a Medium or smaller creature, it is grappled (escape DC 15). The glabrezu has two pincers, each of which can grapple only one target.",
-        "attackBonus": 9,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d10+5",
-          "average": 16
-        }
+        "desc": "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 16 (2d10 + 5) bludgeoning damage. If the target is a Medium or smaller creature, it is grappled (escape DC 15). The glabrezu has two pincers, each of which can grapple only one target.",
+        "attack_bonus": 9,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "bludgeoning",
+              "name": "Bludgeoning",
+              "url": "/api/2014/damage-types/bludgeoning"
+            },
+            "damage_dice": "2d10+5"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Fist",
-        "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 7 (2d4 + 2) bludgeoning damage.",
-        "attackBonus": 9,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d4+2",
-          "average": 7
-        }
+        "desc": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 7 (2d4 + 2) bludgeoning damage.",
+        "attack_bonus": 9,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "bludgeoning",
+              "name": "Bludgeoning",
+              "url": "/api/2014/damage-types/bludgeoning"
+            },
+            "damage_dice": "2d4+2"
+          }
+        ],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A massive 15-foot tall demon with a canine-like head, four arms, and imposing muscular build. Two large pincer-tipped arms and two smaller clawed arms.",
-    "background": "Glabrezu are powerful demons known for their intelligence and deceptive nature. They often disguise themselves to manipulate mortals before revealing their true terrifying form.",
-    "imagePrompt": "A massive 15-foot tall demon with broad muscular build, canine-like head with horned muzzle and sharp teeth, violet eyes, four arms (two large pincer-tipped arms and two smaller clawed arms), skin ranging from russet to black, thick hide and scales covering shoulders and back. Imposing demonic presence.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "large",
-      "chaotic-evil",
-      "fiend",
-      "evil"
+      "chaotic evil"
     ]
   },
   {
@@ -803,9 +1159,10 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 15,
     "armorType": "natural",
     "hitPoints": 45,
-    "hitDice": "7d8+14",
+    "hitDice": "7d8",
     "speed": {
-      "walk": 50
+      "walk": 50,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -818,8 +1175,8 @@ export const fiendMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 15,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 15
     },
     "languages": [
       "understands Infernal but can't speak it"
@@ -838,41 +1195,57 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Bite",
-        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) piercing damage plus 7 (2d6) fire damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d8+3",
-          "average": 8
-        }
+        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) piercing damage plus 7 (2d6) fire damage.",
+        "attack_bonus": 5,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "1d8+3"
+          },
+          {
+            "damage_type": {
+              "index": "fire",
+              "name": "Fire",
+              "url": "/api/2014/damage-types/fire"
+            },
+            "damage_dice": "2d6"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Fire Breath",
-        "description": "The hound exhales fire in a 15-foot cone. Each creature in that area must make a DC 12 Dexterity saving throw, taking 21 (6d6) fire damage on a failed save, or half as much damage on a successful one.",
-        "damage": {
-          "type": "Fire",
-          "roll": "6d6",
-          "average": 21
-        }
+        "desc": "The hound exhales fire in a 15-foot cone. Each creature in that area must make a DC 12 Dexterity saving throw, taking 21 (6d6) fire damage on a failed save, or half as much damage on a successful one.",
+        "damage": [
+          {
+            "damage_type": {
+              "index": "fire",
+              "name": "Fire",
+              "url": "/api/2014/damage-types/fire"
+            },
+            "damage_dice": "6d6"
+          }
+        ],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A large, muscular hound with black fur, glowing red eyes, and smoke rising from its nostrils and mouth. Hell hounds are fiendish hunting dogs bred in the Nine Hells to track and kill prey. They can breathe fire in a cone, their bites deal both piercing and fire damage, and they work together in packs to bring down larger prey. They are immune to fire and understand Infernal but cannot speak.",    "imagePrompt": "A medium fiend creature with demonic or devilish features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "medium",
-      "lawful-evil",
-      "fiend",
-      "evil"
+      "lawful evil"
     ]
   },
   {
     "name": "Hezrou",
     "size": "Large",
     "type": "fiend",
-    "subtype": "demon",
     "alignment": "chaotic evil",
     "challengeRating": "8",
     "xp": 3900,
@@ -885,9 +1258,10 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 16,
     "armorType": "natural",
     "hitPoints": 136,
-    "hitDice": "13d10+65",
+    "hitDice": "13d10",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -901,12 +1275,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 11,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 11
     },
     "languages": [
       "Abyssal",
@@ -926,48 +1304,68 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The hezrou makes three attacks: one with its bite and two with its claws.",
-        },
+        "desc": "The hezrou makes three attacks: one with its bite and two with its claws.",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Bite",
+            "count": "1",
+            "type": "melee"
+          },
+          {
+            "action_name": "Claws",
+            "count": "2",
+            "type": "melee"
+          }
+        ]
+      },
       {
         "name": "Bite",
-        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 15 (2d10 + 4) piercing damage.",
-        "attackBonus": 7,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d10+4",
-          "average": 15
-        }
+        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 15 (2d10 + 4) piercing damage.",
+        "attack_bonus": 7,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "2d10+4"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Claws",
-        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage.",
-        "attackBonus": 7,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d6+4",
-          "average": 11
-        }
+        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage.",
+        "attack_bonus": 7,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "2d6+4"
+          }
+        ],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A massive 7-8 foot tall toad-like demon with slimy, scaly skin covered in warts and bony spikes. Wide mouth filled with rows of sharp teeth and long spines running down its back.",
-    "background": "Hezrou are powerful demons known for their foul stench and the noxious fluid they constantly exude. They are bipedal but can move on all fours, resembling massive armored toads.",
-    "imagePrompt": "A massive 7-8 foot tall toad-like demon with bulky muscular build, slimy scaly skin covered in warts and bony spikes, frog-like face with large gaping mouth filled with rows of sharp teeth, long spines running down its back, constantly leaking noxious fluid. Bipedal demonic toad creature.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "large",
-      "chaotic-evil",
-      "fiend",
-      "evil"
+      "chaotic evil"
     ]
   },
   {
     "name": "Horned Devil",
     "size": "Large",
     "type": "fiend",
-    "subtype": "devil",
     "alignment": "lawful evil",
     "challengeRating": "11",
     "xp": 7200,
@@ -980,10 +1378,11 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 18,
     "armorType": "natural",
     "hitPoints": 178,
-    "hitDice": "17d10+85",
+    "hitDice": "17d10",
     "speed": {
       "walk": 20,
-      "fly": 60
+      "fly": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -996,12 +1395,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 13,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 13
     },
     "languages": [
       "Infernal",
@@ -1021,56 +1424,139 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The devil makes three melee attacks: two with its fork and one with its tail. It can use Hurl Flame in place of any melee attack.",
+        "desc": "The devil makes three melee attacks: two with its fork and one with its tail. It can use Hurl Flame in place of any melee attack.",
+        "damage": [],
+        "multiattack_type": "action_options",
+        "action_options": {
+          "choose": 1,
+          "type": "action",
+          "from": {
+            "option_set_type": "options_array",
+            "options": [
+              {
+                "option_type": "multiple",
+                "items": [
+                  {
+                    "option_type": "action",
+                    "action_name": "Fork",
+                    "count": 2,
+                    "type": "melee"
+                  },
+                  {
+                    "option_type": "action",
+                    "action_name": "Tail",
+                    "count": 1,
+                    "type": "melee"
+                  }
+                ]
+              },
+              {
+                "option_type": "multiple",
+                "items": [
+                  {
+                    "option_type": "action",
+                    "action_name": "Fork",
+                    "count": 2,
+                    "type": "melee"
+                  },
+                  {
+                    "option_type": "action",
+                    "action_name": "Hurl Flame",
+                    "count": 1,
+                    "type": "ranged"
+                  }
+                ]
+              },
+              {
+                "option_type": "multiple",
+                "items": [
+                  {
+                    "option_type": "action",
+                    "action_name": "Fork",
+                    "count": 1,
+                    "type": "melee"
+                  },
+                  {
+                    "option_type": "action",
+                    "action_name": "Tail",
+                    "count": 1,
+                    "type": "melee"
+                  },
+                  {
+                    "option_type": "action",
+                    "action_name": "Hurl Flame",
+                    "count": 1,
+                    "type": "ranged"
+                  }
+                ]
+              }
+            ]
+          }
         },
+        "actions": []
+      },
       {
         "name": "Fork",
-        "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 15 (2d8 + 6) piercing damage.",
-        "attackBonus": 10,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d8+6",
-          "average": 15
-        }
+        "desc": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 15 (2d8 + 6) piercing damage.",
+        "attack_bonus": 10,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "2d8+6"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Tail",
-        "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 10 (1d8 + 6) piercing damage. If the target is a creature other than an undead or a construct, it must succeed on a DC 17 Constitution saving throw or lose 10 (3d6) hit points at the start of each of its turns due to an infernal wound. Each time the devil hits the wounded target with this attack, the damage dealt by the wound increases by 10 (3d6). Any creature can take an action to stanch the wound with a successful DC 12 Wisdom (Medicine) check. The wound also closes if the target receives magical healing.",
-        "attackBonus": 10,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d8+6",
-          "average": 11
-        }
+        "desc": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 10 (1d8 + 6) piercing damage. If the target is a creature other than an undead or a construct, it must succeed on a DC 17 Constitution saving throw or lose 10 (3d6) hit points at the start of each of its turns due to an infernal wound. Each time the devil hits the wounded target with this attack, the damage dealt by the wound increases by 10 (3d6). Any creature can take an action to stanch the wound with a successful DC 12 Wisdom (Medicine) check. The wound also closes if the target receives magical healing.",
+        "attack_bonus": 10,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "1d8+6"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Hurl Flame",
-        "description": "Ranged Spell Attack: +7 to hit, range 150 ft., one target. Hit: 14 (4d6) fire damage. If the target is a flammable object that isn't being worn or carried, it also catches fire.",
-        "attackBonus": 7,
-        "damage": {
-          "type": "Fire",
-          "roll": "4d6",
-          "average": 14
-        }
+        "desc": "Ranged Spell Attack: +7 to hit, range 150 ft., one target. Hit: 14 (4d6) fire damage. If the target is a flammable object that isn't being worn or carried, it also catches fire.",
+        "attack_bonus": 7,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "fire",
+              "name": "Fire",
+              "url": "/api/2014/damage-types/fire"
+            },
+            "damage_dice": "4d6"
+          }
+        ],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A massive devil with large horns, leathery wings, and a muscular build covered in thick hide. Horned devils are powerful warriors of the Nine Hells who wield massive forks and can hurl balls of hellfire. Their tail attacks create infernal wounds that bleed profusely, and they are immune to fire and poison, making them formidable opponents in battle.",    "imagePrompt": "A large fiend creature with demonic or devilish features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "large",
-      "lawful-evil",
-      "fiend",
-      "evil"
+      "lawful evil"
     ]
   },
   {
     "name": "Ice Devil",
     "size": "Large",
     "type": "fiend",
-    "subtype": "devil",
     "alignment": "lawful evil",
     "challengeRating": "14",
     "xp": 11500,
@@ -1083,9 +1569,10 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 18,
     "armorType": "natural",
     "hitPoints": 180,
-    "hitDice": "19d10+76",
+    "hitDice": "19d10",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1097,13 +1584,17 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 12,
       "darkvision": 120,
-      "blindsight": 60
+      "blindsight": 60,
+      "passivePerception": 12
     },
     "languages": [
       "Infernal",
@@ -1123,67 +1614,119 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The devil makes three attacks: one with its bite, one with its claws, and one with its tail.",
-        },
+        "desc": "The devil makes three attacks: one with its bite, one with its claws, and one with its tail.",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Bite",
+            "count": "1",
+            "type": "melee"
+          },
+          {
+            "action_name": "Claws",
+            "count": "1",
+            "type": "melee"
+          },
+          {
+            "action_name": "Tail",
+            "count": "1",
+            "type": "melee"
+          }
+        ]
+      },
       {
         "name": "Bite",
-        "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 12 (2d6 + 5) piercing damage plus 10 (3d6) cold damage.",
-        "attackBonus": 10,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d6+5",
-          "average": 12
-        }
+        "desc": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 12 (2d6 + 5) piercing damage plus 10 (3d6) cold damage.",
+        "attack_bonus": 10,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "2d6+5"
+          },
+          {
+            "damage_type": {
+              "index": "cold",
+              "name": "Cold",
+              "url": "/api/2014/damage-types/cold"
+            },
+            "damage_dice": "3d6"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Claws",
-        "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 10 (2d4 + 5) slashing damage plus 10 (3d6) cold damage.",
-        "attackBonus": 10,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d4+5",
-          "average": 10
-        }
+        "desc": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 10 (2d4 + 5) slashing damage plus 10 (3d6) cold damage.",
+        "attack_bonus": 10,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "2d4+5"
+          },
+          {
+            "damage_type": {
+              "index": "cold",
+              "name": "Cold",
+              "url": "/api/2014/damage-types/cold"
+            },
+            "damage_dice": "3d6"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Tail",
-        "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 12 (2d6 + 5) bludgeoning damage plus 10 (3d6) cold damage.",
-        "attackBonus": 10,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d6+5",
-          "average": 12
-        }
+        "desc": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 12 (2d6 + 5) bludgeoning damage plus 10 (3d6) cold damage.",
+        "attack_bonus": 10,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "bludgeoning",
+              "name": "Bludgeoning",
+              "url": "/api/2014/damage-types/bludgeoning"
+            },
+            "damage_dice": "2d6+5"
+          },
+          {
+            "damage_type": {
+              "index": "cold",
+              "name": "Cold",
+              "url": "/api/2014/damage-types/cold"
+            },
+            "damage_dice": "3d6"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Wall of Ice",
-        "description": "The devil magically forms an opaque wall of ice on a solid surface it can see within 60 feet of it. The wall is 1 foot thick and up to 30 feet long and 10 feet high, or it's a hemispherical dome up to 20 feet in diameter.\nWhen the wall appears, each creature in its space is pushed out of it by the shortest route. The creature chooses which side of the wall to end up on, unless the creature is incapacitated. The creature then makes a DC 17 Dexterity saving throw, taking 35 (10d6) cold damage on a failed save, or half as much damage on a successful one.\nThe wall lasts for 1 minute or until the devil is incapacitated or dies. The wall can be damaged and breached; each 10-foot section has AC 5, 30 hit points, vulnerability to fire damage, and immunity to acid, cold, necrotic, poison, and psychic damage. If a section is destroyed, it leaves behind a sheet of frigid air in the space the wall occupied. Whenever a creature finishes moving through the frigid air on a turn, willingly or otherwise, the creature must make a DC 17 Constitution saving throw, taking 17 (5d6) cold damage on a failed save, or half as much damage on a successful one. The frigid air dissipates when the rest of the wall vanishes.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The devil magically forms an opaque wall of ice on a solid surface it can see within 60 feet of it. The wall is 1 foot thick and up to 30 feet long and 10 feet high, or it's a hemispherical dome up to 20 feet in diameter.\nWhen the wall appears, each creature in its space is pushed out of it by the shortest route. The creature chooses which side of the wall to end up on, unless the creature is incapacitated. The creature then makes a DC 17 Dexterity saving throw, taking 35 (10d6) cold damage on a failed save, or half as much damage on a successful one.\nThe wall lasts for 1 minute or until the devil is incapacitated or dies. The wall can be damaged and breached; each 10-foot section has AC 5, 30 hit points, vulnerability to fire damage, and immunity to acid, cold, necrotic, poison, and psychic damage. If a section is destroyed, it leaves behind a sheet of frigid air in the space the wall occupied. Whenever a creature finishes moving through the frigid air on a turn, willingly or otherwise, the creature must make a DC 17 Constitution saving throw, taking 17 (5d6) cold damage on a failed save, or half as much damage on a successful one. The frigid air dissipates when the rest of the wall vanishes.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A giant blue-tinged insect-like devil with segmented body, large multifaceted eyes, antennae, powerful mandibles, and a long spiky tail. Cold and calculating in appearance.",
-    "background": "Ice Devils (Gelugon) are powerful commanders of infernal armies, found in the frozen layers of the Nine Hells. They are feared for their strength, strategic thinking, and ability to create walls of ice.",
-    "imagePrompt": "A giant blue-tinged insect-like devil with segmented body, large multifaceted eyes, antennae, powerful mandibles, long spiky tail covered in razor-sharp spikes, bipedal stance, cold calculating appearance. Monstrous devil commander.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "large",
-      "lawful-evil",
-      "fiend",
-      "evil"
+      "lawful evil"
     ]
   },
   {
     "name": "Imp",
     "size": "Tiny",
     "type": "fiend",
-    "subtype": "devil",
     "alignment": "lawful evil",
     "challengeRating": "1",
     "xp": 200,
@@ -1196,10 +1739,11 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "dex",
     "hitPoints": 10,
-    "hitDice": "3d4+3",
+    "hitDice": "3d4",
     "speed": {
       "walk": 20,
-      "fly": 40
+      "fly": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -1217,12 +1761,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 11,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 11
     },
     "languages": [
       "Infernal",
@@ -1246,41 +1794,40 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Sting (Bite in Beast Form)",
-        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 5 (1d4 + 3) piercing damage, and the target must make on a DC 11 Constitution saving throw, taking 10 (3d6) poison damage on a failed save, or half as much damage on a successful one.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d4+3",
-          "average": 6
-        }
+        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 5 (1d4 + 3) piercing damage, and the target must make on a DC 11 Constitution saving throw, taking 10 (3d6) poison damage on a failed save, or half as much damage on a successful one.",
+        "attack_bonus": 5,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "1d4+3"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Invisibility",
-        "description": "The imp magically turns invisible until it attacks, or until its concentration ends (as if concentrating on a spell). Any equipment the imp wears or carries is invisible with it.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The imp magically turns invisible until it attacks, or until its concentration ends (as if concentrating on a spell). Any equipment the imp wears or carries is invisible with it.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny devil with bat-like wings, a pointed tail, and sharp claws. Imps are the smallest and most common devils, often serving as spies, messengers, and familiars to more powerful evil beings. They can shapeshift into animals, turn invisible, and are immune to fire and poison, making them excellent for stealth missions and reconnaissance.",    "imagePrompt": "A tiny fiend creature with demonic or devilish features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "tiny",
-      "lawful-evil",
-      "fiend",
-      "evil"
+      "lawful evil"
     ]
   },
   {
     "name": "Lemure",
     "size": "Medium",
     "type": "fiend",
-    "subtype": "devil",
     "alignment": "lawful evil",
     "challengeRating": "0",
     "xp": 10,
@@ -1295,7 +1842,8 @@ export const fiendMonsters: Monster[] = [
     "hitPoints": 13,
     "hitDice": "3d8",
     "speed": {
-      "walk": 15
+      "walk": 15,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1307,14 +1855,26 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Charmed",
-      "Frightened",
-      "Poisoned"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      },
+      {
+        "index": "frightened",
+        "name": "Frightened",
+        "url": "/api/2014/conditions/frightened"
+      },
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 10
     },
     "languages": [
       "understands infernal but can't speak"
@@ -1333,34 +1893,34 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Fist",
-        "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 2 (1d4) bludgeoning damage.",
-        "attackBonus": 3,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 2 (1d4) bludgeoning damage.",
+        "attack_bonus": 3,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "bludgeoning",
+              "name": "Bludgeoning",
+              "url": "/api/2014/damage-types/bludgeoning"
+            },
+            "damage_dice": "1d4"
+          }
+        ],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A 5-foot tall blob of molten, stinking flesh that oozes across the ground. Formless and shivering, these are the lowest form of devil.",
-    "background": "Lemures are the most basic form of devil, created from the souls of evil mortals. They are mindless, formless blobs of flesh that serve as cannon fodder in the Nine Hells.",
-    "imagePrompt": "A 5-foot tall blob of molten stinking flesh, formless and shivering, oozing across the ground as it moves. Hideous amorphous devil creature with no distinct features, just a mass of writhing flesh.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "medium",
-      "lawful-evil",
-      "fiend",
-      "evil"
+      "lawful evil"
     ]
   },
   {
     "name": "Marilith",
     "size": "Large",
     "type": "fiend",
-    "subtype": "demon",
     "alignment": "chaotic evil",
     "challengeRating": "16",
     "xp": 15000,
@@ -1373,9 +1933,10 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 18,
     "armorType": "natural",
     "hitPoints": 189,
-    "hitDice": "18d10+90",
+    "hitDice": "18d10",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1389,12 +1950,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 13,
-      "truesight": 120
+      "truesight": 120,
+      "passivePerception": 13
     },
     "languages": [
       "Abyssal",
@@ -1418,57 +1983,74 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The marilith can make seven attacks: six with its longswords and one with its tail.",
-        },
+        "desc": "The marilith can make seven attacks: six with its longswords and one with its tail.",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Longsword",
+            "count": "6",
+            "type": "melee"
+          },
+          {
+            "action_name": "Tail",
+            "count": "1",
+            "type": "melee"
+          }
+        ]
+      },
       {
         "name": "Longsword",
-        "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
-        "attackBonus": 9,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d8+4",
-          "average": 13
-        }
+        "desc": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
+        "attack_bonus": 9,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "2d8+4"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Tail",
-        "description": "Melee Weapon Attack: +9 to hit, reach 10 ft., one creature. Hit: 15 (2d10 + 4) bludgeoning damage. If the target is Medium or smaller, it is grappled (escape DC 19). Until this grapple ends, the target is restrained, the marilith can automatically hit the target with its tail, and the marilith can't make tail attacks against other targets.",
-        "attackBonus": 9,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d10+4",
-          "average": 15
-        }
+        "desc": "Melee Weapon Attack: +9 to hit, reach 10 ft., one creature. Hit: 15 (2d10 + 4) bludgeoning damage. If the target is Medium or smaller, it is grappled (escape DC 19). Until this grapple ends, the target is restrained, the marilith can automatically hit the target with its tail, and the marilith can't make tail attacks against other targets.",
+        "attack_bonus": 9,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "bludgeoning",
+              "name": "Bludgeoning",
+              "url": "/api/2014/damage-types/bludgeoning"
+            },
+            "damage_dice": "2d10+4"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Teleport",
-        "description": "The marilith magically teleports, along with any equipment it is wearing or carrying, up to 120 feet to an unoccupied space it can see.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The marilith magically teleports, along with any equipment it is wearing or carrying, up to 120 feet to an unoccupied space it can see.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A female humanoid demon with six arms and a serpentine lower body. Attractive upper body with demonic features, wielding multiple weapons including swords.",
-    "background": "Mariliths are powerful serpentine demons with the upper body of an attractive female humanoid and the lower body of a snake. They are intelligent commanders of demon hordes, excelling at strategy and tactics.",
-    "imagePrompt": "A female humanoid demon with attractive upper body and demonic features, six arms wielding multiple weapons including swords, serpentine lower body with snake tail, intelligent commanding presence. Beautiful but deadly demon commander.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "large",
-      "chaotic-evil",
-      "fiend",
-      "evil"
+      "chaotic evil"
     ]
   },
   {
     "name": "Nalfeshnee",
     "size": "Large",
     "type": "fiend",
-    "subtype": "demon",
     "alignment": "chaotic evil",
     "challengeRating": "13",
     "xp": 10000,
@@ -1481,10 +2063,11 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 18,
     "armorType": "natural",
     "hitPoints": 184,
-    "hitDice": "16d10+96",
+    "hitDice": "16d10",
     "speed": {
       "walk": 20,
-      "fly": 30
+      "fly": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1498,12 +2081,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 11,
-      "truesight": 120
+      "truesight": 120,
+      "passivePerception": 11
     },
     "languages": [
       "Abyssal",
@@ -1519,59 +2106,79 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The nalfeshnee uses Horror Nimbus if it can. It then makes three attacks: one with its bite and two with its claws.",
-        },
+        "desc": "The nalfeshnee uses Horror Nimbus if it can. It then makes three attacks: one with its bite and two with its claws.",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Horror Nimbus",
+            "count": "1",
+            "type": "ability"
+          },
+          {
+            "action_name": "Bite",
+            "count": "1",
+            "type": "melee"
+          },
+          {
+            "action_name": "Claw",
+            "count": "2",
+            "type": "melee"
+          }
+        ]
+      },
       {
         "name": "Bite",
-        "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 32 (5d10 + 5) piercing damage.",
-        "attackBonus": 10,
-        "damage": {
-          "type": "Piercing",
-          "roll": "5d10+5",
-          "average": 33
-        }
+        "desc": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 32 (5d10 + 5) piercing damage.",
+        "attack_bonus": 10,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "5d10+5"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Claw",
-        "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 15 (3d6 + 5) slashing damage.",
-        "attackBonus": 10,
-        "damage": {
-          "type": "Slashing",
-          "roll": "3d6+5",
-          "average": 16
-        }
+        "desc": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 15 (3d6 + 5) slashing damage.",
+        "attack_bonus": 10,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "3d6+5"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Horror Nimbus",
-        "description": "The nalfeshnee magically emits scintillating, multicolored light. Each creature within 15 feet of the nalfeshnee that can see the light must succeed on a DC 15 Wisdom saving throw or be frightened for 1 minute. A creature can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success. If a creature's saving throw is successful or the effect ends for it, the creature is immune to the nalfeshnee's Horror Nimbus for the next 24 hours.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The nalfeshnee magically emits scintillating, multicolored light. Each creature within 15 feet of the nalfeshnee that can see the light must succeed on a DC 15 Wisdom saving throw or be frightened for 1 minute. A creature can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success. If a creature's saving throw is successful or the effect ends for it, the creature is immune to the nalfeshnee's Horror Nimbus for the next 24 hours.",
+        "damage": [],
+        "actions": []
       },
       {
         "name": "Teleport",
-        "description": "The nalfeshnee magically teleports, along with any equipment it is wearing or carrying, up to 120 feet to an unoccupied space it can see.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The nalfeshnee magically teleports, along with any equipment it is wearing or carrying, up to 120 feet to an unoccupied space it can see.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A massive 20-foot tall grotesque fusion of ape and boar with a hulking, bloated body. Small feathered wings, clawed hands and feet, tusks, and glowing red eyes.",
-    "background": "Nalfeshnees are monstrous demons known for their grotesque appearance and high intelligence. They serve as judges of souls in the Abyss and command lesser demons despite their corpulent form.",
-    "imagePrompt": "A massive 20-foot tall grotesque demon, fusion of ape and boar with hulking bloated body, small feathered wings that somehow support its weight, clawed hands and feet, tusks, glowing red eyes. Monstrous corpulent demon judge.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "large",
-      "chaotic-evil",
-      "fiend",
-      "evil"
+      "chaotic evil"
     ]
   },
   {
@@ -1590,9 +2197,10 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 17,
     "armorType": "natural",
     "hitPoints": 112,
-    "hitDice": "15d8+45",
+    "hitDice": "15d8",
     "speed": {
-      "walk": 30
+      "walk": 30,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -1608,12 +2216,16 @@ export const fiendMonsters: Monster[] = [
     ],
     "damageImmunities": [],
     "conditionImmunities": [
-      "Charmed"
+      {
+        "index": "charmed",
+        "name": "Charmed",
+        "url": "/api/2014/conditions/charmed"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 16,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 16
     },
     "languages": [
       "Abyssal",
@@ -1639,54 +2251,46 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Claws (Hag Form Only)",
-        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
-        "attackBonus": 7,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d8+4",
-          "average": 13
-        }
+        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
+        "attack_bonus": 7,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "2d8+4"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Change Shape",
-        "description": "The hag magically polymorphs into a Small or Medium female humanoid, or back into her true form. Her statistics are the same in each form. Any equipment she is wearing or carrying isn't transformed. She reverts to her true form if she dies.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The hag magically polymorphs into a Small or Medium female humanoid, or back into her true form. Her statistics are the same in each form. Any equipment she is wearing or carrying isn't transformed. She reverts to her true form if she dies.",
+        "damage": [],
+        "actions": []
       },
       {
         "name": "Etherealness",
-        "description": "The hag magically enters the Ethereal Plane from the Material Plane, or vice versa. To do so, the hag must have a heartstone in her possession.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The hag magically enters the Ethereal Plane from the Material Plane, or vice versa. To do so, the hag must have a heartstone in her possession.",
+        "damage": [],
+        "actions": []
       },
       {
         "name": "Nightmare Haunting",
-        "description": "While on the Ethereal Plane, the hag magically touches a sleeping humanoid on the Material Plane. A protection from evil and good spell cast on the target prevents this contact, as does a magic circle. As long as the contact persists, the target has dreadful visions. If these visions last for at least 1 hour, the target gains no benefit from its rest, and its hit point maximum is reduced by 5 (1d10). If this effect reduces the target's hit point maximum to 0, the target dies, and if the target was evil, its soul is trapped in the hag's soul bag. The reduction to the target's hit point maximum lasts until removed by the greater restoration spell or similar magic.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "While on the Ethereal Plane, the hag magically touches a sleeping humanoid on the Material Plane. A protection from evil and good spell cast on the target prevents this contact, as does a magic circle. As long as the contact persists, the target has dreadful visions. If these visions last for at least 1 hour, the target gains no benefit from its rest, and its hit point maximum is reduced by 5 (1d10). If this effect reduces the target's hit point maximum to 0, the target dies, and if the target was evil, its soul is trapped in the hag's soul bag. The reduction to the target's hit point maximum lasts until removed by the greater restoration spell or similar magic.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A hideously ugly hag with blue-violet or black skin, wiry black hair, jagged yellow teeth, warts, blisters, and open sores. Burning red eyes, horns, and long sharp claws.",
-    "background": "Night Hags are fiendish hags known for invading dreams and twisting them into nightmares. They are physically repulsive with grotesque human-like features and serve as soul collectors.",
-    "imagePrompt": "A hideously ugly hag with blue-violet or black bruised-looking skin, wiry black hair, jagged yellow teeth, warts blisters and open sores, burning red eyes, horns, long sharp claws. Grotesque human-like fiendish hag.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "medium",
-      "neutral-evil",
-      "fiend",
-      "evil"
+      "neutral evil"
     ]
   },
   {
@@ -1705,10 +2309,11 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 13,
     "armorType": "natural",
     "hitPoints": 68,
-    "hitDice": "8d10+24",
+    "hitDice": "8d10",
     "speed": {
       "walk": 60,
-      "fly": 90
+      "fly": 90,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1740,43 +2345,48 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Hooves",
-        "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage plus 7 (2d6) fire damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d8+4",
-          "average": 13
-        }
+        "desc": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage plus 7 (2d6) fire damage.",
+        "attack_bonus": 6,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "bludgeoning",
+              "name": "Bludgeoning",
+              "url": "/api/2014/damage-types/bludgeoning"
+            },
+            "damage_dice": "2d8+4"
+          },
+          {
+            "damage_type": {
+              "index": "fire",
+              "name": "Fire",
+              "url": "/api/2014/damage-types/fire"
+            },
+            "damage_dice": "2d6"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Ethereal Stride",
-        "description": "The nightmare and up to three willing creatures within 5 feet of it magically enter the Ethereal Plane from the Material Plane, or vice versa.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The nightmare and up to three willing creatures within 5 feet of it magically enter the Ethereal Plane from the Material Plane, or vice versa.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A large emaciated black horse with flaming mane and tail, red glowing eyes, and fiery demonic features. Serves as a steed for evil creatures.",
-    "background": "Nightmares are fiery fiendish horses that serve as mounts for evil creatures like demons, devils, death knights, and liches. They can travel between the Material and Ethereal Planes.",
-    "imagePrompt": "A large 6-foot tall emaciated black horse with flaming mane and tail, red glowing eyes, demonic features, shedding bright light. Fiery fiendish steed for evil creatures.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "large",
-      "neutral-evil",
-      "fiend",
-      "evil"
+      "neutral evil"
     ]
   },
   {
     "name": "Pit Fiend",
     "size": "Large",
     "type": "fiend",
-    "subtype": "devil",
     "alignment": "lawful evil",
     "challengeRating": "20",
     "xp": 25000,
@@ -1789,10 +2399,11 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 19,
     "armorType": "natural",
     "hitPoints": 300,
-    "hitDice": "24d10+168",
+    "hitDice": "24d10",
     "speed": {
       "walk": 30,
-      "fly": 60
+      "fly": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -1805,12 +2416,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 14,
-      "truesight": 120
+      "truesight": 120,
+      "passivePerception": 14
     },
     "languages": [
       "Infernal",
@@ -1838,66 +2453,110 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The pit fiend makes four attacks: one with its bite, one with its claw, one with its mace, and one with its tail.",
-        },
+        "desc": "The pit fiend makes four attacks: one with its bite, one with its claw, one with its mace, and one with its tail.",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Bite",
+            "count": "1",
+            "type": "melee"
+          },
+          {
+            "action_name": "Claw",
+            "count": "1",
+            "type": "melee"
+          },
+          {
+            "action_name": "Mace",
+            "count": "1",
+            "type": "melee"
+          },
+          {
+            "action_name": "Tail",
+            "count": "1",
+            "type": "melee"
+          }
+        ]
+      },
       {
         "name": "Bite",
-        "description": "Melee Weapon Attack: +14 to hit, reach 5 ft., one target. Hit: 22 (4d6 + 8) piercing damage. The target must succeed on a DC 21 Constitution saving throw or become poisoned. While poisoned in this way, the target can't regain hit points, and it takes 21 (6d6) poison damage at the start of each of its turns. The poisoned target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
-        "attackBonus": 14,
-        "damage": {
-          "type": "Piercing",
-          "roll": "4d6+8",
-          "average": 22
-        }
+        "desc": "Melee Weapon Attack: +14 to hit, reach 5 ft., one target. Hit: 22 (4d6 + 8) piercing damage. The target must succeed on a DC 21 Constitution saving throw or become poisoned. While poisoned in this way, the target can't regain hit points, and it takes 21 (6d6) poison damage at the start of each of its turns. The poisoned target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
+        "attack_bonus": 14,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "4d6+8"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Claw",
-        "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 17 (2d8 + 8) slashing damage.",
-        "attackBonus": 14,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d8+8",
-          "average": 17
-        }
+        "desc": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 17 (2d8 + 8) slashing damage.",
+        "attack_bonus": 14,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "2d8+8"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Mace",
-        "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 15 (2d6 + 8) bludgeoning damage plus 21 (6d6) fire damage.",
-        "attackBonus": 14,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "2d6+8",
-          "average": 15
-        }
+        "desc": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 15 (2d6 + 8) bludgeoning damage plus 21 (6d6) fire damage.",
+        "attack_bonus": 14,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "bludgeoning",
+              "name": "Bludgeoning",
+              "url": "/api/2014/damage-types/bludgeoning"
+            },
+            "damage_dice": "2d6+8"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Tail",
-        "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 24 (3d10 + 8) bludgeoning damage.",
-        "attackBonus": 14,
-        "damage": {
-          "type": "Bludgeoning",
-          "roll": "3d10+8",
-          "average": 25
-        }
+        "desc": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 24 (3d10 + 8) bludgeoning damage.",
+        "attack_bonus": 14,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "bludgeoning",
+              "name": "Bludgeoning",
+              "url": "/api/2014/damage-types/bludgeoning"
+            },
+            "damage_dice": "3d10+8"
+          }
+        ],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A massive devil with bat-like wings, a long tail, and burning red eyes. Pit fiends are the highest-ranking devils in the Nine Hells, serving as generals and administrators. They are nearly indestructible due to their regeneration, can hurl fireballs, and are immune to fire and poison. Their mere presence can inspire fear in lesser creatures.",    "imagePrompt": "A large fiend creature with demonic or devilish features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "large",
-      "lawful-evil",
-      "fiend",
-      "evil"
+      "lawful evil"
     ]
   },
   {
     "name": "Quasit",
     "size": "Tiny",
     "type": "fiend",
-    "subtype": "demon",
     "alignment": "chaotic evil",
     "challengeRating": "1",
     "xp": 200,
@@ -1912,7 +2571,8 @@ export const fiendMonsters: Monster[] = [
     "hitPoints": 7,
     "hitDice": "3d4",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -1928,12 +2588,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 10,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 10
     },
     "languages": [
       "Abyssal",
@@ -1953,43 +2617,40 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Claw (Bite in Beast Form)",
-        "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d4 + 3) piercing damage, and the target must succeed on a DC 10 Constitution saving throw or take 5 (2d4) poison damage and become poisoned for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
-        "attackBonus": 4,
-        "damage": {
-          "type": "Piercing",
-          "roll": "1d4+3",
-          "average": 6
-        }
+        "desc": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d4 + 3) piercing damage, and the target must succeed on a DC 10 Constitution saving throw or take 5 (2d4) poison damage and become poisoned for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
+        "attack_bonus": 4,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "1d4+3"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Scare",
-        "description": "One creature of the quasit's choice within 20 ft. of it must succeed on a DC 10 Wisdom saving throw or be frightened for 1 minute. The target can repeat the saving throw at the end of each of its turns, with disadvantage if the quasit is within line of sight, ending the effect on itself on a success.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "One creature of the quasit's choice within 20 ft. of it must succeed on a DC 10 Wisdom saving throw or be frightened for 1 minute. The target can repeat the saving throw at the end of each of its turns, with disadvantage if the quasit is within line of sight, ending the effect on itself on a success.",
+        "damage": [],
+        "actions": []
       },
       {
         "name": "Invisibility",
-        "description": "The quasit magically turns invisible until it attacks or uses Scare, or until its concentration ends (as if concentrating on a spell). Any equipment the quasit wears or carries is invisible with it.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The quasit magically turns invisible until it attacks or uses Scare, or until its concentration ends (as if concentrating on a spell). Any equipment the quasit wears or carries is invisible with it.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A tiny demon with bat-like wings, sharp claws, and a mischievous appearance. Quasits are the smallest demons, often serving as familiars to evil spellcasters. They can shapeshift into animals, turn invisible, and use their claws to poison victims. Despite their small size, they are cunning and dangerous, using stealth and deception to achieve their goals.",    "imagePrompt": "A tiny fiend creature with demonic or devilish features",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "tiny",
-      "chaotic-evil",
-      "fiend",
-      "evil"
+      "chaotic evil"
     ]
   },
   {
@@ -2008,9 +2669,10 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 16,
     "armorType": "natural",
     "hitPoints": 110,
-    "hitDice": "13d8+52",
+    "hitDice": "13d8",
     "speed": {
-      "walk": 40
+      "walk": 40,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -2026,8 +2688,8 @@ export const fiendMonsters: Monster[] = [
       "piercing from magic weapons wielded by good creatures"
     ],
     "senses": {
-      "passivePerception": 13,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 13
     },
     "languages": [
       "Common",
@@ -2047,38 +2709,47 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The rakshasa makes two claw attacks",
-        },
+        "desc": "The rakshasa makes two claw attacks",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Claw",
+            "count": "2",
+            "type": "melee"
+          }
+        ]
+      },
       {
         "name": "Claw",
-        "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 9 (2d6 + 2) slashing damage, and the target is cursed if it is a creature. The magical curse takes effect whenever the target takes a short or long rest, filling the target's thoughts with horrible images and dreams. The cursed target gains no benefit from finishing a short or long rest. The curse lasts until it is lifted by a remove curse spell or similar magic.",
-        "attackBonus": 7,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d6+2",
-          "average": 9
-        }
+        "desc": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 9 (2d6 + 2) slashing damage, and the target is cursed if it is a creature. The magical curse takes effect whenever the target takes a short or long rest, filling the target's thoughts with horrible images and dreams. The cursed target gains no benefit from finishing a short or long rest. The curse lasts until it is lifted by a remove curse spell or similar magic.",
+        "attack_bonus": 7,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "2d6+2"
+          }
+        ],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A humanoid fiend with an animalistic head (commonly tiger), reversed hands with palms facing up, and infernal glowing eyes. Master of shapeshifting and illusion magic.",
-    "background": "Rakshasas are manipulative fiends known for their powerful sorcery and ability to shapeshift. They can appear as any humanoid but their true form reveals animal heads and reversed hands.",
-    "imagePrompt": "A humanoid fiend with tiger head (or other animal head), reversed hands with palms facing up, infernal glowing eyes, manipulative appearance. Shapeshifting fiend with animalistic features.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "medium",
-      "lawful-evil",
-      "fiend",
-      "evil"
+      "lawful evil"
     ]
   },
   {
     "name": "Succubus/Incubus",
     "size": "Medium",
     "type": "fiend",
-    "subtype": "shapechanger",
     "alignment": "neutral evil",
     "challengeRating": "4",
     "xp": 1100,
@@ -2091,10 +2762,11 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 15,
     "armorType": "natural",
     "hitPoints": 66,
-    "hitDice": "12d8+12",
+    "hitDice": "12d8",
     "speed": {
       "walk": 30,
-      "fly": 60
+      "fly": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {
@@ -2115,8 +2787,8 @@ export const fiendMonsters: Monster[] = [
     "conditionImmunities": [],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 15,
-      "darkvision": 60
+      "darkvision": 60,
+      "passivePerception": 15
     },
     "languages": [
       "Abyssal",
@@ -2138,61 +2810,61 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Claw (Fiend Form Only)",
-        "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
-        "attackBonus": 5,
-        "damage": {
-          "type": "Slashing",
-          "roll": "1d6+3",
-          "average": 7
-        }
+        "desc": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
+        "attack_bonus": 5,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "1d6+3"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Charm",
-        "description": "One humanoid the fiend can see within 30 feet of it must succeed on a DC 15 Wisdom saving throw or be magically charmed for 1 day. The charmed target obeys the fiend's verbal or telepathic commands. If the target suffers any harm or receives a suicidal command, it can repeat the saving throw, ending the effect on a success. If the target successfully saves against the effect, or if the effect on it ends, the target is immune to this fiend's Charm for the next 24 hours.\nThe fiend can have only one target charmed at a time. If it charms another, the effect on the previous target ends.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "One humanoid the fiend can see within 30 feet of it must succeed on a DC 15 Wisdom saving throw or be magically charmed for 1 day. The charmed target obeys the fiend's verbal or telepathic commands. If the target suffers any harm or receives a suicidal command, it can repeat the saving throw, ending the effect on a success. If the target successfully saves against the effect, or if the effect on it ends, the target is immune to this fiend's Charm for the next 24 hours.\nThe fiend can have only one target charmed at a time. If it charms another, the effect on the previous target ends.",
+        "damage": [],
+        "actions": []
       },
       {
         "name": "Draining Kiss",
-        "description": "The fiend kisses a creature charmed by it or a willing creature. The target must make a DC 15 Constitution saving throw against this magic, taking 32 (5d10 + 5) psychic damage on a failed save, or half as much damage on a successful one. The target's hit point maximum is reduced by an amount equal to the damage taken. This reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0.",
-        "damage": {
-          "type": "Psychic",
-          "roll": "5d10+5",
-          "average": 33
-        }
+        "desc": "The fiend kisses a creature charmed by it or a willing creature. The target must make a DC 15 Constitution saving throw against this magic, taking 32 (5d10 + 5) psychic damage on a failed save, or half as much damage on a successful one. The target's hit point maximum is reduced by an amount equal to the damage taken. This reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0.",
+        "damage": [
+          {
+            "damage_type": {
+              "index": "psychic",
+              "name": "Psychic",
+              "url": "/api/2014/damage-types/psychic"
+            },
+            "damage_dice": "5d10+5"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Etherealness",
-        "description": "The fiend magically enters the Ethereal Plane from the Material Plane, or vice versa.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The fiend magically enters the Ethereal Plane from the Material Plane, or vice versa.",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A beautiful, seductive fiend with horns, bat-like wings, and clawed hands. Can shapeshift between male and female forms to charm and manipulate mortals.",
-    "background": "Succubi and Incubi are seductive fiends that can shapeshift between male and female forms. They use charm and telepathy to corrupt mortals, serving as spies and advisors in the Lower Planes.",
-    "imagePrompt": "A beautiful seductive fiend with horns, bat-like wings, clawed hands, sharp teeth, alluring humanoid form, scantily clad, sexual appeal. Charming manipulative demon with infernal beauty.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "medium",
-      "neutral-evil",
-      "fiend",
-      "evil"
+      "neutral evil"
     ]
   },
   {
     "name": "Vrock",
     "size": "Large",
     "type": "fiend",
-    "subtype": "demon",
     "alignment": "chaotic evil",
     "challengeRating": "6",
     "xp": 2300,
@@ -2205,10 +2877,11 @@ export const fiendMonsters: Monster[] = [
     "armorClass": 15,
     "armorType": "natural",
     "hitPoints": 104,
-    "hitDice": "11d10+44",
+    "hitDice": "11d10",
     "speed": {
       "walk": 40,
-      "fly": 60
+      "fly": 60,
+      "hover": false
     },
     "savingThrows": {},
     "skills": {},
@@ -2222,12 +2895,16 @@ export const fiendMonsters: Monster[] = [
       "poison"
     ],
     "conditionImmunities": [
-      "Poisoned"
+      {
+        "index": "poisoned",
+        "name": "Poisoned",
+        "url": "/api/2014/conditions/poisoned"
+      }
     ],
     "damageVulnerabilities": [],
     "senses": {
-      "passivePerception": 11,
-      "darkvision": 120
+      "darkvision": 120,
+      "passivePerception": 11
     },
     "languages": [
       "Abyssal",
@@ -2243,59 +2920,74 @@ export const fiendMonsters: Monster[] = [
     "actions": [
       {
         "name": "Multiattack",
-        "description": "The vrock makes two attacks: one with its beak and one with its talons.",
-        },
+        "desc": "The vrock makes two attacks: one with its beak and one with its talons.",
+        "damage": [],
+        "multiattack_type": "actions",
+        "actions": [
+          {
+            "action_name": "Beak",
+            "count": "1",
+            "type": "melee"
+          },
+          {
+            "action_name": "Talons",
+            "count": "1",
+            "type": "melee"
+          }
+        ]
+      },
       {
         "name": "Beak",
-        "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) piercing damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Piercing",
-          "roll": "2d6+3",
-          "average": 10
-        }
+        "desc": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) piercing damage.",
+        "attack_bonus": 6,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "piercing",
+              "name": "Piercing",
+              "url": "/api/2014/damage-types/piercing"
+            },
+            "damage_dice": "2d6+3"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Talons",
-        "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 14 (2d10 + 3) slashing damage.",
-        "attackBonus": 6,
-        "damage": {
-          "type": "Slashing",
-          "roll": "2d10+3",
-          "average": 14
-        }
+        "desc": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 14 (2d10 + 3) slashing damage.",
+        "attack_bonus": 6,
+        "damage": [
+          {
+            "damage_type": {
+              "index": "slashing",
+              "name": "Slashing",
+              "url": "/api/2014/damage-types/slashing"
+            },
+            "damage_dice": "2d10+3"
+          }
+        ],
+        "actions": []
       },
       {
         "name": "Spores",
-        "description": "A 15-foot-radius cloud of toxic spores extends out from the vrock. The spores spread around corners. Each creature in that area must succeed on a DC 14 Constitution saving throw or become poisoned. While poisoned in this way, a target takes 5 (1d10) poison damage at the start of each of its turns. A target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success. Emptying a vial of holy water on the target also ends the effect on it.",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "A 15-foot-radius cloud of toxic spores extends out from the vrock. The spores spread around corners. Each creature in that area must succeed on a DC 14 Constitution saving throw or become poisoned. While poisoned in this way, a target takes 5 (1d10) poison damage at the start of each of its turns. A target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success. Emptying a vial of holy water on the target also ends the effect on it.",
+        "damage": [],
+        "actions": []
       },
       {
         "name": "Stunning Screech",
-        "description": "The vrock emits a horrific screech. Each creature within 20 feet of it that can hear it and that isn't a demon must succeed on a DC 14 Constitution saving throw or be stunned until the end of the vrock's next turn .",
-        "damage": {
-          "type": "bludgeoning",
-          "roll": "1d4",
-          "average": 3
-        }
+        "desc": "The vrock emits a horrific screech. Each creature within 20 feet of it that can hear it and that isn't a demon must succeed on a DC 14 Constitution saving throw or be stunned until the end of the vrock's next turn .",
+        "damage": [],
+        "actions": []
       }
     ],
     "legendaryActions": [],
-    "description": "A large 8-foot tall vulture-like humanoid demon with gray feathers, broad wings, long powerful limbs, and a beak filled with sharp teeth. Emanates an unpleasant odor of offal and carrion.",
-    "background": "Vrocks are grotesque vulture-like demons used as shock troops by demon lords. They are known for their powerful screech, toxic spores, and penchant for violence.",
-    "imagePrompt": "A large 8-foot tall vulture-like humanoid demon with gray feathers covering its body, broad wings, long powerful limbs, beak filled with sharp teeth, grotesque fusion of humanoid and vulture features. Violent demonic shock troop.",
-    "imageStyle": "fantasy",
+    "description": "",
     "source": "SRD",
     "tags": [
       "fiend",
       "large",
-      "chaotic-evil",
-      "fiend",
-      "evil"
+      "chaotic evil"
     ]
   }
 ];
