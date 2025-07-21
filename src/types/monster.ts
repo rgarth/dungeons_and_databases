@@ -6,11 +6,64 @@ export interface MonsterAction {
     type: string;
     roll: string; // e.g., "2d6+3"
     average?: number;
+    description?: string; // e.g., "One-handed", "Two-handed"
   };
   secondaryDamage?: {
     type: string;
-    roll: string; // e.g., "4d8"
+    roll: string; // e.g., "1d10+3"
     average?: number;
+    description?: string; // e.g., "Two-handed", "Versatile"
+  };
+  reach?: string;
+  target?: string;
+  savingThrow?: {
+    ability: string;
+    dc: number;
+    effect: string;
+  };
+  recharge?: string; // e.g., "5-6", "Recharge 5-6"
+  legendary?: boolean;
+  lair?: boolean;
+};
+  secondaryDamage?: {
+    type: string;
+    roll: string; // e.g., "1d10+3"
+    average?: number;
+    description?: string; // e.g., "Two-handed", "Versatile"
+  };
+  reach?: string;
+  target?: string;
+  savingThrow?: {
+    ability: string;
+    dc: number;
+    effect: string;
+  };
+  recharge?: string; // e.g., "5-6", "Recharge 5-6"
+  legendary?: boolean;
+  lair?: boolean;
+};
+  secondaryDamage?: {
+    type: string;
+    roll: string; // e.g., "1d10+3"
+    average?: number;
+    description?: string; // e.g., "Two-handed", "Versatile"
+  };
+  reach?: string;
+  target?: string;
+  savingThrow?: {
+    ability: string;
+    dc: number;
+    effect: string;
+  };
+  recharge?: string; // e.g., "5-6", "Recharge 5-6"
+  legendary?: boolean;
+  lair?: boolean;
+};
+  secondaryDamage?: {
+    type: string;
+    roll: string; // e.g., "1d10+3"
+    average?: number;
+    description?: string; // e.g., "Two-handed", "Versatile"
   };
   reach?: string;
   target?: string;

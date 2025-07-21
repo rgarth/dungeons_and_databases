@@ -4,15 +4,118 @@ const fs = require('fs');
 
 // Helper function to parse damage from action description
 function parseDamageFromDescription(description) {
+  // Normalize the description by replacing newlines with spaces and normalizing whitespace
+  const normalizedDescription = description.replace(/\s+/g, ' ').trim();
+  
   // Look for damage patterns like "X (YdZ + W) damage" or "X (YdZ) damage"
-  const damageMatch = description.match(/(\d+)\s*\((\d+d\d+(?:\+\d+)?)\)\s*(\w+)\s*damage/);
-  if (damageMatch) {
+  // Handle both single damage and multiple damage options (e.g., "7 (1d8 + 3) slashing damage, or 8 (1d10 + 3) slashing damage if used with two hands")
+  
+  // First, try to match the primary damage (before any "or" clause)
+  const primaryDamageMatch = normalizedDescription.match(/(\d+)\s*\((\d+d\d+\s*\+\s*\d+)\)\s*(\w+)\s*damage/);
+  
+  if (primaryDamageMatch) {
+    const damageType = primaryDamageMatch[3].charAt(0).toUpperCase() + primaryDamageMatch[3].slice(1);
+    const primaryRoll = primaryDamageMatch[2];
+    const primaryAverage = parseInt(primaryDamageMatch[1]);
+    
+    // Check if there's a secondary damage option (after "or")
+    const secondaryMatch = normalizedDescription.match(/or\s+(\d+)\s*\((\d+d\d+\s*\+\s*\d+)\)\s*(\w+)\s*damage/);
+    
+    if (secondaryMatch) {
+      // We have multiple damage options - return both
+      const secondaryRoll = secondaryMatch[2];
+      const secondaryAverage = parseInt(secondaryMatch[1]);
+      
+      return {
+        primary: {
+          type: damageType,
+          roll: primaryRoll,
+          average: primaryAverage,
+          description: "One-handed"
+        },
+        secondary: {
+          type: damageType,
+          roll: secondaryRoll,
+          average: secondaryAverage,
+          description: "Two-handed"
+        }
+      };
+    }
+    
+    // Check if there's additional damage (e.g., "plus X (YdZ) damage")
+    const additionalDamageMatch = normalizedDescription.match(/plus\s+(\d+)\s*\((\d+d\d+)\)\s*(\w+)\s*damage/);
+    
+    if (additionalDamageMatch) {
+      // We have multiple damage types in one attack
+      const additionalRoll = additionalDamageMatch[2];
+      const additionalAverage = parseInt(additionalDamageMatch[1]);
+      const additionalType = additionalDamageMatch[3].charAt(0).toUpperCase() + additionalDamageMatch[3].slice(1);
+      
+      return {
+        primary: {
+          type: damageType,
+          roll: primaryRoll,
+          average: primaryAverage
+        },
+        secondary: {
+          type: additionalType,
+          roll: additionalRoll,
+          average: additionalAverage,
+          description: "Additional"
+        }
+      };
+    }
+    
+    // Single damage option
     return {
-      type: damageMatch[3].charAt(0).toUpperCase() + damageMatch[3].slice(1),
-      roll: damageMatch[2],
-      average: parseInt(damageMatch[1])
+      primary: {
+        type: damageType,
+        roll: primaryRoll,
+        average: primaryAverage
+      }
     };
   }
+  
+  // Handle cases with just dice rolls (no modifiers)
+  const simpleDamageMatch = normalizedDescription.match(/(\d+)\s*\((\d+d\d+)\)\s*(\w+)\s*damage/);
+  
+  if (simpleDamageMatch) {
+    const damageType = simpleDamageMatch[3].charAt(0).toUpperCase() + simpleDamageMatch[3].slice(1);
+    const roll = simpleDamageMatch[2];
+    const average = parseInt(simpleDamageMatch[1]);
+    
+    // Check if there's additional damage
+    const additionalDamageMatch = normalizedDescription.match(/plus\s+(\d+)\s*\((\d+d\d+)\)\s*(\w+)\s*damage/);
+    
+    if (additionalDamageMatch) {
+      const additionalRoll = additionalDamageMatch[2];
+      const additionalAverage = parseInt(additionalDamageMatch[1]);
+      const additionalType = additionalDamageMatch[3].charAt(0).toUpperCase() + additionalDamageMatch[3].slice(1);
+      
+      return {
+        primary: {
+          type: damageType,
+          roll: roll,
+          average: average
+        },
+        secondary: {
+          type: additionalType,
+          roll: additionalRoll,
+          average: additionalAverage,
+          description: "Additional"
+        }
+      };
+    }
+    
+    return {
+      primary: {
+        type: damageType,
+        roll: roll,
+        average: average
+      }
+    };
+  }
+  
   return null;
 }
 
@@ -104,7 +207,12 @@ async function fetchMonsterWithRetry(monsterRef, maxRetries = 3) {
           // Only add damage if there's actually damage in the description
           const parsedDamage = parseDamageFromDescription(action.desc);
           if (parsedDamage) {
-            transformedAction.damage = parsedDamage;
+            if (parsedDamage.primary) {
+              transformedAction.damage = parsedDamage.primary;
+            }
+            if (parsedDamage.secondary) {
+              transformedAction.secondaryDamage = parsedDamage.secondary;
+            }
           }
           
           return transformedAction;
@@ -215,7 +323,7 @@ function generateTypeScriptFile(monsters) {
 export const beastMonsters: Monster[] = ${JSON.stringify(beastMonsters, null, 2)};
 `;
   
-  fs.writeFileSync('src/data/monsters/beast.ts', beastContent);
+  fs.writeFileSync('../src/data/monsters/beast.ts', beastContent);
   console.log(`Generated beast.ts with ${beastMonsters.length} monsters`);
   
   // Generate aberration.ts
@@ -224,7 +332,7 @@ export const beastMonsters: Monster[] = ${JSON.stringify(beastMonsters, null, 2)
 export const aberrationMonsters: Monster[] = ${JSON.stringify(aberrationMonsters, null, 2)};
 `;
   
-  fs.writeFileSync('src/data/monsters/aberration.ts', aberrationContent);
+  fs.writeFileSync('../src/data/monsters/aberration.ts', aberrationContent);
   console.log(`Generated aberration.ts with ${aberrationMonsters.length} monsters`);
   
   // Continue for other types...
@@ -250,12 +358,28 @@ export const aberrationMonsters: Monster[] = ${JSON.stringify(aberrationMonsters
 export const ${file.name}Monsters: Monster[] = ${JSON.stringify(file.monsters, null, 2)};
 `;
     
-    fs.writeFileSync(`src/data/monsters/${file.name}.ts`, content);
+    fs.writeFileSync(`../src/data/monsters/${file.name}.ts`, content);
     console.log(`Generated ${file.name}.ts with ${file.monsters.length} monsters`);
   }
   
   // Generate index.ts
-  const indexContent = `export { beastMonsters } from './beast';
+  const indexContent = `import { beastMonsters } from './beast';
+import { aberrationMonsters } from './aberration';
+import { celestialMonsters } from './celestial';
+import { constructMonsters } from './construct';
+import { dragonMonsters } from './dragon';
+import { elementalMonsters } from './elemental';
+import { feyMonsters } from './fey';
+import { fiendMonsters } from './fiend';
+import { giantMonsters } from './giant';
+import { humanoidMonsters } from './humanoid';
+import { monstrosityMonsters } from './monstrosity';
+import { oozeMonsters } from './ooze';
+import { plantMonsters } from './plant';
+import { swarmMonsters } from './swarm';
+import { undeadMonsters } from './undead';
+
+export { beastMonsters } from './beast';
 export { aberrationMonsters } from './aberration';
 export { celestialMonsters } from './celestial';
 export { constructMonsters } from './construct';
@@ -290,13 +414,17 @@ export const allMonsters = [
 ];
 `;
   
-  fs.writeFileSync('src/data/monsters/index.ts', indexContent);
+  fs.writeFileSync('../src/data/monsters/index.ts', indexContent);
   console.log('Generated index.ts');
 }
 
 async function main() {
   try {
     console.log('Starting monster regeneration from official API...\n');
+    
+    // Update TypeScript types first
+    console.log('Updating TypeScript types...');
+    require('./update-monster-types.js');
     
     const monsters = await fetchAllMonsters();
     
@@ -310,7 +438,7 @@ async function main() {
     
     console.log('\n✅ Monster regeneration complete!');
     console.log('All monster data is now sourced directly from the official D&D 5e API');
-    
+    console.log('Full support for multiple damage options (one-handed/two-handed)');
   } catch (error) {
     console.error('❌ Error during monster regeneration:', error);
     process.exit(1);

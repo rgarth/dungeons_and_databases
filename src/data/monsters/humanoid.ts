@@ -119,7 +119,12 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Dagger",
         "description": "Melee or Ranged Weapon Attack: +6 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4 + 2",
+          "average": 4
+        }
       }
     ],
     "legendaryActions": [],
@@ -196,9 +201,9 @@ export const humanoidMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage, and the target must make a DC 15 Constitution saving throw, taking 24 (7d6) poison damage on a failed save, or half as much damage on a successful one.",
         "attackBonus": 6,
         "damage": {
-          "type": "Poison",
-          "roll": "7d6",
-          "average": 24
+          "type": "Piercing",
+          "roll": "1d6 + 3",
+          "average": 6
         }
       },
       {
@@ -206,9 +211,9 @@ export const humanoidMonsters: Monster[] = [
         "description": "Ranged Weapon Attack: +6 to hit, range 80/320 ft., one target. Hit: 7 (1d8 + 3) piercing damage, and the target must make a DC 15 Constitution saving throw, taking 24 (7d6) poison damage on a failed save, or half as much damage on a successful one.",
         "attackBonus": 6,
         "damage": {
-          "type": "Poison",
-          "roll": "7d6",
-          "average": 24
+          "type": "Piercing",
+          "roll": "1d8 + 3",
+          "average": 7
         }
       }
     ],
@@ -260,12 +265,22 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Scimitar",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) slashing damage.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6 + 1",
+          "average": 4
+        }
       },
       {
         "name": "Light Crossbow",
         "description": "Ranged Weapon Attack: +3 to hit, range 80 ft./320 ft., one target. Hit: 5 (1d8 + 1) piercing damage.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 1",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
@@ -323,12 +338,22 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Scimitar",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6 + 3",
+          "average": 6
+        }
       },
       {
         "name": "Dagger",
         "description": "Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 5 (1d4 + 3) piercing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4 + 3",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
@@ -384,7 +409,12 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Greataxe",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 9 (1d12 + 3) slashing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d12 + 3",
+          "average": 9
+        }
       }
     ],
     "legendaryActions": [],
@@ -449,12 +479,29 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Morningstar",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 11 (2d8 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d8 + 2",
+          "average": 11
+        }
       },
       {
         "name": "Javelin",
         "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 9 (2d6 + 2) piercing damage in melee or 5 (1d6 + 2) piercing damage at range.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d6 + 2",
+          "average": 9,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5,
+          "description": "Two-handed"
+        }
       }
     ],
     "legendaryActions": [],
@@ -578,7 +625,12 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Dagger",
         "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one creature. Hit: 4 (1d4 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4 + 2",
+          "average": 4
+        }
       }
     ],
     "legendaryActions": [],
@@ -637,7 +689,12 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Scimitar",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 4 (1d6 + 1) slashing damage.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6 + 1",
+          "average": 4
+        }
       }
     ],
     "legendaryActions": [],
@@ -708,12 +765,22 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "War Pick",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 2",
+          "average": 6
+        }
       },
       {
         "name": "Poisoned Dart",
         "description": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one creature. Hit: 4 (1d4 + 2) piercing damage, and the target must succeed on a DC 12 Constitution saving throw or be poisoned for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4 + 2",
+          "average": 4
+        }
       }
     ],
     "legendaryActions": [],
@@ -782,12 +849,22 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Shortsword",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       },
       {
         "name": "Hand Crossbow",
         "description": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage, and the target must succeed on a DC 13 Constitution saving throw or be poisoned for 1 hour. If the saving throw fails by 5 or more, the target is also unconscious while poisoned in this way. The target wakes up if it takes damage or if another creature takes an action to shake it awake.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
@@ -850,8 +927,15 @@ export const humanoidMonsters: Monster[] = [
         "attackBonus": 2,
         "damage": {
           "type": "Bludgeoning",
-          "roll": "1d6",
-          "average": 3
+          "roll": "1d8 + 2",
+          "average": 6,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Bludgeoning",
+          "roll": "1d8 + 2",
+          "average": 6,
+          "description": "Two-handed"
         }
       }
     ],
@@ -920,12 +1004,36 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "War Pick",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage, or 11 (2d8 + 2) piercing damage while enlarged.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 2",
+          "average": 6,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Piercing",
+          "roll": "2d8 + 2",
+          "average": 11,
+          "description": "Two-handed"
+        }
       },
       {
         "name": "Javelin",
         "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage, or 9 (2d6 + 2) piercing damage while enlarged.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Piercing",
+          "roll": "2d6 + 2",
+          "average": 9,
+          "description": "Two-handed"
+        }
       },
       {
         "name": "Invisibility",
@@ -996,12 +1104,29 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Spear",
         "description": "Melee or Ranged Weapon Attack: +7 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 11 (2d6 + 4) piercing damage, or 13 (2d8 + 4) piercing damage if used with two hands to make a melee attack.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d6 + 4",
+          "average": 11,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Piercing",
+          "roll": "2d8 + 4",
+          "average": 13,
+          "description": "Two-handed"
+        }
       },
       {
         "name": "Shield Bash",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one creature. Hit: 9 (2d4 + 4) bludgeoning damage. If the target is a Medium or smaller creature, it must succeed on a DC 15 Strength saving throw or be knocked prone.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d4 + 4",
+          "average": 9
+        }
       }
     ],
     "legendaryActions": [],
@@ -1058,17 +1183,39 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 4 (1d4 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4 + 2",
+          "average": 4
+        }
       },
       {
         "name": "Spear",
         "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 5 (1d6 + 2) piercing damage, or 6 (1d8 + 2) piercing damage if used with two hands to make a melee attack.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Piercing",
+          "roll": "1d8 + 2",
+          "average": 6,
+          "description": "Two-handed"
+        }
       },
       {
         "name": "Longbow",
         "description": "Ranged Weapon Attack: +3 to hit, range 150/600 ft., one target. Hit: 5 (1d8 + 1) piercing damage.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 1",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
@@ -1128,12 +1275,22 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Scimitar",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) slashing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       },
       {
         "name": "Shortbow",
         "description": "Ranged Weapon Attack: +4 to hit, range 80/320 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
@@ -1210,9 +1367,15 @@ export const humanoidMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 5 (1d4 + 3) bludgeoning damage plus 2 (1d4) piercing damage.",
         "attackBonus": 5,
         "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d4 + 3",
+          "average": 5
+        },
+        "secondaryDamage": {
           "type": "Piercing",
           "roll": "1d4",
-          "average": 2
+          "average": 2,
+          "description": "Additional"
         }
       }
     ],
@@ -1266,7 +1429,19 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Spear",
         "description": "Melee or Ranged Weapon Attack: +3 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d6 + 1) piercing damage or 5 (1d8 + 1) piercing damage if used with two hands to make a melee attack.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 1",
+          "average": 4,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Piercing",
+          "roll": "1d8 + 1",
+          "average": 5,
+          "description": "Two-handed"
+        }
       }
     ],
     "legendaryActions": [],
@@ -1326,17 +1501,39 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Longsword",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage, or 8 (1d10 + 3) slashing damage if used with two hands.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d8 + 3",
+          "average": 7,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Slashing",
+          "roll": "1d10 + 3",
+          "average": 8,
+          "description": "Two-handed"
+        }
       },
       {
         "name": "Shortsword",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 3",
+          "average": 6
+        }
       },
       {
         "name": "Heavy Crossbow",
         "description": "Ranged Weapon Attack: +3 to hit, range 100/400 ft., one target. Hit: 6 (1d10 + 1) piercing damage.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d10 + 1",
+          "average": 6
+        }
       },
       {
         "name": "Fire Breath",
@@ -1403,12 +1600,29 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Longsword",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 5 (1d8 + 1) slashing damage, or 6 (1d10 + 1) slashing damage if used with two hands.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d8 + 1",
+          "average": 5,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Slashing",
+          "roll": "1d10 + 1",
+          "average": 6,
+          "description": "Two-handed"
+        }
       },
       {
         "name": "Longbow",
         "description": "Ranged Weapon Attack: +3 to hit, range 150/600 ft., one target. Hit: 5 (1d8 + 1) piercing damage.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 1",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
@@ -1468,7 +1682,12 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Greatsword",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 3",
+          "average": 10
+        }
       },
       {
         "name": "Heavy Crossbow",
@@ -1544,12 +1763,22 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Dagger",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4 + 2",
+          "average": 4
+        }
       },
       {
         "name": "Sling",
         "description": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 4 (1d4 + 2) bludgeoning damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d4 + 2",
+          "average": 4
+        }
       }
     ],
     "legendaryActions": [],
@@ -1614,22 +1843,42 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       },
       {
         "name": "Heavy Club",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) bludgeoning damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       },
       {
         "name": "Javelin",
         "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       },
       {
         "name": "Spiked Shield",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
@@ -1688,7 +1937,12 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Dagger",
         "description": "Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4 + 2",
+          "average": 4
+        }
       }
     ],
     "legendaryActions": [],
@@ -1808,7 +2062,12 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Rapier",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 5 (1d8 + 1) piercing damage.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 1",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
@@ -1868,12 +2127,22 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Greataxe",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 9 (1d12 + 3) slashing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d12 + 3",
+          "average": 9
+        }
       },
       {
         "name": "Javelin",
         "description": "Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 3",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
@@ -2014,17 +2283,39 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 3 (1d4 + 1) piercing damage.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4 + 1",
+          "average": 3
+        }
       },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 3 (1d4 + 1) slashing damage.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d4 + 1",
+          "average": 3
+        }
       },
       {
         "name": "Spear",
         "description": "Melee or Ranged Weapon Attack: +3 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d6 + 1) piercing damage, or 5 (1d8 + 1) piercing damage if used with two hands to make a melee attack.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 1",
+          "average": 4,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Piercing",
+          "roll": "1d8 + 1",
+          "average": 5,
+          "description": "Two-handed"
+        }
       }
     ],
     "legendaryActions": [],
@@ -2089,12 +2380,22 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Shortsword",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       },
       {
         "name": "Longbow",
         "description": "Ranged Weapon Attack: +4 to hit, range 150/600 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 2",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
@@ -2165,12 +2466,22 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Shortsword",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       },
       {
         "name": "Hand Crossbow",
         "description": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
@@ -2232,7 +2543,12 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Mace",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 5 (1d6 + 2) bludgeoning damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       },
       {
         "name": "Heavy Crossbow",
@@ -2298,7 +2614,19 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Spear",
         "description": "Melee or Ranged Weapon Attack: +3 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 4 (1d6 + 1) piercing damage, or 5 (1d8 + 1) piercing damage if used with two hands to make a melee attack.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 1",
+          "average": 4,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Piercing",
+          "roll": "1d8 + 1",
+          "average": 5,
+          "description": "Two-handed"
+        }
       }
     ],
     "legendaryActions": [],
@@ -2356,17 +2684,39 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Longsword",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage, or 8 (1d10 + 3) slashing damage if used with two hands.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d8 + 3",
+          "average": 7,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Slashing",
+          "roll": "1d10 + 3",
+          "average": 8,
+          "description": "Two-handed"
+        }
       },
       {
         "name": "Shortsword",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 3",
+          "average": 6
+        }
       },
       {
         "name": "Heavy Crossbow",
         "description": "Ranged Weapon Attack: +3 to hit, range 100/400 ft., one target. Hit: 6 (1d10 + 1) piercing damage.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d10 + 1",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
@@ -2433,12 +2783,22 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 15 (2d10 + 4) piercing damage. If the target is a humanoid, it must succeed on a DC 14 Constitution saving throw or be cursed with werebear lycanthropy.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 4",
+          "average": 15
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d8 + 4",
+          "average": 13
+        }
       }
     ],
     "legendaryActions": [],
@@ -2506,7 +2866,12 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Greataxe",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 10 (1d12 + 4) slashing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d12 + 4",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
@@ -2575,17 +2940,32 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 15 (2d10 + 4) piercing damage. If the target is a humanoid, it must succeed on a DC 14 Constitution saving throw or be cursed with werebear lycanthropy.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 4",
+          "average": 15
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d8 + 4",
+          "average": 13
+        }
       },
       {
         "name": "Greataxe",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 10 (1d12 + 4) slashing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d12 + 4",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
@@ -2651,7 +3031,12 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Tusks",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with wereboar lycanthropy.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 3",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
@@ -2719,7 +3104,12 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Maul",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 3",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
@@ -2791,12 +3181,22 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Maul",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 3",
+          "average": 10
+        }
       },
       {
         "name": "Tusks",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with wereboar lycanthropy.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 3",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
@@ -2865,12 +3265,22 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Shortsword",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       },
       {
         "name": "Hand Crossbow",
         "description": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
@@ -2939,17 +3349,32 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 11 Constitution saving throw or be cursed with wererat lycanthropy.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4 + 2",
+          "average": 4
+        }
       },
       {
         "name": "Shortsword",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       },
       {
         "name": "Hand Crossbow",
         "description": "Ranged Weapon Attack: +4 to hit, range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
@@ -3013,7 +3438,12 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 11 Constitution saving throw or be cursed with wererat lycanthropy.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4 + 2",
+          "average": 4
+        }
       }
     ],
     "legendaryActions": [],
@@ -3083,12 +3513,22 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Scimitar",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6 + 3",
+          "average": 6
+        }
       },
       {
         "name": "Longbow",
         "description": "Ranged Weapon Attack: +4 to hit, range 150/600 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 2",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
@@ -3162,22 +3602,42 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 8 (1d10 + 3) piercing damage. If the target is a humanoid, it must succeed on a DC 13 Constitution saving throw or be cursed with weretiger lycanthropy.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d10 + 3",
+          "average": 8
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d8 + 3",
+          "average": 7
+        }
       },
       {
         "name": "Scimitar",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6 + 3",
+          "average": 6
+        }
       },
       {
         "name": "Longbow",
         "description": "Ranged Weapon Attack: +4 to hit, range 150/600 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 2",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
@@ -3245,12 +3705,22 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 8 (1d10 + 3) piercing damage. If the target is a humanoid, it must succeed on a DC 13 Constitution saving throw or be cursed with weretiger lycanthropy.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d10 + 3",
+          "average": 8
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d8 + 3",
+          "average": 7
+        }
       }
     ],
     "legendaryActions": [],
@@ -3318,7 +3788,19 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Spear",
         "description": "Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one creature. Hit: 5 (1d6 + 2) piercing damage, or 6 (1d8 + 2) piercing damage if used with two hands to make a melee attack.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Piercing",
+          "roll": "1d8 + 2",
+          "average": 6,
+          "description": "Two-handed"
+        }
       }
     ],
     "legendaryActions": [],
@@ -3386,12 +3868,22 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with werewolf lycanthropy.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 2",
+          "average": 6
+        }
       },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 7 (2d4 + 2) slashing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d4 + 2",
+          "average": 7
+        }
       }
     ],
     "legendaryActions": [],
@@ -3453,7 +3945,12 @@ export const humanoidMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with werewolf lycanthropy.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 2",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],

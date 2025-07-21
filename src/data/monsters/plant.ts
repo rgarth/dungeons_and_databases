@@ -110,7 +110,12 @@ export const plantMonsters: Monster[] = [
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +6 to hit, reach 10 ft., one target. Hit: 14 (3d6 + 4) bludgeoning damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d6 + 4",
+          "average": 14
+        }
       }
     ],
     "legendaryActions": [],
@@ -193,11 +198,21 @@ export const plantMonsters: Monster[] = [
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 4",
+          "average": 13
+        }
       },
       {
         "name": "Engulf",
-        "description": "The shambling mound engulfs a Medium or smaller creature grappled by it. The engulfed target is blinded, restrained, and unable to breathe, and it must succeed on a DC 14 Constitution saving throw at the start of each of the mound's turns or take 13 (2d8 + 4) bludgeoning damage. If the mound moves, the engulfed target moves with it. The mound can have only one creature engulfed at a time."
+        "description": "The shambling mound engulfs a Medium or smaller creature grappled by it. The engulfed target is blinded, restrained, and unable to breathe, and it must succeed on a DC 14 Constitution saving throw at the start of each of the mound's turns or take 13 (2d8 + 4) bludgeoning damage. If the mound moves, the engulfed target moves with it. The mound can have only one creature engulfed at a time.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 4",
+          "average": 13
+        }
       }
     ],
     "legendaryActions": [],
@@ -334,12 +349,22 @@ export const plantMonsters: Monster[] = [
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 16 (3d6 + 6) bludgeoning damage.",
-        "attackBonus": 10
+        "attackBonus": 10,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d6 + 6",
+          "average": 16
+        }
       },
       {
         "name": "Rock",
         "description": "Ranged Weapon Attack: +10 to hit, range 60/180 ft., one target. Hit: 28 (4d10 + 6) bludgeoning damage.",
-        "attackBonus": 10
+        "attackBonus": 10,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "4d10 + 6",
+          "average": 28
+        }
       },
       {
         "name": "Animate Trees",

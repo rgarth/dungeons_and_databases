@@ -96,7 +96,12 @@ export const constructMonsters: Monster[] = [
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) bludgeoning damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
@@ -209,7 +214,12 @@ export const constructMonsters: Monster[] = [
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 16 (2d10 + 5) bludgeoning damage. If the target is a creature, it must succeed on a DC 15 Constitution saving throw or have its hit point maximum reduced by an amount equal to the damage taken. The target dies if this attack reduces its hit point maximum to 0. The reduction lasts until removed by the greater restoration spell or other magic.",
-        "attackBonus": 8
+        "attackBonus": 8,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d10 + 5",
+          "average": 16
+        }
       },
       {
         "name": "Haste",
@@ -329,7 +339,12 @@ export const constructMonsters: Monster[] = [
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 4",
+          "average": 13
+        }
       }
     ],
     "legendaryActions": [],
@@ -428,7 +443,12 @@ export const constructMonsters: Monster[] = [
       {
         "name": "Longsword",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 5 (1d8 + 1) slashing damage.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d8 + 1",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
@@ -608,12 +628,22 @@ export const constructMonsters: Monster[] = [
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +13 to hit, reach 5 ft., one target. Hit: 20 (3d8 + 7) bludgeoning damage.",
-        "attackBonus": 13
+        "attackBonus": 13,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d8 + 7",
+          "average": 20
+        }
       },
       {
         "name": "Sword",
         "description": "Melee Weapon Attack: +13 to hit, reach 10 ft., one target. Hit: 23 (3d10 + 7) slashing damage.",
-        "attackBonus": 13
+        "attackBonus": 13,
+        "damage": {
+          "type": "Slashing",
+          "roll": "3d10 + 7",
+          "average": 23
+        }
       },
       {
         "name": "Poison Breath",
@@ -724,7 +754,12 @@ export const constructMonsters: Monster[] = [
       {
         "name": "Smother",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one Medium or smaller creature. Hit: The creature is grappled (escape DC 13). Until this grapple ends, the target is restrained, blinded, and at risk of suffocating, and the rug can't smother another target. In addition, at the start of each of the target's turns, the target takes 10 (2d6 + 3) bludgeoning damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 3",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
@@ -822,7 +857,12 @@ export const constructMonsters: Monster[] = [
       {
         "name": "Fist",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 4",
+          "average": 11
+        }
       }
     ],
     "legendaryActions": [],
@@ -926,7 +966,12 @@ export const constructMonsters: Monster[] = [
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 19 (3d8 + 6) bludgeoning damage.",
-        "attackBonus": 10
+        "attackBonus": 10,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d8 + 6",
+          "average": 19
+        }
       },
       {
         "name": "Slow",

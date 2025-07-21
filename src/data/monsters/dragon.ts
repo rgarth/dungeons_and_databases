@@ -65,20 +65,36 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +11 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage plus 4 (1d8) acid damage.",
         "attackBonus": 11,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 6",
+          "average": 17
+        },
+        "secondaryDamage": {
           "type": "Acid",
           "roll": "1d8",
-          "average": 4
+          "average": 4,
+          "description": "Additional"
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +11 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) slashing damage.",
-        "attackBonus": 11
+        "attackBonus": 11,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 6",
+          "average": 13
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +11 to hit, reach 15 ft., one target. Hit: 15 (2d8 + 6) bludgeoning damage.",
-        "attackBonus": 11
+        "attackBonus": 11,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 6",
+          "average": 15
+        }
       },
       {
         "name": "Frightful Presence",
@@ -176,20 +192,36 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +12 to hit, reach 10 ft., one target. Hit: 18 (2d10 + 7) piercing damage plus 5 (1d10) lightning damage.",
         "attackBonus": 12,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 7",
+          "average": 18
+        },
+        "secondaryDamage": {
           "type": "Lightning",
           "roll": "1d10",
-          "average": 5
+          "average": 5,
+          "description": "Additional"
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +12 to hit, reach 5 ft., one target. Hit: 14 (2d6 + 7) slashing damage.",
-        "attackBonus": 12
+        "attackBonus": 12,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 7",
+          "average": 14
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +12 to hit, reach 15 ft., one target. Hit: 16 (2d8 + 7) bludgeoning damage.",
-        "attackBonus": 12
+        "attackBonus": 12,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 7",
+          "average": 16
+        }
       },
       {
         "name": "Frightful Presence",
@@ -287,17 +319,32 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +11 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage.",
-        "attackBonus": 11
+        "attackBonus": 11,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 6",
+          "average": 17
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +11 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) slashing damage.",
-        "attackBonus": 11
+        "attackBonus": 11,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 6",
+          "average": 13
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +11 to hit, reach 15 ft., one target. Hit: 15 (2d8 + 6) bludgeoning damage.",
-        "attackBonus": 11
+        "attackBonus": 11,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 6",
+          "average": 15
+        }
       },
       {
         "name": "Frightful Presence",
@@ -398,17 +445,32 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +12 to hit, reach 10 ft., one target. Hit: 18 (2d10 + 7) piercing damage.",
-        "attackBonus": 12
+        "attackBonus": 12,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 7",
+          "average": 18
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +12 to hit, reach 5 ft., one target. Hit: 14 (2d6 + 7) slashing damage.",
-        "attackBonus": 12
+        "attackBonus": 12,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 7",
+          "average": 14
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +12 to hit, reach 15 ft., one target. Hit: 16 (2d8 + 7) bludgeoning damage.",
-        "attackBonus": 12
+        "attackBonus": 12,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 7",
+          "average": 16
+        }
       },
       {
         "name": "Frightful Presence",
@@ -505,17 +567,32 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +11 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage.",
-        "attackBonus": 11
+        "attackBonus": 11,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 6",
+          "average": 17
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +11 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) slashing damage.",
-        "attackBonus": 11
+        "attackBonus": 11,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 6",
+          "average": 13
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +11 to hit, reach 15 ft., one target. Hit: 15 (2d8 + 6) bludgeoning damage.",
-        "attackBonus": 11
+        "attackBonus": 11,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 6",
+          "average": 15
+        }
       },
       {
         "name": "Frightful Presence",
@@ -617,17 +694,32 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 19 (2d10 + 8) piercing damage.",
-        "attackBonus": 14
+        "attackBonus": 14,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 8",
+          "average": 19
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +14 to hit, reach 5 ft., one target. Hit: 15 (2d6 + 8) slashing damage.",
-        "attackBonus": 14
+        "attackBonus": 14,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 8",
+          "average": 15
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +14 to hit, reach 15 ft., one target. Hit: 17 (2d8 + 8) bludgeoning damage.",
-        "attackBonus": 14
+        "attackBonus": 14,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 8",
+          "average": 17
+        }
       },
       {
         "name": "Frightful Presence",
@@ -738,20 +830,36 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +11 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage plus 7 (2d6) poison damage.",
         "attackBonus": 11,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 6",
+          "average": 17
+        },
+        "secondaryDamage": {
           "type": "Poison",
           "roll": "2d6",
-          "average": 7
+          "average": 7,
+          "description": "Additional"
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +11 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) slashing damage.",
-        "attackBonus": 11
+        "attackBonus": 11,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 6",
+          "average": 13
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +11 to hit, reach 15 ft., one target. Hit: 15 (2d8 + 6) bludgeoning damage.",
-        "attackBonus": 11
+        "attackBonus": 11,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 6",
+          "average": 15
+        }
       },
       {
         "name": "Frightful Presence",
@@ -849,20 +957,36 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 19 (2d10 + 8) piercing damage plus 7 (2d6) fire damage.",
         "attackBonus": 14,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 8",
+          "average": 19
+        },
+        "secondaryDamage": {
           "type": "Fire",
           "roll": "2d6",
-          "average": 7
+          "average": 7,
+          "description": "Additional"
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +14 to hit, reach 5 ft., one target. Hit: 15 (2d6 + 8) slashing damage.",
-        "attackBonus": 14
+        "attackBonus": 14,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 8",
+          "average": 15
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +14 to hit, reach 15 ft., one target. Hit: 17 (2d8 + 8) bludgeoning damage.",
-        "attackBonus": 14
+        "attackBonus": 14,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 8",
+          "average": 17
+        }
       },
       {
         "name": "Frightful Presence",
@@ -959,17 +1083,32 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +13 to hit, reach 10 ft., one target. Hit: 19 (2d10 + 8) piercing damage.",
-        "attackBonus": 13
+        "attackBonus": 13,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 8",
+          "average": 19
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +13 to hit, reach 5 ft., one target. Hit: 15 (2d6 + 8) slashing damage.",
-        "attackBonus": 13
+        "attackBonus": 13,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 8",
+          "average": 15
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +13 to hit, reach 15 ft., one target. Hit: 17 (2d8 + 8) bludgeoning damage.",
-        "attackBonus": 13
+        "attackBonus": 13,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 8",
+          "average": 17
+        }
       },
       {
         "name": "Frightful Presence",
@@ -1072,20 +1211,36 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +11 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage plus 4 (1d8) cold damage.",
         "attackBonus": 11,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 6",
+          "average": 17
+        },
+        "secondaryDamage": {
           "type": "Cold",
           "roll": "1d8",
-          "average": 4
+          "average": 4,
+          "description": "Additional"
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +11 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) slashing damage.",
-        "attackBonus": 11
+        "attackBonus": 11,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 6",
+          "average": 13
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +11 to hit, reach 15 ft., one target. Hit: 15 (2d8 + 6) bludgeoning damage.",
-        "attackBonus": 11
+        "attackBonus": 11,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 6",
+          "average": 15
+        }
       },
       {
         "name": "Frightful Presence",
@@ -1187,20 +1342,36 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack:+ 15 to hit, reach 15 ft., one target. Hit: 19 (2d10 + 8) piercing damage plus 9 (2d8) acid damage.",
         "attackBonus": 15,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 8",
+          "average": 19
+        },
+        "secondaryDamage": {
           "type": "Acid",
           "roll": "2d8",
-          "average": 9
+          "average": 9,
+          "description": "Additional"
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +15 to hit, reach 10 ft., one target. Hit: 15 (2d6 + 8) slashing damage.",
-        "attackBonus": 15
+        "attackBonus": 15,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 8",
+          "average": 15
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +15 to hit, reach 20 ft., one target. Hit: 17 (2d8 + 8) bludgeoning damage.",
-        "attackBonus": 15
+        "attackBonus": 15,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 8",
+          "average": 17
+        }
       },
       {
         "name": "Frightful Presence",
@@ -1298,20 +1469,36 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +16 to hit, reach 15 ft., one target. Hit: 20 (2d10 + 9) piercing damage plus 11 (2d10) lightning damage.",
         "attackBonus": 16,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 9",
+          "average": 20
+        },
+        "secondaryDamage": {
           "type": "Lightning",
           "roll": "2d10",
-          "average": 11
+          "average": 11,
+          "description": "Additional"
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +16 to hit, reach 10 ft., one target. Hit: 16 (2d6 + 9) slashing damage.",
-        "attackBonus": 16
+        "attackBonus": 16,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 9",
+          "average": 16
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +16 to hit, reach 20 ft., one target. Hit: 18 (2d8 + 9) bludgeoning damage.",
-        "attackBonus": 16
+        "attackBonus": 16,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 9",
+          "average": 18
+        }
       },
       {
         "name": "Frightful Presence",
@@ -1409,17 +1596,32 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +14 to hit, reach 15 ft., one target. Hit: 19 (2d10 + 8) piercing damage.",
-        "attackBonus": 14
+        "attackBonus": 14,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 8",
+          "average": 19
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 15 (2d6 + 8) slashing damage.",
-        "attackBonus": 14
+        "attackBonus": 14,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 8",
+          "average": 15
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +14 to hit, reach 20 ft., one target. Hit: 17 (2d8 + 8) bludgeoning damage.",
-        "attackBonus": 14
+        "attackBonus": 14,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 8",
+          "average": 17
+        }
       },
       {
         "name": "Frightful Presence",
@@ -1524,17 +1726,32 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +16 to hit, reach 15 ft., one target. Hit: 20 (2d10 + 9) piercing damage.",
-        "attackBonus": 16
+        "attackBonus": 16,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 9",
+          "average": 20
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +16 to hit, reach 10 ft., one target. Hit: 16 (2d6 + 9) slashing damage.",
-        "attackBonus": 16
+        "attackBonus": 16,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 9",
+          "average": 16
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +16 to hit, reach 20 ft., one target. Hit: 18 (2d8 + 9) bludgeoning damage.",
-        "attackBonus": 16
+        "attackBonus": 16,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 9",
+          "average": 18
+        }
       },
       {
         "name": "Frightful Presence",
@@ -1635,17 +1852,32 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +15 to hit, reach 15 ft., one target. Hit: 19 (2d10 + 8) piercing damage.",
-        "attackBonus": 15
+        "attackBonus": 15,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 8",
+          "average": 19
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +15 to hit, reach 10 ft., one target. Hit: 15 (2d6 + 8) slashing damage.",
-        "attackBonus": 15
+        "attackBonus": 15,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 8",
+          "average": 15
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +15 to hit, reach 20 ft., one target. Hit: 17 (2d8 + 8) bludgeoning damage.",
-        "attackBonus": 15
+        "attackBonus": 15,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 8",
+          "average": 17
+        }
       },
       {
         "name": "Frightful Presence",
@@ -1751,17 +1983,32 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +17 to hit, reach 15 ft., one target. Hit: 21 (2d10 + 10) piercing damage.",
-        "attackBonus": 17
+        "attackBonus": 17,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 10",
+          "average": 21
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +17 to hit, reach 10 ft., one target. Hit: 17 (2d6 + 10) slashing damage.",
-        "attackBonus": 17
+        "attackBonus": 17,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 10",
+          "average": 17
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +17 to hit, reach 20 ft., one target. Hit: 19 (2d8 + 10) bludgeoning damage.",
-        "attackBonus": 17
+        "attackBonus": 17,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 10",
+          "average": 19
+        }
       },
       {
         "name": "Frightful Presence",
@@ -1876,20 +2123,36 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +15 to hit, reach 15 ft., one target. Hit: 19 (2d10 + 8) piercing damage plus 10 (3d6) poison damage.",
         "attackBonus": 15,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 8",
+          "average": 19
+        },
+        "secondaryDamage": {
           "type": "Poison",
           "roll": "3d6",
-          "average": 10
+          "average": 10,
+          "description": "Additional"
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +15 to hit, reach 10 ft., one target. Hit: 22 (4d6 + 8) slashing damage.",
-        "attackBonus": 15
+        "attackBonus": 15,
+        "damage": {
+          "type": "Slashing",
+          "roll": "4d6 + 8",
+          "average": 22
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +15 to hit, reach 20 ft., one target. Hit: 17 (2d8 + 8) bludgeoning damage.",
-        "attackBonus": 15
+        "attackBonus": 15,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 8",
+          "average": 17
+        }
       },
       {
         "name": "Frightful Presence",
@@ -1987,20 +2250,36 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +17 to hit, reach 15 ft., one target. Hit: 21 (2d10 + 10) piercing damage plus 14 (4d6) fire damage.",
         "attackBonus": 17,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 10",
+          "average": 21
+        },
+        "secondaryDamage": {
           "type": "Fire",
           "roll": "4d6",
-          "average": 14
+          "average": 14,
+          "description": "Additional"
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +17 to hit, reach 10 ft., one target. Hit: 17 (2d6 + 10) slashing damage.",
-        "attackBonus": 17
+        "attackBonus": 17,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 10",
+          "average": 17
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +17 to hit, reach 20 ft., one target. Hit: 19 (2d8 + 10) bludgeoning damage.",
-        "attackBonus": 17
+        "attackBonus": 17,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 10",
+          "average": 19
+        }
       },
       {
         "name": "Frightful Presence",
@@ -2097,17 +2376,32 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +17 to hit, reach 15 ft., one target. Hit: 21 (2d10 + 10) piercing damage.",
-        "attackBonus": 17
+        "attackBonus": 17,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 10",
+          "average": 21
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +17 to hit, reach 10 ft., one target. Hit: 17 (2d6 + 10) slashing damage.",
-        "attackBonus": 17
+        "attackBonus": 17,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 10",
+          "average": 17
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +17 to hit, reach 20 ft., one target. Hit: 19 (2d8 + 10) bludgeoning damage.",
-        "attackBonus": 17
+        "attackBonus": 17,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 10",
+          "average": 19
+        }
       },
       {
         "name": "Frightful Presence",
@@ -2214,20 +2508,36 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +14 to hit, reach 15 ft., one target. Hit: 19 (2d10 + 8) piercing damage plus 9 (2d8) cold damage.",
         "attackBonus": 14,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 8",
+          "average": 19
+        },
+        "secondaryDamage": {
           "type": "Cold",
           "roll": "2d8",
-          "average": 9
+          "average": 9,
+          "description": "Additional"
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 15 (2d6 + 8) slashing damage.",
-        "attackBonus": 14
+        "attackBonus": 14,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 8",
+          "average": 15
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +14 to hit, reach 20 ft., one target. Hit: 17 (2d8 + 8) bludgeoning damage.",
-        "attackBonus": 14
+        "attackBonus": 14,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 8",
+          "average": 17
+        }
       },
       {
         "name": "Frightful Presence",
@@ -2315,9 +2625,15 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (1d10 + 2) piercing damage plus 2 (1d4) acid damage.",
         "attackBonus": 4,
         "damage": {
+          "type": "Piercing",
+          "roll": "1d10 + 2",
+          "average": 7
+        },
+        "secondaryDamage": {
           "type": "Acid",
           "roll": "1d4",
-          "average": 2
+          "average": 2,
+          "description": "Additional"
         }
       },
       {
@@ -2389,9 +2705,15 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 8 (1d10 + 3) piercing damage plus 3 (1d6) lightning damage.",
         "attackBonus": 5,
         "damage": {
+          "type": "Piercing",
+          "roll": "1d10 + 3",
+          "average": 8
+        },
+        "secondaryDamage": {
           "type": "Lightning",
           "roll": "1d6",
-          "average": 3
+          "average": 3,
+          "description": "Additional"
         }
       },
       {
@@ -2461,7 +2783,12 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (1d10 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d10 + 2",
+          "average": 7
+        }
       },
       {
         "name": "Breath Weapons",
@@ -2535,7 +2862,12 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 8 (1d10 + 3) piercing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d10 + 3",
+          "average": 8
+        }
       },
       {
         "name": "Breath Weapons",
@@ -2604,7 +2936,12 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (1d10 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d10 + 2",
+          "average": 7
+        }
       },
       {
         "name": "Breath Weapons",
@@ -2678,17 +3015,32 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +13 to hit, reach 15 ft., one target. Hit: 26 (3d12 + 7) piercing damage.",
-        "attackBonus": 13
+        "attackBonus": 13,
+        "damage": {
+          "type": "Piercing",
+          "roll": "3d12 + 7",
+          "average": 26
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +13 to hit, reach 10 ft., one target. Hit: 16 (2d8 + 7) slashing damage.",
-        "attackBonus": 13
+        "attackBonus": 13,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d8 + 7",
+          "average": 16
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +13 to hit, reach 15 ft., one target. Hit: 26 (3d12 + 7) bludgeoning damage. If the target is a creature, it must succeed on a DC 20 Strength saving throw or be pushed up to 10 feet away from the dragon turtle and knocked prone.",
-        "attackBonus": 13
+        "attackBonus": 13,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d12 + 7",
+          "average": 26
+        }
       },
       {
         "name": "Steam Breath",
@@ -2762,7 +3114,12 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 9 (1d10 + 4) piercing damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d10 + 4",
+          "average": 9
+        }
       },
       {
         "name": "Breath Weapons",
@@ -2844,9 +3201,15 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (1d10 + 2) piercing damage plus 3 (1d6) poison damage.",
         "attackBonus": 4,
         "damage": {
+          "type": "Piercing",
+          "roll": "1d10 + 2",
+          "average": 7
+        },
+        "secondaryDamage": {
           "type": "Poison",
           "roll": "1d6",
-          "average": 3
+          "average": 3,
+          "description": "Additional"
         }
       },
       {
@@ -2926,12 +3289,22 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 4 (1d4 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4 + 2",
+          "average": 4
+        }
       },
       {
         "name": "Sting",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 4 (1d4 + 2) piercing damage, and the target must succeed on a DC 11 Constitution saving throw or become poisoned for 1 hour. If the saving throw fails by 5 or more, the target falls unconscious for the same duration, or until it takes damage or another creature uses an action to shake it awake.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d4 + 2",
+          "average": 4
+        }
       }
     ],
     "legendaryActions": [],
@@ -2993,9 +3366,15 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 9 (1d10 + 4) piercing damage plus 3 (1d6) fire damage.",
         "attackBonus": 6,
         "damage": {
+          "type": "Piercing",
+          "roll": "1d10 + 4",
+          "average": 9
+        },
+        "secondaryDamage": {
           "type": "Fire",
           "roll": "1d6",
-          "average": 3
+          "average": 3,
+          "description": "Additional"
         }
       },
       {
@@ -3064,7 +3443,12 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 9 (1d10 + 4) piercing damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d10 + 4",
+          "average": 9
+        }
       },
       {
         "name": "Breath Weapons",
@@ -3136,9 +3520,15 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (1d10 + 2) piercing damage plus 2 (1d4) cold damage.",
         "attackBonus": 4,
         "damage": {
+          "type": "Piercing",
+          "roll": "1d10 + 2",
+          "average": 7
+        },
+        "secondaryDamage": {
           "type": "Cold",
           "roll": "1d4",
-          "average": 2
+          "average": 2,
+          "description": "Additional"
         }
       },
       {
@@ -3205,21 +3595,31 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one creature. Hit: 11 (2d6 + 4) piercing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d6 + 4",
+          "average": 11
+        }
       },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d8 + 4",
+          "average": 13
+        }
       },
       {
         "name": "Stinger",
         "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one creature. Hit: 11 (2d6 + 4) piercing damage. The target must make a DC 15 Constitution saving throw, taking 24 (7d6) poison damage on a failed save, or half as much damage on a successful one.",
         "attackBonus": 7,
         "damage": {
-          "type": "Poison",
-          "roll": "7d6",
-          "average": 24
+          "type": "Piercing",
+          "roll": "2d6 + 4",
+          "average": 11
         }
       }
     ],
@@ -3292,15 +3692,26 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 15 (2d10 + 4) piercing damage plus 4 (1d8) acid damage.",
         "attackBonus": 7,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 4",
+          "average": 15
+        },
+        "secondaryDamage": {
           "type": "Acid",
           "roll": "1d8",
-          "average": 4
+          "average": 4,
+          "description": "Additional"
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 4",
+          "average": 11
+        }
       },
       {
         "name": "Acid Breath",
@@ -3376,15 +3787,26 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 16 (2d10 + 5) piercing damage plus 5 (1d10) lightning damage.",
         "attackBonus": 9,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 5",
+          "average": 16
+        },
+        "secondaryDamage": {
           "type": "Lightning",
           "roll": "1d10",
-          "average": 5
+          "average": 5,
+          "description": "Additional"
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 12 (2d6 + 5) slashing damage.",
-        "attackBonus": 9
+        "attackBonus": 9,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 5",
+          "average": 12
+        }
       },
       {
         "name": "Lightning Breath",
@@ -3459,12 +3881,22 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 15 (2d10 + 4) piercing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 4",
+          "average": 15
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 4",
+          "average": 11
+        }
       },
       {
         "name": "Breath Weapons",
@@ -3544,12 +3976,22 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 16 (2d10 + 5) piercing damage.",
-        "attackBonus": 8
+        "attackBonus": 8,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 5",
+          "average": 16
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 12 (2d6 + 5) slashing damage.",
-        "attackBonus": 8
+        "attackBonus": 8,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 5",
+          "average": 12
+        }
       },
       {
         "name": "Breath Weapons",
@@ -3624,12 +4066,22 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 15 (2d10 + 4) piercing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 4",
+          "average": 15
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 4",
+          "average": 11
+        }
       },
       {
         "name": "Breath Weapons",
@@ -3710,12 +4162,22 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage.",
-        "attackBonus": 10
+        "attackBonus": 10,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 6",
+          "average": 17
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) slashing damage.",
-        "attackBonus": 10
+        "attackBonus": 10,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 6",
+          "average": 13
+        }
       },
       {
         "name": "Breath Weapons",
@@ -3803,15 +4265,26 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 15 (2d10 + 4) piercing damage plus 7 (2d6) poison damage.",
         "attackBonus": 7,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 4",
+          "average": 15
+        },
+        "secondaryDamage": {
           "type": "Poison",
           "roll": "2d6",
-          "average": 7
+          "average": 7,
+          "description": "Additional"
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 4",
+          "average": 11
+        }
       },
       {
         "name": "Poison Breath",
@@ -3887,15 +4360,26 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage plus 3 (1d6) fire damage.",
         "attackBonus": 10,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 6",
+          "average": 17
+        },
+        "secondaryDamage": {
           "type": "Fire",
           "roll": "1d6",
-          "average": 3
+          "average": 3,
+          "description": "Additional"
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) slashing damage.",
-        "attackBonus": 10
+        "attackBonus": 10,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 6",
+          "average": 13
+        }
       },
       {
         "name": "Fire Breath",
@@ -3970,12 +4454,22 @@ export const dragonMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 17 (2d10 + 6) piercing damage.",
-        "attackBonus": 10
+        "attackBonus": 10,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 6",
+          "average": 17
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) slashing damage.",
-        "attackBonus": 10
+        "attackBonus": 10,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 6",
+          "average": 13
+        }
       },
       {
         "name": "Breath Weapons",
@@ -4057,15 +4551,26 @@ export const dragonMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 15 (2d10 + 4) piercing damage plus 4 (1d8) cold damage.",
         "attackBonus": 7,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 4",
+          "average": 15
+        },
+        "secondaryDamage": {
           "type": "Cold",
           "roll": "1d8",
-          "average": 4
+          "average": 4,
+          "description": "Additional"
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 4",
+          "average": 11
+        }
       },
       {
         "name": "Cold Breath",

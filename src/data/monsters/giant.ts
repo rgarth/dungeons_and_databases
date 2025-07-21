@@ -57,12 +57,22 @@ export const giantMonsters: Monster[] = [
       {
         "name": "Morningstar",
         "description": "Melee Weapon Attack: +12 to hit, reach 10 ft., one target. Hit: 21 (3d8 + 8) piercing damage.",
-        "attackBonus": 12
+        "attackBonus": 12,
+        "damage": {
+          "type": "Piercing",
+          "roll": "3d8 + 8",
+          "average": 21
+        }
       },
       {
         "name": "Rock",
         "description": "Ranged Weapon Attack: +12 to hit, range 60/240 ft., one target. Hit: 30 (4d10 + 8) bludgeoning damage.",
-        "attackBonus": 12
+        "attackBonus": 12,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "4d10 + 8",
+          "average": 30
+        }
       }
     ],
     "legendaryActions": [],
@@ -130,12 +140,22 @@ export const giantMonsters: Monster[] = [
       {
         "name": "Battleaxe",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 14 (2d8 + 5) slashing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d8 + 5",
+          "average": 14
+        }
       },
       {
         "name": "Morningstar",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 14 (2d8 + 5) piercing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d8 + 5",
+          "average": 14
+        }
       }
     ],
     "legendaryActions": [],
@@ -195,12 +215,22 @@ export const giantMonsters: Monster[] = [
       {
         "name": "Greatsword",
         "description": "Melee Weapon Attack: +11 to hit, reach 10 ft., one target. Hit: 28 (6d6 + 7) slashing damage.",
-        "attackBonus": 11
+        "attackBonus": 11,
+        "damage": {
+          "type": "Slashing",
+          "roll": "6d6 + 7",
+          "average": 28
+        }
       },
       {
         "name": "Rock",
         "description": "Ranged Weapon Attack: +11 to hit, range 60/240 ft., one target. Hit: 29 (4d10 + 7) bludgeoning damage.",
-        "attackBonus": 11
+        "attackBonus": 11,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "4d10 + 7",
+          "average": 29
+        }
       }
     ],
     "legendaryActions": [],
@@ -260,12 +290,22 @@ export const giantMonsters: Monster[] = [
       {
         "name": "Greataxe",
         "description": "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 25 (3d12 + 6) slashing damage.",
-        "attackBonus": 9
+        "attackBonus": 9,
+        "damage": {
+          "type": "Slashing",
+          "roll": "3d12 + 6",
+          "average": 25
+        }
       },
       {
         "name": "Rock",
         "description": "Ranged Weapon Attack: +9 to hit, range 60/240 ft., one target. Hit: 28 (4d10 + 6) bludgeoning damage.",
-        "attackBonus": 9
+        "attackBonus": 9,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "4d10 + 6",
+          "average": 28
+        }
       }
     ],
     "legendaryActions": [],
@@ -322,12 +362,22 @@ export const giantMonsters: Monster[] = [
       {
         "name": "Greatclub",
         "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 18 (3d8 + 5) bludgeoning damage.",
-        "attackBonus": 8
+        "attackBonus": 8,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d8 + 5",
+          "average": 18
+        }
       },
       {
         "name": "Rock",
         "description": "Ranged Weapon Attack: +8 to hit, range 60/240 ft., one target. Hit: 21 (3d10 + 5) bludgeoning damage.",
-        "attackBonus": 8
+        "attackBonus": 8,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d10 + 5",
+          "average": 21
+        }
       }
     ],
     "legendaryActions": [],
@@ -380,12 +430,22 @@ export const giantMonsters: Monster[] = [
       {
         "name": "Greatclub",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 4",
+          "average": 13
+        }
       },
       {
         "name": "Javelin",
         "description": "Melee or Ranged Weapon Attack: +6 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 11 (2d6 + 4) piercing damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d6 + 4",
+          "average": 11
+        }
       }
     ],
     "legendaryActions": [],
@@ -460,12 +520,29 @@ export const giantMonsters: Monster[] = [
       {
         "name": "Claw (Oni Form Only)",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) slashing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d8 + 4",
+          "average": 8
+        }
       },
       {
         "name": "Glaive",
         "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 15 (2d10 + 4) slashing damage, or 9 (1d10 + 4) slashing damage in Small or Medium form.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d10 + 4",
+          "average": 15,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Slashing",
+          "roll": "1d10 + 4",
+          "average": 9,
+          "description": "Two-handed"
+        }
       },
       {
         "name": "Change Shape",
@@ -533,12 +610,22 @@ export const giantMonsters: Monster[] = [
       {
         "name": "Greatclub",
         "description": "Melee Weapon Attack: +9 to hit, reach 15 ft., one target. Hit: 19 (3d8 + 6) bludgeoning damage.",
-        "attackBonus": 9
+        "attackBonus": 9,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d8 + 6",
+          "average": 19
+        }
       },
       {
         "name": "Rock",
         "description": "Ranged Weapon Attack: +9 to hit, range 60/240 ft., one target. Hit: 28 (4d10 + 6) bludgeoning damage. If the target is a creature, it must succeed on a DC 17 Strength saving throw or be knocked prone.",
-        "attackBonus": 9
+        "attackBonus": 9,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "4d10 + 6",
+          "average": 28
+        }
       }
     ],
     "legendaryActions": [],
@@ -614,12 +701,22 @@ export const giantMonsters: Monster[] = [
       {
         "name": "Greatsword",
         "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 30 (6d6 + 9) slashing damage.",
-        "attackBonus": 14
+        "attackBonus": 14,
+        "damage": {
+          "type": "Slashing",
+          "roll": "6d6 + 9",
+          "average": 30
+        }
       },
       {
         "name": "Rock",
         "description": "Ranged Weapon Attack: +14 to hit, range 60/240 ft., one target. Hit: 35 (4d12 + 9) bludgeoning damage.",
-        "attackBonus": 14
+        "attackBonus": 14,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "4d12 + 9",
+          "average": 35
+        }
       },
       {
         "name": "Lightning Strike",
@@ -695,12 +792,22 @@ export const giantMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 7 (1d6 + 4) piercing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 4",
+          "average": 7
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 4",
+          "average": 11
+        }
       }
     ],
     "legendaryActions": [],

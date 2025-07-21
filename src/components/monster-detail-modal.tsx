@@ -361,16 +361,37 @@ export default function MonsterDetailModal({ monster, isOpen, onClose }: Monster
                   </button>
                 )}
                 
+                {/* Primary Damage */}
                 {action.damage && action.damage.roll && (
                   <button
                     onClick={() => rollDice(action.damage!.roll)}
                     className="text-center bg-[var(--color-card-secondary)] rounded p-2 hover:bg-[var(--color-card-tertiary)] transition-colors cursor-pointer group"
-                    title={`Roll damage: ${action.damage.roll} ${action.damage.type}`}
+                    title={`Roll damage: ${action.damage.roll} ${action.damage.type}${action.damage.description ? ` (${action.damage.description})` : ''}`}
                   >
                     <div className="text-lg font-bold text-[var(--color-danger)] group-hover:scale-105 transition-transform">
                       {action.damage.roll}
                     </div>
-                    <div className="text-xs text-[var(--color-text-muted)]">{action.damage.type} Damage</div>
+                    <div className="text-xs text-[var(--color-text-muted)]">
+                      {action.damage.type} Damage
+                      {action.damage.description && <div className="text-[10px]">({action.damage.description})</div>}
+                    </div>
+                  </button>
+                )}
+                
+                {/* Secondary Damage */}
+                {action.secondaryDamage && action.secondaryDamage.roll && (
+                  <button
+                    onClick={() => rollDice(action.secondaryDamage!.roll)}
+                    className="text-center bg-[var(--color-card-secondary)] rounded p-2 hover:bg-[var(--color-card-tertiary)] transition-colors cursor-pointer group"
+                    title={`Roll damage: ${action.secondaryDamage.roll} ${action.secondaryDamage.type}${action.secondaryDamage.description ? ` (${action.secondaryDamage.description})` : ''}`}
+                  >
+                    <div className="text-lg font-bold text-[var(--color-danger)] group-hover:scale-105 transition-transform">
+                      {action.secondaryDamage.roll}
+                    </div>
+                    <div className="text-xs text-[var(--color-text-muted)]">
+                      {action.secondaryDamage.type} Damage
+                      {action.secondaryDamage.description && <div className="text-[10px]">({action.secondaryDamage.description})</div>}
+                    </div>
                   </button>
                 )}
               </div>
@@ -387,6 +408,15 @@ export default function MonsterDetailModal({ monster, isOpen, onClose }: Monster
                   <p className="text-sm text-[var(--color-text-secondary)]">
                     <span className="font-medium">Damage:</span> {action.damage.roll} {action.damage.type}
                     {action.damage.average && ` (average ${action.damage.average})`}
+                    {action.damage.description && ` (${action.damage.description})`}
+                  </p>
+                )}
+                
+                {action.secondaryDamage && (
+                  <p className="text-sm text-[var(--color-text-secondary)]">
+                    <span className="font-medium">Secondary Damage:</span> {action.secondaryDamage.roll} {action.secondaryDamage.type}
+                    {action.secondaryDamage.average && ` (average ${action.secondaryDamage.average})`}
+                    {action.secondaryDamage.description && ` (${action.secondaryDamage.description})`}
                   </p>
                 )}
                 

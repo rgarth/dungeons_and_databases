@@ -61,12 +61,22 @@ export const celestialMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one creature. Hit: 8 (1d6 + 5) piercing damage, and the target must succeed on a DC 13 Constitution saving throw or be poisoned for 24 hours. Until this poison ends, the target is unconscious. Another creature can use an action to shake the target awake.",
-        "attackBonus": 8
+        "attackBonus": 8,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 5",
+          "average": 8
+        }
       },
       {
         "name": "Constrict",
         "description": "Melee Weapon Attack: +6 to hit, reach 10 ft., one Medium or smaller creature. Hit: 10 (2d6 + 3) bludgeoning damage, and the target is grappled (escape DC 15). Until this grapple ends, the target is restrained, and the couatl can't constrict another target.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 3",
+          "average": 10
+        }
       },
       {
         "name": "Change Shape",
@@ -165,9 +175,15 @@ export const celestialMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 7 (1d6 + 4) bludgeoning damage plus 18 (4d8) radiant damage.",
         "attackBonus": 8,
         "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d6 + 4",
+          "average": 7
+        },
+        "secondaryDamage": {
           "type": "Radiant",
           "roll": "4d8",
-          "average": 18
+          "average": 18,
+          "description": "Additional"
         }
       },
       {
@@ -233,7 +249,12 @@ export const celestialMonsters: Monster[] = [
       {
         "name": "Hooves",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 4",
+          "average": 11
+        }
       }
     ],
     "legendaryActions": [],
@@ -331,9 +352,15 @@ export const celestialMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +12 to hit, reach 5 ft., one target. Hit: 21 (4d6 + 7) slashing damage plus 22 (5d8) radiant damage.",
         "attackBonus": 12,
         "damage": {
+          "type": "Slashing",
+          "roll": "4d6 + 7",
+          "average": 21
+        },
+        "secondaryDamage": {
           "type": "Radiant",
           "roll": "5d8",
-          "average": 22
+          "average": 22,
+          "description": "Additional"
         }
       },
       {
@@ -444,9 +471,15 @@ export const celestialMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +15 to hit, reach 5 ft., one target. Hit: 22 (4d6 + 8) slashing damage plus 27 (6d8) radiant damage.",
         "attackBonus": 15,
         "damage": {
+          "type": "Slashing",
+          "roll": "4d6 + 8",
+          "average": 22
+        },
+        "secondaryDamage": {
           "type": "Radiant",
           "roll": "6d8",
-          "average": 27
+          "average": 27,
+          "description": "Additional"
         }
       },
       {
@@ -454,9 +487,15 @@ export const celestialMonsters: Monster[] = [
         "description": "Ranged Weapon Attack: +13 to hit, range 150/600 ft., one target. Hit: 15 (2d8 + 6) piercing damage plus 27 (6d8) radiant damage. If the target is a creature that has 190 hit points or fewer, it must succeed on a DC 15 Constitution saving throw or die.",
         "attackBonus": 13,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d8 + 6",
+          "average": 15
+        },
+        "secondaryDamage": {
           "type": "Radiant",
           "roll": "6d8",
-          "average": 27
+          "average": 27,
+          "description": "Additional"
         }
       },
       {
@@ -572,12 +611,22 @@ export const celestialMonsters: Monster[] = [
       {
         "name": "Hooves",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 4",
+          "average": 11
+        }
       },
       {
         "name": "Horn",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) piercing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 4",
+          "average": 8
+        }
       },
       {
         "name": "Healing Touch",

@@ -79,9 +79,15 @@ export const fiendMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 21 (3d8 + 8) slashing damage plus 13 (3d8) lightning damage. If the balor scores a critical hit, it rolls damage dice three times, instead of twice.",
         "attackBonus": 14,
         "damage": {
+          "type": "Slashing",
+          "roll": "3d8 + 8",
+          "average": 21
+        },
+        "secondaryDamage": {
           "type": "Lightning",
           "roll": "3d8",
-          "average": 13
+          "average": 13,
+          "description": "Additional"
         }
       },
       {
@@ -89,9 +95,15 @@ export const fiendMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +14 to hit, reach 30 ft., one target. Hit: 15 (2d6 + 8) slashing damage plus 10 (3d6) fire damage, and the target must succeed on a DC 20 Strength saving throw or be pulled up to 25 feet toward the balor.",
         "attackBonus": 14,
         "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 8",
+          "average": 15
+        },
+        "secondaryDamage": {
           "type": "Fire",
           "roll": "3d6",
-          "average": 10
+          "average": 10,
+          "description": "Additional"
         }
       },
       {
@@ -182,12 +194,22 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 3",
+          "average": 6
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) piercing damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d6 + 3",
+          "average": 10
+        }
       },
       {
         "name": "Hurl Flame",
@@ -279,12 +301,22 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Beard",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one creature. Hit: 6 (1d8 + 2) piercing damage, and the target must succeed on a DC 12 Constitution saving throw or be poisoned for 1 minute. While poisoned in this way, the target can't regain hit points. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 2",
+          "average": 6
+        }
       },
       {
         "name": "Glaive",
         "description": "Melee Weapon Attack: +5 to hit, reach 10 ft., one target. Hit: 8 (1d10 + 3) slashing damage. If the target is a creature other than an undead or a construct, it must succeed on a DC 12 Constitution saving throw or lose 5 (1d10) hit points at the start of each of its turns due to an infernal wound. Each time the devil hits the wounded target with this attack, the damage dealt by the wound increases by 5 (1d10). Any creature can take an action to stanch the wound with a successful DC 12 Wisdom (Medicine) check. The wound also closes if the target receives magical healing.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d10 + 3",
+          "average": 8
+        }
       }
     ],
     "legendaryActions": [],
@@ -366,16 +398,27 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 8 (1d8 + 4) slashing damage.",
-        "attackBonus": 8
+        "attackBonus": 8,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d8 + 4",
+          "average": 8
+        }
       },
       {
         "name": "Sting",
         "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 13 (2d8 + 4) piercing damage plus 17 (5d6) poison damage, and the target must succeed on a DC 14 Constitution saving throw or become poisoned for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
         "attackBonus": 8,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d8 + 4",
+          "average": 13
+        },
+        "secondaryDamage": {
           "type": "Poison",
           "roll": "5d6",
-          "average": 17
+          "average": 17,
+          "description": "Additional"
         }
       }
     ],
@@ -456,9 +499,9 @@ export const fiendMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 11 (2d6 + 4) slashing damage. The target is grappled (escape DC 14) if the devil isn't already grappling a creature. Until this grapple ends, the target is restrained and takes 7 (2d6) piercing damage at the start of each of its turns.",
         "attackBonus": 8,
         "damage": {
-          "type": "Piercing",
-          "roll": "2d6",
-          "average": 7
+          "type": "Slashing",
+          "roll": "2d6 + 4",
+          "average": 11
         }
       },
       {
@@ -632,9 +675,16 @@ export const fiendMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) slashing damage, or 9 (1d10 + 4) slashing damage if used with two hands, plus 13 (3d8) poison damage.",
         "attackBonus": 8,
         "damage": {
-          "type": "Poison",
-          "roll": "3d8",
-          "average": 13
+          "type": "Slashing",
+          "roll": "1d8 + 4",
+          "average": 8,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Slashing",
+          "roll": "1d10 + 4",
+          "average": 9,
+          "description": "Two-handed"
         }
       },
       {
@@ -642,9 +692,15 @@ export const fiendMonsters: Monster[] = [
         "description": "Ranged Weapon Attack: +7 to hit, range 150/600 ft., one target. Hit: 7 (1d8 + 3) piercing damage plus 13 (3d8) poison damage, and the target must succeed on a DC 14 Constitution saving throw or be poisoned. The poison lasts until it is removed by the lesser restoration spell or similar magic.",
         "attackBonus": 7,
         "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 3",
+          "average": 7
+        },
+        "secondaryDamage": {
           "type": "Poison",
           "roll": "3d8",
-          "average": 13
+          "average": 13,
+          "description": "Additional"
         }
       }
     ],
@@ -724,12 +780,22 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Pincer",
         "description": "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 16 (2d10 + 5) bludgeoning damage. If the target is a Medium or smaller creature, it is grappled (escape DC 15). The glabrezu has two pincers, each of which can grapple only one target.",
-        "attackBonus": 9
+        "attackBonus": 9,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d10 + 5",
+          "average": 16
+        }
       },
       {
         "name": "Fist",
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 7 (2d4 + 2) bludgeoning damage.",
-        "attackBonus": 9
+        "attackBonus": 9,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d4 + 2",
+          "average": 7
+        }
       }
     ],
     "legendaryActions": [],
@@ -796,9 +862,15 @@ export const fiendMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) piercing damage plus 7 (2d6) fire damage.",
         "attackBonus": 5,
         "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 3",
+          "average": 7
+        },
+        "secondaryDamage": {
           "type": "Fire",
           "roll": "2d6",
-          "average": 7
+          "average": 7,
+          "description": "Additional"
         }
       },
       {
@@ -887,12 +959,22 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 15 (2d10 + 4) piercing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d10 + 4",
+          "average": 15
+        }
       },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) slashing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 4",
+          "average": 11
+        }
       }
     ],
     "legendaryActions": [],
@@ -971,12 +1053,22 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Fork",
         "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 15 (2d8 + 6) piercing damage.",
-        "attackBonus": 10
+        "attackBonus": 10,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d8 + 6",
+          "average": 15
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 10 (1d8 + 6) piercing damage. If the target is a creature other than an undead or a construct, it must succeed on a DC 17 Constitution saving throw or lose 10 (3d6) hit points at the start of each of its turns due to an infernal wound. Each time the devil hits the wounded target with this attack, the damage dealt by the wound increases by 10 (3d6). Any creature can take an action to stanch the wound with a successful DC 12 Wisdom (Medicine) check. The wound also closes if the target receives magical healing.",
-        "attackBonus": 10
+        "attackBonus": 10,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 6",
+          "average": 10
+        }
       },
       {
         "name": "Hurl Flame",
@@ -1066,9 +1158,15 @@ export const fiendMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 12 (2d6 + 5) piercing damage plus 10 (3d6) cold damage.",
         "attackBonus": 10,
         "damage": {
+          "type": "Piercing",
+          "roll": "2d6 + 5",
+          "average": 12
+        },
+        "secondaryDamage": {
           "type": "Cold",
           "roll": "3d6",
-          "average": 10
+          "average": 10,
+          "description": "Additional"
         }
       },
       {
@@ -1076,9 +1174,15 @@ export const fiendMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 10 (2d4 + 5) slashing damage plus 10 (3d6) cold damage.",
         "attackBonus": 10,
         "damage": {
+          "type": "Slashing",
+          "roll": "2d4 + 5",
+          "average": 10
+        },
+        "secondaryDamage": {
           "type": "Cold",
           "roll": "3d6",
-          "average": 10
+          "average": 10,
+          "description": "Additional"
         }
       },
       {
@@ -1086,9 +1190,15 @@ export const fiendMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 12 (2d6 + 5) bludgeoning damage plus 10 (3d6) cold damage.",
         "attackBonus": 10,
         "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 5",
+          "average": 12
+        },
+        "secondaryDamage": {
           "type": "Cold",
           "roll": "3d6",
-          "average": 10
+          "average": 10,
+          "description": "Additional"
         }
       },
       {
@@ -1184,9 +1294,9 @@ export const fiendMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 5 (1d4 + 3) piercing damage, and the target must make on a DC 11 Constitution saving throw, taking 10 (3d6) poison damage on a failed save, or half as much damage on a successful one.",
         "attackBonus": 5,
         "damage": {
-          "type": "Poison",
-          "roll": "3d6",
-          "average": 10
+          "type": "Piercing",
+          "roll": "1d4 + 3",
+          "average": 5
         }
       },
       {
@@ -1361,12 +1471,22 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Longsword",
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
-        "attackBonus": 9
+        "attackBonus": 9,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d8 + 4",
+          "average": 13
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +9 to hit, reach 10 ft., one creature. Hit: 15 (2d10 + 4) bludgeoning damage. If the target is Medium or smaller, it is grappled (escape DC 19). Until this grapple ends, the target is restrained, the marilith can automatically hit the target with its tail, and the marilith can't make tail attacks against other targets.",
-        "attackBonus": 9
+        "attackBonus": 9,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d10 + 4",
+          "average": 15
+        }
       },
       {
         "name": "Teleport",
@@ -1446,12 +1566,22 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 32 (5d10 + 5) piercing damage.",
-        "attackBonus": 10
+        "attackBonus": 10,
+        "damage": {
+          "type": "Piercing",
+          "roll": "5d10 + 5",
+          "average": 32
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +10 to hit, reach 10 ft., one target. Hit: 15 (3d6 + 5) slashing damage.",
-        "attackBonus": 10
+        "attackBonus": 10,
+        "damage": {
+          "type": "Slashing",
+          "roll": "3d6 + 5",
+          "average": 15
+        }
       },
       {
         "name": "Horror Nimbus",
@@ -1542,7 +1672,12 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Claws (Hag Form Only)",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d8 + 4",
+          "average": 13
+        }
       },
       {
         "name": "Change Shape",
@@ -1621,9 +1756,15 @@ export const fiendMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage plus 7 (2d6) fire damage.",
         "attackBonus": 6,
         "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 4",
+          "average": 13
+        },
+        "secondaryDamage": {
           "type": "Fire",
           "roll": "2d6",
-          "average": 7
+          "average": 7,
+          "description": "Additional"
         }
       },
       {
@@ -1717,30 +1858,46 @@ export const fiendMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +14 to hit, reach 5 ft., one target. Hit: 22 (4d6 + 8) piercing damage. The target must succeed on a DC 21 Constitution saving throw or become poisoned. While poisoned in this way, the target can't regain hit points, and it takes 21 (6d6) poison damage at the start of each of its turns. The poisoned target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
         "attackBonus": 14,
         "damage": {
-          "type": "Poison",
-          "roll": "6d6",
-          "average": 21
+          "type": "Piercing",
+          "roll": "4d6 + 8",
+          "average": 22
         }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 17 (2d8 + 8) slashing damage.",
-        "attackBonus": 14
+        "attackBonus": 14,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d8 + 8",
+          "average": 17
+        }
       },
       {
         "name": "Mace",
         "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 15 (2d6 + 8) bludgeoning damage plus 21 (6d6) fire damage.",
         "attackBonus": 14,
         "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 8",
+          "average": 15
+        },
+        "secondaryDamage": {
           "type": "Fire",
           "roll": "6d6",
-          "average": 21
+          "average": 21,
+          "description": "Additional"
         }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 24 (3d10 + 8) bludgeoning damage.",
-        "attackBonus": 14
+        "attackBonus": 14,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d10 + 8",
+          "average": 24
+        }
       }
     ],
     "legendaryActions": [],
@@ -1819,8 +1976,8 @@ export const fiendMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d4 + 3) piercing damage, and the target must succeed on a DC 10 Constitution saving throw or take 5 (2d4) poison damage and become poisoned for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
         "attackBonus": 4,
         "damage": {
-          "type": "Poison",
-          "roll": "2d4",
+          "type": "Piercing",
+          "roll": "1d4 + 3",
           "average": 5
         }
       },
@@ -1903,7 +2060,12 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 9 (2d6 + 2) slashing damage, and the target is cursed if it is a creature. The magical curse takes effect whenever the target takes a short or long rest, filling the target's thoughts with horrible images and dreams. The cursed target gains no benefit from finishing a short or long rest. The curse lasts until it is lifted by a remove curse spell or similar magic.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 2",
+          "average": 9
+        }
       }
     ],
     "legendaryActions": [],
@@ -1980,7 +2142,12 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Claw (Fiend Form Only)",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6 + 3",
+          "average": 6
+        }
       },
       {
         "name": "Charm",
@@ -1988,7 +2155,12 @@ export const fiendMonsters: Monster[] = [
       },
       {
         "name": "Draining Kiss",
-        "description": "The fiend kisses a creature charmed by it or a willing creature. The target must make a DC 15 Constitution saving throw against this magic, taking 32 (5d10 + 5) psychic damage on a failed save, or half as much damage on a successful one. The target's hit point maximum is reduced by an amount equal to the damage taken. This reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0."
+        "description": "The fiend kisses a creature charmed by it or a willing creature. The target must make a DC 15 Constitution saving throw against this magic, taking 32 (5d10 + 5) psychic damage on a failed save, or half as much damage on a successful one. The target's hit point maximum is reduced by an amount equal to the damage taken. This reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0.",
+        "damage": {
+          "type": "Psychic",
+          "roll": "5d10 + 5",
+          "average": 32
+        }
       },
       {
         "name": "Etherealness",
@@ -2068,12 +2240,22 @@ export const fiendMonsters: Monster[] = [
       {
         "name": "Beak",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) piercing damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d6 + 3",
+          "average": 10
+        }
       },
       {
         "name": "Talons",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 14 (2d10 + 3) slashing damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d10 + 3",
+          "average": 14
+        }
       },
       {
         "name": "Spores",

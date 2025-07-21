@@ -86,9 +86,15 @@ export const oozeMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) bludgeoning damage plus 18 (4d8) acid damage. In addition, nonmagical armor worn by the target is partly dissolved and takes a permanent and cumulative -1 penalty to the AC it offers. The armor is destroyed if the penalty reduces its AC to 10.",
         "attackBonus": 5,
         "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d6 + 3",
+          "average": 6
+        },
+        "secondaryDamage": {
           "type": "Acid",
           "roll": "4d8",
-          "average": 18
+          "average": 18,
+          "description": "Additional"
         }
       }
     ],
@@ -296,9 +302,15 @@ export const oozeMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) bludgeoning damage plus 7 (2d6) acid damage, and if the target is wearing nonmagical metal armor, its armor is partly corroded and takes a permanent and cumulative -1 penalty to the AC it offers. The armor is destroyed if the penalty reduces its AC to 10.",
         "attackBonus": 3,
         "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d6 + 1",
+          "average": 4
+        },
+        "secondaryDamage": {
           "type": "Acid",
           "roll": "2d6",
-          "average": 7
+          "average": 7,
+          "description": "Additional"
         }
       }
     ],
@@ -397,9 +409,15 @@ export const oozeMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 9 (2d6 + 2) bludgeoning damage plus 3 (1d6) acid damage.",
         "attackBonus": 4,
         "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 2",
+          "average": 9
+        },
+        "secondaryDamage": {
           "type": "Acid",
           "roll": "1d6",
-          "average": 3
+          "average": 3,
+          "description": "Additional"
         }
       }
     ],

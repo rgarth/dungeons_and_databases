@@ -49,7 +49,12 @@ export const feyMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) piercing damage.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 1",
+          "average": 4
+        }
       },
       {
         "name": "Teleport",
@@ -126,7 +131,19 @@ export const feyMonsters: Monster[] = [
       {
         "name": "Club",
         "description": "Melee Weapon Attack: +2 to hit (+6 to hit with shillelagh), reach 5 ft., one target. Hit: 2 (1 d4) bludgeoning damage, or 8 (1d8 + 4) bludgeoning damage with shillelagh.",
-        "attackBonus": 2
+        "attackBonus": 2,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d8 + 4",
+          "average": 8,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Bludgeoning",
+          "roll": "1d8 + 4",
+          "average": 8,
+          "description": "Two-handed"
+        }
       },
       {
         "name": "Fey Charm",
@@ -202,7 +219,12 @@ export const feyMonsters: Monster[] = [
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d8 + 4",
+          "average": 13
+        }
       },
       {
         "name": "Illusory Appearance",
@@ -272,7 +294,12 @@ export const feyMonsters: Monster[] = [
       {
         "name": "Ram",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 6 (2d4 + 1) bludgeoning damage.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d4 + 1",
+          "average": 6
+        }
       },
       {
         "name": "Shortsword",
@@ -282,7 +309,12 @@ export const feyMonsters: Monster[] = [
       {
         "name": "Shortbow",
         "description": "Ranged Weapon Attack: +5 to hit, range 80/320 ft., one target. Hit: 6 (1d6 + 3) piercing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 3",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
@@ -346,7 +378,12 @@ export const feyMonsters: Monster[] = [
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 3",
+          "average": 10
+        }
       },
       {
         "name": "Death Glare",

@@ -65,15 +65,20 @@ export const aberrationMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 12 (2d6 + 5) bludgeoning damage. If the target is a creature, it must succeed on a DC 14 Constitution saving throw or become diseased. The disease has no effect for 1 minute and can be removed by any magic that cures disease. After 1 minute, the diseased creature's skin becomes translucent and slimy, the creature can't regain hit points unless it is underwater, and the disease can be removed only by heal or another disease-curing spell of 6th level or higher. When the creature is outside a body of water, it takes 6 (1d12) acid damage every 10 minutes unless moisture is applied to the skin before 10 minutes have passed.",
         "attackBonus": 9,
         "damage": {
-          "type": "Acid",
-          "roll": "1d12",
-          "average": 6
+          "type": "Bludgeoning",
+          "roll": "2d6 + 5",
+          "average": 12
         }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 15 (3d6 + 5) bludgeoning damage.",
-        "attackBonus": 9
+        "attackBonus": 9,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d6 + 5",
+          "average": 15
+        }
       },
       {
         "name": "Enslave",
@@ -166,7 +171,12 @@ export const aberrationMonsters: Monster[] = [
       {
         "name": "Pincer",
         "description": "Melee Weapon Attack: +6 to hit, reach 10 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage. The target is grappled (escape DC 14) if it is a Large or smaller creature and the chuul doesn't have two other creatures grappled.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 4",
+          "average": 11
+        }
       },
       {
         "name": "Tentacles",
@@ -243,12 +253,22 @@ export const aberrationMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one creature. Hit: 10 (2d6 + 3) piercing damage, and if the target is Large or smaller, the cloaker attaches to it. If the cloaker has advantage against the target, the cloaker attaches to the target's head, and the target is blinded and unable to breathe while the cloaker is attached. While attached, the cloaker can make this attack only against the target and has advantage on the attack roll. The cloaker can detach itself by spending 5 feet of its movement. A creature, including the target, can take its action to detach the cloaker by succeeding on a DC 16 Strength check.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d6 + 3",
+          "average": 10
+        }
       },
       {
         "name": "Tail",
         "description": "Melee Weapon Attack: +6 to hit, reach 10 ft., one creature. Hit: 7 (1d8 + 3) slashing damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d8 + 3",
+          "average": 7
+        }
       },
       {
         "name": "Moan",
@@ -396,21 +416,37 @@ export const aberrationMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 12 (2d8 + 3) piercing damage. If the target is a creature, it must succeed on a DC 15 Constitution saving throw against disease or become poisoned until the disease is cured. Every 24 hours that elapse, the target must repeat the saving throw, reducing its hit point maximum by 5 (1d10) on a failure. The disease is cured on a success. The target dies if the disease reduces its hit point maximum to 0. This reduction to the target's hit point maximum lasts until the disease is cured.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d8 + 3",
+          "average": 12
+        }
       },
       {
         "name": "Tentacle",
         "description": "Melee Weapon Attack: +6 to hit, reach 10 ft., one target. Hit: 7 (1d8 + 3) bludgeoning damage plus 4 (1d8) piercing damage. If the target is Medium or smaller, it is grappled (escape DC 13) and restrained until the grapple ends. The otyugh has two tentacles, each of which can grapple one target.",
         "attackBonus": 6,
         "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d8 + 3",
+          "average": 7
+        },
+        "secondaryDamage": {
           "type": "Piercing",
           "roll": "1d8",
-          "average": 4
+          "average": 4,
+          "description": "Additional"
         }
       },
       {
         "name": "Tentacle Slam",
-        "description": "The otyugh slams creatures grappled by it into each other or a solid surface. Each creature must succeed on a DC 14 Constitution saving throw or take 10 (2d6 + 3) bludgeoning damage and be stunned until the end of the otyugh's next turn. On a successful save, the target takes half the bludgeoning damage and isn't stunned."
+        "description": "The otyugh slams creatures grappled by it into each other or a solid surface. Each creature must succeed on a DC 14 Constitution saving throw or take 10 (2d6 + 3) bludgeoning damage and be stunned until the end of the otyugh's next turn. On a successful save, the target takes half the bludgeoning damage and isn't stunned.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 3",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],

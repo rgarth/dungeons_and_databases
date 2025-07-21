@@ -97,15 +97,20 @@ export const elementalMonsters: Monster[] = [
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 14 (2d8 + 5) bludgeoning damage.",
-        "attackBonus": 8
+        "attackBonus": 8,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 5",
+          "average": 14
+        }
       },
       {
         "name": "Whirlwind",
         "description": "Each creature in the elemental's space must make a DC 13 Strength saving throw. On a failure, a target takes 15 (3d8 + 2) bludgeoning damage and is flung up 20 feet away from the elemental in a random direction and knocked prone. If a thrown target strikes an object, such as a wall or floor, the target takes 3 (1d6) bludgeoning damage for every 10 feet it was thrown. If the target is thrown at another creature, that creature must succeed on a DC 13 Dexterity saving throw or take the same damage and be knocked prone.\nIf the saving throw is successful, the target takes half the bludgeoning damage and isn't flung away or knocked prone.",
         "damage": {
           "type": "Bludgeoning",
-          "roll": "1d6",
-          "average": 3
+          "roll": "3d8 + 2",
+          "average": 15
         }
       }
     ],
@@ -181,9 +186,16 @@ export const elementalMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) bludgeoning damage, or 8 (1d10 + 3) bludgeoning damage if used with two hands to make a melee attack, plus 3 (1d6) fire damage.",
         "attackBonus": 5,
         "damage": {
-          "type": "Fire",
-          "roll": "1d6",
-          "average": 3
+          "type": "Bludgeoning",
+          "roll": "1d8 + 3",
+          "average": 7,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Bludgeoning",
+          "roll": "1d10 + 3",
+          "average": 8,
+          "description": "Two-handed"
         }
       }
     ],
@@ -253,7 +265,12 @@ export const elementalMonsters: Monster[] = [
       {
         "name": "Scimitar",
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 12 (2d6 + 5) slashing damage plus 3 (1d6) lightning or thunder damage (djinni's choice).",
-        "attackBonus": 9
+        "attackBonus": 9,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 5",
+          "average": 12
+        }
       },
       {
         "name": "Create Whirlwind",
@@ -333,7 +350,12 @@ export const elementalMonsters: Monster[] = [
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 4 (1d4 + 2) slashing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d4 + 2",
+          "average": 4
+        }
       },
       {
         "name": "Blinding Breath",
@@ -436,7 +458,12 @@ export const elementalMonsters: Monster[] = [
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 14 (2d8 + 5) bludgeoning damage.",
-        "attackBonus": 8
+        "attackBonus": 8,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 5",
+          "average": 14
+        }
       }
     ],
     "legendaryActions": [],
@@ -506,9 +533,15 @@ export const elementalMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +10 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) slashing damage plus 7 (2d6) fire damage.",
         "attackBonus": 10,
         "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 6",
+          "average": 13
+        },
+        "secondaryDamage": {
           "type": "Fire",
           "roll": "2d6",
-          "average": 7
+          "average": 7,
+          "description": "Additional"
         }
       },
       {
@@ -637,8 +670,8 @@ export const elementalMonsters: Monster[] = [
         "attackBonus": 6,
         "damage": {
           "type": "Fire",
-          "roll": "1d10",
-          "average": 5
+          "roll": "2d6 + 3",
+          "average": 10
         }
       }
     ],
@@ -721,12 +754,22 @@ export const elementalMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) slashing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
@@ -810,9 +853,15 @@ export const elementalMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 3 (1d4 + 1) slashing damage plus 2 (1d4) cold damage.",
         "attackBonus": 3,
         "damage": {
+          "type": "Slashing",
+          "roll": "1d4 + 1",
+          "average": 3
+        },
+        "secondaryDamage": {
           "type": "Cold",
           "roll": "1d4",
-          "average": 2
+          "average": 2,
+          "description": "Additional"
         }
       },
       {
@@ -937,7 +986,12 @@ export const elementalMonsters: Monster[] = [
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 3",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
@@ -1019,9 +1073,15 @@ export const elementalMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 3 (1d4 + 1) slashing damage plus 2 (1d4) fire damage.",
         "attackBonus": 3,
         "damage": {
+          "type": "Slashing",
+          "roll": "1d4 + 1",
+          "average": 3
+        },
+        "secondaryDamage": {
           "type": "Fire",
           "roll": "1d4",
-          "average": 2
+          "average": 2,
+          "description": "Additional"
         }
       },
       {
@@ -1174,9 +1234,16 @@ export const elementalMonsters: Monster[] = [
         "description": "Melee or Ranged Weapon Attack: +7 to hit, reach 5 ft. or range 20 ft./60 ft., one target. Hit: 11 (2d6 + 4) piercing damage, or 13 (2d8 + 4) piercing damage if used with two hands to make a melee attack, plus 3 (1d6) fire damage.",
         "attackBonus": 7,
         "damage": {
-          "type": "Fire",
-          "roll": "1d6",
-          "average": 3
+          "type": "Piercing",
+          "roll": "2d6 + 4",
+          "average": 11,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Piercing",
+          "roll": "2d8 + 4",
+          "average": 13,
+          "description": "Two-handed"
         }
       },
       {
@@ -1184,9 +1251,15 @@ export const elementalMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage plus 7 (2d6) fire damage, and the target is grappled (escape DC 14). Until this grapple ends, the target is restrained, the salamander can automatically hit the target with its tail, and the salamander can't make tail attacks against other targets.",
         "attackBonus": 7,
         "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 4",
+          "average": 11
+        },
+        "secondaryDamage": {
           "type": "Fire",
           "roll": "2d6",
-          "average": 7
+          "average": 7,
+          "description": "Additional"
         }
       }
     ],
@@ -1264,6 +1337,12 @@ export const elementalMonsters: Monster[] = [
           "type": "Slashing",
           "roll": "1d4",
           "average": 2
+        },
+        "secondaryDamage": {
+          "type": "Fire",
+          "roll": "1d4",
+          "average": 2,
+          "description": "Additional"
         }
       },
       {
@@ -1385,11 +1464,21 @@ export const elementalMonsters: Monster[] = [
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
-        "attackBonus": 7
+        "attackBonus": 7,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 4",
+          "average": 13
+        }
       },
       {
         "name": "Whelm",
-        "description": "Each creature in the elemental's space must make a DC 15 Strength saving throw. On a failure, a target takes 13 (2d8 + 4) bludgeoning damage. If it is Large or smaller, it is also grappled (escape DC 14). Until this grapple ends, the target is restrained and unable to breathe unless it can breathe water. If the saving throw is successful, the target is pushed out of the elemental's space.\nThe elemental can grapple one Large creature or up to two Medium or smaller creatures at one time. At the start of each of the elemental's turns, each target grappled by it takes 13 (2d8 + 4) bludgeoning damage. A creature within 5 feet of the elemental can pull a creature or object out of it by taking an action to make a DC 14 Strength and succeeding."
+        "description": "Each creature in the elemental's space must make a DC 15 Strength saving throw. On a failure, a target takes 13 (2d8 + 4) bludgeoning damage. If it is Large or smaller, it is also grappled (escape DC 14). Until this grapple ends, the target is restrained and unable to breathe unless it can breathe water. If the saving throw is successful, the target is pushed out of the elemental's space.\nThe elemental can grapple one Large creature or up to two Medium or smaller creatures at one time. At the start of each of the elemental's turns, each target grappled by it takes 13 (2d8 + 4) bludgeoning damage. A creature within 5 feet of the elemental can pull a creature or object out of it by taking an action to make a DC 14 Strength and succeeding.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 4",
+          "average": 13
+        }
       }
     ],
     "legendaryActions": [],
@@ -1465,12 +1554,22 @@ export const elementalMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (3d6 + 3) piercing damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "3d6 + 3",
+          "average": 13
+        }
       },
       {
         "name": "Claw",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d6 + 3",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],

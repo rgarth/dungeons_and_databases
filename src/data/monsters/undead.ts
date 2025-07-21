@@ -70,12 +70,22 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 12 (2d8 + 3) piercing damage.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d8 + 3",
+          "average": 12
+        }
       },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage. If the target is a creature other than an undead, it must succeed on a DC 10 Constitution saving throw or be paralyzed for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d6 + 3",
+          "average": 10
+        }
       }
     ],
     "legendaryActions": [],
@@ -193,7 +203,12 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Withering Touch",
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 17 (4d6 + 3) necrotic damage.",
-        "attackBonus": 5
+        "attackBonus": 5,
+        "damage": {
+          "type": "Necrotic",
+          "roll": "4d6 + 3",
+          "average": 17
+        }
       },
       {
         "name": "Etherealness",
@@ -275,12 +290,22 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +2 to hit, reach 5 ft., one creature. Hit: 9 (2d6 + 2) piercing damage.",
-        "attackBonus": 2
+        "attackBonus": 2,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d6 + 2",
+          "average": 9
+        }
       },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (2d4 + 2) slashing damage. If the target is a creature other than an elf or undead, it must succeed on a DC 10 Constitution saving throw or be paralyzed for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d4 + 2",
+          "average": 7
+        }
       }
     ],
     "legendaryActions": [],
@@ -481,12 +506,22 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Greataxe",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 17 (2d12 + 4) slashing damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d12 + 4",
+          "average": 17
+        }
       },
       {
         "name": "Gore",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) piercing damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Piercing",
+          "roll": "2d8 + 4",
+          "average": 13
+        }
       }
     ],
     "legendaryActions": [],
@@ -577,9 +612,15 @@ export const undeadMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage plus 10 (3d6) necrotic damage. If the target is a creature, it must succeed on a DC 12 Constitution saving throw or be cursed with mummy rot. The cursed target can't regain hit points, and its hit point maximum decreases by 10 (3d6) for every 24 hours that elapse. If the curse reduces the target's hit point maximum to 0, the target dies, and its body turns to dust. The curse lasts until removed by the remove curse spell or other magic.",
         "attackBonus": 5,
         "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 3",
+          "average": 10
+        },
+        "secondaryDamage": {
           "type": "Necrotic",
           "roll": "3d6",
-          "average": 10
+          "average": 10,
+          "description": "Additional"
         }
       },
       {
@@ -690,9 +731,15 @@ export const undeadMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 14 (3d6 + 4) bludgeoning damage plus 21 (6d6) necrotic damage. If the target is a creature, it must succeed on a DC 16 Constitution saving throw or be cursed with mummy rot. The cursed target can't regain hit points, and its hit point maximum decreases by 10 (3d6) for every 24 hours that elapse. If the curse reduces the target's hit point maximum to 0, the target dies, and its body turns to dust. The curse lasts until removed by the remove curse spell or other magic.",
         "attackBonus": 9,
         "damage": {
+          "type": "Bludgeoning",
+          "roll": "3d6 + 4",
+          "average": 14
+        },
+        "secondaryDamage": {
           "type": "Necrotic",
           "roll": "6d6",
-          "average": 21
+          "average": 21,
+          "description": "Additional"
         }
       },
       {
@@ -783,7 +830,12 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Morningstar",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) bludgeoning damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d8 + 4",
+          "average": 13
+        }
       }
     ],
     "legendaryActions": [],
@@ -901,7 +953,12 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Strength Drain",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 9 (2d6 + 2) necrotic damage, and the target's Strength score is reduced by 1d4. The target dies if this reduces its Strength to 0. Otherwise, the reduction lasts until the target finishes a short or long rest.\nIf a non-evil humanoid dies from this attack, a new shadow rises from the corpse 1d4 hours later.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Necrotic",
+          "roll": "2d6 + 2",
+          "average": 9
+        }
       }
     ],
     "legendaryActions": [],
@@ -968,12 +1025,22 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Shortsword",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       },
       {
         "name": "Shortbow",
         "description": "Ranged Weapon Attack: +4 to hit, range 80/320 ft., one target. Hit: 5 (1d6 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       }
     ],
     "legendaryActions": [],
@@ -1182,9 +1249,15 @@ export const undeadMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one willing creature, or a creature that is grappled by the vampire, incapacitated, or restrained. Hit: 7 (1d6 + 4) piercing damage plus 10 (3d6) necrotic damage. The target's hit point maximum is reduced by an amount equal to the necrotic damage taken, and the vampire regains hit points equal to that amount. The reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0. A humanoid slain in this way and then buried in the ground rises the following night as a vampire spawn under the vampire's control.",
         "attackBonus": 9,
         "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 4",
+          "average": 7
+        },
+        "secondaryDamage": {
           "type": "Necrotic",
           "roll": "3d6",
-          "average": 10
+          "average": 10,
+          "description": "Additional"
         }
       },
       {
@@ -1373,15 +1446,26 @@ export const undeadMonsters: Monster[] = [
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one willing creature, or a creature that is grappled by the vampire, incapacitated, or restrained. Hit: 6 (1d6 + 3) piercing damage plus 7 (2d6) necrotic damage. The target's hit point maximum is reduced by an amount equal to the necrotic damage taken, and the vampire regains hit points equal to that amount. The reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0.",
         "attackBonus": 6,
         "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 3",
+          "average": 6
+        },
+        "secondaryDamage": {
           "type": "Necrotic",
           "roll": "2d6",
-          "average": 7
+          "average": 7,
+          "description": "Additional"
         }
       },
       {
         "name": "Claws",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one creature. Hit: 8 (2d4 + 3) slashing damage. Instead of dealing damage, the vampire can grapple the target (escape DC 13).",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Slashing",
+          "roll": "2d4 + 3",
+          "average": 8
+        }
       }
     ],
     "legendaryActions": [],
@@ -1468,16 +1552,27 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Unarmed Strike",
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one creature. Hit: 8 (1d8 + 4) bludgeoning damage. Instead of dealing damage, the vampire can grapple the target (escape DC 18).",
-        "attackBonus": 9
+        "attackBonus": 9,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d8 + 4",
+          "average": 8
+        }
       },
       {
         "name": "Bite",
         "description": "Melee Weapon Attack: +9 to hit, reach 5 ft., one willing creature, or a creature that is grappled by the vampire, incapacitated, or restrained. Hit: 7 (1d6 + 4) piercing damage plus 10 (3d6) necrotic damage. The target's hit point maximum is reduced by an amount equal to the necrotic damage taken, and the vampire regains hit points equal to that amount. The reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0. A humanoid slain in this way and then buried in the ground rises the following night as a vampire spawn under the vampire's control.",
         "attackBonus": 9,
         "damage": {
+          "type": "Piercing",
+          "roll": "1d6 + 4",
+          "average": 7
+        },
+        "secondaryDamage": {
           "type": "Necrotic",
           "roll": "3d6",
-          "average": 10
+          "average": 10,
+          "description": "Additional"
         }
       },
       {
@@ -1564,7 +1659,12 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Hooves",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 4) bludgeoning damage.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 4",
+          "average": 11
+        }
       }
     ],
     "legendaryActions": [],
@@ -1644,17 +1744,39 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Life Drain",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 5 (1d6 + 2) necrotic damage. The target must succeed on a DC 13 Constitution saving throw or its hit point maximum is reduced by an amount equal to the damage taken. This reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0.\nA humanoid slain by this attack rises 24 hours later as a zombie under the wight's control, unless the humanoid is restored to life or its body is destroyed. The wight can have no more than twelve zombies under its control at one time.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Necrotic",
+          "roll": "1d6 + 2",
+          "average": 5
+        }
       },
       {
         "name": "Longsword",
         "description": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) slashing damage, or 7 (1d10 + 2) slashing damage if used with two hands.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1d8 + 2",
+          "average": 6,
+          "description": "One-handed"
+        },
+        "secondaryDamage": {
+          "type": "Slashing",
+          "roll": "1d10 + 2",
+          "average": 7,
+          "description": "Two-handed"
+        }
       },
       {
         "name": "Longbow",
         "description": "Ranged Weapon Attack: +4 to hit, range 150/600 ft., one target. Hit: 6 (1d8 + 2) piercing damage.",
-        "attackBonus": 4
+        "attackBonus": 4,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1d8 + 2",
+          "average": 6
+        }
       }
     ],
     "legendaryActions": [],
@@ -1892,7 +2014,12 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Life Drain",
         "description": "Melee Weapon Attack: +6 to hit, reach 5 ft., one creature. Hit: 21 (4d8 + 3) necrotic damage. The target must succeed on a DC 14 Constitution saving throw or its hit point maximum is reduced by an amount equal to the damage taken. This reduction lasts until the target finishes a long rest. The target dies if this effect reduces its hit point maximum to 0.",
-        "attackBonus": 6
+        "attackBonus": 6,
+        "damage": {
+          "type": "Necrotic",
+          "roll": "4d8 + 3",
+          "average": 21
+        }
       },
       {
         "name": "Create Specter",
@@ -1961,7 +2088,12 @@ export const undeadMonsters: Monster[] = [
       {
         "name": "Slam",
         "description": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) bludgeoning damage.",
-        "attackBonus": 3
+        "attackBonus": 3,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1d6 + 1",
+          "average": 4
+        }
       }
     ],
     "legendaryActions": [],
