@@ -42,8 +42,8 @@ function parseDamageFromDescription(description) {
       };
     }
     
-    // Check if there's additional damage (e.g., "plus X (YdZ) damage")
-    const additionalDamageMatch = normalizedDescription.match(/plus\s+(\d+)\s*\((\d+d\d+)\)\s*(\w+)\s*damage/);
+    // Check if there's additional damage (e.g., "plus X (YdZ) damage" or "it takes X (YdZ) damage")
+    const additionalDamageMatch = normalizedDescription.match(/(?:plus|it takes)\s+(\d+)\s*\((\d+d\d+)\)\s*(\w+)\s*damage/);
     
     if (additionalDamageMatch) {
       // We have multiple damage types in one attack
@@ -85,7 +85,7 @@ function parseDamageFromDescription(description) {
     const average = parseInt(simpleDamageMatch[1]);
     
     // Check if there's additional damage
-    const additionalDamageMatch = normalizedDescription.match(/plus\s+(\d+)\s*\((\d+d\d+)\)\s*(\w+)\s*damage/);
+    const additionalDamageMatch = normalizedDescription.match(/(?:plus|it takes)\s+(\d+)\s*\((\d+d\d+)\)\s*(\w+)\s*damage/);
     
     if (additionalDamageMatch) {
       const additionalRoll = additionalDamageMatch[2];
@@ -217,11 +217,21 @@ async function fetchMonsterWithRetry(monsterRef, maxRetries = 3) {
           
           return transformedAction;
         }),
-        legendaryActions: (monster.legendary_actions || []).map(action => ({
-          name: action.name,
-          description: action.desc,
-          cost: action.cost
-        })),
+        legendaryActions: (monster.legendary_actions || []).map(action => {
+          const transformedAction = {
+            name: action.name,
+            description: action.desc,
+            cost: action.cost
+          };
+          
+          // Parse damage for legendary actions
+          const parsedDamage = parseDamageFromDescription(action.desc);
+          if (parsedDamage && parsedDamage.primary) {
+            transformedAction.damage = parsedDamage.primary;
+          }
+          
+          return transformedAction;
+        }),
         description: monster.desc || "",
         source: "SRD",
         // Always add tags for filtering

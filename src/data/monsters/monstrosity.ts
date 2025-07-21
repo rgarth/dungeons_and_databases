@@ -338,6 +338,12 @@ export const monstrosityMonsters: Monster[] = [
           "type": "Acid",
           "roll": "6d6",
           "average": 21
+        },
+        "secondaryDamage": {
+          "type": "Acid",
+          "roll": "6d6",
+          "average": 21,
+          "description": "Additional"
         }
       }
     ],
@@ -1857,6 +1863,12 @@ export const monstrosityMonsters: Monster[] = [
           "type": "Piercing",
           "roll": "3d8 + 10",
           "average": 23
+        },
+        "secondaryDamage": {
+          "type": "Acid",
+          "roll": "12d6",
+          "average": 42,
+          "description": "Additional"
         }
       },
       {
@@ -1899,7 +1911,12 @@ export const monstrosityMonsters: Monster[] = [
       },
       {
         "name": "Ink Cloud (Costs 3 Actions)",
-        "description": "While underwater, the kraken expels an ink cloud in a 60-foot radius. The cloud spreads around corners, and that area is heavily obscured to creatures other than the kraken. Each creature other than the kraken that ends its turn there must succeed on a DC 23 Constitution saving throw, taking 16 (3d10) poison damage on a failed save, or half as much damage on a successful one. A strong current disperses the cloud, which otherwise disappears at the end of the kraken's next turn."
+        "description": "While underwater, the kraken expels an ink cloud in a 60-foot radius. The cloud spreads around corners, and that area is heavily obscured to creatures other than the kraken. Each creature other than the kraken that ends its turn there must succeed on a DC 23 Constitution saving throw, taking 16 (3d10) poison damage on a failed save, or half as much damage on a successful one. A strong current disperses the cloud, which otherwise disappears at the end of the kraken's next turn.",
+        "damage": {
+          "type": "Poison",
+          "roll": "3d10",
+          "average": 16
+        }
       }
     ],
     "description": "",
@@ -2653,6 +2670,12 @@ export const monstrosityMonsters: Monster[] = [
           "type": "Piercing",
           "roll": "3d8 + 9",
           "average": 22
+        },
+        "secondaryDamage": {
+          "type": "Acid",
+          "roll": "6d6",
+          "average": 21,
+          "description": "Additional"
         }
       },
       {
@@ -2743,6 +2766,12 @@ export const monstrosityMonsters: Monster[] = [
           "type": "Acid",
           "roll": "6d6",
           "average": 21
+        },
+        "secondaryDamage": {
+          "type": "Acid",
+          "roll": "6d6",
+          "average": 21,
+          "description": "Additional"
         }
       }
     ],
@@ -3196,6 +3225,12 @@ export const monstrosityMonsters: Monster[] = [
           "type": "Acid",
           "roll": "16d6",
           "average": 56
+        },
+        "secondaryDamage": {
+          "type": "Acid",
+          "roll": "16d6",
+          "average": 56,
+          "description": "Additional"
         }
       }
     ],

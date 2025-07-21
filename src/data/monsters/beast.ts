@@ -2184,6 +2184,12 @@ export const beastMonsters: Monster[] = [
           "type": "Acid",
           "roll": "2d4",
           "average": 5
+        },
+        "secondaryDamage": {
+          "type": "Acid",
+          "roll": "2d4",
+          "average": 5,
+          "description": "Additional"
         }
       }
     ],
@@ -3055,6 +3061,12 @@ export const beastMonsters: Monster[] = [
           "type": "Acid",
           "roll": "3d6",
           "average": 10
+        },
+        "secondaryDamage": {
+          "type": "Acid",
+          "roll": "3d6",
+          "average": 10,
+          "description": "Additional"
         }
       }
     ],

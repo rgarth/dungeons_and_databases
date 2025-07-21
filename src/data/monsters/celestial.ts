@@ -514,7 +514,12 @@ export const celestialMonsters: Monster[] = [
       },
       {
         "name": "Searing Burst (Costs 2 Actions)",
-        "description": "The solar emits magical, divine energy. Each creature of its choice in a 10 -foot radius must make a DC 23 Dexterity saving throw, taking 14 (4d6) fire damage plus 14 (4d6) radiant damage on a failed save, or half as much damage on a successful one."
+        "description": "The solar emits magical, divine energy. Each creature of its choice in a 10 -foot radius must make a DC 23 Dexterity saving throw, taking 14 (4d6) fire damage plus 14 (4d6) radiant damage on a failed save, or half as much damage on a successful one.",
+        "damage": {
+          "type": "Fire",
+          "roll": "4d6",
+          "average": 14
+        }
       },
       {
         "name": "Blinding Gaze (Costs 3 Actions)",

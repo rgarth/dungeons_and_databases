@@ -121,7 +121,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 6",
+          "average": 13
+        }
       }
     ],
     "description": "",
@@ -248,7 +253,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 20 Dexterity saving throw or take 14 (2d6 + 7) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 20 Dexterity saving throw or take 14 (2d6 + 7) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 7",
+          "average": 14
+        }
       }
     ],
     "description": "",
@@ -371,7 +381,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 6",
+          "average": 13
+        }
       }
     ],
     "description": "",
@@ -497,7 +512,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 20 Dexterity saving throw or take 14 (2d6 + 7) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 20 Dexterity saving throw or take 14 (2d6 + 7) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 7",
+          "average": 14
+        }
       }
     ],
     "description": "",
@@ -619,7 +639,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 6",
+          "average": 13
+        }
       }
     ],
     "description": "",
@@ -746,7 +771,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 8",
+          "average": 15
+        }
       }
     ],
     "description": "",
@@ -886,7 +916,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 6",
+          "average": 13
+        }
       }
     ],
     "description": "",
@@ -1013,7 +1048,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 8",
+          "average": 15
+        }
       }
     ],
     "description": "",
@@ -1135,7 +1175,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 8",
+          "average": 15
+        }
       }
     ],
     "description": "",
@@ -1267,7 +1312,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 10 ft. of the dragon must succeed on a DC 19 Dexterity saving throw or take 13 (2d6 + 6) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 6",
+          "average": 13
+        }
       }
     ],
     "description": "",
@@ -1398,7 +1448,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 23 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 23 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 8",
+          "average": 15
+        }
       }
     ],
     "description": "",
@@ -1525,7 +1580,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 24 Dexterity saving throw or take 16 (2d6 + 9) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 24 Dexterity saving throw or take 16 (2d6 + 9) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 9",
+          "average": 16
+        }
       }
     ],
     "description": "",
@@ -1652,7 +1712,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 8",
+          "average": 15
+        }
       }
     ],
     "description": "",
@@ -1782,7 +1847,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 24 Dexterity saving throw or take 16 (2d6 + 9) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 24 Dexterity saving throw or take 16 (2d6 + 9) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 9",
+          "average": 16
+        }
       }
     ],
     "description": "",
@@ -1908,7 +1978,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 23 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 23 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 8",
+          "average": 15
+        }
       }
     ],
     "description": "",
@@ -2039,7 +2114,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 25 Dexterity saving throw or take 17 (2d6 + 10) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 25 Dexterity saving throw or take 17 (2d6 + 10) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 10",
+          "average": 17
+        }
       }
     ],
     "description": "",
@@ -2179,7 +2259,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 23 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 23 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 8",
+          "average": 15
+        }
       }
     ],
     "description": "",
@@ -2306,7 +2391,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 25 Dexterity saving throw or take 17 (2d6 + 10) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 25 Dexterity saving throw or take 17 (2d6 + 10) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 10",
+          "average": 17
+        }
       }
     ],
     "description": "",
@@ -2432,7 +2522,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 25 Dexterity saving throw or take 17 (2d6 + 10) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 25 Dexterity saving throw or take 17 (2d6 + 10) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 10",
+          "average": 17
+        }
       }
     ],
     "description": "",
@@ -2559,7 +2654,12 @@ export const dragonMonsters: Monster[] = [
       },
       {
         "name": "Wing Attack (Costs 2 Actions)",
-        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."
+        "description": "The dragon beats its wings. Each creature within 15 ft. of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed.",
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "2d6 + 8",
+          "average": 15
+        }
       }
     ],
     "description": "",

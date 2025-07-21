@@ -435,7 +435,12 @@ export const undeadMonsters: Monster[] = [
       },
       {
         "name": "Disrupt Life (Costs 3 Actions)",
-        "description": "Each living creature within 20 feet of the lich must make a DC 18 Constitution saving throw against this magic, taking 21 (6d6) necrotic damage on a failed save, or half as much damage on a successful one."
+        "description": "Each living creature within 20 feet of the lich must make a DC 18 Constitution saving throw against this magic, taking 21 (6d6) necrotic damage on a failed save, or half as much damage on a successful one.",
+        "damage": {
+          "type": "Necrotic",
+          "roll": "6d6",
+          "average": 21
+        }
       }
     ],
     "description": "",

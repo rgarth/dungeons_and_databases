@@ -68,6 +68,12 @@ export const aberrationMonsters: Monster[] = [
           "type": "Bludgeoning",
           "roll": "2d6 + 5",
           "average": 12
+        },
+        "secondaryDamage": {
+          "type": "Acid",
+          "roll": "1d12",
+          "average": 6,
+          "description": "Additional"
         }
       },
       {
@@ -96,7 +102,12 @@ export const aberrationMonsters: Monster[] = [
       },
       {
         "name": "Psychic Drain (Costs 2 Actions)",
-        "description": "One creature charmed by the aboleth takes 10 (3d6) psychic damage, and the aboleth regains hit points equal to the damage the creature takes."
+        "description": "One creature charmed by the aboleth takes 10 (3d6) psychic damage, and the aboleth regains hit points equal to the damage the creature takes.",
+        "damage": {
+          "type": "Psychic",
+          "roll": "3d6",
+          "average": 10
+        }
       }
     ],
     "description": "",

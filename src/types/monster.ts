@@ -75,6 +75,23 @@ export interface MonsterAction {
   recharge?: string; // e.g., "5-6", "Recharge 5-6"
   legendary?: boolean;
   lair?: boolean;
+};
+  secondaryDamage?: {
+    type: string;
+    roll: string; // e.g., "1d10+3"
+    average?: number;
+    description?: string; // e.g., "Two-handed", "Versatile"
+  };
+  reach?: string;
+  target?: string;
+  savingThrow?: {
+    ability: string;
+    dc: number;
+    effect: string;
+  };
+  recharge?: string; // e.g., "5-6", "Recharge 5-6"
+  legendary?: boolean;
+  lair?: boolean;
 }
 
 export interface MonsterSpellcasting {
@@ -105,6 +122,12 @@ export interface MonsterLegendaryAction {
   name: string;
   cost?: number; // 1, 2, or 3 (optional since API doesn't provide it)
   description: string;
+  damage?: {
+    type: string;
+    roll: string; // e.g., "3d6"
+    average?: number;
+  };
+};
 }
 
 export interface MonsterLairAction {

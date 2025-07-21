@@ -1861,6 +1861,12 @@ export const fiendMonsters: Monster[] = [
           "type": "Piercing",
           "roll": "4d6 + 8",
           "average": 22
+        },
+        "secondaryDamage": {
+          "type": "Poison",
+          "roll": "6d6",
+          "average": 21,
+          "description": "Additional"
         }
       },
       {

@@ -469,7 +469,35 @@ export default function MonsterDetailModal({ monster, isOpen, onClose }: Monster
                   {action.cost || 1} action{(action.cost || 1) > 1 ? 's' : ''}
                 </span>
               </div>
-              <p className="text-[var(--color-text-secondary)] text-sm whitespace-pre-wrap">{stripMarkdown(action.description)}</p>
+              <p className="text-[var(--color-text-secondary)] text-sm whitespace-pre-wrap mb-2">{stripMarkdown(action.description)}</p>
+              
+              {/* Damage Dice Rollers for Legendary Actions */}
+              {action.damage && action.damage.roll && (
+                <div className="flex gap-2 mb-3">
+                  <button
+                    onClick={() => rollDice(action.damage!.roll)}
+                    className="text-center bg-[var(--color-card-secondary)] rounded p-2 hover:bg-[var(--color-card-tertiary)] transition-colors cursor-pointer group"
+                    title={`Roll damage: ${action.damage.roll} ${action.damage.type}`}
+                  >
+                    <div className="text-lg font-bold text-[var(--color-danger)] group-hover:scale-105 transition-transform">
+                      {action.damage.roll}
+                    </div>
+                    <div className="text-xs text-[var(--color-text-muted)]">
+                      {action.damage.type} Damage
+                    </div>
+                  </button>
+                </div>
+              )}
+              
+              {/* Legendary Action Details */}
+              {action.damage && (
+                <div className="space-y-1">
+                  <p className="text-sm text-[var(--color-text-secondary)]">
+                    <span className="font-medium">Damage:</span> {action.damage.roll} {action.damage.type}
+                    {action.damage.average && ` (average ${action.damage.average})`}
+                  </p>
+                </div>
+              )}
             </div>
           ))}
         </div>
