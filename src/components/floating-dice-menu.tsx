@@ -617,6 +617,7 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
         if (requestResults) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (window as any).requestedDiceResults = requestResults;
+          console.log('🎲 Set requestedDiceResults:', requestResults);
         }
       }
     };
@@ -703,6 +704,36 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
       return 'Roll history cleared';
     };
 
+    // Add global function to clear requested dice results
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).clearRequestedDiceResults = () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((window as any).requestedDiceResults) {
+        console.log('🎲 Clearing requestedDiceResults via global function');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        delete (window as any).requestedDiceResults;
+        return 'Requested dice results cleared';
+      }
+      return 'No requested dice results to clear';
+    };
+
+    // Add global function to reset dice library
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).resetDiceLibrary = () => {
+      console.log('🎲 Manually resetting dice library');
+      if (window.DICE && window.DICE.clearMaterialCache) {
+        window.DICE.clearMaterialCache();
+        console.log('🎲 Cleared dice material cache');
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((window as any).requestedDiceResults) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        delete (window as any).requestedDiceResults;
+        console.log('🎲 Cleared requested dice results');
+      }
+      return 'Dice library reset complete';
+    };
+
     // Cleanup on unmount
     return () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -711,6 +742,17 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
       delete (window as any).checkRollHistory;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       delete (window as any).clearRollHistory;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).clearRequestedDiceResults;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).resetDiceLibrary;
+      // Clear any requested results to prevent them from affecting future rolls
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((window as any).requestedDiceResults) {
+        console.log('🎲 Clearing requestedDiceResults on unmount');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        delete (window as any).requestedDiceResults;
+      }
     };
   }, [rollHistory]);
 
@@ -733,8 +775,38 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
   };
 
   const handleRollComplete = (result: { resultString?: string; resultTotal?: number }) => {
-    // Store the roll result if provided
-    if (result && result.resultString) {
+    // Clear any requested results to prevent them from affecting future rolls
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((window as any).requestedDiceResults) {
+      console.log('🎲 Clearing requestedDiceResults in handleRollComplete');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).requestedDiceResults;
+    }
+    
+             // Validate the result - check for invalid values like -1
+         if (result && result.resultString) {
+           // Check if this is an error result - just ignore it, component will reload
+           if (result.resultString.startsWith('ERROR:')) {
+             console.log('🎲 Dice roll failed, component will reload');
+             setIsRolling(false);
+             setIsExpanded(false);
+             return;
+           }
+      
+      // Check if the result contains invalid values
+      const hasInvalidValues = result.resultString.includes('-1') || 
+                              result.resultString.includes(' -') ||
+                              (result.resultTotal !== undefined && result.resultTotal <= 0);
+      
+      if (hasInvalidValues) {
+        console.warn('🎲 Invalid dice result detected in handleRollComplete:', result.resultString);
+        console.log('🎲 Rejecting invalid result - not storing or displaying');
+        // Don't store or display invalid results
+        setIsRolling(false);
+        setIsExpanded(false);
+        return;
+      }
+      
       setLastRollResult(result.resultString);
       
       // Add to roll history

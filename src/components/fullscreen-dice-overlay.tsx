@@ -54,8 +54,13 @@ export default function FullscreenDiceOverlay({
   const containerRef = useRef<HTMLDivElement>(null);
   const diceBoxRef = useRef<DiceBox | null>(null);
   const [isFading, setIsFading] = useState(false);
+  const retryCountRef = useRef(0);
+  const maxRetries = 3;
+  const [componentKey, setComponentKey] = useState(0);
 
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
+
+
 
   // Load DICE library scripts
   useEffect(() => {
@@ -196,6 +201,7 @@ export default function FullscreenDiceOverlay({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const requestedResults = (window as any).requestedDiceResults;
             if (requestedResults) {
+              console.log('🎲 Using requested results:', requestedResults);
               // Clear the requested results so they don't affect future rolls
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               delete (window as any).requestedDiceResults;
@@ -205,6 +211,89 @@ export default function FullscreenDiceOverlay({
           },
           // afterRoll callback
           (notation: DiceResult) => {
+            console.log('🎲 Roll completed:', notation);
+            
+            // Validate the roll result - dice should never return negative values
+            const hasInvalidResults = notation.result && notation.result.some(r => r <= 0);
+            if (hasInvalidResults) {
+              retryCountRef.current++;
+              console.warn(`🎲 Invalid dice result detected (attempt ${retryCountRef.current}/${maxRetries}):`, notation.result);
+              
+              // Check if we've exceeded max retries
+              if (retryCountRef.current >= maxRetries) {
+                console.error('🎲 Max retries exceeded, giving up on dice roll');
+                console.error('🎲 Dice notation:', diceNotation);
+                console.error('🎲 All attempts returned invalid results');
+                
+                // Clear any requested results to prevent future issues
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                if ((window as any).requestedDiceResults) {
+                  console.log('🎲 Clearing requestedDiceResults due to max retries exceeded');
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  delete (window as any).requestedDiceResults;
+                }
+                
+                // Completely reload the dice component
+                console.log('🎲 Dice library broken, completely reloading component');
+                if (window.DICE && window.DICE.clearMaterialCache) {
+                  window.DICE.clearMaterialCache();
+                }
+                // Clear the dice box reference
+                diceBoxRef.current = null;
+                // Force complete component reload by changing the key
+                setComponentKey(prev => prev + 1);
+                // Reset retry count
+                retryCountRef.current = 0;
+                // Close current overlay
+                handleFadeOut();
+                return;
+              }
+              
+              // Clear any requested results that might be causing the issue
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              if ((window as any).requestedDiceResults) {
+                console.log('🎲 Clearing requestedDiceResults due to invalid result');
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                delete (window as any).requestedDiceResults;
+              }
+              
+              // Retry the roll after a short delay
+              setTimeout(() => {
+                if (diceBoxRef.current) {
+                  console.log(`🎲 Retrying dice roll (attempt ${retryCountRef.current}/${maxRetries})`);
+                  diceBoxRef.current.setDice(diceNotation);
+                  diceBoxRef.current.start_throw(
+                    // beforeRoll callback
+                    () => {
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      const requestedResults = (window as any).requestedDiceResults;
+                      if (requestedResults) {
+                        console.log('🎲 Using requested results on retry:', requestedResults);
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        delete (window as any).requestedDiceResults;
+                        return requestedResults;
+                      }
+                      return null;
+                    },
+                    // afterRoll callback - reuse the same callback logic
+                    (retryNotation: DiceResult) => {
+                      console.log('🎲 Retry roll completed:', retryNotation);
+                      onRollComplete(retryNotation);
+                      
+                      // Auto-close after a longer delay to show results
+                      setTimeout(() => {
+                        handleFadeOut();
+                      }, 2000);
+                    }
+                  );
+                }
+              }, 500);
+              return; // Don't call onRollComplete for invalid results
+            }
+            
+            // Valid result - reset retry count
+            retryCountRef.current = 0;
+            
             onRollComplete(notation);
             
             // Auto-close after a longer delay to show results
@@ -215,6 +304,13 @@ export default function FullscreenDiceOverlay({
         );
       } catch (error) {
         console.error('Failed to initialize dice box:', error);
+        // Clear any requested results to prevent them from affecting future rolls
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if ((window as any).requestedDiceResults) {
+          console.log('🎲 Clearing requestedDiceResults due to error');
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          delete (window as any).requestedDiceResults;
+        }
         handleFadeOut();
       }
     };
@@ -228,6 +324,13 @@ export default function FullscreenDiceOverlay({
       if (diceBoxRef.current) {
         // Clean up any resources if needed
         diceBoxRef.current = null;
+      }
+      // Clear any requested results to prevent them from affecting future rolls
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((window as any).requestedDiceResults) {
+        console.log('🎲 Clearing requestedDiceResults on component unmount');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        delete (window as any).requestedDiceResults;
       }
     };
   }, []);
@@ -261,6 +364,7 @@ export default function FullscreenDiceOverlay({
 
   return (
     <div 
+      key={componentKey}
       className="fixed inset-0 z-[100] pointer-events-none transition-all duration-300 ease-out"
       style={{ 
         opacity: isFading ? 0 : 1,
