@@ -151,7 +151,26 @@ function generateServerPrompt(characterData: CharacterAvatarData): string {
         
         return fullBodyPrompt;
       } else {
-        raceDescription = 'stout humanoid with broad features and thick hair';
+        // Use the age system for regular dwarves to get the correct appearance features
+        const dwarfAgeDescription = getDiverseAgeDescription('Dwarf', gender);
+        raceDescription = 'dwarf with stocky build, broad shoulders, thick muscular frame, 4-5 feet tall, traditional dwarven features, big bushy beard, thick hair, stout appearance, NOT tall or skinny, clearly dwarven proportions';
+        // Use the age system description for dwarves
+        appearanceDescription = `, A ${ageDesc} ${raceDescription} with ${dwarfAgeDescription}`;
+        
+        // Add body type diversity for dwarves
+        const bodyType = getRandomItem(BODY_TYPES);
+        appearanceDescription += `, ${bodyType}`;
+        
+        // Add custom appearance if provided
+        if (appearance && appearance.trim()) {
+          appearanceDescription += `, ${appearance.trim()}`;
+        }
+        
+        // Create the full prompt for regular dwarves
+        const clothing = CLASS_CLOTHING[characterClass as keyof typeof CLASS_CLOTHING] || 'appropriate clothing';
+        const fullBodyPrompt = `A professional full-body photograph of a ${gender || 'Person'} ${characterClass}${appearanceDescription} in ${clothing}, standing in a dramatic pose, complete head visible, studio lighting, high quality, detailed, realistic, 8k resolution, professional photography, full figure from head to toe, clear facial features for cropping${cameraAngle || ''}`;
+        
+        return fullBodyPrompt;
       }
       break;
     case 'Elf':
@@ -304,6 +323,15 @@ async function generateWithReplicateFluxSchnell(characterData: CharacterAvatarDa
     
     // Generate server-side prompt with anti-bias measures
     const fullBodyPrompt = generateServerPrompt(characterData);
+
+    // Log the exact prompt being sent
+    console.log('🎨 FULL PROMPT BEING SENT TO AI:');
+    console.log('='.repeat(80));
+    console.log(fullBodyPrompt);
+    console.log('='.repeat(80));
+    console.log('🎨 CHARACTER DATA SENT:');
+    console.log(JSON.stringify(characterData, null, 2));
+    console.log('='.repeat(80));
 
     // Full body prompt generated
     console.log('🔑 Using API key:', REPLICATE_API_KEY ? 'Present' : 'Missing');
