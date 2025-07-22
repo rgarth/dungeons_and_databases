@@ -238,7 +238,13 @@ export const CLASS_PROGRESSION: Record<string, ClassProgression[]> = {
   Rogue: [
     createStandardProgression("Rogue", 1, 8, ["Expertise", "Sneak Attack (1d6)", "Thieves' Cant"]),
     createStandardProgression("Rogue", 2, 8, ["Cunning Action"]),
-    createStandardProgression("Rogue", 3, 8, ["Sneak Attack (2d6)", "Roguish Archetype"]),
+    createStandardProgression("Rogue", 3, 8, ["Sneak Attack (2d6)", "Roguish Archetype"], [{
+      type: "classFeature" as const,
+      required: true,
+      options: ["Thief", "Assassin", "Arcane Trickster"],
+      maxSelections: 1,
+      description: "Choose your Roguish Archetype"
+    }]),
     createStandardProgression("Rogue", 4, 8, ["Ability Score Improvement"], [createASIChoice()]),
     createStandardProgression("Rogue", 5, 8, ["Sneak Attack (3d6)", "Uncanny Dodge"]),
     createStandardProgression("Rogue", 6, 8, ["Expertise"]),

@@ -115,8 +115,16 @@ export class LevelUpService {
         throw new Error(`No progression data found for ${levelingClass} level ${level}`);
       }
       
-      // Add features for this level
-      allFeatures.push(...progression.features.map(feature => `${feature} (Level ${level})`));
+      // Add automatic features for this level (features without choices)
+      const automaticFeatures = progression.features.filter(feature => {
+        // Check if this feature has a corresponding choice
+        return !progression.choices.some(choice => 
+          choice.description.toLowerCase().includes(feature.toLowerCase()) ||
+          feature.toLowerCase().includes(choice.description.toLowerCase())
+        );
+      });
+      
+      allFeatures.push(...automaticFeatures.map(feature => `${feature} (Level ${level})`));
       
       // Add choices for this level
       allChoices.push(...progression.choices.map(choice => ({
@@ -204,6 +212,29 @@ export class LevelUpService {
     for (const level of levelsToProcess) {
       const levelProgression = this.getClassProgression(levelingClass, level);
       if (!levelProgression) continue;
+      
+      // Add automatic features for this level
+      const automaticFeatures = levelProgression.features.filter(feature => {
+        // Check if this feature has a corresponding choice
+        return !levelProgression.choices.some(choice => 
+          choice.description.toLowerCase().includes(feature.toLowerCase()) ||
+          feature.toLowerCase().includes(choice.description.toLowerCase())
+        );
+      });
+      
+      // Add automatic features to selected features
+      automaticFeatures.forEach(feature => {
+        selectedFeatures.push({
+          id: `${character.id}-${newTotalLevel}-${featureId++}`,
+          classSource: levelingClass,
+          classLevel: level,
+          characterLevel: newTotalLevel,
+          featureType: 'classFeature',
+          name: feature,
+          selection: feature,
+          description: `Automatic feature gained at level ${level}`
+        });
+      });
       
       // Process choices specific to this level
       levelProgression.choices.forEach(choice => {

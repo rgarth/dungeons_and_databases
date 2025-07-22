@@ -711,10 +711,10 @@ body {
   --color-surface-tertiary: #2a2a2a; /* medium gray */
   --color-surface-quaternary: #3a3a3a; /* light gray */
   --color-card: #1a1a1a; /* dark gray */
-  --color-card-secondary: #2a2a2a; /* medium gray */
+  --color-card-secondary: #252525; /* slightly lighter than card for better contrast */
   --color-card-tertiary: #3a3a3a; /* light gray */
-  --color-border: #4a4a4a; /* gray border */
-  --color-border-light: #5a5a5a; /* lighter gray border */
+  --color-border: #404040; /* darker gray border for better definition */
+  --color-border-light: #505050; /* lighter gray border */
   --color-text-primary: #e0e0e0; /* light gray text */
   --color-text-secondary: #c0c0c0; /* medium gray text */
   --color-text-tertiary: #a0a0a0; /* muted gray text */
@@ -726,9 +726,13 @@ body {
   --color-primary-hover: #4b5563; /* darker steel gray for primary hover */
   
   /* Accent colors - iron gray */
-  --color-accent: #4b5563; /* iron gray for tabs and text */
-  --color-accent-hover: #374151; /* darker iron gray */
-  --color-accent-text: #ffffff; /* white text on iron gray */
+  --color-accent: #6b7280; /* steel gray for buttons and general accent */
+  --color-accent-hover: #4b5563; /* darker steel gray */
+  --color-accent-text: #ffffff; /* white text on steel gray */
+  
+  /* Racial traits specific colors */
+  --color-racial-trait-bg: #606060; /* light gray background for racial traits */
+  --color-racial-trait-text: #ffffff; /* white text for racial traits */
   
   /* Button colors - steel gray */
   --color-button: #4b5563; /* steel gray for buttons */
@@ -745,17 +749,17 @@ body {
   --color-error-text: #ffffff; /* white text on error */
   --color-error-hover: #dc2626; /* darker red for hover */
   
-  /* Background variants for status colors */
+  /* Background variants for status colors - IMPROVED CONTRAST */
   --color-success-bg: #374151; /* dark gray background */
   --color-warning-bg: #6b7280; /* medium gray background */
   --color-error-bg: #450a0a; /* dark red background */
-  --color-accent-bg: #374151; /* dark gray background */
+  --color-accent-bg: #606060; /* very light gray background for maximum contrast with card */
   
   /* Border variants for status colors */
   --color-success-border: #6b7280; /* steel gray border */
   --color-warning-border: #9ca3af; /* light gray border */
   --color-error-border: #ef4444; /* red border for errors */
-  --color-accent-border: #4b5563; /* iron gray border */
+  --color-accent-border: #ffffff; /* white border to match accent */
   
   /* Legacy aliases for backward compatibility */
   --color-danger: var(--color-error); /* alias for error */
@@ -894,6 +898,8 @@ body {
 .text-muted-foreground {
   color: var(--color-text-muted) !important;
 }
+
+
 
 
 

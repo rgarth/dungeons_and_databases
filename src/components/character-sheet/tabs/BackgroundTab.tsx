@@ -823,7 +823,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
             <div className="flex flex-wrap gap-2">
               {racialTraits.map((trait, index) => (
                 <div key={index} className="relative flex items-center gap-2">
-                  <span className="bg-[var(--color-accent-bg)] text-[var(--color-accent)] px-3 py-1 rounded-full text-sm font-medium">
+                  <span className="bg-[var(--color-racial-trait-bg)] text-[var(--color-racial-trait-text)] px-3 py-1 rounded-full text-sm font-medium">
                     {trait.name}
                   </span>
                   <button
@@ -859,7 +859,7 @@ export function BackgroundTab({ character, onUpdate }: BackgroundTabProps) {
               {/* Background Feature */}
               <div className="flex flex-wrap gap-2">
                 <div className="relative flex items-center gap-2">
-                  <span className="bg-[var(--color-accent-bg)] text-[var(--color-accent)] px-3 py-1 rounded-full text-sm font-medium">
+                  <span className="bg-[var(--color-racial-trait-bg)] text-[var(--color-racial-trait-text)] px-3 py-1 rounded-full text-sm font-medium">
                     {backgroundData.feature}
                   </span>
                   <button

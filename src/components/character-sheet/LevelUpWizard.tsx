@@ -41,6 +41,7 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
   const [selections, setSelections] = useState<Record<string, string | string[]>>({});
   const [hitPointChoice, setHitPointChoice] = useState<'fixed' | 'roll'>('fixed');
   const [rolledHitPoints, setRolledHitPoints] = useState<number | null>(null);
+  const [diceResults, setDiceResults] = useState<number[]>([]);
   const [abilityScoreAllocations, setAbilityScoreAllocations] = useState<Record<string, number>>({});
   const [selectedFeat, setSelectedFeat] = useState<string>('');
   const [selectedSpells, setSelectedSpells] = useState<string[]>([]);
@@ -111,11 +112,62 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
     return levelUpTarget.targetLevel;
   };
 
+  const getHitDie = (characterClass: string): number => {
+    const hitDieMap: Record<string, number> = {
+      'Barbarian': 12,
+      'Fighter': 10,
+      'Paladin': 10,
+      'Ranger': 10,
+      'Bard': 8,
+      'Cleric': 8,
+      'Druid': 8,
+      'Monk': 8,
+      'Rogue': 8,
+      'Warlock': 8,
+      'Sorcerer': 6,
+      'Wizard': 6
+    };
+    return hitDieMap[characterClass] || 8;
+  };
+
   const rollHitPoints = () => {
     if (!levelUpOptions) return;
-    const { min, max } = levelUpOptions.hitPointOptions.roll;
-    const rolled = Math.floor(Math.random() * (max - min + 1)) + min;
-    setRolledHitPoints(rolled);
+    
+    // Calculate what dice we need to roll
+    const levelsToGain = levelUpTarget.targetLevel - character.level;
+    const constitutionModifier = Math.floor((character.constitution - 10) / 2);
+    
+    // Get hit die for the class
+    const hitDieMap: Record<string, number> = {
+      'Barbarian': 12,
+      'Fighter': 10,
+      'Paladin': 10,
+      'Ranger': 10,
+      'Bard': 8,
+      'Cleric': 8,
+      'Druid': 8,
+      'Monk': 8,
+      'Rogue': 8,
+      'Warlock': 8,
+      'Sorcerer': 6,
+      'Wizard': 6
+    };
+    
+    const hitDie = hitDieMap[character.class] || 8;
+    
+    // Roll individual dice for each level
+    const diceResults: number[] = [];
+    let totalRolled = 0;
+    
+    for (let i = 0; i < levelsToGain; i++) {
+      const dieRoll = Math.floor(Math.random() * hitDie) + 1;
+      diceResults.push(dieRoll);
+      totalRolled += dieRoll + constitutionModifier;
+    }
+    
+    // Store both the total and the individual dice results
+    setRolledHitPoints(totalRolled);
+    setDiceResults(diceResults);
   };
 
   const getSelectedHitPoints = () => {
@@ -683,9 +735,18 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
                         Roll Dice
                       </button>
                       {rolledHitPoints !== null && (
-                        <span className="text-[var(--color-accent)] font-bold text-lg">
-                          Rolled: +{rolledHitPoints} HP
-                        </span>
+                        <div>
+                          <span className="text-[var(--color-accent)] font-bold text-lg">
+                            Rolled: +{rolledHitPoints} HP
+                          </span>
+                          {diceResults.length > 0 && (
+                            <div className="mt-2 text-sm text-[var(--color-text-secondary)]">
+                              <div>Dice rolled: {diceResults.length}d{getHitDie(character.class)}</div>
+                              <div>Results: {diceResults.join(', ')}</div>
+                              <div>Constitution modifier: +{Math.floor((character.constitution - 10) / 2)} per level</div>
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
                   )}
@@ -732,6 +793,32 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
                     </div>
                   )}
 
+                  {choice.type === 'classFeature' && choice.options && (
+                    <div className="space-y-2">
+                      {choice.options.map(option => (
+                        <label key={option} className="flex items-start space-x-3">
+                          <input
+                            type="radio"
+                            name={choiceKey}
+                            value={option}
+                            checked={selections[choiceKey] === option}
+                            onChange={(e) => handleChoiceSelection(choice.type, e.target.value, level)}
+                            className="mt-1 text-[var(--color-accent)]"
+                          />
+                          <div>
+                            <div className="text-[var(--color-text-primary)] font-medium">{option}</div>
+                            <div className="text-[var(--color-text-secondary)] text-sm">
+                              {choice.description === "Choose your Roguish Archetype" ? 
+                                "Specialized rogue abilities and features" : 
+                                "Class-specific feature choice"
+                              }
+                            </div>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+
                   {choice.type === 'abilityScoreIncrease' && (
                     <div className="space-y-4">
                       <div className="border border-[var(--color-border)] rounded p-3">
@@ -755,10 +842,12 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
                                   const total = Object.values(newAllocations).reduce((sum, val) => sum + val, 0);
                                   if (total <= 2) {
                                     setAbilityScoreAllocations(newAllocations);
+                                    // Clear feat selection when choosing ability scores
                                     setSelectedFeat('');
                                   }
                                 }}
-                                className="bg-[var(--color-input)] text-[var(--color-text-primary)] rounded px-2 py-1 text-sm"
+                                disabled={selectedFeat !== ''}
+                                className="bg-[var(--color-input)] text-[var(--color-text-primary)] rounded px-2 py-1 text-sm disabled:opacity-50"
                               >
                                 <option value={0}>+0</option>
                                 <option value={1}>+1</option>
@@ -777,10 +866,12 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
                           onChange={(e) => {
                             setSelectedFeat(e.target.value);
                             if (e.target.value) {
+                              // Clear ability score allocations when choosing a feat
                               setAbilityScoreAllocations({});
                             }
                           }}
-                          className="w-full bg-[var(--color-input)] text-[var(--color-text-primary)] rounded px-3 py-2 mb-2"
+                          disabled={Object.values(abilityScoreAllocations).reduce((sum, val) => sum + val, 0) > 0}
+                          className="w-full bg-[var(--color-input)] text-[var(--color-text-primary)] rounded px-3 py-2 mb-2 disabled:opacity-50"
                         >
                           <option value="">Choose a feat...</option>
                           {Object.keys(FEATS).map(featName => (
