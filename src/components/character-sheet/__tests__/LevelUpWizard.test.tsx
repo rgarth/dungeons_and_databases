@@ -196,8 +196,7 @@ describe('LevelUpWizard', () => {
   it('should handle multiple level jumps', async () => {
     const testCharacter = {
       ...mockCharacter,
-      level: 1,
-      class: 'Fighter'
+      level: 1
     };
 
     const mockOptions = {
@@ -206,7 +205,8 @@ describe('LevelUpWizard', () => {
           type: 'fightingStyle',
           description: 'Choose a Fighting Style (Level 2)',
           required: true,
-          options: ['Archery', 'Defense']
+          options: ['Archery', 'Defense'],
+          maxSelections: 1
         },
         {
           type: 'abilityScoreIncrease',
@@ -214,14 +214,10 @@ describe('LevelUpWizard', () => {
           required: true
         }
       ],
-      newFeatures: [
-        'Action Surge (Level 2)',
-        'Martial Archetype (Level 3)',
-        'Ability Score Improvement (Level 4)'
-      ],
+      newFeatures: ['Fighting Style', 'Ability Score Improvement'],
       hitPointOptions: {
-        fixed: 12, // 3 levels * 4 HP average
-        roll: { min: 3, max: 12 }
+        fixed: 4,
+        roll: { min: 1, max: 10 }
       },
       spellOptions: undefined
     };
@@ -230,18 +226,12 @@ describe('LevelUpWizard', () => {
 
     render(<LevelUpWizard character={testCharacter} onClose={jest.fn()} onLevelUp={jest.fn()} />);
 
-    // Set target level to 4
-    const plusButton = screen.getByRole('button', { name: /increase level/i });
-    fireEvent.click(plusButton);
-    fireEvent.click(plusButton);
-    fireEvent.click(plusButton);
+    // Complete level up
+    fireEvent.click(screen.getByText('Continue to Level 2'));
 
-    // Proceed through steps
-    fireEvent.click(screen.getByText('Next')); // Overview
-    
     // Wait for options to load
     await waitFor(() => {
-      expect(screen.getByText('Level 5 Features')).toBeInTheDocument();
+      expect(screen.getByText('Level 2 Features')).toBeInTheDocument();
     });
     
     fireEvent.click(screen.getByText('Next')); // Hit Points
@@ -254,6 +244,10 @@ describe('LevelUpWizard', () => {
     // Select fighting style
     fireEvent.click(screen.getByLabelText(/Archery/));
     
+    // Select ability score improvement type
+    const improvementTypeSelect = screen.getByDisplayValue('Choose improvement type...');
+    fireEvent.change(improvementTypeSelect, { target: { value: 'ability' } });
+
     // Select ability score increase (allocate 2 points)
     const strSelect = screen.getAllByDisplayValue('+0')[0];
     fireEvent.change(strSelect, { target: { value: '1' } });
@@ -261,8 +255,6 @@ describe('LevelUpWizard', () => {
     fireEvent.change(dexSelect, { target: { value: '1' } });
     
     fireEvent.click(screen.getByText('Next')); // Review
-
-    // Complete level up
     fireEvent.click(screen.getAllByText('Level Up!')[1]); // Use the button, not the header
 
     expect(mockService.processLevelUp).toHaveBeenCalledWith(
@@ -271,9 +263,9 @@ describe('LevelUpWizard', () => {
         'fightingStyle_level_2': 'Archery',
         'abilityScoreIncrease': expect.any(String)
       }),
-      12,
+      4,
       'Fighter',
-      5
+      2
     );
   });
 
@@ -307,7 +299,7 @@ describe('LevelUpWizard', () => {
     render(<LevelUpWizard character={rogueCharacter} onClose={jest.fn()} onLevelUp={jest.fn()} />);
 
     // Proceed to choices step
-    fireEvent.click(screen.getByText('Next')); // Overview
+    fireEvent.click(screen.getByText('Continue to Level 3'));
     await waitFor(() => {
       expect(screen.getByText('Level 3 Features')).toBeInTheDocument();
     });
@@ -354,19 +346,22 @@ describe('LevelUpWizard', () => {
     render(<LevelUpWizard character={testCharacter} onClose={jest.fn()} onLevelUp={jest.fn()} />);
 
     // Proceed to choices step
-    fireEvent.click(screen.getByText('Next')); // Overview
+    fireEvent.click(screen.getByText('Continue to Level 4'));
     await waitFor(() => {
       expect(screen.getByText('Level 4 Features')).toBeInTheDocument();
     });
     fireEvent.click(screen.getByText('Next')); // Hit Points
     fireEvent.click(screen.getByText('Next')); // Choices
 
-    // Should show ability score increase choice
-    expect(screen.getByText('Ability Score Increase')).toBeInTheDocument();
-    expect(screen.getByText('Take a Feat')).toBeInTheDocument();
-
     // Initially, neither should be selected, so Next should be disabled
     expect(screen.getByText('Next')).toBeDisabled();
+
+    // Select ability score improvement type
+    const improvementTypeSelect = screen.getByDisplayValue('Choose improvement type...');
+    fireEvent.change(improvementTypeSelect, { target: { value: 'ability' } });
+
+    // Should show ability score interface
+    expect(screen.getByText('Ability Score Increase')).toBeInTheDocument();
 
     // Select ability score increase
     const strSelect = screen.getAllByDisplayValue('+0')[0];
@@ -374,23 +369,89 @@ describe('LevelUpWizard', () => {
     const dexSelect = screen.getAllByDisplayValue('+0')[1];
     fireEvent.change(dexSelect, { target: { value: '1' } });
 
-    // Feat dropdown should be disabled
+    // Should be able to proceed
+    expect(screen.getByText('Next')).not.toBeDisabled();
+
+    // Switch to feat selection
+    fireEvent.change(improvementTypeSelect, { target: { value: 'feat' } });
+
+    // Should show feat interface (use getAllByText since there are multiple elements)
+    expect(screen.getAllByText('Take a Feat')[1]).toBeInTheDocument();
+
+    // Select a feat
     const featSelect = screen.getByDisplayValue('Choose a feat...');
-    expect(featSelect).toBeDisabled();
+    fireEvent.change(featSelect, { target: { value: 'Alert' } });
+
+    // Should be able to proceed
+    expect(screen.getByText('Next')).not.toBeDisabled();
+  });
+
+  it('should allow clearing feat selection to switch back to ability scores', async () => {
+    const testCharacter = {
+      ...mockCharacter,
+      level: 3
+    };
+
+    const mockOptions = {
+      availableChoices: [
+        {
+          type: 'abilityScoreIncrease',
+          description: 'Increase one ability score by 2, or two ability scores by 1 each, or take a feat. (Level 4)',
+          required: true
+        }
+      ],
+      newFeatures: ['Ability Score Improvement'],
+      hitPointOptions: {
+        fixed: 4,
+        roll: { min: 1, max: 10 }
+      },
+      spellOptions: undefined
+    };
+
+    mockService.getLevelUpOptions.mockResolvedValue(mockOptions);
+
+    render(<LevelUpWizard character={testCharacter} onClose={jest.fn()} onLevelUp={jest.fn()} />);
+
+    // Proceed to choices step
+    fireEvent.click(screen.getByText('Continue to Level 4'));
+    await waitFor(() => {
+      expect(screen.getByText('Level 4 Features')).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByText('Next')); // Hit Points
+    fireEvent.click(screen.getByText('Next')); // Choices
+
+    // Select feat improvement type
+    const improvementTypeSelect = screen.getByDisplayValue('Choose improvement type...');
+    fireEvent.change(improvementTypeSelect, { target: { value: 'feat' } });
+
+    // Initially select a feat
+    const featSelect = screen.getByDisplayValue('Choose a feat...');
+    fireEvent.change(featSelect, { target: { value: 'Alert' } });
 
     // Should be able to proceed
     expect(screen.getByText('Next')).not.toBeDisabled();
 
-    // Clear ability score selections
-    fireEvent.change(strSelect, { target: { value: '0' } });
-    fireEvent.change(dexSelect, { target: { value: '0' } });
+    // Clear the feat selection
+    const clearButton = screen.getByText('Clear feat selection');
+    fireEvent.click(clearButton);
 
-    // Now select a feat
-    fireEvent.change(featSelect, { target: { value: 'Alert' } });
+    // Feat should be cleared and interface should be hidden
+    expect(screen.queryByDisplayValue('Choose a feat...')).not.toBeInTheDocument();
 
-    // Ability score dropdowns should be disabled
-    expect(strSelect).toBeDisabled();
-    expect(dexSelect).toBeDisabled();
+    // Switch back to ability scores
+    fireEvent.change(improvementTypeSelect, { target: { value: 'ability' } });
+
+    // Should show ability score interface
+    expect(screen.getByText('Ability Score Increase')).toBeInTheDocument();
+
+    // Should not be able to proceed until ability scores are allocated
+    expect(screen.getByText('Next')).toBeDisabled();
+
+    // Allocate ability scores
+    const strSelect = screen.getAllByDisplayValue('+0')[0];
+    fireEvent.change(strSelect, { target: { value: '1' } });
+    const dexSelect = screen.getAllByDisplayValue('+0')[1];
+    fireEvent.change(dexSelect, { target: { value: '1' } });
 
     // Should be able to proceed
     expect(screen.getByText('Next')).not.toBeDisabled();

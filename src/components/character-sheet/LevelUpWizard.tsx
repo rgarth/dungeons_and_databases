@@ -46,6 +46,7 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
   const [selectedFeat, setSelectedFeat] = useState<string>('');
   const [selectedSpells, setSelectedSpells] = useState<string[]>([]);
   const [availableClasses, setAvailableClasses] = useState<string[]>([]);
+  const [selectedImprovementType, setSelectedImprovementType] = useState<'ability' | 'feat' | ''>('');
 
   const levelUpService = useMemo(() => createLevelUpService(), []);
 
@@ -821,69 +822,122 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
 
                   {choice.type === 'abilityScoreIncrease' && (
                     <div className="space-y-4">
+                      {/* Choice Type Selector */}
                       <div className="border border-[var(--color-border)] rounded p-3">
-                        <h5 className="text-[var(--color-text-primary)] font-medium mb-2">Ability Score Increase</h5>
-                        <p className="text-[var(--color-text-secondary)] text-sm mb-3">Allocate 2 points among your abilities (max 1 per ability)</p>
-                        
-                        <div className="grid grid-cols-3 gap-2">
-                          {['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].map(ability => (
-                            <div key={ability} className="flex items-center space-x-2">
-                              <span className="text-[var(--color-text-primary)] text-sm capitalize w-16">{ability.slice(0, 3)}</span>
-                              <select
-                                value={abilityScoreAllocations[ability] || 0}
-                                onChange={(e) => {
-                                  const value = parseInt(e.target.value);
-                                  const newAllocations = { ...abilityScoreAllocations };
-                                  if (value === 0) {
-                                    delete newAllocations[ability];
-                                  } else {
-                                    newAllocations[ability] = value;
-                                  }
-                                  const total = Object.values(newAllocations).reduce((sum, val) => sum + val, 0);
-                                  if (total <= 2) {
-                                    setAbilityScoreAllocations(newAllocations);
-                                    // Clear feat selection when choosing ability scores
-                                    setSelectedFeat('');
-                                  }
-                                }}
-                                disabled={selectedFeat !== ''}
-                                className="bg-[var(--color-input)] text-[var(--color-text-primary)] rounded px-2 py-1 text-sm disabled:opacity-50"
-                              >
-                                <option value={0}>+0</option>
-                                <option value={1}>+1</option>
-                              </select>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="text-center text-[var(--color-text-secondary)]">— OR —</div>
-
-                      <div className="border border-[var(--color-border)] rounded p-3">
-                        <h5 className="text-[var(--color-text-primary)] font-medium mb-2">Take a Feat</h5>
+                        <h5 className="text-[var(--color-text-primary)] font-medium mb-2">Choose Your Improvement</h5>
                         <select
-                          value={selectedFeat}
+                          value={selectedFeat ? 'feat' : (Object.values(abilityScoreAllocations).reduce((sum, val) => sum + val, 0) > 0 ? 'ability' : '')}
                           onChange={(e) => {
-                            setSelectedFeat(e.target.value);
-                            if (e.target.value) {
-                              // Clear ability score allocations when choosing a feat
+                            if (e.target.value === 'feat') {
+                              setSelectedFeat(''); // Will be set by feat dropdown
                               setAbilityScoreAllocations({});
+                              setSelectedImprovementType('feat');
+                            } else if (e.target.value === 'ability') {
+                              setSelectedFeat('');
+                              setAbilityScoreAllocations({});
+                              setSelectedImprovementType('ability');
+                            } else {
+                              setSelectedFeat('');
+                              setAbilityScoreAllocations({});
+                              setSelectedImprovementType('');
                             }
                           }}
-                          disabled={Object.values(abilityScoreAllocations).reduce((sum, val) => sum + val, 0) > 0}
-                          className="w-full bg-[var(--color-input)] text-[var(--color-text-primary)] rounded px-3 py-2 mb-2 disabled:opacity-50"
+                          className="w-full bg-[var(--color-input)] text-[var(--color-text-primary)] rounded px-3 py-2 mb-2"
                         >
-                          <option value="">Choose a feat...</option>
-                          {Object.keys(FEATS).map(featName => (
-                            <option key={featName} value={featName}>{featName}</option>
-                          ))}
+                          <option value="">Choose improvement type...</option>
+                          <option value="ability">Ability Score Improvement</option>
+                          <option value="feat">Take a Feat</option>
                         </select>
-                        {selectedFeat && (
-                          <div className="text-[var(--color-text-secondary)] text-sm">
-                            {FEATS[selectedFeat]?.description}
-                          </div>
-                        )}
                       </div>
+
+                      {/* Ability Score Interface - Only show if ability is selected */}
+                      {selectedImprovementType === 'ability' && (
+                        <div className="border border-[var(--color-border)] rounded p-3">
+                          <h5 className="text-[var(--color-text-primary)] font-medium mb-2">Ability Score Increase</h5>
+                          <p className="text-[var(--color-text-secondary)] text-sm mb-3">Allocate 2 points among your abilities (max 1 per ability)</p>
+                          
+                          <div className="grid grid-cols-3 gap-2">
+                            {['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].map(ability => (
+                              <div key={ability} className="flex items-center space-x-2">
+                                <span className="text-[var(--color-text-primary)] text-sm capitalize w-16">{ability.slice(0, 3)}</span>
+                                <select
+                                  value={abilityScoreAllocations[ability] || 0}
+                                  onChange={(e) => {
+                                    const value = parseInt(e.target.value);
+                                    const newAllocations = { ...abilityScoreAllocations };
+                                    if (value === 0) {
+                                      delete newAllocations[ability];
+                                    } else {
+                                      newAllocations[ability] = value;
+                                    }
+                                    const total = Object.values(newAllocations).reduce((sum, val) => sum + val, 0);
+                                    if (total <= 2) {
+                                      setAbilityScoreAllocations(newAllocations);
+                                    }
+                                  }}
+                                  className="bg-[var(--color-input)] text-[var(--color-text-primary)] rounded px-2 py-1 text-sm"
+                                >
+                                  <option value={0}>+0</option>
+                                  <option value={1}>+1</option>
+                                </select>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Feat Interface - Only show if feat is selected */}
+                      {selectedImprovementType === 'feat' && (
+                        <div className="border border-[var(--color-border)] rounded p-3">
+                          <h5 className="text-[var(--color-text-primary)] font-medium mb-2">Take a Feat</h5>
+                          <select
+                            value={selectedFeat}
+                            onChange={(e) => {
+                              setSelectedFeat(e.target.value);
+                            }}
+                            className="w-full bg-[var(--color-input)] text-[var(--color-text-primary)] rounded px-3 py-2 mb-2"
+                          >
+                            <option value="">Choose a feat...</option>
+                            {Object.keys(FEATS).map(featName => (
+                              <option key={featName} value={featName}>{featName}</option>
+                            ))}
+                          </select>
+                          {selectedFeat && (
+                            <div>
+                              <div className="text-[var(--color-text-secondary)] text-sm mb-2">
+                                {FEATS[selectedFeat]?.description}
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSelectedFeat('');
+                                  setSelectedImprovementType('');
+                                }}
+                                className="text-sm text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] underline"
+                              >
+                                Clear feat selection
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Show current selection summary */}
+                      {((selectedImprovementType === 'feat' && selectedFeat) || (selectedImprovementType === 'ability' && Object.values(abilityScoreAllocations).reduce((sum, val) => sum + val, 0) > 0)) && (
+                        <div className="bg-[var(--color-accent)]/10 border border-[var(--color-accent)] rounded p-3">
+                          <h6 className="text-[var(--color-accent)] font-medium mb-1">Current Selection:</h6>
+                          {selectedFeat ? (
+                            <p className="text-[var(--color-text-primary)]">Feat: {selectedFeat}</p>
+                          ) : (
+                            <p className="text-[var(--color-text-primary)]">
+                              Ability Scores: {Object.entries(abilityScoreAllocations)
+                                .filter(([, value]) => value > 0)
+                                .map(([ability, value]) => `${ability.slice(0, 3)} +${value}`)
+                                .join(', ')}
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
