@@ -38,7 +38,7 @@ export async function POST(
     }
 
     // Verify the encounter exists and belongs to this game
-    const encounter = await prisma.encounter.findUnique({
+    const encounter = await (prisma as any).encounter.findUnique({
       where: { id: encounterId }
     });
 
@@ -47,7 +47,7 @@ export async function POST(
     }
 
     // Check if character is already in this encounter
-    const existingParticipant = await prisma.encounterParticipant.findFirst({
+    const existingParticipant = await (prisma as any).encounterParticipant.findFirst({
       where: {
         encounterId,
         characterId
@@ -61,7 +61,7 @@ export async function POST(
       );
     }
 
-    const encounterParticipant = await prisma.encounterParticipant.create({
+    const encounterParticipant = await (prisma as any).encounterParticipant.create({
       data: {
         encounterId,
         characterId,

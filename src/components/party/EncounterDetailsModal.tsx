@@ -316,7 +316,7 @@ export default function EncounterDetailsModal({
               <Button
                 onClick={handleAddParty}
                 disabled={loading}
-                className="bg-[var(--color-secondary)] hover:bg-[var(--color-secondary-hover)] text-[var(--color-secondary-text)]"
+                className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
               >
                 <Users className="h-4 w-4 mr-1" />
                 Add Party

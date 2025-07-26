@@ -40,7 +40,7 @@ export async function POST(
     }
 
     // Verify the encounter exists and belongs to this game
-    const encounter = await prisma.encounter.findUnique({
+    const encounter = await (prisma as any).encounter.findUnique({
       where: { id: encounterId }
     });
 
@@ -48,7 +48,7 @@ export async function POST(
       return NextResponse.json({ error: 'Encounter not found' }, { status: 404 });
     }
 
-    const encounterMonster = await prisma.encounterMonster.create({
+    const encounterMonster = await (prisma as any).encounterMonster.create({
       data: {
         encounterId,
         monsterName,
