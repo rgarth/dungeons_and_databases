@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { X, Plus, Users, Skull, Play, Trash2, Edit, Save } from 'lucide-react';
+import { X, Plus, Users, Skull, Trash2, Edit, Save, Dice1, Sword } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { Encounter, EncounterMonster, EncounterParticipant } from '@/types/encounter';
 import AddMonsterModal from './AddMonsterModal';
@@ -328,7 +328,7 @@ export default function EncounterDetailsModal({
               onClick={() => setShowInitiativeRoller(true)}
               className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]"
             >
-              <Play className="h-4 w-4 mr-1" />
+              <Dice1 className="h-4 w-4 mr-1" />
               Roll Initiative
             </Button>
           )}
@@ -342,6 +342,7 @@ export default function EncounterDetailsModal({
                   : 'bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]'
               }`}
             >
+              <Sword className="h-4 w-4 mr-1" />
               {currentEncounter.isActive ? 'End Combat' : 'Start Combat'}
             </Button>
           )}
