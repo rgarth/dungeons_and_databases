@@ -20,19 +20,34 @@ export function useEncounterEvents({
   onParticipantAdded,
   onInitiativeUpdated
 }: UseEncounterEventsOptions) {
-  const pusherRef = useRef<{ unsubscribe: (channel: string) => void; disconnect: () => void } | null>(null);
+  const pusherRef = useRef<{ unsubscribe: (channel: string) => void; disconnect: () => void; connection: { state: string } } | null>(null);
+  const channelRef = useRef<{ bind: (event: string, callback: (...args: unknown[]) => void) => void; unbind_all: () => void } | null>(null);
+  const isConnectedRef = useRef(false);
 
   useEffect(() => {
     if (!gameId) return;
 
     // Import Pusher dynamically to avoid SSR issues
     import('pusher-js').then((Pusher) => {
+      // Clean up any existing connection
+      if (pusherRef.current && isConnectedRef.current) {
+        try {
+          if (channelRef.current) {
+            channelRef.current.unbind_all();
+          }
+          pusherRef.current.unsubscribe(`game-${gameId}`);
+          pusherRef.current.disconnect();
+        } catch (error) {
+          console.warn('Error cleaning up previous Pusher connection:', error);
+        }
+      }
+
       const pusher = new Pusher.default(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
         cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
       });
 
       const channel = pusher.subscribe(`game-${gameId}`);
-
+      
       // Listen for encounter events
       if (onEncounterCreated) {
         channel.bind('encounter:created', onEncounterCreated);
@@ -59,19 +74,30 @@ export function useEncounterEvents({
       }
 
       pusherRef.current = pusher;
-
-      return () => {
-        if (pusherRef.current) {
-          pusherRef.current.unsubscribe(`game-${gameId}`);
-          pusherRef.current.disconnect();
-        }
-      };
+      channelRef.current = channel;
+      isConnectedRef.current = true;
     });
 
+    // Cleanup function
     return () => {
-      if (pusherRef.current) {
-        pusherRef.current.unsubscribe(`game-${gameId}`);
-        pusherRef.current.disconnect();
+      if (pusherRef.current && isConnectedRef.current) {
+        try {
+          // Check if the connection is still active before attempting to unsubscribe
+          if (pusherRef.current.connection.state === 'connected' || 
+              pusherRef.current.connection.state === 'connecting') {
+            if (channelRef.current) {
+              channelRef.current.unbind_all();
+            }
+            pusherRef.current.unsubscribe(`game-${gameId}`);
+            pusherRef.current.disconnect();
+          }
+        } catch (error) {
+          console.warn('Error during Pusher cleanup:', error);
+        } finally {
+          isConnectedRef.current = false;
+          pusherRef.current = null;
+          channelRef.current = null;
+        }
       }
     };
   }, [
