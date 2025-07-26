@@ -34,12 +34,19 @@ export function Button({
     ghost: 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-card-secondary)]'
   };
 
+  // If custom className is provided and it includes theme colors, don't apply default variant classes
+  const hasCustomTheme = className.includes('bg-[var(--color-') || className.includes('text-[var(--color-') || className.includes('hover:bg-[var(--color-') || className.includes('hover:text-[var(--color-') || className.includes('border-[var(--color-') || className.includes('focus:ring-[var(--color-') || className.includes('focus:border-[var(--color-') || className.includes('disabled:bg-[var(--color-') || className.includes('disabled:text-[var(--color-') || className.includes('disabled:border-[var(--color-') || className.includes('disabled:opacity-') || className.includes('disabled:cursor-');
+  
+  const finalClasses = hasCustomTheme 
+    ? `${baseClasses} ${sizeClasses[size]} ${className}`
+    : `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${className}`;
+
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
+      className={finalClasses}
     >
       {children}
     </button>

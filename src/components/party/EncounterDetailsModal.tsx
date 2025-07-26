@@ -308,7 +308,7 @@ export default function EncounterDetailsModal({
               </Button>
               <Button
                 onClick={() => setShowAddParticipant(true)}
-                className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-primary-text)]"
+                className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
               >
                 <Users className="h-4 w-4 mr-1" />
                 Add Character
