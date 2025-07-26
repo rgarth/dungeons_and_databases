@@ -27,22 +27,7 @@ interface FullscreenDiceOverlayProps {
 }
 
 // Add window interface for DICE library
-declare global {
-  interface Window {
-    DICE: {
-      dice_box: new (element: HTMLElement) => DiceBox;
-      vars?: {
-        dice_color: string;
-        label_color: string;
-        desk_opacity?: number;
-        desk_color?: string;
-      };
-      clearMaterialCache?: () => void;
-    };
-    THREE: Record<string, unknown>;
-    CANNON: Record<string, unknown>;
-  }
-}
+
 
 export default function FullscreenDiceOverlay({ 
   isVisible, 
@@ -158,8 +143,7 @@ export default function FullscreenDiceOverlay({
 
         // Configure for complete transparency BEFORE creating dice box
         if (window.DICE.vars) {
-          window.DICE.vars.desk_opacity = 0;
-          window.DICE.vars.desk_color = '#000000'; // Use black instead of 'transparent'
+          // Note: desk_opacity and desk_color are not available in this version
           
           // Use provided color or theme default
           const colorToUse = diceColor || getComputedStyle(document.documentElement)

@@ -198,6 +198,7 @@ model Game {
   invites      GameInvite[]
   notes        GameNote[]
   participants GameParticipant[]
+  encounters   Encounter[]
 
   @@index([dmId], map: "idx_games_dm_id")
   @@index([createdAt], map: "idx_games_created_at")
@@ -266,4 +267,55 @@ model GameChatMessage {
   @@index([gameId], map: "idx_game_chat_messages_game_id")
   @@index([userId], map: "idx_game_chat_messages_user_id")
   @@index([createdAt], map: "idx_game_chat_messages_created_at")
+}
+
+model Encounter {
+  id          String   @id @default(dbgenerated("(gen_random_uuid())::text"))
+  gameId      String   @map("game_id")
+  name        String
+  description String?
+  isActive    Boolean  @default(false) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  monsters    EncounterMonster[]
+  participants EncounterParticipant[]
+
+  @@index([gameId], map: "idx_encounters_game_id")
+  @@index([isActive], map: "idx_encounters_is_active")
+}
+
+model EncounterMonster {
+  id          String   @id @default(dbgenerated("(gen_random_uuid())::text"))
+  encounterId String   @map("encounter_id")
+  monsterName String   @map("monster_name")
+  monsterData Json     @map("monster_data") // Full monster data from our database
+  quantity    Int      @default(1)
+  initiative  Int?     // Rolled initiative value
+  currentHP   Int?     @map("current_hp") // Current HP for each instance
+  maxHP       Int      @map("max_hp") // Max HP for each instance
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  encounter   Encounter @relation(fields: [encounterId], references: [id], onDelete: Cascade)
+
+  @@index([encounterId], map: "idx_encounter_monsters_encounter_id")
+  @@index([isActive], map: "idx_encounter_monsters_is_active")
+}
+
+model EncounterParticipant {
+  id          String   @id @default(dbgenerated("(gen_random_uuid())::text"))
+  encounterId String   @map("encounter_id")
+  characterId String   @map("character_id")
+  characterName String @map("character_name")
+  characterData Json   @map("character_data") // Character data snapshot
+  initiative  Int?     // Rolled initiative value
+  currentHP   Int?     @map("current_hp")
+  maxHP       Int      @map("max_hp")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  encounter   Encounter @relation(fields: [encounterId], references: [id], onDelete: Cascade)
+
+  @@index([encounterId], map: "idx_encounter_participants_encounter_id")
+  @@index([characterId], map: "idx_encounter_participants_character_id")
+  @@index([isActive], map: "idx_encounter_participants_is_active")
 }

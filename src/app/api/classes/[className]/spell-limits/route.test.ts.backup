@@ -29,7 +29,7 @@ describe('/api/classes/[className]/spell-limits', () => {
     mockPrisma.$queryRaw.mockResolvedValue([mockSpellLimits]);
 
     const request = new NextRequest('http://localhost:3000/api/classes/Wizard/spell-limits?level=1');
-    const response = await GET(request, { params: { className: 'Wizard' } });
+    const response = await GET(request, { params: Promise.resolve({ className: 'Wizard' } });
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -41,7 +41,7 @@ describe('/api/classes/[className]/spell-limits', () => {
 
   it('should return default values for non-spellcasting classes without hitting database', async () => {
     const request = new NextRequest('http://localhost:3000/api/classes/Fighter/spell-limits?level=1');
-    const response = await GET(request, { params: { className: 'Fighter' } });
+    const response = await GET(request, { params: Promise.resolve({ className: 'Fighter' } });
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -60,7 +60,7 @@ describe('/api/classes/[className]/spell-limits', () => {
     
     for (const className of nonSpellcastingClasses) {
       const request = new NextRequest(`http://localhost:3000/api/classes/${className}/spell-limits?level=1`);
-      const response = await GET(request, { params: { className } });
+      const response = await GET(request, { params: Promise.resolve({ className }) });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -80,7 +80,7 @@ describe('/api/classes/[className]/spell-limits', () => {
     mockPrisma.$queryRaw.mockResolvedValue([]);
 
     const request = new NextRequest('http://localhost:3000/api/classes/NonExistentClass/spell-limits?level=1');
-    const response = await GET(request, { params: { className: 'NonExistentClass' } });
+    const response = await GET(request, { params: Promise.resolve({ className: 'NonExistentClass' } });
     const data = await response.json();
 
     expect(response.status).toBe(404);
@@ -99,7 +99,7 @@ describe('/api/classes/[className]/spell-limits', () => {
     mockPrisma.$queryRaw.mockResolvedValue([mockSpellLimits]);
 
     const request = new NextRequest('http://localhost:3000/api/classes/Wizard/spell-limits');
-    const response = await GET(request, { params: { className: 'Wizard' } });
+    const response = await GET(request, { params: Promise.resolve({ className: 'Wizard' } });
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -110,7 +110,7 @@ describe('/api/classes/[className]/spell-limits', () => {
     mockPrisma.$queryRaw.mockRejectedValue(new Error('Database connection failed'));
 
     const request = new NextRequest('http://localhost:3000/api/classes/Wizard/spell-limits?level=1');
-    const response = await GET(request, { params: { className: 'Wizard' } });
+    const response = await GET(request, { params: Promise.resolve({ className: 'Wizard' } });
     const data = await response.json();
 
     expect(response.status).toBe(500);
@@ -119,7 +119,7 @@ describe('/api/classes/[className]/spell-limits', () => {
 
   it('should handle invalid level parameter', async () => {
     const request = new NextRequest('http://localhost:3000/api/classes/Wizard/spell-limits?level=invalid');
-    await GET(request, { params: { className: 'Wizard' } });
+    await GET(request, { params: Promise.resolve({ className: 'Wizard' } });
 
     // Should default to level 1
     expect(mockPrisma.$queryRaw).toHaveBeenCalledWith(
@@ -139,7 +139,7 @@ describe('/api/classes/[className]/spell-limits', () => {
     mockPrisma.$queryRaw.mockResolvedValue([mockSpellLimits]);
 
     const request = new NextRequest('http://localhost:3000/api/classes/Sorcerer%20%28Wild%20Magic%29/spell-limits?level=1');
-    const response = await GET(request, { params: { className: 'Sorcerer (Wild Magic)' } });
+    const response = await GET(request, { params: Promise.resolve({ className: 'Sorcerer (Wild Magic)' } });
     const data = await response.json();
 
     expect(response.status).toBe(200);

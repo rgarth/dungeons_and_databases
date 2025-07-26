@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { GameChat } from '@/components/party/GameChat';
+import GameChat from '@/components/party/GameChat';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 

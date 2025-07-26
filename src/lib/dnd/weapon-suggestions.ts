@@ -22,7 +22,7 @@ export async function getWeaponSuggestionsForClass(className: string): Promise<W
   }
 
   try {
-    const suggestions = await prisma.classWeaponSuggestion.findMany({
+    const suggestions = await (prisma as unknown as any).classWeaponSuggestion.findMany({
       where: {
         class: {
           name: className

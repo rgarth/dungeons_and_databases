@@ -14,7 +14,7 @@ export interface ClassProficiencies {
 // Database-driven proficiency functions
 export async function getClassProficiencies(className: string): Promise<ClassProficiencies | null> {
   try {
-    const dndClass = await prisma.dndClass.findUnique({
+    const dndClass = await (prisma as unknown as any).dndClass.findUnique({
       where: { name: className },
       include: {
         armorProficiencies: true,
@@ -26,14 +26,14 @@ export async function getClassProficiencies(className: string): Promise<ClassPro
       return null;
     }
 
-    const armorTypes = dndClass.armorProficiencies.map(prof => prof.armorType);
+    const armorTypes = dndClass.armorProficiencies.map((prof: any) => prof.armorType);
     
     const weaponProfs = dndClass.weaponProficiencies;
-    const hasSimple = weaponProfs.some(prof => prof.proficiencyType === 'Simple');
-    const hasMartial = weaponProfs.some(prof => prof.proficiencyType === 'Martial');
+    const hasSimple = weaponProfs.some((prof: any) => prof.proficiencyType === 'Simple');
+    const hasMartial = weaponProfs.some((prof: any) => prof.proficiencyType === 'Martial');
     const specificWeapons = weaponProfs
-      .filter(prof => prof.proficiencyType === 'Specific' && prof.weaponName)
-      .map(prof => prof.weaponName!);
+      .filter((prof: any) => prof.proficiencyType === 'Specific' && prof.weaponName)
+      .map((prof: any) => prof.weaponName!);
 
     const savingThrows = dndClass.savingThrows as string[];
 

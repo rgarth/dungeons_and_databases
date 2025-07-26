@@ -103,8 +103,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           weaponsLength: weapons.length,
           armorLength: armor.length
         });
-        setAllWeapons(weapons);
-        setAllArmor(armor);
+        setAllWeapons(weapons as any);
+        setAllArmor(armor as any);
       } catch (error) {
         console.error('❌ Failed to load weapons and armor from client cache:', error);
       }

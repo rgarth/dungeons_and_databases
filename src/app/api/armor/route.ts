@@ -8,7 +8,7 @@ export async function GET() {
     
     // Transform to match the expected API structure (add database-compatible fields)
     const transformedArmor = armor.map(item => ({
-      id: item.id || `armor_${item.name.toLowerCase().replace(/\s+/g, '_')}`,
+      id: `armor_${item.name.toLowerCase().replace(/\s+/g, '_')}`,
       name: item.name,
       type: item.type,
       baseAC: item.baseAC,

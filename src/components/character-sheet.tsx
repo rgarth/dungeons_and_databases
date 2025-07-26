@@ -1154,7 +1154,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     const currentWeapons = currentCharacter.weapons || [];
     const weaponIndex = currentWeapons.findIndex(w => w.name === weaponName && w.stackable);
     
-    if (weaponIndex === -1 || !currentWeapons[weaponIndex].quantity || currentWeapons[weaponIndex].quantity <= 0) {
+    if (weaponIndex === -1 || !currentWeapons[weaponIndex]?.quantity || (currentWeapons[weaponIndex]?.quantity ?? 0) <= 0) {
       return;
     }
 

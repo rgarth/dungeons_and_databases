@@ -7,7 +7,7 @@ export interface ArmorSuggestion {
 
 export async function getArmorSuggestionsForClass(className: string): Promise<ArmorSuggestion[]> {
   try {
-    const suggestions = await prisma.classArmorSuggestion.findMany({
+    const suggestions = await (prisma as unknown as any).classArmorSuggestion.findMany({
       where: {
         class: {
           name: className
@@ -22,7 +22,7 @@ export async function getArmorSuggestionsForClass(className: string): Promise<Ar
       }
     });
 
-    return suggestions.map(s => ({
+    return suggestions.map((s: any) => ({
       armorName: s.armorName,
       reason: s.reason || undefined
     }));

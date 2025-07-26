@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Card } from '@/components/ui';
-import { Users, User, BookOpen, MessageSquare, Calendar } from 'lucide-react';
+import { Users, User, BookOpen, MessageSquare, Calendar, Sword } from 'lucide-react';
 import { Game } from '@/types/game';
 import { Character } from '@/types/character';
 import { useAvatar } from '@/hooks/use-character-mutations';
@@ -13,6 +13,7 @@ import { CharacterSheet } from '@/components/character-sheet';
 import ReadOnlyCharacterSheet from '@/components/character-sheet/ReadOnlyCharacterSheet';
 import { useGameEvents } from '@/hooks/use-game-events';
 import GameChat from './GameChat';
+import EncountersTab from './EncountersTab';
 
 // Character Avatar Component
 function CharacterAvatar({ characterId, characterName }: { characterId: string; characterName: string }) {
@@ -109,7 +110,7 @@ interface GameDetailsModalProps {
 export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated }: GameDetailsModalProps) {
   const { data: session } = useSession();
   const [currentGame, setCurrentGame] = useState<Game | null>(game);
-  const [activeTab, setActiveTab] = useState<'lobby' | 'characters' | 'notes' | 'chat'>('lobby');
+  const [activeTab, setActiveTab] = useState<'lobby' | 'characters' | 'notes' | 'chat' | 'encounters'>('lobby');
   const [characters, setCharacters] = useState<Array<{id: string; name: string; level: number; race: string; class: string}>>([]);
   const [showAddCharacterModal, setShowAddCharacterModal] = useState(false);
   const [selectedParticipant, setSelectedParticipant] = useState<string | null>(null);
@@ -600,6 +601,21 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                 <MessageSquare className="h-4 w-4 inline mr-2" />
                 Chat
               </button>
+              <button
+                onClick={() => setActiveTab('encounters')}
+                className={`px-4 py-2 font-medium transition-colors ${
+                  activeTab === 'encounters' 
+                    ? 'border-b-2' 
+                    : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                }`}
+                style={{ 
+                  borderColor: activeTab === 'encounters' ? 'var(--color-accent)' : 'transparent',
+                  color: activeTab === 'encounters' ? 'var(--color-accent)' : undefined
+                }}
+              >
+                <Sword className="h-4 w-4 inline mr-2" />
+                Encounters
+              </button>
 
             </div>
 
@@ -892,6 +908,15 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                 <GameChat 
                   gameId={currentGame?.id || ''} 
                   enabled={activeTab === 'chat' && !!currentGame}
+                  isDM={isDM}
+                />
+              </div>
+            )}
+
+            {activeTab === 'encounters' && currentGame && (
+              <div className="h-96">
+                <EncountersTab 
+                  gameId={currentGame.id}
                   isDM={isDM}
                 />
               </div>
