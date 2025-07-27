@@ -105,7 +105,7 @@ export default function EncountersTab({ gameId, isDM }: EncountersTabProps) {
         {isDM && (
           <Button
             onClick={() => setShowCreateModal(true)}
-            className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
+            className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] flex items-center"
           >
             <Plus className="h-4 w-4 mr-2" />
             Create Encounter
@@ -126,15 +126,7 @@ export default function EncountersTab({ gameId, isDM }: EncountersTabProps) {
               : "The DM hasn't created any encounters yet."
             }
           </p>
-          {isDM && (
-            <Button
-              onClick={() => setShowCreateModal(true)}
-              className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create First Encounter
-            </Button>
-          )}
+
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
