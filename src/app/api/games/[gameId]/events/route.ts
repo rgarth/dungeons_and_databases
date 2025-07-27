@@ -156,8 +156,8 @@ export async function GET(
         // Send initial state
         sendGameUpdate();
 
-        // Set up periodic updates - reduced frequency to 2 minutes
-        updateInterval = setInterval(sendGameUpdate, 2 * 60 * 1000); // Every 2 minutes
+        // Set up periodic updates - reduced frequency to 10 seconds for more responsive updates
+        updateInterval = setInterval(sendGameUpdate, 10 * 1000);
 
         // Clean up on disconnect
         const cleanup = () => {

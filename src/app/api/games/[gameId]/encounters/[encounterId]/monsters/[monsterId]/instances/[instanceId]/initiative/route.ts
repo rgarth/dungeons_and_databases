@@ -3,10 +3,10 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
-// PUT /api/games/[gameId]/encounters/[encounterId]/monsters/[monsterId]/initiative - Update monster initiative
+// PUT /api/games/[gameId]/encounters/[encounterId]/monsters/[monsterId]/instances/[instanceId]/initiative - Update monster instance initiative
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ gameId: string; encounterId: string; monsterId: string }> }
+  { params }: { params: Promise<{ gameId: string; encounterId: string; monsterId: string; instanceId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -15,7 +15,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { gameId, encounterId, monsterId } = await params;
+    const { gameId, encounterId, monsterId, instanceId } = await params;
     const { initiative } = await request.json();
 
     if (typeof initiative !== 'number' || initiative < 0) {
@@ -48,15 +48,32 @@ export async function PUT(
       return NextResponse.json({ error: 'Encounter not found' }, { status: 404 });
     }
 
-    // Update the monster's initiative
-    const updatedMonster = await (prisma as any).encounterMonster.update({
-      where: { id: monsterId },
+    // Verify the monster instance exists and belongs to this encounter
+    const monsterInstance = await (prisma as any).encounterMonsterInstance.findFirst({
+      where: { 
+        id: instanceId,
+        encounterMonster: {
+          encounterId: encounterId
+        }
+      },
+      include: {
+        encounterMonster: true
+      }
+    });
+
+    if (!monsterInstance) {
+      return NextResponse.json({ error: 'Monster instance not found' }, { status: 404 });
+    }
+
+    // Update the monster instance's initiative
+    const updatedInstance = await (prisma as any).encounterMonsterInstance.update({
+      where: { id: instanceId },
       data: { initiative }
     });
 
-    return NextResponse.json(updatedMonster);
+    return NextResponse.json(updatedInstance);
   } catch (error) {
-    console.error('Error updating monster initiative:', error);
+    console.error('Error updating monster instance initiative:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

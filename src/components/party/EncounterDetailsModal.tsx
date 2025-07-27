@@ -422,6 +422,7 @@ export default function EncounterDetailsModal({
         {/* Modals */}
         {showAddMonster && (
           <AddMonsterModal
+            gameId={encounter.gameId}
             encounterId={encounter.id}
             isOpen={showAddMonster}
             onClose={() => setShowAddMonster(false)}

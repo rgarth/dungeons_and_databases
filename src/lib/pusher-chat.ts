@@ -79,6 +79,8 @@ export class PusherChat {
     // Handle chat messages
     this.channel.bind('chat-message', (data: ChatMessage) => {
       console.log(`📨 Received chat message:`, data);
+      // Store message locally for persistence
+      this.storeMessageLocally(data);
       if (data.userId !== this.config.userId) {
         this.config.onMessage(data);
       }
@@ -157,8 +159,9 @@ export class PusherChat {
 
     console.log(`📤 Sending message:`, chatMessage);
 
-    // Send to self for immediate display (no local storage)
+    // Send to self for immediate display and store locally
     this.config.onMessage(chatMessage);
+    this.storeMessageLocally(chatMessage);
 
     // Send to server endpoint which will broadcast to Pusher
     try {
@@ -192,8 +195,8 @@ export class PusherChat {
       const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
       const filteredMessages = messages.filter((msg: ChatMessage) => msg.timestamp > sevenDaysAgo);
       
-      // Keep only last 200 messages if we have too many
-      const trimmedMessages = filteredMessages.slice(-200);
+      // Keep only last 1000 messages if we have too many
+      const trimmedMessages = filteredMessages.slice(-1000);
       
       localStorage.setItem(storageKey, JSON.stringify(trimmedMessages));
     } catch (error) {
@@ -246,4 +249,4 @@ export class PusherChat {
     // Return the actual number of connected peers (excluding self)
     return this.connectedPeers.size;
   }
-} 
+}

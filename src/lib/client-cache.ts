@@ -1,6 +1,8 @@
 // Client-side cache for D&D data
 // This cache is built on first load and persists during the session
 
+import { Character } from '@/types/character';
+
 interface Race {
   name: string;
   size: string;
@@ -308,6 +310,7 @@ interface CacheData {
   spellLimits: Record<string, SpellLimits>; // Class name -> spell limits for level 1
   games: Game[]; // User's games
   monsters: Monster[]; // All monsters
+  characters: Character[]; // User's characters
 }
 
 class ClientCache {
@@ -346,7 +349,8 @@ class ClientCache {
         subraces,
         languages,
         spells,
-        games
+        games,
+        characters
       ] = await Promise.all([
         fetch('/api/races').then(res => res.json()),
         fetch('/api/classes').then(res => res.json()),
@@ -360,8 +364,12 @@ class ClientCache {
         fetch('/api/subraces').then(res => res.json()),
         fetch('/api/languages').then(res => res.json()),
         fetch('/api/spells').then(res => res.json()),
-        fetch('/api/games').then(res => res.json()).catch(() => []) // Games might fail if not authenticated
+        fetch('/api/games').then(res => res.json()).catch(() => []), // Games might fail if not authenticated
+        fetch('/api/characters').then(res => res.json()).catch(() => []) // Characters might fail if not authenticated
       ]);
+
+      console.log('🔄 Client cache - Characters loaded:', characters.length);
+      console.log('🔄 Client cache - Character IDs:', characters.map((c: Character) => ({ id: c.id, name: c.name })));
 
       // Pre-load weapon and armor suggestions for all classes
       const weaponSuggestions: Record<string, Weapon[]> = {};
@@ -439,7 +447,8 @@ class ClientCache {
         armorSuggestions,
         spells,
         spellLimits,
-        games
+        games,
+        characters
       };
 
       console.log('✅ Client cache initialized:', {
@@ -458,7 +467,8 @@ class ClientCache {
         weaponSuggestions: Object.keys(weaponSuggestions).length,
         armorSuggestions: Object.keys(armorSuggestions).length,
         spellLimits: Object.keys(spellLimits).length,
-        games: games.length
+        games: games.length,
+        characters: characters.length
       });
     } catch (error) {
       console.error('❌ Failed to initialize client cache:', error);
@@ -534,6 +544,10 @@ class ClientCache {
 
   getGames() {
     return this.cache.games || [];
+  }
+
+  getCharacters() {
+    return this.cache.characters || [];
   }
 
   async getMonsters() {

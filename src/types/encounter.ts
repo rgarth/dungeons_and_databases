@@ -13,17 +13,27 @@ export interface Encounter {
   participants: EncounterParticipant[];
 }
 
+export interface EncounterMonsterInstance {
+  id: string;
+  encounterMonsterId: string;
+  instanceNumber: number;
+  initiative?: number; // Individual initiative value for this instance
+  currentHP?: number; // Individual HP for this instance
+  isActive: boolean;
+  createdAt: string;
+}
+
 export interface EncounterMonster {
   id: string;
   encounterId: string;
   monsterName: string;
   monsterData: Monster; // Full monster data from our database
   quantity: number;
-  initiative?: number; // Rolled initiative value
   currentHP?: number; // Current HP for each instance
   maxHP: number; // Max HP for each instance
   isActive: boolean;
   createdAt: string;
+  instances: EncounterMonsterInstance[];
 }
 
 export interface EncounterParticipant {
@@ -79,4 +89,5 @@ export interface InitiativeOrder {
   currentHP?: number;
   maxHP: number;
   isActive: boolean;
+  characterData?: Character; // Only present for character type
 } 

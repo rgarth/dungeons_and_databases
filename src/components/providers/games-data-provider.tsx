@@ -47,8 +47,8 @@ export function GamesDataProvider({ children }: { children: React.ReactNode }) {
   } = useQuery<Game[]>({
     queryKey: ['games'],
     queryFn: fetchGames,
-    staleTime: 5 * 60 * 1000, // 5 minutes - much longer cache
-    gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
+    staleTime: 30 * 1000, // 30 seconds - much more responsive
+    gcTime: 5 * 60 * 1000, // 5 minutes garbage collection
     refetchOnWindowFocus: false,
     refetchOnMount: false, // Don't refetch on mount if we have cached data
   });

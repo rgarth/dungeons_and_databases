@@ -41,6 +41,7 @@ export function useClientCache() {
     // Game and monster data
     games: clientCache.getGames(),
     monsters: clientCache.getMonsters(),
+    characters: clientCache.getCharacters(),
     
     // Suggestions and limits
     weaponSuggestions: clientCache.getWeaponSuggestions.bind(clientCache),

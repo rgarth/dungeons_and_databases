@@ -8,10 +8,11 @@ import MainLayout from "@/components/layout/MainLayout";
 import { CharacterCard } from "@/components/character-card";
 import { CreateCharacterModal } from "@/components/create-character-modal";
 import { LoadingModal } from "@/components/loading-modal";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Character } from "@/types/character";
 import { Button } from "@/components/ui";
 import { useLoading } from "@/components/providers/loading-provider";
+import { useClientCache } from '@/hooks/use-client-cache';
 
 export default function CharactersPage() {
   const { data: session, status } = useSession();
@@ -19,19 +20,10 @@ export default function CharactersPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { assetsLoaded, setAssetsLoaded } = useLoading();
   const queryClient = useQueryClient();
+  const { characters } = useClientCache();
 
-  // Fetch characters using React Query
-  const { data: characters = [] } = useQuery<Character[]>({
-    queryKey: ['characters'],
-    queryFn: async () => {
-      const response = await fetch("/api/characters");
-      if (!response.ok) {
-        throw new Error('Failed to fetch characters');
-      }
-      return response.json();
-    },
-    enabled: !!session, // Only fetch when we have a session
-  });
+  // Use cached characters instead of React Query
+  const charactersData = characters || [];
 
   // Handle character creation
   const handleCharacterCreated = (newCharacter: Character) => {
@@ -108,7 +100,7 @@ export default function CharactersPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {characters.map((character) => (
+        {charactersData.map((character) => (
           <CharacterCard
             key={character.id}
             character={character}

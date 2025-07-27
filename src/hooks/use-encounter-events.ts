@@ -20,51 +20,34 @@ export function useEncounterEvents({
   onParticipantAdded,
   onInitiativeUpdated
 }: UseEncounterEventsOptions) {
-  const pusherRef = useRef<{ unsubscribe: (channel: string) => void; disconnect: () => void; connection: { state: string } } | null>(null);
+  const pusherRef = useRef<{ disconnect: () => void } | null>(null);
   const channelRef = useRef<{ bind: (event: string, callback: (...args: unknown[]) => void) => void; unbind_all: () => void } | null>(null);
-  const isConnectedRef = useRef(false);
-  const isConnectingRef = useRef(false);
-  const cleanupRef = useRef(false);
+  const mountedRef = useRef(true);
 
   useEffect(() => {
     if (!gameId) return;
 
-    // Set cleanup flag to false for this effect run
-    cleanupRef.current = false;
-
-    // Don't create a new connection if we're already connecting
-    if (isConnectingRef.current) {
-      return;
-    }
+    mountedRef.current = true;
 
     // Import Pusher dynamically to avoid SSR issues
     import('pusher-js').then((Pusher) => {
-      // Check if we should abort this connection attempt
-      if (cleanupRef.current) {
-        return;
-      }
-
-      // Set connecting flag
-      isConnectingRef.current = true;
+      // Check if component is still mounted
+      if (!mountedRef.current) return;
 
       // Clean up any existing connection
-      if (pusherRef.current && isConnectedRef.current) {
+      if (pusherRef.current) {
         try {
           if (channelRef.current) {
             channelRef.current.unbind_all();
           }
-          pusherRef.current.unsubscribe(`game-${gameId}`);
           pusherRef.current.disconnect();
-        } catch (error) {
-          console.warn('Error cleaning up previous Pusher connection:', error);
+        } catch {
+          // Ignore cleanup errors
         }
       }
 
-      // Check again if we should abort
-      if (cleanupRef.current) {
-        isConnectingRef.current = false;
-        return;
-      }
+      // Check if component is still mounted after cleanup
+      if (!mountedRef.current) return;
 
       const pusher = new Pusher.default(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
         cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
@@ -97,58 +80,38 @@ export function useEncounterEvents({
         channel.bind('encounter:initiative:updated', onInitiativeUpdated);
       }
 
-      // Final check before setting refs
-      if (cleanupRef.current) {
+      // Only set refs if still mounted
+      if (mountedRef.current) {
+        pusherRef.current = pusher;
+        channelRef.current = channel;
+      } else {
+        // Component unmounted during setup, clean up immediately
         try {
           channel.unbind_all();
-          pusher.unsubscribe(`game-${gameId}`);
           pusher.disconnect();
-        } catch (error) {
-          console.warn('Error cleaning up aborted connection:', error);
+        } catch {
+          // Ignore cleanup errors
         }
-        isConnectingRef.current = false;
-        return;
       }
-
-      pusherRef.current = pusher;
-      channelRef.current = channel;
-      isConnectedRef.current = true;
-      isConnectingRef.current = false;
     });
 
     // Cleanup function
     return () => {
-      // Set cleanup flag to prevent new connections
-      cleanupRef.current = true;
-      isConnectingRef.current = false;
+      mountedRef.current = false;
 
-      if (pusherRef.current && isConnectedRef.current) {
+      if (pusherRef.current) {
         try {
-          // Check if the connection is still active before attempting to unsubscribe
-          if (pusherRef.current.connection.state === 'connected' || 
-              pusherRef.current.connection.state === 'connecting') {
-            if (channelRef.current) {
-              channelRef.current.unbind_all();
-            }
-            pusherRef.current.unsubscribe(`game-${gameId}`);
-            pusherRef.current.disconnect();
+          if (channelRef.current) {
+            channelRef.current.unbind_all();
           }
-        } catch (error) {
-          console.warn('Error during Pusher cleanup:', error);
+          pusherRef.current.disconnect();
+        } catch {
+          // Ignore cleanup errors - they're expected when connection is already closed
         } finally {
-          isConnectedRef.current = false;
           pusherRef.current = null;
           channelRef.current = null;
         }
       }
     };
-  }, [
-    gameId,
-    onEncounterCreated,
-    onEncounterUpdated,
-    onEncounterDeleted,
-    onMonsterAdded,
-    onParticipantAdded,
-    onInitiativeUpdated
-  ]);
+  }, [gameId]); // Only depend on gameId to prevent unnecessary reconnections
 } 

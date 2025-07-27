@@ -291,15 +291,30 @@ model EncounterMonster {
   monsterName String   @map("monster_name")
   monsterData Json     @map("monster_data") // Full monster data from our database
   quantity    Int      @default(1)
-  initiative  Int?     // Rolled initiative value
   currentHP   Int?     @map("current_hp") // Current HP for each instance
   maxHP       Int      @map("max_hp") // Max HP for each instance
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   encounter   Encounter @relation(fields: [encounterId], references: [id], onDelete: Cascade)
+  instances   EncounterMonsterInstance[]
 
   @@index([encounterId], map: "idx_encounter_monsters_encounter_id")
   @@index([isActive], map: "idx_encounter_monsters_is_active")
+}
+
+model EncounterMonsterInstance {
+  id          String   @id @default(dbgenerated("(gen_random_uuid())::text"))
+  encounterMonsterId String @map("encounter_monster_id")
+  instanceNumber Int   @map("instance_number") // 1, 2, 3, etc. for multiple instances
+  initiative  Int?     // Individual initiative value for this instance
+  currentHP   Int?     @map("current_hp") // Individual HP for this instance
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  encounterMonster EncounterMonster @relation(fields: [encounterMonsterId], references: [id], onDelete: Cascade)
+
+  @@index([encounterMonsterId], map: "idx_encounter_monster_instances_encounter_monster_id")
+  @@index([isActive], map: "idx_encounter_monster_instances_is_active")
+  @@unique([encounterMonsterId, instanceNumber], map: "unique_encounter_monster_instance")
 }
 
 model EncounterParticipant {

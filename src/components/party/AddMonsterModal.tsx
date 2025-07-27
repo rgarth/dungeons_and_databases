@@ -8,6 +8,7 @@ import { Monster } from '@/types/monster';
 import { useClientCache } from '@/hooks/use-client-cache';
 
 interface AddMonsterModalProps {
+  gameId: string;
   encounterId: string;
   isOpen: boolean;
   onClose: () => void;
@@ -15,6 +16,7 @@ interface AddMonsterModalProps {
 }
 
 export default function AddMonsterModal({
+  gameId,
   encounterId,
   isOpen,
   onClose,
@@ -66,7 +68,7 @@ export default function AddMonsterModal({
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/api/games/encounters/${encounterId}/monsters`, {
+      const response = await fetch(`/api/games/${gameId}/encounters/${encounterId}/monsters`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

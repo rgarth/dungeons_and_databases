@@ -63,28 +63,23 @@ export default function GameChat({ gameId, enabled = true, isDM = false }: GameC
   };
 
   const handleClearChat = async () => {
-    if (isDM) {
-      // DM can clear chat history from server
-      setIsClearing(true);
-      try {
-        const response = await fetch(`/api/games/${gameId}/chat`, {
-          method: 'DELETE',
-        });
-        
-        if (response.ok) {
-          // Clear local messages immediately
-          clearMessages();
-        } else {
-          console.error('Failed to clear chat history');
-        }
-      } catch (error) {
-        console.error('Error clearing chat history:', error);
-      } finally {
-        setIsClearing(false);
+    // Only DM can clear chat history from server
+    setIsClearing(true);
+    try {
+      const response = await fetch(`/api/games/${gameId}/chat`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        // Clear local messages immediately
+        clearMessages();
+      } else {
+        console.error('Failed to clear chat history');
       }
-    } else {
-      // Regular users can only clear their local view
-      clearMessages();
+    } catch (error) {
+      console.error('Error clearing chat history:', error);
+    } finally {
+      setIsClearing(false);
     }
   };
 
@@ -130,8 +125,8 @@ export default function GameChat({ gameId, enabled = true, isDM = false }: GameC
           )}
           {isConnected && (
             <>
-              {/* Clear Button - only show if there are messages */}
-              {messages.length > 0 && (
+              {/* Clear Button - only show to DM if there are messages */}
+              {isDM && messages.length > 0 && (
                 <button
                   onClick={handleClearChat}
                   disabled={isClearing}
@@ -140,7 +135,7 @@ export default function GameChat({ gameId, enabled = true, isDM = false }: GameC
                     backgroundColor: 'var(--color-warning)',
                     color: 'var(--color-warning-text)'
                   }}
-                  title={isDM ? 'Clear chat history for everyone' : 'Clear your view'}
+                  title="Clear chat history for everyone"
                 >
                   {isClearing ? 'Clearing...' : 'Clear'}
                 </button>

@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { X, Dice1, Users, Skull, ArrowUpDown } from 'lucide-react';
+import { X, Dice1, Users, Skull } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui';
-import { Encounter, InitiativeOrder } from '@/types/encounter';
+import { Encounter, InitiativeOrder, EncounterMonster } from '@/types/encounter';
+import { Character } from '@/types/character';
 import { getModifier } from '@/lib/dnd/core';
 
 interface InitiativeRollerProps {
@@ -21,6 +23,7 @@ export default function InitiativeRoller({
   onInitiativeUpdated,
   isDM
 }: InitiativeRollerProps) {
+  const { data: session } = useSession();
   const [initiativeOrder, setInitiativeOrder] = useState<InitiativeOrder[]>([]);
   const [rolling, setRolling] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +33,28 @@ export default function InitiativeRoller({
       buildInitiativeOrder();
     }
   }, [isOpen, encounter]);
+
+  // Add polling to refresh encounter data when modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const refreshEncounter = async () => {
+      try {
+        const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
+        if (response.ok) {
+          const updatedEncounter = await response.json();
+          onInitiativeUpdated(updatedEncounter);
+        }
+      } catch (error) {
+        console.error('Failed to refresh encounter:', error);
+      }
+    };
+
+    // Refresh every 2 seconds when modal is open
+    const interval = setInterval(refreshEncounter, 2000);
+
+    return () => clearInterval(interval);
+  }, [isOpen, encounter.gameId, encounter.id, onInitiativeUpdated]);
 
   const buildInitiativeOrder = () => {
     const order: InitiativeOrder[] = [];
@@ -43,21 +68,25 @@ export default function InitiativeRoller({
         initiative: participant.initiative || 0,
         currentHP: participant.currentHP,
         maxHP: participant.maxHP,
-        isActive: participant.isActive
+        isActive: participant.isActive,
+        characterData: participant.characterData
       });
     });
 
     // Add monsters
     encounter.monsters.forEach(monster => {
       for (let i = 0; i < monster.quantity; i++) {
+        const instanceNumber = i + 1;
+        const monsterInstance = monster.instances?.find(inst => inst.instanceNumber === instanceNumber);
+        
         order.push({
           id: `${monster.id}-${i}`,
-          name: `${monster.monsterName} ${monster.quantity > 1 ? `#${i + 1}` : ''}`,
+          name: `${monster.monsterName} ${monster.quantity > 1 ? `#${instanceNumber}` : ''}`,
           type: 'monster' as const,
-          initiative: monster.initiative || 0,
-          currentHP: monster.currentHP,
+          initiative: monsterInstance?.initiative || 0,
+          currentHP: monsterInstance?.currentHP || monster.currentHP,
           maxHP: monster.maxHP,
-          isActive: monster.isActive
+          isActive: monsterInstance?.isActive ?? monster.isActive
         });
       }
     });
@@ -65,86 +94,419 @@ export default function InitiativeRoller({
     setInitiativeOrder(order);
   };
 
-  const rollInitiativeForMonsters = () => {
-    const updatedOrder = initiativeOrder.map(participant => {
-      if (participant.type === 'monster' && participant.initiative === 0) {
-        // Roll d20 + monster's dexterity modifier
-        const monsterData = encounter.monsters.find(m => 
-          participant.id.startsWith(m.id)
-        );
-        if (monsterData) {
-          const dexMod = getModifier(monsterData.monsterData.dexterity);
-          const roll = Math.floor(Math.random() * 20) + 1;
-          const initiative = roll + dexMod;
-          return { ...participant, initiative };
-        }
-      }
-      return participant;
-    });
-    setInitiativeOrder(updatedOrder);
-  };
-
-  const rollInitiativeForCharacter = (participantId: string) => {
-    const participant = encounter.participants.find(p => p.id === participantId);
-    if (!participant) return;
-
-    const dexMod = getModifier(participant.characterData.dexterity);
-    const roll = Math.floor(Math.random() * 20) + 1;
-    const initiative = roll + dexMod;
-
-    const updatedOrder = initiativeOrder.map(p => 
-      p.id === participantId ? { ...p, initiative } : p
-    );
-    setInitiativeOrder(updatedOrder);
-  };
-
-  const saveInitiativeOrder = async () => {
+  const rollInitiativeForMonsters = async () => {
     try {
       setRolling(true);
       setError(null);
 
-      // Update all participants and monsters with their initiative values
-      const updates = [];
+      // Get all monster instances that need initiative rolled
+      const monstersToRoll = initiativeOrder.filter(participant => 
+        participant.type === 'monster' && participant.initiative === 0
+      );
 
-      // Update participants
-      for (const participant of encounter.participants) {
-        const initiativeData = initiativeOrder.find(p => p.id === participant.id);
-        if (initiativeData && initiativeData.initiative > 0) {
-          updates.push(
-            fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/participants/${participant.id}/initiative`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ initiative: initiativeData.initiative })
-            })
-          );
-        }
+      if (monstersToRoll.length === 0) {
+        setError('No monsters need initiative rolled');
+        return;
       }
 
-      // Update monsters
-      for (const monster of encounter.monsters) {
-        const monsterInitiative = initiativeOrder.find(p => 
-          p.id.startsWith(monster.id) && p.initiative > 0
+      // Roll initiative for each individual monster instance
+      const updatedOrder = [...initiativeOrder];
+      const monsterUpdates = [];
+
+      for (const participant of monstersToRoll) {
+        // Find the monster data for this participant
+        const monsterData = encounter.monsters.find(m => participant.id.startsWith(m.id));
+        if (!monsterData) continue;
+
+        // Find the specific instance for this participant
+        const instanceNumber = parseInt(participant.id.split('-')[1]) || 1;
+        const monsterInstance = monsterData.instances?.find(inst => inst.instanceNumber === instanceNumber);
+        
+        if (!monsterInstance) continue;
+
+        // Generate random number 1-20 + dex modifier
+        const roll = Math.floor(Math.random() * 20) + 1;
+        const dexMod = getModifier(monsterData.monsterData.dexterity);
+        const initiative = roll + dexMod;
+
+        // Update local state
+        const participantIndex = updatedOrder.findIndex(p => p.id === participant.id);
+        if (participantIndex !== -1) {
+          updatedOrder[participantIndex] = { ...participant, initiative };
+        }
+
+        // Queue database update for this specific monster instance
+        monsterUpdates.push(
+          fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/monsters/${monsterData.id}/instances/${monsterInstance.id}/initiative`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ initiative })
+          })
         );
-        if (monsterInitiative) {
-          updates.push(
-            fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/monsters/${monster.id}/initiative`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ initiative: monsterInitiative.initiative })
-            })
-          );
-        }
       }
 
-      await Promise.all(updates);
+      // Update local state
+      setInitiativeOrder(updatedOrder);
+
+      // Save all monster initiatives to database
+      await Promise.all(monsterUpdates);
 
       // Fetch updated encounter
       const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
       if (response.ok) {
         const updatedEncounter = await response.json();
         onInitiativeUpdated(updatedEncounter);
-        onClose();
       }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to roll monster initiative');
+    } finally {
+      setRolling(false);
+    }
+  };
+
+  const resetAllInitiative = async () => {
+    try {
+      setRolling(true);
+      setError(null);
+
+      // Reset all initiative to 0 in local state
+      const updatedOrder = initiativeOrder.map(participant => ({
+        ...participant,
+        initiative: 0
+      }));
+      setInitiativeOrder(updatedOrder);
+
+      // Reset all participant initiative in database
+      const participantUpdates = encounter.participants.map(participant =>
+        fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/participants/${participant.id}/initiative`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ initiative: 0 })
+        })
+      );
+
+      // Reset all monster instance initiative in database
+      const monsterUpdates = [];
+      for (const monster of encounter.monsters) {
+        for (const instance of monster.instances || []) {
+          monsterUpdates.push(
+            fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/monsters/${monster.id}/instances/${instance.id}/initiative`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ initiative: 0 })
+            })
+          );
+        }
+      }
+
+      // Wait for all updates to complete
+      await Promise.all([...participantUpdates, ...monsterUpdates]);
+
+      // Fetch updated encounter
+      const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
+      if (response.ok) {
+        const updatedEncounter = await response.json();
+        onInitiativeUpdated(updatedEncounter);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to reset initiative');
+    } finally {
+      setRolling(false);
+    }
+  };
+
+  const canRollForCharacter = (characterData: Character) => {
+    if (!session?.user?.id) return false;
+    return characterData.userId === session.user.id;
+  };
+
+  const handleMonsterRollClick = (participantId: string) => {
+    const participant = initiativeOrder.find(p => p.id === participantId);
+    if (!participant || participant.type !== 'monster') return;
+
+    // Find the monster data
+    const monsterData = encounter.monsters.find(m => participant.id.startsWith(m.id));
+    if (!monsterData) return;
+
+    // Use the proper dice system like combat
+    const event = new CustomEvent('triggerDiceRoll', {
+      detail: { notation: '1d20' }
+    });
+    window.dispatchEvent(event);
+    
+    // Listen for the dice roll completion
+    const handleDiceRollCompleted = (event: CustomEvent) => {
+      const { notation, resultTotal } = event.detail;
+      console.log('🎲 Monster initiative dice roll completed:', { notation, resultTotal });
+      
+      // Only process if this is our initiative roll (1d20)
+      if (notation === '1d20' && resultTotal !== undefined) {
+        console.log('🎲 Processing monster initiative roll result:', resultTotal);
+        handleMonsterDiceRollResult(resultTotal, participantId, monsterData);
+        
+        // Remove the event listener
+        window.removeEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+      } else {
+        console.log('🎲 Ignoring dice roll - not our monster initiative roll:', { notation, resultTotal });
+      }
+    };
+    
+    // Add event listener for dice roll completion
+    window.addEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+    
+    // Cleanup listener after 10 seconds to prevent memory leaks
+    setTimeout(() => {
+      window.removeEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+    }, 10000);
+  };
+
+  const handleMonsterDiceRollResult = async (result: number, participantId: string, monsterData: EncounterMonster) => {
+    console.log('🎲 handleMonsterDiceRollResult called with:', result, 'for participant:', participantId);
+    
+    const participant = initiativeOrder.find(p => p.id === participantId);
+    console.log('🎲 Found monster participant:', participant);
+    
+    if (!participant || participant.type !== 'monster') {
+      console.log('🎲 Invalid monster participant, returning');
+      return;
+    }
+
+    try {
+      setRolling(true);
+      setError(null);
+
+      // Find the specific monster instance for this participant
+      const instanceNumber = parseInt(participantId.split('-')[1]) || 1;
+      const monsterInstance = monsterData.instances?.find(inst => inst.instanceNumber === instanceNumber);
+      
+      if (!monsterInstance) {
+        console.log('🎲 Monster instance not found, returning');
+        return;
+      }
+
+      const dexMod = getModifier(monsterData.monsterData.dexterity);
+      const initiative = result + dexMod;
+      console.log('🎲 Calculated monster initiative:', { result, dexMod, initiative });
+
+      // Update local state
+      const updatedOrder = initiativeOrder.map(p => 
+        p.id === participantId ? { ...p, initiative } : p
+      );
+      setInitiativeOrder(updatedOrder);
+
+      // Auto-save monster initiative
+      const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/monsters/${monsterData.id}/instances/${monsterInstance.id}/initiative`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ initiative })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('🎲 Monster API Error:', response.status, errorText);
+        throw new Error(`Failed to save monster initiative: ${response.status} ${errorText}`);
+      }
+
+      // Fetch updated encounter
+      const encounterResponse = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
+      if (encounterResponse.ok) {
+        const updatedEncounter = await encounterResponse.json();
+        onInitiativeUpdated(updatedEncounter);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save monster initiative');
+    } finally {
+      setRolling(false);
+    }
+  };
+
+  const handleCharacterRollClick = (participantId: string) => {
+    const participant = initiativeOrder.find(p => p.id === participantId);
+    if (!participant || participant.type !== 'character' || !participant.characterData) return;
+
+    if (!canRollForCharacter(participant.characterData)) {
+      setError('You can only roll initiative for your own characters');
+      return;
+    }
+
+
+    
+    // Use the proper dice system like combat
+    const event = new CustomEvent('triggerDiceRoll', {
+      detail: { notation: '1d20' }
+    });
+    window.dispatchEvent(event);
+    
+    // Listen for the dice roll completion
+    const handleDiceRollCompleted = (event: CustomEvent) => {
+      const { notation, resultTotal } = event.detail;
+      console.log('🎲 Initiative dice roll completed:', { notation, resultTotal });
+      
+      // Only process if this is our initiative roll (1d20)
+      if (notation === '1d20' && resultTotal !== undefined) {
+        console.log('🎲 Processing initiative roll result:', resultTotal);
+        handleDiceRollResult(resultTotal, participantId);
+        
+        // Remove the event listener
+        window.removeEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+      } else {
+        console.log('🎲 Ignoring dice roll - not our initiative roll:', { notation, resultTotal });
+      }
+    };
+    
+    // Add event listener for dice roll completion
+    window.addEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+    
+    // Cleanup listener after 10 seconds to prevent memory leaks
+    setTimeout(() => {
+      window.removeEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+    }, 10000);
+  };
+
+  const handleManualInitiative = async (participantId: string, initiative: number) => {
+    console.log('🎲 handleManualInitiative called with:', initiative, 'for participant:', participantId);
+    
+    const participant = initiativeOrder.find(p => p.id === participantId);
+    console.log('🎲 Found participant:', participant);
+    
+    if (!participant) {
+      console.log('🎲 Invalid participant, returning');
+      return;
+    }
+
+    // Check ownership for characters (unless DM)
+    if (participant.type === 'character') {
+      if (!isDM && (!participant.characterData || !canRollForCharacter(participant.characterData))) {
+        console.log('🎲 Access denied: Character ownership check failed');
+        setError('You can only set initiative for your own characters');
+        return;
+      }
+    }
+    
+    // Check DM permissions for monsters
+    if (participant.type === 'monster' && !isDM) {
+      console.log('🎲 Access denied: DM permissions required for monsters');
+      setError('Only the DM can set monster initiative');
+      return;
+    }
+
+    try {
+      setRolling(true);
+      setError(null);
+
+      console.log('🎲 Setting manual initiative:', initiative);
+
+      // Update local state
+      const updatedOrder = initiativeOrder.map(p => 
+        p.id === participantId ? { ...p, initiative } : p
+      );
+      setInitiativeOrder(updatedOrder);
+
+      // Auto-save initiative
+      let response;
+      if (participant.type === 'character') {
+        response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/participants/${participantId}/initiative`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ initiative })
+        });
+      } else if (participant.type === 'monster') {
+        // Find the monster data and instance for this participant
+        const monsterData = encounter.monsters.find(m => participantId.startsWith(m.id));
+        if (!monsterData) {
+          throw new Error('Monster data not found');
+        }
+        
+        const instanceNumber = parseInt(participantId.split('-')[1]) || 1;
+        const monsterInstance = monsterData.instances?.find(inst => inst.instanceNumber === instanceNumber);
+        
+        if (!monsterInstance) {
+          throw new Error('Monster instance not found');
+        }
+        
+        response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/monsters/${monsterData.id}/instances/${monsterInstance.id}/initiative`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ initiative })
+        });
+      } else {
+        throw new Error('Invalid participant type');
+      }
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('🎲 API Error:', response.status, errorText);
+        throw new Error(`Failed to save initiative: ${response.status} ${errorText}`);
+      }
+
+      // Fetch updated encounter
+      const encounterResponse = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
+      if (encounterResponse.ok) {
+        const updatedEncounter = await encounterResponse.json();
+        onInitiativeUpdated(updatedEncounter);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save initiative');
+    } finally {
+      setRolling(false);
+    }
+  };
+
+  const handleDiceRollResult = async (result: number, participantId: string) => {
+    console.log('🎲 handleDiceRollResult called with:', result, 'for participant:', participantId);
+    
+    const participant = initiativeOrder.find(p => p.id === participantId);
+    console.log('🎲 Found participant:', participant);
+    console.log('🎲 Participant character data:', participant?.characterData);
+    
+    if (!participant || participant.type !== 'character' || !participant.characterData) {
+      console.log('🎲 Invalid participant, returning');
+      return;
+    }
+
+    try {
+      setRolling(true);
+      setError(null);
+
+      // Handle missing character data gracefully
+      let dexMod = 0;
+      console.log('🎲 Character dexterity value:', participant.characterData.dexterity);
+      if (participant.characterData && participant.characterData.dexterity) {
+        dexMod = getModifier(participant.characterData.dexterity);
+        console.log('🎲 Calculated dex modifier:', dexMod);
+      } else {
+        console.log('🎲 No dexterity data found, using 0 modifier');
+      }
+      const initiative = result + dexMod;
+      console.log('🎲 Calculated initiative:', { result, dexMod, initiative });
+
+      // Update local state
+      const updatedOrder = initiativeOrder.map(p => 
+        p.id === participantId ? { ...p, initiative } : p
+      );
+      setInitiativeOrder(updatedOrder);
+
+      // Auto-save character initiative
+      const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/participants/${participantId}/initiative`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ initiative })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('🎲 API Error:', response.status, errorText);
+        throw new Error(`Failed to save initiative: ${response.status} ${errorText}`);
+      }
+
+      // Fetch updated encounter
+      const encounterResponse = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
+      if (encounterResponse.ok) {
+        const updatedEncounter = await encounterResponse.json();
+        onInitiativeUpdated(updatedEncounter);
+      }
+
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save initiative');
     } finally {
@@ -158,8 +520,6 @@ export default function InitiativeRoller({
     if (b.initiative === 0) return -1;
     return b.initiative - a.initiative;
   });
-
-  const allRolled = initiativeOrder.every(p => p.initiative > 0);
 
   if (!isOpen) return null;
 
@@ -187,21 +547,47 @@ export default function InitiativeRoller({
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3 mb-6">
           {isDM && (
-            <Button
-              onClick={rollInitiativeForMonsters}
-              className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
-            >
-              <Dice1 className="h-4 w-4 mr-1" />
-              Roll Monster Initiative
-            </Button>
+            <>
+              <Button
+                onClick={rollInitiativeForMonsters}
+                disabled={rolling}
+                className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
+              >
+                <Dice1 className="h-4 w-4 mr-1" />
+                {rolling ? 'Rolling...' : 'Roll Monster Initiative'}
+              </Button>
+              
+              <Button
+                onClick={resetAllInitiative}
+                disabled={rolling}
+                className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 bg-white"
+              >
+                <X className="h-4 w-4 mr-1" />
+                {rolling ? 'Resetting...' : 'Reset All Initiative'}
+              </Button>
+            </>
           )}
+          
           <Button
-            onClick={saveInitiativeOrder}
-            disabled={!allRolled || rolling}
-            className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]"
+            onClick={async () => {
+              try {
+                const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
+                if (response.ok) {
+                  const updatedEncounter = await response.json();
+                  onInitiativeUpdated(updatedEncounter);
+                }
+              } catch (error) {
+                console.error('Failed to refresh:', error);
+              }
+            }}
+            variant="ghost"
+            size="sm"
+            className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
           >
-            <ArrowUpDown className="h-4 w-4 mr-1" />
-            {rolling ? 'Saving...' : 'Save Initiative Order'}
+            <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Refresh
           </Button>
         </div>
 
@@ -216,8 +602,8 @@ export default function InitiativeRoller({
               No participants in this encounter
             </p>
           ) : (
-                         <div className="space-y-2">
-               {sortedInitiativeOrder.map((participant) => (
+            <div className="space-y-2">
+              {sortedInitiativeOrder.map((participant) => (
                 <div
                   key={participant.id}
                   className={`flex items-center justify-between p-3 rounded-md border ${
@@ -253,16 +639,77 @@ export default function InitiativeRoller({
                       </span>
                     )}
                     
-                                         {participant.type === 'character' && participant.initiative === 0 && (
-                       <Button
-                         onClick={() => rollInitiativeForCharacter(participant.id)}
-                         size="sm"
-                         className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
-                       >
-                         <Dice1 className="h-3 w-3 mr-1" />
-                         Roll
-                       </Button>
-                     )}
+                    {participant.initiative === 0 && (
+                      <div className="flex items-center space-x-2">
+                        {participant.type === 'character' && (
+                          <Button
+                            onClick={() => handleCharacterRollClick(participant.id)}
+                            size="sm"
+                            disabled={!participant.characterData || !canRollForCharacter(participant.characterData) || rolling}
+                            className={`${
+                              participant.characterData && canRollForCharacter(participant.characterData)
+                                ? 'bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]'
+                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                            }`}
+                          >
+                            <Dice1 className="h-3 w-3 mr-1" />
+                            {participant.characterData && canRollForCharacter(participant.characterData) ? 'Roll' : 'Not Yours'}
+                          </Button>
+                        )}
+                        
+                        {participant.type === 'monster' && isDM && (
+                          <Button
+                            onClick={() => handleMonsterRollClick(participant.id)}
+                            size="sm"
+                            disabled={rolling}
+                            className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
+                          >
+                            <Dice1 className="h-3 w-3 mr-1" />
+                            Roll
+                          </Button>
+                        )}
+                        
+                        {/* Manual initiative entry - only for owned characters or DM for any participant */}
+                        {(participant.type === 'character' && (participant.characterData && canRollForCharacter(participant.characterData) || isDM)) || 
+                         (participant.type === 'monster' && isDM) ? (
+                          <div className="flex items-center space-x-1">
+                            <input
+                              type="number"
+                              placeholder="Manual"
+                              className="w-16 px-2 py-1 text-sm border border-[var(--color-border)] rounded bg-[var(--color-surface)] text-[var(--color-text-primary)]"
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  const value = parseInt(e.currentTarget.value);
+                                  if (!isNaN(value)) {
+                                    handleManualInitiative(participant.id, value);
+                                    e.currentTarget.value = '';
+                                  }
+                                }
+                              }}
+                            />
+                            <button
+                              onClick={(e) => {
+                                const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                                if (input && input.type === 'number') {
+                                  const value = parseInt(input.value);
+                                  if (!isNaN(value)) {
+                                    handleManualInitiative(participant.id, value);
+                                    input.value = '';
+                                  }
+                                }
+                              }}
+                              className="px-2 py-1 text-xs bg-[var(--color-button)] hover:bg-[var(--color-button-hover)] text-[var(--color-button-text)] rounded transition-colors"
+                            >
+                              Set
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-[var(--color-text-secondary)]">
+                            {participant.type === 'character' ? 'Not yours' : 'DM only'}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -270,16 +717,7 @@ export default function InitiativeRoller({
           )}
         </div>
 
-        {!allRolled && (
-          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-            <p className="text-sm text-yellow-800">
-              {isDM 
-                ? "Roll initiative for all participants before saving the order."
-                : "The DM needs to roll initiative for all participants."
-              }
-            </p>
-          </div>
-        )}
+
       </div>
     </div>
   );
