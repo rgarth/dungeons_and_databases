@@ -638,12 +638,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
               </button>
             </div>
 
-            {/* Debug Info */}
-            <div className="mb-4 p-2 bg-[var(--color-card-secondary)] rounded text-xs" style={{ color: 'var(--color-text-secondary)' }}>
-              <div>Debug: {currentGame.participants.length} participants, {getCharacterCount()} characters</div>
-              <div>Current user: {session?.user?.email}</div>
-              <div>Available characters: {getAvailableCharacters().length}</div>
-            </div>
+            
 
             {/* Error Display */}
             {error && (
@@ -658,7 +653,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                 {/* Left Column - Stats */}
                 <div className="space-y-6">
                 {/* Game Stats */}
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
                     <Users className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
                       <div className="text-center">
@@ -673,14 +668,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                       <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{getCharacterCount()}</div>
                     </div>
                   </div>
-                    <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                    <MessageSquare className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
-                      <div className="text-center">
-                        <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Messages</div>
-                        <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>0</div>
-                      </div>
-                    </div>
-                  </div>
+                </div>
 
                   {/* Description */}
                   {currentGame.description && (

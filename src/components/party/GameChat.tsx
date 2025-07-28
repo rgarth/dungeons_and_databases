@@ -83,6 +83,8 @@ export default function GameChat({ gameId, enabled = true, isDM = false }: GameC
     }
   };
 
+
+
   const formatTimestamp = (timestamp: number) => {
     return new Date(timestamp).toLocaleTimeString([], { 
       hour: '2-digit', 
@@ -125,6 +127,7 @@ export default function GameChat({ gameId, enabled = true, isDM = false }: GameC
           )}
           {isConnected && (
             <>
+
               {/* Clear Button - only show to DM if there are messages */}
               {isDM && messages.length > 0 && (
                 <button

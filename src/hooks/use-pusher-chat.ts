@@ -28,6 +28,13 @@ export function usePusherChat({ gameId, enabled = true }: UsePusherChatOptions):
   const pusherRef = useRef<PusherChat | null>(null);
 
   const handleMessage = useCallback((message: ChatMessage) => {
+    // Handle special clear message
+    if (message.id === 'clear-all-messages' && message.message === 'CLEAR_ALL_MESSAGES') {
+      console.log(`🗑️ Clearing all messages from UI state`);
+      setMessages([]);
+      return;
+    }
+    
     setMessages(prev => [...prev, message]);
   }, []);
 
@@ -69,31 +76,14 @@ export function usePusherChat({ gameId, enabled = true }: UsePusherChatOptions):
       await pusher.connect();
       setIsConnected(true);
       
-      // Load chat history from localStorage first (for immediate display)
-      try {
-        const localHistory = await pusher.loadChatHistory();
-        if (localHistory.length > 0) {
-          console.log(`📚 Loaded ${localHistory.length} messages from localStorage`);
-          setMessages(localHistory);
-        }
-      } catch (localError) {
-        console.warn('Error loading local chat history:', localError);
-      }
-      
-      // Load chat history from server (to get any missing messages)
+      // Load chat history from server
       try {
         const response = await fetch(`/api/games/${gameId}/chat`);
         if (response.ok) {
           const data = await response.json();
           if (data.messages && Array.isArray(data.messages)) {
             console.log(`📚 Loaded ${data.messages.length} chat messages from server`);
-            // Merge server messages with local messages, avoiding duplicates
-            const serverMessages = data.messages;
-            setMessages(prevMessages => {
-              const existingIds = new Set(prevMessages.map(m => m.id));
-              const newMessages = serverMessages.filter((m: ChatMessage) => !existingIds.has(m.id));
-              return [...prevMessages, ...newMessages].sort((a, b) => a.timestamp - b.timestamp);
-            });
+            setMessages(data.messages);
           }
         } else {
           console.warn('Failed to load chat history from server:', response.statusText);
