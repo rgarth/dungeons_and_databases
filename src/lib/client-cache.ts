@@ -557,6 +557,12 @@ class ClientCache {
     this.cache.characters.push(character);
   }
 
+  removeCharacter(characterId: string) {
+    if (this.cache.characters) {
+      this.cache.characters = this.cache.characters.filter(char => char.id !== characterId);
+    }
+  }
+
   async getMonsters() {
     if (!this.cache.monsters) {
       try {

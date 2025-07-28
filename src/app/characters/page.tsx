@@ -8,18 +8,17 @@ import MainLayout from "@/components/layout/MainLayout";
 import { CharacterCard } from "@/components/character-card";
 import { CreateCharacterModal } from "@/components/create-character-modal";
 import { LoadingModal } from "@/components/loading-modal";
-import { useQueryClient } from "@tanstack/react-query";
 import { Character } from "@/types/character";
 import { Button } from "@/components/ui";
 import { useLoading } from "@/components/providers/loading-provider";
 import { useClientCache } from '@/hooks/use-client-cache';
+import { clientCache } from '@/lib/client-cache';
 
 export default function CharactersPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { assetsLoaded, setAssetsLoaded } = useLoading();
-  const queryClient = useQueryClient();
   const { characters } = useClientCache();
   const [localCharacters, setLocalCharacters] = useState<Character[]>([]);
 
@@ -98,10 +97,20 @@ export default function CharactersPage() {
             key={character.id}
             character={character}
             onCharacterDeleted={() => {
-              queryClient.invalidateQueries({ queryKey: ['characters'] });
+              // Remove from local state if it exists there
+              setLocalCharacters(prev => prev.filter(char => char.id !== character.id));
+              // Force a re-render by updating the cache state
+              setTimeout(() => {
+                const currentCharacters = clientCache.getCharacters();
+                console.log('✅ Character removed from cache, total characters:', currentCharacters.length);
+              }, 100);
             }}
             onCharacterUpdated={() => {
-              queryClient.invalidateQueries({ queryKey: ['characters'] });
+              // Force a re-render by updating the cache state
+              setTimeout(() => {
+                const currentCharacters = clientCache.getCharacters();
+                console.log('✅ Character updated in cache, total characters:', currentCharacters.length);
+              }, 100);
             }}
           />
         ))}
