@@ -204,9 +204,56 @@ export default function EncounterDetailsModal({
   };
 
   const handleAddParty = async () => {
-    // This would add all party members to the encounter
-    // For now, just show the add participant modal
-    setShowAddParticipant(true);
+    try {
+      setLoading(true);
+      
+      // Fetch all characters in the game
+      const charactersResponse = await fetch(`/api/characters?gameId=${encounter.gameId}`);
+      if (!charactersResponse.ok) {
+        throw new Error('Failed to fetch characters');
+      }
+      
+      const characters = await charactersResponse.json();
+      
+      // Add each character to the encounter
+      const addPromises = characters.map(async (character: { id: string; name: string }) => {
+        const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/participants`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            characterId: character.id,
+            characterName: character.name,
+            characterData: character
+          }),
+        });
+        
+        if (!response.ok) {
+          console.error(`Failed to add character ${character.name} to encounter`);
+          return null;
+        }
+        
+        return response.json();
+      });
+      
+      const results = await Promise.all(addPromises);
+      const successfulAdds = results.filter(result => result !== null);
+      
+      if (successfulAdds.length > 0) {
+        // Refresh encounter data
+        const encounterResponse = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
+        if (encounterResponse.ok) {
+          const updatedEncounter = await encounterResponse.json();
+          setCurrentEncounter(updatedEncounter);
+          onEncounterUpdated(updatedEncounter);
+        }
+      }
+      
+      console.log(`Added ${successfulAdds.length} characters to encounter`);
+    } catch (error) {
+      console.error('Error adding party to encounter:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const characterCount = currentEncounter.participants.length;
