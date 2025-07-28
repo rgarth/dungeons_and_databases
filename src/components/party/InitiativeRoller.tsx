@@ -464,6 +464,36 @@ export default function InitiativeRoller({
       return;
     }
 
+    // If character data is missing ability scores, try to fetch fresh data
+    if (participant.characterData && (participant.characterData.dexterity === undefined || participant.characterData.dexterity === null)) {
+      console.log('🎲 Character data missing ability scores, fetching fresh data...');
+      try {
+        const characterId = participant.characterData.id;
+        if (characterId) {
+          const characterResponse = await fetch(`/api/characters/${characterId}`);
+          if (characterResponse.ok) {
+            const freshCharacterData = await characterResponse.json();
+            console.log('🎲 Fresh character data:', freshCharacterData);
+            
+            // Update the participant's character data
+            const updatedOrder = initiativeOrder.map(p => 
+              p.id === participantId 
+                ? { ...p, characterData: freshCharacterData }
+                : p
+            );
+            setInitiativeOrder(updatedOrder);
+            
+            // Update the participant reference
+            if (participant.characterData) {
+              participant.characterData = freshCharacterData;
+            }
+          }
+        }
+      } catch (error) {
+        console.error('🎲 Failed to fetch fresh character data:', error);
+      }
+    }
+
     try {
       setRolling(true);
       setError(null);
@@ -471,10 +501,13 @@ export default function InitiativeRoller({
       // Handle missing character data gracefully
       let dexMod = 0;
       console.log('🎲 Character dexterity value:', participant.characterData.dexterity);
-      if (participant.characterData && participant.characterData.dexterity) {
-        const dexValue = Number(participant.characterData.dexterity);
-        if (!isNaN(dexValue)) {
-          dexMod = getModifier(dexValue);
+      
+      // Try to get dexterity from character data
+      const dexValue = participant.characterData.dexterity;
+      if (dexValue !== undefined && dexValue !== null) {
+        const numericDex = Number(dexValue);
+        if (!isNaN(numericDex)) {
+          dexMod = getModifier(numericDex);
           console.log('🎲 Calculated dex modifier:', dexMod);
         } else {
           console.log('🎲 Invalid dexterity value, using 0 modifier');
@@ -642,8 +675,24 @@ export default function InitiativeRoller({
                         {participant.type === 'character' && participant.characterData && (() => {
                           console.log('🔍 DEBUG: Character data for', participant.name, ':', participant.characterData);
                           console.log('🔍 DEBUG: Dexterity value:', participant.characterData.dexterity, 'type:', typeof participant.characterData.dexterity);
-                          const dexValue = Number(participant.characterData.dexterity);
-                          const dexMod = !isNaN(dexValue) ? getModifier(dexValue) : 0;
+                          console.log('🔍 DEBUG: All ability scores:', {
+                            strength: participant.characterData.strength,
+                            dexterity: participant.characterData.dexterity,
+                            constitution: participant.characterData.constitution,
+                            intelligence: participant.characterData.intelligence,
+                            wisdom: participant.characterData.wisdom,
+                            charisma: participant.characterData.charisma
+                          });
+                          
+                          // Handle undefined/null dexterity values
+                          const dexValue = participant.characterData.dexterity;
+                          let dexMod = 0;
+                          if (dexValue !== undefined && dexValue !== null) {
+                            const numericDex = Number(dexValue);
+                            if (!isNaN(numericDex)) {
+                              dexMod = getModifier(numericDex);
+                            }
+                          }
                           console.log('🔍 DEBUG: Converted dex value:', dexValue, 'modifier:', dexMod);
                           return (
                             <span className="text-xs text-[var(--color-text-secondary)]">

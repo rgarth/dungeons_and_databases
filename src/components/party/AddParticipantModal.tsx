@@ -67,6 +67,10 @@ export default function AddParticipantModal({
       setLoading(true);
       setError(null);
 
+      // Debug: Log the character data being sent
+      console.log('🔍 DEBUG: Character data being sent to encounter:', selectedCharacter);
+      console.log('🔍 DEBUG: Dexterity value:', selectedCharacter.dexterity, 'type:', typeof selectedCharacter.dexterity);
+
       const response = await fetch(`/api/games/${gameId}/encounters/${encounterId}/participants`, {
         method: 'POST',
         headers: {

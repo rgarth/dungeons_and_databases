@@ -18,6 +18,10 @@ export async function POST(
     const { gameId, encounterId } = await params;
     const { characterId, characterName, characterData } = await request.json();
 
+    // Debug: Log the character data being received
+    console.log('🔍 API DEBUG: Character data received:', characterData);
+    console.log('🔍 API DEBUG: Dexterity value:', characterData?.dexterity, 'type:', typeof characterData?.dexterity);
+
     if (!characterId || !characterName || !characterData) {
       return NextResponse.json(
         { error: 'Character ID, name, and data are required' },
