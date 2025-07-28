@@ -119,7 +119,8 @@ export default function InitiativeRoller({
         if (!monsterData) continue;
 
         // Find the specific instance for this participant
-        const instanceNumber = parseInt(participant.id.split('-')[1]) || 1;
+        const instanceIndex = parseInt(participant.id.split('-')[1]) || 0;
+        const instanceNumber = instanceIndex + 1; // Convert 0-based index to 1-based instance number
         const monsterInstance = monsterData.instances?.find(inst => inst.instanceNumber === instanceNumber);
         
         if (!monsterInstance) continue;
@@ -317,10 +318,13 @@ export default function InitiativeRoller({
       setError(null);
 
       // Find the specific monster instance for this participant
-      const instanceNumber = parseInt(participantId.split('-')[1]) || 1;
+      const instanceIndex = parseInt(participantId.split('-')[1]) || 0;
+      const instanceNumber = instanceIndex + 1; // Convert 0-based index to 1-based instance number
       const monsterInstance = monsterData.instances?.find(inst => inst.instanceNumber === instanceNumber);
       
       console.log('🎲 Looking for monster instance:', { 
+        participantId,
+        instanceIndex,
         instanceNumber, 
         totalInstances: monsterData.instances?.length,
         foundInstance: monsterInstance 
