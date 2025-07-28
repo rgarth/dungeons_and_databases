@@ -57,6 +57,7 @@ function formatClassInfo(character: Character): { classText: string; levelText: 
 export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdated }: CharacterCardProps) {
   const [showSheet, setShowSheet] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   // Use React Query for avatar fetching
   const { data: avatarUrl, isLoading: isAvatarLoading } = useAvatar(character.id);
   const isOptimistic = character.isOptimistic;
@@ -72,6 +73,7 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
   }, [character.id]);
 
   const handleDelete = async () => {
+    setIsDeleting(true);
     try {
       const response = await fetch(`/api/characters?id=${character.id}`, {
         method: 'DELETE',
@@ -81,6 +83,8 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
         // Remove character from client cache
         clientCache.removeCharacter(character.id);
         toast.success('Character deleted successfully');
+        // Close the dialog
+        setShowDeleteDialog(false);
         onCharacterDeleted?.();
       } else {
         throw new Error('Failed to delete character');
@@ -88,6 +92,8 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
     } catch (error) {
       console.error('Error deleting character:', error);
       toast.error('Failed to delete character');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -209,6 +215,7 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
         characterName={character.name}
         onConfirm={handleDelete}
         onCancel={() => setShowDeleteDialog(false)}
+        isDeleting={isDeleting}
       />
     </>
   );
