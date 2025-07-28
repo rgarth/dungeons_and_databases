@@ -323,31 +323,33 @@ export default function EncounterDetailsModal({
                   Edit
                 </Button>
               )}
-              <Button
-                onClick={handleToggleActive}
-                disabled={loading}
-                className={`${
-                  currentEncounter.isActive
-                    ? 'bg-[var(--color-warning)] hover:bg-[var(--color-warning-hover)] text-[var(--color-warning-text)]'
-                    : 'bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]'
-                }`}
-              >
-                {loading ? 'Updating...' : currentEncounter.isActive ? 'Deactivate' : (
-                  <>
-                    <Sword className="h-4 w-4 mr-1" />
-                    Start
-                  </>
-                )}
-              </Button>
             </>
           )}
           {(characterCount > 0 || monsterCount > 0) && (
             <Button
               onClick={() => setShowInitiativeRoller(true)}
-              className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
+              className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]"
             >
               <Dice1 className="h-4 w-4 mr-1" />
               Roll Initiative
+            </Button>
+          )}
+          {isDM && (
+            <Button
+              onClick={handleToggleActive}
+              disabled={loading}
+              className={`${
+                currentEncounter.isActive
+                  ? 'bg-[var(--color-warning)] hover:bg-[var(--color-warning-hover)] text-[var(--color-warning-text)]'
+                  : 'bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]'
+              }`}
+            >
+              {loading ? 'Updating...' : currentEncounter.isActive ? 'Deactivate' : (
+                <>
+                  <Sword className="h-4 w-4 mr-1" />
+                  Start
+                </>
+              )}
             </Button>
           )}
           {isDM && (
