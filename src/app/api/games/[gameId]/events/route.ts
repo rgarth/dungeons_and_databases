@@ -58,6 +58,7 @@ export async function GET(
       start(controller) {
         let isClosed = false;
         let updateInterval: NodeJS.Timeout | null = null;
+        let heartbeatInterval: NodeJS.Timeout | null = null;
         
         const sendEvent = (event: string, data: unknown) => {
           if (isClosed) return;
@@ -66,6 +67,18 @@ export async function GET(
             controller.enqueue(new TextEncoder().encode(message));
           } catch (error) {
             console.error('Error sending SSE event:', error);
+            isClosed = true;
+          }
+        };
+
+        // Send heartbeat to keep connection alive
+        const sendHeartbeat = () => {
+          if (isClosed) return;
+          try {
+            const message = `event: heartbeat\ndata: ${JSON.stringify({ timestamp: Date.now() })}\n\n`;
+            controller.enqueue(new TextEncoder().encode(message));
+          } catch (error) {
+            console.error('Error sending heartbeat:', error);
             isClosed = true;
           }
         };
@@ -135,9 +148,8 @@ export async function GET(
               }
             }
 
-            // Only send update if there are changes or it's been more than 2 minutes
-            const timeSinceLastUpdate = Date.now() - (previousState?.lastUpdate || 0);
-            if (hasChanges || timeSinceLastUpdate > 2 * 60 * 1000) {
+            // Only send update if there are actual changes
+            if (hasChanges) {
               sendEvent('game-update', {
                 id: game.id,
                 name: game.name,
@@ -156,8 +168,11 @@ export async function GET(
         // Send initial state
         sendGameUpdate();
 
-        // Set up periodic updates - reduced frequency to 10 seconds for more responsive updates
+        // Set up periodic updates - check for changes every 10 seconds
         updateInterval = setInterval(sendGameUpdate, 10 * 1000);
+
+        // Set up heartbeat every 30 seconds to keep connection alive
+        heartbeatInterval = setInterval(sendHeartbeat, 30 * 1000);
 
         // Clean up on disconnect
         const cleanup = () => {
@@ -165,6 +180,10 @@ export async function GET(
           if (updateInterval) {
             clearInterval(updateInterval);
             updateInterval = null;
+          }
+          if (heartbeatInterval) {
+            clearInterval(heartbeatInterval);
+            heartbeatInterval = null;
           }
           try {
             controller.close();
