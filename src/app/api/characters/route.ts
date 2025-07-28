@@ -104,6 +104,22 @@ export async function GET(request: NextRequest) {
       });
     }
 
+          // Debug logging for game context
+      if (gameId) {
+        console.log('🔍 API DEBUG: Fetching characters for game:', gameId);
+        console.log('🔍 API DEBUG: Found characters:', characters.length);
+        if (characters.length > 0) {
+          console.log('🔍 API DEBUG: First character ability scores:', {
+            strength: characters[0].strength,
+            dexterity: characters[0].dexterity,
+            constitution: characters[0].constitution,
+            intelligence: characters[0].intelligence,
+            wisdom: characters[0].wisdom,
+            charisma: characters[0].charisma
+          });
+        }
+      }
+
     return NextResponse.json(characters);
   } catch (error) {
     console.error("Error fetching characters:", error);

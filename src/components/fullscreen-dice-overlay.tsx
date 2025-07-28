@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 interface DiceResult {
   set: string[];
@@ -43,7 +43,13 @@ export default function FullscreenDiceOverlay({
 
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
 
-
+  // Handle fade out animation
+  const handleFadeOut = useCallback(() => {
+    setIsFading(true);
+    setTimeout(() => {
+      onClose();
+    }, 300); // 300ms fade duration
+  }, [onClose]);
 
   // Load DICE library scripts
   useEffect(() => {
@@ -244,7 +250,7 @@ export default function FullscreenDiceOverlay({
     };
 
     initializeDiceBox();
-  }, [isVisible, diceNotation, diceColor, scriptsLoaded]);
+  }, [isVisible, diceNotation, diceColor, scriptsLoaded, handleFadeOut, onRollComplete]);
 
   // Cleanup dice box when component unmounts or becomes invisible
   useEffect(() => {
@@ -278,15 +284,7 @@ export default function FullscreenDiceOverlay({
     return () => {
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [isVisible, isFading, onClose]);
-
-  // Handle fade out animation
-  const handleFadeOut = () => {
-    setIsFading(true);
-    setTimeout(() => {
-      onClose();
-    }, 300); // 300ms fade duration
-  };
+  }, [isVisible, isFading, handleFadeOut]);
 
   if (!isVisible) return null;
 

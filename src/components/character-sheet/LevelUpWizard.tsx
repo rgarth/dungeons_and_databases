@@ -103,7 +103,7 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
       setPendingStepTransition(null);
       console.log('🟢 Step transition completed');
     }
-  }, [pendingStepTransition]);
+  }, [pendingStepTransition, currentStep, levelUpOptions]);
 
   const getCurrentClass = () => {
     return levelUpTarget.targetClass;

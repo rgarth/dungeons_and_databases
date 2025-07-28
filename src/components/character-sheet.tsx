@@ -155,7 +155,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       
       return (character.inventory as string[]).map(name => ({ name, quantity: 1 }));
     });
-  }, [character.id]); // Only sync when character ID changes, not when character data updates
+  }, [character.id, character]); // Include character in dependencies
 
   // Clean up all state when unmounting
   useEffect(() => {
@@ -202,9 +202,10 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   
   // Cleanup timeout on unmount
   useEffect(() => {
+    const timeoutRef = updateTimeoutRef.current;
     return () => {
-      if (updateTimeoutRef.current) {
-        clearTimeout(updateTimeoutRef.current);
+      if (timeoutRef) {
+        clearTimeout(timeoutRef);
       }
     };
   }, []);

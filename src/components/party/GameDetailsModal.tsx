@@ -124,6 +124,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
   const [showCharacterSheet, setShowCharacterSheet] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [isReadOnly, setIsReadOnly] = useState(false);
+  const [isAddingCharacter, setIsAddingCharacter] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Notes state
@@ -240,54 +241,99 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
   // Fetch characters when add character modal opens
   useEffect(() => {
     if (showAddCharacterModal) {
+      console.log('🔍 Add character modal opened');
+      console.log('🔍 Current game:', currentGame);
+      console.log('🔍 Session user email:', session?.user?.email);
+      console.log('🔍 Cached characters:', cachedCharacters);
+      console.log('🔍 Cached characters length:', cachedCharacters?.length);
+      console.log('🔍 Cached characters details:', cachedCharacters?.map(c => ({ id: c.id, name: c.name, userId: c.userId })));
+      
       // Use cached characters instead of fetching
       setCharacters(cachedCharacters);
-      // Set the current user's participant ID
+      
+      // Set the current user's participant ID (DM or player)
       if (currentGame && session?.user?.email) {
-        const isDM = currentGame.dm.id === session.user?.id;
+        const currentParticipant = currentGame.participants.find(
+          p => p.user.email === session.user?.email
+        );
+        console.log('🔍 Found current participant:', currentParticipant);
+        console.log('🔍 All participants:', currentGame.participants.map(p => ({ id: p.id, email: p.user.email })));
         
-        if (isDM) {
-          // DM can add characters to any participant, so we'll let them choose
-          // For now, just set the first participant as default
-          if (currentGame.participants.length > 0) {
-            setSelectedParticipant(currentGame.participants[0].id);
-          }
+        if (currentParticipant) {
+          console.log('🔍 Setting selectedParticipant to:', currentParticipant.id);
+          setSelectedParticipant(currentParticipant.id);
         } else {
-          // Regular players can only add to themselves
-          const currentParticipant = currentGame.participants.find(
-            p => p.user.email === session.user?.email
-          );
-          if (currentParticipant) {
-            setSelectedParticipant(currentParticipant.id);
-          }
+          console.log('❌ No current participant found for user:', session.user?.email);
+          console.log('❌ Available participants:', currentGame.participants.map(p => p.user.email));
         }
+      } else {
+        console.log('❌ Missing currentGame or session user email');
+        console.log('❌ currentGame:', !!currentGame);
+        console.log('❌ session?.user?.email:', !!session?.user?.email);
       }
     }
   }, [showAddCharacterModal, currentGame, session?.user?.email, cachedCharacters]);
 
   const getAvailableCharacters = () => {
-    if (!currentGame || !session?.user?.email) return [];
+    console.log('🔍 getAvailableCharacters called');
+    console.log('🔍 currentGame:', currentGame);
+    console.log('🔍 session?.user?.email:', session?.user?.email);
+    console.log('🔍 characters:', characters);
+    console.log('🔍 characters length:', characters?.length);
+    
+    if (!currentGame || !session?.user?.email) {
+      console.log('❌ Missing currentGame or session user email');
+      return [];
+    }
     
     // Both DMs and players should only see their own characters that aren't already in the game
     const availableCharacters = characters.filter(character => {
-      // Check if character is already in the game
-      const isAlreadyInGame = currentGame.participants.some(participant =>
-        participant.characters.some(gameCharacter => gameCharacter.id === character.id)
-      );
+      console.log('🔍 Checking character:', character.name, character.id);
+      console.log('🔍 Character userId:', character.userId);
+      console.log('🔍 Current user email:', session?.user?.email);
       
+      // Check if character is already in the game
+      const isAlreadyInGame = currentGame.participants.some(participant => {
+        const hasCharacter = participant.characters.some(gameCharacter => gameCharacter.id === character.id);
+        console.log('🔍 Participant:', participant.user.name, 'has character:', hasCharacter);
+        console.log('🔍 Participant characters:', participant.characters.map(c => c.name));
+        return hasCharacter;
+      });
+      
+      console.log('🔍 Character', character.name, 'is already in game:', isAlreadyInGame);
       return !isAlreadyInGame;
     });
     
+    console.log('🔍 Available characters:', availableCharacters.map(c => c.name));
+    console.log('🔍 Available characters count:', availableCharacters.length);
     return availableCharacters;
   };
 
   const handleAddCharacter = async () => {
-    if (!selectedCharacterId || !currentGame || !selectedParticipant) return;
+    console.log('🔍 handleAddCharacter called');
+    console.log('🔍 selectedCharacterId:', selectedCharacterId);
+    console.log('🔍 currentGame:', currentGame);
+    console.log('🔍 selectedParticipant:', selectedParticipant);
+    console.log('🔍 currentGame.id:', currentGame?.id);
+    
+    if (!selectedCharacterId || !currentGame || !selectedParticipant) {
+      console.log('❌ Missing required data for add character');
+      console.log('❌ selectedCharacterId missing:', !selectedCharacterId);
+      console.log('❌ currentGame missing:', !currentGame);
+      console.log('❌ selectedParticipant missing:', !selectedParticipant);
+      return;
+    }
 
     try {
+      setIsAddingCharacter(true);
       setError(null);
 
-      const response = await fetch(`/api/games/${currentGame.id}/participants/${selectedParticipant}/character`, {
+      const url = `/api/games/${currentGame.id}/participants/${selectedParticipant}/character`;
+      console.log('🔍 Making PUT request to:', url);
+      console.log('🔍 Request body:', { characterId: selectedCharacterId });
+      console.log('🔍 Full URL:', `${window.location.origin}${url}`);
+
+      const response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -297,11 +343,17 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
         }),
       });
 
+      console.log('🔍 Response status:', response.status);
+      console.log('🔍 Response headers:', response.headers);
+      
       if (!response.ok) {
         const errorData = await response.json();
+        console.log('❌ Error response:', errorData);
         throw new Error(errorData.error || 'Failed to add character');
       }
 
+      console.log('✅ Character added successfully');
+      
       // Refresh the game data
       await refreshGameData();
       
@@ -313,7 +365,10 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
       // Also trigger parent refresh
       onGameUpdated?.();
     } catch (err) {
+      console.log('❌ Error in handleAddCharacter:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsAddingCharacter(false);
     }
   };
 
@@ -1029,33 +1084,6 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
               </div>
 
               <div className="space-y-4">
-                {/* Participant selector for DMs */}
-                {isDM && currentGame.participants.length > 0 && (
-                  <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
-                      Select Participant
-                    </label>
-                    <select
-                      value={selectedParticipant || ''}
-                      onChange={(e) => setSelectedParticipant(e.target.value)}
-                      className="w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2"
-                      style={{
-                        backgroundColor: 'var(--color-card-secondary)',
-                        color: 'var(--color-text-primary)',
-                        borderColor: 'var(--color-border)',
-                        outlineColor: 'var(--color-accent)'
-                      }}
-                    >
-                      <option value="">Choose a participant...</option>
-                      {currentGame.participants.map((participant) => (
-                        <option key={participant.id} value={participant.id}>
-                          {participant.user.name || participant.user.email}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
                     Select Character
@@ -1105,10 +1133,10 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                   </button>
                   <button
                     onClick={handleAddCharacter}
-                    disabled={!selectedCharacterId || getAvailableCharacters().length === 0 || (isDM && !selectedParticipant)}
+                    disabled={!selectedCharacterId || getAvailableCharacters().length === 0 || isAddingCharacter}
                     className="px-4 py-2 text-sm bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors disabled:opacity-50"
                   >
-                    Add Character
+                    {isAddingCharacter ? 'Adding...' : 'Add Character'}
                   </button>
                 </div>
               </div>

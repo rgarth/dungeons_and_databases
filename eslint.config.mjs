@@ -16,33 +16,34 @@ const eslintConfig = [
       // Jest configuration
       "jest.config.js",
       "jest.setup.js",
-      // Markdown files
-      "**/*.md", 
-      "**/*.mdx", 
-      "**/README.md", 
-      "**/docs/**/*.md",
-      // Cursor configuration
-      ".cursorrules",
-      // Next.js build output and generated files
+      // Build outputs
       ".next/**/*",
       ".next/types/**/*",
       "out/**/*",
-      // Dependencies
-      "node_modules/**/*",
-      // Build output and temporary files
       "dist/**/*",
       "build/**/*",
       ".turbo/**/*",
+      // Dependencies
+      "node_modules/**/*",
+      // Environment files
+      ".env*",
+      "!.env.example",
+      // TypeScript declaration files
+      "**/*.d.ts",
+      // Documentation and markdown files
+      "**/*.md",
+      "**/*.mdx",
+      "docs/**/*.md",
+      "README.md",
+      "DEPLOYMENT.md",
+      "SINGLE_SOURCE_OF_TRUTH.md",
+      // Cursor configuration
+      ".cursorrules",
       // Scripts and generated files that shouldn't be linted
       "scripts/**/*.js",
       "cache_status_checker.js",
       // Prisma generated files
       "prisma/generated/**/*",
-      // TypeScript declaration files
-      "**/*.d.ts",
-      // Environment files
-      ".env*",
-      "!.env.example",
     ],
   },
   // Then apply Next.js rules to remaining files

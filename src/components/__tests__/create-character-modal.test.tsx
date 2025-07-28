@@ -2,6 +2,9 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { CreateCharacterModal } from '../create-character-modal';
 import { CharacterCreationService } from '@/services/character/creation';
 import { useDndData } from '@/components/providers/dnd-data-provider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SessionProvider } from 'next-auth/react';
+import { DndDataProvider } from '@/components/providers/dnd-data-provider';
 
 // Mock the providers and services
 jest.mock('@/components/providers/dnd-data-provider');
@@ -11,8 +14,42 @@ jest.mock('@/lib/dnd/subclasses', () => ({
   choosesSubclassAtCreation: jest.fn()
 }));
 
+jest.mock('@/lib/client-cache', () => ({
+  clientCache: {
+    initialize: jest.fn().mockResolvedValue(undefined),
+    getWeapons: jest.fn().mockReturnValue([]),
+    getArmor: jest.fn().mockReturnValue([]),
+    getAmmunition: jest.fn().mockReturnValue([])
+  }
+}));
+
+// Mock the character mutations hook
+jest.mock('@/hooks/use-character-mutations', () => ({
+  useCharacterMutations: jest.fn(() => ({
+    createCharacter: jest.fn(),
+    updateCharacter: jest.fn(),
+    deleteCharacter: jest.fn()
+  }))
+}));
+
+// Mock the toast notifications
+jest.mock('react-hot-toast', () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+    loading: jest.fn(),
+    dismiss: jest.fn()
+  }
+}));
+
 // Mock global fetch
 global.fetch = jest.fn();
+
+// Mock Next.js Image component
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: ({ src, alt, ...props }: { src: string; alt: string; [key: string]: unknown }) => <img src={src} alt={alt} {...props} />
+}));
 
 const mockUseDndData = useDndData as jest.MockedFunction<typeof useDndData>;
 const mockCharacterCreationService = CharacterCreationService.getInstance as jest.MockedFunction<typeof CharacterCreationService.getInstance>;
@@ -264,13 +301,34 @@ describe('CreateCharacterModal', () => {
   });
 
   const renderModal = () => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
+
     return render(
-      <CreateCharacterModal 
-        onClose={mockOnClose} 
-        onCharacterCreated={mockOnCharacterCreated} 
-      />
+      <SessionProvider session={null}>
+        <QueryClientProvider client={queryClient}>
+          <DndDataProvider>
+            <CreateCharacterModal 
+              onClose={mockOnClose} 
+              onCharacterCreated={mockOnCharacterCreated} 
+            />
+          </DndDataProvider>
+        </QueryClientProvider>
+      </SessionProvider>
     );
   };
+
+  // Add a simple test to debug what's rendering
+  it('should render something', () => {
+    const { container } = renderModal();
+    console.log('Container HTML:', container.innerHTML);
+    expect(container.innerHTML).not.toBe('');
+  });
 
   describe('Basic Functionality', () => {
     it('should render all required form fields', () => {

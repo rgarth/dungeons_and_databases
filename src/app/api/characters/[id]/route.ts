@@ -64,6 +64,18 @@ export async function GET(
       }
     }
 
+    // Debug logging
+    console.log('🔍 API DEBUG: Individual character endpoint - Character ID:', characterId);
+    console.log('🔍 API DEBUG: Full character object:', character);
+    console.log('🔍 API DEBUG: Character ability scores:', {
+      strength: character?.strength,
+      dexterity: character?.dexterity,
+      constitution: character?.constitution,
+      intelligence: character?.intelligence,
+      wisdom: character?.wisdom,
+      charisma: character?.charisma
+    });
+
     return NextResponse.json(character);
   } catch (error) {
     console.error("Error fetching character:", error);

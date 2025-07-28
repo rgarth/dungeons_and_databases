@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { X, Search, Plus } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { EncounterParticipant } from '@/types/encounter';
@@ -28,11 +28,26 @@ export default function AddParticipantModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchCharacters = useCallback(async () => {
+    try {
+      console.log('🔍 DEBUG: Fetching characters for game:', gameId);
+      const response = await fetch(`/api/characters?gameId=${gameId}`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('🔍 DEBUG: Characters fetched:', data);
+        setCharacters(data);
+        setFilteredCharacters(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch characters:', error);
+    }
+  }, [gameId]);
+
   useEffect(() => {
     if (isOpen) {
       fetchCharacters();
     }
-  }, [isOpen]);
+  }, [isOpen, fetchCharacters]);
 
   useEffect(() => {
     if (searchTerm.trim() === '') {
@@ -47,18 +62,7 @@ export default function AddParticipantModal({
     }
   }, [searchTerm, characters]);
 
-  const fetchCharacters = async () => {
-    try {
-      const response = await fetch(`/api/characters?gameId=${gameId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setCharacters(data);
-        setFilteredCharacters(data);
-      }
-    } catch (error) {
-      console.error('Failed to fetch characters:', error);
-    }
-  };
+
 
   const handleAddParticipant = async () => {
     if (!selectedCharacter) return;
@@ -68,6 +72,20 @@ export default function AddParticipantModal({
       setError(null);
 
 
+
+
+
+      // Debug: Log the character data being sent
+      console.log('🔍 DEBUG: Character data being sent to encounter:', selectedCharacter);
+      console.log('🔍 DEBUG: Dexterity value:', selectedCharacter.dexterity, 'type:', typeof selectedCharacter.dexterity);
+      console.log('🔍 DEBUG: All ability scores:', {
+        strength: selectedCharacter.strength,
+        dexterity: selectedCharacter.dexterity,
+        constitution: selectedCharacter.constitution,
+        intelligence: selectedCharacter.intelligence,
+        wisdom: selectedCharacter.wisdom,
+        charisma: selectedCharacter.charisma
+      });
 
       const response = await fetch(`/api/games/${gameId}/encounters/${encounterId}/participants`, {
         method: 'POST',

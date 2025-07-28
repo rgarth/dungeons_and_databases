@@ -113,5 +113,5 @@ export function useEncounterEvents({
         }
       }
     };
-  }, [gameId]); // Only depend on gameId to prevent unnecessary reconnections
+  }, [gameId, onEncounterCreated, onEncounterUpdated, onEncounterDeleted, onMonsterAdded, onParticipantAdded, onInitiativeUpdated]); // Include all callback dependencies
 } 

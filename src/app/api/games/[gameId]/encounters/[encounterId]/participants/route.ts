@@ -16,9 +16,40 @@ export async function POST(
     }
 
     const { gameId, encounterId } = await params;
-    const { characterId, characterName, characterData } = await request.json();
+    const { characterId, characterName } = await request.json();
 
+    // Fetch the latest character data from the database
+    const character = await prisma.character.findUnique({
+      where: { id: characterId },
+    });
 
+    if (!character) {
+      return NextResponse.json({ error: 'Character not found' }, { status: 404 });
+    }
+
+    // Use the full character object as the snapshot
+    const characterData = character;
+
+    // Debug: Log what we're about to store
+    console.log('🔍 API DEBUG: Storing character data in encounter:', {
+      encounterId,
+      characterId,
+      characterName,
+      characterData,
+      maxHP: characterData.hitPoints || 10
+    });
+    console.log('🔍 API DEBUG: Character data ability scores:', {
+      strength: characterData?.strength,
+      dexterity: characterData?.dexterity,
+      constitution: characterData?.constitution,
+      intelligence: characterData?.intelligence,
+      wisdom: characterData?.wisdom,
+      charisma: characterData?.charisma
+    });
+    console.log('🔍 API DEBUG: Full character data object:', characterData);
+    console.log('🔍 API DEBUG: Character data type:', typeof characterData);
+    console.log('🔍 API DEBUG: Character data keys:', Object.keys(characterData || {}));
+    console.log('🔍 API DEBUG: Character data has dexterity:', 'dexterity' in (characterData || {}));
 
     if (!characterId || !characterName || !characterData) {
       return NextResponse.json(
@@ -76,6 +107,8 @@ interface EncounterParticipant {
         { status: 400 }
       );
     }
+
+
 
     const encounterParticipant = await (prisma as unknown as { encounterParticipant: { create: (args: { data: { encounterId: string; characterId: string; characterName: string; characterData: unknown; maxHP: number } }) => Promise<EncounterParticipant> } }).encounterParticipant.create({
       data: {

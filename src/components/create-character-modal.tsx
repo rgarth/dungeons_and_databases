@@ -594,7 +594,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     if (randomArray) {
       setRandomScoreArray(randomArray);
     }
-  }, [statMethod]); // Removed characterCreationService from dependencies since it's a singleton
+  }, [statMethod, characterCreationService]); // Include characterCreationService in dependencies
 
   // Add a ref to track if weapon suggestions have been processed
   const processedWeaponSuggestionsRef = useRef<string>('');
@@ -1228,7 +1228,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     if (!hasLoadedAllClassData.current && !isLoadingAllClassData) {
       loadAllClassData();
     }
-  }, []); // Remove loadAllClassData dependency - it's stable with useCallback
+  }, [isLoadingAllClassData, loadAllClassData]); // Include dependencies
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
