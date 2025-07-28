@@ -88,53 +88,55 @@ export default function InitiativeRoller({
       });
     });
 
+    // Sort by initiative (highest first)
+    order.sort((a, b) => b.initiative - a.initiative);
+
     setInitiativeOrder(order);
   };
 
-  const rollInitiativeForMonsters = async () => {
+    const rollInitiativeForMonsters = async () => {
     try {
       setRolling(true);
       setError(null);
 
-      // Get all monster instances that need initiative rolled
-      const monstersToRoll = initiativeOrder.filter(participant => 
-        participant.type === 'monster' && participant.initiative === 0
+      // Get all monsters from the encounter
+      const allMonsters = encounter.monsters.flatMap(monster => 
+        monster.instances?.map((instance) => ({
+          monsterId: monster.id,
+          instanceId: instance.id,
+          instanceNumber: instance.instanceNumber,
+          name: `${monster.monsterName} #${instance.instanceNumber}`,
+          dexMod: getModifier(monster.monsterData.dexterity)
+        })) || []
       );
 
-      if (monstersToRoll.length === 0) {
-        setError('No monsters need initiative rolled');
+      if (allMonsters.length === 0) {
+        setError('No monsters found');
         return;
       }
 
-      // Roll initiative for each individual monster instance
-      const updatedOrder = [...initiativeOrder];
-      const monsterUpdates = [];
+      // Roll initiative for each monster instance
+      const updates = [];
+      const newInitiativeOrder = [...initiativeOrder];
 
-      for (const participant of monstersToRoll) {
-        // Find the monster data for this participant
-        const monsterData = encounter.monsters.find(m => participant.id.startsWith(m.id));
-        if (!monsterData) continue;
-
-        // Find the specific instance for this participant
-        const instanceIndex = parseInt(participant.id.split('-')[1]) || 0;
-        const monsterInstance = monsterData.instances?.[instanceIndex]; // Use direct array index
-        
-        if (!monsterInstance) continue;
-
-        // Generate random number 1-20 + dex modifier
+      for (const monster of allMonsters) {
         const roll = Math.floor(Math.random() * 20) + 1;
-        const dexMod = getModifier(monsterData.monsterData.dexterity);
-        const initiative = roll + dexMod;
+        const initiative = roll + monster.dexMod;
 
         // Update local state
-        const participantIndex = updatedOrder.findIndex(p => p.id === participant.id);
+        const participantIndex = newInitiativeOrder.findIndex(p => 
+          p.name === monster.name
+        );
         if (participantIndex !== -1) {
-          updatedOrder[participantIndex] = { ...participant, initiative };
+          newInitiativeOrder[participantIndex] = { 
+            ...newInitiativeOrder[participantIndex], 
+            initiative 
+          };
         }
 
-        // Queue database update for this specific monster instance
-        monsterUpdates.push(
-          fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/monsters/${monsterData.id}/instances/${monsterInstance.id}/initiative`, {
+        // Queue database update
+        updates.push(
+          fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/monsters/${monster.monsterId}/instances/${monster.instanceId}/initiative`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ initiative })
@@ -143,12 +145,12 @@ export default function InitiativeRoller({
       }
 
       // Update local state
-      setInitiativeOrder(updatedOrder);
+      setInitiativeOrder(newInitiativeOrder);
 
-      // Save all monster initiatives to database
-      await Promise.all(monsterUpdates);
+      // Save all to database
+      await Promise.all(updates);
 
-      // Fetch updated encounter
+      // Refresh encounter data
       const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
       if (response.ok) {
         const updatedEncounter = await response.json();
