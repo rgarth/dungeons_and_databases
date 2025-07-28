@@ -53,6 +53,16 @@ interface EncounterMonster {
   maxHP: number;
 }
 
+interface EncounterMonsterInstance {
+  id: string;
+  encounterMonsterId: string;
+  instanceNumber: number;
+  initiative?: number;
+  currentHP?: number;
+  isActive: boolean;
+  createdAt: string;
+}
+
     // Verify the encounter exists and belongs to this game
     const encounter = await (prisma as unknown as { encounter: { findUnique: (args: { where: { id: string } }) => Promise<Encounter | null> } }).encounter.findUnique({
       where: { id: encounterId }
@@ -62,6 +72,7 @@ interface EncounterMonster {
       return NextResponse.json({ error: 'Encounter not found' }, { status: 404 });
     }
 
+    // Create the encounter monster
     const encounterMonster = await (prisma as unknown as { encounterMonster: { create: (args: { data: { encounterId: string; monsterName: string; monsterData: unknown; quantity: number; maxHP: number } }) => Promise<EncounterMonster> } }).encounterMonster.create({
       data: {
         encounterId,
@@ -72,7 +83,27 @@ interface EncounterMonster {
       }
     });
 
-    return NextResponse.json(encounterMonster, { status: 201 });
+    // Create individual monster instances for each monster in the quantity
+    const monsterInstances = [];
+    for (let i = 1; i <= quantity; i++) {
+      const instance = await (prisma as unknown as { encounterMonsterInstance: { create: (args: { data: { encounterMonsterId: string; instanceNumber: number; currentHP: number; isActive: boolean } }) => Promise<EncounterMonsterInstance> } }).encounterMonsterInstance.create({
+        data: {
+          encounterMonsterId: encounterMonster.id,
+          instanceNumber: i,
+          currentHP: monsterData.hitPoints || 10,
+          isActive: true
+        }
+      });
+      monsterInstances.push(instance);
+    }
+
+    // Return the encounter monster with its instances
+    const result = {
+      ...encounterMonster,
+      instances: monsterInstances
+    };
+
+    return NextResponse.json(result, { status: 201 });
   } catch (error) {
     console.error('Error adding monster to encounter:', error);
     return NextResponse.json(
