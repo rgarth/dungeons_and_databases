@@ -203,18 +203,18 @@ export default function EncounterDetailsModal({
     }
   };
 
-  const handleAddParty = async () => {
+    const handleAddParty = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch all characters in the game
       const charactersResponse = await fetch(`/api/characters?gameId=${encounter.gameId}`);
       if (!charactersResponse.ok) {
         throw new Error('Failed to fetch characters');
       }
-      
+
       const characters = await charactersResponse.json();
-      
+
       // Add each character to the encounter
       const addPromises = characters.map(async (character: { id: string; name: string }) => {
         const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/participants`, {
@@ -226,18 +226,18 @@ export default function EncounterDetailsModal({
             characterData: character
           }),
         });
-        
+
         if (!response.ok) {
           console.error(`Failed to add character ${character.name} to encounter`);
           return null;
         }
-        
+
         return response.json();
       });
-      
+
       const results = await Promise.all(addPromises);
       const successfulAdds = results.filter(result => result !== null);
-      
+
       if (successfulAdds.length > 0) {
         // Refresh encounter data
         const encounterResponse = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
@@ -247,13 +247,30 @@ export default function EncounterDetailsModal({
           onEncounterUpdated(updatedEncounter);
         }
       }
-      
+
       console.log(`Added ${successfulAdds.length} characters to encounter`);
     } catch (error) {
       console.error('Error adding party to encounter:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Check if all participants have initiative rolled
+  const allParticipantsHaveInitiative = () => {
+    // Check characters
+    const charactersHaveInitiative = currentEncounter.participants.every(
+      participant => participant.initiative !== undefined && participant.initiative !== null
+    );
+
+    // Check monsters
+    const monstersHaveInitiative = currentEncounter.monsters.every(monster =>
+      monster.instances?.every(instance => 
+        instance.initiative !== undefined && instance.initiative !== null
+      )
+    );
+
+    return charactersHaveInitiative && monstersHaveInitiative;
   };
 
   const characterCount = currentEncounter.participants.length;
@@ -374,7 +391,14 @@ export default function EncounterDetailsModal({
           )}
           {(characterCount > 0 || monsterCount > 0) && (
             <Button
-              onClick={() => setShowInitiativeRoller(true)}
+              onClick={() => {
+                console.log('🎲 Roll Initiative button clicked');
+                console.log('Current encounter:', currentEncounter);
+                console.log('Character count:', characterCount);
+                console.log('Monster count:', monsterCount);
+                console.log('Monsters:', currentEncounter.monsters);
+                setShowInitiativeRoller(true);
+              }}
               className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]"
             >
               <Dice1 className="h-4 w-4 mr-1" />
@@ -384,7 +408,7 @@ export default function EncounterDetailsModal({
           {isDM && (
             <Button
               onClick={handleToggleActive}
-              disabled={loading}
+              disabled={loading || (!currentEncounter.isActive && !allParticipantsHaveInitiative())}
               className={`${
                 currentEncounter.isActive
                   ? 'bg-[var(--color-warning)] hover:bg-[var(--color-warning-hover)] text-[var(--color-warning-text)]'
