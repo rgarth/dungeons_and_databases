@@ -151,7 +151,7 @@ export default function EncounterDetailsModal({
       setError(null);
 
       // Fetch all characters in the game
-      const charactersResponse = await fetch(`/api/games/${encounter.gameId}/characters`);
+      const charactersResponse = await fetch(`/api/characters?gameId=${encounter.gameId}`);
       if (!charactersResponse.ok) {
         throw new Error('Failed to fetch game characters');
       }
@@ -404,9 +404,9 @@ export default function EncounterDetailsModal({
                       <span className="font-medium text-[var(--color-text-primary)]">
                         {monster.monsterName} {monster.quantity > 1 && `(×${monster.quantity})`}
                       </span>
-                      {monster.instances.some(instance => instance.initiative !== undefined) && (
+                      {monster.instances?.some(instance => instance.initiative !== undefined) && (
                         <span className="text-sm text-[var(--color-accent)] font-mono">
-                          Initiative: {monster.instances.find(instance => instance.initiative !== undefined)?.initiative}
+                          Initiative: {monster.instances?.find(instance => instance.initiative !== undefined)?.initiative}
                         </span>
                       )}
                     </div>

@@ -7,7 +7,7 @@ import { getRacialLanguages } from "@/lib/dnd/languages";
 import { getClassLanguages } from "@/lib/dnd/languages";
 import { DndDataService } from "@/lib/dnd-data-service";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -24,20 +24,85 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // More debug logging
-    console.log('User ID:', user.id);
+    const { searchParams } = new URL(request.url);
+    const gameId = searchParams.get('gameId');
 
-    const characters = await prisma.character.findMany({
-      where: {
-        userId: user.id,
-      },
-      orderBy: {
-        updatedAt: 'desc',
-      },
-    });
+    let characters;
 
-    // Log character count
-    console.log('Found characters:', characters.length);
+    if (gameId) {
+      // Get characters for a specific game
+      // Check if user is a participant in this game
+      const participant = await prisma.gameParticipant.findFirst({
+        where: {
+          gameId: gameId,
+          userId: user.id
+        }
+      });
+
+      if (!participant) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+      }
+
+      // Get the game to find all participants
+      const game = await prisma.game.findUnique({
+        where: { id: gameId },
+        include: {
+          participants: {
+            include: {
+              user: true
+            }
+          }
+        }
+      });
+
+      if (!game) {
+        return NextResponse.json({ error: 'Game not found' }, { status: 404 });
+      }
+
+      // Collect all character IDs from all participants
+      const allCharacterIds: string[] = [];
+      game.participants.forEach(participant => {
+        if (participant.characterIds && Array.isArray(participant.characterIds)) {
+          allCharacterIds.push(...(participant.characterIds as string[]));
+        }
+      });
+
+      // Get all characters for this game
+      characters = await prisma.character.findMany({
+        where: {
+          id: {
+            in: allCharacterIds
+          }
+        },
+        select: {
+          id: true,
+          name: true,
+          race: true,
+          class: true,
+          level: true,
+          hitPoints: true,
+          maxHitPoints: true,
+          strength: true,
+          dexterity: true,
+          constitution: true,
+          intelligence: true,
+          wisdom: true,
+          charisma: true,
+          userId: true,
+          // Add other fields as needed for encounter setup
+        }
+      });
+    } else {
+      // Get all characters for the current user
+      characters = await prisma.character.findMany({
+        where: {
+          userId: user.id,
+        },
+        orderBy: {
+          updatedAt: 'desc',
+        },
+      });
+    }
 
     return NextResponse.json(characters);
   } catch (error) {

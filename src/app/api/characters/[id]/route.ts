@@ -15,6 +15,8 @@ export async function GET(
     }
 
     const { id: characterId } = await params;
+    const { searchParams } = new URL(request.url);
+    const gameId = searchParams.get('gameId');
     
     // Find user by email since session.user.id might not be available
     const user = await prisma.user.findUnique({
@@ -25,16 +27,41 @@ export async function GET(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Only allow users to access their own characters
-    const character = await prisma.character.findFirst({
-      where: {
-        id: characterId,
-        userId: user.id,
-      },
-    });
+    let character;
 
-    if (!character) {
-      return NextResponse.json({ error: "Character not found" }, { status: 404 });
+    if (gameId) {
+      // Check if user is DM of this game
+      const game = await prisma.game.findFirst({
+        where: {
+          id: gameId,
+          dmId: user.id,
+        },
+      });
+
+      if (!game) {
+        return NextResponse.json({ error: "Game not found or access denied" }, { status: 404 });
+      }
+
+      // Get the character data (DM can view any character in their game)
+      character = await prisma.character.findUnique({
+        where: { id: characterId },
+      });
+
+      if (!character) {
+        return NextResponse.json({ error: "Character not found" }, { status: 404 });
+      }
+    } else {
+      // Only allow users to access their own characters
+      character = await prisma.character.findFirst({
+        where: {
+          id: characterId,
+          userId: user.id,
+        },
+      });
+
+      if (!character) {
+        return NextResponse.json({ error: "Character not found" }, { status: 404 });
+      }
     }
 
     return NextResponse.json(character);

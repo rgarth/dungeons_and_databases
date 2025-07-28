@@ -33,7 +33,12 @@ export async function GET(
       where: { id: encounterId },
       include: {
         monsters: {
-          orderBy: { createdAt: 'asc' }
+          orderBy: { createdAt: 'asc' },
+          include: {
+            instances: {
+              orderBy: { instanceNumber: 'asc' }
+            }
+          }
         },
         participants: {
           orderBy: { createdAt: 'asc' }
@@ -93,7 +98,12 @@ export async function PUT(
       },
       include: {
         monsters: {
-          orderBy: { createdAt: 'asc' }
+          orderBy: { createdAt: 'asc' },
+          include: {
+            instances: {
+              orderBy: { instanceNumber: 'asc' }
+            }
+          }
         },
         participants: {
           orderBy: { createdAt: 'asc' }

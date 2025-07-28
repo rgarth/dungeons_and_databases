@@ -432,8 +432,8 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
         // User's own character - use regular character API
         response = await fetch(`/api/characters/${characterId}`);
       } else if (isDM) {
-        // DM viewing other player's character - use game-specific read-only API
-        response = await fetch(`/api/games/${currentGame?.id}/characters/${characterId}`);
+        // DM viewing other player's character - use game context
+        response = await fetch(`/api/characters/${characterId}?gameId=${currentGame?.id}`);
       } else {
         // Other player viewing another player's character - use public API
         response = await fetch(`/api/games/${currentGame?.id}/characters/${characterId}/public`);

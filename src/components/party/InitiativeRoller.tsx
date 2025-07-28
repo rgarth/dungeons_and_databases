@@ -470,10 +470,35 @@ export default function InitiativeRoller({
       try {
         const characterId = participant.characterData.id;
         if (characterId) {
-          const characterResponse = await fetch(`/api/characters/${characterId}`);
+          // Try to fetch from the character API first
+          let characterResponse = await fetch(`/api/characters/${characterId}`);
+          if (!characterResponse.ok) {
+                      // Fallback to game-specific characters endpoint
+          characterResponse = await fetch(`/api/characters?gameId=${encounter.gameId}`);
           if (characterResponse.ok) {
+            const gameCharacters = await characterResponse.json();
+            const freshCharacterData = gameCharacters.find((char: { id: string }) => char.id === characterId);
+              if (freshCharacterData) {
+                console.log('🎲 Fresh character data from game endpoint:', freshCharacterData);
+                
+                // Update the participant's character data
+                const updatedOrder = initiativeOrder.map(p => 
+                  p.id === participantId 
+                    ? { ...p, characterData: freshCharacterData }
+                    : p
+                );
+                setInitiativeOrder(updatedOrder);
+                
+                // Update the participant reference with proper type checking
+                const updatedParticipant = updatedOrder.find(p => p.id === participantId);
+                if (updatedParticipant && updatedParticipant.characterData) {
+                  updatedParticipant.characterData = freshCharacterData;
+                }
+              }
+            }
+          } else {
             const freshCharacterData = await characterResponse.json();
-            console.log('🎲 Fresh character data:', freshCharacterData);
+            console.log('🎲 Fresh character data from character endpoint:', freshCharacterData);
             
             // Update the participant's character data
             const updatedOrder = initiativeOrder.map(p => 
@@ -674,17 +699,6 @@ export default function InitiativeRoller({
                           {participant.initiative}
                         </span>
                         {participant.type === 'character' && participant.characterData && (() => {
-                          console.log('🔍 DEBUG: Character data for', participant.name, ':', participant.characterData);
-                          console.log('🔍 DEBUG: Dexterity value:', participant.characterData.dexterity, 'type:', typeof participant.characterData.dexterity);
-                          console.log('🔍 DEBUG: All ability scores:', {
-                            strength: participant.characterData.strength,
-                            dexterity: participant.characterData.dexterity,
-                            constitution: participant.characterData.constitution,
-                            intelligence: participant.characterData.intelligence,
-                            wisdom: participant.characterData.wisdom,
-                            charisma: participant.characterData.charisma
-                          });
-                          
                           // Handle undefined/null dexterity values
                           const dexValue = participant.characterData.dexterity;
                           let dexMod = 0;
@@ -694,7 +708,6 @@ export default function InitiativeRoller({
                               dexMod = getModifier(numericDex);
                             }
                           }
-                          console.log('🔍 DEBUG: Converted dex value:', dexValue, 'modifier:', dexMod);
                           return (
                             <span className="text-xs text-[var(--color-text-secondary)]">
                               (1d20 {dexMod >= 0 ? '+' : ''}{dexMod} DEX)

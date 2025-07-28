@@ -82,25 +82,14 @@ interface EncounterParticipant {
 
     // Parse the character data to check ownership
     const characterData = encounterParticipant.characterData as { userId?: string };
-    console.log('🔍 API DEBUG: Checking character ownership');
-    console.log('Session user ID:', session.user.id);
-    console.log('Is DM:', isDM);
-    console.log('Character data from DB:', encounterParticipant.characterData);
-    console.log('Parsed character data:', characterData);
-    console.log('Character user ID:', characterData?.userId);
-    console.log('Ownership check result:', characterData?.userId === session.user.id);
     
     // Allow DMs to modify any character's initiative
     if (isDM) {
-      console.log('✅ Access granted: DM can modify any character initiative');
+      // DM can modify any character's initiative
     }
     // For non-DMs, check character ownership
     else if (characterData && characterData.userId && characterData.userId !== session.user.id) {
-      console.log('❌ Access denied: Character ownership mismatch');
       return NextResponse.json({ error: 'You can only roll initiative for your own characters' }, { status: 403 });
-    }
-    else {
-      console.log('✅ Access granted: Character ownership verified or missing userId (old data)');
     }
 
     // Update the participant's initiative
