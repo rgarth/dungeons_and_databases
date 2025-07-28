@@ -26,7 +26,6 @@ import {
 } from "@/services/character/creation";
 
 import type { CharacterAvatarData } from '@/types/character';
-import Image from 'next/image';
 import { useDndData } from '@/components/providers/dnd-data-provider';
 import { BackgroundSelector, SelectedCharacteristics as BackgroundCharacteristics } from '@/components/shared/BackgroundSelector';
 import { AvatarGenerator } from '@/components/shared/AvatarGenerator';
@@ -2067,14 +2066,11 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                         <h4 className="text-white font-medium" style={{ color: 'var(--color-text-primary)' }}>Avatar Preview</h4>
                         {generatedFullBodyAvatar ? (
                           <div className="space-y-3">
-                            <Image
+                            <img
                               src={generatedFullBodyAvatar}
                               alt="Generated character avatar"
-                              width={192}
-                              height={336}
                               className="w-48 mx-auto rounded-lg border-2 object-cover"
                               style={{ borderColor: 'var(--color-primary)' }}
-                              priority
                             />
                             <div className="text-center">
                               <button
