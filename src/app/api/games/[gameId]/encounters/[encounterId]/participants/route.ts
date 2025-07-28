@@ -41,8 +41,22 @@ export async function POST(
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
+interface Encounter {
+  id: string;
+  gameId: string;
+}
+
+interface EncounterParticipant {
+  id: string;
+  encounterId: string;
+  characterId: string;
+  characterName: string;
+  characterData: unknown;
+  maxHP: number;
+}
+
     // Verify the encounter exists and belongs to this game
-    const encounter = await (prisma as any).encounter.findUnique({
+    const encounter = await (prisma as unknown as { encounter: { findUnique: (args: { where: { id: string } }) => Promise<Encounter | null> } }).encounter.findUnique({
       where: { id: encounterId }
     });
 
@@ -51,7 +65,7 @@ export async function POST(
     }
 
     // Check if character is already in this encounter
-    const existingParticipant = await (prisma as any).encounterParticipant.findFirst({
+    const existingParticipant = await (prisma as unknown as { encounterParticipant: { findFirst: (args: { where: { encounterId: string; characterId: string } }) => Promise<EncounterParticipant | null> } }).encounterParticipant.findFirst({
       where: {
         encounterId,
         characterId
@@ -65,7 +79,7 @@ export async function POST(
       );
     }
 
-    const encounterParticipant = await (prisma as any).encounterParticipant.create({
+    const encounterParticipant = await (prisma as unknown as { encounterParticipant: { create: (args: { data: { encounterId: string; characterId: string; characterName: string; characterData: unknown; maxHP: number } }) => Promise<EncounterParticipant> } }).encounterParticipant.create({
       data: {
         encounterId,
         characterId,

@@ -48,8 +48,22 @@ export async function PUT(
     // Check if user is the DM
     const isDM = gameParticipant.isDm;
 
+interface Encounter {
+  id: string;
+  gameId: string;
+}
+
+interface EncounterParticipant {
+  id: string;
+  encounterId: string;
+  characterId: string;
+  characterName: string;
+  characterData: unknown;
+  initiative?: number;
+}
+
     // Verify the encounter exists and belongs to this game
-    const encounter = await (prisma as any).encounter.findUnique({
+    const encounter = await (prisma as unknown as { encounter: { findUnique: (args: { where: { id: string } }) => Promise<Encounter | null> } }).encounter.findUnique({
       where: { id: encounterId }
     });
 
@@ -58,7 +72,7 @@ export async function PUT(
     }
 
     // Get the encounter participant and verify character ownership
-    const encounterParticipant = await (prisma as any).encounterParticipant.findUnique({
+    const encounterParticipant = await (prisma as unknown as { encounterParticipant: { findUnique: (args: { where: { id: string } }) => Promise<EncounterParticipant | null> } }).encounterParticipant.findUnique({
       where: { id: participantId }
     });
 
@@ -90,7 +104,7 @@ export async function PUT(
     }
 
     // Update the participant's initiative
-    const updatedParticipant = await (prisma as any).encounterParticipant.update({
+    const updatedParticipant = await (prisma as unknown as { encounterParticipant: { update: (args: { where: { id: string }; data: { initiative: number } }) => Promise<EncounterParticipant> } }).encounterParticipant.update({
       where: { id: participantId },
       data: { initiative }
     });

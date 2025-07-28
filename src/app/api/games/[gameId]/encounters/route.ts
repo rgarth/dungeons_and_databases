@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { encounterCache } from '@/lib/encounter-cache';
+import { Encounter } from '@/types/encounter';
 import Pusher from 'pusher';
 
 const pusher = new Pusher({
@@ -43,7 +44,7 @@ export async function GET(
     let encounters = encounterCache.get(gameId);
     if (!encounters) {
       // Fetch from DB - using type assertion since Prisma client types may not be updated yet
-      const dbEncounters = await (prisma as any).encounter.findMany({
+      const dbEncounters = await (prisma as unknown as { encounter: { findMany: (args: { where: { gameId: string }; include: { monsters: { orderBy: { createdAt: string } }; participants: { orderBy: { createdAt: string } } }; orderBy: { createdAt: string } }) => Promise<unknown[]> } }).encounter.findMany({
         where: { gameId },
         include: {
           monsters: {
@@ -57,10 +58,13 @@ export async function GET(
       });
       
       // Transform Prisma result to match our Encounter type
-      const transformedEncounters = dbEncounters.map((enc: Record<string, unknown>) => ({
-        ...enc,
-        description: enc.description || undefined // Convert null to undefined
-      }));
+      const transformedEncounters = dbEncounters.map((enc: unknown) => {
+        const encounter = enc as Record<string, unknown>;
+        return {
+          ...encounter,
+          description: encounter.description || undefined // Convert null to undefined
+        } as Encounter;
+      });
       
       // Cache the result
       encounterCache.set(gameId, transformedEncounters);
@@ -113,7 +117,16 @@ export async function POST(
       return NextResponse.json({ error: 'Only the DM can create encounters' }, { status: 403 });
     }
 
-    const encounter = await (prisma as any).encounter.create({
+interface CreatedEncounter {
+  id: string;
+  gameId: string;
+  name: string;
+  description: string | null;
+  monsters: unknown[];
+  participants: unknown[];
+}
+
+    const encounter = await (prisma as unknown as { encounter: { create: (args: { data: { gameId: string; name: string; description: string | null }; include: { monsters: boolean; participants: boolean } }) => Promise<CreatedEncounter> } }).encounter.create({
       data: {
         gameId,
         name: name.trim(),
@@ -129,7 +142,7 @@ export async function POST(
     const transformedEncounter = {
       ...encounter,
       description: encounter.description || undefined
-    };
+    } as Encounter;
 
     // Update cache
     encounterCache.addEncounter(gameId, transformedEncounter);
