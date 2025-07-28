@@ -39,8 +39,20 @@ export async function PUT(
       return NextResponse.json({ error: 'Only the DM can update monster initiative' }, { status: 403 });
     }
 
+interface Encounter {
+  id: string;
+  gameId: string;
+}
+
+interface EncounterMonster {
+  id: string;
+  encounterId: string;
+  monsterName: string;
+  initiative?: number;
+}
+
     // Verify the encounter exists and belongs to this game
-    const encounter = await (prisma as any).encounter.findUnique({
+    const encounter = await (prisma as unknown as { encounter: { findUnique: (args: { where: { id: string } }) => Promise<Encounter | null> } }).encounter.findUnique({
       where: { id: encounterId }
     });
 
@@ -49,7 +61,7 @@ export async function PUT(
     }
 
     // Update the monster's initiative
-    const updatedMonster = await (prisma as any).encounterMonster.update({
+    const updatedMonster = await (prisma as unknown as { encounterMonster: { update: (args: { where: { id: string }; data: { initiative: number } }) => Promise<EncounterMonster> } }).encounterMonster.update({
       where: { id: monsterId },
       data: { initiative }
     });

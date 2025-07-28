@@ -39,8 +39,22 @@ export async function POST(
       return NextResponse.json({ error: 'Only the DM can add monsters to encounters' }, { status: 403 });
     }
 
+interface Encounter {
+  id: string;
+  gameId: string;
+}
+
+interface EncounterMonster {
+  id: string;
+  encounterId: string;
+  monsterName: string;
+  monsterData: unknown;
+  quantity: number;
+  maxHP: number;
+}
+
     // Verify the encounter exists and belongs to this game
-    const encounter = await (prisma as any).encounter.findUnique({
+    const encounter = await (prisma as unknown as { encounter: { findUnique: (args: { where: { id: string } }) => Promise<Encounter | null> } }).encounter.findUnique({
       where: { id: encounterId }
     });
 
@@ -48,7 +62,7 @@ export async function POST(
       return NextResponse.json({ error: 'Encounter not found' }, { status: 404 });
     }
 
-    const encounterMonster = await (prisma as any).encounterMonster.create({
+    const encounterMonster = await (prisma as unknown as { encounterMonster: { create: (args: { data: { encounterId: string; monsterName: string; monsterData: unknown; quantity: number; maxHP: number } }) => Promise<EncounterMonster> } }).encounterMonster.create({
       data: {
         encounterId,
         monsterName,

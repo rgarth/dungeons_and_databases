@@ -158,19 +158,20 @@ export default function EncounterDetailsModal({
       const characters = await charactersResponse.json();
 
       // Add all characters to the encounter
-      const addPromises = characters.map((character: any) =>
-        fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/participants`, {
+      const addPromises = characters.map((character: unknown) => {
+        const char = character as { id: string; name: string };
+        return fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/participants`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            characterId: character.id,
-            characterName: character.name,
+            characterId: char.id,
+            characterName: char.name,
             characterData: character
           }),
-        })
-      );
+        });
+      });
 
       const responses = await Promise.all(addPromises);
       const failedResponses = responses.filter(response => !response.ok);
@@ -403,9 +404,9 @@ export default function EncounterDetailsModal({
                       <span className="font-medium text-[var(--color-text-primary)]">
                         {monster.monsterName} {monster.quantity > 1 && `(×${monster.quantity})`}
                       </span>
-                      {monster.initiative !== undefined && (
+                      {monster.instances.some(instance => instance.initiative !== undefined) && (
                         <span className="text-sm text-[var(--color-accent)] font-mono">
-                          Initiative: {monster.initiative}
+                          Initiative: {monster.instances.find(instance => instance.initiative !== undefined)?.initiative}
                         </span>
                       )}
                     </div>

@@ -15,7 +15,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { gameId, encounterId, monsterId, instanceId } = await params;
+    const { gameId, encounterId, instanceId } = await params;
     const { initiative } = await request.json();
 
     if (typeof initiative !== 'number' || initiative < 0) {
@@ -39,8 +39,23 @@ export async function PUT(
       return NextResponse.json({ error: 'Only the DM can update monster initiative' }, { status: 403 });
     }
 
+interface Encounter {
+  id: string;
+  gameId: string;
+}
+
+interface EncounterMonsterInstance {
+  id: string;
+  encounterMonsterId: string;
+  instanceNumber: number;
+  initiative?: number;
+  encounterMonster?: {
+    encounterId: string;
+  };
+}
+
     // Verify the encounter exists and belongs to this game
-    const encounter = await (prisma as any).encounter.findUnique({
+    const encounter = await (prisma as unknown as { encounter: { findUnique: (args: { where: { id: string } }) => Promise<Encounter | null> } }).encounter.findUnique({
       where: { id: encounterId }
     });
 
@@ -49,7 +64,7 @@ export async function PUT(
     }
 
     // Verify the monster instance exists and belongs to this encounter
-    const monsterInstance = await (prisma as any).encounterMonsterInstance.findFirst({
+    const monsterInstance = await (prisma as unknown as { encounterMonsterInstance: { findFirst: (args: { where: { id: string; encounterMonster: { encounterId: string } }; include: { encounterMonster: boolean } }) => Promise<EncounterMonsterInstance | null> } }).encounterMonsterInstance.findFirst({
       where: { 
         id: instanceId,
         encounterMonster: {
@@ -66,7 +81,7 @@ export async function PUT(
     }
 
     // Update the monster instance's initiative
-    const updatedInstance = await (prisma as any).encounterMonsterInstance.update({
+    const updatedInstance = await (prisma as unknown as { encounterMonsterInstance: { update: (args: { where: { id: string }; data: { initiative: number } }) => Promise<EncounterMonsterInstance> } }).encounterMonsterInstance.update({
       where: { id: instanceId },
       data: { initiative }
     });

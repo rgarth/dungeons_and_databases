@@ -131,7 +131,7 @@ export function EquipmentTab({
       magicalProperties: template.description
     };
 
-    onAddWeapon(magicalWeapon as any);
+    onAddWeapon(magicalWeapon as unknown as Weapon | MagicalWeapon);
     setShowWeaponCreator(false);
     setSelectedBaseWeapon('');
     setSelectedMagicalTemplate('');
@@ -173,7 +173,7 @@ export function EquipmentTab({
   const handleWeaponSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const weaponName = e.target.value;
     const weapon = clientCache.getWeapons().find(w => w.name === weaponName);
-    setSelectedWeapon(weapon as any || null);
+    setSelectedWeapon((weapon as unknown as Weapon) || null);
   };
 
   return (
