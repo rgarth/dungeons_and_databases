@@ -19,7 +19,7 @@ describe('BackgroundTab', () => {
     id: '1',
     name: 'Test Character',
     race: 'Elf',
-    subrace: null,
+    subrace: undefined,
     class: 'Fighter',
     level: 1,
     background: 'Folk Hero',

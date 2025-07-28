@@ -103,7 +103,7 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
       setPendingStepTransition(null);
       console.log('🟢 Step transition completed');
     }
-  }, [pendingStepTransition]);
+  }, [pendingStepTransition, currentStep, levelUpOptions]);
 
   const getCurrentClass = () => {
     return levelUpTarget.targetClass;
@@ -324,7 +324,7 @@ export function LevelUpWizard({ character, onClose, onLevelUp }: LevelUpWizardPr
         updates.totalLevel = levelUpTarget.targetLevel;
       } else {
         // Multiclass - need to merge with existing classes
-        const parsedClasses = character.classes ? JSON.parse(character.classes) : null;
+        const parsedClasses = character.classes ? JSON.parse(character.classes as unknown as string) : null;
         const existingClasses: ClassLevel[] = parsedClasses || [{
           class: character.class,
           level: character.level,

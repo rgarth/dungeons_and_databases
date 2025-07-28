@@ -26,6 +26,8 @@ export default function GamesList({ games, isLoading, onGameSelect, onCreateGame
     return game.participants.reduce((total, p) => total + (p.characters?.length || 0), 0);
   };
 
+
+
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -94,10 +96,6 @@ export default function GamesList({ games, isLoading, onGameSelect, onCreateGame
                 <div className="flex justify-between">
                   <span>Characters:</span>
                   <span>{getCharacterCount(game)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Messages:</span>
-                  <span>0</span>
                 </div>
               </div>
               

@@ -155,7 +155,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       
       return (character.inventory as string[]).map(name => ({ name, quantity: 1 }));
     });
-  }, [character.id]); // Only sync when character ID changes, not when character data updates
+  }, [character.id, character]); // Include character in dependencies
 
   // Clean up all state when unmounting
   useEffect(() => {
@@ -202,9 +202,10 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
   
   // Cleanup timeout on unmount
   useEffect(() => {
+    const timeoutRef = updateTimeoutRef.current;
     return () => {
-      if (updateTimeoutRef.current) {
-        clearTimeout(updateTimeoutRef.current);
+      if (timeoutRef) {
+        clearTimeout(timeoutRef);
       }
     };
   }, []);
@@ -287,6 +288,8 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
       });
 
       if (response.ok) {
+        // Remove character from client cache
+        clientCache.removeCharacter(character.id);
         setShowDeleteDialog(false);
         onClose();
         onCharacterDeleted?.();
@@ -1154,7 +1157,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     const currentWeapons = currentCharacter.weapons || [];
     const weaponIndex = currentWeapons.findIndex(w => w.name === weaponName && w.stackable);
     
-    if (weaponIndex === -1 || !currentWeapons[weaponIndex].quantity || currentWeapons[weaponIndex].quantity <= 0) {
+    if (weaponIndex === -1 || !currentWeapons[weaponIndex]?.quantity || (currentWeapons[weaponIndex]?.quantity ?? 0) <= 0) {
       return;
     }
 

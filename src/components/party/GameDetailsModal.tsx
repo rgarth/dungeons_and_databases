@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Card } from '@/components/ui';
-import { Users, User, BookOpen, MessageSquare, Calendar } from 'lucide-react';
+import { Users, User, BookOpen, MessageSquare, Calendar, Sword } from 'lucide-react';
 import { Game } from '@/types/game';
 import { Character } from '@/types/character';
 import { useAvatar } from '@/hooks/use-character-mutations';
@@ -13,6 +13,8 @@ import { CharacterSheet } from '@/components/character-sheet';
 import ReadOnlyCharacterSheet from '@/components/character-sheet/ReadOnlyCharacterSheet';
 import { useGameEvents } from '@/hooks/use-game-events';
 import GameChat from './GameChat';
+import EncountersTab from './EncountersTab';
+import { useClientCache } from '@/hooks/use-client-cache';
 
 // Character Avatar Component
 function CharacterAvatar({ characterId, characterName }: { characterId: string; characterName: string }) {
@@ -108,9 +110,10 @@ interface GameDetailsModalProps {
 
 export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated }: GameDetailsModalProps) {
   const { data: session } = useSession();
-  const [currentGame, setCurrentGame] = useState<Game | null>(game);
-  const [activeTab, setActiveTab] = useState<'lobby' | 'characters' | 'notes' | 'chat'>('lobby');
-  const [characters, setCharacters] = useState<Array<{id: string; name: string; level: number; race: string; class: string}>>([]);
+  const { characters: cachedCharacters } = useClientCache();
+  const [currentGame, setCurrentGame] = useState<Game | null>(null);
+  const [activeTab, setActiveTab] = useState<'lobby' | 'characters' | 'notes' | 'chat' | 'encounters'>('lobby');
+  const [characters, setCharacters] = useState<Character[]>([]);
   const [showAddCharacterModal, setShowAddCharacterModal] = useState(false);
   const [selectedParticipant, setSelectedParticipant] = useState<string | null>(null);
   const [selectedCharacterId, setSelectedCharacterId] = useState('');
@@ -121,6 +124,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
   const [showCharacterSheet, setShowCharacterSheet] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [isReadOnly, setIsReadOnly] = useState(false);
+  const [isAddingCharacter, setIsAddingCharacter] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Notes state
@@ -144,13 +148,15 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
     onGameUpdate: (gameUpdate) => {
       // Only refresh if there are actual changes
       if (gameUpdate.hasChanges) {
-        console.log('🔄 Game state changed, refreshing data...');
+        console.log('🔄 Game state changed, refreshing data...', gameUpdate);
         refreshGameData();
-            }
+      } else {
+        console.log('📊 Game update received but no changes detected:', gameUpdate);
+      }
     },
     onError: (error: Error) => {
       console.error('❌ Game SSE error:', error);
-      }
+    }
   });
 
   // Load notes when notes tab is active
@@ -235,38 +241,99 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
   // Fetch characters when add character modal opens
   useEffect(() => {
     if (showAddCharacterModal) {
-      fetchCharacters();
-      // Set the current user's participant ID
+      console.log('🔍 Add character modal opened');
+      console.log('🔍 Current game:', currentGame);
+      console.log('🔍 Session user email:', session?.user?.email);
+      console.log('🔍 Cached characters:', cachedCharacters);
+      console.log('🔍 Cached characters length:', cachedCharacters?.length);
+      console.log('🔍 Cached characters details:', cachedCharacters?.map(c => ({ id: c.id, name: c.name, userId: c.userId })));
+      
+      // Use cached characters instead of fetching
+      setCharacters(cachedCharacters);
+      
+      // Set the current user's participant ID (DM or player)
       if (currentGame && session?.user?.email) {
         const currentParticipant = currentGame.participants.find(
           p => p.user.email === session.user?.email
         );
+        console.log('🔍 Found current participant:', currentParticipant);
+        console.log('🔍 All participants:', currentGame.participants.map(p => ({ id: p.id, email: p.user.email })));
+        
         if (currentParticipant) {
+          console.log('🔍 Setting selectedParticipant to:', currentParticipant.id);
           setSelectedParticipant(currentParticipant.id);
+        } else {
+          console.log('❌ No current participant found for user:', session.user?.email);
+          console.log('❌ Available participants:', currentGame.participants.map(p => p.user.email));
         }
+      } else {
+        console.log('❌ Missing currentGame or session user email');
+        console.log('❌ currentGame:', !!currentGame);
+        console.log('❌ session?.user?.email:', !!session?.user?.email);
       }
     }
-  }, [showAddCharacterModal, currentGame, session?.user?.email]);
+  }, [showAddCharacterModal, currentGame, session?.user?.email, cachedCharacters]);
 
-  const fetchCharacters = async () => {
-    try {
-      const response = await fetch('/api/characters');
-      if (response.ok) {
-        const data = await response.json();
-        setCharacters(data);
-      }
-    } catch (error) {
-      console.error('Error fetching characters:', error);
+  const getAvailableCharacters = () => {
+    console.log('🔍 getAvailableCharacters called');
+    console.log('🔍 currentGame:', currentGame);
+    console.log('🔍 session?.user?.email:', session?.user?.email);
+    console.log('🔍 characters:', characters);
+    console.log('🔍 characters length:', characters?.length);
+    
+    if (!currentGame || !session?.user?.email) {
+      console.log('❌ Missing currentGame or session user email');
+      return [];
     }
+    
+    // Both DMs and players should only see their own characters that aren't already in the game
+    const availableCharacters = characters.filter(character => {
+      console.log('🔍 Checking character:', character.name, character.id);
+      console.log('🔍 Character userId:', character.userId);
+      console.log('🔍 Current user email:', session?.user?.email);
+      
+      // Check if character is already in the game
+      const isAlreadyInGame = currentGame.participants.some(participant => {
+        const hasCharacter = participant.characters.some(gameCharacter => gameCharacter.id === character.id);
+        console.log('🔍 Participant:', participant.user.name, 'has character:', hasCharacter);
+        console.log('🔍 Participant characters:', participant.characters.map(c => c.name));
+        return hasCharacter;
+      });
+      
+      console.log('🔍 Character', character.name, 'is already in game:', isAlreadyInGame);
+      return !isAlreadyInGame;
+    });
+    
+    console.log('🔍 Available characters:', availableCharacters.map(c => c.name));
+    console.log('🔍 Available characters count:', availableCharacters.length);
+    return availableCharacters;
   };
 
   const handleAddCharacter = async () => {
-    if (!selectedCharacterId || !currentGame || !selectedParticipant) return;
+    console.log('🔍 handleAddCharacter called');
+    console.log('🔍 selectedCharacterId:', selectedCharacterId);
+    console.log('🔍 currentGame:', currentGame);
+    console.log('🔍 selectedParticipant:', selectedParticipant);
+    console.log('🔍 currentGame.id:', currentGame?.id);
+    
+    if (!selectedCharacterId || !currentGame || !selectedParticipant) {
+      console.log('❌ Missing required data for add character');
+      console.log('❌ selectedCharacterId missing:', !selectedCharacterId);
+      console.log('❌ currentGame missing:', !currentGame);
+      console.log('❌ selectedParticipant missing:', !selectedParticipant);
+      return;
+    }
 
     try {
+      setIsAddingCharacter(true);
       setError(null);
 
-      const response = await fetch(`/api/games/${currentGame.id}/participants/${selectedParticipant}/character`, {
+      const url = `/api/games/${currentGame.id}/participants/${selectedParticipant}/character`;
+      console.log('🔍 Making PUT request to:', url);
+      console.log('🔍 Request body:', { characterId: selectedCharacterId });
+      console.log('🔍 Full URL:', `${window.location.origin}${url}`);
+
+      const response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -276,11 +343,17 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
         }),
       });
 
+      console.log('🔍 Response status:', response.status);
+      console.log('🔍 Response headers:', response.headers);
+      
       if (!response.ok) {
         const errorData = await response.json();
+        console.log('❌ Error response:', errorData);
         throw new Error(errorData.error || 'Failed to add character');
       }
 
+      console.log('✅ Character added successfully');
+      
       // Refresh the game data
       await refreshGameData();
       
@@ -292,7 +365,10 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
       // Also trigger parent refresh
       onGameUpdated?.();
     } catch (err) {
+      console.log('❌ Error in handleAddCharacter:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsAddingCharacter(false);
     }
   };
 
@@ -411,8 +487,8 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
         // User's own character - use regular character API
         response = await fetch(`/api/characters/${characterId}`);
       } else if (isDM) {
-        // DM viewing other player's character - use game-specific read-only API
-        response = await fetch(`/api/games/${currentGame?.id}/characters/${characterId}`);
+        // DM viewing other player's character - use game context
+        response = await fetch(`/api/characters/${characterId}?gameId=${currentGame?.id}`);
       } else {
         // Other player viewing another player's character - use public API
         response = await fetch(`/api/games/${currentGame?.id}/characters/${characterId}/public`);
@@ -488,17 +564,10 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
         <Card className="w-full max-w-4xl mx-4 h-[90vh] flex flex-col">
           <div className="p-6 flex-1 overflow-y-auto">
             {/* Header */}
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--color-text-primary)' }}>
-                  {currentGame.name}
-                </h2>
-                {isDM && (
-                  <span className="inline-block bg-[var(--color-success)] text-[var(--color-success-text)] px-3 py-1 rounded-full text-sm font-medium">
-                    You are the DM
-                  </span>
-                )}
-              </div>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>
+                {currentGame.name}
+              </h2>
               <div className="flex items-center gap-2">
                 <button
                   onClick={refreshGameData}
@@ -519,6 +588,13 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                       Refresh
                     </>
                   )}
+                </button>
+                <button
+                  onClick={copyInviteCode}
+                  className="px-3 py-1 text-sm bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)] rounded transition-colors"
+                  title="Copy invite code"
+                >
+                  📋 Copy Invite
                 </button>
                 {isDM && (
                   <button
@@ -558,7 +634,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
               <button
                 onClick={() => setActiveTab('characters')}
                 className={`px-4 py-2 font-medium transition-colors ${
-                  activeTab === 'characters' 
+                  activeTab === 'characters'
                     ? 'border-b-2' 
                     : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
                 }`}
@@ -600,8 +676,24 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                 <MessageSquare className="h-4 w-4 inline mr-2" />
                 Chat
               </button>
-
+              <button
+                onClick={() => setActiveTab('encounters')}
+                className={`px-4 py-2 font-medium transition-colors ${
+                  activeTab === 'encounters' 
+                    ? 'border-b-2' 
+                    : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                }`}
+                style={{ 
+                  borderColor: activeTab === 'encounters' ? 'var(--color-accent)' : 'transparent',
+                  color: activeTab === 'encounters' ? 'var(--color-accent)' : undefined
+                }}
+              >
+                <Sword className="h-4 w-4 inline mr-2" />
+                Encounters
+              </button>
             </div>
+
+            
 
             {/* Error Display */}
             {error && (
@@ -616,7 +708,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                 {/* Left Column - Stats */}
                 <div className="space-y-6">
                 {/* Game Stats */}
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
                     <Users className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
                       <div className="text-center">
@@ -631,14 +723,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                       <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>{getCharacterCount()}</div>
                     </div>
                   </div>
-                    <div className="flex flex-col items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                    <MessageSquare className="h-5 w-5" style={{ color: 'var(--color-accent)' }} />
-                      <div className="text-center">
-                        <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Messages</div>
-                        <div className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>0</div>
-                      </div>
-                    </div>
-                  </div>
+                </div>
 
                   {/* Description */}
                   {currentGame.description && (
@@ -690,6 +775,72 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                     </div>
                   </div>
                 </div>
+
+                {/* Participants Section */}
+                <div className="p-4 rounded-lg mt-6" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
+                    Players ({currentGame.participants.length})
+                  </h3>
+                  <div className="space-y-3">
+                    {currentGame.participants.map((participant) => {
+                      const isCurrentUser = participant.user.email === session?.user?.email;
+                      const isParticipantDM = participant.user.id === currentGame.dm.id;
+                      
+                      return (
+                        <div
+                          key={participant.id}
+                          className="flex items-center justify-between p-3 rounded-lg"
+                          style={{ backgroundColor: 'var(--color-card)' }}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold" style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-accent-text)' }}>
+                              {participant.user.name?.[0] || participant.user.email[0].toUpperCase()}
+                            </div>
+                            <div>
+                              <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                                {participant.user.name || participant.user.email}
+                                {isCurrentUser && ' (You)'}
+                                {isParticipantDM && ' (DM)'}
+                              </div>
+                              <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                                {participant.characters?.length || 0} character{(participant.characters?.length || 0) !== 1 ? 's' : ''}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Action buttons */}
+                          <div className="flex items-center gap-2">
+                            {isCurrentUser && !isParticipantDM ? (
+                              // Current user (non-DM) can leave
+                              <button
+                                onClick={() => setShowRemoveParticipantConfirm(participant.id)}
+                                className="text-xs px-3 py-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded transition-colors"
+                                title="Leave game"
+                              >
+                                Leave
+                              </button>
+                            ) : isDM && !isCurrentUser ? (
+                              // DM can remove other players (but not themselves)
+                              <button
+                                onClick={() => setShowRemoveParticipantConfirm(participant.id)}
+                                className="text-xs px-3 py-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded transition-colors"
+                                title="Remove player"
+                              >
+                                Remove
+                              </button>
+                            ) : null}
+                          </div>
+                        </div>
+                      );
+                    })}
+                    
+                    {currentGame.participants.length === 0 && (
+                      <div className="text-center py-4" style={{ color: 'var(--color-text-secondary)' }}>
+                        No players yet. Share the invite code to get started!
+                      </div>
+                    )}
+                  </div>
+                </div>
                             </div>
                               </div>
             )}
@@ -738,17 +889,20 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                         <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                           Player: {session?.user?.email === currentGame.participants.find(p => p.id === character.participantId)?.user.email ? 'You' : character.playerName}
                         </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveCharacter(character.participantId, character.id);
-                          }}
-                          disabled={removingCharacter === character.participantId}
-                          className="text-xs px-2 py-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded transition-colors disabled:opacity-50"
-                          title="Remove character from game"
-                        >
-                          {removingCharacter === character.participantId ? 'Removing...' : 'Remove'}
-                        </button>
+                        {/* Show remove button if this is the user's own character OR if user is DM */}
+                        {(session?.user?.email === currentGame.participants.find(p => p.id === character.participantId)?.user.email || isDM) && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveCharacter(character.participantId, character.id);
+                            }}
+                            disabled={removingCharacter === character.participantId}
+                            className="text-xs px-2 py-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded transition-colors disabled:opacity-50"
+                            title="Remove character from game"
+                          >
+                            {removingCharacter === character.participantId ? 'Removing...' : 'Remove'}
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -887,11 +1041,19 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
               </div>
             )}
 
-            {activeTab === 'chat' && (
+            {/* Chat - Always rendered but hidden when not active */}
+            <div className={`h-96 ${activeTab === 'chat' ? 'block' : 'hidden'}`}>
+              <GameChat 
+                gameId={currentGame?.id || ''} 
+                enabled={!!currentGame}
+                isDM={isDM}
+              />
+            </div>
+
+            {activeTab === 'encounters' && currentGame && (
               <div className="h-96">
-                <GameChat 
-                  gameId={currentGame?.id || ''} 
-                  enabled={activeTab === 'chat' && !!currentGame}
+                <EncountersTab 
+                  gameId={currentGame.id}
                   isDM={isDM}
                 />
               </div>
@@ -938,25 +1100,12 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                     }}
                   >
                     <option value="">Choose a character...</option>
-                    {characters
-                      .filter(character => {
-                        // Filter out characters that are already in the game
-                        const isAlreadyInGame = currentGame.participants.some(participant =>
-                          participant.characters.some(gameCharacter => gameCharacter.id === character.id)
-                        );
-                        return !isAlreadyInGame;
-                      })
-                      .map((character) => (
+                    {getAvailableCharacters().map((character) => (
                         <option key={character.id} value={character.id}>
                           {character.name} - Level {character.level} {character.race} {character.class}
                         </option>
                       ))}
-                    {characters.filter(character => {
-                      const isAlreadyInGame = currentGame.participants.some(participant =>
-                        participant.characters.some(gameCharacter => gameCharacter.id === character.id)
-                      );
-                      return !isAlreadyInGame;
-                    }).length === 0 && (
+                    {getAvailableCharacters().length === 0 && (
                       <option value="" disabled>
                         No available characters to add
                       </option>
@@ -984,15 +1133,10 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                   </button>
                   <button
                     onClick={handleAddCharacter}
-                    disabled={!selectedCharacterId || characters.filter(character => {
-                      const isAlreadyInGame = currentGame.participants.some(participant =>
-                        participant.characters.some(gameCharacter => gameCharacter.id === character.id)
-                      );
-                      return !isAlreadyInGame;
-                    }).length === 0}
+                    disabled={!selectedCharacterId || getAvailableCharacters().length === 0 || isAddingCharacter}
                     className="px-4 py-2 text-sm bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] rounded transition-colors disabled:opacity-50"
                   >
-                    Add Character
+                    {isAddingCharacter ? 'Adding...' : 'Add Character'}
                   </button>
                 </div>
               </div>
@@ -1052,4 +1196,4 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
       </div>
     </>
   );
-} 
+}

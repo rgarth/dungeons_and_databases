@@ -7,7 +7,7 @@ export async function GET() {
     
     // Transform to match the expected API structure
     const transformedBackgrounds = backgrounds.map(bg => ({
-      id: bg.id || `bg_${bg.name.toLowerCase().replace(/\s+/g, '_')}`,
+      id: `bg_${bg.name.toLowerCase().replace(/\s+/g, '_')}`,
       name: bg.name,
       description: bg.description,
       phbDescription: bg.phbDescription,

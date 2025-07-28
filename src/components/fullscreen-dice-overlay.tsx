@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 interface DiceResult {
   set: string[];
@@ -27,22 +27,7 @@ interface FullscreenDiceOverlayProps {
 }
 
 // Add window interface for DICE library
-declare global {
-  interface Window {
-    DICE: {
-      dice_box: new (element: HTMLElement) => DiceBox;
-      vars?: {
-        dice_color: string;
-        label_color: string;
-        desk_opacity?: number;
-        desk_color?: string;
-      };
-      clearMaterialCache?: () => void;
-    };
-    THREE: Record<string, unknown>;
-    CANNON: Record<string, unknown>;
-  }
-}
+
 
 export default function FullscreenDiceOverlay({ 
   isVisible, 
@@ -58,7 +43,13 @@ export default function FullscreenDiceOverlay({
 
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
 
-
+  // Handle fade out animation
+  const handleFadeOut = useCallback(() => {
+    setIsFading(true);
+    setTimeout(() => {
+      onClose();
+    }, 300); // 300ms fade duration
+  }, [onClose]);
 
   // Load DICE library scripts
   useEffect(() => {
@@ -158,8 +149,7 @@ export default function FullscreenDiceOverlay({
 
         // Configure for complete transparency BEFORE creating dice box
         if (window.DICE.vars) {
-          window.DICE.vars.desk_opacity = 0;
-          window.DICE.vars.desk_color = '#000000'; // Use black instead of 'transparent'
+          // Note: desk_opacity and desk_color are not available in this version
           
           // Use provided color or theme default
           const colorToUse = diceColor || getComputedStyle(document.documentElement)
@@ -260,7 +250,7 @@ export default function FullscreenDiceOverlay({
     };
 
     initializeDiceBox();
-  }, [isVisible, diceNotation, diceColor, scriptsLoaded]);
+  }, [isVisible, diceNotation, diceColor, scriptsLoaded, handleFadeOut, onRollComplete]);
 
   // Cleanup dice box when component unmounts or becomes invisible
   useEffect(() => {
@@ -294,15 +284,7 @@ export default function FullscreenDiceOverlay({
     return () => {
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [isVisible, isFading, onClose]);
-
-  // Handle fade out animation
-  const handleFadeOut = () => {
-    setIsFading(true);
-    setTimeout(() => {
-      onClose();
-    }, 300); // 300ms fade duration
-  };
+  }, [isVisible, isFading, handleFadeOut]);
 
   if (!isVisible) return null;
 

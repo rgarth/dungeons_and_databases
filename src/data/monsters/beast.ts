@@ -285,7 +285,13 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Bite",
-        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one creature. Hit: 1 piercing damage."
+        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one creature. Hit: 1 piercing damage.",
+        "attackBonus": 0,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1",
+          "average": 1
+        }
       }
     ],
     "legendaryActions": [],
@@ -675,7 +681,13 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Claws",
-        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 slashing damage."
+        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 slashing damage.",
+        "attackBonus": 0,
+        "damage": {
+          "type": "Slashing",
+          "roll": "1",
+          "average": 1
+        }
       }
     ],
     "legendaryActions": [],
@@ -798,7 +810,13 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Claw",
-        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 bludgeoning damage."
+        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 bludgeoning damage.",
+        "attackBonus": 0,
+        "damage": {
+          "type": "Bludgeoning",
+          "roll": "1",
+          "average": 1
+        }
       }
     ],
     "legendaryActions": [],
@@ -3852,7 +3870,13 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Bite",
-        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 piercing damage."
+        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 piercing damage.",
+        "attackBonus": 0,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1",
+          "average": 1
+        }
       }
     ],
     "legendaryActions": [],
@@ -4618,7 +4642,13 @@ export const beastMonsters: Monster[] = [
     "actions": [
       {
         "name": "Bite",
-        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 piercing damage."
+        "description": "Melee Weapon Attack: +0 to hit, reach 5 ft., one target. Hit: 1 piercing damage.",
+        "attackBonus": 0,
+        "damage": {
+          "type": "Piercing",
+          "roll": "1",
+          "average": 1
+        }
       }
     ],
     "legendaryActions": [],

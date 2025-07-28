@@ -8,27 +8,18 @@ interface ChatCacheEntry {
 
 class ChatCache {
   private cache = new Map<string, ChatCacheEntry>();
-  private readonly DEFAULT_TTL = 5 * 60 * 1000; // 5 minutes
-  private readonly MAX_MESSAGES = 100;
-  private cleanupInterval: NodeJS.Timeout;
+  private readonly DEFAULT_TTL = Infinity; // Never expire - only message count limit applies
+  private readonly MAX_MESSAGES = 1000; // Increased from 100 to 1000
 
   constructor() {
-    // Clean up expired entries every minute
-    this.cleanupInterval = setInterval(() => {
-      this.cleanup();
-    }, 60 * 1000);
+    // No cleanup interval needed since chat never expires
   }
 
   get(gameId: string): ChatMessage[] | null {
     const entry = this.cache.get(gameId);
     if (!entry) return null;
 
-    // Check if entry has expired
-    if (Date.now() - entry.lastUpdated > entry.ttl) {
-      this.cache.delete(gameId);
-      return null;
-    }
-
+    // No TTL check - chat never expires, only message count limit applies
     return entry.messages;
   }
 
@@ -56,19 +47,7 @@ class ChatCache {
     this.cache.delete(gameId);
   }
 
-  private cleanup(): void {
-    const now = Date.now();
-    for (const [gameId, entry] of this.cache.entries()) {
-      if (now - entry.lastUpdated > entry.ttl) {
-        this.cache.delete(gameId);
-      }
-    }
-  }
-
   destroy(): void {
-    if (this.cleanupInterval) {
-      clearInterval(this.cleanupInterval);
-    }
     this.cache.clear();
   }
 

@@ -59,7 +59,7 @@ export function SubraceSelector({
         if (clientCache.isInitialized()) {
           const cachedSubraces = clientCache.getSubraces(race);
           console.log('⚡ Using client cache for subraces:', race, cachedSubraces.length);
-          setSubraces(cachedSubraces);
+          setSubraces(cachedSubraces as unknown as Subrace[]);
           if (cachedSubraces.length === 0) {
             onSubraceChangeRef.current(null);
           }

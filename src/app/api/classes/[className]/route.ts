@@ -3,7 +3,7 @@ import { dndDataService } from '@/lib/dnd-data-service';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { className: string } }
+  { params }: { params: Promise<{ className: string }> }
 ) {
   try {
     const { className } = await params;

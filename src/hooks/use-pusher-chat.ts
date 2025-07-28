@@ -28,6 +28,13 @@ export function usePusherChat({ gameId, enabled = true }: UsePusherChatOptions):
   const pusherRef = useRef<PusherChat | null>(null);
 
   const handleMessage = useCallback((message: ChatMessage) => {
+    // Handle special clear message
+    if (message.id === 'clear-all-messages' && message.message === 'CLEAR_ALL_MESSAGES') {
+      console.log(`🗑️ Clearing all messages from UI state`);
+      setMessages([]);
+      return;
+    }
+    
     setMessages(prev => [...prev, message]);
   }, []);
 
@@ -75,14 +82,14 @@ export function usePusherChat({ gameId, enabled = true }: UsePusherChatOptions):
         if (response.ok) {
           const data = await response.json();
           if (data.messages && Array.isArray(data.messages)) {
-            console.log(`📚 Loaded ${data.messages.length} chat messages from history`);
+            console.log(`📚 Loaded ${data.messages.length} chat messages from server`);
             setMessages(data.messages);
           }
         } else {
-          console.warn('Failed to load chat history:', response.statusText);
+          console.warn('Failed to load chat history from server:', response.statusText);
         }
       } catch (historyError) {
-        console.warn('Error loading chat history:', historyError);
+        console.warn('Error loading chat history from server:', historyError);
         // Don't fail the connection if history loading fails
       }
       

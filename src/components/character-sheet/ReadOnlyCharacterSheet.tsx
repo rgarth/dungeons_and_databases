@@ -3,7 +3,7 @@ import { Character } from '@/types/character';
 import { Card } from '@/components/ui';
 import { useAvatar } from '@/hooks/use-character-mutations';
 import Image from 'next/image';
-import { getProficiencyBonus } from '@/lib/dnd/core';
+import { getProficiencyBonus, getModifier } from '@/lib/dnd/core';
 
 interface ReadOnlyCharacterSheetProps {
   character: Character;
@@ -128,12 +128,17 @@ export default function ReadOnlyCharacterSheet({
                   { name: 'INT', value: character.intelligence },
                   { name: 'WIS', value: character.wisdom },
                   { name: 'CHA', value: character.charisma },
-                ].map((ability) => (
-                  <div key={ability.name} className="p-3 rounded text-center" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                    <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{ability.name}</div>
-                    <div className="font-medium text-lg" style={{ color: 'var(--color-text-primary)' }}>{ability.value}</div>
-                  </div>
-                ))}
+                ].map((ability) => {
+                  const modifier = getModifier(ability.value);
+                  const modifierText = modifier >= 0 ? `+${modifier}` : `${modifier}`;
+                  return (
+                    <div key={ability.name} className="p-3 rounded text-center" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                      <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>{ability.name}</div>
+                      <div className="font-medium text-lg" style={{ color: 'var(--color-text-primary)' }}>{ability.value}</div>
+                      <div className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>{modifierText}</div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 

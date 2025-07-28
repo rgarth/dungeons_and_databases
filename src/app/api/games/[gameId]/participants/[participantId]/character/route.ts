@@ -101,6 +101,12 @@ export async function PUT(
       }
     });
 
+    // Update the game's updatedAt timestamp to trigger SSE updates
+    await prisma.game.update({
+      where: { id: gameId },
+      data: { updatedAt: new Date() }
+    });
+
     return NextResponse.json(updatedParticipant);
 
   } catch (error) {

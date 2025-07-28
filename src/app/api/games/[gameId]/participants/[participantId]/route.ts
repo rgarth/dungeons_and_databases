@@ -76,6 +76,12 @@ export async function DELETE(
         where: { id: participantId }
       });
 
+      // Update the game's updatedAt timestamp to trigger SSE updates
+      await tx.game.update({
+        where: { id: gameId },
+        data: { updatedAt: new Date() }
+      });
+
       // Note: The character itself is not deleted, just the assignment to this game
       // Characters belong to users, not games
     });

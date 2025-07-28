@@ -22,8 +22,8 @@ describe('HitPointsDisplay - Death Saves', () => {
     hitPoints: 0, // Start at 0 HP to trigger death saves
     maxHitPoints: 12,
     constitution: 14,
-    deathSaveSuccesses: 0,
-    deathSaveFailures: 0,
+    deathSaveSuccesses: [],
+    deathSaveFailures: [],
     ...overrides
   });
 

@@ -146,15 +146,21 @@ export async function DELETE(
     // Delete all chat messages for this game
     await prisma.gameChatMessage.deleteMany({ where: { gameId: gameId } });
     chatCache.invalidate(gameId);
-    // Optionally, broadcast a system message that chat was cleared
-    await pusher.trigger(`game-${gameId}-chat`, 'chat-message', {
+    
+    // Broadcast a system message that chat was cleared
+    const clearMessage = {
       id: `system-${Date.now()}`,
       userId: 'system',
       userName: 'System',
       message: 'The DM has cleared the chat history.',
       timestamp: Date.now(),
       type: 'system',
-    });
+    };
+    
+    console.log(`🗑️ DM clearing chat for game ${gameId}, broadcasting system message:`, clearMessage);
+    await pusher.trigger(`game-${gameId}-chat`, 'chat-message', clearMessage);
+    console.log(`✅ System message broadcasted successfully`);
+    
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Chat clear error:', error);

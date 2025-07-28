@@ -79,6 +79,30 @@ export class PusherChat {
     // Handle chat messages
     this.channel.bind('chat-message', (data: ChatMessage) => {
       console.log(`📨 Received chat message:`, data);
+      
+      // If this is a system message about clearing chat, trigger message clear
+      if (data.type === 'system' && data.message === 'The DM has cleared the chat history.') {
+        console.log(`🗑️ Received chat clear message, clearing messages`);
+        // Trigger a special clear event that will clear the UI state
+        this.config.onMessage({
+          id: 'clear-all-messages',
+          userId: 'system',
+          userName: 'System',
+          message: 'CLEAR_ALL_MESSAGES',
+          timestamp: Date.now(),
+          type: 'system'
+        });
+        // Also send the original clear message so players see it
+        this.config.onMessage(data);
+        return; // Don't process this message further
+      }
+      
+      // Debug: Log all system messages to see what we're receiving
+      if (data.type === 'system') {
+        console.log(`🔍 System message received: "${data.message}"`);
+      }
+      
+      // Pass message to UI (no local storage)
       if (data.userId !== this.config.userId) {
         this.config.onMessage(data);
       }
@@ -136,10 +160,8 @@ export class PusherChat {
     // Pusher members object has user IDs as keys in the 'members' property
     if (members.members) {
       Object.keys(members.members).forEach(userId => {
-        if (userId !== this.config.userId) {
-          this.connectedPeers.add(userId);
-          this.config.onPeerConnected(userId);
-        }
+        this.connectedPeers.add(userId);
+        this.config.onPeerConnected(userId);
       });
     }
     console.log(`📊 Updated peer list:`, Array.from(this.connectedPeers));
@@ -157,7 +179,7 @@ export class PusherChat {
 
     console.log(`📤 Sending message:`, chatMessage);
 
-    // Send to self for immediate display (no local storage)
+    // Send to self for immediate display
     this.config.onMessage(chatMessage);
 
     // Send to server endpoint which will broadcast to Pusher
@@ -179,49 +201,7 @@ export class PusherChat {
     }
   }
 
-  private storeMessageLocally(message: ChatMessage): void {
-    try {
-      const storageKey = `chat-history-${this.config.gameId}`;
-      const existingData = localStorage.getItem(storageKey);
-      const messages = existingData ? JSON.parse(existingData) : [];
-      
-      // Add new message
-      messages.push(message);
-      
-      // Clean up old messages (older than 7 days)
-      const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-      const filteredMessages = messages.filter((msg: ChatMessage) => msg.timestamp > sevenDaysAgo);
-      
-      // Keep only last 200 messages if we have too many
-      const trimmedMessages = filteredMessages.slice(-200);
-      
-      localStorage.setItem(storageKey, JSON.stringify(trimmedMessages));
-    } catch (error) {
-      console.error('Failed to store message locally:', error);
-    }
-  }
 
-  async loadChatHistory(): Promise<ChatMessage[]> {
-    try {
-      const storageKey = `chat-history-${this.config.gameId}`;
-      const existingData = localStorage.getItem(storageKey);
-      if (!existingData) return [];
-      
-      const messages = JSON.parse(existingData);
-      
-      // Clean up old messages (older than 7 days)
-      const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-      const filteredMessages = messages.filter((msg: ChatMessage) => msg.timestamp > sevenDaysAgo);
-      
-      // Update storage with cleaned messages
-      localStorage.setItem(storageKey, JSON.stringify(filteredMessages));
-      
-      return filteredMessages;
-    } catch (error) {
-      console.error('Failed to load local history:', error);
-      return [];
-    }
-  }
 
   disconnect(): void {
     console.log(`🔌 Disconnecting Pusher chat for game ${this.config.gameId}`);
@@ -243,7 +223,8 @@ export class PusherChat {
   }
 
   async getRoomPeerCount(): Promise<number> {
-    // Return the actual number of connected peers (excluding self)
+    // Return the total number of connected users (including self)
     return this.connectedPeers.size;
   }
-} 
+
+}

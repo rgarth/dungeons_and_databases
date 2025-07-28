@@ -26,7 +26,6 @@ import {
 } from "@/services/character/creation";
 
 import type { CharacterAvatarData } from '@/types/character';
-import Image from 'next/image';
 import { useDndData } from '@/components/providers/dnd-data-provider';
 import { BackgroundSelector, SelectedCharacteristics as BackgroundCharacteristics } from '@/components/shared/BackgroundSelector';
 import { AvatarGenerator } from '@/components/shared/AvatarGenerator';
@@ -103,8 +102,8 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
           weaponsLength: weapons.length,
           armorLength: armor.length
         });
-        setAllWeapons(weapons);
-        setAllArmor(armor);
+        setAllWeapons(weapons as unknown as Weapon[]);
+        setAllArmor(armor as unknown as Armor[]);
       } catch (error) {
         console.error('❌ Failed to load weapons and armor from client cache:', error);
       }
@@ -594,7 +593,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     if (randomArray) {
       setRandomScoreArray(randomArray);
     }
-  }, [statMethod]); // Removed characterCreationService from dependencies since it's a singleton
+  }, [statMethod]); // Remove characterCreationService since it's a singleton
 
   // Add a ref to track if weapon suggestions have been processed
   const processedWeaponSuggestionsRef = useRef<string>('');
@@ -1228,7 +1227,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
     if (!hasLoadedAllClassData.current && !isLoadingAllClassData) {
       loadAllClassData();
     }
-  }, []); // Remove loadAllClassData dependency - it's stable with useCallback
+  }, [isLoadingAllClassData]); // Remove loadAllClassData since it's stable with useCallback
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 pt-8 z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
@@ -2067,14 +2066,11 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
                         <h4 className="text-white font-medium" style={{ color: 'var(--color-text-primary)' }}>Avatar Preview</h4>
                         {generatedFullBodyAvatar ? (
                           <div className="space-y-3">
-                            <Image
+                            <img
                               src={generatedFullBodyAvatar}
                               alt="Generated character avatar"
-                              width={192}
-                              height={336}
                               className="w-48 mx-auto rounded-lg border-2 object-cover"
                               style={{ borderColor: 'var(--color-primary)' }}
-                              priority
                             />
                             <div className="text-center">
                               <button

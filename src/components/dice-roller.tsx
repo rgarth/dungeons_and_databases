@@ -6,15 +6,12 @@ import { useState, useEffect, useRef } from 'react';
 declare global {
   interface Window {
     DICE: {
-      dice_box: new (element: HTMLElement) => {
-        setDice: (notation: string) => void;
-        start_throw: (beforeRoll?: ((notation: DiceResult) => number[] | null), afterRoll?: (notation: DiceResult) => void) => void;
-        bind_swipe: (element: HTMLElement, beforeRoll?: ((notation: DiceResult) => number[] | null), afterRoll?: (notation: DiceResult) => void) => void;
-        reinit: (container: HTMLElement) => void;
-      };
+      dice_box: new (element: HTMLElement) => DiceBox;
       vars?: {
         dice_color: string;
         label_color: string;
+        desk_opacity?: number;
+        desk_color?: string;
       };
       clearMaterialCache?: () => void;
     };

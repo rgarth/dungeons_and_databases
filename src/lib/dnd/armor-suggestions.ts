@@ -5,9 +5,14 @@ export interface ArmorSuggestion {
   reason?: string | null;
 }
 
+interface ClassArmorSuggestion {
+  armorName: string;
+  reason?: string | null;
+}
+
 export async function getArmorSuggestionsForClass(className: string): Promise<ArmorSuggestion[]> {
   try {
-    const suggestions = await prisma.classArmorSuggestion.findMany({
+    const suggestions = await (prisma as unknown as { classArmorSuggestion: { findMany: (args: { where: { class: { name: string } }; select: { armorName: boolean; reason: boolean }; orderBy: { armorName: string } }) => Promise<ClassArmorSuggestion[]> } }).classArmorSuggestion.findMany({
       where: {
         class: {
           name: className
@@ -22,7 +27,7 @@ export async function getArmorSuggestionsForClass(className: string): Promise<Ar
       }
     });
 
-    return suggestions.map(s => ({
+    return suggestions.map((s: ClassArmorSuggestion) => ({
       armorName: s.armorName,
       reason: s.reason || undefined
     }));

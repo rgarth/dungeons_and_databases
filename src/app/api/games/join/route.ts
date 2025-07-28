@@ -144,6 +144,12 @@ export async function POST(request: NextRequest) {
         data: { usedCount: invite.usedCount + 1 }
       });
 
+      // Update the game's updatedAt timestamp to trigger SSE updates
+      await tx.game.update({
+        where: { id: invite.gameId },
+        data: { updatedAt: new Date() }
+      });
+
       return participant;
     });
 

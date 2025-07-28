@@ -12,9 +12,24 @@ export interface ClassProficiencies {
 }
 
 // Database-driven proficiency functions
+interface ArmorProficiency {
+  armorType: string;
+}
+
+interface WeaponProficiency {
+  proficiencyType: string;
+  weaponName?: string;
+}
+
+interface DndClass {
+  armorProficiencies: ArmorProficiency[];
+  weaponProficiencies: WeaponProficiency[];
+  savingThrows: string[];
+}
+
 export async function getClassProficiencies(className: string): Promise<ClassProficiencies | null> {
   try {
-    const dndClass = await prisma.dndClass.findUnique({
+    const dndClass = await (prisma as unknown as { dndClass: { findUnique: (args: { where: { name: string }; include: { armorProficiencies: boolean; weaponProficiencies: boolean } }) => Promise<DndClass | null> } }).dndClass.findUnique({
       where: { name: className },
       include: {
         armorProficiencies: true,
@@ -26,14 +41,14 @@ export async function getClassProficiencies(className: string): Promise<ClassPro
       return null;
     }
 
-    const armorTypes = dndClass.armorProficiencies.map(prof => prof.armorType);
+    const armorTypes = dndClass.armorProficiencies.map((prof: ArmorProficiency) => prof.armorType);
     
     const weaponProfs = dndClass.weaponProficiencies;
-    const hasSimple = weaponProfs.some(prof => prof.proficiencyType === 'Simple');
-    const hasMartial = weaponProfs.some(prof => prof.proficiencyType === 'Martial');
+    const hasSimple = weaponProfs.some((prof: WeaponProficiency) => prof.proficiencyType === 'Simple');
+    const hasMartial = weaponProfs.some((prof: WeaponProficiency) => prof.proficiencyType === 'Martial');
     const specificWeapons = weaponProfs
-      .filter(prof => prof.proficiencyType === 'Specific' && prof.weaponName)
-      .map(prof => prof.weaponName!);
+      .filter((prof: WeaponProficiency) => prof.proficiencyType === 'Specific' && prof.weaponName)
+      .map((prof: WeaponProficiency) => prof.weaponName!);
 
     const savingThrows = dndClass.savingThrows as string[];
 

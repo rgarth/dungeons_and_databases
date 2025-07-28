@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, use, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
@@ -38,20 +38,7 @@ export default function InvitePage({ params }: InvitePageProps) {
   const unwrappedParams = use(params);
   const inviteCode = unwrappedParams.code;
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    
-    if (!session) {
-      // Redirect to sign in with return URL
-      router.push(`/api/auth/signin?callbackUrl=${encodeURIComponent(window.location.href)}`);
-      return;
-    }
-
-    fetchGameDetails();
-    fetchCharacters();
-  }, [session, status, inviteCode]);
-
-  const fetchGameDetails = async () => {
+  const fetchGameDetails = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/games/invite/${inviteCode}`);
@@ -72,9 +59,9 @@ export default function InvitePage({ params }: InvitePageProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [inviteCode]);
 
-  const fetchCharacters = async () => {
+  const fetchCharacters = useCallback(async () => {
     try {
       const response = await fetch('/api/characters');
       if (response.ok) {
@@ -84,7 +71,22 @@ export default function InvitePage({ params }: InvitePageProps) {
     } catch {
       // Silently handle character fetch errors
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    
+    if (!session) {
+      // Redirect to sign in with return URL
+      router.push(`/api/auth/signin?callbackUrl=${encodeURIComponent(window.location.href)}`);
+      return;
+    }
+
+    fetchGameDetails();
+    fetchCharacters();
+  }, [session, status, inviteCode, fetchGameDetails, fetchCharacters, router]);
+
+
 
   const handleJoinGame = async () => {
     if (!game) return;
