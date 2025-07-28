@@ -309,7 +309,7 @@ export default function EncounterDetailsModal({
                 <Button
                   onClick={handleSave}
                   disabled={loading}
-                  className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]"
+                  className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
                 >
                   <Save className="h-4 w-4 mr-1" />
                   {loading ? 'Saving...' : 'Save'}
