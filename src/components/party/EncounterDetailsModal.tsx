@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { X, Plus, Users, Skull, Trash2, Edit, Save, Dice1 } from 'lucide-react';
+import { X, Plus, Users, Skull, Trash2, Edit, Save, Dice1, Sword } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { Encounter, EncounterMonster, EncounterParticipant } from '@/types/encounter';
 import AddMonsterModal from './AddMonsterModal';
@@ -332,25 +332,32 @@ export default function EncounterDetailsModal({
                     : 'bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]'
                 }`}
               >
-                {loading ? 'Updating...' : currentEncounter.isActive ? 'Deactivate' : 'Activate'}
-              </Button>
-              <Button
-                onClick={handleDelete}
-                disabled={loading}
-                className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)]"
-              >
-                <Trash2 className="h-4 w-4 mr-1" />
-                {loading ? 'Deleting...' : 'Delete'}
+                {loading ? 'Updating...' : currentEncounter.isActive ? 'Deactivate' : (
+                  <>
+                    <Sword className="h-4 w-4 mr-1" />
+                    Start
+                  </>
+                )}
               </Button>
             </>
           )}
           {(characterCount > 0 || monsterCount > 0) && (
             <Button
               onClick={() => setShowInitiativeRoller(true)}
-              className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]"
+              className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
             >
               <Dice1 className="h-4 w-4 mr-1" />
               Roll Initiative
+            </Button>
+          )}
+          {isDM && (
+            <Button
+              onClick={handleDelete}
+              disabled={loading}
+              className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)]"
+            >
+              <Trash2 className="h-4 w-4 mr-1" />
+              {loading ? 'Deleting...' : 'Delete'}
             </Button>
           )}
         </div>
