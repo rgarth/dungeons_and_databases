@@ -472,8 +472,13 @@ export default function InitiativeRoller({
       let dexMod = 0;
       console.log('🎲 Character dexterity value:', participant.characterData.dexterity);
       if (participant.characterData && participant.characterData.dexterity) {
-        dexMod = getModifier(participant.characterData.dexterity);
-        console.log('🎲 Calculated dex modifier:', dexMod);
+        const dexValue = Number(participant.characterData.dexterity);
+        if (!isNaN(dexValue)) {
+          dexMod = getModifier(dexValue);
+          console.log('🎲 Calculated dex modifier:', dexMod);
+        } else {
+          console.log('🎲 Invalid dexterity value, using 0 modifier');
+        }
       } else {
         console.log('🎲 No dexterity data found, using 0 modifier');
       }
@@ -630,13 +635,38 @@ export default function InitiativeRoller({
                   
                   <div className="flex items-center space-x-3">
                     {participant.initiative > 0 ? (
-                      <span className="font-mono text-lg font-bold text-[var(--color-accent)]">
-                        {participant.initiative}
-                      </span>
+                      <div className="flex items-center space-x-2">
+                        <span className="font-mono text-lg font-bold text-[var(--color-accent)]">
+                          {participant.initiative}
+                        </span>
+                        {participant.type === 'character' && participant.characterData && (() => {
+                          console.log('🔍 DEBUG: Character data for', participant.name, ':', participant.characterData);
+                          console.log('🔍 DEBUG: Dexterity value:', participant.characterData.dexterity, 'type:', typeof participant.characterData.dexterity);
+                          const dexValue = Number(participant.characterData.dexterity);
+                          const dexMod = !isNaN(dexValue) ? getModifier(dexValue) : 0;
+                          console.log('🔍 DEBUG: Converted dex value:', dexValue, 'modifier:', dexMod);
+                          return (
+                            <span className="text-xs text-[var(--color-text-secondary)]">
+                              (1d20 {dexMod >= 0 ? '+' : ''}{dexMod} DEX)
+                            </span>
+                          );
+                        })()}
+                      </div>
                     ) : (
-                      <span className="text-sm text-[var(--color-text-secondary)]">
-                        Not rolled
-                      </span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm text-[var(--color-text-secondary)]">
+                          Not rolled
+                        </span>
+                        {participant.type === 'character' && participant.characterData && (() => {
+                          const dexValue = Number(participant.characterData.dexterity);
+                          const dexMod = !isNaN(dexValue) ? getModifier(dexValue) : 0;
+                          return (
+                            <span className="text-xs text-[var(--color-text-secondary)]">
+                              ({dexMod >= 0 ? '+' : ''}{dexMod} DEX)
+                            </span>
+                          );
+                        })()}
+                      </div>
                     )}
                     
                     {participant.initiative === 0 && (

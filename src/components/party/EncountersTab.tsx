@@ -55,8 +55,8 @@ export default function EncountersTab({ gameId, isDM }: EncountersTabProps) {
     }
   };
 
-  const handleCreateEncounter = (encounter: Encounter) => {
-    setEncounters(prev => [encounter, ...prev]);
+  const handleCreateEncounter = () => {
+    // Don't manually add to state - the real-time event will handle it
     setShowCreateModal(false);
   };
 

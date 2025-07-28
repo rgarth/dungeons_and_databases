@@ -68,6 +68,12 @@ export async function GET(
         level: true,
         hitPoints: true,
         maxHitPoints: true,
+        strength: true,
+        dexterity: true,
+        constitution: true,
+        intelligence: true,
+        wisdom: true,
+        charisma: true,
         userId: true, // Include userId for ownership checks
         // Add other fields as needed for encounter setup
       }

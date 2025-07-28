@@ -720,6 +720,72 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                     </div>
                   </div>
                 </div>
+
+                {/* Participants Section */}
+                <div className="p-4 rounded-lg mt-6" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
+                  <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
+                    Players ({currentGame.participants.length})
+                  </h3>
+                  <div className="space-y-3">
+                    {currentGame.participants.map((participant) => {
+                      const isCurrentUser = participant.user.email === session?.user?.email;
+                      const isParticipantDM = participant.user.id === currentGame.dm.id;
+                      
+                      return (
+                        <div
+                          key={participant.id}
+                          className="flex items-center justify-between p-3 rounded-lg"
+                          style={{ backgroundColor: 'var(--color-card)' }}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold" style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-accent-text)' }}>
+                              {participant.user.name?.[0] || participant.user.email[0].toUpperCase()}
+                            </div>
+                            <div>
+                              <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>
+                                {participant.user.name || participant.user.email}
+                                {isCurrentUser && ' (You)'}
+                                {isParticipantDM && ' (DM)'}
+                              </div>
+                              <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                                {participant.characters?.length || 0} character{(participant.characters?.length || 0) !== 1 ? 's' : ''}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Action buttons */}
+                          <div className="flex items-center gap-2">
+                            {isCurrentUser && !isParticipantDM ? (
+                              // Current user (non-DM) can leave
+                              <button
+                                onClick={() => setShowRemoveParticipantConfirm(participant.id)}
+                                className="text-xs px-3 py-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded transition-colors"
+                                title="Leave game"
+                              >
+                                Leave
+                              </button>
+                            ) : isDM && !isCurrentUser ? (
+                              // DM can remove other players (but not themselves)
+                              <button
+                                onClick={() => setShowRemoveParticipantConfirm(participant.id)}
+                                className="text-xs px-3 py-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded transition-colors"
+                                title="Remove player"
+                              >
+                                Remove
+                              </button>
+                            ) : null}
+                          </div>
+                        </div>
+                      );
+                    })}
+                    
+                    {currentGame.participants.length === 0 && (
+                      <div className="text-center py-4" style={{ color: 'var(--color-text-secondary)' }}>
+                        No players yet. Share the invite code to get started!
+                      </div>
+                    )}
+                  </div>
+                </div>
                             </div>
                               </div>
             )}
@@ -768,17 +834,20 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                         <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                           Player: {session?.user?.email === currentGame.participants.find(p => p.id === character.participantId)?.user.email ? 'You' : character.playerName}
                         </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveCharacter(character.participantId, character.id);
-                          }}
-                          disabled={removingCharacter === character.participantId}
-                          className="text-xs px-2 py-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded transition-colors disabled:opacity-50"
-                          title="Remove character from game"
-                        >
-                          {removingCharacter === character.participantId ? 'Removing...' : 'Remove'}
-                        </button>
+                        {/* Show remove button if this is the user's own character OR if user is DM */}
+                        {(session?.user?.email === currentGame.participants.find(p => p.id === character.participantId)?.user.email || isDM) && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveCharacter(character.participantId, character.id);
+                            }}
+                            disabled={removingCharacter === character.participantId}
+                            className="text-xs px-2 py-1 text-[var(--color-danger)] hover:text-[var(--color-danger-hover)] hover:bg-[var(--color-danger-bg)] rounded transition-colors disabled:opacity-50"
+                            title="Remove character from game"
+                          >
+                            {removingCharacter === character.participantId ? 'Removing...' : 'Remove'}
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
