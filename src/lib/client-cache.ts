@@ -550,6 +550,13 @@ class ClientCache {
     return this.cache.characters || [];
   }
 
+  addCharacter(character: Character) {
+    if (!this.cache.characters) {
+      this.cache.characters = [];
+    }
+    this.cache.characters.push(character);
+  }
+
   async getMonsters() {
     if (!this.cache.monsters) {
       try {

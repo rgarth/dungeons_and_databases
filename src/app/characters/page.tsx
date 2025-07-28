@@ -21,29 +21,22 @@ export default function CharactersPage() {
   const { assetsLoaded, setAssetsLoaded } = useLoading();
   const queryClient = useQueryClient();
   const { characters } = useClientCache();
+  const [localCharacters, setLocalCharacters] = useState<Character[]>([]);
 
-  // Use cached characters instead of React Query
-  const charactersData = characters || [];
+  // Use cached characters combined with local state for immediate updates
+  const charactersData = [...(characters || []), ...localCharacters];
 
   // Handle character creation
   const handleCharacterCreated = (newCharacter: Character) => {
-    // Optimistically add the new character to the list with syncing state
-    const optimisticCharacter = {
-      ...newCharacter,
-      isOptimistic: true
-    };
-    
-    queryClient.setQueryData(['characters'], (oldData: Character[] | undefined) => {
-      if (!oldData) return [optimisticCharacter];
-      return [...oldData, optimisticCharacter];
-    });
+    // Add the new character to local state for immediate display
+    setLocalCharacters(prev => [...prev, newCharacter]);
     
     // Close the modal
     setShowCreateModal(false);
     
-    // Refetch the characters after a short delay to get the final state from the database
+    // Clear local characters after a delay to let the cache update
     setTimeout(() => {
-      queryClient.invalidateQueries({ queryKey: ['characters'] });
+      setLocalCharacters([]);
     }, 2000);
   };
 
