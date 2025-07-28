@@ -73,22 +73,19 @@ export default function InitiativeRoller({
       });
     });
 
-    // Add monsters
+    // Add monsters - use actual instances instead of quantity
     encounter.monsters.forEach(monster => {
-      for (let i = 0; i < monster.quantity; i++) {
-        const instanceNumber = i + 1;
-        const monsterInstance = monster.instances?.find(inst => inst.instanceNumber === instanceNumber);
-        
+      monster.instances?.forEach((instance, index) => {
         order.push({
-          id: `${monster.id}-${i}`,
-          name: `${monster.monsterName} ${monster.quantity > 1 ? `#${instanceNumber}` : ''}`,
+          id: `${monster.id}-${index}`, // Use 0-based index for participant ID
+          name: `${monster.monsterName} #${instance.instanceNumber}`,
           type: 'monster' as const,
-          initiative: monsterInstance?.initiative || 0,
-          currentHP: monsterInstance?.currentHP || monster.currentHP,
+          initiative: instance.initiative || 0,
+          currentHP: instance.currentHP || monster.maxHP,
           maxHP: monster.maxHP,
-          isActive: monsterInstance?.isActive ?? monster.isActive
+          isActive: instance.isActive
         });
-      }
+      });
     });
 
     setInitiativeOrder(order);
@@ -120,8 +117,7 @@ export default function InitiativeRoller({
 
         // Find the specific instance for this participant
         const instanceIndex = parseInt(participant.id.split('-')[1]) || 0;
-        const instanceNumber = instanceIndex + 1; // Convert 0-based index to 1-based instance number
-        const monsterInstance = monsterData.instances?.find(inst => inst.instanceNumber === instanceNumber);
+        const monsterInstance = monsterData.instances?.[instanceIndex]; // Use direct array index
         
         if (!monsterInstance) continue;
 
@@ -319,13 +315,11 @@ export default function InitiativeRoller({
 
       // Find the specific monster instance for this participant
       const instanceIndex = parseInt(participantId.split('-')[1]) || 0;
-      const instanceNumber = instanceIndex + 1; // Convert 0-based index to 1-based instance number
-      const monsterInstance = monsterData.instances?.find(inst => inst.instanceNumber === instanceNumber);
+      const monsterInstance = monsterData.instances?.[instanceIndex]; // Use direct array index
       
       console.log('🎲 Looking for monster instance:', { 
         participantId,
         instanceIndex,
-        instanceNumber, 
         totalInstances: monsterData.instances?.length,
         foundInstance: monsterInstance 
       });
