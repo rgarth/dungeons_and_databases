@@ -221,12 +221,31 @@ export default function InitiativeRoller({
   };
 
   const handleMonsterRollClick = (participantId: string) => {
+    console.log('🎲 handleMonsterRollClick called for participant:', participantId);
+    
     const participant = initiativeOrder.find(p => p.id === participantId);
-    if (!participant || participant.type !== 'monster') return;
+    if (!participant || participant.type !== 'monster') {
+      console.log('🎲 Invalid participant or not a monster:', participant);
+      return;
+    }
 
     // Find the monster data
     const monsterData = encounter.monsters.find(m => participant.id.startsWith(m.id));
-    if (!monsterData) return;
+    if (!monsterData) {
+      console.log('🎲 Monster data not found for participant:', participantId);
+      return;
+    }
+
+    console.log('🎲 Found monster data:', { 
+      monsterId: monsterData.id, 
+      monsterName: monsterData.monsterName,
+      participantId,
+      participant 
+    });
+
+    // Create a unique identifier for this roll
+    const rollId = `monster-${participantId}-${Date.now()}`;
+    console.log('🎲 Created unique roll ID:', rollId);
 
     // Use the proper dice system like combat
     const event = new CustomEvent('triggerDiceRoll', {
@@ -237,31 +256,53 @@ export default function InitiativeRoller({
     // Listen for the dice roll completion
     const handleDiceRollCompleted = (event: CustomEvent) => {
       const { notation, resultTotal } = event.detail;
-      console.log('🎲 Monster initiative dice roll completed:', { notation, resultTotal });
+      console.log('🎲 Monster initiative dice roll completed:', { 
+        rollId, 
+        notation, 
+        resultTotal,
+        participantId 
+      });
       
       // Only process if this is our initiative roll (1d20)
       if (notation === '1d20' && resultTotal !== undefined) {
-        console.log('🎲 Processing monster initiative roll result:', resultTotal);
-        handleMonsterDiceRollResult(resultTotal, participantId, monsterData);
+        console.log('🎲 Processing monster initiative roll result:', { 
+          rollId, 
+          resultTotal, 
+          participantId 
+        });
+        handleMonsterDiceRollResult(resultTotal, participantId, monsterData, rollId);
         
         // Remove the event listener
         window.removeEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+        console.log('🎲 Removed dice roll event listener for:', rollId);
       } else {
-        console.log('🎲 Ignoring dice roll - not our monster initiative roll:', { notation, resultTotal });
+        console.log('🎲 Ignoring dice roll - not our monster initiative roll:', { 
+          rollId, 
+          notation, 
+          resultTotal 
+        });
       }
     };
     
     // Add event listener for dice roll completion
     window.addEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+    console.log('🎲 Added dice roll event listener for:', rollId);
     
     // Cleanup listener after 10 seconds to prevent memory leaks
     setTimeout(() => {
       window.removeEventListener('diceRollCompleted', handleDiceRollCompleted as EventListener);
+      console.log('🎲 Cleanup: Removed dice roll event listener for:', rollId);
     }, 10000);
   };
 
-  const handleMonsterDiceRollResult = async (result: number, participantId: string, monsterData: EncounterMonster) => {
-    console.log('🎲 handleMonsterDiceRollResult called with:', result, 'for participant:', participantId);
+  const handleMonsterDiceRollResult = async (result: number, participantId: string, monsterData: EncounterMonster, rollId: string) => {
+    console.log('🎲 handleMonsterDiceRollResult called with:', { 
+      result, 
+      participantId, 
+      rollId,
+      monsterId: monsterData.id,
+      monsterName: monsterData.monsterName
+    });
     
     const participant = initiativeOrder.find(p => p.id === participantId);
     console.log('🎲 Found monster participant:', participant);
@@ -279,6 +320,12 @@ export default function InitiativeRoller({
       const instanceNumber = parseInt(participantId.split('-')[1]) || 1;
       const monsterInstance = monsterData.instances?.find(inst => inst.instanceNumber === instanceNumber);
       
+      console.log('🎲 Looking for monster instance:', { 
+        instanceNumber, 
+        totalInstances: monsterData.instances?.length,
+        foundInstance: monsterInstance 
+      });
+      
       if (!monsterInstance) {
         console.log('🎲 Monster instance not found, returning');
         return;
@@ -286,37 +333,73 @@ export default function InitiativeRoller({
 
       const dexMod = getModifier(monsterData.monsterData.dexterity);
       const initiative = result + dexMod;
-      console.log('🎲 Calculated monster initiative:', { result, dexMod, initiative });
+      console.log('🎲 Calculated monster initiative:', { 
+        rollId,
+        result, 
+        dexMod, 
+        initiative,
+        instanceId: monsterInstance.id 
+      });
 
       // Update local state
       const updatedOrder = initiativeOrder.map(p => 
         p.id === participantId ? { ...p, initiative } : p
       );
       setInitiativeOrder(updatedOrder);
+      console.log('🎲 Updated local initiative order for:', participantId);
 
       // Auto-save monster initiative
-      const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/monsters/${monsterData.id}/instances/${monsterInstance.id}/initiative`, {
+      const apiUrl = `/api/games/${encounter.gameId}/encounters/${encounter.id}/monsters/${monsterData.id}/instances/${monsterInstance.id}/initiative`;
+      console.log('🎲 Saving monster initiative to API:', apiUrl);
+      
+      const response = await fetch(apiUrl, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ initiative })
       });
 
+      console.log('🎲 API response status:', response.status);
+      
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('🎲 Monster API Error:', response.status, errorText);
+        console.error('🎲 Monster API Error:', { 
+          rollId, 
+          status: response.status, 
+          error: errorText 
+        });
         throw new Error(`Failed to save monster initiative: ${response.status} ${errorText}`);
       }
 
+      const savedData = await response.json();
+      console.log('🎲 Successfully saved monster initiative:', { 
+        rollId, 
+        savedData,
+        participantId 
+      });
+
       // Fetch updated encounter
+      console.log('🎲 Fetching updated encounter data');
       const encounterResponse = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
       if (encounterResponse.ok) {
         const updatedEncounter = await encounterResponse.json();
+        console.log('🎲 Updated encounter data received:', { 
+          rollId, 
+          encounterId: updatedEncounter.id,
+          monsterCount: updatedEncounter.monsters.length 
+        });
         onInitiativeUpdated(updatedEncounter);
+      } else {
+        console.error('🎲 Failed to fetch updated encounter:', encounterResponse.status);
       }
     } catch (err) {
+      console.error('🎲 Error in handleMonsterDiceRollResult:', { 
+        rollId, 
+        error: err 
+      });
       setError(err instanceof Error ? err.message : 'Failed to save monster initiative');
     } finally {
       setRolling(false);
+      console.log('🎲 Completed monster initiative roll for:', { rollId, participantId });
     }
   };
 

@@ -303,15 +303,6 @@ export default function EncounterDetailsModal({
               </Button>
             </>
           )}
-          {(characterCount > 0 || monsterCount > 0) && (
-            <Button
-              onClick={() => setShowInitiativeRoller(true)}
-              className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]"
-            >
-              <Dice1 className="h-4 w-4 mr-1" />
-              Roll Initiative
-            </Button>
-          )}
           {isDM && (
             <>
               {isEditing ? (
@@ -352,6 +343,15 @@ export default function EncounterDetailsModal({
                 {loading ? 'Deleting...' : 'Delete'}
               </Button>
             </>
+          )}
+          {(characterCount > 0 || monsterCount > 0) && (
+            <Button
+              onClick={() => setShowInitiativeRoller(true)}
+              className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]"
+            >
+              <Dice1 className="h-4 w-4 mr-1" />
+              Roll Initiative
+            </Button>
           )}
         </div>
 
