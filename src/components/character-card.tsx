@@ -4,13 +4,12 @@ import { Heart, Shield, Trash2, RefreshCw } from "lucide-react";
 import { useState, useEffect } from "react";
 import { CharacterSheet } from "./character-sheet";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
-import { useAvatar } from '@/hooks/use-character-mutations';
+import { useCharacterMutations, useAvatar } from '@/hooks/use-character-mutations';
 import { toast } from 'react-hot-toast';
 import { Character } from '@/types/character';
 import { ClassLevel } from '@/lib/dnd/progression';
 import Image from 'next/image';
 import { Card, Button } from "./ui";
-import { clientCache } from '@/lib/client-cache';
 
 interface CharacterCardProps {
   character: Character;
@@ -59,6 +58,7 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   // Use React Query for avatar fetching
   const { data: avatarUrl, isLoading: isAvatarLoading } = useAvatar(character.id);
+  const { deleteCharacter } = useCharacterMutations();
   const isOptimistic = character.isOptimistic;
   const hpPercentage = (character.hitPoints / character.maxHitPoints) * 100;
 
@@ -73,18 +73,9 @@ export function CharacterCard({ character, onCharacterDeleted, onCharacterUpdate
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`/api/characters?id=${character.id}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        // Remove character from client cache
-        clientCache.removeCharacter(character.id);
-        toast.success('Character deleted successfully');
-        onCharacterDeleted?.();
-      } else {
-        throw new Error('Failed to delete character');
-      }
+      await deleteCharacter.mutateAsync(character.id);
+      toast.success('Character deleted successfully');
+      onCharacterDeleted?.();
     } catch (error) {
       console.error('Error deleting character:', error);
       toast.error('Failed to delete character');

@@ -8,34 +8,50 @@ import MainLayout from "@/components/layout/MainLayout";
 import { CharacterCard } from "@/components/character-card";
 import { CreateCharacterModal } from "@/components/create-character-modal";
 import { LoadingModal } from "@/components/loading-modal";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Character } from "@/types/character";
 import { Button } from "@/components/ui";
 import { useLoading } from "@/components/providers/loading-provider";
-import { useClientCache } from '@/hooks/use-client-cache';
-import { clientCache } from '@/lib/client-cache';
 
 export default function CharactersPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { assetsLoaded, setAssetsLoaded } = useLoading();
-  const { characters } = useClientCache();
-  const [localCharacters, setLocalCharacters] = useState<Character[]>([]);
+  const queryClient = useQueryClient();
 
-  // Use cached characters combined with local state for immediate updates
-  const charactersData = [...(characters || []), ...localCharacters];
+  // Fetch characters using React Query
+  const { data: characters = [] } = useQuery<Character[]>({
+    queryKey: ['characters'],
+    queryFn: async () => {
+      const response = await fetch("/api/characters");
+      if (!response.ok) {
+        throw new Error('Failed to fetch characters');
+      }
+      return response.json();
+    },
+    enabled: !!session, // Only fetch when we have a session
+  });
 
   // Handle character creation
   const handleCharacterCreated = (newCharacter: Character) => {
-    // Add the new character to local state for immediate display
-    setLocalCharacters(prev => [...prev, newCharacter]);
+    // Optimistically add the new character to the list with syncing state
+    const optimisticCharacter = {
+      ...newCharacter,
+      isOptimistic: true
+    };
+    
+    queryClient.setQueryData(['characters'], (oldData: Character[] | undefined) => {
+      if (!oldData) return [optimisticCharacter];
+      return [...oldData, optimisticCharacter];
+    });
     
     // Close the modal
     setShowCreateModal(false);
     
-    // Clear local characters after a delay to let the cache update
+    // Refetch the characters after a short delay to get the final state from the database
     setTimeout(() => {
-      setLocalCharacters([]);
+      queryClient.invalidateQueries({ queryKey: ['characters'] });
     }, 2000);
   };
 
@@ -92,25 +108,15 @@ export default function CharactersPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {charactersData.map((character) => (
+        {characters.map((character) => (
           <CharacterCard
             key={character.id}
             character={character}
             onCharacterDeleted={() => {
-              // Remove from local state if it exists there
-              setLocalCharacters(prev => prev.filter(char => char.id !== character.id));
-              // Force a re-render by updating the cache state
-              setTimeout(() => {
-                const currentCharacters = clientCache.getCharacters();
-                console.log('✅ Character removed from cache, total characters:', currentCharacters.length);
-              }, 100);
+              queryClient.invalidateQueries({ queryKey: ['characters'] });
             }}
             onCharacterUpdated={() => {
-              // Force a re-render by updating the cache state
-              setTimeout(() => {
-                const currentCharacters = clientCache.getCharacters();
-                console.log('✅ Character updated in cache, total characters:', currentCharacters.length);
-              }, 100);
+              queryClient.invalidateQueries({ queryKey: ['characters'] });
             }}
           />
         ))}
