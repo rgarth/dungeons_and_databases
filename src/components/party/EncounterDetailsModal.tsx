@@ -413,38 +413,40 @@ export default function EncounterDetailsModal({
               <p className="text-[var(--color-text-secondary)] text-sm">No monsters added yet.</p>
             ) : (
               <div className="space-y-2">
-                {currentEncounter.monsters.map((monster) => (
-                  <div
-                    key={monster.id}
-                    className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-md p-3"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div className="flex-1">
-                        <span className="font-medium text-[var(--color-text-primary)]">
-                          {monster.monsterName} {monster.quantity > 1 && `(×${monster.quantity})`}
-                        </span>
-                        {monster.instances?.some(instance => instance.initiative !== undefined) && (
-                          <span className="text-sm text-[var(--color-accent)] font-mono ml-2">
-                            Initiative: {monster.instances?.find(instance => instance.initiative !== undefined)?.initiative}
+                {currentEncounter.monsters.flatMap((monster) => 
+                  monster.instances?.map((instance) => (
+                    <div
+                      key={`${monster.id}-${instance.id}`}
+                      className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-md p-3"
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex-1">
+                          <span className="font-medium text-[var(--color-text-primary)]">
+                            {monster.monsterName} #{instance.instanceNumber}
                           </span>
+                          {instance.initiative !== undefined && (
+                            <span className="text-sm text-[var(--color-accent)] font-mono ml-2">
+                              Initiative: {instance.initiative}
+                            </span>
+                          )}
+                        </div>
+                        {isDM && (
+                          <Button
+                            onClick={() => handleRemoveMonster(monster.id)}
+                            disabled={loading}
+                            size="sm"
+                            className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)] ml-2"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
                         )}
                       </div>
-                      {isDM && (
-                        <Button
-                          onClick={() => handleRemoveMonster(monster.id)}
-                          disabled={loading}
-                          size="sm"
-                          className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)] ml-2"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      )}
+                      <div className="text-sm text-[var(--color-text-secondary)] mt-1">
+                        HP: {instance.currentHP ?? monster.maxHP}/{monster.maxHP}
+                      </div>
                     </div>
-                    <div className="text-sm text-[var(--color-text-secondary)] mt-1">
-                      HP: {monster.currentHP ?? monster.maxHP}/{monster.maxHP} each
-                    </div>
-                  </div>
-                ))}
+                  )) || []
+                )}
               </div>
             )}
           </div>
