@@ -483,9 +483,10 @@ export default function InitiativeRoller({
             );
             setInitiativeOrder(updatedOrder);
             
-            // Update the participant reference
-            if (participant.characterData) {
-              participant.characterData = freshCharacterData;
+            // Update the participant reference with proper type checking
+            const updatedParticipant = updatedOrder.find(p => p.id === participantId);
+            if (updatedParticipant && updatedParticipant.characterData) {
+              updatedParticipant.characterData = freshCharacterData;
             }
           }
         }
