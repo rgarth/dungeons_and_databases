@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { X, Plus, Users, Skull, Trash2, Edit, Save, Dice1, Sword } from 'lucide-react';
+import { X, Plus, Users, Skull, Trash2, Edit, Save, Dice1 } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { Encounter, EncounterMonster, EncounterParticipant } from '@/types/encounter';
 import AddMonsterModal from './AddMonsterModal';
@@ -29,11 +29,10 @@ export default function EncounterDetailsModal({
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(encounter.name);
   const [description, setDescription] = useState(encounter.description || '');
+  const [loading, setLoading] = useState(false);
   const [showAddMonster, setShowAddMonster] = useState(false);
   const [showAddParticipant, setShowAddParticipant] = useState(false);
   const [showInitiativeRoller, setShowInitiativeRoller] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setCurrentEncounter(encounter);
@@ -44,31 +43,26 @@ export default function EncounterDetailsModal({
   const handleSave = async () => {
     try {
       setLoading(true);
-      setError(null);
-
       const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: name.trim(),
-          description: description.trim() || null,
+          description: description.trim(),
           isActive: currentEncounter.isActive
         }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update encounter');
+        throw new Error('Failed to update encounter');
       }
 
       const updatedEncounter = await response.json();
       setCurrentEncounter(updatedEncounter);
       onEncounterUpdated(updatedEncounter);
       setIsEditing(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+    } catch (error) {
+      console.error('Error updating encounter:', error);
     } finally {
       setLoading(false);
     }
@@ -86,14 +80,13 @@ export default function EncounterDetailsModal({
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete encounter');
+        throw new Error('Failed to delete encounter');
       }
 
       onEncounterDeleted(encounter.id);
       onClose();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+    } catch (error) {
+      console.error('Error deleting encounter:', error);
     } finally {
       setLoading(false);
     }
@@ -104,9 +97,7 @@ export default function EncounterDetailsModal({
       setLoading(true);
       const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: currentEncounter.name,
           description: currentEncounter.description,
@@ -115,15 +106,14 @@ export default function EncounterDetailsModal({
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update encounter');
+        throw new Error('Failed to update encounter');
       }
 
       const updatedEncounter = await response.json();
       setCurrentEncounter(updatedEncounter);
       onEncounterUpdated(updatedEncounter);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+    } catch (error) {
+      console.error('Error updating encounter:', error);
     } finally {
       setLoading(false);
     }
@@ -134,7 +124,7 @@ export default function EncounterDetailsModal({
       ...prev,
       monsters: [...prev.monsters, monster]
     }));
-    setShowAddMonster(false);
+    onEncounterUpdated(currentEncounter);
   };
 
   const handleParticipantAdded = (participant: EncounterParticipant) => {
@@ -142,159 +132,148 @@ export default function EncounterDetailsModal({
       ...prev,
       participants: [...prev.participants, participant]
     }));
-    setShowAddParticipant(false);
+    onEncounterUpdated(currentEncounter);
   };
 
-  const handleAddParty = async () => {
+  const handleRemoveMonster = async (monsterId: string) => {
+    if (!confirm('Are you sure you want to remove this monster from the encounter?')) {
+      return;
+    }
+
     try {
       setLoading(true);
-      setError(null);
-
-      // Fetch all characters in the game
-      const charactersResponse = await fetch(`/api/characters?gameId=${encounter.gameId}`);
-      if (!charactersResponse.ok) {
-        throw new Error('Failed to fetch game characters');
-      }
-      const characters = await charactersResponse.json();
-
-      // Add all characters to the encounter
-      const addPromises = characters.map((character: unknown) => {
-        const char = character as { id: string; name: string };
-        return fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/participants`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            characterId: char.id,
-            characterName: char.name,
-            characterData: character
-          }),
-        });
+      const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/monsters/${monsterId}`, {
+        method: 'DELETE',
       });
 
-      const responses = await Promise.all(addPromises);
-      const failedResponses = responses.filter(response => !response.ok);
-
-      if (failedResponses.length > 0) {
-        throw new Error(`Failed to add ${failedResponses.length} characters to encounter`);
+      if (!response.ok) {
+        throw new Error('Failed to remove monster');
       }
 
-      // Refresh encounter data
+      // Remove from local state
+      setCurrentEncounter(prev => ({
+        ...prev,
+        monsters: prev.monsters.filter(m => m.id !== monsterId)
+      }));
+
+      // Fetch updated encounter to ensure consistency
       const encounterResponse = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
       if (encounterResponse.ok) {
         const updatedEncounter = await encounterResponse.json();
-        setCurrentEncounter(updatedEncounter);
         onEncounterUpdated(updatedEncounter);
       }
-
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred while adding party members');
+    } catch (error) {
+      console.error('Error removing monster:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const getParticipantCount = () => {
-    const characterCount = currentEncounter.participants.length;
-    const monsterCount = currentEncounter.monsters.reduce((total, monster) => total + monster.quantity, 0);
-    return { characterCount, monsterCount };
+  const handleRemoveParticipant = async (participantId: string) => {
+    if (!confirm('Are you sure you want to remove this character from the encounter?')) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/participants/${participantId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to remove participant');
+      }
+
+      // Remove from local state
+      setCurrentEncounter(prev => ({
+        ...prev,
+        participants: prev.participants.filter(p => p.id !== participantId)
+      }));
+
+      // Fetch updated encounter to ensure consistency
+      const encounterResponse = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
+      if (encounterResponse.ok) {
+        const updatedEncounter = await encounterResponse.json();
+        onEncounterUpdated(updatedEncounter);
+      }
+    } catch (error) {
+      console.error('Error removing participant:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (!isOpen) return null;
+  const handleAddParty = async () => {
+    // This would add all party members to the encounter
+    // For now, just show the add participant modal
+    setShowAddParticipant(true);
+  };
 
-  const { characterCount, monsterCount } = getParticipantCount();
+  const characterCount = currentEncounter.participants.length;
+  const monsterCount = currentEncounter.monsters.reduce((total, monster) => total + monster.quantity, 0);
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center space-x-3">
-            <h2 className="text-2xl font-bold text-[var(--color-text-primary)]">
-              {isEditing ? (
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-[var(--color-text-primary)]">
+            {isEditing ? 'Edit Encounter' : 'Encounter Details'}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Encounter Info */}
+        <div className="mb-6">
+          {isEditing ? (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-1">
+                  Name
+                </label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded px-2 py-1 text-[var(--color-text-primary)]"
+                  className="w-full px-3 py-2 border border-[var(--color-border)] rounded-md bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
                 />
-              ) : (
-                currentEncounter.name
-              )}
-            </h2>
-            {currentEncounter.isActive && (
-              <div className="flex items-center space-x-2 text-green-600">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                <span className="text-sm font-medium">Active Combat</span>
               </div>
-            )}
-          </div>
-          <div className="flex items-center space-x-2">
-            {isDM && (
-              <>
-                {isEditing ? (
-                  <Button
-                    onClick={handleSave}
-                    disabled={loading}
-                    className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]"
-                  >
-                    <Save className="h-4 w-4 mr-1" />
-                    Save
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => setIsEditing(true)}
-                    className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
-                  >
-                    <Edit className="h-4 w-4 mr-1" />
-                    Edit
-                  </Button>
-                )}
-                <Button
-                  onClick={handleDelete}
-                  disabled={loading}
-                  className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)]"
-                >
-                  <Trash2 className="h-4 w-4 mr-1" />
-                  Delete
-                </Button>
-              </>
-            )}
-            <button
-              onClick={onClose}
-              className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-1">
+                  Description
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-[var(--color-border)] rounded-md bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                />
+              </div>
+            </div>
+          ) : (
+            <div>
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">
+                {currentEncounter.name}
+              </h3>
+              {currentEncounter.description && (
+                <p className="text-[var(--color-text-secondary)] mb-2">
+                  {currentEncounter.description}
+                </p>
+              )}
+              <div className="flex items-center gap-4 text-sm text-[var(--color-text-secondary)]">
+                <span>Status: {currentEncounter.isActive ? 'Active' : 'Inactive'}</span>
+                <span>Characters: {characterCount}</span>
+                <span>Monsters: {monsterCount}</span>
+              </div>
+            </div>
+          )}
         </div>
-
-        {isEditing && (
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-[var(--color-text-primary)] mb-1">
-              Description
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 border border-[var(--color-border)] rounded-md bg-[var(--color-surface)] text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-              placeholder="Brief description of the encounter..."
-            />
-          </div>
-        )}
-
-        {!isEditing && currentEncounter.description && (
-          <div className="mb-6">
-            <p className="text-[var(--color-text-secondary)]">{currentEncounter.description}</p>
-          </div>
-        )}
-
-        {error && (
-          <div className="mb-4 text-red-500 text-sm bg-red-50 border border-red-200 rounded-md p-2">
-            {error}
-          </div>
-        )}
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3 mb-6">
@@ -334,23 +313,50 @@ export default function EncounterDetailsModal({
             </Button>
           )}
           {isDM && (
-            <Button
-              onClick={handleToggleActive}
-              disabled={loading}
-              className={`${
-                currentEncounter.isActive
-                  ? 'bg-[var(--color-warning)] hover:bg-[var(--color-warning-hover)] text-[var(--color-warning-text)]'
-                  : 'bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]'
-              }`}
-            >
-              <Sword className="h-4 w-4 mr-1" />
-              {currentEncounter.isActive ? 'End Combat' : 'Start Combat'}
-            </Button>
+            <>
+              {isEditing ? (
+                <Button
+                  onClick={handleSave}
+                  disabled={loading}
+                  className="bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]"
+                >
+                  <Save className="h-4 w-4 mr-1" />
+                  {loading ? 'Saving...' : 'Save'}
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => setIsEditing(true)}
+                  className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
+                >
+                  <Edit className="h-4 w-4 mr-1" />
+                  Edit
+                </Button>
+              )}
+              <Button
+                onClick={handleToggleActive}
+                disabled={loading}
+                className={`${
+                  currentEncounter.isActive
+                    ? 'bg-[var(--color-warning)] hover:bg-[var(--color-warning-hover)] text-[var(--color-warning-text)]'
+                    : 'bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]'
+                }`}
+              >
+                {loading ? 'Updating...' : currentEncounter.isActive ? 'Deactivate' : 'Activate'}
+              </Button>
+              <Button
+                onClick={handleDelete}
+                disabled={loading}
+                className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)]"
+              >
+                <Trash2 className="h-4 w-4 mr-1" />
+                {loading ? 'Deleting...' : 'Delete'}
+              </Button>
+            </>
           )}
         </div>
 
-        {/* Participants Summary */}
-        <div className="grid md:grid-cols-2 gap-6">
+        {/* Participants and Monsters */}
+        <div className="space-y-6">
           {/* Characters */}
           <div>
             <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center">
@@ -367,13 +373,25 @@ export default function EncounterDetailsModal({
                     className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-md p-3"
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-medium text-[var(--color-text-primary)]">
-                        {participant.characterName}
-                      </span>
-                      {participant.initiative !== undefined && (
-                        <span className="text-sm text-[var(--color-accent)] font-mono">
-                          Initiative: {participant.initiative}
+                      <div className="flex-1">
+                        <span className="font-medium text-[var(--color-text-primary)]">
+                          {participant.characterName}
                         </span>
+                        {participant.initiative !== undefined && (
+                          <span className="text-sm text-[var(--color-accent)] font-mono ml-2">
+                            Initiative: {participant.initiative}
+                          </span>
+                        )}
+                      </div>
+                      {isDM && (
+                        <Button
+                          onClick={() => handleRemoveParticipant(participant.id)}
+                          disabled={loading}
+                          size="sm"
+                          className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)] ml-2"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
                       )}
                     </div>
                     <div className="text-sm text-[var(--color-text-secondary)] mt-1">
@@ -401,13 +419,25 @@ export default function EncounterDetailsModal({
                     className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-md p-3"
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-medium text-[var(--color-text-primary)]">
-                        {monster.monsterName} {monster.quantity > 1 && `(×${monster.quantity})`}
-                      </span>
-                      {monster.instances?.some(instance => instance.initiative !== undefined) && (
-                        <span className="text-sm text-[var(--color-accent)] font-mono">
-                          Initiative: {monster.instances?.find(instance => instance.initiative !== undefined)?.initiative}
+                      <div className="flex-1">
+                        <span className="font-medium text-[var(--color-text-primary)]">
+                          {monster.monsterName} {monster.quantity > 1 && `(×${monster.quantity})`}
                         </span>
+                        {monster.instances?.some(instance => instance.initiative !== undefined) && (
+                          <span className="text-sm text-[var(--color-accent)] font-mono ml-2">
+                            Initiative: {monster.instances?.find(instance => instance.initiative !== undefined)?.initiative}
+                          </span>
+                        )}
+                      </div>
+                      {isDM && (
+                        <Button
+                          onClick={() => handleRemoveMonster(monster.id)}
+                          disabled={loading}
+                          size="sm"
+                          className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)] ml-2"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
                       )}
                     </div>
                     <div className="text-sm text-[var(--color-text-secondary)] mt-1">
@@ -446,10 +476,10 @@ export default function EncounterDetailsModal({
             encounter={currentEncounter}
             isOpen={showInitiativeRoller}
             onClose={() => setShowInitiativeRoller(false)}
-                         onInitiativeUpdated={(updatedEncounter: Encounter) => {
-               setCurrentEncounter(updatedEncounter);
-               onEncounterUpdated(updatedEncounter);
-             }}
+            onInitiativeUpdated={(updatedEncounter: Encounter) => {
+              setCurrentEncounter(updatedEncounter);
+              onEncounterUpdated(updatedEncounter);
+            }}
             isDM={isDM}
           />
         )}
