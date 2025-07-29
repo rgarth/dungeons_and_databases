@@ -59,7 +59,6 @@ model Character {
   name                  String
   race                  String
   subrace               String?
-  class                 String
   level                 Int          @default(1)
   background            String
   alignment             String
@@ -93,49 +92,50 @@ model Character {
   createdAt             DateTime     @default(now())
   updatedAt             DateTime     @updatedAt
   userId                String
-  subclass              String?
-  classes               Json?
-  totalLevel            Int?
-  selectedFeatures      Json?
-  gender                String?
+  actions               Json?
   age                   Int?
-  temporaryHitPoints    Int?         @default(0)
-  proficiencyBonus      Int?         @default(2)
-  skills                Json?
-  equippedWeapons       Json?
-  inventoryWeapons      Json?
   ammunition            Json?
-  equippedArmor         Json?
-  inventoryArmor        Json?
-  magicalItems          Json?
-  inventoryMagicalItems Json?
   attunedItems          Json?
+  avatar                String?
+  backstory             String?
+  bonusActions          Json?
+  class                 String
+  classes               Json?
+  conditions            Json?
   copperPieces          Int?         @default(0)
-  silverPieces          Int?         @default(0)
+  deathSaveFailures     Json         @default("[false, false, false]")
+  deathSaveSuccesses    Json         @default("[false, false, false]")
+  equippedArmor         Json?
+  equippedWeapons       Json?
+  fullBodyAvatar        String?
+  gender                String?
   goldPieces            Int?         @default(0)
-  treasures             Json?
-  spellsKnown           Json?
-  spellsPrepared        Json?
+  inspiration           Boolean?     @default(false)
+  inventoryArmor        Json?
+  inventoryMagicalItems Json?
+  inventoryWeapons      Json?
+  kiPoints              Int?         @default(0)
+  languageSources       Json?        @default("{}")
+  magicalItems          Json?
+  notes                 String?
+  personality           String?
+  proficiencyBonus      Int?         @default(2)
+  racialTraits          Json?
+  reactions             Json?
+  selectedFeatures      Json?
+  silverPieces          Int?         @default(0)
+  skillSources          Json?        @default("{}")
+  skills                Json?
+  spellAttackBonus      Int?
+  spellSaveDC           Int?
   spellSlots            Json?
   spellcastingAbility   String?
-  spellSaveDC           Int?
-  spellAttackBonus      Int?
-  actions               Json?
-  bonusActions          Json?
-  reactions             Json?
-  personality           String?
-  backstory             String?
-  notes                 String?
-  avatar                String?
-  fullBodyAvatar        String?
-  inspiration           Boolean?     @default(false)
-  conditions            Json?
-  racialTraits          Json?
-  skillSources          Json?        @default("{}")
-  languageSources       Json?        @default("{}")
-  deathSaveSuccesses    Json         @default("[false, false, false]")
-  deathSaveFailures     Json         @default("[false, false, false]")
-  kiPoints              Int?         @default(0)
+  spellsKnown           Json?
+  spellsPrepared        Json?
+  subclass              String?
+  temporaryHitPoints    Int?         @default(0)
+  totalLevel            Int?
+  treasures             Json?
   usedKiPoints          Int?         @default(0)
   usedSpellSlots        Json?
   avatarImage           AvatarImage?
@@ -193,12 +193,12 @@ model Game {
   createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt    DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
   isActive     Boolean           @default(true) @map("is_active")
+  encounters   Encounter[]
   dm           User              @relation("GameDM", fields: [dmId], references: [id], onDelete: Cascade)
   chatMessages GameChatMessage[]
   invites      GameInvite[]
   notes        GameNote[]
   participants GameParticipant[]
-  encounters   Encounter[]
 
   @@index([dmId], map: "idx_games_dm_id")
   @@index([createdAt], map: "idx_games_created_at")
@@ -270,32 +270,36 @@ model GameChatMessage {
 }
 
 model Encounter {
-  id          String   @id @default(dbgenerated("(gen_random_uuid())::text"))
-  gameId      String   @map("game_id")
-  name        String
-  description String?
-  isActive    Boolean  @default(false) @map("is_active")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-  game        Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  monsters    EncounterMonster[]
-  participants EncounterParticipant[]
+  id                   String                 @id @default(dbgenerated("(gen_random_uuid())::text"))
+  gameId               String                 @map("game_id")
+  name                 String
+  description          String?
+  isActive             Boolean                @default(false) @map("is_active")
+  createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+  currentParticipantId String?                @map("current_participant_id")
+  currentTurn          Int?                   @map("current_turn")
+  round                Int?                   @default(1)
+  turnOrder            Json?                  @map("turn_order")
+  game                 Game                   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  monsters             EncounterMonster[]
+  participants         EncounterParticipant[]
 
   @@index([gameId], map: "idx_encounters_game_id")
   @@index([isActive], map: "idx_encounters_is_active")
 }
 
 model EncounterMonster {
-  id          String   @id @default(dbgenerated("(gen_random_uuid())::text"))
-  encounterId String   @map("encounter_id")
-  monsterName String   @map("monster_name")
-  monsterData Json     @map("monster_data") // Full monster data from our database
-  quantity    Int      @default(1)
-  currentHP   Int?     @map("current_hp") // Current HP for each instance
-  maxHP       Int      @map("max_hp") // Max HP for each instance
-  isActive    Boolean  @default(true) @map("is_active")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  encounter   Encounter @relation(fields: [encounterId], references: [id], onDelete: Cascade)
+  id          String                     @id @default(dbgenerated("(gen_random_uuid())::text"))
+  encounterId String                     @map("encounter_id")
+  monsterName String                     @map("monster_name")
+  monsterData Json                       @map("monster_data")
+  quantity    Int                        @default(1)
+  currentHP   Int?                       @map("current_hp")
+  maxHP       Int                        @map("max_hp")
+  isActive    Boolean                    @default(true) @map("is_active")
+  createdAt   DateTime                   @default(now()) @map("created_at") @db.Timestamptz(6)
+  encounter   Encounter                  @relation(fields: [encounterId], references: [id], onDelete: Cascade)
   instances   EncounterMonsterInstance[]
 
   @@index([encounterId], map: "idx_encounter_monsters_encounter_id")
@@ -303,32 +307,32 @@ model EncounterMonster {
 }
 
 model EncounterMonsterInstance {
-  id          String   @id @default(dbgenerated("(gen_random_uuid())::text"))
-  encounterMonsterId String @map("encounter_monster_id")
-  instanceNumber Int   @map("instance_number") // 1, 2, 3, etc. for multiple instances
-  initiative  Int?     // Individual initiative value for this instance
-  currentHP   Int?     @map("current_hp") // Individual HP for this instance
-  isActive    Boolean  @default(true) @map("is_active")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  encounterMonster EncounterMonster @relation(fields: [encounterMonsterId], references: [id], onDelete: Cascade)
+  id                 String           @id @default(dbgenerated("(gen_random_uuid())::text"))
+  encounterMonsterId String           @map("encounter_monster_id")
+  instanceNumber     Int              @map("instance_number")
+  initiative         Int?
+  currentHP          Int?             @map("current_hp")
+  isActive           Boolean          @default(true) @map("is_active")
+  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  encounterMonster   EncounterMonster @relation(fields: [encounterMonsterId], references: [id], onDelete: Cascade)
 
+  @@unique([encounterMonsterId, instanceNumber], map: "unique_encounter_monster_instance")
   @@index([encounterMonsterId], map: "idx_encounter_monster_instances_encounter_monster_id")
   @@index([isActive], map: "idx_encounter_monster_instances_is_active")
-  @@unique([encounterMonsterId, instanceNumber], map: "unique_encounter_monster_instance")
 }
 
 model EncounterParticipant {
-  id          String   @id @default(dbgenerated("(gen_random_uuid())::text"))
-  encounterId String   @map("encounter_id")
-  characterId String   @map("character_id")
-  characterName String @map("character_name")
-  characterData Json   @map("character_data") // Character data snapshot
-  initiative  Int?     // Rolled initiative value
-  currentHP   Int?     @map("current_hp")
-  maxHP       Int      @map("max_hp")
-  isActive    Boolean  @default(true) @map("is_active")
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  encounter   Encounter @relation(fields: [encounterId], references: [id], onDelete: Cascade)
+  id            String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  encounterId   String    @map("encounter_id")
+  characterId   String    @map("character_id")
+  characterName String    @map("character_name")
+  characterData Json      @map("character_data")
+  initiative    Int?
+  currentHP     Int?      @map("current_hp")
+  maxHP         Int       @map("max_hp")
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  encounter     Encounter @relation(fields: [encounterId], references: [id], onDelete: Cascade)
 
   @@index([encounterId], map: "idx_encounter_participants_encounter_id")
   @@index([characterId], map: "idx_encounter_participants_character_id")

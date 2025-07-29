@@ -59,6 +59,16 @@ export async function GET(
       return NextResponse.json({ error: 'Encounter not found' }, { status: 404 });
     }
 
+    console.log('🎯 GET /api/games/[gameId]/encounters/[encounterId] - Response data:', {
+      id: encounter.id,
+      name: encounter.name,
+      isActive: encounter.isActive,
+      turnOrder: encounter.turnOrder,
+      currentParticipantId: encounter.currentParticipantId,
+      currentTurn: encounter.currentTurn,
+      round: encounter.round
+    });
+
     return NextResponse.json(encounter);
   } catch (error) {
     console.error('Error fetching encounter:', error);
@@ -82,7 +92,21 @@ export async function PUT(
     }
 
     const { gameId, encounterId } = await params;
-    const { name, description, isActive } = await request.json();
+    const { name, description, isActive, turnOrder, currentParticipantId, currentTurn, round } = await request.json();
+    
+    console.log('🎯 PUT /api/games/[gameId]/encounters/[encounterId] - Request data:', {
+      gameId,
+      encounterId,
+      name,
+      description,
+      isActive,
+      turnOrder,
+      currentParticipantId,
+      currentTurn,
+      round
+    });
+
+
 
     // Check if user is the DM of this game
     const game = await prisma.game.findUnique({
@@ -98,12 +122,18 @@ export async function PUT(
       return NextResponse.json({ error: 'Only the DM can update encounters' }, { status: 403 });
     }
 
+
+    
     const encounter = await prisma.encounter.update({
       where: { id: encounterId },
       data: {
         name: name?.trim(),
         description: description?.trim(),
-        isActive
+        isActive,
+        turnOrder,
+        currentParticipantId,
+        currentTurn,
+        round
       },
       include: {
         monsters: {
@@ -119,6 +149,7 @@ export async function PUT(
         }
       }
     });
+
 
     return NextResponse.json(encounter);
   } catch (error) {

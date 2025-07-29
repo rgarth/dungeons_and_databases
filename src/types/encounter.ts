@@ -7,6 +7,10 @@ export interface Encounter {
   name: string;
   description?: string;
   isActive: boolean;
+  currentTurn?: number; // Current turn number (1, 2, 3, etc.)
+  currentParticipantId?: string; // ID of current participant in initiative order
+  turnOrder?: string[]; // Array of participant IDs in initiative order
+  round?: number; // Current round number
   createdAt: string;
   updatedAt: string;
   monsters: EncounterMonster[];
