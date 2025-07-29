@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import Pusher from 'pusher';
+
+const pusher = new Pusher({
+  appId: process.env.PUSHER_APP_ID || '',
+  key: process.env.NEXT_PUBLIC_PUSHER_KEY || '',
+  secret: process.env.PUSHER_SECRET || '',
+  cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || 'us2',
+  useTLS: true,
+});
 
 // POST /api/games/join - Join a game with an invite code
 export async function POST(request: NextRequest) {
@@ -144,13 +153,30 @@ export async function POST(request: NextRequest) {
         data: { usedCount: invite.usedCount + 1 }
       });
 
-      // Update the game's updatedAt timestamp to trigger SSE updates
+      // Update the game's updatedAt timestamp
       await tx.game.update({
         where: { id: invite.gameId },
         data: { updatedAt: new Date() }
       });
 
       return participant;
+    });
+
+    // Broadcast the participant addition via Pusher
+    await pusher.trigger(`game-${invite.gameId}`, 'participant:added', {
+      gameId: invite.gameId,
+      participantId: result.id,
+      participant: {
+        id: result.id,
+        userId: result.userId,
+        userName: result.user.name || result.user.email
+      }
+    });
+
+    // Also broadcast a general game update
+    await pusher.trigger(`game-${invite.gameId}`, 'game:updated', {
+      gameId: invite.gameId,
+      updatedAt: new Date().toISOString()
     });
 
     return NextResponse.json(result, { status: 201 });

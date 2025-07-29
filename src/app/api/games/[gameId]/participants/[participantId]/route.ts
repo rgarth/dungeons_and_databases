@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import Pusher from 'pusher';
+
+const pusher = new Pusher({
+  appId: process.env.PUSHER_APP_ID || '',
+  key: process.env.NEXT_PUBLIC_PUSHER_KEY || '',
+  secret: process.env.PUSHER_SECRET || '',
+  cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || 'us2',
+  useTLS: true,
+});
 
 // DELETE /api/games/[gameId]/participants/[participantId] - Remove a participant from the game
 export async function DELETE(
@@ -76,7 +85,7 @@ export async function DELETE(
         where: { id: participantId }
       });
 
-      // Update the game's updatedAt timestamp to trigger SSE updates
+      // Update the game's updatedAt timestamp
       await tx.game.update({
         where: { id: gameId },
         data: { updatedAt: new Date() }
@@ -84,6 +93,23 @@ export async function DELETE(
 
       // Note: The character itself is not deleted, just the assignment to this game
       // Characters belong to users, not games
+    });
+
+    // Broadcast the participant removal via Pusher
+    await pusher.trigger(`game-${gameId}`, 'participant:removed', {
+      gameId,
+      participantId,
+      removedParticipant: {
+        id: participantToRemove.id,
+        userId: participantToRemove.userId,
+        userName: participantToRemove.user.name || participantToRemove.user.email
+      }
+    });
+
+    // Also broadcast a general game update
+    await pusher.trigger(`game-${gameId}`, 'game:updated', {
+      gameId,
+      updatedAt: new Date().toISOString()
     });
 
     return NextResponse.json({ 

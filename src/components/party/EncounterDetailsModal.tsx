@@ -109,12 +109,37 @@ export default function EncounterDetailsModal({
 
     // Listen for encounter updates (like start/stop)
     const gameChannel = pusher.subscribe(`game-${encounter.gameId}`);
-    gameChannel.bind('encounter:updated', (data: { encounterId: string; encounter: Encounter }) => {
+    gameChannel.bind('encounter:updated', (data: { 
+      encounterId: string; 
+      isActive: boolean;
+      name: string;
+      currentTurn?: number;
+      currentParticipantId?: string;
+      round?: number;
+      turnOrder?: string[];
+    }) => {
       console.log('🎯 Received encounter update:', data);
       if (data.encounterId === encounter.id) {
-        console.log('🎯 Updating encounter state:', data.encounter.isActive ? 'ACTIVE' : 'STOPPED');
-        setCurrentEncounter(data.encounter);
-        onEncounterUpdated(data.encounter);
+        console.log('🎯 Updating encounter state:', data.isActive ? 'ACTIVE' : 'STOPPED');
+        setCurrentEncounter(prev => ({
+          ...prev,
+          isActive: data.isActive,
+          name: data.name,
+          currentTurn: data.currentTurn,
+          currentParticipantId: data.currentParticipantId,
+          round: data.round,
+          turnOrder: data.turnOrder
+        }));
+        // Also update the parent component
+        onEncounterUpdated({
+          ...currentEncounter,
+          isActive: data.isActive,
+          name: data.name,
+          currentTurn: data.currentTurn,
+          currentParticipantId: data.currentParticipantId,
+          round: data.round,
+          turnOrder: data.turnOrder
+        });
       }
     });
 

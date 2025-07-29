@@ -11,7 +11,7 @@ import { useAvatar } from '@/hooks/use-character-mutations';
 import Image from 'next/image';
 import { CharacterSheet } from '@/components/character-sheet';
 import ReadOnlyCharacterSheet from '@/components/character-sheet/ReadOnlyCharacterSheet';
-import { useGameEvents } from '@/hooks/use-game-events';
+
 import GameChat from './GameChat';
 import EncountersTab from './EncountersTab';
 import { useClientCache } from '@/hooks/use-client-cache';
@@ -141,23 +141,58 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
     setCurrentGame(game);
   }, [game]);
 
-  // SSE-based real-time updates for game state changes
-  useGameEvents({
-    gameId: currentGame?.id || '',
-    enabled: isOpen && !!currentGame,
-    onGameUpdate: (gameUpdate) => {
-      // Only refresh if there are actual changes
-      if (gameUpdate.hasChanges) {
-        console.log('🔄 Game state changed, refreshing data...', gameUpdate);
-        refreshGameData();
-      } else {
-        console.log('📊 Game update received but no changes detected:', gameUpdate);
-      }
-    },
-    onError: (error: Error) => {
-      console.error('❌ Game SSE error:', error);
-    }
-  });
+  // Pusher-based real-time updates for game state changes
+  useEffect(() => {
+    if (!isOpen || !currentGame) return;
+
+    // Import Pusher dynamically to avoid SSR issues
+    import('pusher-js').then((PusherModule) => {
+      const pusher = new PusherModule.default(process.env.NEXT_PUBLIC_PUSHER_KEY || 'your-pusher-key', {
+        cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || 'us2',
+        authEndpoint: `/api/pusher/auth`,
+        enabledTransports: ['ws', 'wss'],
+      });
+
+      // Subscribe to game updates
+      const gameChannel = pusher.subscribe(`game-${currentGame.id}`);
+
+      // Listen for game state changes
+      gameChannel.bind('game:updated', (data: { 
+        gameId: string;
+        name?: string;
+        participantCount?: number;
+        characterCount?: number;
+        updatedAt: string;
+      }) => {
+        console.log('🔄 Game state changed via Pusher:', data);
+        if (data.gameId === currentGame.id) {
+          refreshGameData();
+        }
+      });
+
+      // Listen for participant changes
+      gameChannel.bind('participant:added', (data: { gameId: string; participantId: string }) => {
+        console.log('👤 Participant added via Pusher:', data);
+        if (data.gameId === currentGame.id) {
+          refreshGameData();
+        }
+      });
+
+      gameChannel.bind('participant:removed', (data: { gameId: string; participantId: string }) => {
+        console.log('👤 Participant removed via Pusher:', data);
+        if (data.gameId === currentGame.id) {
+          refreshGameData();
+        }
+      });
+
+      // Cleanup on unmount
+      return () => {
+        gameChannel.unbind_all();
+        pusher.unsubscribe(`game-${currentGame.id}`);
+        pusher.disconnect();
+      };
+    });
+  }, [isOpen, currentGame?.id]);
 
   // Load notes when notes tab is active
   useEffect(() => {

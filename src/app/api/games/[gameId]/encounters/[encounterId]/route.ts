@@ -133,9 +133,15 @@ export async function PUT(
     });
 
     // Broadcast the encounter state change to all players
+    // Only send essential state data to avoid Pusher size limits
     await pusher.trigger(`game-${gameId}`, 'encounter:updated', {
       encounterId,
-      encounter
+      isActive: encounter.isActive,
+      name: encounter.name,
+      currentTurn: encounter.currentTurn,
+      currentParticipantId: encounter.currentParticipantId,
+      round: encounter.round,
+      turnOrder: encounter.turnOrder
     });
 
     return NextResponse.json(encounter);
