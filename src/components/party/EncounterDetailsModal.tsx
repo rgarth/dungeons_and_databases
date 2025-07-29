@@ -44,6 +44,21 @@ export default function EncounterDetailsModal({
     setDescription(encounter.description || '');
   }, [encounter]);
 
+  useEffect(() => {
+    if (isOpen) {
+      const pollInterval = setInterval(() => {
+        fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`)
+          .then(response => response.json())
+          .then(updatedEncounter => {
+            setCurrentEncounter(updatedEncounter);
+            onEncounterUpdated(updatedEncounter);
+          })
+          .catch(error => console.error('Error polling encounter:', error));
+      }, 1000); // Poll every 1 second
+      return () => clearInterval(pollInterval);
+    }
+  }, [isOpen, encounter.gameId, encounter.id]);
+
   const handleSave = async () => {
     try {
       setSaveLoading(true);
@@ -96,16 +111,109 @@ export default function EncounterDetailsModal({
     }
   };
 
+  const generateInitiativeOrder = () => {
+    const order: string[] = [];
+    
+    // Add characters
+    currentEncounter.participants.forEach(participant => {
+      if (participant.initiative !== undefined && participant.initiative !== null) {
+        order.push(participant.id);
+      }
+    });
+
+    // Add monsters - use actual instances instead of quantity
+    currentEncounter.monsters.forEach(monster => {
+      monster.instances?.forEach((instance) => {
+        if (instance.initiative !== undefined && instance.initiative !== null) {
+          order.push(`${monster.id}-${instance.instanceNumber}`);
+        }
+      });
+    });
+
+    // Sort by initiative (highest first), then by dex modifier as tiebreaker
+    order.sort((a, b) => {
+      const aParticipant = currentEncounter.participants.find(p => p.id === a);
+      const bParticipant = currentEncounter.participants.find(p => p.id === b);
+      
+      if (aParticipant && bParticipant) {
+        // Both are characters - compare initiative, then dex
+        if (aParticipant.initiative !== bParticipant.initiative) {
+          return (bParticipant.initiative || 0) - (aParticipant.initiative || 0);
+        }
+        // Same initiative, compare dex
+        const aDex = aParticipant.characterData?.dexterity || 0;
+        const bDex = bParticipant.characterData?.dexterity || 0;
+        return bDex - aDex;
+      }
+      
+      // One or both are monsters - compare initiative, then monster dex
+      const aInitiative = aParticipant?.initiative || 
+        (() => {
+          const [monsterId, instanceNum] = a.split('-');
+          const monster = currentEncounter.monsters.find(m => m.id === monsterId);
+          const instance = monster?.instances?.find(i => i.instanceNumber === parseInt(instanceNum));
+          return instance?.initiative || 0;
+        })();
+      
+      const bInitiative = bParticipant?.initiative || 
+        (() => {
+          const [monsterId, instanceNum] = b.split('-');
+          const monster = currentEncounter.monsters.find(m => m.id === monsterId);
+          const instance = monster?.instances?.find(i => i.instanceNumber === parseInt(instanceNum));
+          return instance?.initiative || 0;
+        })();
+      
+      if (aInitiative !== bInitiative) {
+        return bInitiative - aInitiative;
+      }
+      
+      // Same initiative, compare monster dex
+      const aDex = aParticipant?.characterData?.dexterity || 
+        (() => {
+          const [monsterId] = a.split('-');
+          const monster = currentEncounter.monsters.find(m => m.id === monsterId);
+          return monster?.monsterData?.dexterity || 0;
+        })();
+      
+      const bDex = bParticipant?.characterData?.dexterity || 
+        (() => {
+          const [monsterId] = b.split('-');
+          const monster = currentEncounter.monsters.find(m => m.id === monsterId);
+          return monster?.monsterData?.dexterity || 0;
+        })();
+      
+      return bDex - aDex;
+    });
+
+    return order;
+  };
+
   const handleToggleActive = async () => {
     try {
       setToggleLoading(true);
+      
+      let turnOrder = null;
+      let currentParticipantId = null;
+      let round = null;
+      
+      if (!currentEncounter.isActive) {
+        // Starting combat - generate initiative order
+        turnOrder = generateInitiativeOrder();
+        currentParticipantId = turnOrder.length > 0 ? turnOrder[0] : null;
+        round = 1;
+      }
+      // If stopping combat, turnOrder, currentParticipantId, and round will be null
+      
       const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: currentEncounter.name,
           description: currentEncounter.description,
-          isActive: !currentEncounter.isActive
+          isActive: !currentEncounter.isActive,
+          turnOrder,
+          currentParticipantId,
+          round
         }),
       });
 
@@ -280,6 +388,80 @@ export default function EncounterDetailsModal({
   const characterCount = currentEncounter.participants.length;
   const monsterCount = currentEncounter.monsters.reduce((total, monster) => total + monster.quantity, 0);
 
+  const getModifier = (abilityScore: number) => {
+    return Math.floor((abilityScore - 10) / 2);
+  };
+
+  const getInitiativeOrderedParticipants = () => {
+    const allParticipants: Array<{
+      id: string;
+      name: string;
+      type: 'character' | 'monster';
+      initiative: number;
+      currentHP: number;
+      maxHP: number;
+      participant?: EncounterParticipant;
+      monster?: EncounterMonster;
+      instance?: { id: string; instanceNumber: number; initiative?: number; currentHP?: number };
+    }> = [];
+
+    // Add characters
+    currentEncounter.participants.forEach(participant => {
+      allParticipants.push({
+        id: participant.id,
+        name: participant.characterName,
+        type: 'character',
+        initiative: participant.initiative || 0,
+        currentHP: participant.currentHP || participant.maxHP,
+        maxHP: participant.maxHP,
+        participant
+      });
+    });
+
+    // Add monsters
+    currentEncounter.monsters.forEach(monster => {
+      monster.instances?.forEach((instance) => {
+        allParticipants.push({
+          id: `${monster.id}-${instance.instanceNumber}`,
+          name: `${monster.monsterName} #${instance.instanceNumber}`,
+          type: 'monster',
+          initiative: instance.initiative || 0,
+          currentHP: instance.currentHP || monster.maxHP,
+          maxHP: monster.maxHP,
+          monster,
+          instance
+        });
+      });
+    });
+
+    // Sort by initiative (highest first), then by dex modifier as tiebreaker
+    allParticipants.sort((a, b) => {
+      if (a.initiative !== b.initiative) {
+        return b.initiative - a.initiative;
+      }
+      
+      // If initiative is the same, sort by dex modifier
+      let aDexMod = 0;
+      let bDexMod = 0;
+      
+      if (a.type === 'character' && a.participant?.characterData?.dexterity) {
+        aDexMod = getModifier(a.participant.characterData.dexterity);
+      } else if (a.type === 'monster' && a.monster?.monsterData?.dexterity) {
+        aDexMod = getModifier(a.monster.monsterData.dexterity);
+      }
+      
+      if (b.type === 'character' && b.participant?.characterData?.dexterity) {
+        bDexMod = getModifier(b.participant.characterData.dexterity);
+      } else if (b.type === 'monster' && b.monster?.monsterData?.dexterity) {
+        bDexMod = getModifier(b.monster.monsterData.dexterity);
+      }
+      
+      return bDexMod - aDexMod;
+    });
+
+    return allParticipants;
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -439,99 +621,170 @@ export default function EncounterDetailsModal({
 
         {/* Participants and Monsters */}
         <div className="space-y-6">
-          {/* Characters */}
-          <div>
-            <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center">
-              <Users className="h-4 w-4 mr-2" />
-              Characters ({characterCount})
-            </h3>
-            {currentEncounter.participants.length === 0 ? (
-              <p className="text-[var(--color-text-secondary)] text-sm">No characters added yet.</p>
-            ) : (
-              <div className="space-y-2">
-                {currentEncounter.participants.map((participant) => (
-                  <div
-                    key={participant.id}
-                    className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-md p-3"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div className="flex-1">
-                        <span className="font-medium text-[var(--color-text-primary)]">
-                          {participant.characterName}
-                        </span>
-                        {participant.initiative !== undefined && (
-                          <span className="text-sm text-[var(--color-accent)] font-mono ml-2">
-                            Initiative: {participant.initiative}
-                          </span>
-                        )}
-                      </div>
-                      {isDM && (
-                        <Button
-                          onClick={() => handleRemoveParticipant(participant.id)}
-                          disabled={loading}
-                          size="sm"
-                          className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)] ml-2"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      )}
-                    </div>
-                    <div className="text-sm text-[var(--color-text-secondary)] mt-1">
-                      HP: {participant.currentHP ?? participant.maxHP}/{participant.maxHP}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Monsters */}
-          <div>
-            <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center">
-              <Skull className="h-4 w-4 mr-2" />
-              Monsters ({monsterCount})
-            </h3>
-            {currentEncounter.monsters.length === 0 ? (
-              <p className="text-[var(--color-text-secondary)] text-sm">No monsters added yet.</p>
-            ) : (
-              <div className="space-y-2">
-                {currentEncounter.monsters.flatMap((monster) => 
-                  monster.instances?.map((instance) => (
-                    <div
-                      key={`${monster.id}-${instance.id}`}
-                      className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-md p-3"
-                    >
-                      <div className="flex justify-between items-center">
-                        <div className="flex-1">
-                          <span className="font-medium text-[var(--color-text-primary)]">
-                            {monster.monsterName} #{instance.instanceNumber}
-                          </span>
-                          {instance.initiative !== undefined && (
-                            <span className="text-sm text-[var(--color-accent)] font-mono ml-2">
-                              Initiative: {instance.initiative}
-                            </span>
+          {currentEncounter.isActive ? (
+            /* Initiative Order Display */
+            <div>
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center">
+                <Sword className="h-4 w-4 mr-2" />
+                Initiative Order
+              </h3>
+              {(() => {
+                const orderedParticipants = getInitiativeOrderedParticipants();
+                return orderedParticipants.length === 0 ? (
+                  <p className="text-[var(--color-text-secondary)] text-sm">No participants in this encounter.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {orderedParticipants.map((participant, index) => (
+                      <div
+                        key={participant.id}
+                        className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-md p-3 transition-all duration-300 ease-in-out"
+                        style={{
+                          transform: `translateY(${index * 2}px)`,
+                          opacity: 0.9 + (index * 0.02)
+                        }}
+                      >
+                        <div className="flex justify-between items-center">
+                          <div className="flex-1">
+                                                         <div className="flex items-center space-x-2">
+                               {participant.type === 'character' ? (
+                                 <Users className="h-4 w-4 text-blue-500" />
+                               ) : (
+                                 <Skull className="h-4 w-4 text-red-500" />
+                               )}
+                               <span className="font-medium text-[var(--color-text-primary)]">
+                                 {participant.name}
+                               </span>
+                             </div>
+                            {participant.initiative > 0 && (
+                              <span className="text-sm text-[var(--color-accent)] font-mono ml-6">
+                                Initiative: {participant.initiative}
+                              </span>
+                            )}
+                          </div>
+                          {isDM && (
+                            <Button
+                              onClick={() => {
+                                if (participant.type === 'character' && participant.participant) {
+                                  handleRemoveParticipant(participant.participant.id);
+                                } else if (participant.type === 'monster' && participant.monster) {
+                                  handleRemoveMonster(participant.monster.id);
+                                }
+                              }}
+                              disabled={loading}
+                              size="sm"
+                              className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)] ml-2"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
                           )}
                         </div>
-                        {isDM && (
-                          <Button
-                            onClick={() => handleRemoveMonster(monster.id)}
-                            disabled={loading}
-                            size="sm"
-                            className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)] ml-2"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        )}
+                        <div className="text-sm text-[var(--color-text-secondary)] mt-1 ml-6">
+                          HP: {participant.currentHP}/{participant.maxHP}
+                        </div>
                       </div>
-                      <div className="text-sm text-[var(--color-text-secondary)] mt-1">
-                        HP: {instance.currentHP ?? monster.maxHP}/{monster.maxHP}
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+          ) : (
+            /* Default Layout */
+            <>
+              {/* Characters */}
+              <div>
+                <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center">
+                  <Users className="h-4 w-4 mr-2" />
+                  Characters ({characterCount})
+                </h3>
+                {currentEncounter.participants.length === 0 ? (
+                  <p className="text-[var(--color-text-secondary)] text-sm">No characters added yet.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {currentEncounter.participants.map((participant) => (
+                      <div
+                        key={participant.id}
+                        className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-md p-3"
+                      >
+                        <div className="flex justify-between items-center">
+                          <div className="flex-1">
+                            <span className="font-medium text-[var(--color-text-primary)]">
+                              {participant.characterName}
+                            </span>
+                            {participant.initiative !== undefined && (
+                              <span className="text-sm text-[var(--color-accent)] font-mono ml-2">
+                                Initiative: {participant.initiative}
+                              </span>
+                            )}
+                          </div>
+                          {isDM && (
+                            <Button
+                              onClick={() => handleRemoveParticipant(participant.id)}
+                              disabled={loading}
+                              size="sm"
+                              className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)] ml-2"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          )}
+                        </div>
+                        <div className="text-sm text-[var(--color-text-secondary)] mt-1">
+                          HP: {participant.currentHP ?? participant.maxHP}/{participant.maxHP}
+                        </div>
                       </div>
-                    </div>
-                  )) || []
+                    ))}
+                  </div>
                 )}
               </div>
-            )}
-          </div>
+
+              {/* Monsters */}
+              <div>
+                <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center">
+                  <Skull className="h-4 w-4 mr-2" />
+                  Monsters ({monsterCount})
+                </h3>
+                {currentEncounter.monsters.length === 0 ? (
+                  <p className="text-[var(--color-text-secondary)] text-sm">No monsters added yet.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {currentEncounter.monsters.flatMap((monster) => 
+                      monster.instances?.map((instance) => (
+                        <div
+                          key={`${monster.id}-${instance.id}`}
+                          className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-md p-3"
+                        >
+                          <div className="flex justify-between items-center">
+                            <div className="flex-1">
+                              <span className="font-medium text-[var(--color-text-primary)]">
+                                {monster.monsterName} #{instance.instanceNumber}
+                              </span>
+                              {instance.initiative !== undefined && (
+                                <span className="text-sm text-[var(--color-accent)] font-mono ml-2">
+                                  Initiative: {instance.initiative}
+                                </span>
+                              )}
+                            </div>
+                            {isDM && (
+                              <Button
+                                onClick={() => handleRemoveMonster(monster.id)}
+                                disabled={loading}
+                                size="sm"
+                                className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)] ml-2"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
+                          <div className="text-sm text-[var(--color-text-secondary)] mt-1">
+                            HP: {instance.currentHP ?? monster.maxHP}/{monster.maxHP}
+                          </div>
+                        </div>
+                      )) || []
+                    )}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Modals */}
