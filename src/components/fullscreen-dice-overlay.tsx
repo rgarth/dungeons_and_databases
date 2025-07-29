@@ -231,20 +231,28 @@ export default function FullscreenDiceOverlay({
             // Log dice roll to active encounter if one exists
             const logDiceRoll = async () => {
               try {
+                console.log('🎲 Starting dice roll logging...');
+                
                 // Get current user session
                 const sessionResponse = await fetch('/api/auth/session');
                 if (sessionResponse.ok) {
                   const session = await sessionResponse.json();
                   const userName = session?.user?.name || 'Unknown Player';
                   const isDM = session?.user?.id ? true : false; // Simplified DM check
+                  console.log('🎲 User session:', { userName, isDM });
                   
                   // Check for active encounters in the current game
                   const gameId = window.location.pathname.split('/')[2]; // Extract game ID from URL
+                  console.log('🎲 Game ID from URL:', gameId);
+                  
                   if (gameId) {
                     const encountersResponse = await fetch(`/api/games/${gameId}/encounters`);
                     if (encountersResponse.ok) {
                       const encounters = await encountersResponse.json();
+                      console.log('🎲 All encounters:', encounters);
+                      
                       const activeEncounter = encounters.find((enc: { isActive: boolean }) => enc.isActive);
+                      console.log('🎲 Active encounter:', activeEncounter);
                       
                       if (activeEncounter) {
                         // Log the dice roll to the encounter via Pusher
@@ -257,6 +265,8 @@ export default function FullscreenDiceOverlay({
                           isDM,
                           isHidden: isDM // DM rolls are hidden by default
                         };
+                        
+                        console.log('🎲 Sending log entry:', logEntry);
                         
                         const logResponse = await fetch(`/api/games/${gameId}/dice-rolls`, {
                           method: 'POST',
@@ -273,9 +283,17 @@ export default function FullscreenDiceOverlay({
                           const errorText = await logResponse.text();
                           console.warn('🎲 Failed to log dice roll to encounter:', logResponse.status, errorText);
                         }
+                      } else {
+                        console.log('🎲 No active encounter found');
                       }
+                    } else {
+                      console.warn('🎲 Failed to fetch encounters:', encountersResponse.status);
                     }
+                  } else {
+                    console.log('🎲 No game ID found in URL');
                   }
+                } else {
+                  console.warn('🎲 Failed to get session:', sessionResponse.status);
                 }
               } catch (error) {
                 console.warn('🎲 Error logging dice roll:', error);
