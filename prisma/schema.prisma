@@ -282,6 +282,7 @@ model Encounter {
   round                Int?                   @default(1)
   turnOrder            Json?                  @map("turn_order")
   diceRollLog          Json?                  @map("dice_roll_log")
+  showDMRolls          Boolean                @default(false) @map("show_dm_rolls")
   game                 Game                   @relation(fields: [gameId], references: [id], onDelete: Cascade)
   monsters             EncounterMonster[]
   participants         EncounterParticipant[]

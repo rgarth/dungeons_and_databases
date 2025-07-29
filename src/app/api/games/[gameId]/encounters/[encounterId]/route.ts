@@ -132,10 +132,66 @@ export async function PUT(
       }
     });
 
+    // Broadcast the encounter state change to all players
+    await pusher.trigger(`game-${gameId}`, 'encounter:updated', {
+      encounterId,
+      encounter
+    });
 
     return NextResponse.json(encounter);
   } catch (error) {
     console.error('Error updating encounter:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+// PATCH /api/games/[gameId]/encounters/[encounterId] - Update encounter settings (like showDMRolls)
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ gameId: string; encounterId: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { gameId, encounterId } = await params;
+    const { showDMRolls } = await request.json();
+
+    // Check if user is the DM of this game
+    const game = await prisma.game.findUnique({
+      where: { id: gameId },
+      include: { dm: true }
+    });
+
+    if (!game) {
+      return NextResponse.json({ error: 'Game not found' }, { status: 404 });
+    }
+
+    if (game.dmId !== session.user.id) {
+      return NextResponse.json({ error: 'Only the DM can update encounter settings' }, { status: 403 });
+    }
+
+    // Update the encounter with the new showDMRolls value
+    const updatedEncounter = await prisma.encounter.update({
+      where: { id: encounterId },
+      data: { showDMRolls }
+    });
+
+    // Broadcast the change to all players
+    await pusher.trigger(`game-${gameId}-dice-rolls`, 'dm-rolls-toggle-changed', {
+      encounterId,
+      showDMRolls
+    });
+
+    return NextResponse.json({ success: true, encounter: updatedEncounter });
+  } catch (error) {
+    console.error('Error updating encounter DM rolls toggle:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

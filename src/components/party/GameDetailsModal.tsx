@@ -798,9 +798,9 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
                             </div>
                             <div>
                               <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>
-                                {participant.user.name || participant.user.email}
-                                {isCurrentUser && ' (You)'}
-                                {isParticipantDM && ' (DM)'}
+                                {isCurrentUser ? 'You' : (participant.user.name || participant.user.email)}
+                                {isParticipantDM && !isCurrentUser && ' (DM)'}
+                                {isParticipantDM && isCurrentUser && ' (DM)'}
                               </div>
                               <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
                                 {participant.characters?.length || 0} character{(participant.characters?.length || 0) !== 1 ? 's' : ''}

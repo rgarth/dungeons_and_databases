@@ -238,12 +238,42 @@ export default function FullscreenDiceOverlay({
                 if (sessionResponse.ok) {
                   const session = await sessionResponse.json();
                   const userName = session?.user?.name || 'Unknown Player';
-                  const isDM = session?.user?.id ? true : false; // Simplified DM check
-                  console.log('🎲 User session:', { userName, isDM });
+                  const userId = session?.user?.id;
+                  console.log('🎲 User session:', { userName, userId });
                   
-                  // Check for active encounters in the current game
-                  const gameId = window.location.pathname.split('/')[2]; // Extract game ID from URL
-                  console.log('🎲 Game ID from URL:', gameId);
+                  // Get game ID from client cache since we're on top-level routes
+                  let gameId: string | undefined;
+                  try {
+                    // Import the client cache
+                    const { clientCache } = await import('@/lib/client-cache');
+                    const games = clientCache.getGames();
+                    console.log('🎲 Available games:', games);
+                    
+                    // Use the first game for now (or you could add logic to determine which game is active)
+                    if (games.length > 0) {
+                      gameId = games[0].id;
+                      console.log('🎲 Using game from cache:', gameId);
+                    }
+                  } catch (error) {
+                    console.warn('🎲 Failed to get games from cache:', error);
+                  }
+                  
+                  console.log('🎲 Game ID:', gameId);
+                  
+                  // Check if user is DM for this game
+                  let isDM = false;
+                  if (userId && gameId) {
+                    try {
+                      const gameResponse = await fetch(`/api/games/${gameId}`);
+                      if (gameResponse.ok) {
+                        const game = await gameResponse.json();
+                        isDM = game.dmId === userId;
+                        console.log('🎲 DM check:', { userId, gameDmId: game.dmId, isDM, userIdType: typeof userId, dmIdType: typeof game.dmId });
+                      }
+                    } catch (error) {
+                      console.warn('🎲 Failed to check DM status:', error);
+                    }
+                  }
                   
                   if (gameId) {
                     const encountersResponse = await fetch(`/api/games/${gameId}/encounters`);
@@ -260,6 +290,7 @@ export default function FullscreenDiceOverlay({
                           id: `roll-${Date.now()}`,
                           timestamp: new Date().toISOString(),
                           playerName: userName,
+                          playerId: userId, // Store the user ID to properly identify who made the roll
                           notation: diceNotation,
                           result: notation.resultString,
                           isDM,
@@ -267,6 +298,7 @@ export default function FullscreenDiceOverlay({
                         };
                         
                         console.log('🎲 Sending log entry:', logEntry);
+                        console.log('🎲 Final isDM value:', isDM);
                         
                         const logResponse = await fetch(`/api/games/${gameId}/dice-rolls`, {
                           method: 'POST',
@@ -284,7 +316,8 @@ export default function FullscreenDiceOverlay({
                           console.warn('🎲 Failed to log dice roll to encounter:', logResponse.status, errorText);
                         }
                       } else {
-                        console.log('🎲 No active encounter found');
+                        console.log('🎲 No active encounter found - dice roll not logged');
+                        // TODO: Consider logging to game level instead of encounter level
                       }
                     } else {
                       console.warn('🎲 Failed to fetch encounters:', encountersResponse.status);

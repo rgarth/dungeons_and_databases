@@ -5,6 +5,7 @@ export interface DiceRollLogEntry {
   id: string;
   timestamp: string;
   playerName: string;
+  playerId: string; // User ID of the player who made the roll
   notation: string;
   result: string;
   isDM: boolean;
@@ -22,6 +23,7 @@ export interface Encounter {
   turnOrder?: string[]; // Array of participant IDs in initiative order
   round?: number; // Current round number
   diceRollLog?: DiceRollLogEntry[]; // Array of dice roll log entries
+  showDMRolls?: boolean; // Whether DM rolls are visible to players
   createdAt: string;
   updatedAt: string;
   monsters: EncounterMonster[];

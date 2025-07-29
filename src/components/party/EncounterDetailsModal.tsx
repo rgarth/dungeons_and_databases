@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { X, Plus, Users, Skull, Trash2, Edit, Save, Dice1, Sword } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { Encounter, EncounterMonster, EncounterParticipant, DiceRollLogEntry } from '@/types/encounter';
+import { useSession } from 'next-auth/react';
 import AddMonsterModal from './AddMonsterModal';
 import AddParticipantModal from './AddParticipantModal';
 import InitiativeRoller from './InitiativeRoller';
@@ -26,6 +27,7 @@ export default function EncounterDetailsModal({
   onEncounterDeleted,
   isDM
 }: EncounterDetailsModalProps) {
+  const { data: session } = useSession();
   const [currentEncounter, setCurrentEncounter] = useState<Encounter>(encounter);
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(encounter.name);
@@ -38,12 +40,14 @@ export default function EncounterDetailsModal({
   const [showAddMonster, setShowAddMonster] = useState(false);
   const [showAddParticipant, setShowAddParticipant] = useState(false);
   const [showInitiativeRoller, setShowInitiativeRoller] = useState(false);
-  const [showDMRolls, setShowDMRolls] = useState(false);
+  const [showDMRolls, setShowDMRolls] = useState(currentEncounter?.showDMRolls || false);
+  const [clearHistoryLoading, setClearHistoryLoading] = useState(false);
 
   useEffect(() => {
     setCurrentEncounter(encounter);
     setName(encounter.name);
     setDescription(encounter.description || '');
+    setShowDMRolls(encounter.showDMRolls || false);
   }, [encounter]);
 
   useEffect(() => {
@@ -74,10 +78,54 @@ export default function EncounterDetailsModal({
       }
     });
 
+    // Listen for dice roll history cleared events
+    diceRollChannel.bind('dice-roll-history-cleared', (data: { encounterId: string; updatedLog: DiceRollLogEntry[] }) => {
+      console.log('🎲 Received dice roll history cleared event:', data);
+      console.log('🎲 Current encounter ID:', encounter.id);
+      console.log('🎲 Event encounter ID:', data.encounterId);
+      if (data.encounterId === encounter.id) {
+        console.log('🎲 Updating encounter with cleared dice roll log');
+        setCurrentEncounter(prev => ({
+          ...prev,
+          diceRollLog: data.updatedLog
+        }));
+      } else {
+        console.log('🎲 Event for different encounter, ignoring');
+      }
+    });
+
+    // Listen for DM rolls toggle changes
+    diceRollChannel.bind('dm-rolls-toggle-changed', (data: { encounterId: string; showDMRolls: boolean }) => {
+      console.log('🎲 Received DM rolls toggle change:', data);
+      if (data.encounterId === encounter.id) {
+        console.log('🎲 Updating showDMRolls state:', data.showDMRolls);
+        setShowDMRolls(data.showDMRolls);
+        setCurrentEncounter(prev => ({
+          ...prev,
+          showDMRolls: data.showDMRolls
+        }));
+      }
+    });
+
+    // Listen for encounter updates (like start/stop)
+    const gameChannel = pusher.subscribe(`game-${encounter.gameId}`);
+    gameChannel.bind('encounter:updated', (data: { encounterId: string; encounter: Encounter }) => {
+      console.log('🎯 Received encounter update:', data);
+      if (data.encounterId === encounter.id) {
+        console.log('🎯 Updating encounter state:', data.encounter.isActive ? 'ACTIVE' : 'STOPPED');
+        setCurrentEncounter(data.encounter);
+        onEncounterUpdated(data.encounter);
+      }
+    });
+
     // Cleanup function
     return () => {
       diceRollChannel.unbind('dice-roll-logged');
+      diceRollChannel.unbind('dice-roll-history-cleared');
+      diceRollChannel.unbind('dm-rolls-toggle-changed');
+      gameChannel.unbind('encounter:updated');
       pusher.unsubscribe(`game-${encounter.gameId}-dice-rolls`);
+      pusher.unsubscribe(`game-${encounter.gameId}`);
       pusher.disconnect();
     };
   }, [isOpen, encounter.gameId, encounter.id]);
@@ -131,6 +179,56 @@ export default function EncounterDetailsModal({
       console.error('Error deleting encounter:', error);
     } finally {
       setDeleteLoading(false);
+    }
+  };
+
+  const handleClearDiceHistory = async () => {
+
+    try {
+      setClearHistoryLoading(true);
+      const response = await fetch(`/api/games/${encounter.gameId}/dice-rolls`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          encounterId: encounter.id
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to clear dice roll history');
+      }
+
+      console.log('🎲 Dice roll history cleared successfully');
+      
+      // Also update local state immediately for better UX
+      setCurrentEncounter(prev => ({
+        ...prev,
+        diceRollLog: []
+      }));
+    } catch (error) {
+      console.error('Error clearing dice roll history:', error);
+    } finally {
+      setClearHistoryLoading(false);
+    }
+  };
+
+  const handleToggleDMRolls = async () => {
+    try {
+      const newShowDMRolls = !showDMRolls;
+      const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          showDMRolls: newShowDMRolls
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update DM rolls toggle');
+      }
+      console.log('🎲 DM rolls toggle updated successfully');
+      // Local state will be updated via Pusher event
+    } catch (error) {
+      console.error('Error updating DM rolls toggle:', error);
     }
   };
 
@@ -893,19 +991,30 @@ export default function EncounterDetailsModal({
           <div className="lg:col-span-1">
             <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-md p-4 h-full">
               <div className="mb-3">
-                <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center">
-                  <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Roll History
-                </h3>
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center">
+                    <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Roll History
+                  </h3>
+                  {isDM && currentEncounter.diceRollLog && currentEncounter.diceRollLog.length > 0 && (
+                    <button
+                      onClick={handleClearDiceHistory}
+                      disabled={clearHistoryLoading}
+                      className="px-3 py-1 text-xs bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white rounded transition-colors"
+                    >
+                      {clearHistoryLoading ? 'Clearing...' : 'Clear History'}
+                    </button>
+                  )}
+                </div>
                 {isDM && (
                   <div className="flex items-center mt-2">
                     <input
                       type="checkbox"
                       id="show-dm-rolls"
                       checked={showDMRolls}
-                      onChange={(e) => setShowDMRolls(e.target.checked)}
+                      onChange={handleToggleDMRolls}
                       className="mr-2"
                     />
                     <label htmlFor="show-dm-rolls" className="text-sm text-[var(--color-text-secondary)]">
@@ -915,37 +1024,36 @@ export default function EncounterDetailsModal({
                 )}
               </div>
               
-              <div className="space-y-2 max-h-96 overflow-y-auto">
+              <div className="max-h-96 overflow-y-auto font-mono text-sm">
                 {currentEncounter.diceRollLog && currentEncounter.diceRollLog.length > 0 ? (
                   currentEncounter.diceRollLog
-                    .filter(entry => !entry.isDM || showDMRolls) // Filter out DM rolls unless toggle is on
-                    .map((entry) => (
-                      <div
-                        key={entry.id}
-                        className={`p-2 rounded text-sm ${
-                          entry.isDM ? 'bg-[var(--color-accent)] bg-opacity-10' : 'bg-[var(--color-card)]'
-                        }`}
-                      >
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-1">
-                              <span className="font-medium text-[var(--color-text-primary)]">
-                                {entry.playerName}
-                              </span>
-                              {entry.isDM && (
-                                <span className="text-xs text-[var(--color-text-secondary)]">(DM)</span>
-                              )}
-                            </div>
-                            <div className="text-xs text-[var(--color-text-secondary)]">
-                              {entry.notation} = {entry.result}
-                            </div>
-                          </div>
-                          <div className="text-xs text-[var(--color-text-secondary)]">
+                    .filter(entry => {
+                      // Show all non-DM rolls to everyone
+                      if (!entry.isDM) return true;
+                      // Show DM rolls to DM always, and to others only if DM has toggle on
+                      const shouldShow = isDM || showDMRolls;
+                      return shouldShow;
+                    })
+                    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) // Reverse sort - newest first
+                    .map((entry) => {
+                      // Use playerId to properly identify who made the roll
+                      const displayName = entry.playerId === session?.user?.id ? 'You' : entry.playerName;
+                      
+                      return (
+                        <div key={entry.id} className="py-1 border-b border-[var(--color-border)] last:border-b-0">
+                          <span className="text-[var(--color-text-primary)]">
+                            {displayName}
+                            {entry.isDM && ' (DM)'}
+                          </span>
+                          <span className="text-[var(--color-text-secondary)] ml-2">
+                            {entry.notation} = {entry.result}
+                          </span>
+                          <span className="text-[var(--color-text-secondary)] ml-2 text-xs">
                             {new Date(entry.timestamp).toLocaleTimeString()}
-                          </div>
+                          </span>
                         </div>
-                      </div>
-                    ))
+                      );
+                    })
                 ) : (
                   <p className="text-[var(--color-text-secondary)] text-sm text-center py-4">
                     No dice rolls logged yet
