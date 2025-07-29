@@ -18,12 +18,15 @@ export async function POST(
   { params }: { params: Promise<{ gameId: string }> }
 ) {
   try {
+    console.log('🎲 Dice rolls API called');
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
+      console.log('🎲 Unauthorized - no session');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { gameId } = await params;
+    console.log('🎲 Game ID:', gameId);
 
     // Verify user is a participant in this game
     const participant = await prisma.gameParticipant.findUnique({
@@ -35,10 +38,12 @@ export async function POST(
       }
     });
     if (!participant) {
+      console.log('🎲 Not a participant in this game');
       return NextResponse.json({ error: 'Not a participant in this game' }, { status: 403 });
     }
 
     const { encounterId, logEntry } = await request.json();
+    console.log('🎲 Request data:', { encounterId, logEntry });
     
     if (!encounterId || !logEntry) {
       return NextResponse.json({ error: 'Encounter ID and log entry are required' }, { status: 400 });

@@ -61,12 +61,16 @@ export default function EncounterDetailsModal({
 
     // Listen for dice roll events
     diceRollChannel.bind('dice-roll-logged', (data: { encounterId: string; logEntry: DiceRollLogEntry; updatedLog: DiceRollLogEntry[] }) => {
+      console.log('🎲 Received dice roll event:', data);
       if (data.encounterId === encounter.id) {
+        console.log('🎲 Updating encounter with new dice roll log');
         // Update the encounter with the new dice roll log
         setCurrentEncounter(prev => ({
           ...prev,
           diceRollLog: data.updatedLog
         }));
+      } else {
+        console.log('🎲 Dice roll event for different encounter:', data.encounterId, 'vs', encounter.id);
       }
     });
 
@@ -885,28 +889,29 @@ export default function EncounterDetailsModal({
           )}
           </div>
 
-          {/* Dice Roll Log - Takes 1/3 of the space */}
+          {/* Roll History - Takes 1/3 of the space */}
           <div className="lg:col-span-1">
             <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-md p-4 h-full">
-              <div className="flex justify-between items-center mb-3">
+              <div className="mb-3">
                 <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center">
                   <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  Dice Roll Log
+                  Roll History
                 </h3>
                 {isDM && (
-                  <button
-                    onClick={() => setShowDMRolls(!showDMRolls)}
-                    className="text-xs px-2 py-1 rounded border transition-colors"
-                    style={{
-                      backgroundColor: showDMRolls ? 'var(--color-accent)' : 'var(--color-button)',
-                      color: showDMRolls ? 'var(--color-accent-text)' : 'var(--color-button-text)',
-                      borderColor: 'var(--color-border)'
-                    }}
-                  >
-                    {showDMRolls ? 'Hide DM Rolls' : 'Show DM Rolls'}
-                  </button>
+                  <div className="flex items-center mt-2">
+                    <input
+                      type="checkbox"
+                      id="show-dm-rolls"
+                      checked={showDMRolls}
+                      onChange={(e) => setShowDMRolls(e.target.checked)}
+                      className="mr-2"
+                    />
+                    <label htmlFor="show-dm-rolls" className="text-sm text-[var(--color-text-secondary)]">
+                      Show DM rolls
+                    </label>
+                  </div>
                 )}
               </div>
               

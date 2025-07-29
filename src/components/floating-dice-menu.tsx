@@ -865,7 +865,8 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
                   if (logResponse.ok) {
                     console.log('🎲 Dice roll logged to encounter via Pusher:', logEntry);
                   } else {
-                    console.warn('🎲 Failed to log dice roll to encounter');
+                    const errorText = await logResponse.text();
+                    console.warn('🎲 Failed to log dice roll to encounter:', logResponse.status, errorText);
                   }
                 }
               }
