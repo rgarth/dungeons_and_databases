@@ -823,62 +823,7 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
         return newHistory.slice(0, 5);
       });
       
-      // Check if there's an active encounter and log the roll via Pusher
-      const logDiceRoll = async () => {
-        try {
-          // Get current user session
-          const sessionResponse = await fetch('/api/auth/session');
-          if (sessionResponse.ok) {
-            const session = await sessionResponse.json();
-            const userName = session?.user?.name || 'Unknown Player';
-            const isDM = session?.user?.id ? true : false; // Simplified DM check
-            
-            // Check for active encounters in the current game
-            const gameId = window.location.pathname.split('/')[2]; // Extract game ID from URL
-            if (gameId) {
-              const encountersResponse = await fetch(`/api/games/${gameId}/encounters`);
-              if (encountersResponse.ok) {
-                const encounters = await encountersResponse.json();
-                const activeEncounter = encounters.find((enc: { isActive: boolean }) => enc.isActive);
-                
-                if (activeEncounter) {
-                  // Log the dice roll to the encounter via Pusher
-                  const logEntry = {
-                    id: `roll-${Date.now()}`,
-                    timestamp: new Date().toISOString(),
-                    playerName: userName,
-                    notation: fullscreenDiceNotation,
-                    result: result.resultString,
-                    isDM,
-                    isHidden: isDM // DM rolls are hidden by default
-                  };
-                  
-                  const logResponse = await fetch(`/api/games/${gameId}/dice-rolls`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      encounterId: activeEncounter.id,
-                      logEntry
-                    })
-                  });
-                  
-                  if (logResponse.ok) {
-                    console.log('🎲 Dice roll logged to encounter via Pusher:', logEntry);
-                  } else {
-                    const errorText = await logResponse.text();
-                    console.warn('🎲 Failed to log dice roll to encounter:', logResponse.status, errorText);
-                  }
-                }
-              }
-            }
-          }
-        } catch (error) {
-          console.warn('🎲 Error logging dice roll:', error);
-        }
-      };
-      
-      // Log the roll asynchronously
-      logDiceRoll();
+
       
       // Dispatch global event for other components to listen to
       const globalEvent = new CustomEvent('diceRollCompleted', {

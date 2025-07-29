@@ -201,32 +201,89 @@ export default function FullscreenDiceOverlay({
           (notation: DiceResult) => {
             console.log('🎲 Roll completed:', notation);
             
-                    // Validate the roll result - dice should never return negative values
-        const hasInvalidResults = notation.result && notation.result.some(r => r <= 0);
-        if (hasInvalidResults) {
-          console.warn('🎲 Invalid dice result detected, reloading component:', notation.result);
-          
-          // Clear any requested results to prevent future issues
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          if ((window as any).requestedDiceResults) {
-            console.log('🎲 Clearing requestedDiceResults due to invalid result');
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            delete (window as any).requestedDiceResults;
-          }
-          
-          // Completely reload the dice component
-          console.log('🎲 Dice library broken, completely reloading component');
-          if (window.DICE && window.DICE.clearMaterialCache) {
-            window.DICE.clearMaterialCache();
-          }
-          // Clear the dice box reference
-          diceBoxRef.current = null;
-          // Force complete component reload by changing the key
-          setComponentKey(prev => prev + 1);
-          // Close current overlay
-          handleFadeOut();
-          return;
-        }
+            // Validate the roll result - dice should never return negative values
+            const hasInvalidResults = notation.result && notation.result.some(r => r <= 0);
+            if (hasInvalidResults) {
+              console.warn('🎲 Invalid dice result detected, reloading component:', notation.result);
+              
+              // Clear any requested results to prevent future issues
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              if ((window as any).requestedDiceResults) {
+                console.log('🎲 Clearing requestedDiceResults due to invalid result');
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                delete (window as any).requestedDiceResults;
+              }
+              
+              // Completely reload the dice component
+              console.log('🎲 Dice library broken, completely reloading component');
+              if (window.DICE && window.DICE.clearMaterialCache) {
+                window.DICE.clearMaterialCache();
+              }
+              // Clear the dice box reference
+              diceBoxRef.current = null;
+              // Force complete component reload by changing the key
+              setComponentKey(prev => prev + 1);
+              // Close current overlay
+              handleFadeOut();
+              return;
+            }
+            
+            // Log dice roll to active encounter if one exists
+            const logDiceRoll = async () => {
+              try {
+                // Get current user session
+                const sessionResponse = await fetch('/api/auth/session');
+                if (sessionResponse.ok) {
+                  const session = await sessionResponse.json();
+                  const userName = session?.user?.name || 'Unknown Player';
+                  const isDM = session?.user?.id ? true : false; // Simplified DM check
+                  
+                  // Check for active encounters in the current game
+                  const gameId = window.location.pathname.split('/')[2]; // Extract game ID from URL
+                  if (gameId) {
+                    const encountersResponse = await fetch(`/api/games/${gameId}/encounters`);
+                    if (encountersResponse.ok) {
+                      const encounters = await encountersResponse.json();
+                      const activeEncounter = encounters.find((enc: { isActive: boolean }) => enc.isActive);
+                      
+                      if (activeEncounter) {
+                        // Log the dice roll to the encounter via Pusher
+                        const logEntry = {
+                          id: `roll-${Date.now()}`,
+                          timestamp: new Date().toISOString(),
+                          playerName: userName,
+                          notation: diceNotation,
+                          result: notation.resultString,
+                          isDM,
+                          isHidden: isDM // DM rolls are hidden by default
+                        };
+                        
+                        const logResponse = await fetch(`/api/games/${gameId}/dice-rolls`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            encounterId: activeEncounter.id,
+                            logEntry
+                          })
+                        });
+                        
+                        if (logResponse.ok) {
+                          console.log('🎲 Dice roll logged to encounter via Pusher:', logEntry);
+                        } else {
+                          const errorText = await logResponse.text();
+                          console.warn('🎲 Failed to log dice roll to encounter:', logResponse.status, errorText);
+                        }
+                      }
+                    }
+                  }
+                }
+              } catch (error) {
+                console.warn('🎲 Error logging dice roll:', error);
+              }
+            };
+            
+            // Log the roll asynchronously
+            logDiceRoll();
             
             onRollComplete(notation);
             
