@@ -172,15 +172,10 @@ export default function EncounterDetailsModal({
         currentParticipantId = turnOrder.length > 0 ? turnOrder[0] : null;
         round = 1;
         currentTurn = 1;
-        console.log('🎯 Combat start values:', {
-          turnOrder,
-          currentParticipantId,
-          round,
-          currentTurn
-        });
+
       } else {
         // Stopping combat - clear turn order
-        console.log('🎯 Stopping combat - clearing turn order');
+
         turnOrder = null;
         currentParticipantId = null;
         round = null;
@@ -197,7 +192,7 @@ export default function EncounterDetailsModal({
         round
       };
       
-      console.log('🎯 Sending encounter update:', requestBody);
+
       
       const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`, {
         method: 'PUT',
@@ -451,54 +446,32 @@ export default function EncounterDetailsModal({
   };
 
   const getCurrentParticipant = () => {
-    console.log('🎯 getCurrentParticipant called:', {
-      isActive: currentEncounter.isActive,
-      turnOrder: currentEncounter.turnOrder,
-      currentParticipantId: currentEncounter.currentParticipantId,
-      fullEncounter: currentEncounter
-    });
-    
     if (!currentEncounter.isActive || !currentEncounter.turnOrder || currentEncounter.turnOrder.length === 0) {
-      console.log('🎯 No active encounter or turn order');
       return null;
     }
 
     const currentId = currentEncounter.currentParticipantId;
     if (!currentId) {
       // If no current participant is set, default to the first one (highest initiative)
-      console.log('🎯 No current participant, defaulting to first:', currentEncounter.turnOrder[0]);
       return currentEncounter.turnOrder[0];
     }
 
-    console.log('🎯 Current participant ID:', currentId);
     return currentId;
   };
 
   const advanceTurn = async () => {
-    console.log('🎯 advanceTurn called');
-    
     if (!currentEncounter.isActive || !currentEncounter.turnOrder || currentEncounter.turnOrder.length === 0) {
-      console.log('🎯 Cannot advance turn - encounter not active or no turn order');
       return;
     }
 
     const currentId = getCurrentParticipant();
     if (!currentId) {
-      console.log('🎯 No current participant found');
       return;
     }
 
     const currentIndex = currentEncounter.turnOrder.indexOf(currentId);
     const nextIndex = (currentIndex + 1) % currentEncounter.turnOrder.length;
     const nextParticipantId = currentEncounter.turnOrder[nextIndex];
-    
-    console.log('🎯 Turn advancement:', {
-      currentId,
-      currentIndex,
-      nextIndex,
-      nextParticipantId,
-      turnOrder: currentEncounter.turnOrder
-    });
     
     // Calculate new turn and round
     let newTurn = (currentEncounter.currentTurn || 1);
@@ -510,8 +483,6 @@ export default function EncounterDetailsModal({
     } else {
       newTurn += 1;
     }
-
-    console.log('🎯 New turn/round:', { newTurn, newRound });
 
     try {
       const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`, {
@@ -533,7 +504,7 @@ export default function EncounterDetailsModal({
       }
 
       const updatedEncounter = await response.json();
-      console.log('🎯 Turn advanced successfully:', updatedEncounter);
+
       setCurrentEncounter(updatedEncounter);
       onEncounterUpdated(updatedEncounter);
     } catch (error) {
@@ -718,7 +689,6 @@ export default function EncounterDetailsModal({
                     {isDM && (
                       <Button
                         onClick={() => {
-                          console.log('🎯 Next Turn button clicked');
                           advanceTurn();
                         }}
                         size="sm"
@@ -739,12 +709,6 @@ export default function EncounterDetailsModal({
                   <div className="space-y-2">
                                       {orderedParticipants.map((participant, index) => {
                     const isCurrentTurn = participant.id === currentParticipantId;
-                    console.log('🎯 Participant mapping:', {
-                      participantId: participant.id,
-                      currentParticipantId,
-                      isCurrentTurn,
-                      participantName: participant.name
-                    });
                     return (
                         <div
                           key={participant.id}

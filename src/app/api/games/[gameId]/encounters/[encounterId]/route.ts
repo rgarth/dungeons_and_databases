@@ -59,15 +59,7 @@ export async function GET(
       return NextResponse.json({ error: 'Encounter not found' }, { status: 404 });
     }
 
-    console.log('🎯 GET /api/games/[gameId]/encounters/[encounterId] - Response data:', {
-      id: encounter.id,
-      name: encounter.name,
-      isActive: encounter.isActive,
-      turnOrder: encounter.turnOrder,
-      currentParticipantId: encounter.currentParticipantId,
-      currentTurn: encounter.currentTurn,
-      round: encounter.round
-    });
+
 
     return NextResponse.json(encounter);
   } catch (error) {
@@ -94,17 +86,7 @@ export async function PUT(
     const { gameId, encounterId } = await params;
     const { name, description, isActive, turnOrder, currentParticipantId, currentTurn, round } = await request.json();
     
-    console.log('🎯 PUT /api/games/[gameId]/encounters/[encounterId] - Request data:', {
-      gameId,
-      encounterId,
-      name,
-      description,
-      isActive,
-      turnOrder,
-      currentParticipantId,
-      currentTurn,
-      round
-    });
+
 
 
 
