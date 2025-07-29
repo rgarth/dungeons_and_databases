@@ -30,6 +30,10 @@ export default function EncounterDetailsModal({
   const [name, setName] = useState(encounter.name);
   const [description, setDescription] = useState(encounter.description || '');
   const [loading, setLoading] = useState(false);
+  const [toggleLoading, setToggleLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [addPartyLoading, setAddPartyLoading] = useState(false);
   const [showAddMonster, setShowAddMonster] = useState(false);
   const [showAddParticipant, setShowAddParticipant] = useState(false);
   const [showInitiativeRoller, setShowInitiativeRoller] = useState(false);
@@ -42,7 +46,7 @@ export default function EncounterDetailsModal({
 
   const handleSave = async () => {
     try {
-      setLoading(true);
+      setSaveLoading(true);
       const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -64,7 +68,7 @@ export default function EncounterDetailsModal({
     } catch (error) {
       console.error('Error updating encounter:', error);
     } finally {
-      setLoading(false);
+      setSaveLoading(false);
     }
   };
 
@@ -74,7 +78,7 @@ export default function EncounterDetailsModal({
     }
 
     try {
-      setLoading(true);
+      setDeleteLoading(true);
       const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`, {
         method: 'DELETE',
       });
@@ -88,13 +92,13 @@ export default function EncounterDetailsModal({
     } catch (error) {
       console.error('Error deleting encounter:', error);
     } finally {
-      setLoading(false);
+      setDeleteLoading(false);
     }
   };
 
   const handleToggleActive = async () => {
     try {
-      setLoading(true);
+      setToggleLoading(true);
       const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -115,7 +119,7 @@ export default function EncounterDetailsModal({
     } catch (error) {
       console.error('Error updating encounter:', error);
     } finally {
-      setLoading(false);
+      setToggleLoading(false);
     }
   };
 
@@ -205,7 +209,7 @@ export default function EncounterDetailsModal({
 
     const handleAddParty = async () => {
     try {
-      setLoading(true);
+      setAddPartyLoading(true);
 
       // Fetch all characters in the game
       const charactersResponse = await fetch(`/api/characters?gameId=${encounter.gameId}`);
@@ -252,7 +256,7 @@ export default function EncounterDetailsModal({
     } catch (error) {
       console.error('Error adding party to encounter:', error);
     } finally {
-      setLoading(false);
+      setAddPartyLoading(false);
     }
   };
 
@@ -359,7 +363,7 @@ export default function EncounterDetailsModal({
               </Button>
               <Button
                 onClick={handleAddParty}
-                disabled={loading}
+                disabled={addPartyLoading}
                 className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
               >
                 <Users className="h-4 w-4 mr-1" />
@@ -372,11 +376,11 @@ export default function EncounterDetailsModal({
               {isEditing ? (
                 <Button
                   onClick={handleSave}
-                  disabled={loading}
+                  disabled={saveLoading}
                   className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
                 >
                   <Save className="h-4 w-4 mr-1" />
-                  {loading ? 'Saving...' : 'Save'}
+                  {saveLoading ? 'Saving...' : 'Save'}
                 </Button>
               ) : (
                 <Button
@@ -408,29 +412,27 @@ export default function EncounterDetailsModal({
           {isDM && (
             <Button
               onClick={handleToggleActive}
-              disabled={loading || (!currentEncounter.isActive && !allParticipantsHaveInitiative())}
+              disabled={toggleLoading || (!currentEncounter.isActive && !allParticipantsHaveInitiative())}
               className={`${
                 currentEncounter.isActive
-                  ? 'bg-[var(--color-warning)] hover:bg-[var(--color-warning-hover)] text-[var(--color-warning-text)]'
+                  ? 'bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)]'
                   : 'bg-[var(--color-success)] hover:bg-[var(--color-success-hover)] text-[var(--color-success-text)]'
               }`}
             >
-              {loading ? 'Updating...' : currentEncounter.isActive ? 'Deactivate' : (
-                <>
-                  <Sword className="h-4 w-4 mr-1" />
-                  Start
-                </>
-              )}
+              <>
+                <Sword className="h-4 w-4 mr-1" />
+                {toggleLoading ? 'Updating...' : currentEncounter.isActive ? 'Stop' : 'Start'}
+              </>
             </Button>
           )}
           {isDM && (
             <Button
               onClick={handleDelete}
-              disabled={loading}
+              disabled={deleteLoading}
               className="bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-[var(--color-danger-text)]"
             >
               <Trash2 className="h-4 w-4 mr-1" />
-              {loading ? 'Deleting...' : 'Delete'}
+              {deleteLoading ? 'Deleting...' : 'Delete'}
             </Button>
           )}
         </div>
