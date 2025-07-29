@@ -112,77 +112,45 @@ export default function EncounterDetailsModal({
   };
 
   const generateInitiativeOrder = () => {
-    const order: string[] = [];
+    // Create a map of all participants with their initiative and dex data
+    const participantsMap = new Map<string, { initiative: number; dex: number; name: string }>();
     
-    // Add characters
+    // Add characters to the map
     currentEncounter.participants.forEach(participant => {
-      if (participant.initiative !== undefined && participant.initiative !== null) {
-        order.push(participant.id);
-      }
+      const initiative = participant.initiative || 0;
+      const dex = participant.characterData?.dexterity || 0;
+      participantsMap.set(participant.id, { initiative, dex, name: participant.characterName || 'Unknown' });
     });
 
-    // Add monsters - use actual instances instead of quantity
+    // Add monsters to the map
     currentEncounter.monsters.forEach(monster => {
       monster.instances?.forEach((instance) => {
-        if (instance.initiative !== undefined && instance.initiative !== null) {
-          order.push(`${monster.id}-${instance.instanceNumber}`);
-        }
+        const monsterId = `${monster.id}-${instance.instanceNumber}`;
+        const initiative = instance.initiative || 0;
+        const dex = monster.monsterData?.dexterity || 0;
+        participantsMap.set(monsterId, { initiative, dex, name: `${monster.monsterName} #${instance.instanceNumber}` });
       });
     });
 
+    // Create the order array from the map keys
+    const order = Array.from(participantsMap.keys());
+
     // Sort by initiative (highest first), then by dex modifier as tiebreaker
     order.sort((a, b) => {
-      const aParticipant = currentEncounter.participants.find(p => p.id === a);
-      const bParticipant = currentEncounter.participants.find(p => p.id === b);
+      const aData = participantsMap.get(a);
+      const bData = participantsMap.get(b);
       
-      if (aParticipant && bParticipant) {
-        // Both are characters - compare initiative, then dex
-        if (aParticipant.initiative !== bParticipant.initiative) {
-          return (bParticipant.initiative || 0) - (aParticipant.initiative || 0);
-        }
-        // Same initiative, compare dex
-        const aDex = aParticipant.characterData?.dexterity || 0;
-        const bDex = bParticipant.characterData?.dexterity || 0;
-        return bDex - aDex;
+      if (!aData || !bData) {
+        return 0;
       }
       
-      // One or both are monsters - compare initiative, then monster dex
-      const aInitiative = aParticipant?.initiative || 
-        (() => {
-          const [monsterId, instanceNum] = a.split('-');
-          const monster = currentEncounter.monsters.find(m => m.id === monsterId);
-          const instance = monster?.instances?.find(i => i.instanceNumber === parseInt(instanceNum));
-          return instance?.initiative || 0;
-        })();
-      
-      const bInitiative = bParticipant?.initiative || 
-        (() => {
-          const [monsterId, instanceNum] = b.split('-');
-          const monster = currentEncounter.monsters.find(m => m.id === monsterId);
-          const instance = monster?.instances?.find(i => i.instanceNumber === parseInt(instanceNum));
-          return instance?.initiative || 0;
-        })();
-      
-      if (aInitiative !== bInitiative) {
-        return bInitiative - aInitiative;
+      // Compare initiative first
+      if (aData.initiative !== bData.initiative) {
+        return bData.initiative - aData.initiative;
       }
       
-      // Same initiative, compare monster dex
-      const aDex = aParticipant?.characterData?.dexterity || 
-        (() => {
-          const [monsterId] = a.split('-');
-          const monster = currentEncounter.monsters.find(m => m.id === monsterId);
-          return monster?.monsterData?.dexterity || 0;
-        })();
-      
-      const bDex = bParticipant?.characterData?.dexterity || 
-        (() => {
-          const [monsterId] = b.split('-');
-          const monster = currentEncounter.monsters.find(m => m.id === monsterId);
-          return monster?.monsterData?.dexterity || 0;
-        })();
-      
-      return bDex - aDex;
+      // Same initiative, compare dex
+      return bData.dex - aData.dex;
     });
 
     return order;
@@ -195,26 +163,45 @@ export default function EncounterDetailsModal({
       let turnOrder = null;
       let currentParticipantId = null;
       let round = null;
+      let currentTurn = null;
       
       if (!currentEncounter.isActive) {
         // Starting combat - generate initiative order
         turnOrder = generateInitiativeOrder();
         currentParticipantId = turnOrder.length > 0 ? turnOrder[0] : null;
         round = 1;
+        currentTurn = 1;
+        console.log('🎯 Combat start values:', {
+          turnOrder,
+          currentParticipantId,
+          round,
+          currentTurn
+        });
+      } else {
+        // Stopping combat - clear turn order
+        console.log('🎯 Stopping combat - clearing turn order');
+        turnOrder = null;
+        currentParticipantId = null;
+        round = null;
+        currentTurn = null;
       }
-      // If stopping combat, turnOrder, currentParticipantId, and round will be null
+      
+      const requestBody = {
+        name: currentEncounter.name,
+        description: currentEncounter.description,
+        isActive: !currentEncounter.isActive,
+        turnOrder,
+        currentParticipantId,
+        currentTurn,
+        round
+      };
+      
+      console.log('🎯 Sending encounter update:', requestBody);
       
       const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: currentEncounter.name,
-          description: currentEncounter.description,
-          isActive: !currentEncounter.isActive,
-          turnOrder,
-          currentParticipantId,
-          round
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -225,7 +212,7 @@ export default function EncounterDetailsModal({
       setCurrentEncounter(updatedEncounter);
       onEncounterUpdated(updatedEncounter);
     } catch (error) {
-      console.error('Error updating encounter:', error);
+      console.error('🎯 Error updating encounter:', error);
     } finally {
       setToggleLoading(false);
     }
@@ -462,6 +449,97 @@ export default function EncounterDetailsModal({
     return allParticipants;
   };
 
+  const getCurrentParticipant = () => {
+    console.log('🎯 getCurrentParticipant called:', {
+      isActive: currentEncounter.isActive,
+      turnOrder: currentEncounter.turnOrder,
+      currentParticipantId: currentEncounter.currentParticipantId,
+      fullEncounter: currentEncounter
+    });
+    
+    if (!currentEncounter.isActive || !currentEncounter.turnOrder || currentEncounter.turnOrder.length === 0) {
+      console.log('🎯 No active encounter or turn order');
+      return null;
+    }
+
+    const currentId = currentEncounter.currentParticipantId;
+    if (!currentId) {
+      // If no current participant is set, default to the first one (highest initiative)
+      console.log('🎯 No current participant, defaulting to first:', currentEncounter.turnOrder[0]);
+      return currentEncounter.turnOrder[0];
+    }
+
+    console.log('🎯 Current participant ID:', currentId);
+    return currentId;
+  };
+
+  const advanceTurn = async () => {
+    console.log('🎯 advanceTurn called');
+    
+    if (!currentEncounter.isActive || !currentEncounter.turnOrder || currentEncounter.turnOrder.length === 0) {
+      console.log('🎯 Cannot advance turn - encounter not active or no turn order');
+      return;
+    }
+
+    const currentId = getCurrentParticipant();
+    if (!currentId) {
+      console.log('🎯 No current participant found');
+      return;
+    }
+
+    const currentIndex = currentEncounter.turnOrder.indexOf(currentId);
+    const nextIndex = (currentIndex + 1) % currentEncounter.turnOrder.length;
+    const nextParticipantId = currentEncounter.turnOrder[nextIndex];
+    
+    console.log('🎯 Turn advancement:', {
+      currentId,
+      currentIndex,
+      nextIndex,
+      nextParticipantId,
+      turnOrder: currentEncounter.turnOrder
+    });
+    
+    // Calculate new turn and round
+    let newTurn = (currentEncounter.currentTurn || 1);
+    let newRound = currentEncounter.round || 1;
+    
+    if (nextIndex === 0) {
+      // We've completed a round
+      newRound += 1;
+    } else {
+      newTurn += 1;
+    }
+
+    console.log('🎯 New turn/round:', { newTurn, newRound });
+
+    try {
+      const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: currentEncounter.name,
+          description: currentEncounter.description,
+          isActive: currentEncounter.isActive,
+          turnOrder: currentEncounter.turnOrder,
+          currentParticipantId: nextParticipantId,
+          currentTurn: newTurn,
+          round: newRound
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to advance turn');
+      }
+
+      const updatedEncounter = await response.json();
+      console.log('🎯 Turn advanced successfully:', updatedEncounter);
+      setCurrentEncounter(updatedEncounter);
+      onEncounterUpdated(updatedEncounter);
+    } catch (error) {
+      console.error('🎯 Error advancing turn:', error);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -624,25 +702,59 @@ export default function EncounterDetailsModal({
           {currentEncounter.isActive ? (
             /* Initiative Order Display */
             <div>
-              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3 flex items-center">
-                <Sword className="h-4 w-4 mr-2" />
-                Initiative Order
-              </h3>
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center">
+                  <Sword className="h-4 w-4 mr-2" />
+                  Initiative Order
+                </h3>
+                {currentEncounter.isActive && (
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-[var(--color-text-secondary)]">
+                      Round {currentEncounter.round || 1} • Turn {currentEncounter.currentTurn || 1}
+                    </span>
+                    {isDM && (
+                      <Button
+                        onClick={() => {
+                          console.log('🎯 Next Turn button clicked');
+                          advanceTurn();
+                        }}
+                        size="sm"
+                        className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
+                      >
+                        Next Turn
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
               {(() => {
                 const orderedParticipants = getInitiativeOrderedParticipants();
+                const currentParticipantId = getCurrentParticipant();
                 return orderedParticipants.length === 0 ? (
                   <p className="text-[var(--color-text-secondary)] text-sm">No participants in this encounter.</p>
                 ) : (
                   <div className="space-y-2">
-                    {orderedParticipants.map((participant, index) => (
-                      <div
-                        key={participant.id}
-                        className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-md p-3 transition-all duration-300 ease-in-out"
-                        style={{
-                          transform: `translateY(${index * 2}px)`,
-                          opacity: 0.9 + (index * 0.02)
-                        }}
-                      >
+                                      {orderedParticipants.map((participant, index) => {
+                    const isCurrentTurn = participant.id === currentParticipantId;
+                    console.log('🎯 Participant mapping:', {
+                      participantId: participant.id,
+                      currentParticipantId,
+                      isCurrentTurn,
+                      participantName: participant.name
+                    });
+                    return (
+                        <div
+                          key={participant.id}
+                          className={`border rounded-md p-3 transition-all duration-300 ease-in-out ${
+                            isCurrentTurn 
+                              ? 'bg-[var(--color-surface)] border-l-4 border-l-[var(--color-accent)] border-[var(--color-border)] shadow-md' 
+                              : 'bg-[var(--color-surface)] border-[var(--color-border)]'
+                          }`}
+                          style={{
+                            transform: `translateY(${index * 2}px)`,
+                            opacity: isCurrentTurn ? 1 : 0.9 + (index * 0.02)
+                          }}
+                        >
                         <div className="flex justify-between items-center">
                           <div className="flex-1">
                                                          <div className="flex items-center space-x-2">
@@ -682,7 +794,8 @@ export default function EncounterDetailsModal({
                           HP: {participant.currentHP}/{participant.maxHP}
                         </div>
                       </div>
-                    ))}
+                    );
+                  })}
                   </div>
                 );
               })()}
