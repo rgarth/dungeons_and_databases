@@ -1,6 +1,16 @@
 import { Monster } from './monster';
 import { Character } from './character';
 
+export interface DiceRollLogEntry {
+  id: string;
+  timestamp: string;
+  playerName: string;
+  notation: string;
+  result: string;
+  isDM: boolean;
+  isHidden: boolean;
+}
+
 export interface Encounter {
   id: string;
   gameId: string;
@@ -11,6 +21,7 @@ export interface Encounter {
   currentParticipantId?: string; // ID of current participant in initiative order
   turnOrder?: string[]; // Array of participant IDs in initiative order
   round?: number; // Current round number
+  diceRollLog?: DiceRollLogEntry[]; // Array of dice roll log entries
   createdAt: string;
   updatedAt: string;
   monsters: EncounterMonster[];

@@ -783,15 +783,15 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
       delete (window as any).requestedDiceResults;
     }
     
-             // Validate the result - check for invalid values like -1
-         if (result && result.resultString) {
-           // Check if this is an error result - just ignore it, component will reload
-           if (result.resultString.startsWith('ERROR:')) {
-             console.log('🎲 Dice roll failed, component will reload');
-             setIsRolling(false);
-             setIsExpanded(false);
-             return;
-           }
+    // Validate the result - check for invalid values like -1
+    if (result && result.resultString) {
+      // Check if this is an error result - just ignore it, component will reload
+      if (result.resultString.startsWith('ERROR:')) {
+        console.log('🎲 Dice roll failed, component will reload');
+        setIsRolling(false);
+        setIsExpanded(false);
+        return;
+      }
       
       // Check if the result contains invalid values
       const hasInvalidValues = result.resultString.includes('-1') || 
@@ -822,6 +822,59 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
         // Keep only the last 5 rolls
         return newHistory.slice(0, 5);
       });
+      
+      // Check if there's an active encounter and log the roll
+      const logDiceRoll = async () => {
+        try {
+          // Get current user session
+          const sessionResponse = await fetch('/api/auth/session');
+          if (sessionResponse.ok) {
+            const session = await sessionResponse.json();
+            const userName = session?.user?.name || 'Unknown Player';
+            const isDM = session?.user?.id ? true : false; // Simplified DM check
+            
+            // Check for active encounters in the current game
+            const gameId = window.location.pathname.split('/')[2]; // Extract game ID from URL
+            if (gameId) {
+              const encountersResponse = await fetch(`/api/games/${gameId}/encounters`);
+              if (encountersResponse.ok) {
+                const encounters = await encountersResponse.json();
+                const activeEncounter = encounters.find((enc: { isActive: boolean }) => enc.isActive);
+                
+                if (activeEncounter) {
+                  // Log the dice roll to the encounter
+                  const logEntry = {
+                    id: `roll-${Date.now()}`,
+                    timestamp: new Date().toISOString(),
+                    playerName: userName,
+                    notation: fullscreenDiceNotation,
+                    result: result.resultString,
+                    isDM,
+                    isHidden: isDM // DM rolls are hidden by default
+                  };
+                  
+                  const logResponse = await fetch(`/api/games/${gameId}/encounters/${activeEncounter.id}/dice-log`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(logEntry)
+                  });
+                  
+                  if (logResponse.ok) {
+                    console.log('🎲 Dice roll logged to encounter:', logEntry);
+                  } else {
+                    console.warn('🎲 Failed to log dice roll to encounter');
+                  }
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.warn('🎲 Error logging dice roll:', error);
+        }
+      };
+      
+      // Log the roll asynchronously
+      logDiceRoll();
       
       // Dispatch global event for other components to listen to
       const globalEvent = new CustomEvent('diceRollCompleted', {

@@ -37,6 +37,7 @@ export default function EncounterDetailsModal({
   const [showAddMonster, setShowAddMonster] = useState(false);
   const [showAddParticipant, setShowAddParticipant] = useState(false);
   const [showInitiativeRoller, setShowInitiativeRoller] = useState(false);
+  const [showDMRolls, setShowDMRolls] = useState(false);
 
   useEffect(() => {
     setCurrentEncounter(encounter);
@@ -697,8 +698,10 @@ export default function EncounterDetailsModal({
           )}
         </div>
 
-        {/* Participants and Monsters */}
-        <div className="space-y-6">
+        {/* Main Content - Participants and Log */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Participants and Monsters - Takes 2/3 of the space */}
+          <div className="lg:col-span-2 space-y-6">
           {currentEncounter.isActive ? (
             /* Initiative Order Display */
             <div>
@@ -898,6 +901,72 @@ export default function EncounterDetailsModal({
               </div>
             </>
           )}
+          </div>
+
+          {/* Dice Roll Log - Takes 1/3 of the space */}
+          <div className="lg:col-span-1">
+            <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-md p-4 h-full">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center">
+                  <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Dice Roll Log
+                </h3>
+                {isDM && (
+                  <button
+                    onClick={() => setShowDMRolls(!showDMRolls)}
+                    className="text-xs px-2 py-1 rounded border transition-colors"
+                    style={{
+                      backgroundColor: showDMRolls ? 'var(--color-accent)' : 'var(--color-button)',
+                      color: showDMRolls ? 'var(--color-accent-text)' : 'var(--color-button-text)',
+                      borderColor: 'var(--color-border)'
+                    }}
+                  >
+                    {showDMRolls ? 'Hide DM Rolls' : 'Show DM Rolls'}
+                  </button>
+                )}
+              </div>
+              
+              <div className="space-y-2 max-h-96 overflow-y-auto">
+                {currentEncounter.diceRollLog && currentEncounter.diceRollLog.length > 0 ? (
+                  currentEncounter.diceRollLog
+                    .filter(entry => !entry.isDM || showDMRolls) // Filter out DM rolls unless toggle is on
+                    .map((entry) => (
+                      <div
+                        key={entry.id}
+                        className={`p-2 rounded text-sm ${
+                          entry.isDM ? 'bg-[var(--color-accent)] bg-opacity-10' : 'bg-[var(--color-card)]'
+                        }`}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-1">
+                              <span className="font-medium text-[var(--color-text-primary)]">
+                                {entry.playerName}
+                              </span>
+                              {entry.isDM && (
+                                <span className="text-xs text-[var(--color-text-secondary)]">(DM)</span>
+                              )}
+                            </div>
+                            <div className="text-xs text-[var(--color-text-secondary)]">
+                              {entry.notation} = {entry.result}
+                            </div>
+                          </div>
+                          <div className="text-xs text-[var(--color-text-secondary)]">
+                            {new Date(entry.timestamp).toLocaleTimeString()}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                ) : (
+                  <p className="text-[var(--color-text-secondary)] text-sm text-center py-4">
+                    No dice rolls logged yet
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Modals */}
