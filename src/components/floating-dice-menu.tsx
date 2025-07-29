@@ -823,7 +823,7 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
         return newHistory.slice(0, 5);
       });
       
-      // Check if there's an active encounter and log the roll
+      // Check if there's an active encounter and log the roll via Pusher
       const logDiceRoll = async () => {
         try {
           // Get current user session
@@ -842,7 +842,7 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
                 const activeEncounter = encounters.find((enc: { isActive: boolean }) => enc.isActive);
                 
                 if (activeEncounter) {
-                  // Log the dice roll to the encounter
+                  // Log the dice roll to the encounter via Pusher
                   const logEntry = {
                     id: `roll-${Date.now()}`,
                     timestamp: new Date().toISOString(),
@@ -853,14 +853,17 @@ export default function FloatingDiceMenu({ className = "" }: FloatingDiceMenuPro
                     isHidden: isDM // DM rolls are hidden by default
                   };
                   
-                  const logResponse = await fetch(`/api/games/${gameId}/encounters/${activeEncounter.id}/dice-log`, {
+                  const logResponse = await fetch(`/api/games/${gameId}/dice-rolls`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(logEntry)
+                    body: JSON.stringify({
+                      encounterId: activeEncounter.id,
+                      logEntry
+                    })
                   });
                   
                   if (logResponse.ok) {
-                    console.log('🎲 Dice roll logged to encounter:', logEntry);
+                    console.log('🎲 Dice roll logged to encounter via Pusher:', logEntry);
                   } else {
                     console.warn('🎲 Failed to log dice roll to encounter');
                   }

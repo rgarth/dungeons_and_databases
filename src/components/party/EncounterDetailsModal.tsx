@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 import { X, Plus, Users, Skull, Trash2, Edit, Save, Dice1, Sword } from 'lucide-react';
 import { Button } from '@/components/ui';
-import { Encounter, EncounterMonster, EncounterParticipant } from '@/types/encounter';
+import { Encounter, EncounterMonster, EncounterParticipant, DiceRollLogEntry } from '@/types/encounter';
 import AddMonsterModal from './AddMonsterModal';
 import AddParticipantModal from './AddParticipantModal';
 import InitiativeRoller from './InitiativeRoller';
+import Pusher from 'pusher-js';
 
 interface EncounterDetailsModalProps {
   encounter: Encounter;
@@ -46,18 +47,35 @@ export default function EncounterDetailsModal({
   }, [encounter]);
 
   useEffect(() => {
-    if (isOpen) {
-      const pollInterval = setInterval(() => {
-        fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`)
-          .then(response => response.json())
-          .then(updatedEncounter => {
-            setCurrentEncounter(updatedEncounter);
-            onEncounterUpdated(updatedEncounter);
-          })
-          .catch(error => console.error('Error polling encounter:', error));
-      }, 1000); // Poll every 1 second
-      return () => clearInterval(pollInterval);
-    }
+    if (!isOpen) return;
+
+    // Initialize Pusher for real-time dice roll updates
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || 'your-pusher-key', {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || 'us2',
+      authEndpoint: `/api/pusher/auth`,
+      enabledTransports: ['ws', 'wss'],
+    });
+
+    // Subscribe to dice roll events for this game
+    const diceRollChannel = pusher.subscribe(`game-${encounter.gameId}-dice-rolls`);
+
+    // Listen for dice roll events
+    diceRollChannel.bind('dice-roll-logged', (data: { encounterId: string; logEntry: DiceRollLogEntry; updatedLog: DiceRollLogEntry[] }) => {
+      if (data.encounterId === encounter.id) {
+        // Update the encounter with the new dice roll log
+        setCurrentEncounter(prev => ({
+          ...prev,
+          diceRollLog: data.updatedLog
+        }));
+      }
+    });
+
+    // Cleanup function
+    return () => {
+      diceRollChannel.unbind('dice-roll-logged');
+      pusher.unsubscribe(`game-${encounter.gameId}-dice-rolls`);
+      pusher.disconnect();
+    };
   }, [isOpen, encounter.gameId, encounter.id]);
 
   const handleSave = async () => {
