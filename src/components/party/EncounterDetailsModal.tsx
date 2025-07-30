@@ -54,107 +54,144 @@ export default function EncounterDetailsModal({
   useEffect(() => {
     if (!isOpen) return;
 
-    // Initialize Pusher for real-time dice roll updates
-    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || 'your-pusher-key', {
-      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || 'us2',
-      authEndpoint: `/api/pusher/auth`,
-      enabledTransports: ['ws', 'wss'],
-    });
+    let pusher: Pusher | null = null;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 3;
 
-    // Subscribe to dice roll events for this game
-    const diceRollChannel = pusher.subscribe(`game-${encounter.gameId}-dice-rolls`);
-
-    // Listen for dice roll events
-    diceRollChannel.bind('dice-roll-logged', (data: { encounterId: string; logEntry: DiceRollLogEntry; updatedLog: DiceRollLogEntry[] }) => {
-      console.log('🎲 Received dice roll event:', data);
-      if (data.encounterId === encounter.id) {
-        console.log('🎲 Updating encounter with new dice roll log');
-        // Update the encounter with the new dice roll log
-        setCurrentEncounter(prev => ({
-          ...prev,
-          diceRollLog: data.updatedLog
-        }));
-      } else {
-        console.log('🎲 Dice roll event for different encounter:', data.encounterId, 'vs', encounter.id);
-      }
-    });
-
-    // Listen for dice roll history cleared events
-    diceRollChannel.bind('dice-roll-history-cleared', (data: { encounterId: string; updatedLog: DiceRollLogEntry[] }) => {
-      console.log('🎲 Received dice roll history cleared event:', data);
-      console.log('🎲 Current encounter ID:', encounter.id);
-      console.log('🎲 Event encounter ID:', data.encounterId);
-      if (data.encounterId === encounter.id) {
-        console.log('🎲 Updating encounter with cleared dice roll log');
-        setCurrentEncounter(prev => ({
-          ...prev,
-          diceRollLog: data.updatedLog
-        }));
-      } else {
-        console.log('🎲 Event for different encounter, ignoring');
-      }
-    });
-
-    // Listen for DM rolls toggle changes
-    diceRollChannel.bind('dm-rolls-toggle-changed', (data: { encounterId: string; showDMRolls: boolean }) => {
-      console.log('🎲 Received DM rolls toggle change:', data);
-      if (data.encounterId === encounter.id) {
-        console.log('🎲 Updating showDMRolls state:', data.showDMRolls);
-        setShowDMRolls(data.showDMRolls);
-        setCurrentEncounter(prev => ({
-          ...prev,
-          showDMRolls: data.showDMRolls
-        }));
-      }
-    });
-
-    // Listen for encounter updates (like start/stop)
-    const gameChannel = pusher.subscribe(`game-${encounter.gameId}`);
-    gameChannel.bind('encounter:updated', (data: { 
-      encounterId: string; 
-      isActive: boolean;
-      name: string;
-      currentTurn?: number;
-      currentParticipantId?: string;
-      round?: number;
-      turnOrder?: string[];
-    }) => {
-      console.log('🎯 Received encounter update:', data);
-      if (data.encounterId === encounter.id) {
-        console.log('🎯 Updating encounter state:', data.isActive ? 'ACTIVE' : 'STOPPED');
-        setCurrentEncounter(prev => ({
-          ...prev,
-          isActive: data.isActive,
-          name: data.name,
-          currentTurn: data.currentTurn,
-          currentParticipantId: data.currentParticipantId,
-          round: data.round,
-          turnOrder: data.turnOrder
-        }));
-        // Also update the parent component
-        onEncounterUpdated({
-          ...currentEncounter,
-          isActive: data.isActive,
-          name: data.name,
-          currentTurn: data.currentTurn,
-          currentParticipantId: data.currentParticipantId,
-          round: data.round,
-          turnOrder: data.turnOrder
+    const initializePusher = () => {
+      try {
+        // Initialize Pusher for real-time dice roll updates
+        pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY || 'your-pusher-key', {
+          cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || 'us2',
+          authEndpoint: `/api/pusher/auth`,
+          enabledTransports: ['ws', 'wss'],
+          forceTLS: true,
         });
+
+        // Subscribe to dice roll events for this game
+        const diceRollChannel = pusher.subscribe(`game-${encounter.gameId}-dice-rolls`);
+
+        // Listen for dice roll events
+        diceRollChannel.bind('dice-roll-logged', (data: { encounterId: string; logEntry: DiceRollLogEntry; updatedLog: DiceRollLogEntry[] }) => {
+          console.log('🎲 Received dice roll event:', data);
+          if (data.encounterId === encounter.id) {
+            console.log('🎲 Updating encounter with new dice roll log');
+            // Update the encounter with the new dice roll log
+            setCurrentEncounter(prev => ({
+              ...prev,
+              diceRollLog: data.updatedLog
+            }));
+          } else {
+            console.log('🎲 Dice roll event for different encounter:', data.encounterId, 'vs', encounter.id);
+          }
+        });
+
+        // Listen for dice roll history cleared events
+        diceRollChannel.bind('dice-roll-history-cleared', (data: { encounterId: string; updatedLog: DiceRollLogEntry[] }) => {
+          console.log('🎲 Received dice roll history cleared event:', data);
+          console.log('🎲 Current encounter ID:', encounter.id);
+          console.log('🎲 Event encounter ID:', data.encounterId);
+          if (data.encounterId === encounter.id) {
+            console.log('🎲 Updating encounter with cleared dice roll log');
+            setCurrentEncounter(prev => ({
+              ...prev,
+              diceRollLog: data.updatedLog
+            }));
+          } else {
+            console.log('🎲 Event for different encounter, ignoring');
+          }
+        });
+
+        // Listen for DM rolls toggle changes
+        diceRollChannel.bind('dm-rolls-toggle-changed', (data: { encounterId: string; showDMRolls: boolean }) => {
+          console.log('🎲 Received DM rolls toggle change:', data);
+          if (data.encounterId === encounter.id) {
+            console.log('🎲 Updating showDMRolls state:', data.showDMRolls);
+            setShowDMRolls(data.showDMRolls);
+            setCurrentEncounter(prev => ({
+              ...prev,
+              showDMRolls: data.showDMRolls
+            }));
+          }
+        });
+
+        // Listen for encounter updates (like start/stop)
+        const gameChannel = pusher.subscribe(`game-${encounter.gameId}`);
+        gameChannel.bind('encounter:updated', (data: { 
+          encounterId: string; 
+          isActive: boolean;
+          name: string;
+          currentTurn?: number;
+          currentParticipantId?: string;
+          round?: number;
+          turnOrder?: string[];
+        }) => {
+          console.log('🎯 Received encounter update:', data);
+          if (data.encounterId === encounter.id) {
+            console.log('🎯 Updating encounter state:', data.isActive ? 'ACTIVE' : 'STOPPED');
+            setCurrentEncounter(prev => ({
+              ...prev,
+              isActive: data.isActive,
+              name: data.name,
+              currentTurn: data.currentTurn,
+              currentParticipantId: data.currentParticipantId,
+              round: data.round,
+              turnOrder: data.turnOrder
+            }));
+            // Also update the parent component
+            onEncounterUpdated({
+              ...currentEncounter,
+              isActive: data.isActive,
+              name: data.name,
+              currentTurn: data.currentTurn,
+              currentParticipantId: data.currentParticipantId,
+              round: data.round,
+              turnOrder: data.turnOrder
+            });
+          }
+        });
+
+        // Handle connection events
+        pusher.connection.bind('connected', () => {
+          console.log('🎲 Pusher connected successfully');
+          reconnectAttempts = 0; // Reset reconnect attempts on successful connection
+        });
+
+        pusher.connection.bind('disconnected', () => {
+          console.log('🎲 Pusher disconnected');
+        });
+
+        pusher.connection.bind('error', (error: unknown) => {
+          console.error('🎲 Pusher connection error:', error);
+          if (reconnectAttempts < maxReconnectAttempts) {
+            reconnectAttempts++;
+            console.log(`🎲 Attempting to reconnect (${reconnectAttempts}/${maxReconnectAttempts})...`);
+            setTimeout(() => {
+              if (pusher) {
+                pusher.disconnect();
+                initializePusher();
+              }
+            }, 2000 * reconnectAttempts); // Exponential backoff
+          } else {
+            console.error('🎲 Max reconnection attempts reached');
+          }
+        });
+
+      } catch (error) {
+        console.error('🎲 Failed to initialize Pusher:', error);
       }
-    });
+    };
+
+    initializePusher();
 
     // Cleanup function
     return () => {
-      diceRollChannel.unbind('dice-roll-logged');
-      diceRollChannel.unbind('dice-roll-history-cleared');
-      diceRollChannel.unbind('dm-rolls-toggle-changed');
-      gameChannel.unbind('encounter:updated');
-      pusher.unsubscribe(`game-${encounter.gameId}-dice-rolls`);
-      pusher.unsubscribe(`game-${encounter.gameId}`);
-      pusher.disconnect();
+      if (pusher) {
+        console.log('🎲 Disconnecting Pusher');
+        pusher.disconnect();
+      }
     };
-  }, [isOpen, encounter.gameId, encounter.id]);
+  }, [isOpen, encounter.gameId, encounter.id, currentEncounter, onEncounterUpdated]);
 
   const handleSave = async () => {
     try {

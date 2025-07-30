@@ -228,113 +228,12 @@ export default function FullscreenDiceOverlay({
               return;
             }
             
-            // Log dice roll to active encounter if one exists
-            const logDiceRoll = async () => {
-              try {
-                console.log('🎲 Starting dice roll logging...');
-                
-                // Get current user session
-                const sessionResponse = await fetch('/api/auth/session');
-                if (sessionResponse.ok) {
-                  const session = await sessionResponse.json();
-                  const userName = session?.user?.name || 'Unknown Player';
-                  const userId = session?.user?.id;
-                  console.log('🎲 User session:', { userName, userId });
-                  
-                  // Get game ID from client cache since we're on top-level routes
-                  let gameId: string | undefined;
-                  try {
-                    // Import the client cache
-                    const { clientCache } = await import('@/lib/client-cache');
-                    const games = clientCache.getGames();
-                    console.log('🎲 Available games:', games);
-                    
-                    // Use the first game for now (or you could add logic to determine which game is active)
-                    if (games.length > 0) {
-                      gameId = games[0].id;
-                      console.log('🎲 Using game from cache:', gameId);
-                    }
-                  } catch (error) {
-                    console.warn('🎲 Failed to get games from cache:', error);
-                  }
-                  
-                  console.log('🎲 Game ID:', gameId);
-                  
-                  // Check if user is DM for this game
-                  let isDM = false;
-                  if (userId && gameId) {
-                    try {
-                      const gameResponse = await fetch(`/api/games/${gameId}`);
-                      if (gameResponse.ok) {
-                        const game = await gameResponse.json();
-                        isDM = game.dmId === userId;
-                        console.log('🎲 DM check:', { userId, gameDmId: game.dmId, isDM, userIdType: typeof userId, dmIdType: typeof game.dmId });
-                      }
-                    } catch (error) {
-                      console.warn('🎲 Failed to check DM status:', error);
-                    }
-                  }
-                  
-                  if (gameId) {
-                    const encountersResponse = await fetch(`/api/games/${gameId}/encounters`);
-                    if (encountersResponse.ok) {
-                      const encounters = await encountersResponse.json();
-                      console.log('🎲 All encounters:', encounters);
-                      
-                      const activeEncounter = encounters.find((enc: { isActive: boolean }) => enc.isActive);
-                      console.log('🎲 Active encounter:', activeEncounter);
-                      
-                      if (activeEncounter) {
-                        // Log the dice roll to the encounter via Pusher
-                        const logEntry = {
-                          id: `roll-${Date.now()}`,
-                          timestamp: new Date().toISOString(),
-                          playerName: userName,
-                          playerId: userId, // Store the user ID to properly identify who made the roll
-                          notation: diceNotation,
-                          result: notation.resultString,
-                          isDM,
-                          isHidden: isDM // DM rolls are hidden by default
-                        };
-                        
-                        console.log('🎲 Sending log entry:', logEntry);
-                        console.log('🎲 Final isDM value:', isDM);
-                        
-                        const logResponse = await fetch(`/api/games/${gameId}/dice-rolls`, {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            encounterId: activeEncounter.id,
-                            logEntry
-                          })
-                        });
-                        
-                        if (logResponse.ok) {
-                          console.log('🎲 Dice roll logged to encounter via Pusher:', logEntry);
-                        } else {
-                          const errorText = await logResponse.text();
-                          console.warn('🎲 Failed to log dice roll to encounter:', logResponse.status, errorText);
-                        }
-                      } else {
-                        console.log('🎲 No active encounter found - dice roll not logged');
-                        // TODO: Consider logging to game level instead of encounter level
-                      }
-                    } else {
-                      console.warn('🎲 Failed to fetch encounters:', encountersResponse.status);
-                    }
-                  } else {
-                    console.log('🎲 No game ID found in URL');
-                  }
-                } else {
-                  console.warn('🎲 Failed to get session:', sessionResponse.status);
-                }
-              } catch (error) {
-                console.warn('🎲 Error logging dice roll:', error);
-              }
-            };
-            
-            // Log the roll asynchronously
-            logDiceRoll();
+            // Log the roll using optimized logger (non-blocking)
+            import('@/lib/dice-roll-logger').then(({ diceRollLogger }) => {
+              diceRollLogger.logDiceRoll(diceNotation, notation.resultString);
+            }).catch(error => {
+              console.warn('🎲 Failed to import dice roll logger:', error);
+            });
             
             onRollComplete(notation);
             
