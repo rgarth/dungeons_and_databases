@@ -50,8 +50,8 @@ export default function InitiativeRoller({
       }
     };
 
-    // Refresh every 2 seconds when modal is open
-    const interval = setInterval(refreshEncounter, 2000);
+    // Refresh every 5 seconds when modal is open (reduced from 2 seconds)
+    const interval = setInterval(refreshEncounter, 5000);
 
     return () => clearInterval(interval);
   }, [isOpen, encounter.gameId, encounter.id, onInitiativeUpdated]);
@@ -116,7 +116,7 @@ export default function InitiativeRoller({
       }
 
       // Roll initiative for each monster instance
-      const updates = [];
+      const batchUpdates: Array<{ monsterInstanceId: string; initiative: number }> = [];
       const newInitiativeOrder = [...initiativeOrder];
 
       for (const monster of allMonsters) {
@@ -134,26 +134,32 @@ export default function InitiativeRoller({
           };
         }
 
-        // Queue database update
-        updates.push(
-          fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/monsters/${monster.monsterId}/instances/${monster.instanceId}/initiative`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ initiative })
-          })
-        );
+        // Queue batch update
+        batchUpdates.push({
+          monsterInstanceId: monster.instanceId,
+          initiative
+        });
       }
 
       // Update local state
       setInitiativeOrder(newInitiativeOrder);
 
-      // Save all to database
-      await Promise.all(updates);
+      // Use batch API for better performance
+      const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/initiative/batch`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ updates: batchUpdates })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to roll monster initiative: ${response.status} ${errorText}`);
+      }
 
       // Refresh encounter data
-      const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
-      if (response.ok) {
-        const updatedEncounter = await response.json();
+      const encounterResponse = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
+      if (encounterResponse.ok) {
+        const updatedEncounter = await encounterResponse.json();
         onInitiativeUpdated(updatedEncounter);
       }
     } catch (err) {
@@ -175,36 +181,43 @@ export default function InitiativeRoller({
       }));
       setInitiativeOrder(updatedOrder);
 
-      // Reset all participant initiative in database
-      const participantUpdates = encounter.participants.map(participant =>
-        fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/participants/${participant.id}/initiative`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ initiative: 0 })
-        })
-      );
+      // Prepare batch updates
+      const updates: Array<{ participantId?: string; monsterInstanceId?: string; initiative: number }> = [];
 
-      // Reset all monster instance initiative in database
-      const monsterUpdates = [];
-      for (const monster of encounter.monsters) {
-        for (const instance of monster.instances || []) {
-          monsterUpdates.push(
-            fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/monsters/${monster.id}/instances/${instance.id}/initiative`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ initiative: 0 })
-            })
-          );
-        }
+      // Add participant updates
+      encounter.participants.forEach(participant => {
+        updates.push({
+          participantId: participant.id,
+          initiative: 0
+        });
+      });
+
+      // Add monster instance updates
+      encounter.monsters.forEach(monster => {
+        monster.instances?.forEach(instance => {
+          updates.push({
+            monsterInstanceId: instance.id,
+            initiative: 0
+          });
+        });
+      });
+
+      // Use batch API for better performance
+      const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}/initiative/batch`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ updates })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to reset initiative: ${response.status} ${errorText}`);
       }
 
-      // Wait for all updates to complete
-      await Promise.all([...participantUpdates, ...monsterUpdates]);
-
       // Fetch updated encounter
-      const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
-      if (response.ok) {
-        const updatedEncounter = await response.json();
+      const encounterResponse = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`);
+      if (encounterResponse.ok) {
+        const updatedEncounter = await encounterResponse.json();
         onInitiativeUpdated(updatedEncounter);
       }
     } catch (err) {

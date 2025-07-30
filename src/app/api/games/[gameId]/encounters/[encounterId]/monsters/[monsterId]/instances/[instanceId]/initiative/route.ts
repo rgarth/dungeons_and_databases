@@ -3,20 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
-interface Encounter {
-  id: string;
-  gameId: string;
-}
 
-interface EncounterMonsterInstance {
-  id: string;
-  encounterMonsterId: string;
-  instanceNumber: number;
-  initiative?: number;
-  encounterMonster?: {
-    encounterId: string;
-  };
-}
 
 // PUT /api/games/[gameId]/encounters/[encounterId]/monsters/[monsterId]/instances/[instanceId]/initiative - Update monster instance initiative
 export async function PUT(
@@ -76,32 +63,24 @@ export async function PUT(
 
     console.log(`🎯 [${requestId}] User is DM, proceeding with update`);
 
-    // Verify the encounter exists and belongs to this game
-    console.log(`🎯 [${requestId}] Verifying encounter`);
-    const encounter = await (prisma as unknown as { encounter: { findUnique: (args: { where: { id: string } }) => Promise<Encounter | null> } }).encounter.findUnique({
-      where: { id: encounterId }
-    });
-
-    if (!encounter || encounter.gameId !== gameId) {
-      console.log(`🎯 [${requestId}] Encounter not found or doesn't belong to game:`, {
-        encounterFound: !!encounter,
-        encounterGameId: encounter?.gameId,
-        requestedGameId: gameId
-      });
-      return NextResponse.json({ error: 'Encounter not found' }, { status: 404 });
-    }
-
-    // Verify the monster instance exists and belongs to this encounter
-    console.log(`🎯 [${requestId}] Looking for monster instance:`, instanceId);
-    const monsterInstance = await (prisma as unknown as { encounterMonsterInstance: { findFirst: (args: { where: { id: string; encounterMonster: { encounterId: string } }; include: { encounterMonster: boolean } }) => Promise<EncounterMonsterInstance | null> } }).encounterMonsterInstance.findFirst({
+    // Verify the encounter and monster instance in a single query
+    console.log(`🎯 [${requestId}] Verifying encounter and monster instance`);
+    const monsterInstance = await prisma.encounterMonsterInstance.findFirst({
       where: { 
         id: instanceId,
         encounterMonster: {
-          encounterId: encounterId
+          encounterId: encounterId,
+          encounter: {
+            gameId: gameId
+          }
         }
       },
       include: {
-        encounterMonster: true
+        encounterMonster: {
+          include: {
+            encounter: true
+          }
+        }
       }
     });
 
@@ -124,7 +103,7 @@ export async function PUT(
       newInitiative: initiative
     });
 
-    const updatedInstance = await (prisma as unknown as { encounterMonsterInstance: { update: (args: { where: { id: string }; data: { initiative: number } }) => Promise<EncounterMonsterInstance> } }).encounterMonsterInstance.update({
+    const updatedInstance = await prisma.encounterMonsterInstance.update({
       where: { id: instanceId },
       data: { initiative }
     });

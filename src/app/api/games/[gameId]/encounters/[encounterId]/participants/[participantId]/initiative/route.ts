@@ -48,32 +48,20 @@ export async function PUT(
     // Check if user is the DM
     const isDM = gameParticipant.isDm;
 
-interface Encounter {
-  id: string;
-  gameId: string;
-}
 
-interface EncounterParticipant {
-  id: string;
-  encounterId: string;
-  characterId: string;
-  characterName: string;
-  characterData: unknown;
-  initiative?: number;
-}
 
-    // Verify the encounter exists and belongs to this game
-    const encounter = await (prisma as unknown as { encounter: { findUnique: (args: { where: { id: string } }) => Promise<Encounter | null> } }).encounter.findUnique({
-      where: { id: encounterId }
-    });
-
-    if (!encounter || encounter.gameId !== gameId) {
-      return NextResponse.json({ error: 'Encounter not found' }, { status: 404 });
-    }
-
-    // Get the encounter participant and verify character ownership
-    const encounterParticipant = await (prisma as unknown as { encounterParticipant: { findUnique: (args: { where: { id: string } }) => Promise<EncounterParticipant | null> } }).encounterParticipant.findUnique({
-      where: { id: participantId }
+    // Get the encounter participant and verify it belongs to the correct encounter/game
+    const encounterParticipant = await prisma.encounterParticipant.findFirst({
+      where: { 
+        id: participantId,
+        encounterId: encounterId,
+        encounter: {
+          gameId: gameId
+        }
+      },
+      include: {
+        encounter: true
+      }
     });
 
     if (!encounterParticipant) {
@@ -93,7 +81,7 @@ interface EncounterParticipant {
     }
 
     // Update the participant's initiative
-    const updatedParticipant = await (prisma as unknown as { encounterParticipant: { update: (args: { where: { id: string }; data: { initiative: number } }) => Promise<EncounterParticipant> } }).encounterParticipant.update({
+    const updatedParticipant = await prisma.encounterParticipant.update({
       where: { id: participantId },
       data: { initiative }
     });
