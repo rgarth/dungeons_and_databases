@@ -3,23 +3,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import Pusher from 'pusher';
 import { prisma } from '@/lib/prisma';
-import { DiceRollLogEntry } from '@/types/encounter';
-
-// Type guard to safely convert JSON to DiceRollLogEntry[]
-function isDiceRollLogEntryArray(value: unknown): value is DiceRollLogEntry[] {
-  return Array.isArray(value) && value.every(item => 
-    typeof item === 'object' && 
-    item !== null &&
-    typeof item.id === 'string' &&
-    typeof item.timestamp === 'string' &&
-    typeof item.playerName === 'string' &&
-    typeof item.playerId === 'string' &&
-    typeof item.notation === 'string' &&
-    typeof item.result === 'string' &&
-    typeof item.isDM === 'boolean' &&
-    typeof item.isHidden === 'boolean'
-  );
-}
 
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID || '',
@@ -77,39 +60,18 @@ export async function POST(
       return NextResponse.json({ error: 'Encounter not found' }, { status: 404 });
     }
 
-    // Get current dice roll log or initialize empty array
-    const currentLog = isDiceRollLogEntryArray(encounter.diceRollLog) 
-      ? encounter.diceRollLog 
-      : [];
-
-    // Add new log entry
-    const updatedLog = [...currentLog, logEntry];
-
-    // Update the encounter with the new log
-    const updatedEncounter = await prisma.encounter.update({
-      where: { id: encounterId },
-      data: {
-        diceRollLog: updatedLog,
-      },
+    // Broadcast the dice roll event to all players in the game
+    console.log('🎲 Broadcasting dice roll to other players');
+    await pusher.trigger(`game-${gameId}-dice-rolls`, 'dice-roll-logged', {
+      encounterId,
+      logEntry
     });
 
-    // Only broadcast the dice roll event if the encounter is active
-    if (encounter.isActive) {
-      console.log('🎲 Encounter is active - broadcasting dice roll to other players');
-      await pusher.trigger(`game-${gameId}-dice-rolls`, 'dice-roll-logged', {
-        encounterId,
-        logEntry,
-        updatedLog
-      });
-    } else {
-      console.log('🎲 Encounter is inactive - dice roll logged but not broadcast to other players');
-    }
-
-    return NextResponse.json({ success: true, encounter: updatedEncounter });
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error logging dice roll:', error);
+    console.error('Error broadcasting dice roll:', error);
     return NextResponse.json(
-      { error: 'Failed to log dice roll' },
+      { error: 'Failed to broadcast dice roll' },
       { status: 500 }
     );
   }
@@ -166,21 +128,12 @@ export async function DELETE(
       return NextResponse.json({ error: 'Encounter not found' }, { status: 404 });
     }
 
-    // Clear the dice roll log
-    const updatedEncounter = await prisma.encounter.update({
-      where: { id: encounterId },
-      data: {
-        diceRollLog: [],
-      },
-    });
-
     // Broadcast the dice roll history cleared event to all players in the game
     await pusher.trigger(`game-${gameId}-dice-rolls`, 'dice-roll-history-cleared', {
-      encounterId,
-      updatedLog: []
+      encounterId
     });
 
-    return NextResponse.json({ success: true, encounter: updatedEncounter });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error clearing dice roll history:', error);
     return NextResponse.json(

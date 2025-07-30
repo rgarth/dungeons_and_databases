@@ -1,13 +1,5 @@
-interface DiceRollLogEntry {
-  id: string;
-  timestamp: string;
-  playerName: string;
-  playerId: string;
-  notation: string;
-  result: string;
-  isDM: boolean;
-  isHidden: boolean;
-}
+import { DiceRollLogEntry } from '@/types/encounter';
+import { diceRollCache } from './dice-roll-cache';
 
 interface CachedSession {
   userName: string;
@@ -124,7 +116,10 @@ class DiceRollLogger {
         isHidden: session.isDM || false // DM rolls are hidden by default
       };
 
-      // Log the dice roll (non-blocking)
+      // Add to client-side cache immediately
+      diceRollCache.addRoll(activeEncounter.id, logEntry);
+
+      // Broadcast the dice roll (non-blocking)
       fetch(`/api/games/${session.gameId}/dice-rolls`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -134,12 +129,12 @@ class DiceRollLogger {
         })
       }).then(response => {
         if (response.ok) {
-          console.log('🎲 Dice roll logged successfully:', logEntry);
+          console.log('🎲 Dice roll broadcast successfully:', logEntry);
         } else {
-          console.warn('🎲 Failed to log dice roll:', response.status);
+          console.warn('🎲 Failed to broadcast dice roll:', response.status);
         }
       }).catch(error => {
-        console.warn('🎲 Error logging dice roll:', error);
+        console.warn('🎲 Error broadcasting dice roll:', error);
       });
 
     } catch (error) {

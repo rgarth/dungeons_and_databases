@@ -9,6 +9,7 @@ import AddMonsterModal from './AddMonsterModal';
 import AddParticipantModal from './AddParticipantModal';
 import InitiativeRoller from './InitiativeRoller';
 import Pusher from 'pusher-js';
+import { diceRollCache } from '@/lib/dice-roll-cache';
 
 interface EncounterDetailsModalProps {
   encounter: Encounter;
@@ -72,31 +73,29 @@ export default function EncounterDetailsModal({
         const diceRollChannel = pusher.subscribe(`game-${encounter.gameId}-dice-rolls`);
 
         // Listen for dice roll events
-        diceRollChannel.bind('dice-roll-logged', (data: { encounterId: string; logEntry: DiceRollLogEntry; updatedLog: DiceRollLogEntry[] }) => {
+        diceRollChannel.bind('dice-roll-logged', (data: { encounterId: string; logEntry: DiceRollLogEntry }) => {
           console.log('🎲 Received dice roll event:', data);
           if (data.encounterId === encounter.id) {
-            console.log('🎲 Updating encounter with new dice roll log');
-            // Update the encounter with the new dice roll log
-            setCurrentEncounter(prev => ({
-              ...prev,
-              diceRollLog: data.updatedLog
-            }));
+            console.log('🎲 Adding dice roll to client cache');
+            // Add to client-side cache
+            diceRollCache.addRoll(data.encounterId, data.logEntry);
+            // Force re-render by updating a state variable
+            setCurrentEncounter(prev => ({ ...prev }));
           } else {
             console.log('🎲 Dice roll event for different encounter:', data.encounterId, 'vs', encounter.id);
           }
         });
 
         // Listen for dice roll history cleared events
-        diceRollChannel.bind('dice-roll-history-cleared', (data: { encounterId: string; updatedLog: DiceRollLogEntry[] }) => {
+        diceRollChannel.bind('dice-roll-history-cleared', (data: { encounterId: string }) => {
           console.log('🎲 Received dice roll history cleared event:', data);
           console.log('🎲 Current encounter ID:', encounter.id);
           console.log('🎲 Event encounter ID:', data.encounterId);
           if (data.encounterId === encounter.id) {
-            console.log('🎲 Updating encounter with cleared dice roll log');
-            setCurrentEncounter(prev => ({
-              ...prev,
-              diceRollLog: data.updatedLog
-            }));
+            console.log('🎲 Clearing dice roll history from client cache');
+            diceRollCache.clearRolls(data.encounterId);
+            // Force re-render by updating a state variable
+            setCurrentEncounter(prev => ({ ...prev }));
           } else {
             console.log('🎲 Event for different encounter, ignoring');
           }
@@ -195,11 +194,12 @@ export default function EncounterDetailsModal({
 
   // Memoize the filtered and sorted dice roll history for performance
   const memoizedDiceRollHistory = useMemo(() => {
-    if (!currentEncounter.diceRollLog || currentEncounter.diceRollLog.length === 0) {
+    const rolls = diceRollCache.getRolls(currentEncounter.id);
+    if (rolls.length === 0) {
       return [];
     }
 
-    return currentEncounter.diceRollLog
+    return rolls
       .filter(entry => {
         // Show all non-DM rolls to everyone
         if (!entry.isDM) return true;
@@ -213,7 +213,7 @@ export default function EncounterDetailsModal({
         displayName: entry.playerId === session?.user?.id ? 'You' : entry.playerName,
         formattedTime: new Date(entry.timestamp).toLocaleTimeString()
       }));
-  }, [currentEncounter.diceRollLog, isDM, showDMRolls, session?.user?.id]);
+  }, [currentEncounter.id, isDM, showDMRolls, session?.user?.id]);
 
   const handleSave = async () => {
     try {
@@ -285,11 +285,11 @@ export default function EncounterDetailsModal({
 
       console.log('🎲 Dice roll history cleared successfully');
       
-      // Also update local state immediately for better UX
-      setCurrentEncounter(prev => ({
-        ...prev,
-        diceRollLog: []
-      }));
+      // Clear from client-side cache immediately
+      diceRollCache.clearRolls(encounter.id);
+      
+      // Force re-render
+      setCurrentEncounter(prev => ({ ...prev }));
     } catch (error) {
       console.error('Error clearing dice roll history:', error);
     } finally {
