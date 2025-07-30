@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { X, Plus, Users, Skull, Trash2, Edit, Save, Dice1, Sword } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { Encounter, EncounterMonster, EncounterParticipant, DiceRollLogEntry } from '@/types/encounter';
@@ -192,6 +192,28 @@ export default function EncounterDetailsModal({
       }
     };
   }, [isOpen, encounter.gameId, encounter.id, currentEncounter, onEncounterUpdated]);
+
+  // Memoize the filtered and sorted dice roll history for performance
+  const memoizedDiceRollHistory = useMemo(() => {
+    if (!currentEncounter.diceRollLog || currentEncounter.diceRollLog.length === 0) {
+      return [];
+    }
+
+    return currentEncounter.diceRollLog
+      .filter(entry => {
+        // Show all non-DM rolls to everyone
+        if (!entry.isDM) return true;
+        // Show DM rolls to DM always, and to others only if DM has toggle on
+        const shouldShow = isDM || showDMRolls;
+        return shouldShow;
+      })
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) // Reverse sort - newest first
+      .map(entry => ({
+        ...entry,
+        displayName: entry.playerId === session?.user?.id ? 'You' : entry.playerName,
+        formattedTime: new Date(entry.timestamp).toLocaleTimeString()
+      }));
+  }, [currentEncounter.diceRollLog, isDM, showDMRolls, session?.user?.id]);
 
   const handleSave = async () => {
     try {
@@ -1114,35 +1136,21 @@ export default function EncounterDetailsModal({
               </div>
               
               <div className="max-h-96 overflow-y-auto font-mono text-sm">
-                {currentEncounter.diceRollLog && currentEncounter.diceRollLog.length > 0 ? (
-                  currentEncounter.diceRollLog
-                    .filter(entry => {
-                      // Show all non-DM rolls to everyone
-                      if (!entry.isDM) return true;
-                      // Show DM rolls to DM always, and to others only if DM has toggle on
-                      const shouldShow = isDM || showDMRolls;
-                      return shouldShow;
-                    })
-                    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) // Reverse sort - newest first
-                    .map((entry) => {
-                      // Use playerId to properly identify who made the roll
-                      const displayName = entry.playerId === session?.user?.id ? 'You' : entry.playerName;
-                      
-                      return (
-                        <div key={entry.id} className="py-1 border-b border-[var(--color-border)] last:border-b-0">
-                          <span className="text-[var(--color-text-primary)]">
-                            {displayName}
-                            {entry.isDM && ' (DM)'}
-                          </span>
-                          <span className="text-[var(--color-text-secondary)] ml-2">
-                            {entry.notation} = {entry.result}
-                          </span>
-                          <span className="text-[var(--color-text-secondary)] ml-2 text-xs">
-                            {new Date(entry.timestamp).toLocaleTimeString()}
-                          </span>
-                        </div>
-                      );
-                    })
+                {memoizedDiceRollHistory.length > 0 ? (
+                  memoizedDiceRollHistory.map((entry) => (
+                    <div key={entry.id} className="py-1 border-b border-[var(--color-border)] last:border-b-0">
+                      <span className="text-[var(--color-text-primary)]">
+                        {entry.displayName}
+                        {entry.isDM && ' (DM)'}
+                      </span>
+                      <span className="text-[var(--color-text-secondary)] ml-2">
+                        {entry.notation} = {entry.result}
+                      </span>
+                      <span className="text-[var(--color-text-secondary)] ml-2 text-xs">
+                        {entry.formattedTime}
+                      </span>
+                    </div>
+                  ))
                 ) : (
                   <p className="text-[var(--color-text-secondary)] text-sm text-center py-4">
                     No dice rolls logged yet
