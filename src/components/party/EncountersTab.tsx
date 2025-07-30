@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Plus, Sword, Users, Skull, Play, Edit } from 'lucide-react';
+import { useState } from 'react';
+import { Plus, Sword, Users, Skull, Play, Edit, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { Encounter } from '@/types/encounter';
 import CreateEncounterModal from './CreateEncounterModal';
 import EncounterDetailsModal from './EncounterDetailsModal';
 import { useEncounterEvents } from '@/hooks/use-encounter-events';
+import { useEncountersCache } from '@/hooks/use-encounters-cache';
 
 interface EncountersTabProps {
   gameId: string;
@@ -14,60 +15,42 @@ interface EncountersTabProps {
 }
 
 export default function EncountersTab({ gameId, isDM }: EncountersTabProps) {
-  const [encounters, setEncounters] = useState<Encounter[]>([]);
-  const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedEncounter, setSelectedEncounter] = useState<Encounter | null>(null);
 
-  // Set up real-time encounter events
-  useEncounterEvents({
+  // Use the encounters cache hook
+  const {
+    encounters,
+    loading,
+    fetchEncounters,
+    handleEncounterCreated,
+    handleEncounterUpdated,
+    handleEncounterDeleted
+  } = useEncountersCache({
     gameId,
     onEncounterCreated: (encounter) => {
-      setEncounters(prev => [encounter, ...prev]);
+      console.log('📋 Encounter created:', encounter.name);
     },
-    onEncounterUpdated: (updatedEncounter) => {
-      setEncounters(prev => 
-        prev.map(enc => enc.id === updatedEncounter.id ? updatedEncounter : enc)
-      );
+    onEncounterUpdated: (encounter) => {
+      console.log('📋 Encounter updated:', encounter.name);
     },
     onEncounterDeleted: (encounterId) => {
-      setEncounters(prev => prev.filter(enc => enc.id !== encounterId));
+      console.log('📋 Encounter deleted:', encounterId);
     }
   });
 
-  useEffect(() => {
-    fetchEncounters();
-  }, [gameId]);
-
-  const fetchEncounters = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/games/${gameId}/encounters`);
-      if (response.ok) {
-        const data = await response.json();
-        setEncounters(data);
-      }
-    } catch (error) {
-      console.error('Failed to fetch encounters:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Set up real-time encounter events
+  useEncounterEvents({
+    gameId,
+    onEncounterCreated: handleEncounterCreated,
+    onEncounterUpdated: handleEncounterUpdated,
+    onEncounterDeleted: handleEncounterDeleted
+  });
 
   const handleCreateEncounter = () => {
     // Don't manually add to state - the real-time event will handle it
     setShowCreateModal(false);
-  };
-
-  const handleEncounterUpdated = (updatedEncounter: Encounter) => {
-    setEncounters(prev => 
-      prev.map(enc => enc.id === updatedEncounter.id ? updatedEncounter : enc)
-    );
-  };
-
-  const handleEncounterDeleted = (encounterId: string) => {
-    setEncounters(prev => prev.filter(enc => enc.id !== encounterId));
   };
 
   const handleEncounterSelect = (encounter: Encounter) => {
@@ -102,15 +85,25 @@ export default function EncountersTab({ gameId, isDM }: EncountersTabProps) {
             Manage combat encounters for your game
           </p>
         </div>
-        {isDM && (
+        <div className="flex gap-2">
           <Button
-            onClick={() => setShowCreateModal(true)}
-            className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] flex items-center"
+            onClick={() => fetchEncounters(true)}
+            disabled={loading}
+            className="bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] border border-[var(--color-border)] flex items-center"
           >
-            <Plus className="h-4 w-4 mr-2" />
-            Create Encounter
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
           </Button>
-        )}
+          {isDM && (
+            <Button
+              onClick={() => setShowCreateModal(true)}
+              className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)] flex items-center"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Create Encounter
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Encounters List */}

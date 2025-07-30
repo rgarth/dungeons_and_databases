@@ -8,7 +8,7 @@ interface EncounterCacheEntry {
 
 class EncounterCache {
   private cache = new Map<string, EncounterCacheEntry>();
-  private readonly DEFAULT_TTL = 2 * 60 * 1000; // 2 minutes (shorter than chat for real-time updates)
+  private readonly DEFAULT_TTL = 10 * 60 * 1000; // 10 minutes (encounters change less frequently than chat)
   private cleanupInterval: NodeJS.Timeout;
 
   constructor() {
