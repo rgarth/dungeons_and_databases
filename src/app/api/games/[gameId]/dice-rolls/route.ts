@@ -5,6 +5,22 @@ import Pusher from 'pusher';
 import { prisma } from '@/lib/prisma';
 import { DiceRollLogEntry } from '@/types/encounter';
 
+// Type guard to safely convert JSON to DiceRollLogEntry[]
+function isDiceRollLogEntryArray(value: unknown): value is DiceRollLogEntry[] {
+  return Array.isArray(value) && value.every(item => 
+    typeof item === 'object' && 
+    item !== null &&
+    typeof item.id === 'string' &&
+    typeof item.timestamp === 'string' &&
+    typeof item.playerName === 'string' &&
+    typeof item.playerId === 'string' &&
+    typeof item.notation === 'string' &&
+    typeof item.result === 'string' &&
+    typeof item.isDM === 'boolean' &&
+    typeof item.isHidden === 'boolean'
+  );
+}
+
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID || '',
   key: process.env.NEXT_PUBLIC_PUSHER_KEY || '',
@@ -62,7 +78,9 @@ export async function POST(
     }
 
     // Get current dice roll log or initialize empty array
-    const currentLog = encounter.diceRollLog as DiceRollLogEntry[] || [];
+    const currentLog = isDiceRollLogEntryArray(encounter.diceRollLog) 
+      ? encounter.diceRollLog 
+      : [];
 
     // Add new log entry
     const updatedLog = [...currentLog, logEntry];
