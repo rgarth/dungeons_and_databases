@@ -10,6 +10,8 @@ import AddParticipantModal from './AddParticipantModal';
 import InitiativeRoller from './InitiativeRoller';
 import Pusher from 'pusher-js';
 import { diceRollCache } from '@/lib/dice-roll-cache';
+import ReadOnlyCharacterSheet from '@/components/character-sheet/ReadOnlyCharacterSheet';
+import MonsterDetailModal from '@/components/monster-detail-modal';
 
 interface EncounterDetailsModalProps {
   encounter: Encounter;
@@ -45,6 +47,10 @@ export default function EncounterDetailsModal({
   const [clearHistoryLoading, setClearHistoryLoading] = useState(false);
   const [nextTurnLoading, setNextTurnLoading] = useState(false);
   const [diceRollsVersion, setDiceRollsVersion] = useState(0);
+  const [selectedCharacter, setSelectedCharacter] = useState<EncounterParticipant | null>(null);
+  const [selectedMonster, setSelectedMonster] = useState<EncounterMonster | null>(null);
+  const [showCharacterModal, setShowCharacterModal] = useState(false);
+  const [showMonsterModal, setShowMonsterModal] = useState(false);
 
   useEffect(() => {
     setCurrentEncounter(encounter);
@@ -940,7 +946,7 @@ export default function EncounterDetailsModal({
                     return (
                         <div
                           key={participant.id}
-                          className={`border rounded-md p-3 transition-all duration-300 ease-in-out ${
+                          className={`border rounded-md p-3 transition-all duration-300 ease-in-out cursor-pointer hover:bg-[var(--color-surface-hover)] ${
                             isCurrentTurn 
                               ? 'bg-[var(--color-surface)] border-l-4 border-l-[var(--color-accent)] border-[var(--color-border)]' 
                               : 'bg-[var(--color-surface)] border-[var(--color-border)]'
@@ -948,6 +954,15 @@ export default function EncounterDetailsModal({
                           style={{
                             transform: `translateY(${index * 2}px)`,
                             opacity: isCurrentTurn ? 1 : 0.9 + (index * 0.02)
+                          }}
+                          onClick={() => {
+                            if (participant.type === 'character' && participant.participant) {
+                              setSelectedCharacter(participant.participant);
+                              setShowCharacterModal(true);
+                            } else if (participant.type === 'monster' && participant.monster) {
+                              setSelectedMonster(participant.monster);
+                              setShowMonsterModal(true);
+                            }
                           }}
                         >
                         <div className="flex justify-between items-center">
@@ -975,7 +990,8 @@ export default function EncounterDetailsModal({
                           </div>
                           {isDM && (
                             <Button
-                              onClick={() => {
+                              onClick={(e) => {
+                                e?.stopPropagation(); // Prevent triggering the tile click
                                 if (participant.type === 'character' && participant.participant) {
                                   handleRemoveParticipant(participant.participant.id);
                                 } else if (participant.type === 'monster' && participant.monster) {
@@ -1194,6 +1210,30 @@ export default function EncounterDetailsModal({
               onEncounterUpdated(updatedEncounter);
             }}
             isDM={isDM}
+          />
+        )}
+
+        {/* Character Sheet Modal */}
+        {showCharacterModal && selectedCharacter && (
+          <ReadOnlyCharacterSheet
+            character={selectedCharacter.characterData}
+            isDM={isDM}
+            onClose={() => {
+              setShowCharacterModal(false);
+              setSelectedCharacter(null);
+            }}
+          />
+        )}
+
+        {/* Monster Detail Modal */}
+        {showMonsterModal && selectedMonster && (
+          <MonsterDetailModal
+            monster={selectedMonster.monsterData}
+            isOpen={showMonsterModal}
+            onClose={() => {
+              setShowMonsterModal(false);
+              setSelectedMonster(null);
+            }}
           />
         )}
       </div>
