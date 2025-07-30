@@ -942,7 +942,7 @@ export default function EncounterDetailsModal({
                           key={participant.id}
                           className={`border rounded-md p-3 transition-all duration-300 ease-in-out ${
                             isCurrentTurn 
-                              ? 'bg-[var(--color-accent)] bg-opacity-10 border-l-4 border-l-[var(--color-accent)] border-[var(--color-border)] shadow-md' 
+                              ? 'bg-[var(--color-surface)] border-l-4 border-l-[var(--color-accent)] border-[var(--color-border)]' 
                               : 'bg-[var(--color-surface)] border-[var(--color-border)]'
                           }`}
                           style={{
