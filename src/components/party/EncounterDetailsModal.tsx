@@ -44,6 +44,7 @@ export default function EncounterDetailsModal({
   const [showDMRolls, setShowDMRolls] = useState(currentEncounter?.showDMRolls || false);
   const [clearHistoryLoading, setClearHistoryLoading] = useState(false);
   const [nextTurnLoading, setNextTurnLoading] = useState(false);
+  const [diceRollsVersion, setDiceRollsVersion] = useState(0);
 
   useEffect(() => {
     setCurrentEncounter(encounter);
@@ -81,6 +82,7 @@ export default function EncounterDetailsModal({
             diceRollCache.addRoll(data.encounterId, data.logEntry);
             // Force re-render by updating a state variable
             setCurrentEncounter(prev => ({ ...prev }));
+            setDiceRollsVersion(prev => prev + 1);
           } else {
             console.log('🎲 Dice roll event for different encounter:', data.encounterId, 'vs', encounter.id);
           }
@@ -213,7 +215,7 @@ export default function EncounterDetailsModal({
         displayName: entry.playerId === session?.user?.id ? 'You' : entry.playerName,
         formattedTime: new Date(entry.timestamp).toLocaleTimeString()
       }));
-  }, [currentEncounter.id, isDM, showDMRolls, session?.user?.id]);
+  }, [currentEncounter.id, isDM, showDMRolls, session?.user?.id, diceRollsVersion]);
 
   const handleSave = async () => {
     try {
