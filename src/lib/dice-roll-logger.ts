@@ -104,9 +104,9 @@ class DiceRollLogger {
         return;
       }
 
-      // Create log entry
+      // Create log entry with unique ID using timestamp + user
       const logEntry: DiceRollLogEntry = {
-        id: `roll-${Date.now()}`,
+        id: `roll-${Date.now()}-${session.userId}`,
         timestamp: new Date().toISOString(),
         playerName: session.userName,
         playerId: session.userId,

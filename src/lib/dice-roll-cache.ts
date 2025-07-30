@@ -63,6 +63,13 @@ class DiceRollHistoryCache {
       this.cache[encounterId] = { rolls: [], lastUpdated: Date.now() };
     }
 
+    // Check if this roll already exists to prevent duplicates
+    const existingRollIndex = this.cache[encounterId].rolls.findIndex(r => r.id === roll.id);
+    if (existingRollIndex !== -1) {
+      console.log('🎲 Roll already exists in cache, skipping duplicate:', roll.id);
+      return;
+    }
+
     this.cache[encounterId].rolls.push(roll);
     this.cache[encounterId].lastUpdated = Date.now();
 
