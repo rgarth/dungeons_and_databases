@@ -42,6 +42,7 @@ export default function EncounterDetailsModal({
   const [showInitiativeRoller, setShowInitiativeRoller] = useState(false);
   const [showDMRolls, setShowDMRolls] = useState(currentEncounter?.showDMRolls || false);
   const [clearHistoryLoading, setClearHistoryLoading] = useState(false);
+  const [nextTurnLoading, setNextTurnLoading] = useState(false);
 
   useEffect(() => {
     setCurrentEncounter(encounter);
@@ -614,6 +615,9 @@ export default function EncounterDetailsModal({
       return;
     }
 
+    // Set loading state immediately for visual feedback
+    setNextTurnLoading(true);
+
     const currentIndex = currentEncounter.turnOrder.indexOf(currentId);
     const nextIndex = (currentIndex + 1) % currentEncounter.turnOrder.length;
     const nextParticipantId = currentEncounter.turnOrder[nextIndex];
@@ -628,6 +632,14 @@ export default function EncounterDetailsModal({
     } else {
       newTurn += 1;
     }
+
+    // Immediately update the UI for instant feedback
+    setCurrentEncounter(prev => ({
+      ...prev,
+      currentParticipantId: nextParticipantId,
+      currentTurn: newTurn,
+      round: newRound
+    }));
 
     try {
       const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`, {
@@ -654,6 +666,8 @@ export default function EncounterDetailsModal({
       onEncounterUpdated(updatedEncounter);
     } catch (error) {
       console.error('🎯 Error advancing turn:', error);
+    } finally {
+      setNextTurnLoading(false);
     }
   };
 
@@ -836,10 +850,18 @@ export default function EncounterDetailsModal({
                         onClick={() => {
                           advanceTurn();
                         }}
+                        disabled={nextTurnLoading}
                         size="sm"
                         className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
                       >
-                        Next Turn
+                        {nextTurnLoading ? (
+                          <>
+                            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-2"></div>
+                            Advancing...
+                          </>
+                        ) : (
+                          'Next Turn'
+                        )}
                       </Button>
                     )}
                   </div>
@@ -859,7 +881,7 @@ export default function EncounterDetailsModal({
                           key={participant.id}
                           className={`border rounded-md p-3 transition-all duration-300 ease-in-out ${
                             isCurrentTurn 
-                              ? 'bg-[var(--color-surface)] border-l-4 border-l-[var(--color-accent)] border-[var(--color-border)] shadow-md' 
+                              ? 'bg-[var(--color-accent)] bg-opacity-10 border-l-4 border-l-[var(--color-accent)] border-[var(--color-border)] shadow-md' 
                               : 'bg-[var(--color-surface)] border-[var(--color-border)]'
                           }`}
                           style={{
@@ -878,6 +900,11 @@ export default function EncounterDetailsModal({
                                <span className="font-medium text-[var(--color-text-primary)]">
                                  {participant.name}
                                </span>
+                               {isCurrentTurn && (
+                                 <span className="text-xs bg-[var(--color-accent)] text-[var(--color-accent-text)] px-2 py-1 rounded-full ml-2">
+                                   CURRENT TURN
+                                 </span>
+                               )}
                              </div>
                             {participant.initiative > 0 && (
                               <span className="text-sm text-[var(--color-accent)] font-mono ml-6">
