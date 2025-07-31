@@ -11,6 +11,7 @@ import InitiativeRoller from './InitiativeRoller';
 import Pusher from 'pusher-js';
 import { diceRollCache } from '@/lib/dice-roll-cache';
 import ReadOnlyCharacterSheet from '@/components/character-sheet/ReadOnlyCharacterSheet';
+import { CharacterSheet } from '@/components/character-sheet';
 import MonsterDetailModal from '@/components/monster-detail-modal';
 
 interface EncounterDetailsModalProps {
@@ -741,7 +742,7 @@ export default function EncounterDetailsModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 flex items-center justify-center z-50" style={{ backgroundColor: 'var(--color-overlay)' }}>
       <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-[var(--color-text-primary)]">
@@ -1215,14 +1216,24 @@ export default function EncounterDetailsModal({
 
         {/* Character Sheet Modal */}
         {showCharacterModal && selectedCharacter && (
-          <ReadOnlyCharacterSheet
-            character={selectedCharacter.characterData}
-            isDM={isDM}
-            onClose={() => {
-              setShowCharacterModal(false);
-              setSelectedCharacter(null);
-            }}
-          />
+          selectedCharacter.characterData.userId === session?.user?.id ? (
+            <CharacterSheet
+              character={selectedCharacter.characterData}
+              onClose={() => {
+                setShowCharacterModal(false);
+                setSelectedCharacter(null);
+              }}
+            />
+          ) : (
+            <ReadOnlyCharacterSheet
+              character={selectedCharacter.characterData}
+              isDM={isDM}
+              onClose={() => {
+                setShowCharacterModal(false);
+                setSelectedCharacter(null);
+              }}
+            />
+          )
         )}
 
         {/* Monster Detail Modal */}
