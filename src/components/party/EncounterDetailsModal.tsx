@@ -52,6 +52,7 @@ export default function EncounterDetailsModal({
   const [selectedMonster, setSelectedMonster] = useState<EncounterMonster | null>(null);
   const [showCharacterModal, setShowCharacterModal] = useState(false);
   const [showMonsterModal, setShowMonsterModal] = useState(false);
+  const [isAnimatingInitiative, setIsAnimatingInitiative] = useState(false);
 
   useEffect(() => {
     setCurrentEncounter(encounter);
@@ -386,6 +387,11 @@ export default function EncounterDetailsModal({
         currentParticipantId = turnOrder.length > 0 ? turnOrder[0] : null;
         round = 1;
         currentTurn = 1;
+
+        // Add animation delay for initiative order
+        setIsAnimatingInitiative(true);
+        await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5 second delay
+        setIsAnimatingInitiative(false);
 
       } else {
         // Stopping combat - clear turn order
@@ -880,7 +886,7 @@ export default function EncounterDetailsModal({
             >
               <>
                 <Sword className="h-4 w-4 mr-1" />
-                {toggleLoading ? 'Updating...' : currentEncounter.isActive ? 'Stop' : 'Start'}
+                {toggleLoading ? (isAnimatingInitiative ? 'Arranging Initiative...' : 'Updating...') : currentEncounter.isActive ? 'Stop' : 'Start'}
               </>
             </Button>
           )}
