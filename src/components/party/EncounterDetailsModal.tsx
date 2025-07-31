@@ -589,7 +589,7 @@ export default function EncounterDetailsModal({
     return Math.floor((abilityScore - 10) / 2);
   };
 
-  const getInitiativeOrderedParticipants = () => {
+  const getInitiativeOrderedParticipants = useMemo(() => {
     const allParticipants: Array<{
       id: string;
       name: string;
@@ -657,7 +657,7 @@ export default function EncounterDetailsModal({
     });
 
     return allParticipants;
-  };
+  }, [currentEncounter.participants, currentEncounter.monsters]);
 
   const getCurrentParticipant = () => {
     if (!currentEncounter.isActive || !currentEncounter.turnOrder || currentEncounter.turnOrder.length === 0) {
@@ -936,7 +936,7 @@ export default function EncounterDetailsModal({
                 )}
               </div>
               {(() => {
-                const orderedParticipants = getInitiativeOrderedParticipants();
+                const orderedParticipants = getInitiativeOrderedParticipants;
                 const currentParticipantId = getCurrentParticipant();
                 return orderedParticipants.length === 0 ? (
                   <p className="text-[var(--color-text-secondary)] text-sm">No participants in this encounter.</p>
@@ -947,7 +947,7 @@ export default function EncounterDetailsModal({
                     return (
                         <div
                           key={participant.id}
-                          className={`border rounded-md p-3 transition-all duration-300 ease-in-out cursor-pointer hover:bg-[var(--color-surface-hover)] ${
+                          className={`border rounded-md p-3 transition-all duration-700 ease-in-out cursor-pointer hover:bg-[var(--color-surface-hover)] ${
                             isCurrentTurn 
                               ? 'bg-[var(--color-surface)] border-l-4 border-l-[var(--color-accent)] border-[var(--color-border)]' 
                               : 'bg-[var(--color-surface)] border-[var(--color-border)]'
