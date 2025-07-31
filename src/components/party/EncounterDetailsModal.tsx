@@ -215,7 +215,6 @@ export default function EncounterDetailsModal({
         const shouldShow = isDM || showDMRolls;
         return shouldShow;
       })
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) // Reverse sort - newest first
       .map(entry => ({
         ...entry,
         displayName: entry.playerId === session?.user?.id ? 'You' : entry.playerName,
@@ -298,6 +297,7 @@ export default function EncounterDetailsModal({
       
       // Force re-render
       setCurrentEncounter(prev => ({ ...prev }));
+      setDiceRollsVersion(prev => prev + 1);
     } catch (error) {
       console.error('Error clearing dice roll history:', error);
     } finally {
@@ -1230,6 +1230,7 @@ export default function EncounterDetailsModal({
           <MonsterDetailModal
             monster={selectedMonster.monsterData}
             isOpen={showMonsterModal}
+            initialTab="combat"
             onClose={() => {
               setShowMonsterModal(false);
               setSelectedMonster(null);

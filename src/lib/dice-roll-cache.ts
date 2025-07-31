@@ -55,7 +55,9 @@ class DiceRollHistoryCache {
   }
 
   getRolls(encounterId: string): DiceRollLogEntry[] {
-    return this.cache[encounterId]?.rolls || [];
+    const rolls = this.cache[encounterId]?.rolls || [];
+    // Sort by timestamp, newest first
+    return rolls.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   }
 
   addRoll(encounterId: string, roll: DiceRollLogEntry): void {
