@@ -389,7 +389,6 @@ export default function EncounterDetailsModal({
 
       } else {
         // Stopping combat - clear turn order
-
         turnOrder = null;
         currentParticipantId = null;
         round = null;
@@ -405,8 +404,6 @@ export default function EncounterDetailsModal({
         currentTurn,
         round
       };
-      
-
       
       const response = await fetch(`/api/games/${encounter.gameId}/encounters/${encounter.id}`, {
         method: 'PUT',
@@ -946,7 +943,7 @@ export default function EncounterDetailsModal({
                     const isCurrentTurn = participant.id === currentParticipantId;
                     return (
                         <div
-                          key={participant.id}
+                          key={`${participant.type}-${participant.type === 'character' ? participant.participant?.id : participant.monster?.id}-${participant.type === 'monster' ? participant.instance?.instanceNumber : ''}`}
                           className={`border rounded-md p-3 transition-all duration-700 ease-in-out cursor-pointer hover:bg-[var(--color-surface-hover)] ${
                             isCurrentTurn 
                               ? 'bg-[var(--color-surface)] border-l-4 border-l-[var(--color-accent)] border-[var(--color-border)]' 
