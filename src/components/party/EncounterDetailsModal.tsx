@@ -939,24 +939,29 @@ export default function EncounterDetailsModal({
                   <p className="text-[var(--color-text-secondary)] text-sm">No participants in this encounter.</p>
                 ) : (
                   <div className="space-y-2">
-                                      {orderedParticipants.map((participant, index) => {
+                                      {orderedParticipants.map((participant) => {
                     const isCurrentTurn = participant.id === currentParticipantId;
                     return (
                         <div
                           key={`${participant.type}-${participant.type === 'character' ? participant.participant?.id : participant.monster?.id}-${participant.type === 'monster' ? participant.instance?.instanceNumber : ''}`}
-                          className={`border rounded-md p-3 transition-all duration-700 ease-in-out cursor-pointer hover:bg-[var(--color-surface-hover)] ${
+                          className={`border rounded-md p-3 cursor-pointer hover:bg-[var(--color-surface-hover)] ${
                             isCurrentTurn 
                               ? 'bg-[var(--color-surface)] border-l-4 border-l-[var(--color-accent)] border-[var(--color-border)]' 
                               : 'bg-[var(--color-surface)] border-[var(--color-border)]'
                           }`}
-                          style={{
-                            transform: `translateY(${index * 2}px)`,
-                            opacity: isCurrentTurn ? 1 : 0.9 + (index * 0.02)
-                          }}
                           onClick={() => {
                             if (participant.type === 'character' && participant.participant) {
-                              setSelectedCharacter(participant.participant);
-                              setShowCharacterModal(true);
+                              // Check if this is the user's own character
+                              const isOwnCharacter = participant.participant.characterData.userId === session?.user?.id;
+                              if (isOwnCharacter) {
+                                // Open character sheet with Actions tab for own character
+                                setSelectedCharacter(participant.participant);
+                                setShowCharacterModal(true);
+                              } else {
+                                // Show read-only modal for other characters
+                                setSelectedCharacter(participant.participant);
+                                setShowCharacterModal(true);
+                              }
                             } else if (participant.type === 'monster' && participant.monster) {
                               setSelectedMonster(participant.monster);
                               setShowMonsterModal(true);
@@ -1216,6 +1221,7 @@ export default function EncounterDetailsModal({
           selectedCharacter.characterData.userId === session?.user?.id ? (
             <CharacterSheet
               character={selectedCharacter.characterData}
+              initialTab="actions"
               onClose={() => {
                 setShowCharacterModal(false);
                 setSelectedCharacter(null);

@@ -109,6 +109,12 @@ export function InventoryTab({
   onMoneyUpdate,
   onTreasuresUpdate
 }: InventoryTabProps) {
+  // Debug logging for money values
+  console.log('InventoryTab - Money data:', {
+    copperPieces,
+    silverPieces,
+    goldPieces
+  });
   const [newItem, setNewItem] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");

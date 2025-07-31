@@ -50,6 +50,11 @@ export async function POST(
     console.log('🔍 API DEBUG: Character data type:', typeof characterData);
     console.log('🔍 API DEBUG: Character data keys:', Object.keys(characterData || {}));
     console.log('🔍 API DEBUG: Character data has dexterity:', 'dexterity' in (characterData || {}));
+    console.log('🔍 API DEBUG: Character money data:', {
+      copperPieces: characterData?.copperPieces,
+      silverPieces: characterData?.silverPieces,
+      goldPieces: characterData?.goldPieces
+    });
 
     if (!characterId || !characterName || !characterData) {
       return NextResponse.json(

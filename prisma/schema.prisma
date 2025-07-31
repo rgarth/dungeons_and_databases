@@ -83,9 +83,6 @@ model Character {
   armor                 Json?
   languages             Json?
   equipment             Json?
-  gold                  Float        @default(0)
-  copper                Int          @default(0)
-  silver                Int          @default(0)
   electrum              Int          @default(0)
   platinum              Int          @default(0)
   avatarUrl             String?

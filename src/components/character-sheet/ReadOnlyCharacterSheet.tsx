@@ -9,6 +9,7 @@ interface ReadOnlyCharacterSheetProps {
   character: Character;
   isDM?: boolean; // If true, show full details. If false, show limited details for other players
   onClose: () => void;
+  initialSection?: 'stats' | 'actions' | 'gear' | 'background';
 }
 
 export default function ReadOnlyCharacterSheet({ 
@@ -16,6 +17,14 @@ export default function ReadOnlyCharacterSheet({
   isDM = false, 
   onClose 
 }: ReadOnlyCharacterSheetProps) {
+  // Debug logging for money values
+  console.log('ReadOnlyCharacterSheet - Character money data:', {
+    copperPieces: character.copperPieces,
+    silverPieces: character.silverPieces,
+    goldPieces: character.goldPieces,
+    characterId: character.id,
+    characterName: character.name
+  });
   const showFullDetails = isDM;
   const { data: avatarUrl } = useAvatar(character.id);
   
@@ -213,26 +222,26 @@ export default function ReadOnlyCharacterSheet({
                 (character.silverPieces && character.silverPieces > 0) || 
                 (character.goldPieces && character.goldPieces > 0)) && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--color-text-primary)' }}>
+                  <h3 className="text-lg font-semibold mb-3 text-[var(--color-text-primary)]">
                     Money
                   </h3>
                   <div className="flex gap-4">
-                    {character.copperPieces && character.copperPieces > 0 && (
-                      <div className="p-3 rounded" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                        <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Copper</div>
-                        <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{character.copperPieces} cp</div>
+                    {(character.goldPieces && character.goldPieces > 0) && (
+                      <div className="p-3 rounded bg-[var(--color-card-secondary)]">
+                        <div className="text-sm text-[var(--color-text-secondary)]">Gold</div>
+                        <div className="font-medium text-[var(--color-text-primary)]">{character.goldPieces} gp</div>
                       </div>
                     )}
-                    {character.silverPieces && character.silverPieces > 0 && (
-                      <div className="p-3 rounded" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                        <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Silver</div>
-                        <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{character.silverPieces} sp</div>
+                    {(character.silverPieces && character.silverPieces > 0) && (
+                      <div className="p-3 rounded bg-[var(--color-card-secondary)]">
+                        <div className="text-sm text-[var(--color-text-secondary)]">Silver</div>
+                        <div className="font-medium text-[var(--color-text-primary)]">{character.silverPieces} sp</div>
                       </div>
                     )}
-                    {character.goldPieces && character.goldPieces > 0 && (
-                      <div className="p-3 rounded" style={{ backgroundColor: 'var(--color-card-secondary)' }}>
-                        <div className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Gold</div>
-                        <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{character.goldPieces} gp</div>
+                    {(character.copperPieces && character.copperPieces > 0) && (
+                      <div className="p-3 rounded bg-[var(--color-card-secondary)]">
+                        <div className="text-sm text-[var(--color-text-secondary)]">Copper</div>
+                        <div className="font-medium text-[var(--color-text-primary)]">{character.copperPieces} cp</div>
                       </div>
                     )}
                   </div>

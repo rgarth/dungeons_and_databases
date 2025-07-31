@@ -100,9 +100,10 @@ interface CharacterSheetProps {
   onClose: () => void;
   onCharacterDeleted?: () => void;
   onCharacterUpdated?: () => void;
+  initialTab?: "stats" | "actions" | "gear" | "inventory" | "background";
 }
 
-export function CharacterSheet({ character, onClose, onCharacterDeleted }: CharacterSheetProps) {
+export function CharacterSheet({ character, onClose, onCharacterDeleted, initialTab }: CharacterSheetProps) {
   const { updateCharacter: updateCharacterMutation } = useCharacterMutations();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showLevelUpModal, setShowLevelUpModal] = useState(false);
@@ -224,7 +225,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted }: Chara
     }
   }), [currentCharacter]);
   
-  const [activeTab, setActiveTab] = useState<"stats" | "actions" | "gear" | "inventory" | "background">("stats");
+  const [activeTab, setActiveTab] = useState<"stats" | "actions" | "gear" | "inventory" | "background">(initialTab || "stats");
   const [showWeaponCreator, setShowWeaponCreator] = useState(false);
   const [selectedBaseWeapon, setSelectedBaseWeapon] = useState("");
   const [selectedMagicalTemplate, setSelectedMagicalTemplate] = useState("");

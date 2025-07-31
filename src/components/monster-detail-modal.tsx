@@ -11,6 +11,7 @@ interface MonsterDetailModalProps {
   monster: Monster | null;
   isOpen: boolean;
   onClose: () => void;
+  initialTab?: 'overview' | 'combat' | 'abilities' | 'spells';
 }
 
 // Monster category icons mapping
@@ -32,8 +33,8 @@ const MONSTER_TYPE_ICONS: Record<string, React.ComponentType<{ className?: strin
   "swarm of Tiny beasts": Users
 };
 
-export default function MonsterDetailModal({ monster, isOpen, onClose }: MonsterDetailModalProps) {
-  const [activeTab, setActiveTab] = useState<'overview' | 'combat' | 'abilities' | 'spells'>('overview');
+export default function MonsterDetailModal({ monster, isOpen, onClose, initialTab = 'overview' }: MonsterDetailModalProps) {
+  const [activeTab, setActiveTab] = useState<'overview' | 'combat' | 'abilities' | 'spells'>(initialTab);
   const { rollDice } = useDiceRoll();
 
   // Determine available tabs
