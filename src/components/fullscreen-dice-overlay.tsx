@@ -168,6 +168,14 @@ export default function FullscreenDiceOverlay({
           // Switch to white text when lightness is below 50%
           const isDark = lightness < 0.5;
           window.DICE.vars.label_color = isDark ? '#ffffff' : '#000000';
+          
+          // Try to make the background completely transparent
+          if (window.DICE.vars.desk_color !== undefined) {
+            window.DICE.vars.desk_color = 'transparent';
+          }
+          if (window.DICE.vars.desk_opacity !== undefined) {
+            window.DICE.vars.desk_opacity = 0;
+          }
         }
         
         // Clear material cache to ensure new color is applied
@@ -301,15 +309,16 @@ export default function FullscreenDiceOverlay({
       className="fixed inset-0 z-[100] pointer-events-none transition-all duration-300 ease-out"
       style={{ 
         opacity: isFading ? 0 : 1,
-        transform: isFading ? 'rotate(90deg)' : 'rotate(0deg)'
+        transform: isFading ? 'rotate(90deg)' : 'rotate(0deg)',
+        background: 'transparent'
       }}
     >
-      {/* Dice container - completely transparent and non-interactive */}
+      {/* Dice container - completely transparent background but dice remain visible */}
       <div 
         ref={containerRef}
         className="absolute inset-0 w-full h-full pointer-events-none"
         style={{ 
-          background: 'transparent',
+          background: 'none',
           zIndex: 1
         }}
       />
