@@ -112,7 +112,7 @@ export const humanoidMonsters: Monster[] = [
       },
       {
         "name": "Spellcasting",
-        "description": "The archmage is an 18th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 17, +9 to hit with spell attacks). The archmage can cast disguise self and invisibility at will and has the following wizard spells prepared:\n\n- Cantrips (at will): fire bolt, light, mage hand, prestidigitation, shocking grasp\n- 1st level (4 slots): detect magic, identify, mage armor*, magic missile\n- 2nd level (3 slots): detect thoughts, mirror image, misty step\n- 3rd level (3 slots): counterspell, fly, lightning bolt\n- 4th level (3 slots): banishment, fire shield, stoneskin*\n- 5th level (3 slots): cone of cold, scrying, wall of force\n- 6th level (1 slot): globe of invulnerability\n- 7th level (1 slot): teleport\n- 8th level (1 slot): mind blank*\n- 9th level (1 slot): time stop\n* The archmage casts these spells on itself before combat."
+        "description": "The archmage is an 18th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 17, +9 to hit with spell attacks).\n\n🎯 COMBAT SPELLS\n• Fire Bolt (cantrip): 1d10 fire damage, 120ft range\n• Lightning Bolt (3rd): 8d6 lightning damage, 100ft line, Dex save DC 17\n• Cone of Cold (5th): 8d8 cold damage, 60ft cone, Con save DC 17\n• Magic Missile (1st): 3d4+3 force damage, 120ft range, auto-hit\n\n🛡️ DEFENSIVE SPELLS\n• Mage Armor (1st): +3 AC for 8 hours (cast before combat)\n• Mirror Image (2nd): 3 illusory duplicates, 1 minute\n• Stoneskin (4th): Resistance to nonmagical damage (cast before combat)\n• Globe of Invulnerability (6th): Immune to 5th level and below spells\n\n⚡ UTILITY SPELLS\n• Counterspell (3rd): Counter enemy spell, DC 17\n• Teleport (7th): Instant transport to familiar location\n• Time Stop (9th): 1d4+1 rounds of stopped time\n• Invisibility (at will): Become invisible until you attack\n\n📋 PRE-COMBAT BUFFS\n• Mage Armor, Stoneskin, and Mind Blank are cast before combat begins."
       }
     ],
     "actions": [
@@ -614,7 +614,7 @@ export const humanoidMonsters: Monster[] = [
       },
       {
         "name": "Spellcasting",
-        "description": "The fanatic is a 4th-level spellcaster. Its spell casting ability is Wisdom (spell save DC 11, +3 to hit with spell attacks). The fanatic has the following cleric spells prepared:\n\nCantrips (at will): light, sacred flame, thaumaturgy\n- 1st level (4 slots): command, inflict wounds, shield of faith\n- 2nd level (3 slots): hold person, spiritual weapon"
+        "description": "The fanatic is a 4th-level spellcaster. Its spellcasting ability is Wisdom (spell save DC 11, +3 to hit with spell attacks).\n\n🎯 COMBAT SPELLS\n• Sacred Flame (cantrip): 1d8 radiant damage, 60ft range, Dex save DC 11\n• Inflict Wounds (1st): 3d10 necrotic damage, melee touch\n• Spiritual Weapon (2nd): 1d8+2 force damage, bonus action attack\n\n🛡️ DEFENSIVE SPELLS\n• Shield of Faith (1st): +2 AC for 10 minutes\n\n⚡ UTILITY SPELLS\n• Command (1st): Force target to obey one-word command, Wis save DC 11\n• Hold Person (2nd): Paralyze humanoid, Wis save DC 11"
       }
     ],
     "actions": [
@@ -1930,7 +1930,7 @@ export const humanoidMonsters: Monster[] = [
     "traits": [
       {
         "name": "Spellcasting",
-        "description": "The mage is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 14, +6 to hit with spell attacks). The mage has the following wizard spells prepared:\n\n- Cantrips (at will): fire bolt, light, mage hand, prestidigitation\n- 1st level (4 slots): detect magic, mage armor, magic missile, shield\n- 2nd level (3 slots): misty step, suggestion\n- 3rd level (3 slots): counterspell, fireball, fly\n- 4th level (3 slots): greater invisibility, ice storm\n- 5th level (1 slot): cone of cold"
+        "description": "The mage is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 14, +6 to hit with spell attacks).\n\n🎯 COMBAT SPELLS\n• Fire Bolt (cantrip): 1d10 fire damage, 120ft range\n• Fireball (3rd): 8d6 fire damage, 20ft radius, Dex save DC 14\n• Cone of Cold (5th): 8d8 cold damage, 60ft cone, Con save DC 14\n• Magic Missile (1st): 3d4+3 force damage, 120ft range, auto-hit\n\n🛡️ DEFENSIVE SPELLS\n• Mage Armor (1st): +3 AC for 8 hours (cast before combat)\n• Shield (1st): +5 AC as reaction to being hit\n• Greater Invisibility (4th): Invisible for 1 minute or until you attack\n\n⚡ UTILITY SPELLS\n• Counterspell (3rd): Counter enemy spell, DC 14\n• Fly (3rd): 60ft flying speed for 10 minutes\n• Misty Step (2nd): Bonus action teleport 30ft\n• Suggestion (2nd): Charm target for 8 hours, Wis save DC 14"
       }
     ],
     "actions": [

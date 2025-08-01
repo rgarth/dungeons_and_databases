@@ -67,7 +67,7 @@ export const monstrosityMonsters: Monster[] = [
       },
       {
         "name": "Spellcasting",
-        "description": "The sphinx is a 12th-level spellcaster. Its spellcasting ability is Wisdom (spell save DC 18, +10 to hit with spell attacks). It requires no material components to cast its spells. The sphinx has the following cleric spells prepared:\n\n- Cantrips (at will): sacred flame, spare the dying, thaumaturgy\n- 1st level (4 slots): command, detect evil and good, detect magic\n- 2nd level (3 slots): lesser restoration, zone of truth\n- 3rd level (3 slots): dispel magic, tongues\n- 4th level (3 slots): banishment, freedom of movement\n- 5th level (2 slots): flame strike, greater restoration\n- 6th level (1 slot): heroes' feast"
+        "description": "The sphinx is a 12th-level spellcaster. Its spellcasting ability is Wisdom (spell save DC 18, +10 to hit with spell attacks). It requires no material components to cast its spells.\n\n🎯 COMBAT SPELLS\n• Sacred Flame (cantrip): 1d8 radiant damage, 60ft range, Dex save DC 18\n• Flame Strike (5th): 8d6 fire + 8d6 radiant damage, 10ft radius, Dex save DC 18\n\n🛡️ DEFENSIVE SPELLS\n• Freedom of Movement (4th): Immune to restrained/paralyzed for 1 hour\n• Greater Restoration (5th): Remove one major condition\n• Heroes' Feast (6th): +2d10 HP, advantage on Wis saves, immunity to fear\n\n⚡ UTILITY SPELLS\n• Command (1st): Force target to obey one-word command, Wis save DC 18\n• Zone of Truth (2nd): Creatures can't lie in 15ft radius\n• Dispel Magic (3rd): End magical effects, DC 18\n• Banishment (4th): Send target to another plane, Cha save DC 18"
       }
     ],
     "actions": [
