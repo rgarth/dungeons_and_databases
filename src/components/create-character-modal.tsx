@@ -1254,7 +1254,7 @@ export function CreateCharacterModal({ onClose, onCharacterCreated }: CreateChar
               handleCreateCharacter();
             }
           }} 
-          className="p-6 space-y-6"
+          className="p-6 space-y-6 pb-20"
         >
           {/* Step indicator */}
           <div className="flex items-center justify-center mb-6">
