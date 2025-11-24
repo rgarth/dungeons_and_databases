@@ -9,6 +9,10 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASSWORD,
   },
+  // Add connection timeout
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000,
 });
 
 export async function sendPasswordResetEmail(
@@ -111,11 +115,20 @@ export async function sendPasswordResetEmail(
   };
 
   try {
+    // Verify SMTP configuration first
+    if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASSWORD) {
+      console.error("SMTP configuration missing. Required: SMTP_HOST, SMTP_USER, SMTP_PASSWORD");
+      throw new Error("Email service not configured");
+    }
+
     await transporter.sendMail(mailOptions);
     console.log(`Password reset email sent to ${email}`);
   } catch (error) {
     console.error("Error sending password reset email:", error);
-    throw new Error("Failed to send password reset email");
+    if (error instanceof Error) {
+      console.error("Error details:", error.message);
+    }
+    throw error;
   }
 }
 

@@ -46,8 +46,10 @@ export async function POST(request: NextRequest) {
     // Send email with reset link
     try {
       await sendPasswordResetEmail(user.email, resetToken);
+      console.log(`Password reset email sent successfully to ${user.email}`);
     } catch (emailError) {
       console.error("Failed to send password reset email:", emailError);
+      console.error("Email error details:", emailError instanceof Error ? emailError.message : String(emailError));
       // Still return success to prevent email enumeration
       // But log the error for debugging
     }

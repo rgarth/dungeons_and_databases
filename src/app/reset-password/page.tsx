@@ -8,7 +8,7 @@ import { ThemeInput } from "@/components/ui/ThemeComponents";
 export default function ResetPasswordPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams?.get("token") || null;
+  const token = searchParams ? searchParams.get("token") : null;
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
