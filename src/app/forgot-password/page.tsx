@@ -15,6 +15,7 @@ export default function ForgotPasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Forgot password form submitted with email:", email);
     setError("");
     setSuccess(false);
     setResetToken(null);
@@ -25,6 +26,7 @@ export default function ForgotPasswordPage() {
     }
 
     setLoading(true);
+    console.log("Sending password reset request...");
 
     try {
       const response = await fetch("/api/auth/request-reset", {
@@ -33,22 +35,29 @@ export default function ForgotPasswordPage() {
         body: JSON.stringify({ email }),
       });
 
+      console.log("Response status:", response.status);
       const data = await response.json();
+      console.log("Response data:", data);
 
       if (!response.ok) {
-        setError(data.error || "Failed to request password reset");
+        const errorMsg = data.error || "Failed to request password reset";
+        console.error("Password reset request failed:", errorMsg);
+        setError(errorMsg);
         setLoading(false);
         return;
       }
 
+      console.log("Password reset request successful");
       setSuccess(true);
       // In development, show the token
       if (data.resetToken) {
+        console.log("Reset token received (dev mode):", data.resetToken);
         setResetToken(data.resetToken);
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      const errorMsg = err instanceof Error ? err.message : "An error occurred. Please try again.";
       console.error("Request reset error:", err);
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -133,7 +142,7 @@ export default function ForgotPasswordPage() {
                 type="submit"
                 className="w-full"
                 size="lg"
-                disabled={loading}
+                disabled={loading || !email.trim()}
               >
                 {loading ? "Sending..." : "Send Reset Link"}
               </Button>
