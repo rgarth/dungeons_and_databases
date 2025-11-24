@@ -14,7 +14,6 @@ import ReadOnlyCharacterSheet from '@/components/character-sheet/ReadOnlyCharact
 
 import GameChat from './GameChat';
 import EncountersTab from './EncountersTab';
-import { useClientCache } from '@/hooks/use-client-cache';
 
 // Character Avatar Component
 function CharacterAvatar({ characterId, characterName }: { characterId: string; characterName: string }) {

@@ -134,7 +134,7 @@ export default function CharactersPage() {
           {characters.length === 0 ? (
             <div className="col-span-full text-center py-12">
               <p className="text-[var(--color-text-secondary)] text-lg mb-4">
-                You don't have any characters yet.
+                You don&apos;t have any characters yet.
               </p>
               <Button
                 onClick={() => setShowCreateModal(true)}

@@ -1,7 +1,6 @@
 // Client-side cache for D&D data
 // This cache is built on first load and persists during the session
 
-import { Character } from '@/types/character';
 
 interface Race {
   name: string;
