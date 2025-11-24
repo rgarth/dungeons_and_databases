@@ -166,7 +166,7 @@ export function AuthForm() {
         {loading ? "Please wait..." : isSignUp ? "Sign Up" : "Sign In"}
       </Button>
 
-      <div className="text-center">
+      <div className="text-center space-y-2">
         <button
           type="button"
           onClick={() => {
@@ -177,7 +177,7 @@ export function AuthForm() {
             setPassword("");
             setName("");
           }}
-          className="text-sm underline"
+          className="text-sm underline block w-full"
           style={{ color: "var(--color-accent)" }}
           disabled={loading}
         >
@@ -185,6 +185,15 @@ export function AuthForm() {
             ? "Already have an account? Sign in"
             : "Don't have an account? Sign up"}
         </button>
+        {!isSignUp && (
+          <a
+            href="/forgot-password"
+            className="text-sm underline block"
+            style={{ color: "var(--color-accent)" }}
+          >
+            Forgot password?
+          </a>
+        )}
       </div>
     </form>
   );

@@ -12,6 +12,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Character } from "@/types/character";
 import { Button } from "@/components/ui";
 import { useLoading } from "@/components/providers/loading-provider";
+import { PasswordSetupBanner } from "@/components/password-setup-banner";
 
 export default function CharactersPage() {
   const { data: session, status } = useSession();
@@ -84,6 +85,8 @@ export default function CharactersPage() {
 
   return (
     <MainLayout activeTab="characters" onTabChange={handleTabChange}>
+      <PasswordSetupBanner />
+      
       {/* New Character Button */}
       <div className="mb-8">
         <Button
