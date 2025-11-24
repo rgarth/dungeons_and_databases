@@ -332,7 +332,7 @@ class ClientCache {
     this.initialized = true;
   }
 
-  private async fetchWithTimeout(url: string, timeout = 10000): Promise<any> {
+  private async fetchWithTimeout(url: string, timeout = 10000): Promise<unknown> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
     
@@ -343,9 +343,9 @@ class ClientCache {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       return await response.json();
-    } catch (error: any) {
+    } catch (error) {
       clearTimeout(timeoutId);
-      if (error.name === 'AbortError') {
+      if (error instanceof Error && error.name === 'AbortError') {
         console.error(`⏱️ Request timeout for ${url}`);
         throw new Error(`Request timeout for ${url}`);
       }

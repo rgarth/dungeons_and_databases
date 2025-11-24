@@ -2,7 +2,6 @@ import nodemailer from "nodemailer";
 
 // Create reusable transporter
 const smtpPort = parseInt(process.env.SMTP_PORT || "587");
-const useSecure = process.env.SMTP_SECURE === "true";
 
 // IMPORTANT: Port 587 requires secure: false (STARTTLS)
 // Port 465 requires secure: true (SSL/TLS from the start)
@@ -148,8 +147,13 @@ export async function sendPasswordResetEmail(
     console.error("❌ Error sending password reset email:", error);
     if (error instanceof Error) {
       console.error("❌ Error details:", error.message);
-      console.error("❌ Error code:", (error as any).code);
-      console.error("❌ Error command:", (error as any).command);
+      const errorWithCode = error as Error & { code?: string; command?: string };
+      if (errorWithCode.code) {
+        console.error("❌ Error code:", errorWithCode.code);
+      }
+      if (errorWithCode.command) {
+        console.error("❌ Error command:", errorWithCode.command);
+      }
     }
     // Don't throw - let the API handle it gracefully
     throw error;
