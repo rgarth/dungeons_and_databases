@@ -110,7 +110,7 @@ interface GameDetailsModalProps {
 
 export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated }: GameDetailsModalProps) {
   const { data: session } = useSession();
-  const { characters: cachedCharacters } = useClientCache();
+  // Characters are no longer cached - fetch directly when needed
   const [currentGame, setCurrentGame] = useState<Game | null>(null);
   const [activeTab, setActiveTab] = useState<'lobby' | 'characters' | 'notes' | 'chat' | 'encounters'>('lobby');
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -279,27 +279,18 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
       console.log('🔍 Add character modal opened');
       console.log('🔍 Current game:', currentGame);
       console.log('🔍 Session user email:', session?.user?.email);
-      console.log('🔍 Cached characters:', cachedCharacters);
-      console.log('🔍 Cached characters length:', cachedCharacters?.length);
       
-      // Use cached characters if available, otherwise fetch directly
-      if (cachedCharacters && cachedCharacters.length > 0) {
-        console.log('✅ Using cached characters');
-        setCharacters(cachedCharacters);
-      } else {
-        console.log('⚠️ Cache empty or timed out, fetching characters directly...');
-        // Fallback: fetch directly if cache is empty (e.g., due to timeout)
-        fetch('/api/characters')
-          .then(res => res.json())
-          .then(data => {
-            console.log('✅ Fetched characters directly:', data.length);
-            setCharacters(data);
-          })
-          .catch(err => {
-            console.error('❌ Failed to fetch characters:', err);
-            setCharacters([]);
-          });
-      }
+      // Fetch characters directly (no longer using cache)
+      fetch('/api/characters')
+        .then(res => res.json())
+        .then(data => {
+          console.log('✅ Fetched characters:', data.length);
+          setCharacters(data);
+        })
+        .catch(err => {
+          console.error('❌ Failed to fetch characters:', err);
+          setCharacters([]);
+        });
       
       // Set the current user's participant ID (DM or player)
       if (currentGame && session?.user?.email) {
@@ -318,7 +309,7 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
         console.log('❌ Missing currentGame or session user email');
       }
     }
-  }, [showAddCharacterModal, currentGame, session?.user?.email, cachedCharacters]);
+  }, [showAddCharacterModal, currentGame, session?.user?.email]);
 
   const getAvailableCharacters = () => {
     console.log('🔍 getAvailableCharacters called');

@@ -41,7 +41,7 @@ export function useClientCache() {
     // Game and monster data
     games: clientCache.getGames(),
     monsters: clientCache.getMonsters(),
-    characters: clientCache.getCharacters(),
+    // Characters removed - fetched on demand via React Query
     
     // Suggestions and limits
     weaponSuggestions: clientCache.getWeaponSuggestions.bind(clientCache),

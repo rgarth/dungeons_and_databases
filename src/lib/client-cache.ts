@@ -310,7 +310,7 @@ interface CacheData {
   spellLimits: Record<string, SpellLimits>; // Class name -> spell limits for level 1
   games: Game[]; // User's games
   monsters: Monster[]; // All monsters
-  characters: Character[]; // User's characters
+  // Characters removed - fetched on demand via React Query or direct API calls
 }
 
 class ClientCache {
@@ -373,11 +373,9 @@ class ClientCache {
         this.fetchWithTimeout('/api/games', 15000).catch((err) => {
           console.warn('⚠️ Failed to fetch games (may not be authenticated):', err instanceof Error ? err.message : String(err));
           return [];
-        }),
-        this.fetchWithTimeout('/api/characters', 15000).catch((err) => {
-          console.warn('⚠️ Failed to fetch characters (may not be authenticated):', err instanceof Error ? err.message : String(err));
-          return [];
         })
+        // Characters removed - they're fetched via React Query on the characters page
+        // and directly in GameDetailsModal when needed
       ]);
 
       const races = results[0] as Race[];
@@ -393,10 +391,6 @@ class ClientCache {
       const languages = results[10] as Language[];
       const spells = results[11] as Spell[];
       const games = results[12] as Game[];
-      const characters = results[13] as Character[];
-
-      console.log('🔄 Client cache - Characters loaded:', characters.length);
-      console.log('🔄 Client cache - Character IDs:', characters.map((c: Character) => ({ id: c.id, name: c.name })));
 
       // Pre-load weapon and armor suggestions for all classes
       const weaponSuggestions: Record<string, Weapon[]> = {};
@@ -474,8 +468,8 @@ class ClientCache {
         armorSuggestions,
         spells,
         spellLimits,
-        games,
-        characters
+        games
+        // Characters removed - fetched on demand via React Query or direct API calls
       };
 
       console.log('✅ Client cache initialized:', {
@@ -494,8 +488,7 @@ class ClientCache {
         weaponSuggestions: Object.keys(weaponSuggestions).length,
         armorSuggestions: Object.keys(armorSuggestions).length,
         spellLimits: Object.keys(spellLimits).length,
-        games: games.length,
-        characters: characters.length
+        games: games.length
       });
     } catch (error) {
       console.error('❌ Failed to initialize client cache:', error);
@@ -576,22 +569,8 @@ class ClientCache {
     return this.cache.games || [];
   }
 
-  getCharacters() {
-    return this.cache.characters || [];
-  }
-
-  addCharacter(character: Character) {
-    if (!this.cache.characters) {
-      this.cache.characters = [];
-    }
-    this.cache.characters.push(character);
-  }
-
-  removeCharacter(characterId: string) {
-    if (this.cache.characters) {
-      this.cache.characters = this.cache.characters.filter(char => char.id !== characterId);
-    }
-  }
+  // Characters removed from cache - they're fetched on demand via React Query
+  // or direct API calls since they change frequently and cause timeout issues
 
   async getMonsters() {
     if (!this.cache.monsters) {

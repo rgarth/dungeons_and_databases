@@ -290,7 +290,7 @@ export function CharacterSheet({ character, onClose, onCharacterDeleted, initial
 
       if (response.ok) {
         // Remove character from client cache
-        clientCache.removeCharacter(character.id);
+        // Characters no longer cached - removed from cache
         setShowDeleteDialog(false);
         onClose();
         onCharacterDeleted?.();
