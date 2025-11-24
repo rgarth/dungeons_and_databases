@@ -148,6 +148,8 @@ interface ThemeInputProps {
   className?: string;
   type?: string;
   disabled?: boolean;
+  id?: string;
+  required?: boolean;
 }
 
 export function ThemeInput({ 
@@ -156,17 +158,21 @@ export function ThemeInput({
   placeholder, 
   className = '', 
   type = 'text',
-  disabled = false 
+  disabled = false,
+  id,
+  required = false
 }: ThemeInputProps) {
   const inputStyles = useInputStyles();
   
   return (
     <input
+      id={id}
       type={type}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       disabled={disabled}
+      required={required}
       className={`w-full rounded-lg px-3 py-2 focus:outline-none transition-colors ${className}`}
       style={{
         backgroundColor: inputStyles.backgroundColor,
