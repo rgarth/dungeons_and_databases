@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -64,20 +64,8 @@ export default function CharactersPage() {
 
   // Show login screen if not authenticated
   if (!session) {
-    return (
-      <div className="min-h-screen bg-[var(--color-surface)] flex items-center justify-center">
-        <div className="bg-[var(--color-card)] p-8 rounded-lg shadow-xl max-w-md w-full border border-[var(--color-border)]">
-          <h1 className="text-2xl font-bold text-[var(--color-text-primary)] mb-6 text-center">Dungeons & Databases</h1>
-          <Button
-            onClick={() => signIn('google')}
-            className="w-full"
-            size="lg"
-          >
-            Sign In with Google
-          </Button>
-        </div>
-      </div>
-    );
+    router.replace('/');
+    return null;
   }
 
   const handleTabChange = (tab: 'characters' | 'party' | 'monsters') => {

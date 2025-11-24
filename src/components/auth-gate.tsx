@@ -1,7 +1,8 @@
 "use client";
-import { useSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import React from "react";
 import Image from "next/image";
+import { AuthForm } from "./auth-form";
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
@@ -27,16 +28,9 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
           />
           <h1 className="text-2xl font-bold" style={{ color: 'var(--color-text-primary)' }}>Dungeons & Databases</h1>
         </div>
-        <p className="mb-4" style={{ color: 'var(--color-text-secondary)' }}>Sign in to continue</p>
-        <button
-          onClick={() => signIn("google")}
-          className="px-6 py-2 rounded-lg text-lg font-semibold shadow-md transition-colors"
-          style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-accent-text)' }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
-        >
-          Sign in with Google
-        </button>
+        <div className="w-full max-w-md px-6">
+          <AuthForm />
+        </div>
       </div>
     );
   }

@@ -40,6 +40,8 @@ model User {
   email            String            @unique
   emailVerified    DateTime?
   image            String?
+  password         String?
+  username         String?           @unique
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   accounts         Account[]

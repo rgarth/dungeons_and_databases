@@ -1,11 +1,11 @@
 "use client";
 
-import { useSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { LoadingModal } from "@/components/loading-modal";
 import { useLoading } from "@/components/providers/loading-provider";
-import { Button } from "@/components/ui";
+import { AuthForm } from "@/components/auth-form";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -34,13 +34,7 @@ export default function Home() {
       <div className="min-h-screen bg-[var(--color-surface)] flex items-center justify-center">
         <div className="bg-[var(--color-card)] p-8 rounded-lg shadow-xl max-w-md w-full border border-[var(--color-border)]">
           <h1 className="text-2xl font-bold text-[var(--color-text-primary)] mb-6 text-center">Dungeons & Databases</h1>
-          <Button
-            onClick={() => signIn('google')}
-            className="w-full"
-            size="lg"
-          >
-            Sign In with Google
-          </Button>
+          <AuthForm />
         </div>
       </div>
     );
