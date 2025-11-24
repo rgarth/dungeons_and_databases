@@ -106,7 +106,7 @@ export default function ForgotPasswordPage() {
             )}
 
             <p className="text-[var(--color-text-secondary)] mb-4 text-center">
-              Enter your email address and we'll send you a link to reset your password.
+              Enter your email address and we&apos;ll send you a link to reset your password.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">

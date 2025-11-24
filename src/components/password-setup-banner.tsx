@@ -69,7 +69,7 @@ export function PasswordSetupBanner() {
             Set Up Password Login
           </h3>
           <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>
-            You don't have a password set. Set one now to enable username/password login.
+            You don&apos;t have a password set. Set one now to enable username/password login.
           </p>
         </div>
         <Button
