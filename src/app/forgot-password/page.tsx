@@ -16,16 +16,6 @@ export default function ForgotPasswordPage() {
   // Debug: Log when component mounts
   useEffect(() => {
     console.log("🔍 ForgotPasswordPage component mounted");
-    (window as any).forgotPasswordDebug = {
-      email,
-      error,
-      success,
-      loading,
-      setEmail,
-      setError,
-      setSuccess,
-      setLoading,
-    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
