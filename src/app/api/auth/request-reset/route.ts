@@ -47,9 +47,15 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Get the base URL from the request
+    const host = request.headers.get("host") || "localhost:3000";
+    const protocol = request.headers.get("x-forwarded-proto") || 
+                     (host.includes("localhost") ? "http" : "https");
+    const baseUrl = `${protocol}://${host}`;
+
     // Send email with reset link
     try {
-      await sendPasswordResetEmail(user.email, resetToken);
+      await sendPasswordResetEmail(user.email, resetToken, baseUrl);
       console.log(`Password reset email sent successfully to ${user.email}`);
     } catch (emailError) {
       console.error("Failed to send password reset email:", emailError);
@@ -58,19 +64,9 @@ export async function POST(request: NextRequest) {
       // But log the error for debugging
     }
 
-    // In development, also return the token for testing (remove in production)
-    const resetUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/reset-password?token=${resetToken}`;
-    
-    if (process.env.NODE_ENV === "development") {
-      console.log("Password reset token (DEV ONLY):", resetToken);
-      console.log("Reset URL:", resetUrl);
-    }
-
     return NextResponse.json(
       { 
-        message: "If an account exists with that email, a reset link has been sent.",
-        // Only return token in development for testing
-        ...(process.env.NODE_ENV === "development" && { resetToken, resetUrl })
+        message: "If an account exists with that email, a reset link has been sent."
       },
       { status: 200 }
     );

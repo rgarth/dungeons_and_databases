@@ -37,14 +37,22 @@ export function AuthForm() {
         }
 
         // After successful signup, sign in
+        console.log("🔐 Attempting to sign in after signup...");
         const result = await signIn("credentials", {
           username,
           password,
           redirect: false,
         });
 
+        console.log("🔐 Sign in result:", result);
+
         if (result?.error) {
+          console.error("🔐 Sign in error:", result.error);
           setError("Account created but failed to sign in. Please try signing in.");
+        } else if (result?.ok) {
+          console.log("🔐 Sign in successful, redirecting to characters");
+          // Force a page refresh to update session
+          window.location.href = '/characters';
         }
       } else {
         // Sign in
@@ -188,7 +196,12 @@ export function AuthForm() {
         {!isSignUp && (
           <a
             href="/forgot-password"
-            className="text-sm underline block"
+            onClick={(e) => {
+              console.log("🔗 Forgot password link clicked!");
+              e.preventDefault();
+              window.location.href = "/forgot-password";
+            }}
+            className="text-sm underline block cursor-pointer"
             style={{ color: "var(--color-accent)" }}
           >
             Forgot password?

@@ -1,11 +1,17 @@
 "use client";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 import React from "react";
 import Image from "next/image";
 import { AuthForm } from "./auth-form";
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
+  const pathname = usePathname();
+
+  // Allow public access to forgot-password and reset-password pages
+  const publicPaths = ['/forgot-password', '/reset-password'];
+  const isPublicPath = publicPaths.includes(pathname || '');
 
   if (status === "loading") {
     return (
@@ -15,7 +21,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (status === "unauthenticated") {
+  if (status === "unauthenticated" && !isPublicPath) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen" style={{ background: 'var(--color-surface)' }}>
         <div className="flex flex-col items-center mb-6">

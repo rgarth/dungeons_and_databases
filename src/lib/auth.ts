@@ -52,6 +52,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/',
     error: '/',
+    // Don't set a custom error page that might redirect incorrectly
   },
   session: {
     strategy: "jwt",

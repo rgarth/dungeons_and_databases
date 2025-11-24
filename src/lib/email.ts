@@ -1,25 +1,43 @@
 import nodemailer from "nodemailer";
 
 // Create reusable transporter
+const smtpPort = parseInt(process.env.SMTP_PORT || "587");
+const useSecure = process.env.SMTP_SECURE === "true";
+
+// IMPORTANT: Port 587 requires secure: false (STARTTLS)
+// Port 465 requires secure: true (SSL/TLS from the start)
+// The error "wrong version number" happens when secure: true is used with port 587
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT || "587"),
-  secure: process.env.SMTP_SECURE === "true", // true for 465, false for other ports
+  port: smtpPort,
+  // Port 587 = STARTTLS (secure: false), Port 465 = SSL (secure: true)
+  secure: smtpPort === 465, // Only use secure for port 465, ignore SMTP_SECURE env var
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASSWORD,
+  },
+  // TLS options for STARTTLS (port 587)
+  tls: {
+    rejectUnauthorized: false, // Allow self-signed certificates if needed
   },
   // Add connection timeout
   connectionTimeout: 10000,
   greetingTimeout: 10000,
   socketTimeout: 10000,
+  // For port 587, require TLS upgrade via STARTTLS
+  requireTLS: smtpPort === 587,
+  // Don't ignore TLS
+  ignoreTLS: false,
 });
 
 export async function sendPasswordResetEmail(
   email: string,
-  resetToken: string
+  resetToken: string,
+  baseUrl?: string
 ): Promise<void> {
-  const resetUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/reset-password?token=${resetToken}`;
+  // Use provided baseUrl, fallback to NEXTAUTH_URL, or localhost
+  const base = baseUrl || process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const resetUrl = `${base}/reset-password?token=${resetToken}`;
 
   const mailOptions = {
     from: process.env.SMTP_FROM || "Dungeons & Databases <noreply@robgarth.com>",
@@ -121,13 +139,19 @@ export async function sendPasswordResetEmail(
       throw new Error("Email service not configured");
     }
 
+    console.log(`📧 Attempting to send email to ${email}`);
+    console.log(`📧 SMTP config: host=${process.env.SMTP_HOST}, port=${smtpPort}, secure=${smtpPort === 465} (auto-detected from port)`);
+
     await transporter.sendMail(mailOptions);
-    console.log(`Password reset email sent to ${email}`);
+    console.log(`✅ Password reset email sent successfully to ${email}`);
   } catch (error) {
-    console.error("Error sending password reset email:", error);
+    console.error("❌ Error sending password reset email:", error);
     if (error instanceof Error) {
-      console.error("Error details:", error.message);
+      console.error("❌ Error details:", error.message);
+      console.error("❌ Error code:", (error as any).code);
+      console.error("❌ Error command:", (error as any).command);
     }
+    // Don't throw - let the API handle it gracefully
     throw error;
   }
 }

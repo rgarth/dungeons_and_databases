@@ -6,13 +6,27 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-// Configure Prisma for Vercel's serverless environment
+// Configure Prisma for Supabase
+// You can use the pooled connection (DATABASE_URL) in both dev and production
+// Just need to ensure it has ?pgbouncer=true to disable prepared statements
 const createPrismaClient = () => {
+  let databaseUrl = process.env.DATABASE_URL || process.env.DIRECT_URL;
+  
+  // If using pooled connection (pooler.supabase.com), ensure pgbouncer=true
+  if (databaseUrl && databaseUrl.includes('pooler.supabase.com')) {
+    // Add pgbouncer=true if not already present
+    if (!databaseUrl.includes('pgbouncer=true')) {
+      databaseUrl = databaseUrl.includes('?') 
+        ? `${databaseUrl}&pgbouncer=true`
+        : `${databaseUrl}?pgbouncer=true`;
+    }
+  }
+
   return new PrismaClient({
     log: ['error', 'warn'],
     datasources: {
       db: {
-        url: process.env.DATABASE_URL,
+        url: databaseUrl,
       },
     },
   });

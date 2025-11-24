@@ -332,6 +332,27 @@ class ClientCache {
     this.initialized = true;
   }
 
+  private async fetchWithTimeout(url: string, timeout = 10000): Promise<any> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    
+    try {
+      const response = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      return await response.json();
+    } catch (error: any) {
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        console.error(`⏱️ Request timeout for ${url}`);
+        throw new Error(`Request timeout for ${url}`);
+      }
+      throw error;
+    }
+  }
+
   private async loadAllData() {
     console.log('🔄 Initializing client cache...');
     
@@ -352,20 +373,26 @@ class ClientCache {
         games,
         characters
       ] = await Promise.all([
-        fetch('/api/races').then(res => res.json()),
-        fetch('/api/classes').then(res => res.json()),
-        fetch('/api/backgrounds').then(res => res.json()),
-        fetch('/api/alignments').then(res => res.json()),
-        fetch('/api/equipment-packs').then(res => res.json()),
-        fetch('/api/armor').then(res => res.json()),
-        fetch('/api/weapons').then(res => res.json()),
-        fetch('/api/magical-items').then(res => res.json()),
-        fetch('/api/treasures').then(res => res.json()),
-        fetch('/api/subraces').then(res => res.json()),
-        fetch('/api/languages').then(res => res.json()),
-        fetch('/api/spells').then(res => res.json()),
-        fetch('/api/games').then(res => res.json()).catch(() => []), // Games might fail if not authenticated
-        fetch('/api/characters').then(res => res.json()).catch(() => []) // Characters might fail if not authenticated
+        this.fetchWithTimeout('/api/races'),
+        this.fetchWithTimeout('/api/classes'),
+        this.fetchWithTimeout('/api/backgrounds'),
+        this.fetchWithTimeout('/api/alignments'),
+        this.fetchWithTimeout('/api/equipment-packs'),
+        this.fetchWithTimeout('/api/armor'),
+        this.fetchWithTimeout('/api/weapons'),
+        this.fetchWithTimeout('/api/magical-items'),
+        this.fetchWithTimeout('/api/treasures'),
+        this.fetchWithTimeout('/api/subraces'),
+        this.fetchWithTimeout('/api/languages'),
+        this.fetchWithTimeout('/api/spells'),
+        this.fetchWithTimeout('/api/games', 5000).catch((err) => {
+          console.warn('⚠️ Failed to fetch games (may not be authenticated):', err.message);
+          return [];
+        }),
+        this.fetchWithTimeout('/api/characters', 5000).catch((err) => {
+          console.warn('⚠️ Failed to fetch characters (may not be authenticated):', err.message);
+          return [];
+        })
       ]);
 
       console.log('🔄 Client cache - Characters loaded:', characters.length);
@@ -472,6 +499,9 @@ class ClientCache {
       });
     } catch (error) {
       console.error('❌ Failed to initialize client cache:', error);
+      // Set initialized to true anyway to prevent infinite loading
+      // The cache will have partial data which is better than nothing
+      this.initialized = true;
       throw error;
     }
   }
