@@ -370,11 +370,11 @@ class ClientCache {
         this.fetchWithTimeout('/api/subraces'),
         this.fetchWithTimeout('/api/languages'),
         this.fetchWithTimeout('/api/spells'),
-        this.fetchWithTimeout('/api/games', 5000).catch((err) => {
+        this.fetchWithTimeout('/api/games', 15000).catch((err) => {
           console.warn('⚠️ Failed to fetch games (may not be authenticated):', err instanceof Error ? err.message : String(err));
           return [];
         }),
-        this.fetchWithTimeout('/api/characters', 5000).catch((err) => {
+        this.fetchWithTimeout('/api/characters', 15000).catch((err) => {
           console.warn('⚠️ Failed to fetch characters (may not be authenticated):', err instanceof Error ? err.message : String(err));
           return [];
         })

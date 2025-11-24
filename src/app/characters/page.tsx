@@ -22,7 +22,7 @@ export default function CharactersPage() {
   const queryClient = useQueryClient();
 
   // Fetch characters using React Query
-  const { data: characters = [] } = useQuery<Character[]>({
+  const { data: characters = [], isLoading, error, isError } = useQuery<Character[]>({
     queryKey: ['characters'],
     queryFn: async () => {
       const response = await fetch("/api/characters");
@@ -32,6 +32,8 @@ export default function CharactersPage() {
       return response.json();
     },
     enabled: !!session, // Only fetch when we have a session
+    retry: 2, // Retry twice on failure
+    retryDelay: 1000, // Wait 1 second between retries
   });
 
   // Handle character creation
@@ -98,20 +100,65 @@ export default function CharactersPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {characters.map((character) => (
-          <CharacterCard
-            key={character.id}
-            character={character}
-            onCharacterDeleted={() => {
-              queryClient.invalidateQueries({ queryKey: ['characters'] });
-            }}
-            onCharacterUpdated={() => {
-              queryClient.invalidateQueries({ queryKey: ['characters'] });
-            }}
-          />
-        ))}
-      </div>
+      {/* Loading state */}
+      {isLoading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-[var(--color-text-secondary)]">Loading your characters...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Error state */}
+      {isError && (
+        <div className="bg-[var(--color-card)] border border-[var(--color-danger)] rounded-lg p-6 mb-6">
+          <h3 className="text-lg font-semibold text-[var(--color-danger)] mb-2">
+            Failed to load characters
+          </h3>
+          <p className="text-[var(--color-text-secondary)] mb-4">
+            {error instanceof Error ? error.message : 'An error occurred while loading your characters. This might be due to a slow connection or server issue.'}
+          </p>
+          <Button
+            onClick={() => queryClient.invalidateQueries({ queryKey: ['characters'] })}
+            className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
+          >
+            Try Again
+          </Button>
+        </div>
+      )}
+
+      {/* Characters grid */}
+      {!isLoading && !isError && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {characters.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+              <p className="text-[var(--color-text-secondary)] text-lg mb-4">
+                You don't have any characters yet.
+              </p>
+              <Button
+                onClick={() => setShowCreateModal(true)}
+                className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-accent-text)]"
+              >
+                Create Your First Character
+              </Button>
+            </div>
+          ) : (
+            characters.map((character) => (
+              <CharacterCard
+                key={character.id}
+                character={character}
+                onCharacterDeleted={() => {
+                  queryClient.invalidateQueries({ queryKey: ['characters'] });
+                }}
+                onCharacterUpdated={() => {
+                  queryClient.invalidateQueries({ queryKey: ['characters'] });
+                }}
+              />
+            ))
+          )}
+        </div>
+      )}
 
       {/* Create Character Modal */}
       {showCreateModal && (

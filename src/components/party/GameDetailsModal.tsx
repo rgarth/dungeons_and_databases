@@ -281,10 +281,25 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
       console.log('🔍 Session user email:', session?.user?.email);
       console.log('🔍 Cached characters:', cachedCharacters);
       console.log('🔍 Cached characters length:', cachedCharacters?.length);
-      console.log('🔍 Cached characters details:', cachedCharacters?.map(c => ({ id: c.id, name: c.name, userId: c.userId })));
       
-      // Use cached characters instead of fetching
-      setCharacters(cachedCharacters);
+      // Use cached characters if available, otherwise fetch directly
+      if (cachedCharacters && cachedCharacters.length > 0) {
+        console.log('✅ Using cached characters');
+        setCharacters(cachedCharacters);
+      } else {
+        console.log('⚠️ Cache empty or timed out, fetching characters directly...');
+        // Fallback: fetch directly if cache is empty (e.g., due to timeout)
+        fetch('/api/characters')
+          .then(res => res.json())
+          .then(data => {
+            console.log('✅ Fetched characters directly:', data.length);
+            setCharacters(data);
+          })
+          .catch(err => {
+            console.error('❌ Failed to fetch characters:', err);
+            setCharacters([]);
+          });
+      }
       
       // Set the current user's participant ID (DM or player)
       if (currentGame && session?.user?.email) {
@@ -292,19 +307,15 @@ export default function GameDetailsModal({ game, isOpen, onClose, onGameUpdated 
           p => p.user.email === session.user?.email
         );
         console.log('🔍 Found current participant:', currentParticipant);
-        console.log('🔍 All participants:', currentGame.participants.map(p => ({ id: p.id, email: p.user.email })));
         
         if (currentParticipant) {
           console.log('🔍 Setting selectedParticipant to:', currentParticipant.id);
           setSelectedParticipant(currentParticipant.id);
         } else {
           console.log('❌ No current participant found for user:', session.user?.email);
-          console.log('❌ Available participants:', currentGame.participants.map(p => p.user.email));
         }
       } else {
         console.log('❌ Missing currentGame or session user email');
-        console.log('❌ currentGame:', !!currentGame);
-        console.log('❌ session?.user?.email:', !!session?.user?.email);
       }
     }
   }, [showAddCharacterModal, currentGame, session?.user?.email, cachedCharacters]);
