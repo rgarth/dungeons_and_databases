@@ -174,7 +174,7 @@ export default function ForgotPasswordPage() {
                 className="w-full"
                 size="lg"
                 disabled={loading || !email.trim()}
-                onClick={(e) => {
+                onClick={() => {
                   console.log("🖱️ Button clicked!");
                   console.log("📧 Email at click time:", email);
                   console.log("🔄 Loading state:", loading);
