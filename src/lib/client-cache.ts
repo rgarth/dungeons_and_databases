@@ -357,22 +357,7 @@ class ClientCache {
     console.log('🔄 Initializing client cache...');
     
     try {
-      const [
-        races,
-        classes,
-        backgrounds,
-        alignments,
-        equipmentPacks,
-        armor,
-        weapons,
-        magicalItems,
-        treasures,
-        subraces,
-        languages,
-        spells,
-        games,
-        characters
-      ] = await Promise.all([
+      const results = await Promise.all([
         this.fetchWithTimeout('/api/races'),
         this.fetchWithTimeout('/api/classes'),
         this.fetchWithTimeout('/api/backgrounds'),
@@ -386,14 +371,29 @@ class ClientCache {
         this.fetchWithTimeout('/api/languages'),
         this.fetchWithTimeout('/api/spells'),
         this.fetchWithTimeout('/api/games', 5000).catch((err) => {
-          console.warn('⚠️ Failed to fetch games (may not be authenticated):', err.message);
+          console.warn('⚠️ Failed to fetch games (may not be authenticated):', err instanceof Error ? err.message : String(err));
           return [];
         }),
         this.fetchWithTimeout('/api/characters', 5000).catch((err) => {
-          console.warn('⚠️ Failed to fetch characters (may not be authenticated):', err.message);
+          console.warn('⚠️ Failed to fetch characters (may not be authenticated):', err instanceof Error ? err.message : String(err));
           return [];
         })
       ]);
+
+      const races = results[0] as Race[];
+      const classes = results[1] as Class[];
+      const backgrounds = results[2] as Background[];
+      const alignments = results[3] as Alignment[];
+      const equipmentPacks = results[4] as EquipmentPack[];
+      const armor = results[5] as Armor[];
+      const weapons = results[6] as Weapon[];
+      const magicalItems = results[7] as MagicalItem[];
+      const treasures = results[8] as Treasure[];
+      const subraces = results[9] as Subrace[];
+      const languages = results[10] as Language[];
+      const spells = results[11] as Spell[];
+      const games = results[12] as Game[];
+      const characters = results[13] as Character[];
 
       console.log('🔄 Client cache - Characters loaded:', characters.length);
       console.log('🔄 Client cache - Character IDs:', characters.map((c: Character) => ({ id: c.id, name: c.name })));
