@@ -5,11 +5,15 @@ import crypto from "crypto";
 
 // Request password reset - generates a token
 export async function POST(request: NextRequest) {
+  console.log("🔵 POST /api/auth/request-reset called");
   try {
     const body = await request.json();
+    console.log("🔵 Request body received:", body);
     const { email } = body;
+    console.log("🔵 Email extracted:", email);
 
     if (!email) {
+      console.log("🔵 Error: Email is required");
       return NextResponse.json(
         { error: "Email is required" },
         { status: 400 }

@@ -16,6 +16,10 @@ export default function ForgotPasswordPage() {
   // Debug: Log when component mounts
   useEffect(() => {
     console.log("🔍 ForgotPasswordPage component mounted");
+    // Test if console is working
+    console.error("TEST ERROR LOG");
+    console.warn("TEST WARN LOG");
+    console.info("TEST INFO LOG");
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -145,10 +149,16 @@ export default function ForgotPasswordPage() {
 
             <form 
               onSubmit={(e) => {
-                console.log("📝 Form onSubmit event fired");
+                console.log("📝 Form onSubmit event fired - BEFORE preventDefault");
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("📝 Form onSubmit event fired - AFTER preventDefault");
+                console.log("📝 Calling handleSubmit...");
                 handleSubmit(e);
+                console.log("📝 handleSubmit called");
               }}
               className="space-y-4"
+              noValidate
             >
               <div>
                 <label
